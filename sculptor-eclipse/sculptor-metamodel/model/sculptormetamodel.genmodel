@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/sculptor-metamodel/src-gen"
+    modelPluginID="sculptor_metamodel" modelName="Sculptormetamodel"
+    importerID="org.eclipse.emf.importer.ecore" containmentProxies="true">
+  <foreignModel>sculptormetamodel.ecore</foreignModel>
+  <genPackages prefix="Sculptormetamodel" disposableProviderFactory="true" ecorePackage="sculptormetamodel.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sculptormetamodel.ecore#//InheritanceType">
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//InheritanceType/SINGLE_TABLE"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//InheritanceType/JOINED"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sculptormetamodel.ecore#//DiscriminatorType">
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//DiscriminatorType/STRING"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//DiscriminatorType/CHAR"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//DiscriminatorType/INTEGER"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sculptormetamodel.ecore#//HttpMethod">
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//HttpMethod/UNDEFINED"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//HttpMethod/GET"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//HttpMethod/POST"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//HttpMethod/PUT"/>
+      <genEnumLiterals ecoreEnumLiteral="sculptormetamodel.ecore#//HttpMethod/DELETE"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="sculptormetamodel.ecore#//NamedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//NamedElement/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//NamedElement/doc"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//NamedElement/hint"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Application">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Application/basePackage"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Application/modules"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Service">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Service/operations"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Service/repositoryDependencies"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Service/module"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Service/otherDependencies"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Service/serviceDependencies"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Service/gapClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Service/webService"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Service/remoteInterface"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Service/localInterface"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Service/subscribe"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Repository">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Repository/operations"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Repository/aggregateRoot"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Repository/repositoryDependencies"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Repository/otherDependencies"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Repository/gapClass"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Repository/subscribe"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sculptormetamodel.ecore#//DomainObject">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/references"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/extends"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/abstract"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/repository"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/module"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/optimisticLocking"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/cache"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/package"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/databaseTable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/extendsName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/validate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/gapClass"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/inheritance"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/discriminatorColumnValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObject/aggregateRoot"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/belongsToAggregate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/operations"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObject/traits"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Reference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/many"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/collectionType"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Reference/opposite"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Reference/to"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/cascade"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/orderBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/visibility"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/changeable"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Reference/from"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/required"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/fetch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/cache"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/naturalKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/inverse"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/nullable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/databaseColumn"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/validate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/transient"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/databaseJoinTable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Reference/databaseJoinColumn"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//TypedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//TypedElement/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//TypedElement/collectionType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//TypedElement/mapKeyType"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//DomainObjectTypedElement">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObjectTypedElement/domainObjectType"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObjectTypedElement/mapKeyDomainObjectType"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Attribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/changeable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/databaseType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/nullable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/naturalKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/visibility"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/required"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/length"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/index"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/databaseColumn"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/validate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Attribute/transient"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Operation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Operation/throws"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Operation/visibility"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Operation/parameters"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Operation/publish"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Parameter"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//RepositoryOperation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//RepositoryOperation/delegateToAccessObject"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//RepositoryOperation/repository"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//RepositoryOperation/accessObjectName"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//ServiceOperation">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//ServiceOperation/delegate"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//ServiceOperation/service"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//ServiceOperation/serviceDelegate"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//ValueObject">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//ValueObject/immutable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//ValueObject/persistent"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Entity">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Entity/auditable"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Module">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Module/basePackage"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Module/application"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Module/domainObjects"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Module/consumers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Module/services"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Module/external"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Module/persistenceUnit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Module/resources"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//BasicType"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Consumer">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Consumer/module"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Consumer/repositoryDependencies"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Consumer/serviceDependencies"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Consumer/channel"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Consumer/messageRoot"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Consumer/otherDependencies"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Consumer/subscribe"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Enum">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Enum/values"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Enum/ordinal"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//EnumValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//EnumValue/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//EnumConstructorParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//EnumConstructorParameter/value"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Inheritance">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Inheritance/discriminatorColumnName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Inheritance/discriminatorColumnLength"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Inheritance/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Inheritance/discriminatorType"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//DataTransferObject"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//CommandEvent"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//DomainEvent"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Subscribe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Subscribe/eventBus"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Subscribe/topic"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sculptormetamodel.ecore#//Event"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Publish">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Publish/eventBus"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Publish/topic"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Publish/eventType"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Trait"/>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//DomainObjectOperation">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//DomainObjectOperation/domainObject"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//DomainObjectOperation/abstract"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//Resource">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Resource/serviceDependencies"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Resource/gapClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//Resource/path"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Resource/operations"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//Resource/module"/>
+    </genClasses>
+    <genClasses ecoreClass="sculptormetamodel.ecore#//ResourceOperation">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//ResourceOperation/resource"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//ResourceOperation/path"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//ResourceOperation/httpMethod"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptormetamodel.ecore#//ResourceOperation/delegate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sculptormetamodel.ecore#//ResourceOperation/returnString"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

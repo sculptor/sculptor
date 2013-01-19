@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sculptor</groupId>
+		<artifactId>sculptor-eclipse</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>org.sculptor.eclipse</groupId>
+	<artifactId>eclipse-mirror</artifactId>
+	<packaging>pom</packaging>
+	<name>Sculptor :: Eclipse p2 Repository Mirror</name>
+	<description>By activating the profile 'mirror' a local p2 repository is created
+				 in the directory '.p2-mirror' by mirroring all the Eclipse p2 repositories
+				 used by Sculptor.
+				 
+				 This local p2 mirror can be used in Mavens settings.xml as decribed in the
+				 blog post 'Using a mirror for p2 repositories (with tycho)'
+				 http://www.iulidragos.org/?p=207 </description>
+
+	<profiles>
+		<profile>
+			<id>mirror</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-p2-extras-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>mirror</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<source>
+								<repository>
+									<url>http://download.eclipse.org/releases/juno/</url>
+									<layout>p2</layout>
+								</repository>
+								<repository>
+									<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
+									<layout>p2</layout>
+								</repository>
+							</source>
+							<destination>${basedir}/.p2-mirror</destination>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

@@ -1,0 +1,522 @@
+grammar org.sculptor.dsl.Sculptordsl with org.eclipse.xtext.common.Terminals
+
+generate sculptordsl "http://sculptor.org/dsl/sculptordsl"
+
+
+DslModel :
+  (imports+=DslImport)*
+  app=DslApplication;
+
+DslImport :
+	'import' importURI=STRING;
+
+DslApplication :
+  (doc=STRING)?
+  (("Application" name=ID "{"
+    "basePackage" "=" basePackage=DslJavaIdentifier) |
+  ("ApplicationPart"  name=ID "{"))
+
+    (modules+=DslModule)*
+  "}";
+
+DslModule :
+  (doc=STRING)?
+  "Module" name=ID "{"
+    (external?="external")?
+    ("basePackage" "=" basePackage=DslJavaIdentifier )?
+    ("hint" "=" hint=STRING)?
+    ((services+=DslService) |
+     (resources+=DslResource) |
+     (consumers+=DslConsumer) |
+     (domainObjects+=DslSimpleDomainObject))*
+  "}";
+
+DslService :
+  (doc=STRING)?
+  "Service" name=ID "{"
+  	(
+  	 ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     ("hint" "=" hint=STRING)? &
+  	 (webService?="webservice")? &
+  	 (subscribe=DslSubscribe)?
+  	)
+    (dependencies+=DslDependency)*
+    (operations+=DslServiceOperation)*
+  "}";
+
+DslResource :
+  (doc=STRING)?
+  "Resource" name=ID "{"
+  	(
+  	 ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     ("hint" "=" hint=STRING)? &
+     (scaffold?="scaffold")? &
+     ("path" "=" path=STRING)?
+  	)
+    (dependencies+=DslServiceDependency)*
+    (operations+=DslResourceOperation)*
+  "}";
+
+DslConsumer :
+  (doc=STRING)?
+  "Consumer" name=ID "{"
+    ("hint" "=" hint=STRING)?
+    (dependencies+=DslDependency)*
+    ("unmarshall to" ("@")?messageRoot=[DslDomainObject])?
+    (
+     (("queueName" | "topicName") "=" channel=DslChannelIdentifier )? &
+     (subscribe=DslSubscribe)?
+    )
+  "}";
+
+DslSubscribe :
+	"subscribe" "to" topic=DslChannelIdentifier ("eventBus" "=" eventBus=ID)?
+;
+
+DslPublish :
+	"publish" (("@")?eventType=[DslEvent])? "to" topic=DslChannelIdentifier ("eventBus" "=" eventBus=ID)?
+;
+
+DslEvent :
+	DslDomainEvent | DslCommandEvent;
+
+DslDomainObjectTypedElement :
+  DslServiceOperation | DslRepositoryOperation | DslDomainObjectOperation | DslParameter;
+
+DslServiceOperation :
+  (doc=STRING)?
+  (visibility=DslVisibility)?
+  (returnType=DslComplexType)?
+  name=ID ("(" (parameters+=DslParameter)?("," parameters+=DslParameter)* ")")?
+    (
+      ("throws" throws=DslThrowsIdentifier)? &
+	  ("hint" "=" hint=STRING)? &
+	  (publish=DslPublish)?
+    )
+    (delegateHolder=DslServiceOperationDelegate)? ";"
+;
+
+DslServiceOperationDelegate :
+    DELEGATE ("@")? delegate=[DslServiceRepositoryOption]"."delegateOperation=[DslServiceRepositoryOperationOption];
+
+DslServiceRepositoryOption :
+	DslRepository | DslService;
+
+DslServiceRepositoryOperationOption :
+	DslRepositoryOperation | DslServiceOperation;
+
+DslResourceOperation :
+  (doc=STRING)?
+  (visibility=DslVisibility)?
+  (returnType=DslComplexType)?
+  name=ID ("(" (parameters+=DslParameter)?("," parameters+=DslParameter)* ")")?
+    (
+      ("throws" throws=DslThrowsIdentifier)? &
+	  ("hint" "=" hint=STRING)? &
+	  (httpMethod=DslHttpMethod)? &
+	  ("path" "=" path=STRING)? &
+	  ("return" "=" returnString=STRING)?
+    )
+    (delegateHolder=DslResourceOperationDelegate)? ";"
+;
+
+DslResourceOperationDelegate :
+    DELEGATE ("@")? delegate=[DslService]"."delegateOperation=[DslServiceOperation];
+
+enum DslHttpMethod :
+	None | GET="GET" | POST="POST" | PUT="PUT" | DELETE="DELETE";
+
+DslRepositoryOperation :
+  (doc=STRING)?
+  (visibility=DslVisibility)?
+  (returnType=DslComplexType)?
+  name=ID ("(" (parameters+=DslParameter)?("," parameters+=DslParameter)* ")")?
+    (
+      ("throws" throws=DslThrowsIdentifier)? &
+      ("hint" "=" hint=STRING)? &
+      (cache?="cache")? &
+      ((gapOperation?="gap") | (noGapOperation?="nogap"))? &
+      ("query" "=" query=STRING)? &
+      ("condition" "=" condition=STRING)? &
+      ("select" "=" select=STRING)? &
+      ("groupBy" "=" groupBy=STRING)? &
+      ("orderBy" "=" orderBy=STRING)? &
+      (construct?="construct")? &
+      (build?="build")? &
+      (map?="map")? &
+      (publish=DslPublish)?
+    )
+    (delegateToAccessObject?=DELEGATE (("AccessObject") | (accessObjectName=ID)))? ";"
+;
+
+DslParameter :
+  (doc=STRING)?
+  parameterType=DslComplexType name=ID;
+
+DslComplexType :
+  (collectionType=DslCollectionType"<"(("@"domainObjectType=[DslSimpleDomainObject]) | (type=DslType) | (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">"))">") |
+  (mapCollectionType=DslMapCollectionType"<"(mapKeyType=DslType | "@"mapKeyDomainObjectType=[DslSimpleDomainObject])","(("@"domainObjectType=[DslSimpleDomainObject]) | (type=DslType) | (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">"))">") |
+  ("@"domainObjectType=[DslSimpleDomainObject]) |
+  (type=DslType) |
+  (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">");
+
+DslSimpleDomainObject :
+  DslBasicType | DslEnum | DslDomainObject | DslDataTransferObject | DslTrait;
+
+DslDomainObject :
+  DslEntity | DslValueObject | DslEvent;
+
+DslEntity :
+  (doc=STRING)?
+  (abstract?="abstract")? "Entity" name=ID ("extends" (("@"extends=[DslEntity]) | (extendsName=DslJavaIdentifier)))?
+  ("with" ("@")?traits+=[DslTrait])* "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    (((notOptimisticLocking?=NOT "optimisticLocking") | ("optimisticLocking"))? &
+     ((notAuditable?=NOT "auditable") | ("auditable"))? &
+     ((cache?="cache") | (NOT "cache"))? &
+     ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     (scaffold?="scaffold")? &
+     ("hint" "=" hint=STRING)? &
+     ("databaseTable" "=" databaseTable=STRING)? &
+     ("discriminatorValue" "=" discriminatorValue=STRING)? &
+     ("discriminatorColumn" "=" discriminatorColumn=STRING)? &
+     ("discriminatorType" "=" discriminatorType=DslDiscriminatorType)? &
+     ("discriminatorLength" "=" discriminatorLength=STRING)? &
+     ("inheritanceType" "=" inheritanceType=DslInheritanceType)? &
+     ("validate" "=" validate=STRING)? &
+     ((notAggregateRoot?=NOT "aggregateRoot") | ("aggregateRoot"))? &
+     ("belongsTo" (("@")?belongsTo=[DslDomainObject]))?)
+    ((attributes+=DslAttribute) |
+     (references+=DslReference) |
+     (operations+=DslDomainObjectOperation))*
+    (repository=DslRepository)?
+  "}";
+
+DslValueObject :
+  (doc=STRING)?
+  (abstract?="abstract")? "ValueObject" name=ID ("extends" (("@"extends=[DslValueObject]) | (extendsName=DslJavaIdentifier)))?
+  ("with" ("@")?traits+=[DslTrait])* "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    (((notOptimisticLocking?=NOT "optimisticLocking") | ("optimisticLocking"))? &
+     ((notImmutable?=NOT "immutable") | ("immutable"))? &
+     ((cache?="cache") | (NOT "cache"))? &
+     ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     (scaffold?="scaffold")? &
+     ("hint" "=" hint=STRING)? &
+     ("databaseTable" "=" databaseTable=STRING)? &
+     ("discriminatorValue" "=" discriminatorValue=STRING)? &
+     ("discriminatorColumn" "=" discriminatorColumn=STRING)? &
+     ("discriminatorType" "=" discriminatorType=DslDiscriminatorType)? &
+     ("discriminatorLength" "=" discriminatorLength=STRING)? &
+     ("inheritanceType" "=" inheritanceType=DslInheritanceType)? &
+     ("validate" "=" validate=STRING)? &
+     ((persistent?="persistent") | (notPersistent?=NOT "persistent"))? &
+     ((notAggregateRoot?=NOT "aggregateRoot") | ("aggregateRoot"))? &
+     ("belongsTo" (("@")?belongsTo=[DslDomainObject]))?)
+    ((attributes+=DslAttribute) |
+     (references+=DslReference) |
+     (operations+=DslDomainObjectOperation))*
+    (repository=DslRepository)?
+  "}";
+
+DslDomainEvent :
+  (doc=STRING)?
+  (abstract?="abstract")? "DomainEvent" name=ID ("extends" (("@"extends=[DslDomainEvent]) | (extendsName=DslJavaIdentifier)))?
+  ("with" ("@")?traits+=[DslTrait])* "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    (
+     ((cache?="cache") | (NOT "cache"))? &
+     ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     (scaffold?="scaffold")? &
+     ("hint" "=" hint=STRING)? &
+     ("databaseTable" "=" databaseTable=STRING)? &
+     ("discriminatorValue" "=" discriminatorValue=STRING)? &
+     ("discriminatorColumn" "=" discriminatorColumn=STRING)? &
+     ("discriminatorType" "=" discriminatorType=DslDiscriminatorType)? &
+     ("discriminatorLength" "=" discriminatorLength=STRING)? &
+     ("inheritanceType" "=" inheritanceType=DslInheritanceType)? &
+     ("validate" "=" validate=STRING)? &
+     ((persistent?="persistent") | (notPersistent?=NOT "persistent"))? &
+     ((notAggregateRoot?=NOT "aggregateRoot") | ("aggregateRoot"))? &
+     ("belongsTo" (("@")?belongsTo=[DslDomainObject]))?
+    )
+    ((attributes+=DslAttribute) |
+     (references+=DslReference) |
+     (operations+=DslDomainObjectOperation))*
+    (repository=DslRepository)?
+  "}";
+
+DslCommandEvent :
+  (doc=STRING)?
+  (abstract?="abstract")? "CommandEvent" name=ID ("extends" (("@"extends=[DslCommandEvent]) | (extendsName=DslJavaIdentifier)))?
+  ("with" ("@")?traits+=[DslTrait])* "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    (
+     ((cache?="cache") | (NOT "cache"))? &
+     ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     (scaffold?="scaffold")? &
+     ("hint" "=" hint=STRING)? &
+     ("databaseTable" "=" databaseTable=STRING)? &
+     ("discriminatorValue" "=" discriminatorValue=STRING)? &
+     ("discriminatorColumn" "=" discriminatorColumn=STRING)? &
+     ("discriminatorType" "=" discriminatorType=DslDiscriminatorType)? &
+     ("discriminatorLength" "=" discriminatorLength=STRING)? &
+     ("inheritanceType" "=" inheritanceType=DslInheritanceType)? &
+     ("validate" "=" validate=STRING)? &
+     ((persistent?="persistent") | (NOT "persistent"))? &
+     ((notAggregateRoot?=NOT "aggregateRoot") | ("aggregateRoot"))? &
+     ("belongsTo" (("@")?belongsTo=[DslDomainObject]))?
+    )
+    ((attributes+=DslAttribute) |
+     (references+=DslReference) |
+     (operations+=DslDomainObjectOperation))*
+    (repository=DslRepository)?
+  "}";
+
+DslTrait :
+  (doc=STRING)?
+  "Trait" name=ID "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    ("hint" "=" hint=STRING)?
+    ((attributes+=DslAttribute) |
+     (references+=DslReference) |
+     (operations+=DslDomainObjectOperation))*
+
+  "}";
+
+DslDomainObjectOperation :
+  (doc=STRING)?
+  OP (abstract?="abstract")? (visibility=DslVisibility)?
+  (returnType=DslComplexType)?
+  name=ID ("(" (parameters+=DslParameter)?("," parameters+=DslParameter)* ")")?
+    (
+      ("throws" throws=DslThrowsIdentifier)? &
+	  ("hint" "=" hint=STRING)?
+    )
+    ";";
+
+DslDataTransferObject :
+  (doc=STRING)?
+  (abstract?="abstract")? "DataTransferObject" name=ID ("extends" (("@"extends=[DslDataTransferObject]) | (extendsName=DslJavaIdentifier)))? "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    (
+     ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     ("hint" "=" hint=STRING)? &
+     ("validate" "=" validate=STRING)?
+    )
+    ((attributes+=DslDtoAttribute) |
+     (references+=DslDtoReference))*
+  "}";
+
+DslBasicType :
+  (doc=STRING)?
+  "BasicType" name=ID
+  ("with" ("@")?traits+=[DslTrait])* "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    (((notImmutable?=NOT "immutable") | ("immutable"))? &
+     ((gapClass?="gap") | (noGapClass?="nogap"))? &
+     ("hint" "=" hint=STRING)?
+    )
+    ((attributes+=DslAttribute) |
+     (references+=DslReference) |
+     (operations+=DslDomainObjectOperation))*
+  "}";
+
+DslAttribute :
+  (doc=STRING)?
+  (visibility=DslVisibility)? (collectionType=DslCollectionType"<")? type=DslType (">")? name=ID
+    ((key?="key")? &
+     ((notChangeable?=NOT "changeable") | ("changeable"))? &
+     ((required?="required") | (NOT "required"))? &
+     (((nullable?="nullable") | (NOT "nullable")) ("=" nullableMessage=STRING)?)? &
+     (index?="index")? &
+     ((assertFalse?="assertFalse") ("=" assertFalseMessage=STRING)?)? &
+     ((assertTrue?="assertTrue") ("=" assertTrueMessage=STRING)?)? &
+     ("hint" "=" hint=STRING)? &
+     ((creditCardNumber?="creditCardNumber") ("=" creditCardNumberMessage=STRING)?)? &
+     ("digits" "=" digits=STRING)? &
+     ((email?="email") ("=" emailMessage=STRING)?)? &
+     ((future?="future") ("=" futureMessage=STRING)?)? &
+     ((past?="past") ("=" pastMessage=STRING)?)? &
+     ("max" "=" max=STRING)? &
+     ("min" "=" min=STRING)? &
+     ("decimalMax" "=" decimalMax=STRING)? &
+     ("decimalMin" "=" decimalMin=STRING)? &
+     ((notEmpty?="notEmpty") ("=" notEmptyMessage=STRING)?)? &
+     ((notBlank?="notBlank") ("=" notBlankMessage=STRING)?)? &
+     ("pattern" "=" pattern=STRING)? &
+     ("range" "=" range=STRING)? &
+     ("size" "=" size=STRING)? &
+     ("length" "=" length=STRING)? &
+     ("scriptAssert" "=" scriptAssert=STRING)? &
+     ("url" "=" url=STRING)? &
+     ("validate" "=" validate=STRING)? &
+     (transient?="transient")? &
+     ("databaseColumn" "=" databaseColumn=STRING)? &
+     ("databaseType" "=" databaseType=STRING)?) (";")?;
+
+DslReference :
+  (doc=STRING)?
+  REF (visibility=DslVisibility)? (collectionType=DslCollectionType"<")? (("@")?domainObjectType=[DslSimpleDomainObject]) (">")? name=ID
+    ((key?="key")? &
+     ((notChangeable?=NOT "changeable") | ("changeable"))? &
+     ((required?="required") | (NOT "required"))? &
+     (((nullable?="nullable") | (NOT "nullable")) ("=" nullableMessage=STRING)?)? &
+     ("hint" "=" hint=STRING)? &
+     ("cascade" "=" cascade=STRING)? &
+     ("fetch" "=" fetch=STRING)? &
+     ((cache?="cache") | (NOT "cache"))? &
+     ((inverse?="inverse") | (NOT "inverse"))? &
+     ("databaseColumn" "=" databaseColumn=STRING)? &
+     ("databaseJoinTable" "=" databaseJoinTable=STRING)? &
+     ("databaseJoinColumn" "=" databaseJoinColumn=STRING)? &
+     ((notEmpty?="notEmpty") ("=" notEmptyMessage=STRING)?)? &
+     ("size" "=" size=STRING)? &
+     ((valid?="valid") ("=" validMessage=STRING)?)? &
+     ("validate" "=" validate=STRING)? &
+     (transient?="transient")? &
+     ("orderby" "=" orderBy=STRING)? &
+     ((orderColumn?="orderColumn") ("=" orderColumnName=STRING)?)? &
+     (oppositeHolder=DslOppositeHolder)?)
+    (";")?;
+
+DslDtoAttribute :
+  (doc=STRING)?
+  (visibility=DslVisibility)? (collectionType=DslCollectionType"<")? type=DslType (">")? name=ID
+    ((key?="key")? &
+     ((notChangeable?=NOT "changeable") | ("changeable"))? &
+     ((required?="required") | (NOT "required"))? &
+     (((nullable?="nullable") | (NOT "nullable")) ("=" nullableMessage=STRING)?)? &
+     (transient?="transient")? &
+     ((assertFalse?="assertFalse") ("=" assertFalseMessage=STRING)?)? &
+     ((assertTrue?="assertTrue") ("=" assertTrueMessage=STRING)?)? &
+     ((creditCardNumber?="creditCardNumber") ("=" creditCardNumberMessage=STRING)?)? &
+     ("digits" "=" digits=STRING)? &
+     ((email?="email") ("=" emailMessage=STRING)?)? &
+     ((future?="future") ("=" futureMessage=STRING)?)? &
+     ((past?="past") ("=" pastMessage=STRING)?)? &
+     ("max" "=" max=STRING)? &
+     ("min" "=" min=STRING)? &
+     ("decimalMax" "=" decimalMax=STRING)? &
+     ("decimalMin" "=" decimalMin=STRING)? &
+     ((notEmpty?="notEmpty") ("=" notEmptyMessage=STRING)?)? &
+     ((notBlank?="notBlank") ("=" notBlankMessage=STRING)?)? &
+     ("pattern" "=" pattern=STRING)? &
+     ("range" "=" range=STRING)? &
+     ("size" "=" size=STRING)? &
+     ("length" "=" length=STRING)? &
+     ("scriptAssert" "=" scriptAssert=STRING)? &
+     ("url" "=" url=STRING)? &
+     ("validate" "=" validate=STRING)? &
+     ("hint" "=" hint=STRING)?
+	) (";")?;
+
+DslDtoReference :
+  (doc=STRING)?
+  REF (visibility=DslVisibility)? (collectionType=DslCollectionType"<")? (("@")?domainObjectType=[DslSimpleDomainObject]) (">")? name=ID
+    ((key?="key")? &
+     ((notChangeable?=NOT "changeable") | ("changeable"))? &
+     ((required?="required") | (NOT "required"))? &
+     (((nullable?="nullable") | (NOT "nullable")) ("=" nullableMessage=STRING)?)? &
+     (transient?="transient")? &
+     ((notEmpty?="notEmpty") ("=" notEmptyMessage=STRING)?)? &
+     ("size" "=" size=STRING)? &
+     ((valid?="valid") ("=" validMessage=STRING)?)? &
+     ("validate" "=" validate=STRING)? &
+     ("hint" "=" hint=STRING)?
+	) (";")?;
+
+DslOppositeHolder :
+	OPPOSITE opposite=[DslReference];
+
+DslRepository :
+  (doc=STRING)?
+  "Repository" name=ID "{"
+    (
+      ((gapClass?="gap") | (noGapClass?="nogap"))? &
+      ("hint" "=" hint=STRING)? &
+      (subscribe=DslSubscribe)?
+    )
+    (dependencies+=DslDependency)*
+    (operations+=DslRepositoryOperation)*
+  "}";
+
+DslServiceDependency :
+  ('>'|'inject') ("@"dependency=[DslService]);
+
+DslDependency :
+  ('>'|'inject') (("@"dependency=[DslServiceRepositoryOption])|name=ID);
+
+DslEnum :
+  (doc=STRING)?
+  "enum" name=ID "{"
+    ("package" "=" package=DslJavaIdentifier )?
+    ("hint" "=" hint=STRING)?
+    (ordinal?="ordinal")?
+    (attributes+=DslEnumAttribute)*
+    (values+=DslEnumValue) ("," values+=DslEnumValue)* (";")?
+  "}";
+
+DslEnumAttribute :
+  (doc=STRING)?
+  type=DslType name=ID (key?="key")? (";")?;
+
+DslEnumValue :
+  (doc=STRING)?
+  name=ID ("(" parameters+=DslEnumParameter ("," parameters+=DslEnumParameter)* ")")?;
+
+DslEnumParameter :
+	((value=STRING) | (integerValue = INT));
+
+DslAnyProperty :
+	DslProperty | DslDtoProperty;
+
+DslProperty :
+	DslAttribute | DslReference;
+
+DslDtoProperty :
+	DslDtoAttribute | DslDtoReference;
+
+enum DslInheritanceType :
+	JOINED="JOINED" | SINGLE_TABLE="SINGLE_TABLE";
+
+enum DslDiscriminatorType :
+	STRING="STRING" | CHAR="CHAR" | INTEGER="INTEGER";
+
+DslType :
+  ("String"|"int"|"Integer"|"long"|"Long"|"boolean"|"Boolean"|"Date"|"DateTime"|"Timestamp"|"BigDecimal"|"BigInteger"|
+  	"double"|"Double"|"float"|"Float"|"Key"|"PagingPagarameter"|"PagedResult"|"Blob"|"Clob"|"Object[]"|
+  	DslJavaIdentifier);
+
+enum DslCollectionType :
+	None | Set="Set" | List="List" | Bag="Bag" | Collection="Collection";
+
+terminal DslMapCollectionType :
+  "Map";
+
+enum DslVisibility :
+  public="public" | protected="protected" | private="private" | package="package";
+
+DslJavaIdentifier :
+  (ID ("." ID)*);
+
+DslChannelIdentifier :
+  (ID (((".") | ("/") | (":")) ID)*);
+
+DslThrowsIdentifier :
+  (DslJavaIdentifier ("," DslJavaIdentifier)*);
+
+terminal NOT :
+  ('!'|'not');
+
+terminal DELEGATE :
+  ('=>'|('delegates to'));
+
+terminal OPPOSITE :
+  ('<->'|'opposite');
+
+terminal REF :
+  ('-'|'reference');
+
+terminal OP :
+  ('*'|'def');

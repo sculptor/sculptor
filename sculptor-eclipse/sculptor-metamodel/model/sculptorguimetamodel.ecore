@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sculptorguimetamodel"
+    nsURI="http://sculptor.org/sculptorgui" nsPrefix="sc">
+  <eClassifiers xsi:type="ecore:EClass" name="GuiApplication" eSuperTypes="sculptormetamodel.ecore#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guiForApplication" lowerBound="1"
+        eType="ecore:EClass sculptormetamodel.ecore#//Application"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modules" lowerBound="1"
+        upperBound="-1" eType="#//GuiModule" containment="true" eOpposite="#//GuiModule/application"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="basePackage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GuiModule" eSuperTypes="sculptormetamodel.ecore#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="userTasks" lowerBound="1"
+        upperBound="-1" eType="#//UserTask" containment="true" eOpposite="#//UserTask/module"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="basePackage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="application" eType="#//GuiApplication"
+        eOpposite="#//GuiApplication/modules"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="for" eType="ecore:EClass sculptormetamodel.ecore#//Module"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UserTask" eSuperTypes="sculptormetamodel.ecore#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subTaskTransitions" upperBound="-1"
+        eType="#//SubTaskTransition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="for" lowerBound="1" eType="ecore:EClass sculptormetamodel.ecore#//DomainObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="abstract" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" eType="#//GuiModule"
+        eOpposite="#//GuiModule/userTasks"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="taskType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="viewProperties" upperBound="-1"
+        eType="#//ViewDataProperty" containment="true" eOpposite="#//ViewDataProperty/userTask"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="conversationRoot" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gapClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CreateTask" eSuperTypes="#//UserTask">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="createDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="populateDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UpdateTask" eSuperTypes="#//UserTask">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="findDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="updateDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="populateDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ViewTask" eSuperTypes="#//UserTask">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="findDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ListTask" eSuperTypes="#//UserTask">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="searchDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeleteTask" eSuperTypes="#//UserTask">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="findDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="deleteDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SubTaskTransition" eSuperTypes="sculptormetamodel.ecore#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="#//UserTask"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="forReference" lowerBound="1"
+        eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" eType="#//UserTask"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ViewDataProperty" eSuperTypes="sculptormetamodel.ecore#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="userTask" eType="#//UserTask"
+        eOpposite="#//UserTask/viewProperties"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TmpReferenceHolder">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subTaskTransitionHolders"
+        upperBound="-1" eType="#//TmpSubTaskTransitionHolder" containment="true" eOpposite="#//TmpSubTaskTransitionHolder/referenceHoler"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TmpSubTaskTransitionHolder">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="toTaskType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" eType="ecore:EClass sculptormetamodel.ecore#//DomainObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceHoler" lowerBound="1"
+        eType="#//TmpReferenceHolder" eOpposite="#//TmpReferenceHolder/subTaskTransitionHolders"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceTarget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass sculptormetamodel.ecore#//DomainObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceViewProperty" eSuperTypes="#//ViewDataProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relatedTransitions" upperBound="-1"
+        eType="#//SubTaskTransition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass sculptormetamodel.ecore#//DomainObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="base" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="previewProperties" upperBound="-1"
+        eType="#//ViewDataProperty"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeViewProperty" eSuperTypes="#//ViewDataProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attribute" eType="ecore:EClass sculptormetamodel.ecore#//Attribute"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BasicTypeViewProperty" eSuperTypes="#//ViewDataProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attribute" eType="ecore:EClass sculptormetamodel.ecore#//Attribute"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EnumViewProperty" eSuperTypes="#//ViewDataProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BasicTypeEnumViewProperty" eSuperTypes="#//EnumViewProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="basicTypeReference" eType="ecore:EClass sculptormetamodel.ecore#//Reference"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UserTaskGroup">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="userTasks" upperBound="-1"
+        eType="#//UserTask"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="for" eType="ecore:EClass sculptormetamodel.ecore#//DomainObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" eType="#//GuiModule"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DerivedReferenceViewProperty" eSuperTypes="#//ReferenceViewProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="derivedFrom" lowerBound="1"
+        eType="#//ReferenceViewProperty"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AddTask" eSuperTypes="#//UserTask">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="findDOWith" eType="ecore:EClass sculptormetamodel.ecore#//ServiceOperation"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,28 @@
+?IMPORT org::sculptor::dsl::ui::wizard?
+
+?DEFINE main FOR SculptordslProjectInfo?
+?EXPAND model FOR this?
+?EXPAND workflow FOR this?
+?ENDDEFINE?
+
+?DEFINE model FOR SculptordslProjectInfo?
+?FILE "src/model/Model.btdesign"-?
+/*
+ * This is an example model
+ */
+Hello Xtext!
+?ENDFILE?
+?ENDDEFINE?
+
+?DEFINE workflow FOR SculptordslProjectInfo?
+?FILE "src/Generator.mwe2"-?
+module Generator
+
+var targetDir = "src-gen"
+var modelPath = "src/model"
+
+Workflow {
+	component = @workflow.SculptordslGenerator auto-inject {}
+}
+?ENDFILE?
+?ENDDEFINE?

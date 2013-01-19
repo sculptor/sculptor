@@ -1,0 +1,28 @@
+module sculptormetamodel.GenerateMetaModel
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.emf.mwe2.ecore.*
+
+var projectName = "sculptor-metamodel"
+var runtimeProject = "../${projectName}"
+
+Workflow {
+	bean = StandaloneSetup {
+		scanClassPath = true
+		platformUri = "${runtimeProject}/.."
+	}
+
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}/src-gen"
+	}
+
+	component = EcoreGenerator {
+		genModel = "platform:/resource/${projectName}/model/Sculptormetamodel.genmodel"
+		srcPath ="platform:/resource/${projectName}/src"
+	}
+	
+	component = org.eclipse.emf.mwe2.ecore.EcoreGenerator {
+		genModel = "platform:/resource/${projectName}/model/Sculptorguimetamodel.genmodel"
+		srcPath ="platform:/resource/${projectName}/src"
+	}
+}
