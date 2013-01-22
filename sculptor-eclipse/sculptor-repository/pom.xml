@@ -12,12 +12,14 @@
 	<name>Sculptor :: Eclipse p2 Repository</name>
 
 	<properties>
-		<!-- github server corresponds to entry in ~/.m2/settings.xml -->
+		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
 	</properties>
 
 	<build>
 		<plugins>
+			<!-- Deploying the p2 repository to GitHub download area as described in
+				http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
@@ -32,7 +34,6 @@
 					</includes>
 					<repositoryName>sculptor-xtext2</repositoryName>
 					<repositoryOwner>tjuerge</repositoryOwner>
-					<dryRun>false</dryRun>
 				</configuration>
 				<executions>
 					<execution>
