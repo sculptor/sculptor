@@ -21,6 +21,21 @@
 		<module>org.sculptor.dsl.tests</module>
 	</modules>
 
+	<repositories>
+		<!-- Repository to resolve the Eclipse Juno release train dependencies -->
+		<repository>
+			<id>p2.eclipse.juno</id>
+			<url>http://download.eclipse.org/releases/juno/</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the XText dependencies -->
+		<repository>
+			<id>p2.eclipse.xtext</id>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 			<!-- Activate Tycho -->

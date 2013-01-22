@@ -20,25 +20,6 @@
 		<logback-version>1.0.7</logback-version>
 		<junit-version>4.8.1</junit-version>
 	</properties>
-	
-	<modules>
-		<module>../sculptor-eclipse</module>
-	</modules>
-
-	<repositories>
-		<!-- Repository to resolve the Eclipse Juno release train dependencies -->
-		<repository>
-			<id>p2.eclipse.juno</id>
-			<url>http://download.eclipse.org/releases/juno/</url>
-			<layout>p2</layout>
-		</repository>
-		<!-- Repository to resolve the XText dependencies -->
-		<repository>
-			<id>p2.eclipse.xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
 
 	<pluginRepositories>
 		<!-- Repository to resolve fornax-oaw-m2-plugin -->
