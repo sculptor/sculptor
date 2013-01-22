@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse Standalone JAR
+Bundle-SymbolicName: eclipse-standalone
+Bundle-Version: 3.0.0.qualifier
+Require-Bundle: org.eclipse.emf.mwe2.launch;bundle-version="2.3.0",
+ org.eclipse.xtext;bundle-version="2.0",
+ org.eclipse.xtend;bundle-version="1.2.0"
+Bundle-Vendor: Eclipse Foundation
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

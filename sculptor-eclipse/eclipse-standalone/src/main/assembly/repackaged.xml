@@ -1,0 +1,35 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>repackaged</id>
+	<formats>
+		<format>jar</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.directory}/dependency/</directory>
+			<outputDirectory>/</outputDirectory>
+			<useDefaultExcludes>true</useDefaultExcludes>
+			<includes>
+				<include>model/**</include>
+				<include>org/eclipse/emf/common/**</include>
+				<include>org/eclipse/emf/ecore/**</include>
+				<include>org/eclipse/emf/mwe/**</include>
+				<include>org/eclipse/emf/mwe2/**</include>
+				<include>org/eclipse/xpand2/**</include>
+				<include>org/eclipse/xtend/**</include>
+				<include>org/eclipse/xtend2/**</include>
+				<include>org/eclipse/xtext/**</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/src/main/resources/</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

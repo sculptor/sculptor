@@ -4,6 +4,7 @@
 package org.sculptor.dsl.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -12,4 +13,9 @@ public class SculptordslUiModule extends org.sculptor.dsl.ui.AbstractSculptordsl
 	public SculptordslUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+
+	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+		return SculptordslSemanticHighlightingCalculator.class;
+	}
+
 }
