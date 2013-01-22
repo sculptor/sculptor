@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sculptor</groupId>
+		<artifactId>sculptor-eclipse</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>org.sculptor.eclipse</groupId>
+	<artifactId>sculptor-repository</artifactId>
+	<packaging>eclipse-repository</packaging>
+	<name>Sculptor :: Eclipse p2 Repository</name>
+
+	<properties>
+		<!-- github server corresponds to entry in ~/.m2/settings.xml -->
+		<github.global.server>github</github.global.server>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.7</version>
+				<configuration>
+					<message>p2 repository for ${project.version}</message>
+					<noJekyll>true</noJekyll>
+					<outputDirectory>${project.build.directory}/repository</outputDirectory>
+					<branch>refs/heads/p2-repository</branch>
+					<includes>
+						<include>**/*</include>
+					</includes>
+					<repositoryName>sculptor-xtext2</repositoryName>
+					<repositoryOwner>tjuerge</repositoryOwner>
+					<dryRun>false</dryRun>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.sculptor.dsl.feature_3.0.0.qualifier.jar" id="org.sculptor.dsl.feature" version="3.0.0.qualifier">
+      <category name="sculptor"/>
+   </feature>
+   <category-def name="sculptor" label="Sculptor"/>
+</site>

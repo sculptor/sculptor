@@ -19,6 +19,8 @@
 		<module>org.sculptor.dsl</module>
 		<module>org.sculptor.dsl.ui</module>
 		<module>org.sculptor.dsl.tests</module>
+		<module>org.sculptor.dsl.feature</module>
+		<module>sculptor-repository</module>
 	</modules>
 
 	<repositories>
