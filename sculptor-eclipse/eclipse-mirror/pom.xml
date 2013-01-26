@@ -39,7 +39,7 @@
 						<configuration>
 							<source>
 								<repository>
-									<url>http://download.eclipse.org/releases/juno/</url>
+									<url>http://download.eclipse.org/releases/${eclipse-release}/</url>
 									<layout>p2</layout>
 								</repository>
 								<repository>

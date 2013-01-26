@@ -14,8 +14,8 @@
 	<name>Sculptor :: Eclipse module</name>
 	
 	<modules>
-		<module>eclipse-standalone</module>
 		<module>eclipse-mirror</module>
+		<module>eclipse-library</module>
 		<module>sculptor-metamodel</module>
 		<module>org.sculptor.dsl</module>
 		<module>org.sculptor.dsl.ui</module>
@@ -28,7 +28,7 @@
 		<!-- Repository to resolve the Eclipse Juno release train dependencies -->
 		<repository>
 			<id>p2.eclipse.juno</id>
-			<url>http://download.eclipse.org/releases/juno/</url>
+			<url>http://download.eclipse.org/releases/${eclipse-release}/</url>
 			<layout>p2</layout>
 		</repository>
 		<!-- Repository to resolve the XText dependencies -->

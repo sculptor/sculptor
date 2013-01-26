@@ -8,9 +8,9 @@
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>org.sculptor.eclipse</groupId>
-	<artifactId>eclipse-standalone</artifactId>
+	<artifactId>eclipse-library</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>Sculptor :: Repackaged Eclipse plugins</name>
+	<name>Sculptor :: Library with repackaged Eclipse plugins</name>
 
 	<build>
 		<plugins>
