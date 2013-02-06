@@ -40,6 +40,7 @@
 					<descriptors>
 						<descriptor>src/main/assembly/repackaged.xml</descriptor>
 					</descriptors>
+					<appendAssemblyId>false</appendAssemblyId>
 					<archive>
 						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
 					</archive>
