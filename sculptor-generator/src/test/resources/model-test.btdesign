@@ -1,0 +1,9 @@
+Application Test {
+	basePackage = test
+	
+	Module test1 {
+		Entity Test1 {
+			String name
+		}
+	}
+}

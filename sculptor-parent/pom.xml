@@ -9,6 +9,11 @@
 	<name>Sculptor :: Parent POM</name>
 	<description>Sculptor parent project</description>
 
+	<modules>
+		<module>../sculptor-eclipse</module>
+		<module>../sculptor-generator</module>
+	</modules>
+
 	<properties>
 		<maven-version>3.0</maven-version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>

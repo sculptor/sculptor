@@ -20,9 +20,6 @@
 			<resource>
 				<directory>src-gen</directory>
 			</resource>
-			<resource>
-				<directory>xtend-gen</directory>
-			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -31,17 +28,6 @@
 				<configuration>
 					<workflowDescriptor>src/org/sculptor/dsl/GenerateSculptorDsl.mwe2</workflowDescriptor>
 				</configuration>
-			</plugin>
- 			<plugin>
-				<groupId>org.eclipse.xtend</groupId>
-				<artifactId>xtend-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
   		</plugins>
 	</build>
