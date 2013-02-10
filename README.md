@@ -55,7 +55,7 @@ mvn initialize -Pmirror
         <url>file://<location of project>/sculptor-eclipse/eclipse-mirror/.p2-mirror/</url>
         <layout>p2</layout>
         <mirrorOfLayouts>p2</mirrorOfLayouts>
-  </mirror>
+    </mirror>
 </mirrors>
   ```
 
