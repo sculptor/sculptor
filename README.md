@@ -15,19 +15,19 @@ The project outlines some technical details e.g.
 Maven Modules
 ---------------
 
-* ´sculptor-parent´
+* `sculptor-parent`
 
   The aggregator project with the parent POM used by the other modules.
 
-* ´sculptor-eclipse´
+* `sculptor-eclipse`
 
   The aggregator project holding the Eclipse projects with the Eclipse p2 mirror, the meta model, the DSL model with its UI, the feature and the p2 mirror.
 
-* ´sculptor-generator´
+* `sculptor-generator`
 
   The implementation of the code generator.
 
-* ´sculptor-maven´
+* `sculptor-maven`
 
   The aggregator project holding the Maven plugin, the Maven archetypes and the Maven repository.
 
@@ -48,13 +48,13 @@ mvn initialize -Pmirror
 
   ```xml
 <mirrors>
-  <mirror>
-    <!--This sends request to p2 repositories to local mirror -->
-    <id>mirror</id>
-    <mirrorOf>p2.eclipse,p2.eclipse.xtext</mirrorOf>
-    <url>file://<location of project>/sculptor-eclipse/eclipse-mirror/.p2-mirror/</url>
-    <layout>p2</layout>
-    <mirrorOfLayouts>p2</mirrorOfLayouts>
+    <mirror>
+        <!--This sends request to p2 repositories to local mirror -->
+        <id>mirror</id>
+        <mirrorOf>p2.eclipse,p2.eclipse.xtext</mirrorOf>
+        <url>file://<location of project>/sculptor-eclipse/eclipse-mirror/.p2-mirror/</url>
+        <layout>p2</layout>
+        <mirrorOfLayouts>p2</mirrorOfLayouts>
   </mirror>
 </mirrors>
   ```
