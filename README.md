@@ -46,7 +46,7 @@ Build the project needs the following steps:
 
 * Add the local Eclipse P2 repository mirror to the Maven "settings.xml" (located in your home directory folder ".m2/")
 
-  <code>
+  ```xml
   <mirrors>
     <mirror>
       <!--This sends request to p2 repositories to local mirror -->
@@ -57,7 +57,7 @@ Build the project needs the following steps:
       <mirrorOfLayouts>p2</mirrorOfLayouts>
     </mirror>
   </mirrors>
-  </code>
+  ```
 
 * Build the whole project
 
