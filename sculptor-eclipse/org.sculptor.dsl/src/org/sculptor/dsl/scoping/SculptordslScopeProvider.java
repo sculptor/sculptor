@@ -46,61 +46,62 @@ import org.sculptor.dsl.sculptordsl.DslServiceRepositoryOption;
  */
 public class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 
-    IScope scope_DslOppositeHolder_opposite(DslOppositeHolder ctx, EReference ref) {
-        Scope scope =  new Scope();
-        List<IEObjectDescription> elements = new ArrayList<IEObjectDescription>();
-        scope.setElements(elements);
-        DslDomainObject domainObject = (DslDomainObject) ((DslReference) ctx.eContainer()).getDomainObjectType();
-        List<DslReference> references = domainObject.getReferences();
-        for (DslReference reference : references) {
-            if (reference.eContainer() != null) {
-                elements.add(new EObjectDescription(QualifiedName.create(reference.getName()), reference, null));
-            }
-        }
-        return scope;
-    }
+	IScope scope_DslOppositeHolder_opposite(DslOppositeHolder ctx, EReference ref) {
+		Scope scope = new Scope();
+		List<IEObjectDescription> elements = new ArrayList<IEObjectDescription>();
+		scope.setElements(elements);
+		DslDomainObject domainObject = (DslDomainObject) ((DslReference) ctx.eContainer()).getDomainObjectType();
+		List<DslReference> references = domainObject.getReferences();
+		for (DslReference reference : references) {
+			if (reference.eContainer() != null) {
+				elements.add(new EObjectDescription(QualifiedName.create(reference.getName()), reference, null));
+			}
+		}
+		return scope;
+	}
 
-    IScope scope_DslServiceOperationDelegate_delegateOperation(DslServiceOperationDelegate ctx, EReference ref) {
-        Scope scope =  new Scope();
-        List<IEObjectDescription> elements = new ArrayList<IEObjectDescription>();
-        DslServiceRepositoryOption option = ctx.getDelegate();
-        if (option != null) {
-            if (option instanceof DslRepository) {
-                List<DslRepositoryOperation> operations = ((DslRepository) option).getOperations();
-                for (DslRepositoryOperation operation : operations) {
-                    elements.add(new EObjectDescription(QualifiedName.create(operation.getName()), operation, null));
-                }
-            } else {
-                List<DslServiceOperation> operations = ((DslService) option).getOperations();
-                for (DslServiceOperation operation : operations) {
-                    elements.add(new EObjectDescription(QualifiedName.create(operation.getName()), operation, null));
-                }
-            }
-        }
-        scope.setElements(elements);
-        return scope;
-    }
+	IScope scope_DslServiceOperationDelegate_delegateOperation(DslServiceOperationDelegate ctx, EReference ref) {
+		Scope scope = new Scope();
+		List<IEObjectDescription> elements = new ArrayList<IEObjectDescription>();
+		DslServiceRepositoryOption option = ctx.getDelegate();
+		if (option != null) {
+			if (option instanceof DslRepository) {
+				List<DslRepositoryOperation> operations = ((DslRepository) option).getOperations();
+				for (DslRepositoryOperation operation : operations) {
+					elements.add(new EObjectDescription(QualifiedName.create(operation.getName()), operation, null));
+				}
+			} else {
+				List<DslServiceOperation> operations = ((DslService) option).getOperations();
+				for (DslServiceOperation operation : operations) {
+					elements.add(new EObjectDescription(QualifiedName.create(operation.getName()), operation, null));
+				}
+			}
+		}
+		scope.setElements(elements);
+		return scope;
+	}
 
-    IScope scope_DslResourceOperationDelegate_delegateOperation(DslResourceOperationDelegate ctx, EReference ref) {
-        Scope scope = new Scope();
-        List<IEObjectDescription> elements = new ArrayList<IEObjectDescription>();
-        DslService option = ctx.getDelegate();
-        if (option != null) {
-            List<DslServiceOperation> operations = (option).getOperations();
-            for (DslServiceOperation operation : operations) {
-                elements.add(new EObjectDescription(QualifiedName.create(operation.getName()), operation, null));
-            }
-        }
-        scope.setElements(elements);
-        return scope;
-    }
+	IScope scope_DslResourceOperationDelegate_delegateOperation(DslResourceOperationDelegate ctx, EReference ref) {
+		Scope scope = new Scope();
+		List<IEObjectDescription> elements = new ArrayList<IEObjectDescription>();
+		DslService option = ctx.getDelegate();
+		if (option != null) {
+			List<DslServiceOperation> operations = (option).getOperations();
+			for (DslServiceOperation operation : operations) {
+				elements.add(new EObjectDescription(QualifiedName.create(operation.getName()), operation, null));
+			}
+		}
+		scope.setElements(elements);
+		return scope;
+	}
 
-    IScope scope_DslReference2_domainObjectType(DslReference ctx, EReference ref) {
-        IScope scope = super.getScope(ctx, ref);
-        // List<IEObjectDescription> elements = new
-        // ArrayList<IEObjectDescription>();
+	IScope scope_DslReference2_domainObjectType(DslReference ctx, EReference ref) {
+		IScope scope = super.getScope(ctx, ref);
+		// List<IEObjectDescription> elements = new
+		// ArrayList<IEObjectDescription>();
 
-        // scope.setElements(elements);
-        return scope;
-    }
+		// scope.setElements(elements);
+		return scope;
+	}
+
 }
