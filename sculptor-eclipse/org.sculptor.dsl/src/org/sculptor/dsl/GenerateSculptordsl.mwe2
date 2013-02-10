@@ -78,9 +78,10 @@ Workflow {
 
 			// The antlr parser generator fragment.
 			fragment = parser.antlr.XtextAntlrGeneratorFragment {
-//				options = {
-//					backtrack = true
-//				}
+				options = {
+					backtrack = true 
+					classSplitting = true
+				}
 			}
 
 			// the Ecore2Xtext specific terminal converter
@@ -90,7 +91,6 @@ Workflow {
 			fragment = validation.JavaValidatorFragment {
 				// add additional validators
 				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 			}
 
 			// scoping and exporting API
@@ -129,6 +129,7 @@ Workflow {
 			// antlr parser generator tailored for content assist 
 			fragment = parser.antlr.XtextAntlrUiGeneratorFragment {
 				options = {
+					backtrack = true 
 					classSplitting = true
 				}
 			}
