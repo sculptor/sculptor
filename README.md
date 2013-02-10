@@ -35,7 +35,7 @@ Maven Modules
 Usage
 -----------
 
-Build the project needs the following steps:
+Building the project needs the following steps:
 
 * Create the local Eclipse P2 repository mirror (located in "sculptor-eclipse/eclipse-mirror/.p2-mirror/") by activating the Maven profile "mirror" -> **The *initial* mirroring process takes hours!!!**
 
