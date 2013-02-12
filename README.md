@@ -7,6 +7,7 @@ The project outlines some technical details e.g.
 * Using [Eclipe Tycho](http://www.eclipse.org/tycho/) with Maven to build Eclipse plugins
 * Creating a local Eclipse P2 repository mirror used in an Eclipse plugin build
 * Creating a Maven artifact from Eclipse Plugins
+* Running unit tests for the Xtext-generated DSL plugins
 * Creating a stand-alone library JAR from an xtext-based generator
 * Hosting Eclipse plugins in an Eclipse P2 repository on GitHub  
 * Hosting Maven plugins in a Maven repository on GitHub  
@@ -21,7 +22,7 @@ Maven Modules
 
 * `sculptor-eclipse`
 
-  The aggregator project holding the Eclipse projects with the Eclipse p2 mirror, the meta model, the DSL model with its UI, the feature and the p2 mirror.
+  The aggregator project holding the Eclipse projects with the Eclipse p2 mirror, the meta model, the DSL model with its UI and unit tests, the feature and the p2 mirror.
 
 * `sculptor-generator`
 
