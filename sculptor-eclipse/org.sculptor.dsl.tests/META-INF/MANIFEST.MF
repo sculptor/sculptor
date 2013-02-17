@@ -10,7 +10,8 @@ Require-Bundle: org.sculptor.dsl,
  org.eclipse.core.runtime,
  org.eclipse.xtext.junit4,
  org.eclipse.ui.workbench;resolution:=optional,
- org.eclipse.xtend2.lib
+ org.eclipse.xtend2.lib,
+ org.eclipselabs.xtext.utils.unittesting
 Import-Package: org.apache.log4j,
  org.junit;version="4.5.0",
  org.junit.runner;version="4.5.0",

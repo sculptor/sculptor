@@ -15,18 +15,29 @@
  * limitations under the License.
  */
 
-package org.sculptor.dsl.validation;
+package org.sculptor.dsl
+
+import java.util.List
+import org.eclipse.emf.ecore.EObject
+
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.xtext.EcoreUtil2.*
 
 /**
- * Constants for validation errors.
- * <p>
- * These constants are needed for Quick Fixes 
+ * Extensions for model elements of the domain model.
+ * Usage in Xtend files:
+ * <pre>
+ *   @Inject extension SculptordslExtensions
+ * 
+ *   // ...
+ * 
+ *     element.rootContainer.eAllOfClass(typeof(DslService))
+ * </pre>
  */
-public interface IssueCodes {
+class SculptordslExtensions {
 
-	String ISSUE_CODE_PREFIX = "org.sculptor.dsl.validation.issue.";
+	def static <T extends EObject> List<T> eAllOfClass(EObject obj, Class<T> clazz) {
+		obj?.eAll.filter(clazz).toList
+	}
 
-	String CAPITALIZED_NAME = ISSUE_CODE_PREFIX + "capitalized_name";
-	String UNCAPITALIZED_NAME = ISSUE_CODE_PREFIX + "uncapitalized_name";
-	String DUPLICATE_NAME = ISSUE_CODE_PREFIX + "duplicate_name";
 }

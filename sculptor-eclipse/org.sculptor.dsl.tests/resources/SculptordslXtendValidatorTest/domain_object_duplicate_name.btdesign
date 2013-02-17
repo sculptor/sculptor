@@ -1,0 +1,8 @@
+Application App {
+	basePackage=org.sculptor.test
+	Module mod {
+		Entity Test {}
+		ValueObject Test {}
+		Trait TraitTest {}
+	}
+}

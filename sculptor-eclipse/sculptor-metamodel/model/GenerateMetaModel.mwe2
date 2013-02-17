@@ -21,7 +21,7 @@ Workflow {
 		srcPath ="platform:/resource/${projectName}/src"
 	}
 	
-	component = org.eclipse.emf.mwe2.ecore.EcoreGenerator {
+	component = EcoreGenerator {
 		genModel = "platform:/resource/${projectName}/model/Sculptorguimetamodel.genmodel"
 		srcPath ="platform:/resource/${projectName}/src"
 	}

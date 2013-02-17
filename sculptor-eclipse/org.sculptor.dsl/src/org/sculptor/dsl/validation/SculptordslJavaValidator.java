@@ -94,11 +94,9 @@ import org.sculptor.dsl.sculptordsl.DslValueObject;
 
 import com.google.common.collect.Sets;
 
-public class SculptordslJavaValidator extends AbstractSculptordslJavaValidator {
+public class SculptordslJavaValidator extends AbstractSculptordslJavaValidator implements IssueCodes {
 
 	private static final Pattern DIGITS_PATTERN = Pattern.compile("[0-9]+[0-9]*");
-	private static final Pattern START_WITH_LOWER_CASE_PATTERN = Pattern.compile("[a-z]+.*");
-	private static final Pattern START_WITH_UPPER_CASE_PATTERN = Pattern.compile("[A-Z]+.*");
 	private static final Set<String> SUPPORTED_PRIMITIVE_TYPES = new HashSet<String>(asList("int", "long", "float",
 			"double", "boolean"));
 	private static final Set<String> SUPPORTED_TEMPORAL_TYPES = new HashSet<String>(asList("Date", "DateTime",
@@ -108,46 +106,46 @@ public class SculptordslJavaValidator extends AbstractSculptordslJavaValidator {
 	private static final Set<String> SUPPORTED_BOOLEAN_TYPES = new HashSet<String>(asList("Boolean", "boolean"));
 
 	@Check
-	public void checkName(DslModule module) {
+	public void checkModuleNameStartsWithLowerCase(DslModule module) {
 		if (module.getName() == null) {
 			return;
 		}
-		if (!START_WITH_LOWER_CASE_PATTERN.matcher(module.getName()).matches()) {
-			warning("The module name should begin with a lower case letter", DSL_MODULE__NAME,
-					IssueCodes.UNCAPITALIZED_NAME, module.getName());
+		if (!Character.isLowerCase(module.getName().charAt(0))) {
+			warning("The module name should begin with a lower case letter", DSL_MODULE__NAME, UNCAPITALIZED_NAME,
+					module.getName());
 		}
 	}
 
 	@Check
-	public void checkName(DslService service) {
+	public void checkServiceNameStartsWithUpperCase(DslService service) {
 		if (service.getName() == null) {
 			return;
 		}
-		if (!START_WITH_UPPER_CASE_PATTERN.matcher(service.getName()).matches()) {
+		if (!Character.isUpperCase(service.getName().charAt(0))) {
 			warning("The service name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME,
-					IssueCodes.CAPITALIZED_NAME, service.getName());
+					CAPITALIZED_NAME, service.getName());
 		}
 	}
 
 	@Check
-	public void checkName(DslRepository repository) {
+	public void checkRepositoryNameStartsWithUpperCase(DslRepository repository) {
 		if (repository.getName() == null) {
 			return;
 		}
-		if (!START_WITH_UPPER_CASE_PATTERN.matcher(repository.getName()).matches()) {
+		if (!Character.isUpperCase(repository.getName().charAt(0))) {
 			warning("The repository name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME,
-					IssueCodes.CAPITALIZED_NAME, repository.getName());
+					CAPITALIZED_NAME, repository.getName());
 		}
 	}
 
 	@Check
-	public void checkName(DslSimpleDomainObject domainObject) {
+	public void checkDomainObjectNameStartsWithUpperCase(DslSimpleDomainObject domainObject) {
 		if (domainObject.getName() == null) {
 			return;
 		}
-		if (!START_WITH_UPPER_CASE_PATTERN.matcher(domainObject.getName()).matches()) {
+		if (!Character.isUpperCase(domainObject.getName().charAt(0))) {
 			warning("The domain object name should begin with an upper case letter", DSL_SIMPLE_DOMAIN_OBJECT__NAME,
-					IssueCodes.CAPITALIZED_NAME, domainObject.getName());
+					CAPITALIZED_NAME, domainObject.getName());
 		}
 	}
 
@@ -230,24 +228,24 @@ public class SculptordslJavaValidator extends AbstractSculptordslJavaValidator {
 	}
 
 	@Check
-	public void checkName(DslAnyProperty prop) {
+	public void checkPropertyNameStartsWithLowerCase(DslAnyProperty prop) {
 		if (prop.getName() == null) {
 			return;
 		}
-		if (!START_WITH_LOWER_CASE_PATTERN.matcher(prop.getName()).matches()) {
+		if (!Character.isLowerCase(prop.getName().charAt(0))) {
 			warning("Attribute/reference should begin with a lower case letter", DSL_ANY_PROPERTY__NAME,
-					IssueCodes.UNCAPITALIZED_NAME, prop.getName());
+					UNCAPITALIZED_NAME, prop.getName());
 		}
 	}
 
 	@Check
-	public void checkName(DslParameter param) {
+	public void checkParamterNameStartsWithLowerCase(DslParameter param) {
 		if (param.getName() == null) {
 			return;
 		}
-		if (!START_WITH_LOWER_CASE_PATTERN.matcher(param.getName()).matches()) {
-			warning("Parameter should begin with a lower case letter", DSL_PARAMETER__NAME,
-					IssueCodes.UNCAPITALIZED_NAME, param.getName());
+		if (!Character.isLowerCase(param.getName().charAt(0))) {
+			warning("Parameter should begin with a lower case letter", DSL_PARAMETER__NAME, UNCAPITALIZED_NAME,
+					param.getName());
 		}
 	}
 

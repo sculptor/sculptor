@@ -46,6 +46,10 @@
 									<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
 									<layout>p2</layout>
 								</repository>
+								<repository>
+									<url>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</url>
+									<layout>p2</layout>
+								</repository>
 							</source>
 							<destination>${basedir}/.p2-mirror</destination>
 						</configuration>

@@ -42,35 +42,51 @@ class SculptordslJavaValidatorTest {
 	}
 
 	@Test
-	def testCheckNameDslModule() {
+	def testCheckModuleNameStartsWithLowerCase() {
 		val model = SculptordslFactory::eINSTANCE.createDslModule
 		model.setName("UppercaseName")
-		tester.validator().checkName(model)
+		tester.validator().checkModuleNameStartsWithLowerCase(model)
 		tester.diagnose().assertWarning(IssueCodes::UNCAPITALIZED_NAME)
 	}
 
 	@Test
-	def testCheckNameDslService() {
+	def testCheckServiceNameStartsWithUpperCase() {
 		val service = SculptordslFactory::eINSTANCE.createDslService
 		service.setName("lowercaseName")
-		tester.validator().checkName(service)
+		tester.validator().checkServiceNameStartsWithUpperCase(service)
 		tester.diagnose().assertWarning(IssueCodes::CAPITALIZED_NAME)
 	}
 
 	@Test
-	def testCheckNameDslRepository() {
-		val service = SculptordslFactory::eINSTANCE.createDslRepository
-		service.setName("lowercaseName")
-		tester.validator().checkName(service)
+	def testCheckRepositoryNameStartsWithUpperCase() {
+		val repository = SculptordslFactory::eINSTANCE.createDslRepository
+		repository.setName("lowercaseName")
+		tester.validator().checkRepositoryNameStartsWithUpperCase(repository)
 		tester.diagnose().assertWarning(IssueCodes::CAPITALIZED_NAME)
 	}
 
 	@Test
-	def testCheckNameDslSimpleDomainObject() {
+	def testCheckDomainObjectNameStartsWithUpperCase() {
 		val object = SculptordslFactory::eINSTANCE.createDslSimpleDomainObject
 		object.setName("lowercaseName")
-		tester.validator().checkName(object)
+		tester.validator().checkDomainObjectNameStartsWithUpperCase(object)
 		tester.diagnose().assertWarning(IssueCodes::CAPITALIZED_NAME)
+	}
+
+	@Test
+	def testCheckPropertyNameStartsWithLowerCase() {
+		val prop = SculptordslFactory::eINSTANCE.createDslProperty
+		prop.setName("UppercaseName")
+		tester.validator().checkPropertyNameStartsWithLowerCase(prop)
+		tester.diagnose().assertWarning(IssueCodes::UNCAPITALIZED_NAME)
+	}
+
+	@Test
+	def testCheckParamterNameStartsWithLowerCase() {
+		val param = SculptordslFactory::eINSTANCE.createDslParameter
+		param.setName("UppercaseName")
+		tester.validator().checkParamterNameStartsWithLowerCase(param)
+		tester.diagnose().assertWarning(IssueCodes::UNCAPITALIZED_NAME)
 	}
 
 }
