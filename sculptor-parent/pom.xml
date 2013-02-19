@@ -16,6 +16,7 @@
 
 	<properties>
 		<maven-version>3.0</maven-version>
+		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 
 		<eclipse-release>juno</eclipse-release>
@@ -99,6 +100,10 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.0</version>
+					<configuration>
+						<source>${java-version}</source>
+						<target>${java-version}</target>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -151,7 +156,7 @@
 					<configuration>
 						<signature>
 							<groupId>org.codehaus.mojo.signature</groupId>
-							<artifactId>java15</artifactId>
+							<artifactId>java16</artifactId>
 							<version>1.0</version>
 						</signature>
 					</configuration>
@@ -173,8 +178,8 @@
 					<configuration>
 						<meminitial>128m</meminitial>
 						<maxmem>1g</maxmem>
-						<source>5.0</source>
-						<target>5.0</target>
+						<source>${java-version}</source>
+						<target>${java-version}</target>
 						<verbose>true</verbose>
 						<excludeResources>
 							<excludeResource>**/*.xtend</excludeResource>
