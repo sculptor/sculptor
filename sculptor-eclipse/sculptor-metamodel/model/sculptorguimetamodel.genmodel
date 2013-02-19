@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/sculptor-metamodel/src-gen"
-    modelPluginID="sculptor_guimetamodel" modelName="Sculptorguimetamodel"
-    importerID="org.eclipse.emf.importer.ecore" usedGenPackages="sculptormetamodel.genmodel#//sculptormetamodel">
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/sculptor-metamodel/src-gen" modelPluginID="sculptor_guimetamodel"
+    modelName="sculptorguimetamodel" importerID="org.eclipse.emf.importer.ecore" usedGenPackages="sculptormetamodel.genmodel#//sculptormetamodel">
   <foreignModel>sculptorguimetamodel.ecore</foreignModel>
-  <genPackages prefix="Sculptorguimetamodel" disposableProviderFactory="true" ecorePackage="sculptorguimetamodel.ecore#/">
+  <genPackages prefix="sculptorguimetamodel" disposableProviderFactory="true" ecorePackage="sculptorguimetamodel.ecore#/">
     <genClasses ecoreClass="sculptorguimetamodel.ecore#//GuiApplication">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sculptorguimetamodel.ecore#//GuiApplication/guiForApplication"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sculptorguimetamodel.ecore#//GuiApplication/modules"/>
