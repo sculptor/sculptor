@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.dsl.generator;
+package org.sculptor.generator;
 
 import java.util.List;
 

@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package org.sculptor.dsl.generator;
+package org.sculptor.generator;
 
 import org.eclipse.xtext.service.AbstractGenericModule;
+import org.sculptor.generator.SculptordslGenerator;
 
 public class SculptorGeneratorModule extends AbstractGenericModule {
 

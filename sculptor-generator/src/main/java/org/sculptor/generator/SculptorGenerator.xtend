@@ -15,23 +15,17 @@
  * limitations under the License.
  */
 
-module org.sculptor.dsl.generator.SculptordslGenerator
+package org.sculptor.generator
 
-var modelFile
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.generator.IGenerator
+import org.eclipse.xtext.generator.IFileSystemAccess
 
-Workflow {
-
-	// Read model file
-	component = org.eclipse.xtext.mwe.UriBasedReader {
-		uri = modelFile
-		register = SculptordslStandaloneSetup {}
-
-		load = {
-			slot = "model"
-			type = "DslApplication"
-		}
+class SculptordslGenerator implements IGenerator {
+	
+	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+		fsa.generateFile("test.txt", "Hello World!")
+		//TODO implement me
 	}
 
-	// Validate model file
-	component = org.sculptor.dsl.validation.SculptordslValidationWorkflowComponent {}
 }
