@@ -31,4 +31,7 @@ Workflow {
 			type = "DslApplication"
 		}
 	}
+
+	// Validate model file
+	component = org.sculptor.dsl.validation.SculptordslValidationWorkflowComponent {}
 }

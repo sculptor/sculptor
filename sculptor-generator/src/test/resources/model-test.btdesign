@@ -5,5 +5,8 @@ Application Test {
 		Entity Test1 {
 			String name
 		}
+		ValueObject Test1 {
+			String name
+		}
 	}
 }
