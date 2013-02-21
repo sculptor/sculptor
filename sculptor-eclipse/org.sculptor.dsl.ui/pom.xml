@@ -12,15 +12,4 @@
 	<packaging>eclipse-plugin</packaging>
 	<name>Sculptor :: Eclipse Textual DSL Editor</name>
 
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-			<resource>
-				<directory>src-gen</directory>
-			</resource>
-		</resources>
-	</build>
 </project>

@@ -21,9 +21,6 @@
 					<filesets>
 						<fileset>
 							<directory>${basedir}/src/main/xtend-gen</directory>
-							<includes>
-								<include>**</include>
-							</includes>
 							<excludes>
 								<exclude>.gitignore</exclude>
 							</excludes>
