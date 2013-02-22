@@ -12,7 +12,13 @@
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Eclipse module</name>
-	
+
+	<properties>
+		<p2-repository-eclipse-juno>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse-juno>
+		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</p2-repository-eclipse-xtext>
+		<p2-repository-xtext-utils>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</p2-repository-xtext-utils>
+	</properties>
+
 	<modules>
 		<module>eclipse-mirror</module>
 		<module>eclipse-library</module>
@@ -28,13 +34,19 @@
 		<!-- Repository to resolve the Eclipse Juno release train dependencies -->
 		<repository>
 			<id>p2.eclipse.juno</id>
-			<url>http://download.eclipse.org/releases/${eclipse-release}/</url>
+			<url>${p2-repository-eclipse-juno}</url>
 			<layout>p2</layout>
 		</repository>
 		<!-- Repository to resolve the XText dependencies -->
 		<repository>
 			<id>p2.eclipse.xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
+			<url>${p2-repository-eclipse-xtext}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the xtext-utils dependencies -->
+		<repository>
+			<id>p2.xtext-utils</id>
+			<url>${p2-repository-xtext-utils}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

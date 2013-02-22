@@ -52,7 +52,7 @@ mvn initialize -Pmirror
     <mirror>
         <!--This sends request to p2 repositories to local mirror -->
         <id>mirror</id>
-        <mirrorOf>p2.eclipse,p2.eclipse.xtext</mirrorOf>
+        <mirrorOf>p2.eclipse,p2.eclipse.xtext,p2.xtext-utils</mirrorOf>
         <url>file://<location of project>/sculptor-eclipse/eclipse-mirror/.p2-mirror/</url>
         <layout>p2</layout>
         <mirrorOfLayouts>p2</mirrorOfLayouts>

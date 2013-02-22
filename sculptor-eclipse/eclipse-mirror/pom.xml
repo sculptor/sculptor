@@ -39,15 +39,15 @@
 						<configuration>
 							<source>
 								<repository>
-									<url>http://download.eclipse.org/releases/${eclipse-release}/</url>
+									<url>${p2-repository-eclipse-juno}</url>
 									<layout>p2</layout>
 								</repository>
 								<repository>
-									<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
+									<url>${p2-repository-eclipse-xtext}</url>
 									<layout>p2</layout>
 								</repository>
 								<repository>
-									<url>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</url>
+									<url>${p2-repository-xtext-utils}</url>
 									<layout>p2</layout>
 								</repository>
 							</source>
