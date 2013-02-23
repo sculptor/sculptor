@@ -46,7 +46,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 		if (service.name == null) {
 			return
 		}
-		if (service.rootContainer.eAllOfClass(typeof(DslService)).filter [it.name == service.name].size > 1) {
+		if (service.rootContainer.eAllOfType(typeof(DslService)).filter [it.name == service.name].size > 1) {
 			error("Duplicate name.  There is already an existing Service named '"
 				+ service.name + "'.", DSL_SERVICE_REPOSITORY_OPTION__NAME, service.name
 			);  

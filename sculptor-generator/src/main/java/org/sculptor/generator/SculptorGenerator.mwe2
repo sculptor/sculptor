@@ -33,5 +33,14 @@ Workflow {
 	}
 
 	// Validate DSL model
-	component = org.sculptor.dsl.validation.SculptordslValidationWorkflowComponent {}
+	component = org.sculptor.generator.SculptordslValidationWorkflowComponent {
+		modelSlot = "model"
+	}
+
+	// Model transformation from DSL meta model to meta model
+	component = SculptorDslTransformationWorkflowComponent {
+		modelSlot = "model"
+		outputSlot = "transformed"
+	}
+
 }

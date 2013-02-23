@@ -72,7 +72,7 @@ public class Main {
 		}
 		
 		// configure and start the generator
-		fileAccess.setOutputPath("src-gen/");
+		fileAccess.setOutputPath("target/generated-sources/sculptor/");
 		generator.doGenerate(resource, fileAccess);
 		
 		System.out.println("Code generation finished.");
