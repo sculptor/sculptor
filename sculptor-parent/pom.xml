@@ -29,6 +29,11 @@
 	</properties>
 
 	<pluginRepositories>
+		<!-- Maven Central -->
+		<pluginRepository>
+			<id>central</id>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</pluginRepository>
 		<!-- Repository to resolve fornax-oaw-m2-plugin -->
 		<pluginRepository>
 			<id>fornax.oaw</id>
