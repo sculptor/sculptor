@@ -10,6 +10,8 @@ Workflow {
 	bean = StandaloneSetup {
 		scanClassPath = true
 		platformUri = "${runtimeProject}/.."
+		registerGenModelFile = "platform:/resource/${projectName}/model/sculptormetamodel.genmodel"
+		registerGenModelFile = "platform:/resource/${projectName}/model/sculptorguimetamodel.genmodel"
 	}
 
 	component = DirectoryCleaner {
@@ -17,12 +19,12 @@ Workflow {
 	}
 
 	component = EcoreGenerator {
-		genModel = "platform:/resource/${projectName}/model/Sculptormetamodel.genmodel"
+		genModel = "platform:/resource/${projectName}/model/sculptormetamodel.genmodel"
 		srcPath ="platform:/resource/${projectName}/src"
 	}
 	
 	component = EcoreGenerator {
-		genModel = "platform:/resource/${projectName}/model/Sculptorguimetamodel.genmodel"
+		genModel = "platform:/resource/${projectName}/model/sculptorguimetamodel.genmodel"
 		srcPath ="platform:/resource/${projectName}/src"
 	}
 }
