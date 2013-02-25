@@ -28,6 +28,13 @@ import org.junit.Before
 import org.sculptor.dsl.sculptordsl.DslEntity
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslService
+import org.sculptor.dsl.sculptordsl.DslAttribute
+import org.sculptor.dsl.sculptordsl.DslRepository
+import org.sculptor.dsl.sculptordsl.DslModule
+import org.sculptor.dsl.sculptordsl.DslApplication
+import org.sculptor.dsl.sculptordsl.DslServiceOperation
+import org.sculptor.dsl.sculptordsl.DslRepositoryOperation
+import org.sculptor.dsl.sculptordsl.DslParameter
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -56,6 +63,53 @@ class SculptordslXtendValidatorTest extends XtextTest {
 		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(4).under(typeof(DslService), "Test").named("Test").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslService), "Test").named("Test").oneOfThemContains("Duplicate name"))
+	}
+
+	@Test
+	def void testCheckRepositoryDuplicateName() {
+		val issues = testFile("repository_duplicate_name.btdesign")
+		assertEquals(4, issues.errorsOnly.size)
+		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
+		assertConstraints(issues.errorsOnly().inLine(8).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
+	}
+
+	@Test
+	def void testCheckModuleDuplicateName() {
+		val issues = testFile("module_duplicate_name.btdesign")
+		assertEquals(4, issues.errorsOnly.size)
+		assertConstraints(issues.errorsOnly().inLine(3).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
+		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
+	}
+
+//	@Test()  - Disabled for now.  The testFile() method is only validating resources in main file, so can't get duplicate Application/ApplicationPart objects
+	def void testCheckAppDuplicateName() {
+		val issues = testFile("app_duplicate_name.btdesign", "app_duplicate_name_part.btdesign")
+		assertEquals(4, issues.errorsOnly.size)
+		assertConstraints(issues.errorsOnly().inLine(1).under(typeof(DslApplication), "Test").named("Test").oneOfThemContains("Duplicate name"))
+		assertConstraints(issues.errorsOnly().inLine(7).under(typeof(DslApplication), "Test").named("Test").oneOfThemContains("Duplicate name"))
+	}
+
+	@Test
+	def void testBadReferenceMissingDash() {
+		val issues = testFile("attributes.btdesign")
+		assertEquals(2, issues.warningsOnly.size)
+		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslAttribute), "badReference").named("badReference").oneOfThemContains("Use - Another"))
+		assertConstraints(issues.warningsOnly().inLine(7).under(typeof(DslAttribute), "badReference2").named("badReference2").oneOfThemContains("Use - List<Another>"))
+	}
+
+	@Test
+	def void testBadServiceAndRepositoryOperationReturnTypeOfDomainObject() {
+		val issues = testFile("operation_return_type_bad.btdesign")
+		assertEquals(2, issues.warningsOnly.size)
+		assertConstraints(issues.warningsOnly().inLine(5).under(typeof(DslServiceOperation), "anOperation").named("anOperation").oneOfThemContains("Use @SomeTypee"))
+		assertConstraints(issues.warningsOnly().inLine(9).under(typeof(DslRepositoryOperation), "findIt").named("findIt").oneOfThemContains("Use @SomeTypo"))
+	}
+
+	@Test
+	def void testBadParameterTypeOfDomainObject() {
+		val issues = testFile("operation_parameter_type_bad.btdesign")
+		assertEquals(1, issues.warningsOnly.size)
+		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslParameter), "toMatch").named("toMatch").oneOfThemContains("Use @SomeTypo"))
 	}
 
 }

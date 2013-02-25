@@ -1,0 +1,17 @@
+Application Test {
+	basePackage=org.sculptor.test
+	
+	Module amodule {
+		Entity Test {
+			Another badReference;
+			List<Another> badReference2;
+			
+			- @Another goodReference;
+		}
+		
+		Entity Another {
+		
+		}
+	}
+	
+}

@@ -17,8 +17,11 @@
 
 package org.sculptor.dsl
 
-import java.util.List
+import java.util.Iterator
 import org.eclipse.emf.ecore.EObject
+import org.sculptor.dsl.sculptordsl.DslAttribute
+import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
+import org.sculptor.dsl.sculptordsl.DslComplexType
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
@@ -36,8 +39,25 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
  */
 class SculptordslExtensions {
 
-	def static <T extends EObject> List<T> eAllOfClass(EObject obj, Class<T> clazz) {
-		obj?.eAll.filter(clazz).toList
+	def static <T extends EObject> Iterator<T> eAllOfClass(EObject obj, Class<T> clazz) {
+		obj?.eAll.filter(clazz)
+	}
+	
+
+	/**
+	 * @return DslSimpleDomainObjects whose type matches attr.type
+	 */
+	def static Iterable<DslSimpleDomainObject> domainObjectsForAttributeType(DslAttribute attr) {
+		attr.rootContainer.eAllOfType(typeof(DslSimpleDomainObject)).filter [it.name == attr.type]
 	}
 
+
+	/**
+	 * @return the first DslSimpleDomainObject whose type matches complexType, or null
+	 */
+	def static firstDomainObjectForType(DslComplexType complexType) {
+		val res = complexType.rootContainer.eAllOfType(typeof(DslSimpleDomainObject)).findFirst [name == complexType.type]
+		res
+	}
+	
 }

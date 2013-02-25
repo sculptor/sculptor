@@ -1,0 +1,10 @@
+Application App {
+	basePackage=org.sculptor.test
+	Module mod {
+		Entity SomeType {
+			Repository SomeTypeRepository {
+				@SomeType findSomeTypeMatching(SomeTypo toMatch);
+			}
+		}
+	}
+}

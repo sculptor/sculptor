@@ -1,0 +1,16 @@
+Application App {
+	basePackage=org.sculptor.test
+	Module mod {
+		Entity AnEntity {
+			Repository TestRepository {}
+		}
+		Entity AnotherEntity {
+			Repository TestRepository {}
+		}
+		
+		Entity SomethingElse {
+			Repository SomethingElseRepository {}	
+		}
+		Entity Test {}
+	}
+}
