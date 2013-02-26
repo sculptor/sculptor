@@ -10,8 +10,6 @@ Workflow {
 	bean = StandaloneSetup {
 		scanClassPath = true
 		platformUri = "${runtimeProject}/.."
-		registerGenModelFile = "platform:/resource/${projectName}/model/sculptormetamodel.genmodel"
-		registerGenModelFile = "platform:/resource/${projectName}/model/sculptorguimetamodel.genmodel"
 	}
 
 	component = DirectoryCleaner {
