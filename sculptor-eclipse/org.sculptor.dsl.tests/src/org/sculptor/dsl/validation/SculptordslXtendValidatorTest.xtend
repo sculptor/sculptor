@@ -68,7 +68,7 @@ class SculptordslXtendValidatorTest extends XtextTest {
 	@Test
 	def void testCheckRepositoryDuplicateName() {
 		val issues = testFile("repository_duplicate_name.btdesign")
-		assertEquals(4, issues.errorsOnly.size)
+		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(8).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
 	}
@@ -76,7 +76,7 @@ class SculptordslXtendValidatorTest extends XtextTest {
 	@Test
 	def void testCheckModuleDuplicateName() {
 		val issues = testFile("module_duplicate_name.btdesign")
-		assertEquals(4, issues.errorsOnly.size)
+		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(3).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
 	}
