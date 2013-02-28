@@ -172,7 +172,7 @@ DslParameter :
 
 DslComplexType :
   (collectionType=DslCollectionType"<"(("@"domainObjectType=[DslSimpleDomainObject]) | (type=DslType) | (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">"))">") |
-  (mapCollectionType=DslMapCollectionType"<"(mapKeyType=DslType | "@"mapKeyDomainObjectType=[DslSimpleDomainObject])","(("@"domainObjectType=[DslSimpleDomainObject]) | (type=DslType) | (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">"))">") |
+  (mapCollectionType=DSL_MAP_COLLECTION_TYPE"<"(mapKeyType=DslType | "@"mapKeyDomainObjectType=[DslSimpleDomainObject])","(("@"domainObjectType=[DslSimpleDomainObject]) | (type=DslType) | (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">"))">") |
   ("@"domainObjectType=[DslSimpleDomainObject]) |
   (type=DslType) |
   (type=DslType"<""@"domainObjectType=[DslSimpleDomainObject]">");
@@ -508,7 +508,7 @@ DslType :
 enum DslCollectionType :
 	None | Set="Set" | List="List" | Bag="Bag" | Collection="Collection";
 
-terminal DslMapCollectionType :
+terminal DSL_MAP_COLLECTION_TYPE :
   "Map";
 
 enum DslVisibility :
