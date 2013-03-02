@@ -14,27 +14,16 @@
 	<name>Sculptor :: Eclipse module</name>
 
 	<properties>
-		<p2-repository-eclipse-juno>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse-juno>
+		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse>
 		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</p2-repository-eclipse-xtext>
 		<p2-repository-xtext-utils>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</p2-repository-xtext-utils>
 	</properties>
 
-	<modules>
-		<module>eclipse-mirror</module>
-		<module>eclipse-library</module>
-		<module>sculptor-metamodel</module>
-		<module>org.sculptor.dsl</module>
-		<module>org.sculptor.dsl.ui</module>
-		<module>org.sculptor.dsl.tests</module>
-		<module>org.sculptor.dsl.feature</module>
-		<module>sculptor-repository</module>
-	</modules>
-
 	<repositories>
-		<!-- Repository to resolve the Eclipse Juno release train dependencies -->
+		<!-- Repository to resolve the Eclipse release train dependencies -->
 		<repository>
-			<id>p2.eclipse.juno</id>
-			<url>${p2-repository-eclipse-juno}</url>
+			<id>p2.eclipse</id>
+			<url>${p2-repository-eclipse}</url>
 			<layout>p2</layout>
 		</repository>
 		<!-- Repository to resolve the XText dependencies -->
@@ -51,6 +40,24 @@
 		</repository>
 	</repositories>
 
+	<modules>
+		<module>eclipse-library</module>
+		<module>sculptor-metamodel</module>
+		<module>org.sculptor.dsl</module>
+		<module>org.sculptor.dsl.ui</module>
+		<module>org.sculptor.dsl.tests</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<modules>
+				<module>org.sculptor.dsl.feature</module>
+				<module>sculptor-repository</module>
+			</modules>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<!-- Activate Tycho -->
@@ -62,10 +69,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
 			</plugin>
 		</plugins>
 

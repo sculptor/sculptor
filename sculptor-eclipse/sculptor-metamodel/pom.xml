@@ -35,6 +35,10 @@
 					<workflowDescriptor>model/GenerateMetaModel.mwe2</workflowDescriptor>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+			</plugin>
   		</plugins>
 	</build>
 </project>

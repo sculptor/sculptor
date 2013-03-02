@@ -9,10 +9,30 @@
 	<name>Sculptor :: Parent POM</name>
 	<description>Sculptor parent project</description>
 
-	<modules>
-		<module>../sculptor-eclipse</module>
-		<module>../sculptor-generator</module>
-	</modules>
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>../sculptor-eclipse</module>
+				<module>../sculptor-generator</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>mirror</id>
+			<modules>
+				<module>../sculptor-eclipse/eclipse-mirror</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>ide</id>
+			<modules>
+				<module>../sculptor-eclipse/eclipse-ide</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<properties>
 		<maven-version>3.0</maven-version>
@@ -155,38 +175,8 @@
 					<version>${tycho-version}</version>
 					<configuration>
 						<resolver>p2</resolver>
-						<environments>
-							<environment>
-								<os>linux</os>
-								<ws>gtk</ws>
-								<arch>x86_64</arch>
-							</environment>
-							<environment>
-								<os>linux</os>
-								<ws>gtk</ws>
-								<arch>x86</arch>
-							</environment>
-							<environment>
-								<os>macosx</os>
-								<ws>cocoa</ws>
-								<arch>x86_64</arch>
-							</environment>
-							<environment>
-								<os>macosx</os>
-								<ws>cocoa</ws>
-								<arch>x86</arch>
-							</environment>
-							<environment>
-								<os>win32</os>
-								<ws>win32</ws>
-								<arch>x86_64</arch>
-							</environment>
-							<environment>
-								<os>win32</os>
-								<ws>win32</ws>
-								<arch>x86</arch>
-							</environment>
-						</environments>
+						<!-- No environments defined because otherwise we will end up with a cross-platform build which is not needed here.
+							 So we've to live with Tychos warnings "No explicit target runtime environment configuration. Build is platform dependent". -->
 					</configuration>
 				</plugin>
 				<plugin>
@@ -206,6 +196,21 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-director-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-p2-extras-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.github.github</groupId>
+					<artifactId>site-maven-plugin</artifactId>
+					<version>0.7</version>
 				</plugin>
 				<plugin>
 					<groupId>org.fornax.toolsupport</groupId>

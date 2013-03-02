@@ -23,7 +23,6 @@
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
-				<version>0.7</version>
 				<configuration>
 					<message>p2 repository for ${project.version}</message>
 					<noJekyll>true</noJekyll>
@@ -32,8 +31,8 @@
 					<includes>
 						<include>**/*</include>
 					</includes>
-					<repositoryName>sculptor-xtext2</repositoryName>
-					<repositoryOwner>tjuerge</repositoryOwner>
+					<repositoryName>sculptor</repositoryName>
+					<repositoryOwner>sculptor</repositoryOwner>
 				</configuration>
 				<executions>
 					<execution>
@@ -46,4 +45,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>

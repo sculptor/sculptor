@@ -27,7 +27,6 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-p2-extras-plugin</artifactId>
-						<version>${tycho-version}</version>
 						<executions>
 							<execution>
 								<phase>initialize</phase>
@@ -39,7 +38,7 @@
 						<configuration>
 							<source>
 								<repository>
-									<url>${p2-repository-eclipse-juno}</url>
+									<url>${p2-repository-eclipse}</url>
 									<layout>p2</layout>
 								</repository>
 								<repository>
