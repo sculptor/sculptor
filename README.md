@@ -5,11 +5,12 @@ This is a prototype of porting [Fornax Sculptor](https://sites.google.com/site/f
 The project outlines some technical details e.g.
 
 * Using [Eclipe Tycho](http://www.eclipse.org/tycho/) with Maven to build Eclipse plugins
-* Creating a local Eclipse P2 repository mirror used in an Eclipse plugin build
+* Creating a local Eclipse p2 repository mirror used in an Eclipse plugin build
+* Creating a local Eclipse installation with all Eclipse plugins needed for Sculptor development
 * Creating a Maven artifact from Eclipse Plugins
 * Running unit tests for the Xtext-generated DSL plugins
 * Creating a stand-alone library JAR from an xtext-based generator
-* Hosting Eclipse plugins in an Eclipse P2 repository on GitHub  
+* Hosting Eclipse plugins in an Eclipse p2 repository on GitHub  
 * Hosting Maven plugins in a Maven repository on GitHub  
 
 
@@ -38,14 +39,14 @@ Usage
 
 Building the project needs the following steps:
 
-* Create the local Eclipse P2 repository mirror (located in "sculptor-eclipse/eclipse-mirror/.p2-mirror/") by activating the Maven profile "mirror" -> **The *initial* mirroring process takes hours!!!**
+* Create the local Eclipse p2 repository mirror (located in "sculptor-eclipse/eclipse-mirror/.p2-mirror/") by activating the Maven profile "mirror" -> **The *initial* mirroring process takes hours!!!**
 
   <pre>
 cd sculptor-parent
 mvn initialize -Pmirror
   </pre>
 
-* Add the local Eclipse P2 repository mirror to the Maven "settings.xml" (located in your home directory folder ".m2/")
+* Add the local Eclipse p2 repository mirror to the Maven "settings.xml" (located in your home directory folder ".m2/")
 
   ```xml
 <mirrors>
@@ -60,6 +61,13 @@ mvn initialize -Pmirror
 </mirrors>
   ```
 
+* Create a local Eclipse installation (located in "sculptor-eclipse/eclipse-ide/target/products/or.sculptor.ide/<platform>") by activating the Maven profile "ide"
+
+  <pre>
+cd sculptor-parent
+mvn verify -Pide
+  </pre>
+
 * Build the whole project
 
   <pre>
@@ -67,11 +75,11 @@ cd sculptor-parent
 mvn install
   </pre>
 
-* Deploy the Eclipse P2 repository with the Sculptor plugins to GitHub as decribed [here](http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/)
+* Deploy the Eclipse p2 repository with the Sculptor plugins to GitHub as decribed [here](http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/)
 
   <pre>
 cd sculptor-parent
-mvn deploy
+mvn deploy -Pdeploy
   </pre>
 
 * (Optionally) Build and test the stand-alone Generator JAR (the generator isn't useful right now - it reads the model, creates the file "./src-gen/test.txt" with the text "Hello World!" and prints "Code generation finished.")
