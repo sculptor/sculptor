@@ -61,7 +61,7 @@ mvn initialize -Pmirror
 </mirrors>
   ```
 
-* Create a local Eclipse installation (located in "sculptor-eclipse/eclipse-ide/target/products/or.sculptor.ide/<platform>") by activating the Maven profile "ide"
+* Create a local Eclipse installation (located in the folder "sculptor-eclipse/eclipse-ide/target/products/org.sculptor.ide/<platform>") by activating the Maven profile "ide"
 
   <pre>
 cd sculptor-parent
