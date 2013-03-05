@@ -51,6 +51,11 @@
 								</repository>
 							</source>
 							<destination>${basedir}/.p2-mirror</destination>
+							<!--
+							<includeOptional>false</includeOptional>
+							<latestVersionOnly>true</latestVersionOnly>
+							<includePacked>false</includePacked>
+							-->
 						</configuration>
 					</plugin>
 				</plugins>
