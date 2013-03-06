@@ -1,34 +1,32 @@
 package org.sculptor.generator.template.db
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.db.DatasourceTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class DatasourceTmpl {
 
 
 def static String datasource(Application it) {
 	'''
-	«IF dbProduct() == "mysql"»
-			«mysqlDS(it) »
-		«ELSEIF dbProduct() == "oracle"»
-			«oracleDS(it) »
-		«ELSEIF dbProduct() == "postgresql"»
-			«postgresqlDS(it) »
-		«ELSEIF dbProduct() == "hsqldb-inmemory"»
-			«hsqldbInmemoryDS(it) »
-		«ENDIF»
+	«IF dbProduct == "mysql"»
+		«mysqlDS(it) »
+	«ELSEIF dbProduct == "oracle"»
+		«oracleDS(it) »
+	«ELSEIF dbProduct == "postgresql"»
+		«postgresqlDS(it) »
+	«ELSEIF dbProduct == "hsqldb-inmemory"»
+		«hsqldbInmemoryDS(it) »
+	«ENDIF»
 	'''
 }
 
 def static String mysqlDS(Application it) {
-	'''
-	'''
 	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
 		<datasources> 
 		    <local-tx-datasource> 
@@ -41,13 +39,9 @@ def static String mysqlDS(Application it) {
 		</datasources> 
 	'''
 	)
-	'''
-	'''
 }
 
 def static String oracleDS(Application it) {
-	'''
-	'''
 	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<!-- See: http://www.jboss.org/community/wiki/ConfigDataSources -->
@@ -78,8 +72,6 @@ def static String oracleDS(Application it) {
 }
 
 def static String postgresqlDS(Application it) {
-	'''
-	'''
 	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
 		<datasources> 
 		    <local-tx-datasource> 
@@ -92,13 +84,9 @@ def static String postgresqlDS(Application it) {
 		</datasources> 
 	'''
 	)
-	'''
-	'''
 }
 
 def static String hsqldbInmemoryDS(Application it) {
-	'''
-	'''
 	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
 		<datasources> 
 		    <local-tx-datasource> 
@@ -111,7 +99,5 @@ def static String hsqldbInmemoryDS(Application it) {
 		</datasources> 
 	'''
 	)
-	'''
-	'''
 }
 }

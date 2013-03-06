@@ -17,39 +17,29 @@
 
 package org.sculptor.generator.template.db
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
+
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.db.DbUnitTmpl.*
 
 import static extension org.sculptor.generator.ext.DbHelper.*
 import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class DbUnitTmpl {
 
 def static String emptyDbunitTestData(Application it) {
-	'''
-	'''
 	fileOutput("dbunit/EmptyDatabase.xml", 'TO_GEN_RESOURCES_TEST', '''
 		«dbunitTestDataContent(it) »
 	'''
 	)
-	'''
-	'''
 }
 
 def static String singleDbunitTestData(Application it) {
-	'''
-	«IF getDbUnitDataSetFile() != null»
-	'''
-	fileOutput(getDbUnitDataSetFile(), 'TO_RESOURCES_TEST', '''
-			«dbunitTestDataContent(it) »
-	'''
-	)
-	'''
-	«ENDIF»
-	'''
+	if (getDbUnitDataSetFile != null)
+		fileOutput(getDbUnitDataSetFile(), 'TO_RESOURCES_TEST', dbunitTestDataContent(it))
+	else
+		""
 }
 
 def static String dbunitTestDataContent(Application it) {
@@ -60,7 +50,7 @@ def static String dbunitTestDataContent(Application it) {
 		«FOR domainObject  : domainObjects» 
 		<«domainObject.getDatabaseName()» /> 
 		«ENDFOR» 
-		«FOR joinTableName  : domainObjects.getJoinTableNames()» 
+		«FOR joinTableName  : domainObjects.map[d | d.getJoinTableNames()]» 
 		<«joinTableName» /> 
 		«ENDFOR» 
 	</dataset>
