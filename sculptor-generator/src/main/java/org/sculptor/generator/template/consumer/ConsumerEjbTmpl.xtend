@@ -17,14 +17,14 @@
 
 package org.sculptor.generator.template.consumer
 
-import sculptormetamodel.*
+import sculptormetamodel.Consumer
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.consumer.ConsumerEjbTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class ConsumerEjbTmpl {
 
@@ -40,57 +40,53 @@ def static String messageBeanInterceptors(Consumer it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String messageBeanImplBase(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
-/**
- * Generated EJB MessageDrivenBean implementation of «name»
- * <p>
- * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
- * like this in jboss.xml:
- * <pre>
- *       &lt;message-driven&gt;
- *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
- *             &lt;resource-ref&gt;
- *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
- *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
- *             &lt;/resource-ref&gt;
- *             &lt;resource-ref&gt;
- *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
- *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
- *             &lt;/resource-ref&gt;
- *         &lt;/message-driven&gt;
- * </pre>
- *
- * <p>Make sure that subclass defines the following annotations:
- * <pre>
+	/**
+	 * Generated EJB MessageDrivenBean implementation of «name»
+	 * <p>
+	 * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
+	 * like this in jboss.xml:
+	 * <pre>
+	 *       &lt;message-driven&gt;
+	 *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
+	 *             &lt;resource-ref&gt;
+	 *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
+	 *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
+	 *             &lt;/resource-ref&gt;
+	 *             &lt;resource-ref&gt;
+	 *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
+	 *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
+	 *             &lt;/resource-ref&gt;
+	 *         &lt;/message-driven&gt;
+	 * </pre>
+	 *
+	 * <p>Make sure that subclass defines the following annotations:
+	 * <pre>
 	«messageBeanAnnotation(it)»
 	«messageBeanInterceptors(it)»
- * </pre>
- */
+	 * </pre>
+	 */
 	public abstract class «name + getSuffix("Impl")»Base ^extends «^abstractMessageBeanClass()» {
-	«Consumer::serialVersionUID(it)»
+	«ConsumerTmpl::serialVersionUID(it)»
 		public «name + getSuffix("Impl")»Base() {
 		}
 
-		«Consumer::serviceDependencies(it)»
-		«Consumer::repositoryDependencies(it)»
+		«ConsumerTmpl::serviceDependencies(it)»
+		«ConsumerTmpl::repositoryDependencies(it)»
 
-	«jmsConnection(it)»
-	«invalidMessageQueue(it)»
+		«jmsConnection(it)»
+		«invalidMessageQueue(it)»
 
-		«Consumer::consumeMethodBase(it)»
+		«ConsumerTmpl::consumeMethodBase(it)»
 		
-		«Consumer::consumerHook(it)»
+		«ConsumerTmpl::consumerHook(it)»
 
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String messageBeanAnnotation(Consumer it) {
@@ -159,48 +155,43 @@ def static String invalidMessageQueue(Consumer it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String messageBeanImplSubclass(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), 'TO_SRC', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
-/**
- * EJB MessageDrivenBean implementation of «name».
- * <p>
- * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
- * like this in jboss.xml:
- * <pre>
- *       &lt;message-driven&gt;
- *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
- *             &lt;resource-ref&gt;
- *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
- *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
- *             &lt;/resource-ref&gt;
- *             &lt;resource-ref&gt;
- *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
- *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
- *             &lt;/resource-ref&gt;
- *         &lt;/message-driven&gt;
- * </pre>
- */
+	/**
+	 * EJB MessageDrivenBean implementation of «name».
+	 * <p>
+	 * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
+	 * like this in jboss.xml:
+	 * <pre>
+	 *       &lt;message-driven&gt;
+	 *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
+	 *             &lt;resource-ref&gt;
+	 *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
+	 *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
+	 *             &lt;/resource-ref&gt;
+	 *             &lt;resource-ref&gt;
+	 *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
+	 *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
+	 *             &lt;/resource-ref&gt;
+	 *         &lt;/message-driven&gt;
+	 * </pre>
+	 */
 	«messageBeanAnnotation(it)»
 	«messageBeanInterceptors(it)»
 	public class «name + getSuffix("Impl")» ^extends «name + getSuffix("Impl")»Base implements javax.jms.MessageListener {
-	«Consumer::serialVersionUID(it)»
+	«ConsumerTmpl::serialVersionUID(it)»
 		public «name + getSuffix("Impl")»() {
 		}
 
-		«Consumer::otherDependencies(it)»
+		«ConsumerTmpl::otherDependencies(it)»
 
-	«Consumer::consumeMethodSubclass(it)»
+	«ConsumerTmpl::consumeMethodSubclass(it)»
 
 	}
 	'''
 	)
-	'''
-	'''
 }
-
 
 }

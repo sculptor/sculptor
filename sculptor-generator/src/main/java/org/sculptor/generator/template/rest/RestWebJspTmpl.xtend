@@ -1,40 +1,37 @@
 package org.sculptor.generator.template.rest
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
+import sculptormetamodel.HttpMethod
+import sculptormetamodel.Resource
+import sculptormetamodel.ResourceOperation
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.template.rest.RestWebJspTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
+import static extension org.sculptor.generator.util.HelperBase.*
 
 class RestWebJspTmpl {
 
 def static String jsp(Application it) {
 	'''
-	«index(it)»
-	«header(it)»
-	«footer(it)»
-	«includes(it)»
-	«uncaughtException(it)»
+		«index(it)»
+		«header(it)»
+		«footer(it)»
+		«includes(it)»
+		«uncaughtException(it)»
 	'''
 }
 
 def static String index(Application it) {
-	'''
-	'''
 	fileOutput("index.jsp", 'TO_WEBROOT', '''
-	<META http-equiv="refresh" content="0;URL=rest/front">
+		<META http-equiv="refresh" content="0;URL=rest/front">
 	'''
 	)
-	'''
-	'''
 }
 
 def static String header(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/header.jsp", 'TO_WEBROOT', '''
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
@@ -50,13 +47,9 @@ def static String header(Application it) {
 		<div id="main">	
 	'''
 	)
-	'''
-	'''
 }
 
 def static String footer(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/footer.jsp", 'TO_WEBROOT', '''
 	<br/>
 	  <table class="footer">
@@ -74,13 +67,9 @@ def static String footer(Application it) {
 	</html>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String includes(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/includes.jsp", 'TO_WEBROOT', '''
 	<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -89,13 +78,9 @@ def static String includes(Application it) {
 	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String uncaughtException(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/uncaughtException.jsp", 'TO_WEBROOT', '''
 	<h2/>Internal error</h2>
 	<p/>
@@ -142,42 +127,36 @@ def static String uncaughtException(Application it) {
 	<br/>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String jsp(Resource it) {
-	'''
-	«val postOperation = it.operations.selectFirst(e | e.httpMethod == HttpMethod::POST)»
-	«val putOperation = it.operations.selectFirst(e | e.httpMethod == HttpMethod::PUT)»
-	«val deleteOperation = it.operations.selectFirst(e | e.httpMethod == HttpMethod::DELETE)»
-	«val createFormOperation = it.operations.selectFirst(e | e.httpMethod == HttpMethod::GET && e.name == "createForm" && e.returnString != null) »
-	«val updateFormOperation = it.operations.selectFirst(e | e.httpMethod == HttpMethod::GET && e.name == "updateForm" && e.returnString != null) »
-	«LET operations.reject(e | e == createFormOperation || e == updateFormOperation) .selectFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.collectionType == null && e.returnString != null)
-		AS getOperation»
-	«LET operations.reject(e | e == createFormOperation || e == updateFormOperation) .selectFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.collectionType != null && e.returnString != null)
-		AS listOperation»
-	
+	val postOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
+	val putOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
+	val deleteOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::DELETE)
+	val createFormOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::GET && e.name == "createForm" && e.returnString != null)
+	val updateFormOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::GET && e.name == "updateForm" && e.returnString != null)
+	val getOperation = operations.filter[e | !(e == createFormOperation || e == updateFormOperation)].findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.collectionType == null && e.returnString != null)
+	val listOperation = operations.filter[e | !(e == createFormOperation || e == updateFormOperation)].findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.collectionType != null && e.returnString != null)
+
+	'''	
 		«IF createFormOperation != null && postOperation != null»
-			«createForm(it)(postOperation) FOR createFormOperation»
+			«createForm(createFormOperation, postOperation)»
 		«ENDIF»
 		«IF updateFormOperation != null && putOperation != null»
-			«updateForm(it)(putOperation) FOR updateFormOperation»
+			«updateForm(updateFormOperation, putOperation)»
 		«ENDIF»
 		«IF getOperation != null»
-			«show(it) FOR getOperation»
+			«show(getOperation)»
 		«ENDIF»
 		«IF listOperation != null»
-			«list(it)(getOperation, updateFormOperation, deleteOperation, createFormOperation) FOR listOperation»
+			«list(listOperation, getOperation, updateFormOperation, deleteOperation, createFormOperation)»
 		«ENDIF»
-		«emptyPage(it) FOREACH  operations.reject(e | e == createFormOperation || e == updateFormOperation || e == getOperation || e == listOperation)
-					.filter(e | e.httpMethod == HttpMethod::GET && e.returnString != null && !e.returnString.startsWith("redirect:"))»
+		«operations.filter[e | !(e == createFormOperation || e == updateFormOperation || e == getOperation || e == listOperation)]
+					.filter(e | e.httpMethod == HttpMethod::GET && e.returnString != null && !e.returnString.startsWith("redirect:")).map[r | emptyPage(r)]»
 	'''
 }
 
 def static String emptyPage(ResourceOperation it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", 'TO_WEBROOT', '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
@@ -188,7 +167,7 @@ def static String emptyPage(ResourceOperation it) {
 	«IF path == "/front"»
 	<p>Resources:</p>
 	<ul>
-	«FOR r : resource.module.application.getAllResources(false).reject(e|e == this.resource)»
+	«FOR r : resource.module.application.getAllResources(false).filter(e|e != it.resource)»
 		<li><a href="<c:url value="/rest/«r.getDomainResourceName().toFirstLower()»" />">«r.getDomainResourceName().plural()»</a></li>
 	«ENDFOR»
 	</ul>
@@ -197,67 +176,59 @@ def static String emptyPage(ResourceOperation it) {
 	<jsp:directive.include file="/WEB-INF/jsp/footer.jsp"/>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String createForm(ResourceOperation it, ResourceOperation postOperation) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", 'TO_WEBROOT', '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 	<h2>New «resource.getDomainResourceName()»</h2>
-		<form:form action="/rest«postOperation.path»" method="POST" modelAttribute="«postOperation.parameters.first().name»">
-		«val formClass = it.postOperation.parameters.filter(e | e.domainObjectType != null).collect(e|e.domainObjectType).first()»
-			«IF formClass != null»
-		«FOR att : formClass.attributes.filter(e | !e.isSystemAttribute())»
-		<div id="«att.getDomainObject().name.toFirstLower()»_«att.name»">
-				<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
-				<form:input cssStyle="width:300px" id="_«att.name»" path="«att.name»"/>
-				<br/>
-				<form:errors cssClass="errors" id="_«att.name»" path="«att.name»"/>
-			</div>
-		«ENDFOR»
+		<form:form action="/rest«postOperation.path»" method="POST" modelAttribute="«postOperation.parameters.head.name»">
+		«val formClass = postOperation.parameters.filter(e | e.domainObjectType != null).map(e|e.domainObjectType).head»
+		«IF formClass != null»
+			«FOR att : formClass.attributes.filter(e | !e.isSystemAttribute())»
+				<div id="«att.getDomainObject().name.toFirstLower()»_«att.name»">
+					<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
+					<form:input cssStyle="width:300px" id="_«att.name»" path="«att.name»"/>
+					<br/>
+					<form:errors cssClass="errors" id="_«att.name»" path="«att.name»"/>
+				</div>
+			«ENDFOR»
 			<div class="submit" id="«formClass.name.toFirstLower()»_submit">
 				<input id="proceed" type="submit" value="Save"/>
 			</div>
-		«ENDIF»        
+		«ENDIF»
 		</form:form>
 	</div>
 	<jsp:directive.include file="/WEB-INF/jsp/footer.jsp"/>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String updateForm(ResourceOperation it, ResourceOperation putOperation) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", 'TO_WEBROOT', '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 	<h2>Edit «resource.getDomainResourceName()»</h2>
-	«val formClass = it.putOperation.parameters.filter(e | e.domainObjectType != null).collect(e|e.domainObjectType).first()»
+	«val formClass = putOperation.parameters.filter(e | e.domainObjectType != null).map(e|e.domainObjectType).head»
 	«IF formClass != null»
-		<form:form action="/rest«putOperation.path.replacePlaceholder('{id}', '${' + putOperation.parameters.first().name + '}' ) »" method="PUT" modelAttribute="«putOperation.parameters.first().name»">
+		<form:form action="/rest«putOperation.path.replacePlaceholder('{id}', '${' + putOperation.parameters.head.name + '}' ) »" method="PUT" modelAttribute="«putOperation.parameters.head.name»">
 			«FOR att : formClass.attributes»
-			«IF att.isAuditableAttribute() »
-			«ELSEIF !att.isChangeable() || att.isSystemAttribute()»
-			<form:hidden path="«att.name»"/>
-			«ELSE»
-		<div id="«att.getDomainObject().name.toFirstLower()»_«att.name»">
-				<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
-				<form:input cssStyle="width:300px" id="_«att.name»" path="«att.name»"/>
-				<br/>
-				<form:errors cssClass="errors" id="_«att.name»" path="«att.name»"/>
-			</div>
-			«ENDIF»
-		«ENDFOR»
-		<div class="submit" id="«formClass.name.toFirstLower()»_submit">
+				«IF att.isAuditableAttribute() »
+				«ELSEIF !att.isChangeable() || att.isSystemAttribute()»
+					<form:hidden path="«att.name»"/>
+				«ELSE»
+					<div id="«att.getDomainObject().name.toFirstLower()»_«att.name»">
+						<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
+						<form:input cssStyle="width:300px" id="_«att.name»" path="«att.name»"/>
+						<br/>
+						<form:errors cssClass="errors" id="_«att.name»" path="«att.name»"/>
+					</div>
+				«ENDIF»
+			«ENDFOR»
+			<div class="submit" id="«formClass.name.toFirstLower()»_submit">
 				<input id="proceed" type="submit" value="Save"/>
 			</div>
 		</form:form>
@@ -266,26 +237,22 @@ def static String updateForm(ResourceOperation it, ResourceOperation putOperatio
 	<jsp:directive.include file="/WEB-INF/jsp/footer.jsp"/>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String show(ResourceOperation it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", 'TO_WEBROOT', '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 		<c:if test="${not empty result}">
 			«IF domainObjectType != null»
-			«FOR att : domainObjectType.attributes.filter(e | !e.isSystemAttribute())»
-	        <div id="«resource.getDomainResourceName().toFirstLower()»_«att.name»">
-	            <label for="_«att.name»">«att.name.toFirstUpper()»:</label>
-	            <div class="box" id="_«att.name»">${result.«att.name»}</div>
-	        </div>
-	        <br/>
-			«ENDFOR»
+				«FOR att : domainObjectType.attributes.filter(e | !e.isSystemAttribute())»
+					<div id="«resource.getDomainResourceName().toFirstLower()»_«att.name»">
+						<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
+						<div class="box" id="_«att.name»">${result.«att.name»}</div>
+					</div>
+					<br/>
+				«ENDFOR»
 			«ENDIF»
 		</c:if>
 		<c:if test="${empty result}">No «resource.getDomainResourceName()» found with this id.</c:if>
@@ -293,13 +260,9 @@ def static String show(ResourceOperation it) {
 	<jsp:directive.include file="/WEB-INF/jsp/footer.jsp"/>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String list(ResourceOperation it, ResourceOperation getOperation, ResourceOperation updateFormOperation, ResourceOperation deleteOperation, ResourceOperation createFormOperation) {
-	'''
-	'''
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", 'TO_WEBROOT', '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
@@ -315,7 +278,7 @@ def static String list(ResourceOperation it, ResourceOperation getOperation, Res
 		<table>
 			<thead>
 			«IF idAttribute != null»
-	    	<th>«idAttribute.name.toFirstUpper()»</th>
+				<th>«idAttribute.name.toFirstUpper()»</th>
 			«ENDIF»
 			«FOR att : domainObjectType.attributes.filter(e | !e.isSystemAttribute())»
 				<th>«att.name.toFirstUpper()»</th>
@@ -349,20 +312,20 @@ def static String list(ResourceOperation it, ResourceOperation getOperation, Res
 					«IF getOperation != null»
 					<td>
 						<a href="<c:url value="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" />">Show</a>
-				    </td>
-				    «ENDIF»
-				    «IF updateFormOperation != null»
+					</td>
+					«ENDIF»
+					«IF updateFormOperation != null»
 					<td>
 						<a href="<c:url value="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}/form" />">Edit</a>
 					</td>
 					«ENDIF»
 					«IF deleteOperation != null»
 					<td>
-				        <form:form action="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" method="DELETE">
-				        	<input id="delete" type="submit" value="Delete"/>
-				        </form:form>
-				    </td>
-				    «ENDIF»
+						<form:form action="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" method="DELETE">
+							<input id="delete" type="submit" value="Delete"/>
+						</form:form>
+					</td>
+					«ENDIF»
 				</tr>
 			</c:forEach>
 		</table>
@@ -374,8 +337,6 @@ def static String list(ResourceOperation it, ResourceOperation getOperation, Res
 
 	'''
 	)
-	'''
-	'''
 }
 
 }

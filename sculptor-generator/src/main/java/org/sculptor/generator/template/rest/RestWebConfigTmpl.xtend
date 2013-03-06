@@ -1,27 +1,22 @@
 package org.sculptor.generator.template.rest
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.template.rest.RestWebConfigTmpl.*
+import org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl
 
 class RestWebConfigTmpl {
 
 def static String config(Application it) {
 	'''
-	«webXml(it)»
-	«restServletXml(it)»
-	«JSFCrudGuiConfigContextTmpl::contextXml(it)»
+		«webXml(it)»
+		«restServletXml(it)»
+		«JSFCrudGuiConfigContextTmpl::contextXml(it)»
 	'''
 }
 
 def static String webXml(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/web.xml", 'TO_WEBROOT', '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -101,8 +96,6 @@ def static String webXml(Application it) {
 }
 
 def static String restServletXml(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/rest-servlet.xml", 'TO_WEBROOT', '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -184,8 +177,6 @@ def static String restServletXml(Application it) {
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 }

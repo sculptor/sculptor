@@ -17,14 +17,11 @@
 
 package org.sculptor.generator.template.drools
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.drools.DroolsTmpl.*
 
 class DroolsTmpl {
 
@@ -37,8 +34,6 @@ def static String droolsSupport(Application it) {
 }
 
 def static String droolsChangeSet(Application it) {
-	'''
-	'''
 	fileOutput("CompanyPolicy.xml", 'TO_RESOURCES', '''
 	<?xml version = '1.0' encoding = 'UTF-8'?>
 	<change-set xmlns='http://drools.org/drools-5.0/change-set'
@@ -51,19 +46,15 @@ def static String droolsChangeSet(Application it) {
 	</change-set>
 	'''
 	)
-	'''
-	'''
 }
 		
 def static String droolsRules(Application it) {
-	'''    
-	'''
 	fileOutput("CompanyPolicy.dslr", 'TO_RESOURCES', '''
 	package CompanyPolicy
 
-/* ################################################################################
-		# Declaration
-		################################################################################ */
+	/* ################################################################################
+	   # Declaration
+	   ################################################################################ */
 	import java.util.Set;
 	import java.util.Date;
 	import java.util.Calendar;
@@ -82,16 +73,16 @@ def static String droolsRules(Application it) {
 	global Calendar currentDate;
 	global Long currentTimestamp;
 
-/* ################################################################################
-		# Support functions
-		################################################################################ */
+	/* ################################################################################
+	   # Support functions
+	   ################################################################################ */
 	function Object findService(ApplicationContext appContext, String serviceName) {
 	return appContext.getBean(serviceName);
 	}
 
-/* ################################################################################
-		# Auditing rules
-		################################################################################ */
+	/* ################################################################################
+	   # Auditing rules
+	   ################################################################################ */
 	RULE "Zobraz poziadavku"
 	unique-group "Log"
 	priority -100
@@ -103,13 +94,9 @@ def static String droolsRules(Application it) {
 	END
 	'''
 	)
-	'''
-	'''
 }
 
 def static String droolsDsl(Application it) {
-	'''
-	'''
 	fileOutput("CompanyPolicy.dsl", 'TO_RESOURCES', '''
 	[condition][]Exist request on=$req : RequestDescription()
 	[condition][]- service "{service}"=serviceName=="{service}"
@@ -130,7 +117,6 @@ def static String droolsDsl(Application it) {
 	[keyword][]priority=salience
 	'''
 	)
-	'''
-	'''
 }
+
 }

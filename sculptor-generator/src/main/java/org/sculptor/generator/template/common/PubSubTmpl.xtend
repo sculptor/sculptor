@@ -17,32 +17,32 @@
 
 package org.sculptor.generator.template.common
 
-import sculptormetamodel.*
+import sculptormetamodel.Publish
+import sculptormetamodel.Subscribe
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class PubSubTmpl {
 
 def static String publishAnnotation(Publish it) {
+	val eventTypeClass = if (it.eventType == null) null else eventType.getDomainPackage() + "." + eventType.name + ".class"
 	'''
-	«val eventTypeClass- = it.eventType == null ? null : eventType.getDomainPackage() + "." + eventType.name + ".class"»
-	«formatAnnotationParameters("@" + fw("event.annotation.Publish"), { eventTypeClass != null, "eventType", eventTypeClass,
-	topic != null, "topic", '"' + topic + '"',
-	eventBus != null, "eventBus", '"' + eventBus + '"'
-		}) »
+	«formatAnnotationParameters("@" + fw("event.annotation.Publish"), <Object>newArrayList(
+			eventTypeClass != null, "eventType", eventTypeClass,
+			topic != null, "topic", '"' + topic + '"',
+			eventBus != null, "eventBus", '"' + eventBus + '"'
+		))»
 	'''
 }
 
 def static String subscribeAnnotation(Subscribe it) {
 	'''
-	«formatAnnotationParameters("@" + fw("event.annotation.Subscribe"), { topic != null, "topic", '"' + topic + '"',
-	eventBus != null, "eventBus", '"' + eventBus + '"'
-		}) »
+	«formatAnnotationParameters("@" + fw("event.annotation.Subscribe"), <Object>newArrayList(
+			topic != null, "topic", '"' + topic + '"',
+			eventBus != null, "eventBus", '"' + eventBus + '"'
+		)) »
 	'''
 }
 

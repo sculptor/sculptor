@@ -25,6 +25,7 @@ import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
 import static extension org.sculptor.generator.ext.Properties.*
 import static extension org.sculptor.generator.util.PropertiesBase.*
+import sculptorguimetamodel.GuiApplication
 
 class GuiRootTmpl {
 
@@ -37,7 +38,7 @@ def static String GuiRoot(GuiApplication it) {
 		    «it.guiForApplication.getAllResources(false).forEach[ResourceTmpl::resource(it)]»
 		«ENDIF»
 		«IF isRestWebToBeGenerated() && !guiForApplication.getAllResources(false).isEmpty»
-			«RestWebTmpl::restWeb(it) FOR guiForApplication»
+			«RestWebTmpl::restWeb(it.guiForApplication)»
 		«ENDIF»
 	«ENDIF»
 	«IF !modules.isEmpty»

@@ -17,10 +17,15 @@
 
 package org.sculptor.generator.template.spring
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.camel.CamelTmpl
+import org.sculptor.generator.template.drools.DroolsTmpl
+import org.sculptor.generator.template.springint.SpringIntegrationTmpl
+import sculptormetamodel.Application
+import sculptormetamodel.CommandEvent
+import sculptormetamodel.Enum
+import sculptormetamodel.Module
+import sculptormetamodel.Service
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
 import static extension org.sculptor.generator.ext.Properties.*
@@ -30,15 +35,15 @@ class SpringTmpl {
 
 def static String spring(Application it) {
 	'''
-		«applicationContext(it)»
-		«springProperties(it)»
-		«generatedSpringProperties(it)»
-		«beanRefContext(it)»
-		«more(it)»
-		«IF isInjectDrools()»
-			«DroolsTmpl::droolsSupport(it)»
-		«ENDIF»
-		«IF jpa()»
+	«applicationContext(it)»
+	«springProperties(it)»
+	«generatedSpringProperties(it)»
+	«beanRefContext(it)»
+	«more(it)»
+	«IF isInjectDrools()»
+		«DroolsTmpl::droolsSupport(it)»
+	«ENDIF»
+	«IF jpa()»
 		«entityManagerFactory(it)»
 	«ENDIF»
 	«IF isPubSubToBeGenerated()»
@@ -49,48 +54,48 @@ def static String spring(Application it) {
 			«SpringIntegrationTmpl::springIntegrationConfig(it)»
 		«ENDIF»
 	«ENDIF»
-		«interceptor(it)»
-		«IF isSpringRemotingToBeGenerated()»
-			«springRemoting(it)»
-		«ENDIF»
+	«interceptor(it)»
+	«IF isSpringRemotingToBeGenerated()»
+		«springRemoting(it)»
+	«ENDIF»
 
-		«serviceContext(it)»
-		«IF hasConsumers() && isEar()»
-			«jms(it)»
-		«ENDIF»
+	«serviceContext(it)»
+	«IF hasConsumers(it) && isEar()»
+		«jms(it)»
+	«ENDIF»
 
-		«IF cacheProvider() == "EhCache"»
-			«ehcacheProperties(it)»
-		«ENDIF»
-		
-		«IF mongoDb()»
-			«mongodb(it)»
-		«ENDIF»
+	«IF cacheProvider() == "EhCache"»
+		«ehcacheProperties(it)»
+	«ENDIF»
+	
+	«IF mongoDb()»
+		«mongodb(it)»
+	«ENDIF»
 
-		«IF isTestToBeGenerated()»
-			«applicationContextTest(it)»
-			«springPropertiesTest(it)»
-	    «moreTest(it)»
-	    «interceptorTest(it)»
-		«IF jpa()»
-			«IF !isJpaProviderAppEngine()»
-				«entityManagerFactoryTest(it)»
-			«ENDIF»
-	    	«IF !isJpaProviderAppEngine() || (cacheProvider() == "EhCache")»
-				«testEhcacheProperties(it)»
-			«ENDIF»
+	«IF isTestToBeGenerated()»
+		«applicationContextTest(it)»
+		«springPropertiesTest(it)»
+	«moreTest(it)»
+	«interceptorTest(it)»
+	«IF jpa()»
+		«IF !isJpaProviderAppEngine()»
+			«entityManagerFactoryTest(it)»
 		«ENDIF»
-		«IF isPubSubToBeGenerated()»
-			«IF getProperty("integration.product") == "camel"»
-				«CamelTmpl::camelTestConfig(it)»
-			«ELSEIF getProperty("integration.product") == "spring-integration"»
-				«SpringIntegrationTmpl::springIntegrationTestConfig(it)»
-			«ENDIF»
+		«IF !isJpaProviderAppEngine() || (cacheProvider() == "EhCache")»
+			«testEhcacheProperties(it)»
 		«ENDIF»
-		«IF mongoDb()»
-			«mongodbTest(it)»
+	«ENDIF»
+	«IF isPubSubToBeGenerated()»
+		«IF getProperty("integration.product") == "camel"»
+			«CamelTmpl::camelTestConfig(it)»
+		«ELSEIF getProperty("integration.product") == "spring-integration"»
+			«SpringIntegrationTmpl::springIntegrationTestConfig(it)»
 		«ENDIF»
-		«ENDIF»
+	«ENDIF»
+	«IF mongoDb()»
+		«mongodbTest(it)»
+	«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -127,9 +132,7 @@ def static String headerWithMoreNamespaces(Object it) {
 }
 
 def static String applicationContext(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "applicationContext.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "applicationContext.xml", 'TO_GEN_RESOURCES', '''
 		«headerWithMoreNamespaces(it)»
 	«serviceContext(it)»
 
@@ -137,69 +140,63 @@ def static String applicationContext(Application it) {
 
 	<!-- import additional spring configuration files -->
 	«IF jpa()»
-	    <import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("EntityManagerFactory.xml")»"/>
+	    <import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml")»"/>
 	«ENDIF»
 	«IF isPubSubToBeGenerated()»
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("pub-sub.xml")»"/>
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml")»"/>
 		«IF getProperty("integration.product") == "camel"»
-			<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("camel.xml")»"/>
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
 		«ELSEIF getProperty("integration.product") == "spring-integration"»
-			<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("spring-integration.xml")»"/>
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
 		«ENDIF»
 	«ENDIF»
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("Interceptor.xml")»"/>
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("more.xml")»"/>
-		«IF hasConsumers() && isEar() »
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("Jms.xml")»"/>
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml")»"/>
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more.xml")»"/>
+		«IF it.hasConsumers() && isEar() »
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml")»"/>
 	«ENDIF »
 	«IF mongoDb()»
-	<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("mongodb.xml")»"/>
+	<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb.xml")»"/>
 	«ENDIF»
 	«IF isSpringRemotingToBeGenerated()»
-			<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("remote-services.xml")»"/>
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml")»"/>
 		«ENDIF»
 
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String applicationContextTest(Application it) {
-	'''
-	'''
 	fileOutput("applicationContext-test.xml", 'TO_GEN_RESOURCES_TEST', '''
-		«headerWithMoreNamespaces(it)»
-	«serviceContext(it)»
-
-	«springPropertyConfigTest(it)»
-
-	«IF jpa()»
-		«IF isJpaProviderAppEngine()»
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("EntityManagerFactory.xml")»"/>
-		«ELSE»
-	    <import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("EntityManagerFactory-test.xml")»"/>
+	«headerWithMoreNamespaces(it)»
+		«serviceContext(it)»
+	
+		«springPropertyConfigTest(it)»
+	
+		«IF jpa()»
+			«IF isJpaProviderAppEngine()»
+				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml")»"/>
+			«ELSE»
+				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml")»"/>
+			«ENDIF»
 		«ENDIF»
-	«ENDIF»
-	«IF isPubSubToBeGenerated()»
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("pub-sub.xml")»"/>
-		«IF getProperty("integration.product") == "camel"»
-			<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("camel-test.xml")»"/>
-		«ELSEIF getProperty("integration.product") == "spring-integration"»
-			<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("spring-integration-test.xml")»"/>
+		«IF isPubSubToBeGenerated()»
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml")»"/>
+			«IF getProperty("integration.product") == "camel"»
+				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel-test.xml")»"/>
+			«ELSEIF getProperty("integration.product") == "spring-integration"»
+				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration-test.xml")»"/>
+			«ENDIF»
 		«ENDIF»
-	«ENDIF»
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("Interceptor-test.xml")»"/>
-		<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("more-test.xml")»"/>
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml")»"/>
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml")»"/>
 		«IF mongoDb()»
-	<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("mongodb-test.xml")»"/>
-	«ENDIF»
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb-test.xml")»"/>
+		«ENDIF»
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String springPropertyConfig(Application it) {
@@ -207,9 +204,9 @@ def static String springPropertyConfig(Application it) {
 		<bean id="springPropertyConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 			<property name="locations">
 				<list>
-	      		<value>classpath:/«getResourceDir("spring")»generated-spring.properties</value>
-	      		<value>classpath:/«getResourceDir("spring")»spring.properties</value>
-					</list>
+					<value>classpath:/«it.getResourceDir("spring")»generated-spring.properties</value>
+					<value>classpath:/«it.getResourceDir("spring")»spring.properties</value>
+				</list>
 			</property>
 		</bean>
 	'''
@@ -220,42 +217,32 @@ def static String springPropertyConfigTest(Application it) {
 		<bean id="springPropertyConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 			<property name="locations">
 				<list>
-	      		<value>classpath:/«getResourceDir("spring")»generated-spring.properties</value>
-	      		<value>classpath:/«getResourceDir("spring")»spring-test.properties</value>
-					</list>
+					<value>classpath:/«it.getResourceDir("spring")»generated-spring.properties</value>
+					<value>classpath:/«it.getResourceDir("spring")»spring-test.properties</value>
+				</list>
 			</property>
 		</bean>
 	'''
 }
 
 def static String springProperties(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "spring.properties", 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "spring.properties", 'TO_RESOURCES', '''
 	«IF applicationServer() == "jboss"»
 	jndi.port=1099
 	«ENDIF»
 	'''
 	)
-	'''
-	'''
 }
 
 def static String springPropertiesTest(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("spring-test.properties"), 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), 'TO_RESOURCES_TEST', '''
 	# Spring properties for test
 	'''
 	)
-	'''
-	'''
 }
 
 def static String generatedSpringProperties(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "generated-spring.properties", 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "generated-spring.properties", 'TO_GEN_RESOURCES', '''
 	# Default configuration properties, possible to override in spring.properties
 	«IF applicationServer() == "jboss"»
 	jndi.port=1099
@@ -276,22 +263,22 @@ def static String generatedSpringProperties(Application it) {
 	«IF isSpringDataSourceSupportToBeGenerated()»
 	# datasource provider
 	jdbc.dataSourceClassName=org.apache.commons.dbcp.BasicDataSource
-	«IF dbProduct() == "mysql"»
+	«IF dbProduct == "mysql"»
 	# datasource properties for MySQL
 	jdbc.driverClassName=com.mysql.jdbc.Driver
 	jdbc.url=jdbc:mysql://localhost/«name.toFirstLower()»
 	jdbc.username=«name.toFirstLower()»
-	«ELSEIF dbProduct() == "oracle"»
+	«ELSEIF dbProduct == "oracle"»
 	# datasource properties for Oracle
 	jdbc.driverClassName=oracle.jdbc.OracleDriver
 	jdbc.url=jdbc:oracle:thin:@localhost:1521:XE
 	jdbc.username=«name.toFirstLower()»
-	«ELSEIF dbProduct() == "hsqldb-inmemory"»
+	«ELSEIF dbProduct == "hsqldb-inmemory"»
 	# datasource properties for HSQLDB
 	jdbc.driverClassName=org.hsqldb.jdbcDriver
 	jdbc.url=jdbc:hsqldb:mem:«name.toFirstLower()»
 	jdbc.username=sa
-	«ELSEIF dbProduct() == "postgresql"»
+	«ELSEIF dbProduct == "postgresql"»
 	# datasource properties for PostgreSQL
 	jdbc.driverClassName=org.postgresql.Driver
 	jdbc.url=jdbc:postgresql://localhost/«name.toFirstLower()»
@@ -309,7 +296,7 @@ def static String generatedSpringProperties(Application it) {
 	drools.rule-refresh=300
 	drools.catch-all-exceptions=false
 	«ENDIF»
-	«IF hasConsumers() && isEar() »
+	«IF it.hasConsumers() && isEar() »
 	connectionFactory.jndiName=ConnectionFactory
 	invalidMessageDestination.jndiName=queue/«name.toLowerCase()».invalidMessageQueue
 	java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
@@ -318,8 +305,6 @@ def static String generatedSpringProperties(Application it) {
 	«ENDIF»
 	'''
 	)
-	'''
-	'''
 }
 
 def static String serviceContext(Application it) {
@@ -361,57 +346,43 @@ def static String loadTimeWeaving(Application it) {
 }
 
 def static String more(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("more.xml"), 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more.xml"), 'TO_RESOURCES', '''
 	«headerWithMoreNamespaces(it)»
 		<!-- Import more custom beans
-		<import resource="classpath:/«getResourceDir("spring")»moreBeans.xml"/>
+		<import resource="classpath:/«it.getResourceDir("spring")»moreBeans.xml"/>
 		-->
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String moreTest(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("more-test.xml"), 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml"), 'TO_RESOURCES_TEST', '''
 	«headerWithMoreNamespaces(it)»
 		<!-- Import more custom beans for test
-		<import resource="classpath:/«getResourceDir("spring")»moreTestBeans.xml"/>
+		<import resource="classpath:/«it.getResourceDir("spring")»moreTestBeans.xml"/>
 		-->
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String beanRefContext(Application it) {
-	'''
-	'''
 	fileOutput("beanRefContext.xml", 'TO_GEN_RESOURCES', '''
 	«header(it)»
 		<bean id="«basePackage»" lazy-init="true"
 			class="org.springframework.context.support.ClassPathXmlApplicationContext">
 			<constructor-arg>
-				<value>«getResourceDir("spring")»applicationContext.xml</value>
+				<value>«it.getResourceDir("spring")»applicationContext.xml</value>
 			</constructor-arg>
 		</bean>
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String interceptor(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("Interceptor.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), 'TO_GEN_RESOURCES', '''
 	«IF isWar() »
 	«headerWithMoreNamespaces(it)»
 	«ELSE »
@@ -459,8 +430,6 @@ def static String interceptor(Application it) {
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String aspectjAutoproxy(Application it) {
@@ -498,83 +467,79 @@ def static String aopConfig(Application it) {
 	'''
 	<aop:config>
 
-	  <aop:pointcut id="businessService"
-	        expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..))"/>
-	  <aop:pointcut id="readOnlyBusinessService"
-	        expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.get*(..)) or execution(public * «basePackage»..«subPackage("serviceInterface")».*.find*(..))"/>
-	  <!-- Repeating the expression, since I can't find a way to refer to the other pointcuts. -->
-	  <aop:pointcut id="updatingBusinessService"
-	        expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..)) and not (execution(public * «basePackage»..«subPackage("serviceInterface")».*.get*(..)) or execution(public * «basePackage»..«subPackage("serviceInterface")».*.find*(..)))"/>
-	  «IF hasConsumers()»
-	  <aop:pointcut id="messageConsumer"
-	  		expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>
-	  «ENDIF »
+		<aop:pointcut id="businessService"
+			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..))"/>
+		<aop:pointcut id="readOnlyBusinessService"
+			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.get*(..)) or execution(public * «basePackage»..«subPackage("serviceInterface")».*.find*(..))"/>
+		<!-- Repeating the expression, since I can't find a way to refer to the other pointcuts. -->
+		<aop:pointcut id="updatingBusinessService"
+			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..)) and not (execution(public * «basePackage»..«subPackage("serviceInterface")».*.get*(..)) or execution(public * «basePackage»..«subPackage("serviceInterface")».*.find*(..)))"/>
+		«IF it.hasConsumers()»
+			<aop:pointcut id="messageConsumer"
+				expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>
+		«ENDIF »
 
-	  «IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
-	  <aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
-	  «ENDIF »
-	  «IF isServiceContextToBeGenerated()»
-	  <aop:advisor pointcut-ref="businessService" advice-ref="serviceContextStoreAdvice" order="2" />
-	  «ENDIF »
-	  <aop:advisor pointcut-ref="businessService" advice-ref="errorHandlingAdvice" order="3" />
-	  «IF isJpaProviderHibernate()»
-	  <aop:advisor pointcut-ref="businessService" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-	  «ELSEIF isValidationAnnotationToBeGenerated()»
-	  <aop:advisor pointcut-ref="businessService" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-	  «ENDIF»
-	  «IF jpa()»
-		  <aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="5" />
-	  «ENDIF»
-	  «IF mongoDb()»
-	  	<aop:advisor pointcut-ref="businessService" advice-ref="mongodbManagerAdvice" order="5" />
-	  «ENDIF»
+		«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
+			<aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
+		«ENDIF »
+		«IF isServiceContextToBeGenerated()»
+			<aop:advisor pointcut-ref="businessService" advice-ref="serviceContextStoreAdvice" order="2" />
+		«ENDIF »
+		<aop:advisor pointcut-ref="businessService" advice-ref="errorHandlingAdvice" order="3" />
+		«IF isJpaProviderHibernate()»
+			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateErrorHandlingAdvice" order="4" />
+		«ELSEIF isValidationAnnotationToBeGenerated()»
+			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
+		«ENDIF»
+		«IF jpa()»
+			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="5" />
+		«ENDIF»
+		«IF mongoDb()»
+			<aop:advisor pointcut-ref="businessService" advice-ref="mongodbManagerAdvice" order="5" />
+		«ENDIF»
 
-	  «IF isInjectDrools()»
-	  <aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="6" />
-	  «ENDIF »
+		«IF isInjectDrools()»
+			<aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="6" />
+		«ENDIF»
 
-	  «IF hasConsumers()»
-	  	«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
-	  <aop:advisor pointcut-ref="messageConsumer" advice-ref="txAdvice" order="1" />
-	  	«ENDIF »
-	  	«IF isServiceContextToBeGenerated()»
-	  <aop:advisor pointcut-ref="messageConsumer" advice-ref="serviceContextStoreAdvice" order="2" />
-	  	«ENDIF »
-	  <aop:advisor pointcut-ref="messageConsumer" advice-ref="errorHandlingAdvice" order="3" />
-	  	«IF isJpaProviderHibernate()»
-	  <aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-	  	«ELSEIF isValidationAnnotationToBeGenerated()»
-	  <aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-	    «ENDIF»
-	    «IF mongoDb()»
-	  <aop:advisor pointcut-ref="messageConsumer" advice-ref="mongodbManagerAdvice" order="5" />
-	    «ENDIF»
-	  «ENDIF »
+		«IF it.hasConsumers()»
+			«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
+				<aop:advisor pointcut-ref="messageConsumer" advice-ref="txAdvice" order="1" />
+			«ENDIF »
+			«IF isServiceContextToBeGenerated()»
+				<aop:advisor pointcut-ref="messageConsumer" advice-ref="serviceContextStoreAdvice" order="2" />
+			«ENDIF »
+			<aop:advisor pointcut-ref="messageConsumer" advice-ref="errorHandlingAdvice" order="3" />
+			«IF isJpaProviderHibernate()»
+				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateErrorHandlingAdvice" order="4" />
+			«ELSEIF isValidationAnnotationToBeGenerated()»
+				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
+			«ENDIF»
+			«IF mongoDb()»
+				<aop:advisor pointcut-ref="messageConsumer" advice-ref="mongodbManagerAdvice" order="5" />
+			«ENDIF»
+		«ENDIF »
 
 	</aop:config>
 	'''
 }
 
 def static String interceptorTest(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("Interceptor-test.xml"), 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml"), 'TO_GEN_RESOURCES_TEST', '''
 	«headerWithMoreNamespaces(it)»
-		<import resource="classpath:/«getResourceDir("spring")»Interceptor.xml"/>
+		<import resource="classpath:/«it.getResourceDir("spring")»Interceptor.xml"/>
 
 		«aopConfigTest(it) »
 
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String aopConfigTest(Application it) {
 	'''
-	/*When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing */
-	/*TODO remove
+	/* When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing */
+	/* TODO remove
 	«IF !isWar() »
 		«txAdvice(it) »
 	«ENDIF»
@@ -582,66 +547,62 @@ def static String aopConfigTest(Application it) {
 
 	<aop:config>
 
-	  <aop:pointcut id="repository"
-	        expression="execution(public * «basePackage»..*Repository*.*(..))"/>
+		<aop:pointcut id="repository"
+			expression="execution(public * «basePackage»..*Repository*.*(..))"/>
 
-	  /*TODO remove
-	  «IF !isWar()»
-	  <aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
-	  «ENDIF»
-	   */
+		/* TODO remove
+		«IF !isWar()»
+			<aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
+		«ENDIF»
+		*/
 
-	  <!-- Need this when JUnit directly to Repository -->
-	  <aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
-	  «IF isJpaProviderHibernate()»
+		<!-- Need this when JUnit directly to Repository -->
+		<aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
+		«IF isJpaProviderHibernate()»
 			<aop:advisor pointcut-ref="repository" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-			«ELSEIF isValidationAnnotationToBeGenerated()»
+		«ELSEIF isValidationAnnotationToBeGenerated()»
 			<aop:advisor pointcut-ref="repository" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-			«ENDIF»
+		«ENDIF»
 
 	</aop:config>
 	'''
 }
 
 def static String sessionFactory(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("SessionFactory.xml"), 'TO_GEN_RESOURCES', '''
-		«IF dbProduct() == "hsqldb-inmemory" && !isSpringDataSourceSupportToBeGenerated()»
-			«sessionFactoryInMemory(it)(false)»
-		«ELSE»
-		«header(it)»
-		    «IF isWar() »
-		      «txManager(it)»
-		    «ENDIF »
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("SessionFactory.xml"), 'TO_GEN_RESOURCES', '''
+	«IF dbProduct == "hsqldb-inmemory" && !isSpringDataSourceSupportToBeGenerated()»
+		«sessionFactoryInMemory(it, false)»
+	«ELSE»
+	«header(it)»
+		«IF isWar() »
+			«txManager(it)»
+		«ENDIF »
 
 		«IF isSpringDataSourceSupportToBeGenerated()»
-		      «dataSource(it)»
+			«dataSource(it)»
 		«ENDIF»
 
 		«IF isJpaAnnotationToBeGenerated()»
-		    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-			    <property name="configLocation" value="hibernate.cfg.xml"/>
-	    «ENDIF»
-		        <property name="entityInterceptor">
-		            <ref bean="auditInterceptor" />
-		        </property>
-		«IF isSpringDataSourceSupportToBeGenerated()»
-		        <property name="dataSource" ref="dataSource"/>
+			<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+				<property name="configLocation" value="hibernate.cfg.xml"/>
 		«ENDIF»
-				/*extension point for adding additional configuration */
-				«sessionFactoryAdditions(it)»
-		    </bean>
+			<property name="entityInterceptor">
+				<ref bean="auditInterceptor" />
+			</property>
+			«IF isSpringDataSourceSupportToBeGenerated()»
+				<property name="dataSource" ref="dataSource"/>
+			«ENDIF»
+			/*extension point for adding additional configuration */
+			«sessionFactoryAdditions(it)»
+		</bean>
 		«IF isAuditableToBeGenerated()»
-		    <bean id="auditInterceptor" class="«auditInterceptorClass()»"/>
+			<bean id="auditInterceptor" class="«auditInterceptorClass()»"/>
 		«ENDIF»
 		</beans>
 
 	«ENDIF»
 	'''
 	)
-	'''
-	'''
 }
 
 /*extension point for adding additional configuration */
@@ -659,14 +620,10 @@ def static String txManager(Application it) {
 }
 
 def static String sessionFactoryTest(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "SessionFactory-test.xml", 'TO_GEN_RESOURCES_TEST', '''
-	«sessionFactoryInMemory(it)(true)»
+	fileOutput(it.getResourceDir("spring") + "SessionFactory-test.xml", 'TO_GEN_RESOURCES_TEST', '''
+	«sessionFactoryInMemory(it, true)»
 	'''
 	)
-	'''
-	'''
 }
 
 def static String sessionFactoryInMemory(Application it, boolean test) {
@@ -679,24 +636,24 @@ def static String sessionFactoryInMemory(Application it, boolean test) {
 
 		«hsqldbDataSource(it)»
 
-	«IF isJpaAnnotationToBeGenerated()»
-		<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-			<property name="dataSource" ref="hsqldbDataSource"/>
-			«IF test»
-		<property name="configLocation" value="hibernate-test.cfg.xml"></property>
-		«ELSE»
-		<property name="configLocation" value="hibernate.cfg.xml"></property>
-			«ENDIF»
-			/*add additional configuration by aop */
-		«additionalSessionFactoryPropertiesTest(it)»
-	«ENDIF»
-
+		«IF isJpaAnnotationToBeGenerated()»
+			<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+				<property name="dataSource" ref="hsqldbDataSource"/>
+				«IF test»
+					<property name="configLocation" value="hibernate-test.cfg.xml"></property>
+				«ELSE»
+					<property name="configLocation" value="hibernate.cfg.xml"></property>
+				«ENDIF»
+				/* add additional configuration by aop */
+				«additionalSessionFactoryPropertiesTest(it)»
+		«ENDIF»
+	
 			<property name="entityInterceptor">
 				<ref bean="auditInterceptor" />
 			</property>
 		</bean>
 		«IF isAuditableToBeGenerated()»
-		<bean id="auditInterceptor" class="«auditInterceptorClass()»"/>
+			<bean id="auditInterceptor" class="«auditInterceptorClass()»"/>
 		«ENDIF»
 
 	</beans>
@@ -740,7 +697,7 @@ def static String dataSourceAdditions(Application it) {
 
 def static String hibernateResource(Module it) {
 	'''
-	«IF !domainObjects.typeSelect(Enum).isEmpty »
+	«IF !domainObjects.filter[e | e.metaType == typeof(Enum)].isEmpty »
 		«hibernateEnumTypedefResource(it)»
 	«ENDIF»
 	'''
@@ -748,14 +705,12 @@ def static String hibernateResource(Module it) {
 
 def static String hibernateEnumTypedefResource(Module it) {
 	'''
-				    <value>«getResourceDir("hibernate")»«getEnumTypeDefFileName()»</value>
+				<value>«it.getResourceDir("hibernate")»«it.getEnumTypeDefFileName()»</value>
 	'''
 }
 
 def static String jms(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("Jms.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml"), 'TO_GEN_RESOURCES', '''
 	«header(it)»
 		«IF isEar() »
 		«jndiTemplate(it)»
@@ -768,8 +723,6 @@ def static String jms(Application it) {
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String jndiTemplate(Application it) {
@@ -846,8 +799,6 @@ def static String invalidMessageDestination(Application it) {
 
 
 def static String ehcacheProperties(Application it) {
-	'''
-	'''
 	fileOutput("ehcache.xml", 'TO_RESOURCES', '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<ehcache>
@@ -863,13 +814,9 @@ def static String ehcacheProperties(Application it) {
 	</ehcache>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String testEhcacheProperties(Application it) {
-	'''
-	'''
 	fileOutput("ehcache.xml", 'TO_RESOURCES_TEST', '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<ehcache>
@@ -885,20 +832,16 @@ def static String testEhcacheProperties(Application it) {
 	</ehcache>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String entityManagerFactory(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("EntityManagerFactory.xml") , 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml") , 'TO_GEN_RESOURCES', '''
 
 	«headerWithMoreNamespaces(it)»
 
 	«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»
-	<jee:jndi-lookup id="entityManagerFactory" jndi-name="java:/«persistenceUnitName()»"/>
-		«entityManagerFactoryTx(it)(false)»
+		<jee:jndi-lookup id="entityManagerFactory" jndi-name="java:/«it.persistenceUnitName()»"/>
+		«entityManagerFactoryTx(it, false)»
 	«ELSE»
 		<!-- Creates a EntityManagerFactory for use with a JPA provider -->
 		«IF isJpaProviderAppEngine()»
@@ -906,31 +849,27 @@ def static String entityManagerFactory(Application it) {
 			<bean id="entityManagerFactory" factory-bean="appEngineEntityManagerFactory" factory-method="entityManagerFactory" />
 		«ELSE»
 			«IF isSpringDataSourceSupportToBeGenerated()»
-		    	«dataSource(it)»
+				«dataSource(it)»
 			«ENDIF»
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-			«IF isSpringDataSourceSupportToBeGenerated()»
-	        <property name="dataSource" ref="dataSource"/>
-			«ENDIF»
-			«IF persistenceXml() != "META-INF/persistence.xml"»
-			<property name="persistenceXmlLocation" value="«persistenceXml()»"/>
-			«ENDIF»
-	</bean>
+			<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+				«IF isSpringDataSourceSupportToBeGenerated()»
+					<property name="dataSource" ref="dataSource"/>
+				«ENDIF»
+				«IF persistenceXml() != "META-INF/persistence.xml"»
+					<property name="persistenceXmlLocation" value="«persistenceXml()»"/>
+				«ENDIF»
+			</bean>
 		«ENDIF»
-		«entityManagerFactoryTx(it)(false)»
+		«entityManagerFactoryTx(it, false)»
 	«ENDIF»
 
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String entityManagerFactoryTest(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("EntityManagerFactory-test.xml") , 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml") , 'TO_GEN_RESOURCES_TEST', '''
 
 	«headerWithMoreNamespaces(it)»
 
@@ -953,29 +892,26 @@ def static String entityManagerFactoryTest(Application it) {
 	</bean>
 	«ENDIF»
 
-	«entityManagerFactoryTx(it)(true)»
+	«entityManagerFactoryTx(it, true)»
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String entityManagerFactoryTx(Application it, boolean test) {
 	'''
-		«IF isWar() || test || (isSpringDataSourceSupportToBeGenerated() && applicationServer() != "jboss")»
-			«jpaTxManager(it)»
+	«IF isWar() || test || (isSpringDataSourceSupportToBeGenerated() && applicationServer() != "jboss")»
+		«jpaTxManager(it)»
 	«ELSE»
 		«jtaTxManager(it)»
-			«ENDIF»
+	«ENDIF»
 
-		«IF isSpringAnnotationTxToBeGenerated()»
-	    <!-- enables @Transactional support -->
+	«IF isSpringAnnotationTxToBeGenerated()»
+		<!-- enables @Transactional support -->
 		<tx:annotation-driven transaction-manager="txManager"/>
 	«ENDIF»
 
 	«persistenceExceptionTranslationPostProcessor(it)»
-
 	'''
 }
 
@@ -986,9 +922,9 @@ def static String persistenceExceptionTranslationPostProcessor(Application it) {
 				   PersistenceExceptionTranslationPostProcessor needs a PersistenceExceptionTranslator, e.g. LocalContainerEntityManagerFactoryBean
 		 */
 		«IF !isEar()»
-	  	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
-	  	«ENDIF»
-			«ENDIF»
+			<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -1008,18 +944,14 @@ def static String jtaTxManager(Application it) {
 }
 
 def static String mongodb(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "mongodb.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "mongodb.xml", 'TO_GEN_RESOURCES', '''
 			«header(it)»
 			«mongodbManager(it)»
 			«mongodbOptions(it)»
 			</beans>
 	'''
 	)
-	'''
-	'''
-}    
+}
 
 def static String mongodbManager(Application it) {
 	'''
@@ -1045,18 +977,14 @@ def static String mongodbOptions(Application it) {
 }
 
 def static String mongodbTest(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "mongodb-test.xml", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + "mongodb-test.xml", 'TO_GEN_RESOURCES_TEST', '''
 			«header(it)»
 			«mongodbManagerTest(it)»
 			«mongodbOptions(it)»
 			</beans>
 	'''
 	)
-	'''
-	'''
-}    
+}
 
 def static String mongodbManagerTest(Application it) {
 	'''
@@ -1070,23 +998,19 @@ def static String mongodbManagerTest(Application it) {
 }
 
 def static String pubSub(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("pub-sub.xml"), 'TO_GEN_RESOURCES', '''
-			«header(it)»
-				<bean id="publishAdvice" class="«fw("event.annotation.PublishAdvice")»" />
-		
-					<bean id="subscribeBeanPostProcessor" class="«fw("event.annotation.SubscribeBeanPostProcessor")»" />
-					
-					«simpleEventBus(it)»
-					«IF getAllDomainObjects().exists(e|e.metaType == CommandEvent)»
-						«simpleCommandBus(it)»
-					«ENDIF»
-			</beans>
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml"), 'TO_GEN_RESOURCES', '''
+	«header(it)»
+		<bean id="publishAdvice" class="«fw("event.annotation.PublishAdvice")»" />
+
+			<bean id="subscribeBeanPostProcessor" class="«fw("event.annotation.SubscribeBeanPostProcessor")»" />
+			
+			«simpleEventBus(it)»
+			«IF getAllDomainObjects(it).exists(e|e.metaType == typeof(CommandEvent))»
+				«simpleCommandBus(it)»
+			«ENDIF»
+	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String simpleEventBus(Application it) {
@@ -1106,61 +1030,57 @@ def static String simpleCommandBus(Application it) {
 }
 
 def static String springRemoting(Application it) {
-	'''
-	«val remoteServices = it.getAllServices().filter(e|e.remoteInterface)»
-	'''
-	fileOutput(getResourceDir("spring") + getApplicationContextFile("remote-services.xml"), 'TO_GEN_RESOURCES', '''
-			«header(it)»
-				«IF getSpringRemotingType() == "rmi"»
-				«it.remoteServices .forEach[rmiServiceExporter(it)]»
-			«ELSEIF getSpringRemotingType() == "httpinvoker"»
-				«it.remoteServices .forEach[httpInvokerServiceExporter(it)]»
-			«ELSEIF getSpringRemotingType() == "hessian"»
-				«it.remoteServices .forEach[hessianServiceExporter(it)]»
-			«ELSEIF getSpringRemotingType() == "burlap"»
-				«it.remoteServices .forEach[burlapServiceExporter(it)]»
-			«ENDIF»		
-			</beans>
+	val remoteServices = it.getAllServices().filter(e|e.remoteInterface)
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml"), 'TO_GEN_RESOURCES', '''
+	«header(it)»
+		«IF getSpringRemotingType() == "rmi"»
+			«remoteServices .map[rmiServiceExporter(it)]»
+		«ELSEIF getSpringRemotingType() == "httpinvoker"»
+			«remoteServices .map[httpInvokerServiceExporter(it)]»
+		«ELSEIF getSpringRemotingType() == "hessian"»
+			«remoteServices .map[hessianServiceExporter(it)]»
+		«ELSEIF getSpringRemotingType() == "burlap"»
+			«remoteServices .map[burlapServiceExporter(it)]»
+		«ENDIF»		
+	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String rmiServiceExporter(Service it) {
 	'''
-		<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
-	    <property name="serviceName" value="«module.application.name»/«name.toFirstLower()»"/>
-	    <property name="service" ref="«name.toFirstLower()»"/>
-	    <property name="serviceInterface" value="«getServiceapiPackage()».«name»"/>
-	    <property name="registryPort" value="${rmiRegistry.port}"/>
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+		<property name="serviceName" value="«module.application.name»/«name.toFirstLower()»"/>
+		<property name="service" ref="«name.toFirstLower()»"/>
+		<property name="serviceInterface" value="«it.getServiceapiPackage()».«name»"/>
+		<property name="registryPort" value="${rmiRegistry.port}"/>
 	</bean>
 	'''
 }
 
 def static String hessianServiceExporter(Service it) {
 	'''
-	«serviceExporter(it)("org.springframework.remoting.caucho.HessianExporter")»
+		«serviceExporter(it, "org.springframework.remoting.caucho.HessianExporter")»
 	'''
 }
 
 def static String burlapServiceExporter(Service it) {
 	'''
-	«serviceExporter(it)("org.springframework.remoting.caucho.BurlapExporter")»
+		«serviceExporter(it, "org.springframework.remoting.caucho.BurlapExporter")»
 	'''
 }
 
 def static String httpInvokerServiceExporter(Service it) {
 	'''
-	«serviceExporter(it)("org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter")»
+		«serviceExporter(it, "org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter")»
 	'''
 }
 
 def static String serviceExporter(Service it, String exporterClass) {
 	'''
-		<bean name="«name.toFirstLower()»Exporter" class="«exporterClass»">
+	<bean name="«name.toFirstLower()»Exporter" class="«exporterClass»">
 	    <property name="service" ref="«name.toFirstLower()»"/>
-	    <property name="serviceInterface" value="«getServiceapiPackage()».«name»"/>
+	    <property name="serviceInterface" value="«it.getServiceapiPackage()».«name»"/>
 	</bean>
 	<!-- You need to define corresponding servlet in web.xml -->
 	<!--

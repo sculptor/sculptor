@@ -17,20 +17,19 @@
 
 package org.sculptor.generator.template.consumer
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.db.DbUnitTmpl
+import sculptormetamodel.Consumer
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.consumer.ConsumerTestTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class ConsumerTestTmpl {
 
 def static String consumerJUnitWithAnnotations(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -39,9 +38,9 @@ def static String consumerJUnitWithAnnotations(Consumer it) {
 	import static org.junit.Assert.assertTrue;
 	import static org.junit.Assert.fail;
 
-/**
- * JUnit test.
- */
+	/**
+	 * JUnit test.
+	 */
 	public class «name»Test ^extends «databaseJpaTestCaseClass()» {
 
 		@org.springframework.beans.factory.annotation.Autowired
@@ -54,18 +53,16 @@ def static String consumerJUnitWithAnnotations(Consumer it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String consumerJUnitGetDataSetFile(Consumer it) {
 	'''
 	«IF getDbUnitDataSetFile() != null»
-	    @Override
-			protected String getDataSetFile() {
-			    return "«getDbUnitDataSetFile()»";
-			}
-		«ENDIF»
+		@Override
+		protected String getDataSetFile() {
+			return "«getDbUnitDataSetFile()»";
+		}
+	«ENDIF»
 	'''
 }
 
@@ -81,45 +78,37 @@ def static String receiveTestMethod(Consumer it) {
 }
 
 def static String dbunitTestData(Consumer it) {
-	'''
-	'''
 	fileOutput("dbunit/" + name + "Test.xml", 'TO_RESOURCES_TEST', '''
-		«DbUnitTmpl::dbunitTestDataContent(it) FOR module.application»
+		«DbUnitTmpl::dbunitTestDataContent(it.module.application)»
 	'''
 	)
-	'''
-	'''
 }
 
 def static String consumerDependencyInjectionJUnit(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "DependencyInjectionTest"), 'TO_GEN_SRC_TEST', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
-/**
- * JUnit test to verify that dependency injection setter methods
- * of other Spring beans have been implemented.
- */
+	/**
+	 * JUnit test to verify that dependency injection setter methods
+	 * of other Spring beans have been implemented.
+	 */
 	public class «name»DependencyInjectionTest ^extends junit.framework.TestCase {
 
-		«it.otherDependencies.forEach[consumerDependencyInjectionTestMethod(it)(this)]»
+		«it.otherDependencies.forEach[d | consumerDependencyInjectionTestMethod(d, it)]»
 
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 /*This (String) is the name of the dependency */
 def static String consumerDependencyInjectionTestMethod(String it, Consumer consumer) {
 	'''
-		public void test«this.toFirstUpper()»Setter() throws Exception {
+		public void test«it.toFirstUpper()»Setter() throws Exception {
 			Class clazz = «consumer.getConsumerPackage()».«consumer.name».class;
 			java.lang.reflect.Method[] methods = clazz.getMethods();
-			String setterMethodName = "set«this.toFirstUpper()»";
+			String setterMethodName = "set«it.toFirstUpper()»";
 			java.lang.reflect.Method setter = null;
 			for (int i = 0; i < methods.length; i++) {
 				if (methods[i].getName().equals(setterMethodName) &&
@@ -131,7 +120,7 @@ def static String consumerDependencyInjectionTestMethod(String it, Consumer cons
 			}
 
 			assertNotNull("Setter method for dependency injection of " +
-				        "«this» must be defined in «consumer.name».",
+				        "«it» must be defined in «consumer.name».",
 				        setter);
 
 			«consumer.getConsumerPackage()».«consumer.name» «consumer.name.toFirstLower()» = new «consumer.getConsumerPackage()».«consumer.name»();

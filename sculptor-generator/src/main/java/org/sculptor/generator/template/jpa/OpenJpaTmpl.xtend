@@ -17,23 +17,24 @@
 
 package org.sculptor.generator.template.jpa
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.db.OracleDDLTmpl
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.DbHelper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.jpa.OpenJpaTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
 
 class OpenJpaTmpl {
 
 def static String openJpa(Application it) {
 	'''
-	«IF isJodaDateTimeLibrary()»
-	    «jodaStrategy(it)»
-	«ENDIF»
-		«IF containsNonOrdinaryEnums()»
+		«IF isJodaDateTimeLibrary()»
+		«jodaStrategy(it)»
+		«ENDIF»
+		«IF it.containsNonOrdinaryEnums()»
 			«enumStrategy(it)»
 		«ENDIF»
 		«IF isTestToBeGenerated()»
@@ -43,8 +44,6 @@ def static String openJpa(Application it) {
 }
 
 def static String jodaStrategy(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName(basePackage +".util.JodaHandler"), '''
 	package «basePackage».util;
 
@@ -117,13 +116,9 @@ def static String jodaStrategy(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumStrategy(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName(basePackage +".util.EnumHandler"), '''
 	package «basePackage».util;
 
@@ -166,8 +161,6 @@ def static String enumStrategy(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 /*
@@ -175,14 +168,10 @@ def static String enumStrategy(Application it) {
 		OpenJPA is not generating primary keys on manytomany jointables
  */
 def static String testDdl(Application it) {
-	'''
-	«val manyToManyRelations = it.resolveManyToManyRelations(true)»
-	'''
+	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	fileOutput("dbunit/ddl.sql", 'TO_GEN_RESOURCES_TEST', '''
-		«it.manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
+		«manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
 	'''
 	)
-	'''
-	'''
 }
 }

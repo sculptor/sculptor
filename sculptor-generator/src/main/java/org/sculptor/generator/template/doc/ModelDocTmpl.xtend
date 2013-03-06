@@ -4,31 +4,46 @@
 
 package org.sculptor.generator.template.doc
 
-import sculptormetamodel.*
+import java.util.List
+import sculptormetamodel.Application
+import sculptormetamodel.Attribute
+import sculptormetamodel.BasicType
+import sculptormetamodel.CommandEvent
+import sculptormetamodel.Consumer
+import sculptormetamodel.DataTransferObject
+import sculptormetamodel.DomainEvent
+import sculptormetamodel.DomainObject
+import sculptormetamodel.DomainObjectTypedElement
+import sculptormetamodel.Entity
+import sculptormetamodel.Enum
+import sculptormetamodel.Module
+import sculptormetamodel.NamedElement
+import sculptormetamodel.Operation
+import sculptormetamodel.Parameter
+import sculptormetamodel.Reference
+import sculptormetamodel.Service
+import sculptormetamodel.Trait
+import sculptormetamodel.ValueObject
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.doc.ModelDocTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.ext.UmlGraphHelper.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
 
 class ModelDocTmpl {
 
-def static String start(Application it) {
-	'''
-	«docHtml(it) FOR this»
-	«ModelDocCss::docCss(it) FOR this»
-	«it.modules.forEach[moduleDocHtml(it)]»
-	'''
+def static void start(Application it) {
+	docHtml(it)
+	ModelDocCssTmpl::docCss(it)
+	it.modules.forEach[m | moduleDocHtml(m)]
 }
 
 def static String docHtml(Application it) {
-	'''
-	'''
+	val title = "Summary Documentation of " + name + " Domain Model"
 	fileOutput("DomainModelDoc.html", 'TO_GEN_RESOURCES', '''
-	«val title = it."Summary Documentation of " + name + " Domain Model"»
-	«header(it)(title)»
+	«header(it, title)»
 
 	<div id="wrap">
 		
@@ -45,16 +60,12 @@ def static String docHtml(Application it) {
 	</html>
 	'''
 	)
-	'''    
-	'''
 }
 
 def static String moduleDocHtml(Module it) {
-	'''
-	'''
+	val title = "Summary Documentation of " + name + " module"
 	fileOutput("DomainModelDoc-" + name + ".html", 'TO_GEN_RESOURCES', '''
-	«val title = it."Summary Documentation of " + name + " module"»
-	«header(it)(title + "(" + application.name + ")")»
+	«header(it, title + "(" + application.name + ")")»
 	<div id="wrap">
 			<a name="module_«name»"></a>
 	<h1>«title» <a href="DomainModelDoc.html">(«application.name»)</a></h1>
@@ -67,8 +78,6 @@ def static String moduleDocHtml(Module it) {
 	</html>	
 	'''
 	)
-	'''
-	'''
 }
 
 def static String header(Object it, String title) {
@@ -124,13 +133,13 @@ def static String moduleDocContent(Module it) {
 	
 	<div id="services">
 	<hr/>
-	«it.services.sortBy(e|e.name).forEach[serviceDoc(it)]»
+	«it.services.sortBy(e|e.name).forEach[e | serviceDoc(e)]»
 	</div>
 	<div id="consumers">
-	«it.consumers.sortBy(e|e.name).forEach[consumerDoc(it)]»
+	«it.consumers.sortBy(e|e.name).forEach[e | consumerDoc(e)]»
 	</div>
 	<div id="domainObjects">
-	«it.domainObjects.sortBy(e|e.name).forEach[domainObjectDoc(it)]»
+	«it.domainObjects.sortBy(e|e.name).forEach[e | domainObjectDoc(e)]»
 	</div>
 	'''
 }
@@ -140,7 +149,7 @@ def static String menu(Application it) {
 	<div id="menu">
 	«FOR m : modules.sortBy(e|e.name)»
 		<h2><a href="DomainModelDoc-«m.name».html#module_«m.name»">«m.name»</a></h2>
-			«menuItems(it) FOR m»
+			«menuItems(m)»
 	«ENDFOR»
 	</div>
 	'''
@@ -155,13 +164,15 @@ def static String menu(Module it) {
 }
 
 def static String menuItems(Module it) {
+	val List<? extends NamedElement> el = newArrayList()
+	el.addAll(services)
+	el.addAll(consumers)
+	el.addAll(domainObjects)
+
 	'''
-			<ul>
-			«menuItem(it) FOREACH  {}.addAll(services)
-				.addAll(consumers)
-				.addAll(domainObjects)
-				.sortBy(e | ((NamedElement) e).name)»
-			</ul>
+		<ul>
+			«el.sortBy[name].map[e | menuItem(e)]»
+		</ul>
 	'''
 }
 
@@ -172,9 +183,9 @@ def static String menuItem(Object it) {
 
 def static String menuItem(NamedElement it) {
 	'''
-				<li><a href="DomainModelDoc-«getModule().name».html#«name»">«name»</a></li>
+				<li><a href="DomainModelDoc-«it.getModule().name».html#«name»">«name»</a></li>
 	'''
-}				
+}
 
 def static String graph(Application it) {
 	'''
@@ -189,7 +200,7 @@ def static String graph(Application it) {
 		<a href="umlgraph-overview.dot.png">
 		<img src="umlgraph-overview.dot.png" />
 		</a>
-	«IF existsCoreDomain()»
+	«IF it.existsCoreDomain()»
 		<hr/>
 		<p><b>Core Domain</b></p>
 		<a href="umlgraph-core-domain.dot.png">
@@ -197,7 +208,7 @@ def static String graph(Application it) {
 		</a>
 	«ENDIF»
 	
-	«FOR subjectArea : getSubjectAreas().reject(s|s == "entity")»
+	«FOR subjectArea : it.getSubjectAreas().filter(s|s != "entity")»
 		<hr/>
 		<p><b>Subject Area: «subjectArea»</b></p>
 		<a href="umlgraph-«subjectArea».dot.png">
@@ -230,8 +241,8 @@ def static String graph(Module it) {
 		</a>
 		<hr/>
 		<p><b>Persistent Domain in «name»</b></p>
-		<a href="umlgraph-«this.application.modules.size > 1 ? name + "-" : ""»entity.dot.png">
-		<img src="umlgraph-«this.application.modules.size > 1 ? name + "-" : ""»entity.dot.png" />
+		<a href="umlgraph-«if (it.application.modules.size > 1) name + "-" else ""»entity.dot.png">
+		<img src="umlgraph-«if (it.application.modules.size > 1) name + "-" else ""»entity.dot.png" />
 		</a>
 	</div>
 	'''
@@ -242,7 +253,7 @@ def static String serviceDoc(Service it) {
 	<a name="«name»"></a>
 	<h3>«name»</h3>
 	<p>«doc»</p>
-	«it.operations.sortBy(e| ((NamedElement) e).name).forEach[operationDoc(it)]»
+	«it.operations.sortBy(e| e.name).forEach[operationDoc(it)]»
 	<hr/>
 	'''
 }
@@ -296,6 +307,10 @@ def static String consumerDoc(Consumer it) {
 }
 
 def static String domainObjectDoc(DomainObject it) {
+	val List<? extends NamedElement> el = newArrayList()
+	el.addAll(references.filter(r | !r.transient).toList)
+	el.addAll(attributes.filter(a | !a.transient).toList)
+
 	'''
 	<a name="«name»"></a>
 	<h3>«name»</h3>
@@ -311,13 +326,12 @@ def static String domainObjectDoc(DomainObject it) {
 			<th>Description</th>
 		</thead>
 
-	«fieldDoc(it) FOREACH  {}.addAll(references.reject(r | r.transient)).addAll(attributes.reject(a | a.transient)).
-			sortBy(e| ((NamedElement) e).name)»
+	«el.sortBy[e | e.name].map[m | fieldDoc(m)]»
 
 	</table>
 	«IF !operations.isEmpty»
 		<p><i>Operations:</i></p>
-		«it.operations.sortBy(e| ((NamedElement) e).name).forEach[operationDoc(it)]»
+		«it.operations.sortBy(e | e.name).map[operationDoc(it)]»
 	«ENDIF»
 	<hr/>
 	'''
@@ -335,10 +349,10 @@ def static String domainObjectDoc(Enum it) {
 			<th>Description</th>
 		</thead>
 
-	«FOR val : values»
+	«FOR eVal : values»
 		<tr>
-			<td>«val.name»</td>
-			<td>«val.doc»</td>
+			<td>«eVal.name»</td>
+			<td>«eVal.doc»</td>
 		</tr>
 	«ENDFOR»
 	</table>
@@ -346,15 +360,16 @@ def static String domainObjectDoc(Enum it) {
 	'''
 }
 
-	«DEFINE ^extendsCharacteristics FOR DomainObject»
+def static String extendsCharacteristics (DomainObject it) {
+	'''
 	«IF ^extends != null»<p><i>^extends <a href="DomainModelDoc-«^extends.getModule().name».html#«^extends.name»">«^extends.name»</a></i></p>«ENDIF»
 	'''
 }
 
 def static String domainObjectCharacteristics(DomainObject it) {
 	'''
-	<p>«IF isImmutable()»<i>Immutable</i>«ENDIF»</p>
-	«(it)^extendsCharacteristics»
+	<p>«IF it.isImmutable()»<i>Immutable</i>«ENDIF»</p>
+	«extendsCharacteristics(it)»
 	«traitsCharacteristics(it)»
 	'''
 }
@@ -362,8 +377,8 @@ def static String domainObjectCharacteristics(DomainObject it) {
 def static String domainObjectCharacteristics(Entity it) {
 	'''
 	<p><i>Entity</i>«IF !isAggregateRoot()», «notAggregateRootInfo(it)»«ENDIF»</p>
-	«IF isImmutable()»<p><i>Immutable</i></p>«ENDIF»
-	«(it)^extendsCharacteristics»
+	«IF it.isImmutable()»<p><i>Immutable</i></p>«ENDIF»
+	«extendsCharacteristics(it)»
 	«traitsCharacteristics(it)»
 	'''
 }
@@ -379,7 +394,7 @@ def static String notAggregateRootInfo(DomainObject it) {
 def static String domainObjectCharacteristics(ValueObject it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» ValueObject</i>«IF !persistent», not persistent«ELSEIF !isAggregateRoot()», «notAggregateRootInfo(it)»«ENDIF»</p>
-	«(it)^extendsCharacteristics»
+	«extendsCharacteristics(it)»
 	«traitsCharacteristics(it)»
 	'''
 }
@@ -400,14 +415,14 @@ def static String domainObjectCharacteristics(Enum it) {
 def static String domainObjectCharacteristics(DataTransferObject it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» DTO</i></p>
-	«(it)^extendsCharacteristics»
+	«extendsCharacteristics(it)»
 	'''
 }
 
 def static String domainObjectCharacteristics(DomainEvent it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» DomainEvent</i></p>
-	«(it)^extendsCharacteristics»
+	«extendsCharacteristics(it)»
 	«traitsCharacteristics(it)»
 	'''
 }
@@ -415,7 +430,7 @@ def static String domainObjectCharacteristics(DomainEvent it) {
 def static String domainObjectCharacteristics(CommandEvent it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» CommandEvent</i></p>
-	«(it)^extendsCharacteristics»
+	«extendsCharacteristics(it)»
 	«traitsCharacteristics(it)»
 	'''
 }
@@ -432,18 +447,18 @@ def static String traitsCharacteristics(DomainObject it) {
 	'''
 }
 
-def static String fieldDoc(Object it) {
+def static dispatch String fieldDoc(Object it) {
 	'''
 	'''
 }
 
-def static String fieldDoc(Attribute it) {
+def static dispatch String fieldDoc(Attribute it) {
 	'''
-	«val isDto = it.getDomainObject().metaType == DataTransferObject»
+	«val isDto = it.getDomainObject().metaType == typeof(DataTransferObject)»
 	<tr>
 		<td>«IF naturalKey»<b>«ENDIF»«name»«IF naturalKey»</b>«ENDIF»</td>
 		<td>«IF collectionType != null»«collectionType»&lt;«ENDIF»«type»«IF collectionType != null»&gt;«ENDIF»</td>
-		<td>«IF isDto || collectionType != null || getDatabaseLength() == null»&nbsp;«ELSE»«getDatabaseLength()»«ENDIF»</td>
+		<td>«IF isDto || collectionType != null || it.getDatabaseLength() == null»&nbsp;«ELSE»«it.getDatabaseLength()»«ENDIF»</td>
 		<td>«IF (isDto && !required) || (!isDto && nullable)»&nbsp;«ELSE»X«ENDIF»</td>
 		<td>«IF changeable»X«ELSE»&nbsp;«ENDIF»</td>
 		<td>«description(it)»</td>
@@ -473,9 +488,9 @@ def static String description(Attribute it) {
 	'''
 }
 
-def static String fieldDoc(Reference it) {
+def static dispatch String fieldDoc(Reference it) {
 	'''
-	«val isDto = it.from.metaType == DataTransferObject»
+	«val isDto = it.from.metaType == typeof(DataTransferObject)»
 	<tr>
 		<td>«IF naturalKey»<b>«ENDIF»«name»«IF naturalKey»</b>«ENDIF»</td>
 		<td>«IF collectionType != null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«to.module.name».html#«to.name»">«to.name»</a>«IF collectionType != null»&gt;«ENDIF»</td>

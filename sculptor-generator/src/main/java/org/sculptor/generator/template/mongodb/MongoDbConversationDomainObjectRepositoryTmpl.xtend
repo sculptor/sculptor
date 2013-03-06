@@ -17,38 +17,37 @@
 
 package org.sculptor.generator.template.mongodb
 
-import sculptormetamodel.*
+import sculptorguimetamodel.GuiApplication
+import sculptormetamodel.Application
+import sculptormetamodel.BasicType
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.mongodb.MongoDbConversationDomainObjectRepositoryTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class MongoDbConversationDomainObjectRepositoryTmpl {
 
 
 def static String conversationDomainObectRepository(GuiApplication it) {
-	'''
-	'''
-	fileOutput(javaFileName(this.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl") , '''
+	var it = it.guiForApplication
+
+	fileOutput(javaFileName(it.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl") , '''
 	«javaHeader()»
 	package «basePackage».util.«subPackage("web")»;
 
 	public class ConversationDomainObjectMongoDbRepositoryImpl implements «fw("web.hibernate.ConversationDomainObjectRepository")» {
 		
-		«dbManager(it) FOR guiForApplication»
-		«mappers(it) FOR guiForApplication»
-		«get(it) FOR guiForApplication»
-		«revert(it) FOR guiForApplication»
-		«clear(it) FOR guiForApplication»
+		«dbManager(it)»
+		«mappers(it)»
+		«get(it)»
+		«revert(it)»
+		«clear(it)»
 
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String dbManager(Application it) {
@@ -67,7 +66,7 @@ def static String mappers(Application it) {
 	'''
 	private java.util.Map<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<?, com.mongodb.DBObject>> mappers = new java.util.HashMap<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<?, com.mongodb.DBObject>>();
 	{
-	«FOR each  : getAllDomainObjects(false).filter(e | e.isPersistent() || e.metaType == BasicType)»
+	«FOR each  : it.getAllDomainObjects(false).filter[e | e.isPersistent() || e.metaType == typeof(BasicType)]»
 		mappers.put(«each.getDomainPackage()».«each.name».class, «each.module.getMapperPackage()».«each.name»Mapper.getInstance());
 	«ENDFOR»
 	}

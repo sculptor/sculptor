@@ -1,20 +1,13 @@
 package org.sculptor.generator.template.rest
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.ext.Helper.*
 
 class RestWebCssTmpl {
 
 
 def static String css(Application it) {
-	'''
-	'''
 	fileOutput("stylesheets/main.css", 'TO_WEBROOT', '''
 /* main elements */
 
@@ -344,8 +337,6 @@ def static String css(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 }

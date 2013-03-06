@@ -17,24 +17,26 @@
 
 package org.sculptor.generator.template.jpa
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.db.OracleDDLTmpl
+import sculptormetamodel.Application
+import sculptormetamodel.Enum
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.jpa.DataNucleusTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
 
 class DataNucleusTmpl {
 
 def static String dataNucleus(Application it) {
 	'''
-		«IF containsNonOrdinaryEnums()»
-	    «enumMappingClass(it)»
-	    «enumLiteralClass(it)»
-	    «enumPlugin(it)»
-	    «manifest(it)»
+		«IF it.containsNonOrdinaryEnums()»
+			«enumMappingClass(it)»
+			«enumLiteralClass(it)»
+			«enumPlugin(it)»
+			«manifest(it)»
 		«ENDIF»
 		«IF isTestToBeGenerated()»
 			«dataNucleusTestProperties(it)»
@@ -44,8 +46,6 @@ def static String dataNucleus(Application it) {
 }
 
 def static String dataNucleusTestProperties(Application it) {
-	'''
-	'''
 	fileOutput("datanucleus-test.properties", 'TO_GEN_RESOURCES_TEST', '''
 	datanucleus.ConnectionDriverName=org.hsqldb.jdbcDriver
 	datanucleus.ConnectionURL=jdbc:hsqldb:mem:«name.toLowerCase()»
@@ -53,20 +53,16 @@ def static String dataNucleusTestProperties(Application it) {
 	datanucleus.ConnectionPassword=
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumPlugin(Application it) {
-	'''
-	'''
 	fileOutput("plugin.xml", 'TO_GEN_RESOURCES', '''
 	<?xml version="1.0"?>
 	<plugin>
 		<extension point="org.datanucleus.store_mapping">
-	«FOR enum : getAllEnums().filter(e|!e.isOrdinaryEnum())»
-		«enumPluginMapping(it) FOR enum»
-	«ENDFOR»
+		«FOR enum : it.getAllEnums().filter(e|!e.isOrdinaryEnum())»
+			«enumPluginMapping(enum)»
+		«ENDFOR»
 		</extension>
 		<extension point="org.datanucleus.store.rdbms.sql_expression">
 			<sql-expression mapping-class="«basePackage».util.EnumMapping"
@@ -76,20 +72,16 @@ def static String enumPlugin(Application it) {
 	</plugin>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumPluginMapping(Enum it) {
 	'''
-			<mapping java-type="«getDomainPackage() + "." + name»"
-				mapping-class="«getApplicationBasePackage()».util.EnumMapping"/>
+		<mapping java-type="«getDomainPackage() + "." + name»"
+			mapping-class="«it.getApplicationBasePackage()».util.EnumMapping"/>
 	'''
 }
 
 def static String manifest(Application it) {
-	'''
-	'''
 	fileOutput("META-INF/MANIFEST.MF", 'TO_GEN_RESOURCES', '''
 	Manifest-Version: 1.0
 	Bundle-ManifestVersion: 2
@@ -98,13 +90,9 @@ def static String manifest(Application it) {
 	Bundle-Version: 1.0.0
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumMappingClass(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), '''
 	package «basePackage».util;
 
@@ -199,13 +187,9 @@ def static String enumMappingClass(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumLiteralClass(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), '''
 	package org.datanucleus.store.rdbms.sql.expression;
 
@@ -214,9 +198,9 @@ def static String enumLiteralClass(Application it) {
 	import org.datanucleus.store.rdbms.sql.SQLStatement;
 	import org.fornax.cartridges.sculptor.framework.util.EnumHelper;
 
-/**
- * Representation of an Enum literal.
- */
+	/**
+	 * Representation of an Enum literal.
+	 */
 	public class ParameterEnumLiteral ^extends EnumLiteral
 	{
 		public ParameterEnumLiteral(SQLStatement stmt, JavaTypeMapping mapping, Object value, String parameterName) {
@@ -246,8 +230,6 @@ def static String enumLiteralClass(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 /*
@@ -255,14 +237,10 @@ def static String enumLiteralClass(Application it) {
 		DataNucleus is not generating primary keys on manytomany jointables
  */
 def static String testDdl(Application it) {
-	'''
-	«val manyToManyRelations = it.resolveManyToManyRelations(true)»
-	'''
+	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	fileOutput("dbunit/ddl_additional.sql", 'TO_GEN_RESOURCES_TEST', '''
-		«it.manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
+		«manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
 	'''
 	)
-	'''
-	'''
 }
 }

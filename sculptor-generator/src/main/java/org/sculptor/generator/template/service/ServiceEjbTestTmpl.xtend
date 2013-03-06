@@ -17,40 +17,37 @@
 
 package org.sculptor.generator.template.service
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
+import sculptormetamodel.Service
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class ServiceEjbTestTmpl {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String serviceJUnitSubclassOpenEjb(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
 	«javaHeader()»
-	package «getServiceapiPackage()»;
+	package «it.getServiceapiPackage()»;
 
 	import static org.junit.Assert.assertNotNull;
 	import static org.junit.Assert.assertTrue;
 	import static org.junit.Assert.fail;
 
-/**
- *  JUnit test with OpenEJB support.
- */
+	/**
+	 *  JUnit test with OpenEJB support.
+	 */
 	public class «name»Test ^extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» implements «name»TestBase {
 
 	@javax.ejb.EJB
-		private «getServiceapiPackage()».«name» «name.toFirstLower()»;
+		private «it.getServiceapiPackage()».«name» «name.toFirstLower()»;
 
-		«ServiceTest::serviceJUnitGetDataSetFile(it)»
+		«ServiceTestTmpl::serviceJUnitGetDataSetFile(it)»
 
-		«it.operations.filter(op | op.isPublicVisibility()).collect(op| op.name).toSet().forEach[ServiceTest::testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[ServiceTestTmpl::testMethod(it)]»
 	}
 	'''
 	)
@@ -59,8 +56,6 @@ def static String serviceJUnitSubclassOpenEjb(Service it) {
 }
 
 def static String ejbJarXml(Application it) {
-	'''
-	'''
 	fileOutput("META-INF/ejb-jar.xml", 'TO_RESOURCES', '''
 	<?xml version="1.0" encoding="UTF-8"?>  
 	<!-- need this for OpenEJB testing -->
@@ -73,7 +68,5 @@ def static String ejbJarXml(Application it) {
 	</ejb-jar>
 	'''
 	)
-	'''
-	'''
 }
 }

@@ -17,21 +17,16 @@
 
 package org.sculptor.generator.template.camel
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
+import static org.sculptor.generator.ext.Helper.*
+
 import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class CamelTmpl {
 
 def static String camelConfig(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "camel.xml", 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "camel.xml", 'TO_RESOURCES', '''
 	«header(it)»
 	
 	«camelEventBus(it)»
@@ -42,24 +37,18 @@ def static String camelConfig(Application it) {
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String camelTestConfig(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "camel-test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + "camel-test.xml", 'TO_RESOURCES_TEST', '''
 	«header(it)»
-	<import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("camel.xml")»"/>
+	<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
 	
 	«camelTestJmsEndpoint(it)»
 
 	</beans>
 	'''
 	)
-	'''
-	'''
 }
 
 

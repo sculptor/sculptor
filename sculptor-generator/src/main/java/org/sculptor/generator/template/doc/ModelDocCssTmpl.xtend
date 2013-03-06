@@ -4,23 +4,16 @@
 
 package org.sculptor.generator.template.doc
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.ext.Helper.*
 
 class ModelDocCssTmpl {
 
 
 def static String docCss(Application it) {
-	'''
-	'''
 	fileOutput("DomainModelDoc.css", 'TO_GEN_RESOURCES', '''
-/* main elements */
+	/* main elements */
 
 	body,div,td {
 	font-family: Arial, Helvetica, sans-serif;
@@ -294,7 +287,5 @@ def static String docCss(Application it) {
 
 	'''
 	)
-	'''
-	'''
 }
 }

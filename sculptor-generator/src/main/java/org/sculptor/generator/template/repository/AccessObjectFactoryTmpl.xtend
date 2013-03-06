@@ -17,14 +17,15 @@
 
 package org.sculptor.generator.template.repository
 
-import sculptormetamodel.*
+import sculptormetamodel.Repository
+import sculptormetamodel.RepositoryOperation
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.DbHelper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.repository.AccessObjectFactoryTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class AccessObjectFactoryTmpl {
 
@@ -38,10 +39,10 @@ def static String getPersistentClass(Repository it) {
 
 def static String genericFactoryMethod(RepositoryOperation it) {
 	'''
-	«IF useGenericAccessStrategy()»
+	«IF useGenericAccessStrategy(it)»
 		«IF name != "findByExample"»
 		// convenience method
-		protected «genericAccessObjectInterface(name)»2«getGenericType()» create«getAccessObjectName()»() {
+		protected «genericAccessObjectInterface(name)»2«it.getGenericType()» create«getAccessObjectName()»() {
 			return create«getAccessObjectName()»(getPersistentClass(), getPersistentClass());
 		}
 
@@ -63,8 +64,8 @@ def static String genericFactoryMethod(RepositoryOperation it) {
 		}
 		«ENDIF»
 		«ELSE»
-		protected «genericAccessObjectInterface(name)»«getGenericType()» create«getAccessObjectName()»() {
-			«genericAccessObjectImplementation(name)»«getGenericType()» ao = new «genericAccessObjectImplementation(name)»«getGenericType()»(« IF hasAccessObjectPersistentClassConstructor()»getPersistentClass()«ENDIF»);
+		protected «genericAccessObjectInterface(name)»«it.getGenericType()» create«getAccessObjectName()»() {
+			«genericAccessObjectImplementation(name)»«it.getGenericType()» ao = new «genericAccessObjectImplementation(name)»«it.getGenericType()»(« IF it.hasAccessObjectPersistentClassConstructor()»getPersistentClass()«ENDIF»);
 			«factoryMethodInit(it)»
 			return ao;
 		}
@@ -74,8 +75,8 @@ def static String genericFactoryMethod(RepositoryOperation it) {
 
 def static String factoryMethod(RepositoryOperation it) {
 	'''
-		protected «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«getGenericType()» create«getAccessObjectName()»() {
-			«getAccessimplPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«getGenericType()»Impl«getGenericType()» ao = new «getAccessimplPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«getGenericType()»Impl«getGenericType()»();
+		protected «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()» create«getAccessObjectName()»() {
+			«getAccessimplPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()»Impl«it.getGenericType()» ao = new «getAccessimplPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()»Impl«it.getGenericType()»();
 			«factoryMethodInit(it)»
 			return ao;
 		}
@@ -95,9 +96,10 @@ def static String factoryMethodInit(RepositoryOperation it) {
 }
 
 def static String getAdditionalDataMappers(Repository it) {
+	val allUnownedReferences = it.aggregateRoot.getAggregate().map[ag | ag.getAllReferences()].flatten.filter[e | e.isUnownedReference()]
+	val allNonEnumNaturalKeyReferences = it.aggregateRoot.getNaturalKeyReferences().filter[e | !e.isEnumReference()]
+
 	'''
-	«val allUnownedReferences = it.aggregateRoot.getAggregate().getAllReferences().filter(e | e.isUnownedReference())»
-	«val allNonEnumNaturalKeyReferences = it.aggregateRoot.getNaturalKeyReferences().reject(e | e.isEnumReference())»
 		@SuppressWarnings("unchecked")
 		private «fw("accessimpl.mongodb.DataMapper")»[] additionalDataMappers =
 			new «fw("accessimpl.mongodb.DataMapper")»[] {
@@ -106,10 +108,10 @@ def static String getAdditionalDataMappers(Repository it) {
 				«fw("accessimpl.mongodb.JodaDateTimeMapper")».getInstance(),
 				«ENDIF »
 				«fw("accessimpl.mongodb.EnumMapper")».getInstance()«IF !allUnownedReferences.isEmpty»,«ENDIF»
-				«FOR ref SEPARATOR ", " : allUnownedReferences»
+				«FOR ref : allUnownedReferences SEPARATOR ", "»
 				«fw("accessimpl.mongodb.IdMapper")».getInstance(«ref.to.getDomainPackage()».«ref.to.name».class)
 				«ENDFOR»«IF !allNonEnumNaturalKeyReferences.isEmpty»,«ENDIF»
-				«FOR ref SEPARATOR ", " : allNonEnumNaturalKeyReferences»
+				«FOR ref : allNonEnumNaturalKeyReferences SEPARATOR ", "»
 					«getMapperPackage(ref.to.module)».«ref.to.name»Mapper.getInstance()
 				«ENDFOR»
 				};

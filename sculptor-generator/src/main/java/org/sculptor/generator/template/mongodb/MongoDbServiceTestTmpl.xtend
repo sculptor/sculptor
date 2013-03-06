@@ -17,31 +17,29 @@
 
 package org.sculptor.generator.template.mongodb
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.service.ServiceTestTmpl
+import sculptormetamodel.Service
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.mongodb.MongoDbServiceTestTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class MongoDbServiceTestTmpl {
 
 
 
 def static String serviceJUnitSubclassMongoDb(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
 	«javaHeader()»
-	package «getServiceapiPackage()»;
+	package «it.getServiceapiPackage()»;
 
 	import static org.junit.Assert.fail;
 
-/**
- * Spring based test with MongoDB.
- */
+	/**
+	 * Spring based test with MongoDB.
+	 */
 	@org.junit.runner.RunWith(org.springframework.test.context.junit4.SpringJUnit4ClassRunner.class)
 	@org.springframework.test.context.ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
 	public class «name»Test ^extends org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests implements «name»TestBase {
@@ -53,12 +51,10 @@ def static String serviceJUnitSubclassMongoDb(Service it) {
 	«dropDatabase(it)»
 	«countRows(it)»
 	
-		«it.operations.filter(op | op.isPublicVisibility()).collect(op| op.name).toSet().forEach[ServiceTestTmpl::testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet.map[ServiceTestTmpl::testMethod(it)]»
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String dependencyInjection(Service it) {
@@ -67,7 +63,7 @@ def static String dependencyInjection(Service it) {
 	private «fw("accessimpl.mongodb.DbManager")» dbManager;
 	
 	@org.springframework.beans.factory.annotation.Autowired
-		private «getServiceapiPackage()».«name» «name.toFirstLower()»;
+		private «it.getServiceapiPackage()».«name» «name.toFirstLower()»;
 	'''
 }
 

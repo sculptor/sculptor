@@ -17,21 +17,17 @@
 
 package org.sculptor.generator.template.springint
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.template.springint.SpringIntegrationTmpl.*
+
 import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class SpringIntegrationTmpl {
 
 def static String springIntegrationConfig(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "spring-integration.xml", 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", 'TO_RESOURCES', '''
 	«header(it)»
 
 	«springIntegrationEventBus(it)»
@@ -41,23 +37,17 @@ def static String springIntegrationConfig(Application it) {
 	</beans:beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String springIntegrationTestConfig(Application it) {
-	'''
-	'''
-	fileOutput(getResourceDir("spring") + "spring-integration-test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", 'TO_RESOURCES_TEST', '''
 	«header(it)»
-	<beans:import resource="classpath:/«getResourceDir("spring") + getApplicationContextFile("spring-integration.xml")»"/>
+	<beans:import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
 
 	«springIntegrationTestConfigHook(it)»
 	</beans:beans>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String springIntegrationConfigHook(Application it) {

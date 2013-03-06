@@ -17,22 +17,23 @@
 
 package org.sculptor.generator.template.consumer
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.common.PubSubTmpl
+import sculptormetamodel.Consumer
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.consumer.ConsumerTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class ConsumerTmpl {
 
 def static String consumer(Consumer it) {
 	'''
 	«IF pureEjb3()»
-		«ConsumerEjb::messageBeanImplBase(it)»
-			«ConsumerEjb::messageBeanImplSubclass(it)»
+		«ConsumerEjbTmpl::messageBeanImplBase(it)»
+			«ConsumerEjbTmpl::messageBeanImplSubclass(it)»
 	«ELSE»
 		«consumerInterface(it)»
 		«eventConsumerImplBase(it)»
@@ -41,24 +42,22 @@ def static String consumer(Consumer it) {
 		
 		«IF isTestToBeGenerated()»
 	    «IF pureEjb3()»
-	    	«ConsumerEjbTest::consumerJUnitOpenEjb(it)»
+	    	«ConsumerEjbTestTmpl::consumerJUnitOpenEjb(it)»
 	    «ELSEIF applicationServer() == "appengine"»
 	    	/*TODO */
 	    «ELSEIF mongoDb()»
 	    	/*TODO */
 	    «ELSE»
-		    «ConsumerTest::consumerJUnitWithAnnotations(it)»
+		    «ConsumerTestTmpl::consumerJUnitWithAnnotations(it)»
 		«ENDIF»
 		«IF isDbUnitTestDataToBeGenerated()»
-			«ConsumerTest::dbunitTestData(it)»
+			«ConsumerTestTmpl::dbunitTestData(it)»
 		«ENDIF»
 	«ENDIF»
 	'''
 }
 
 def static String consumerInterface(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name), '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -68,32 +67,29 @@ def static String consumerInterface(Consumer it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 
 def static String eventConsumerImplBase(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
-	«IF formatJavaDoc() == "" »
-/**
- * Generated base class for implementation of Consumer «name».
+	«IF it.formatJavaDoc() == "" »
+	/**
+	 * Generated base class for implementation of Consumer «name».
 	«IF isSpringToBeGenerated() »
- * <p>Make sure that subclass defines the following annotations:
- * <pre>
-		@org.springframework.stereotype.Component("«name.toFirstLower()»")
- * </pre>
- *	«ENDIF»
- */
+		 * <p>Make sure that subclass defines the following annotations:
+		 * <pre>
+		    @org.springframework.stereotype.Component("«name.toFirstLower()»")
+		 * </pre>
+		 *
+	«ENDIF»
+	 */
 	«ELSE »
-	«formatJavaDoc()»
+		«it.formatJavaDoc()»
 	«ENDIF »
-	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it) FOR subscribe»«ENDIF»
+	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it.subscribe)»«ENDIF»
 	public abstract class «name»ImplBase implements «name» {
 
 		public final static String BEAN_ID = "«name.toFirstLower()»";
@@ -109,23 +105,19 @@ def static String eventConsumerImplBase(Consumer it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 
 def static String eventConsumerImplSubclass(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Impl"), 'TO_SRC', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
-/**
- * Implementation of «name».
- */
- «IF isSpringToBeGenerated()»
-	@org.springframework.stereotype.Component("«name.toFirstLower()»")
+	/**
+	 * Implementation of «name».
+	 */
+	«IF isSpringToBeGenerated()»
+		@org.springframework.stereotype.Component("«name.toFirstLower()»")
 	«ENDIF»
 	public class «name»Impl ^extends «name»ImplBase {
 
@@ -139,8 +131,6 @@ def static String eventConsumerImplSubclass(Consumer it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String receiveMethodSubclass(Consumer it) {
@@ -156,7 +146,7 @@ def static String serviceDependencies(Consumer it) {
 	'''
 	«FOR serviceDependency  : serviceDependencies»
 		«IF isSpringToBeGenerated()»
-	    	@org.springframework.beans.factory.annotation.Autowired
+			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
 			@javax.ejb.EJB
@@ -166,15 +156,15 @@ def static String serviceDependencies(Consumer it) {
 			protected «getServiceapiPackage(serviceDependency)».«serviceDependency.name» get«serviceDependency.name»() {
 				return «serviceDependency.name.toFirstLower()»;
 			}
-		«ENDFOR»
+	«ENDFOR»
 	'''
 }
 
 def static String repositoryDependencies(Consumer it) {
 	'''
 	«FOR repositoryDependency  : repositoryDependencies»
-			«IF isSpringToBeGenerated()»
-	    @org.springframework.beans.factory.annotation.Autowired
+		«IF isSpringToBeGenerated()»
+			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
 			@javax.ejb.EJB
@@ -184,7 +174,7 @@ def static String repositoryDependencies(Consumer it) {
 			protected «getRepositoryapiPackage(repositoryDependency.aggregateRoot.module)».«repositoryDependency.name» get«repositoryDependency.name»() {
 				return «repositoryDependency.name.toFirstLower()»;
 			}
-		«ENDFOR»
+	«ENDFOR»
 	'''
 }
 

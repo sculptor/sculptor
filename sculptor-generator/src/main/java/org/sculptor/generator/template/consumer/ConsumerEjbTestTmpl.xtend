@@ -17,20 +17,19 @@
 
 package org.sculptor.generator.template.consumer
 
-import sculptormetamodel.*
+import sculptormetamodel.Consumer
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.consumer.ConsumerEjbTestTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.util.XmlHelperBase.*
 
 class ConsumerEjbTestTmpl {
 
 def static String consumerJUnitOpenEjb(Consumer it) {
-	'''
-	'''
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -39,15 +38,15 @@ def static String consumerJUnitOpenEjb(Consumer it) {
 	import static org.junit.Assert.assertTrue;
 	import static org.junit.Assert.fail;
 
-/**
- * JUnit test with OpenEJB and DbUnit support.
- */
+	/**
+	 * JUnit test with OpenEJB and DbUnit support.
+	 */
 	public class «name»Test ^extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» {
 
 		@javax.annotation.Resource(mappedName="«name.toFirstLower()»")
 		private javax.jms.Queue queue;
 
-	«ConsumerTest::consumerJUnitGetDataSetFile(it)»
+	«ConsumerTestTmpl::consumerJUnitGetDataSetFile(it)»
 
 		«openEjbTestMethod(it)»
 
@@ -84,12 +83,12 @@ def static String junitCreateMessage(Consumer it) {
 			return msg;
 		}
 		«ELSE»
-		«val prefix = it.module.application.name.subString(0,1).toLowerCase()»
+		«val prefix = it.module.application.name.substring(0,1).toLowerCase()»
 		private String createMessage() {
 			String msg =
 				"<?xml version='1.0' encoding='UTF-8'?>\n" +
 				"<«prefix»:«messageRoot.name.toXmlName()»>\n" +
-				"    xmlns:«prefix»='«module.application.getSchemaUrl()»' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='«module.application.getSchemaUrl()» «module.application.getSchemaUrl()»/schemas/«messageRoot.name.toXmlName()».xsd'" +
+				"    xmlns:«prefix»='«module.application.schemaUrl()»' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='«module.application.schemaUrl()» «module.application.schemaUrl()»/schemas/«messageRoot.name.toXmlName()».xsd'" +
 				"</«prefix»:«messageRoot.name.toXmlName()»>\n";
 			return msg;
 		}

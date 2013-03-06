@@ -1,81 +1,93 @@
 package org.sculptor.generator.template.doc
 
-import sculptormetamodel.*
+import java.util.Set
+import sculptormetamodel.Application
+import sculptormetamodel.Attribute
+import sculptormetamodel.BasicType
+import sculptormetamodel.Consumer
+import sculptormetamodel.DomainObject
+import sculptormetamodel.DomainObjectOperation
+import sculptormetamodel.Enum
+import sculptormetamodel.EnumValue
+import sculptormetamodel.Module
+import sculptormetamodel.Operation
+import sculptormetamodel.Reference
+import sculptormetamodel.Service
+import sculptormetamodel.Trait
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.template.doc.UMLGraphTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.ext.UmlGraphHelper.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
+import static extension org.sculptor.generator.util.HelperBase.*
 
 class UMLGraphTmpl {
 
 def static String start(Application it) {
+	val mods = it.visibleModules().toSet()
 	'''
-	«val mods = it.visibleModules().toSet()»
 		/*detail 0 => subject area diagrams, including persistence diagram */
-		«startSubjectAreaDiagrams(it)(mods) FOR this»
+		«startSubjectAreaDiagrams(it, mods)»
 		/*detail 1 => all */
-		«start(it)(mods, 1)»
+		«start(it, mods, 1)»
 		/*detail 2 => core domain */
-		«IF existsCoreDomain()»
-			«start(it)(mods, 2)»
+		«IF it.existsCoreDomain()»
+			«start(it, mods, 2)»
 		«ENDIF»
 		/*detail 3 => overview */
-		«start(it)(mods, 3)»
+		«start(it, mods, 3)»
 		/*detail 4 => module dependencies */
-		«start(it)(mods, 4)»
+		«start(it, mods, 4)»
 		/*Each module separatly */
 		«IF mods.size > 1»
 			«FOR m : mods»
-			    «start(it)({m}.toSet(), 0, "entity")»
-				«start(it)({m}.toSet(), 1)»
+			    «start(it, newHashSet(m), 0, "entity")»
+				«start(it, newHashSet(m), 1)»
 			«ENDFOR»
 		«ENDIF»
 	'''
 }
 
-def static String startSubjectAreaDiagrams(Application it, Set[Module] focus) {
+def static String startSubjectAreaDiagrams(Application it, Set<Module> focus) {
 	'''
-	«val subjectAreas = it.this.getSubjectAreas()»
+	«val subjectAreas = it.getSubjectAreas()»
 		«FOR area : subjectAreas»
-			«start(it)(focus, 0, area)»
+			«start(it, focus, 0, area)»
 		«ENDFOR»
 	'''
 }
 
-def static String start(Application it, Set[Module] focus, int detail) {
+def static String start(Application it, Set<Module> focus, int detail) {
 	'''
-	«start(it)(focus, detail, null) FOR this»
+	«start(it, focus, detail, null)»
 	'''
 }
 
-def static String start(Application it, Set[Module] focus, int detail, String subjectArea) {
-	'''
-	«debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)»
-	'''
-	fileOutput(dotFileName(focus, detail, subjectArea), 'TO_GEN_RESOURCES', '''
+def static String start(Application it, Set<Module> focus, int detail, String subjectArea) {
+	debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)
+	fileOutput(it.dotFileName(focus, detail, subjectArea), 'TO_GEN_RESOURCES', '''
 	«graphPropertiesStart(it)»	
-	«it.focus.sortBy(e|e.name).forEach[subGraphForModule(it)(focus, detail, subjectArea)]»
+	«focus.sortBy(e|e.name).forEach[m | subGraphForModule(m, focus, detail, subjectArea)]»
 	«IF detail < 4»
 		«InheritanceGraphProperties(it)»
-		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).forEach[InheritanceToUML(it)(focus, detail, subjectArea)]»
+		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).forEach[InheritanceToUML(it, focus, detail, subjectArea)]»
 		«RelationGraphProperties(it)»
-		«RelationToUML(it)(focus, detail, subjectArea) FOREACH getAllReferences() .reject(e | e.to.metaType == BasicType)
-			.reject(e | e.to.metaType == Enum)
-			.reject(e | e.to.includeInDiagram(detail, subjectArea) == false)
-			.reject(e | e.from.includeInDiagram(detail, subjectArea) == false)
-			.sortBy(e | e.from.name + "->" + e.to.name + ": " + e.name)»
-		«it.modules.services.forEach[ServiceDependenciesToUML(it)(focus, detail, subjectArea)]»
+		«it.getAllReferences()
+			.filter(e | e.to.metaType == typeof(BasicType))
+			.filter(e | e.to.metaType == typeof(Enum))
+			.filter(e | e.to.includeInDiagram(detail, subjectArea) == false)
+			.filter(e | e.from.includeInDiagram(detail, subjectArea) == false)
+			.sortBy(e | e.from.name + "->" + e.to.name + ": " + e.name)
+			.map[r | RelationToUML(r, focus, detail, subjectArea)]»
+		«it.modules.map[services].flatten.forEach[ServiceDependenciesToUML(it, focus, detail, subjectArea)]»
 	«ELSE»
-		«it.focus.forEach[ModuleDependenciesToUML(it)]»
+		«focus.map[ModuleDependenciesToUML(it)]»
 	«ENDIF»
 	«graphPropertiesEnd(it)»	
 	'''
 	)
-	'''    
-	'''
 }
 
 
@@ -101,26 +113,26 @@ def static String graphPropertiesEnd(Application it) {
 	'''
 }
 
-def static String subGraphForModule(Module it, Set[Module] focus, int detail, String subjectArea) {
+def static String subGraphForModule(Module it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF detail < 4»
 		subgraph cluster«name» {
 			label = "«name»"  
-			«IF focus.contains(this)»
-				«it.services.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ServiceToUML(it)(focus, detail)]»
-				«it.consumers.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ConsumerToUML(it)(focus, detail)]»
-				«it.domainObjects.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ObjectToUML(it)(focus, detail, subjectArea)]»
+			«IF focus.contains(it)»
+				«it.services.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ServiceToUML(it, focus, detail)]»
+				«it.consumers.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ConsumerToUML(it, focus, detail)]»
+				«it.domainObjects.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ObjectToUML(it, focus, detail, subjectArea)]»
 			«ENDIF»
 		}
 	«ELSE»
-		«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="20" port="p" bgcolor="#«bgcolor()»">
+		«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="20" port="p" bgcolor="#«it.bgcolor()»">
 		<tr><td>
 			<table border="0" cellspacing="1" cellpadding="1">
-				<tr><td> &laquo;«getStereoTypeName()»&raquo; </td></tr>
+				<tr><td> &laquo;«it.getStereoTypeName()»&raquo; </td></tr>
 				<tr><td><font face="arialbd"  point-size="12.0"> «name» </font></td></tr>
 			</table>
 		</td></tr>	
-		</table>>, fontname="arial", fontcolor="«fontcolor()»", fontsize=9.0];
+		</table>>, fontname="arial", fontcolor="«it.fontcolor()»", fontsize=9.0];
 	«ENDIF»
 	'''
 }
@@ -138,36 +150,36 @@ def static String RelationGraphProperties(Application it) {
 	'''
 }
 
-def static String ServiceToUML(Service it, Set[Module] focus, int detail) {
+def static String ServiceToUML(Service it, Set<Module> focus, int detail) {
 	'''
-	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«bgcolor()»" >
+	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«it.bgcolor()»" >
 	<tr><td>
 	<table border="0" cellspacing="1" cellpadding="1">
-		<tr><td> &laquo;«getStereoTypeName()»&raquo; </td></tr>
+		<tr><td> &laquo;«it.getStereoTypeName()»&raquo; </td></tr>
 		<tr><td><font face="arialbd"  point-size="12.0"> «name» </font></td></tr>
 	</table></td></tr>
-	«IF showCompartment(detail)»
+	«IF it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
 		«it.operations.forEach[OperationToUML(it)]»
 			</table>		
 		</td></tr>
 	«ENDIF»
-	</table>>, fontname="arial", fontcolor="«fontcolor()»", fontsize=9.0];
+	</table>>, fontname="arial", fontcolor="«it.fontcolor()»", fontsize=9.0];
 	'''
 }
 
 def static String OperationToUML(Operation it) {
 	'''
-				<tr><td align="left">«this.name»</td></tr>			
+				<tr><td align="left">«it.name»</td></tr>			
 	'''
 }
 
-def static String ServiceDependenciesToUML(Service it, Set[Module] focus, int detail, String subjectArea) {
+def static String ServiceDependenciesToUML(Service it, Set<Module> focus, int detail, String subjectArea) {
 	'''
-	«IF focus.contains(module) && includeInDiagram(detail, subjectArea)»
+	«IF focus.contains(module) && it.includeInDiagram(detail, subjectArea)»
 		edge [arrowtail="none" arrowhead = "open" headlabel = "" taillabel = "" style = "dashed"]
-		«FOR dep : serviceOperationDependencies()»
+		«FOR dep : it.serviceOperationDependencies()»
 			«IF dep.isShownInView(focus, detail, subjectArea) »
 				«name» -> «dep.name»
 			«ENDIF»
@@ -176,163 +188,160 @@ def static String ServiceDependenciesToUML(Service it, Set[Module] focus, int de
 	'''
 }
 
-def static String ConsumerToUML(Consumer it, Set[Module] focus, int detail) {
+def static String ConsumerToUML(Consumer it, Set<Module> focus, int detail) {
 	'''
-	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«bgcolor()»">
+	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«it.bgcolor()»">
 	<tr><td>
 	<table border="0" cellspacing="1" cellpadding="1">
-		<tr><td> &laquo;«getStereoTypeName()»&raquo; </td></tr>
+		<tr><td> &laquo;«it.getStereoTypeName()»&raquo; </td></tr>
 		<tr><td><font face="arialbd"  point-size="12.0"> «name» </font></td></tr>
 	</table></td></tr>
-	«IF showCompartment(detail)»
+	«IF it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
 				<tr><td align="left">onMessage</td></tr>
 			</table>		
 		</td></tr>
 	«ENDIF»
-	</table>>, fontname="arial", fontcolor="«fontcolor()»", fontsize=9.0];
+	</table>>, fontname="arial", fontcolor="«it.fontcolor()»", fontsize=9.0];
 	'''
 }
 
-def static String ObjectToUML(DomainObject it, Set[Module] focus, int detail, String subjectArea) {
+def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, String subjectArea) {
 	'''
-	«IF isShownInView(focus, detail, subjectArea) »
-	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«bgcolor()»">
+	«IF it.isShownInView(focus, detail, subjectArea) »
+	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«it.bgcolor()»">
 	<tr><td>
 	<table border="0" cellspacing="1" cellpadding="1">
-		<tr><td> &laquo;«getStereoTypeName()»&raquo; </td></tr>
-		<tr><td>«IF this.^abstract»<font face="arialbi"  point-size="12.0"> «name» </font>
+		<tr><td> &laquo;«it.getStereoTypeName()»&raquo; </td></tr>
+		<tr><td>«IF it.^abstract»<font face="arialbi"  point-size="12.0"> «name» </font>
 				«ELSE»<font face="arialbd"  point-size="12.0"> «name» </font>«ENDIF»</td></tr>
 	</table></td></tr>
-	«IF metaType == Enum && showCompartment(detail)»
+	«IF it.metaType == typeof(Enum) && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
-			«it.((Enum) this).values.forEach[EnumValueToUML(it)]»
+			«(it as Enum).values.forEach[EnumValueToUML(it)]»
 			</table>		
 		</td></tr> 
 	«ENDIF »
-	«LET attributes.exists(e | !e.isSystemAttribute() && e.visible()) || references.exists(e | e.to.metaType == BasicType && e.visible())
-			|| references.exists(e | e.to.metaType == Enum && e.visible())
-			|| references.exists(e | !focus.contains(e.to.module) && e.visible()) 
-			AS existsAttributesCompartment»
-	«IF existsAttributesCompartment && showCompartment(detail)»
+	«val existsAttributesCompartment = attributes.exists(e | !e.isSystemAttribute() && e.visible()) || references.exists(e | e.to.metaType == typeof(BasicType) && e.visible())
+			|| references.exists(e | e.to.metaType == typeof(Enum) && e.visible())
+			|| references.exists(e | !focus.contains(e.to.module) && e.visible())»
+	«IF existsAttributesCompartment && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
-		«it.attributes.reject(e|e.isSystemAttribute() || e.hide()).forEach[AttributeToUML(it)]»
-		«it.references.filter(e | e.to.metaType == BasicType && e.visible()).forEach[BasicTypeAttributeToUML(it)]»
-		«it.references.filter(e | e.to.metaType == Enum && e.visible()).forEach[EnumAttributeToUML(it)]»
-		«it.references.filter( e | e.to.metaType != Enum && e.to.metaType != BasicType && !focus.contains(e.to.module) && e.visible()).forEach[NonFocusReferenceToUML(it)]»
+		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].forEach[AttributeToUML(it)]»
+		«it.references.filter(e | e.to.metaType == typeof(BasicType) && e.visible()).forEach[BasicTypeAttributeToUML(it)]»
+		«it.references.filter(e | e.to.metaType == typeof(Enum) && e.visible()).forEach[EnumAttributeToUML(it)]»
+		«it.references.filter( e | e.to.metaType != typeof(Enum) && e.to.metaType != typeof(BasicType) && !focus.contains(e.to.module) && e.visible()).forEach[NonFocusReferenceToUML(it)]»
 			</table>		
 		</td></tr>
 	«ENDIF»
-	«IF operations.exists(e | e.isPublicVisibility() && e.visible()) && showCompartment(detail)»
+	«IF operations.exists(e | e.isPublicVisibility() && e.visible()) && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">
 			«it.operations.filter(e | e.isPublicVisibility() && e.visible()).forEach[OperationToUML(it)]»
 			</table>		
 		</td></tr>
 	«ENDIF»
-	</table>>, fontname="arial", fontcolor="«fontcolor()»", fontsize=9.0];
+	</table>>, fontname="arial", fontcolor="«it.fontcolor()»", fontsize=9.0];
 	«ENDIF»
 	'''
 }
 
 /*Skip Traits */
-def static String ObjectToUML(Trait it, Set[Module] focus, int detail, String subjectArea) {
+def static String ObjectToUML(Trait it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	'''
 }
 
 def static String AttributeToUML(Attribute it) {
 	'''
-		«IF !this.isSystemAttribute()»
-			«IF this.naturalKey» 
-				<tr><td align="left"><font face="arialbd"> * «this.name» : «this.type» </font> </td></tr>			
+		«IF !it.isSystemAttribute()»
+			«IF naturalKey» 
+				<tr><td align="left"><font face="arialbd"> * «name» : «type» </font> </td></tr>			
 			«ELSE»
-				<tr><td align="left"> + «this.name» : «this.type» </td></tr>
+				<tr><td align="left"> + «name» : «type» </td></tr>
 			«ENDIF»
-		
 		«ENDIF»
 	'''
 }
 
 def static String BasicTypeAttributeToUML(Reference it) {
 	'''
-		«IF this.naturalKey» 
-			<tr><td align="left"><font face="arialbd"> * «this.name» : «this.to.name» </font> </td></tr>			
+		«IF naturalKey» 
+			<tr><td align="left"><font face="arialbd"> * «name» : «to.name» </font> </td></tr>			
 		«ELSE»
-			<tr><td align="left"> + «this.name» : «this.to.name» </td></tr>
+			<tr><td align="left"> + «name» : «to.name» </td></tr>
 		«ENDIF»
 	'''
 }
 
 def static String EnumAttributeToUML(Reference it) {
 	'''
-		«IF this.naturalKey» 
-			<tr><td align="left"><font face="arialbd"> * «this.name» : «this.to.name» </font> </td></tr>			
+		«IF naturalKey» 
+			<tr><td align="left"><font face="arialbd"> * «name» : «to.name» </font> </td></tr>			
 		«ELSE»
-			<tr><td align="left"> + «this.name» : «this.to.name» </td></tr>
+			<tr><td align="left"> + «name» : «to.name» </td></tr>
 		«ENDIF»
 	'''
 }
 
 def static String NonFocusReferenceToUML(Reference it) {
+	val typeStr = (if (collectionType != null) collectionType + "&lt;" else "") + to.name + (if (collectionType != null) "&gt;" else "")
 	'''
-	«LET (collectionType != null ? collectionType + "&lt;" : "") + to.name +
-		 (collectionType != null ? "&gt;" : "")  AS typeStr»
-		«IF this.naturalKey» 
-			<tr><td align="left"><font face="arialbd"> * «this.name» : «typeStr» </font> </td></tr>			
+		«IF naturalKey» 
+			<tr><td align="left"><font face="arialbd"> * «name» : «typeStr» </font> </td></tr>			
 		«ELSE»
-			<tr><td align="left"> + «this.name» : «typeStr» </td></tr>
+			<tr><td align="left"> + «name» : «typeStr» </td></tr>
 		«ENDIF»
 	'''
 }
 
 def static String EnumValueToUML(EnumValue it) {
 	'''
-			<tr><td align="left"> + «this.name»</td></tr>
+			<tr><td align="left"> + «name»</td></tr>
 	'''
 }
 
 def static String OperationToUML(DomainObjectOperation it) {
 	'''
-			<tr><td align="left">«this.name»()</td></tr>
+			<tr><td align="left">«name»()</td></tr>
 	'''
 }
 
-def static String InheritanceToUML(DomainObject it, Set[Module] focus, int detail, String subjectArea) {
+def static String InheritanceToUML(DomainObject it, Set<Module> focus, int detail, String subjectArea) {
 	'''
-	«IF this.isShownInView(focus, detail, subjectArea) && ^extends.isShownInView(focus, detail, subjectArea) »
+	«IF it.isShownInView(focus, detail, subjectArea) && ^extends.isShownInView(focus, detail, subjectArea) »
 		«name»:p -> «^extends.name»:p
 	«ENDIF»
 	'''
 }
 
-def static String RelationToUML(Reference it, Set[Module] focus, int detail, String subjectArea) {
+def static String RelationToUML(Reference it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF from.isShownInView(focus, detail, subjectArea) && to.isShownInView(focus, detail, subjectArea)»
 
-		«IF isAggregate() »
-			edge [arrowtail="diamond" arrowhead = "none" « ELSEIF this.opposite == null -»
-			edge [arrowtail="none" arrowhead = "open" « ELSE -»
-		   	edge [arrowtail="none" arrowhead = "none" « ENDIF »headlabel="«detail > 1 ? "" : this.referenceHeadLabel()»" taillabel="«detail > 1 ? "" : this.referenceTailLabel()»" labeldistance="«labeldistance()»" labelangle="«labelangle()»"]
-	
-		«this.from.name» -> «this.to.name»
+		«IF it.isAggregate() »
+			edge [arrowtail="diamond" arrowhead = "none" «ELSEIF opposite == null»
+			edge [arrowtail="none" arrowhead = "open" «ELSE»
+			edge [arrowtail="none" arrowhead = "none" «ENDIF»headlabel="«if (detail > 1) "" else it.referenceHeadLabel()»" taillabel="«if (detail > 1) "" else it.referenceTailLabel()»" labeldistance="«it.labeldistance()»" labelangle="«it.labelangle()»"]
+
+		«from.name» -> «to.name»
 	«ENDIF»
 	'''
 }
 
 def static String ModuleDependenciesToUML(Module it) {
 	'''
-	«it.moduleDependencies().forEach[ModuleDependencyToUML(it)(this)]»
+	«it.moduleDependencies().forEach[m | ModuleDependencyToUML(m, it)]»
 	'''
 }
 
 def static String ModuleDependencyToUML(Module it, Module from) {
 	'''
 		edge [arrowtail="none" arrowhead = "open" headlabel = "" taillabel = "" style = "dashed"]
-		«from.name» -> «this.name»
+		«from.name» -> «name»
 	'''
 }
 }

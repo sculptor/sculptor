@@ -17,14 +17,18 @@
 
 package org.sculptor.generator.template.jpa
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
+import sculptormetamodel.Enum
+import sculptormetamodel.Module
+import sculptormetamodel.Reference
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.DbHelper.*
+import static org.sculptor.generator.template.jpa.HibernateTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.util.HelperBase.*
 
 class HibernateTmpl {
 
@@ -36,7 +40,7 @@ def static String hibernate(Application it) {
 			«hibenateCfgFile(it)»
 		«ENDIF»
 	«ENDIF»
-	«IF isJpa2() && containsNonOrdinaryEnums()»
+	«IF isJpa2() && it.containsNonOrdinaryEnums()»
 			«enumType(it)»
 	«ENDIF»
 	'''
@@ -54,24 +58,20 @@ def static String header(Object it) {
 }
 
 def static String enumTypedefFile(Module it) {
-	'''
-	«val enums = it.domainObjects.typeSelect(Enum)»
-		«IF !enums.isEmpty»
-	'''
-	fileOutput(getResourceDir("hibernate") + getEnumTypeDefFileName(), 'TO_GEN_RESOURCES', '''
-				«header(it) »
-				«it.enums.forEach[enumTypedef(it)]»
-			</hibernate-mapping>
-	'''
-	)
-	'''
-		«ENDIF»
-	'''
+	val enums = it.domainObjects.filter(d | d.metaType == typeof(Enum))
+	if (!enums.isEmpty) {
+		fileOutput(it.getResourceDir("hibernate") + it.getEnumTypeDefFileName(), 'TO_GEN_RESOURCES', '''
+					«header(it) »
+					«enums.map[e | enumTypedef(e as Enum)]»
+				</hibernate-mapping>
+		'''
+		)
+	}
 }
 
 def static String enumTypedef(Enum it) {
+	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-	«val identifierAttribute  = it.getIdentifierAttribute()»
 		<typedef name="«name»"
 			class="«enumUserTypeClass()»">
 		<param name="enumClass">«getDomainPackage()».«name»</param>
@@ -85,13 +85,11 @@ def static String enumTypedef(Enum it) {
 
 def static String enumReference(Reference it, String dbColumnPrefix) {
 	'''
-		<property name="«name»" type="«to.name»" «IF !nullable» not-null="true"«ENDIF»  «IF (getDatabaseName(dbColumnPrefix, this)) != name.toUpperCase()»column="«getDatabaseName(dbColumnPrefix, this)»"«ENDIF»/>
+		<property name="«name»" type="«to.name»" «IF !nullable» not-null="true"«ENDIF»  «IF (getDatabaseName(dbColumnPrefix, it)) != name.toUpperCase()»column="«getDatabaseName(dbColumnPrefix, it)»"«ENDIF»/>
 	'''
 }
 
 def static String hibenateCfgFile(Application it) {
-	'''
-	'''
 	fileOutput("hibernate.cfg.xml", 'TO_GEN_RESOURCES', '''
 	<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
@@ -106,8 +104,6 @@ def static String hibenateCfgFile(Application it) {
 	</hibernate-configuration>
 	'''
 	)
-	'''
-	'''
 }
 
 def static String hibenateCfgMappedResources(Application it) {
@@ -118,9 +114,9 @@ def static String hibenateCfgMappedResources(Application it) {
 
 def static String hibenateCfgMappedResources(Module it) {
 	'''
-	/*set mapping of Hibernate Types here, can't be set in persistence.xml */
-	«IF !domainObjects.typeSelect(Enum).isEmpty»
-	<mapping resource="«getResourceDir("hibernate") + getEnumTypeDefFileName()»"/>
+	/* set mapping of Hibernate Types here, can't be set in persistence.xml */
+	«IF !domainObjects.filter[d | d.metaType == typeof(Enum)].isEmpty»
+		<mapping resource="«it.getResourceDir("hibernate") + it.getEnumTypeDefFileName()»"/>
 	«ENDIF»
 	'''
 }
@@ -132,8 +128,6 @@ def static String hibenateCfgAdditions(Application it) {
 }
 
 def static String enumType(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), '''
 	package «basePackage».util;
 
@@ -188,7 +182,5 @@ def static String enumType(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 }

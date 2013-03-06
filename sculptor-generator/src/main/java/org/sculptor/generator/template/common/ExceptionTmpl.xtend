@@ -17,36 +17,35 @@
 
 package org.sculptor.generator.template.common
 
-import sculptormetamodel.*
+import sculptormetamodel.Module
+import sculptormetamodel.Operation
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.common.ExceptionTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class ExceptionTmpl {
 
 
 def static String applicationExceptions(Module it) {
+	val webServiceExceptions = it.getAllGeneratedWebServiceExceptions()
 	'''
-	«val webServiceExceptions = it.getAllGeneratedWebServiceExceptions()»
-	    «FOR exc : getAllGeneratedExceptions().reject(e|webServiceExceptions.contains(e))»
-	        «applicationException(it)(exc)»
-	    «ENDFOR»
-	    «FOR exc : webServiceExceptions»
-	        «webServiceApplicationException(it)(exc)»
-	    «ENDFOR»
+	«FOR exc : it.getAllGeneratedExceptions().filter[e | !webServiceExceptions.contains(e)]»
+		«applicationException(it, exc)»
+	«ENDFOR»
+	«FOR exc : webServiceExceptions»
+		«webServiceApplicationException(it, exc)»
+	«ENDFOR»
 	'''
 }
 
 def static String applicationException(Module it, String exceptionName) {
-	'''
-	'''
-	fileOutput(javaFileName(this.getExceptionPackage() + "." + exceptionName), '''
+	fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), '''
 	«javaHeader()»
-	package «this.getExceptionPackage()»;
+	package «it.getExceptionPackage()»;
 
 	public class «exceptionName» ^extends «applicationExceptionClass()» {
 	«serialVersionUID(it) »
@@ -58,24 +57,20 @@ def static String applicationException(Module it, String exceptionName) {
 			setMessageParameters(messageParameter);
 		}
 
-		public «exceptionName»(«errorCodeType()» errorCode, String m, java.io.Serializable... messageParameter) {
+		public «exceptionName»(«it.errorCodeType()» errorCode, String m, java.io.Serializable... messageParameter) {
 			super(«getProperty("exception.code.formatWithParam")», m);
 			setMessageParameters(messageParameter);
 		}
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 
 def static String webServiceApplicationException(Module it, String exceptionName) {
-	'''
-	'''
-	fileOutput(javaFileName(this.getExceptionPackage() + "." + exceptionName), '''
+	fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), '''
 	«javaHeader()»
-	package «this.getExceptionPackage()»;
+	package «it.getExceptionPackage()»;
 
 	public class «exceptionName» ^extends Exception {
 	«serialVersionUID(it) »
@@ -116,14 +111,12 @@ def static String webServiceApplicationException(Module it, String exceptionName
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 
-def static String throws(Operation it) {
+def static String throwsDecl(Operation it) {
 	'''
-			«IF !getExceptions().isEmpty»throws «FOR exc SEPARATOR ", " : getExceptions()»«exc»«ENDFOR»«ENDIF»
+		«IF !it.getThrows().isEmpty»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
 	'''
 }
 

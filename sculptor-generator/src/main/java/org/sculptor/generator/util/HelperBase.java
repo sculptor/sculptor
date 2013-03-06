@@ -369,7 +369,7 @@ public class HelperBase {
 		return getJavaType(type);
 	}
 
-	private static String getJavaType(String modelType) {
+	public static String getJavaType(String modelType) {
 		String javaType = PropertiesBase.getJavaType(modelType);
 		if (javaType == null) {
 			return modelType;
@@ -895,7 +895,7 @@ public class HelperBase {
 
 	}
 
-	private static String serviceContextClass() {
+	public static String serviceContextClass() {
 		String propName = "framework.errorhandling.ServiceContext";
 		if (PropertiesBase.hasProperty(propName)) {
 			return PropertiesBase.getProperty(propName);

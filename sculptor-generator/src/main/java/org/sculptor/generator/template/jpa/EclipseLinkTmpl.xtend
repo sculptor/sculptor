@@ -17,14 +17,12 @@
 
 package org.sculptor.generator.template.jpa
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.DbHelper.*
+import static org.sculptor.generator.template.jpa.EclipseLinkTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class EclipseLinkTmpl {
 
@@ -32,9 +30,9 @@ def static String eclipseLink(Application it) {
 	'''
 		«mapping(it)»
 		«IF isJodaDateTimeLibrary()»
-	    «jodaConverterClass(it)»
+			«jodaConverterClass(it)»
 		«ENDIF»
-		«IF containsNonOrdinaryEnums()»
+		«IF it.containsNonOrdinaryEnums()»
 			«enumConverterClass(it)»
 		«ENDIF»
 	'''
@@ -57,8 +55,6 @@ def static String footer(Application it) {
 }
 
 def static String mapping(Application it) {
-	'''
-	'''
 	fileOutput("/META-INF/orm.xml", 'TO_GEN_RESOURCES', '''
 	«header(it)»
 	«enumConverter(it)»
@@ -68,8 +64,6 @@ def static String mapping(Application it) {
 	«footer(it)»
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumConverter(Application it) {
@@ -85,8 +79,6 @@ def static String jodaConverter(Application it) {
 }
 
 def static String jodaConverterClass(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName(basePackage +".util.JodaConverter"), '''
 	package «basePackage».util;
 
@@ -134,13 +126,9 @@ def static String jodaConverterClass(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String enumConverterClass(Application it) {
-	'''
-	'''
 	fileOutput(javaFileName(basePackage +".util.EnumConverter"), '''
 	package «basePackage».util;
 
@@ -180,7 +168,5 @@ def static String enumConverterClass(Application it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 }

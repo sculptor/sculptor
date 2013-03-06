@@ -17,14 +17,15 @@
 
 package org.sculptor.generator.template.repository
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.common.ExceptionTmpl
+import sculptormetamodel.Parameter
+import sculptormetamodel.RepositoryOperation
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.repository.AccessObjectTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class AccessObjectTmpl {
 
@@ -37,51 +38,47 @@ def static String command(RepositoryOperation it) {
 
 
 def static String commandInterface(RepositoryOperation it) {
-	'''
-	'''
 	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), '''
 	«javaHeader()»
 	package «getAccessapiPackage(repository.aggregateRoot.module)»;
 
-	«IF formatJavaDoc() == "" »
-/**
- * <p>
- * Access object for «repository.name».«name».
- * </p>
- * <p>
- * Command design pattern. Set input parameters with the
- * setter methods. {@link #execute Execute}
- * the command«IF getTypeName() != "void"» and retrieve the {@link #getResult result}«ENDIF».
- * </p>
- *
- */
-	«ELSE »
-	«formatJavaDoc()»
+	«IF it.formatJavaDoc() == "" »
+		/**
+		 * <p>
+		 * Access object for «repository.name».«name».
+		 * </p>
+		 * <p>
+		 * Command design pattern. Set input parameters with the
+		 * setter methods. {@link #execute Execute}
+		 * the command«IF it.getTypeName() != "void"» and retrieve the {@link #getResult result}«ENDIF».
+		 * </p>
+		 *
+		 */
+	«ELSE»
+		«it.formatJavaDoc()»
 	«ENDIF »
-	public interface «getAccessObjectName()» «IF getAccessObjectInterfaceExtends() != ''» ^extends «getAccessObjectInterfaceExtends()» «ENDIF»{
+	public interface «getAccessObjectName()» «IF it.getAccessObjectInterfaceExtends() != ''» extends «it.getAccessObjectInterfaceExtends()» «ENDIF»{
 
-		«it.parameters.reject(e|e.isPagingParameter()).forEach[interfaceParameterSetter(it)]»
+		«it.parameters.filter(e|!e.isPagingParameter()).map[interfaceParameterSetter(it)]»
 
-		void execute() «ExceptionTmpl::throws(it)»;
+		void execute() «ExceptionTmpl::throwsDecl(it)»;
 
-		«IF getTypeName() != "void"»
+		«IF it.getTypeName() != "void"»
 		/**
 			* The result of the command.
 			*/
-		«getAccessObjectResultTypeName()» getResult();
+		«it.getAccessObjectResultTypeName()» getResult();
 		«ENDIF»
 
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String interfaceParameterSetter(Parameter it) {
 	'''
 
-		void set«name.toFirstUpper()»(«getTypeName()» «name»);
+		void set«name.toFirstUpper()»(«it.getTypeName()» «name»);
 	'''
 }
 
@@ -93,22 +90,20 @@ def static String commandImpl(RepositoryOperation it) {
 }
 
 def static String commandImplBase(RepositoryOperation it) {
-	'''
-	'''
 	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 
-/**
- * <p>
- * Generated base class for implementation of Access object for «repository.name».«name».
- * </p>
- * <p>
- * Command design pattern.
- * </p>
- *
- */
-	public abstract class «getAccessObjectName()»ImplBase ^extends «getAccessBase()»
+	/**
+	 * <p>
+	 * Generated base class for implementation of Access object for «repository.name».«name».
+	 * </p>
+	 * <p>
+	 * Command design pattern.
+	 * </p>
+	 *
+	 */
+	public abstract class «getAccessObjectName()»ImplBase extends «it.getAccessBase()»
 	implements «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()» {
 
 	«IF jpa()»
@@ -120,23 +115,23 @@ def static String commandImplBase(RepositoryOperation it) {
 		«ENDIF»
 	«ENDIF»
 	
-		«it.parameters.reject(e|e.isPagingParameter()).forEach[parameterAttribute(it)]»
+		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAttribute(it)]»
 
-		«IF getTypeName() != "void"»
-		private «getAccessObjectResultTypeName()» result;
+		«IF it.getTypeName() != "void"»
+		private «it.getAccessObjectResultTypeName()» result;
 		«ENDIF»
 
-		«it.parameters.reject(e|e.isPagingParameter()).forEach[parameterAccessors(it)]»
+		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAccessors(it)]»
 
-	«IF hasPagingParameter()»
-		«pageableProperties(it)»
-	«ENDIF»
+		«IF it.hasPagingParameter()»
+			«pageableProperties(it)»
+		«ENDIF»
 
-		«IF !getExceptions().isEmpty»
-		public void execute() «ExceptionTmpl::throws(it)» {
+		«IF !it.exceptions.isEmpty»
+		public void execute() «ExceptionTmpl::throwsDecl(it)» {
 			try {
 				super.execute();
-			«FOR exc : getExceptions()»
+			«FOR exc : it.exceptions»
 			} catch («exc» e) {
 				throw e;
 			«ENDFOR»
@@ -147,15 +142,15 @@ def static String commandImplBase(RepositoryOperation it) {
 		}
 		«ENDIF»
 
-		«IF getTypeName() != "void"»
+		«IF it.getTypeName() != "void"»
 		/**
 			* The result of the command.
 			*/
-		public «getAccessObjectResultTypeName()» getResult() {
+		public «it.getAccessObjectResultTypeName()» getResult() {
 			return this.result;
 		}
 
-		protected void setResult(«getAccessObjectResultTypeName()» result) {
+		protected void setResult(«it.getAccessObjectResultTypeName()» result) {
 			this.result = result;
 		}
 		«ENDIF»
@@ -163,8 +158,6 @@ def static String commandImplBase(RepositoryOperation it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String pageableProperties(RepositoryOperation it) {
@@ -228,16 +221,14 @@ def static String jpaHibernateTemplate(RepositoryOperation it) {
 }
 
 def static String commandImplSubclass(RepositoryOperation it) {
-	'''
-	'''
 	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "Impl"), 'TO_SRC', '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 
-/**
- * Implementation of Access object for «repository.name».«name».
- *
- */
+	/**
+	 * Implementation of Access object for «repository.name».«name».
+	 *
+	 */
 	public class «getAccessObjectName()»Impl ^extends «getAccessObjectName()»ImplBase {
 
 			«performExecute(it)»
@@ -245,13 +236,11 @@ def static String commandImplSubclass(RepositoryOperation it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String performExecute(RepositoryOperation it) {
 	'''
-	public void performExecute() «ExceptionTmpl::throws(it)» {
+	public void performExecute() «ExceptionTmpl::throwsDecl(it)» {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("«getAccessObjectName()»Impl not implemented");
 		}
@@ -260,7 +249,7 @@ def static String performExecute(RepositoryOperation it) {
 
 def static String parameterAttribute(Parameter it) {
 	'''
-		private «getTypeName()» «name»;
+		private «it.getTypeName()» «name»;
 	'''
 }
 
@@ -273,7 +262,7 @@ def static String parameterAccessors(Parameter it) {
 
 def static String parameterGetter(Parameter it) {
 	'''
-		public «getTypeName()» get«name.toFirstUpper()»() {
+		public «it.getTypeName()» get«name.toFirstUpper()»() {
 			return «name»;
 		};
 	'''
@@ -281,7 +270,7 @@ def static String parameterGetter(Parameter it) {
 
 def static String parameterSetter(Parameter it) {
 	'''
-		public void set«name.toFirstUpper()»(«getTypeName()» «name») {
+		public void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			this.«name» = «name»;
 		};
 	'''

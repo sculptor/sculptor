@@ -17,14 +17,18 @@
 
 package org.sculptor.generator.template.service
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.common.ExceptionTmpl
+import org.sculptor.generator.template.common.PubSubTmpl
+import sculptormetamodel.Parameter
+import sculptormetamodel.Service
+import sculptormetamodel.ServiceOperation
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.service.ServiceEjbTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class ServiceEjbTmpl {
 
@@ -32,94 +36,88 @@ def static String service(Service it) {
 	'''
 	«ejbBeanImplBase(it)»
 	«IF gapClass»
-			«ejbBeanImplSubclass(it)»
-		«ENDIF»
-		«IF remoteInterface»
+		«ejbBeanImplSubclass(it)»
+	«ENDIF»
+	«IF remoteInterface»
 		«ejbRemoteInterface(it)»
 	«ENDIF»
-		«IF localInterface»
-			«ejbLocalInterface(it)»
-		«ENDIF»
-		«IF isServiceProxyToBeGenerated()»
-			«serviceProxy(it)»
-		«ENDIF»
+	«IF localInterface»
+		«ejbLocalInterface(it)»
+	«ENDIF»
+	«IF isServiceProxyToBeGenerated()»
+		«serviceProxy(it)»
+	«ENDIF»
 	'''
 }
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String ejbBeanImplBase(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceimplPackage() + "." + name + getSuffix("Impl") + (gapClass ? "Base" : "")), '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), '''
 	«javaHeader()»
-	package «getServiceimplPackage()»;
+	package «it.getServiceimplPackage()»;
 
 	«IF gapClass»
-/**
- * Generated base class for implementation of «name».
- * <p>Make sure that subclass defines the following annotations:
- * <pre>
-	@javax.ejb.Stateless(name="«name.toFirstLower()»")
-	«ejbInterceptors(it)»
-	«IF webService»
-	«webServiceAnnotations(it)»
-	«ENDIF»
- * </pre>
- */
+		/**
+		 * Generated base class for implementation of «name».
+		 * <p>Make sure that subclass defines the following annotations:
+		 * <pre>
+		@javax.ejb.Stateless(name="«name.toFirstLower()»")
+		«ejbInterceptors(it)»
+		«IF webService»
+		«webServiceAnnotations(it)»
+		«ENDIF»
+		 * </pre>
+		 */
 	«ELSE»
-/**
- * Generated implementation of «name».
- */
-	@javax.ejb.Stateless(name="«name.toFirstLower()»")
-	«IF !gapClass && webService»
-	«webServiceAnnotations(it)»
+		/**
+		 * Generated implementation of «name».
+		 */
+		@javax.ejb.Stateless(name="«name.toFirstLower()»")
+		«IF !gapClass && webService»
+			«webServiceAnnotations(it)»
+		«ENDIF»
+		«ejbInterceptors(it)»
 	«ENDIF»
-	«ejbInterceptors(it)»
-	«ENDIF»
-	public «IF gapClass»abstract «ENDIF»class «name + getSuffix("Impl")»«IF gapClass»Base«ENDIF» «^extendsLitteral()» 
-			implements «getEjbInterfaces()» {
-	«Service::serialVersionUID(it)»
+	public «IF gapClass»abstract «ENDIF»class «name + getSuffix("Impl")»«IF gapClass»Base«ENDIF» «it.extendsLitteral()» 
+			implements «it.getEjbInterfaces()» {
+		«ServiceTmpl::serialVersionUID(it)»
 		public «name + getSuffix("Impl")»«IF gapClass»Base«ENDIF»() {
 		}
 
-		«Service::delegateRepositories(it) »
-		«Service::delegateServices(it) »
+		«ServiceTmpl::delegateRepositories(it) »
+		«ServiceTmpl::delegateServices(it) »
 
-		«it.operations.reject(op | op.isImplementedInGapClass()) .forEach[Service::implMethod(it)]»
+		«it.operations.filter[op | !op.isImplementedInGapClass()].map[ServiceTmpl::implMethod(it)]»
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String ejbBeanImplSubclass(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceimplPackage() + "." + name + getSuffix("Impl")), 'TO_SRC', '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), 'TO_SRC', '''
 	«javaHeader()»
-	package «getServiceimplPackage()»;
+	package «it.getServiceimplPackage()»;
 
-/**
- * Implementation of «name».
- */
+	/**
+	 * Implementation of «name».
+	 */
 	@javax.ejb.Stateless(name="«name.toFirstLower()»")
 	«IF webService»
-	«webServiceAnnotations(it)»
+		«webServiceAnnotations(it)»
 	«ENDIF»
 	«ejbInterceptors(it)»
-	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it) FOR subscribe»«ENDIF»
+	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it.subscribe)»«ENDIF»
 	public class «name + getSuffix("Impl")» «IF gapClass»^extends «name + getSuffix("Impl")»Base«ENDIF» {
-	«Service::serialVersionUID(it)»
+		«ServiceTmpl::serialVersionUID(it)»
 		public «name + getSuffix("Impl")»() {
 		}
 
-	«Service::otherDependencies(it)»
+	«ServiceTmpl::otherDependencies(it)»
 
-		«it.operations.filter(op | op.isImplementedInGapClass()) .forEach[Service::implMethod(it)]»
+		«it.operations.filter(op | op.isImplementedInGapClass()) .map[ServiceTmpl::implMethod(it)]»
 
-	«Service::serviceHook(it)»
+	«ServiceTmpl::serviceHook(it)»
 	}
 	'''
 	)
@@ -136,74 +134,64 @@ def static String ejbInterceptors(Service it) {
 
 def static String ejbMethod(ServiceOperation it) {
 	'''
-		public «getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[Service::paramTypeAndName(it)]») « EXPAND ExceptionTmpl::throws» {
-			initBeanFactory();
-			«IF !getExceptions().isEmpty »try {«ENDIF»
-				«IF getTypeName() != "void" »return «ENDIF »service.«name»(«FOR parameter SEPARATOR ", " : parameters»«parameter.name»«ENDFOR»);
-			«IF !getExceptions().isEmpty »
-			«FOR exc : getExceptions()»
+	public «it.getTypeName()» «it.name»(«it.parameters.map[p | ServiceTmpl::paramTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+		initBeanFactory();
+		«IF !it.exceptions().isEmpty »try {«ENDIF»
+			«IF it.getTypeName() != "void" »return «ENDIF»service.«name»(«FOR parameter : parameters SEPARATOR ", "»«parameter.name»«ENDFOR»);
+		«IF !it.exceptions().isEmpty »
+			«FOR exc : it.exceptions()»
 			} catch («exc» e) {
-			    setRollbackOnly();
+				setRollbackOnly();
 				throw e;
 			«ENDFOR»
 			}
-			«ENDIF»
-		}
+		«ENDIF»
+	}
 	'''
 }
 
 def static String ejbRemoteInterface(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceapiPackage() + "." + name + "Remote"), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), '''
 	«javaHeader()»
-	package «getServiceapiPackage()»;
+	package «it.getServiceapiPackage()»;
 
-/**
- * Generated EJB remote interface for the Service «name».
- */
+	/**
+	 * Generated EJB remote interface for the Service «name».
+	 */
 	@javax.ejb.Remote
 	public interface «name»Remote ^extends «name» {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String ejbLocalInterface(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceapiPackage() + "." + name + "Local"), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), '''
 	«javaHeader()»
-	package «getServiceapiPackage()»;
+	package «it.getServiceapiPackage()»;
 
-/**
- * Generated EJB local interface for the Service «name».
- */
+	/**
+	 * Generated EJB local interface for the Service «name».
+	 */
 	@javax.ejb.Local
 	public interface «name»Local ^extends «name» {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 
 def static String serviceProxy(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceproxyPackage() + "." + name + "Proxy"), '''
+	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), '''
 	«javaHeader()»
-	package «getServiceproxyPackage()»;
+	package «it.getServiceproxyPackage()»;
 
-/**
- * Generated proxy class that can be used by clients to invoke «name».
- */
-	public class «name»Proxy implements «getServiceapiPackage()».«name» {
+	/**
+	 * Generated proxy class that can be used by clients to invoke «name».
+	 */
+	public class «name»Proxy implements «it.getServiceapiPackage()».«name» {
 
-		private «getServiceapiPackage()».«name» service;
+		private «it.getServiceapiPackage()».«name» service;
 		private String jndiName;
 		private String earName;
 
@@ -214,7 +202,7 @@ def static String serviceProxy(Service it) {
 			* Dependency injection of the EJB to invoke. If service is not injected
 			* lookup based on jndiName will be used.
 			*/
-		public void setService(«getServiceapiPackage()».«name» service) {
+		public void setService(«it.getServiceapiPackage()».«name» service) {
 			this.service = service;
 		}
 
@@ -234,7 +222,7 @@ def static String serviceProxy(Service it) {
 			this.earName = earName;
 		}
 
-		protected «getServiceapiPackage()».«name» getService() {
+		protected «it.getServiceapiPackage()».«name» getService() {
 			if (service != null) {
 				return service;
 			}
@@ -243,7 +231,7 @@ def static String serviceProxy(Service it) {
 				    jndiName = defaultJndiName();
 				}
 				javax.naming.InitialContext ctx = «IF remoteInterface»createInitialContext()«ELSE»new javax.naming.InitialContext()«ENDIF»;
-				«getServiceapiPackage()».«name» ejb = («getServiceapiPackage()».«name») ctx.lookup(
+				«it.getServiceapiPackage()».«name» ejb = («it.getServiceapiPackage()».«name») ctx.lookup(
 				    jndiName);
 				«IF remoteInterface»
 				// don't cache the remote proxy instance, since it might be stale and the server 
@@ -261,9 +249,8 @@ def static String serviceProxy(Service it) {
 		}
 
 		private String defaultJndiName() {
-			«LET remoteInterface && localInterface ?  '" + localOrRemote()' : 
-				(remoteInterface ? 'remote"' : 'local"')
-				AS localOrRemote»
+			«val localOrRemote = if (remoteInterface && localInterface) '" + localOrRemote()' else
+				(if (remoteInterface) 'remote"' else 'local"')»
 			if (earName() == null) {
 				// this requires definition of ejb-local-ref (in web.xml)
 				return "java:comp/env/ejb/«name.toFirstLower()»/«localOrRemote»;
@@ -286,23 +273,22 @@ def static String serviceProxy(Service it) {
 			«ELSE»
 				// you can define deployment.earname in sculptor-generator.properties if you need to define 
 				// the name of the ear instead of resolving it from the resourceName like this
-	        String resourceName = "/" + getClass().getName().replace('.', '/') + ".class";
-	        java.net.URL resource = getClass().getResource(resourceName);
-	        String fullPath = resource.toExternalForm();
-	        String[] parts = fullPath.split("/");
-	        for (int i = 0; i < parts.length; i++) {
-	            if (parts[i].endsWith(".ear")) {
-	            	// remove .ear
-	            	String earBaseName = parts[i].substring(0, parts[i].length() - 4);
-	                return earBaseName;
-	            }
-	        }
-	
-	        // ear not found
-	        return null;
+				String resourceName = "/" + getClass().getName().replace('.', '/') + ".class";
+				java.net.URL resource = getClass().getResource(resourceName);
+				String fullPath = resource.toExternalForm();
+				String[] parts = fullPath.split("/");
+				for (int i = 0; i < parts.length; i++) {
+					if (parts[i].endsWith(".ear")) {
+						// remove .ear
+						String earBaseName = parts[i].substring(0, parts[i].length() - 4);
+						return earBaseName;
+					}
+				}
+				// ear not found
+				return null;
 			«ENDIF»
 		}
-		
+
 		«IF remoteInterface»
 			«serviceRemoteProxy(it)»
 		«ENDIF»
@@ -312,8 +298,6 @@ def static String serviceProxy(Service it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String serviceRemoteProxy(Service it) {
@@ -473,36 +457,34 @@ def static String serviceRemoteProxy(Service it) {
 
 def static String proxyMethod(ServiceOperation it) {
 	'''
-		public «getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[Service::paramTypeAndName(it)]») « EXPAND ExceptionTmpl::throws» {
-			«IF getTypeName() != "void" »return «ENDIF »getService().«name»(«FOR parameter SEPARATOR ", " : parameters»«parameter.name»«ENDFOR»);
+		public «it.getTypeName()» «name»(«it.parameters.map[ServiceTmpl::paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+			«IF it.getTypeName() != "void" »return «ENDIF »getService().«name»(«FOR parameter : parameters SEPARATOR ", "»«parameter.name»«ENDFOR»);
 		}
 	'''
 }
 
 def static String webServiceAnnotations(Service it) {
 	'''
-	@javax.jws.WebService(endpointInterface = "«getServiceapiPackage()».«name»Endpoint",
+	@javax.jws.WebService(endpointInterface = "«it.getServiceapiPackage()».«name»Endpoint",
 		serviceName = "«name»")
 	«IF applicationServer() == "jboss" »
-// http://localhost:8080/«module.application.name.toLowerCase()»/«name»/WebDelegateEndPoint?wsdl
-	@org.jboss.wsf.spi.annotation.WebContext(contextRoot = "/«module.application.name.toLowerCase()»", urlPattern="/«name»/WebDelegateEndPoint")
+		// http://localhost:8080/«module.application.name.toLowerCase()»/«name»/WebDelegateEndPoint?wsdl
+		@org.jboss.wsf.spi.annotation.WebContext(contextRoot = "/«module.application.name.toLowerCase()»", urlPattern="/«name»/WebDelegateEndPoint")
 	«ENDIF»
 	'''
 }
 
 def static String webServiceInterface(Service it) {
-	'''
-	'''
-	fileOutput(javaFileName(getServiceapiPackage() + "." + name + "Endpoint"), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), '''
 	«javaHeader()»
-	package «getServiceapiPackage()»;
+	package «it.getServiceapiPackage()»;
 
-	«IF formatJavaDoc() == "" »
-/**
- * Generated interface for the «name» web service endpoint.
- */
+	«IF it.formatJavaDoc() == "" »
+		/**
+		 * Generated interface for the «name» web service endpoint.
+		 */
 	«ELSE »
-	«formatJavaDoc()»
+		«it.formatJavaDoc()»
 	«ENDIF »
 	@javax.jws.WebService
 	public interface «name»Endpoint ^extends «name» {
@@ -512,34 +494,30 @@ def static String webServiceInterface(Service it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String webServiceInterfaceMethod(ServiceOperation it) {
 	'''
-		«formatJavaDoc()»
-		«IF getTypeName() != "void"»@javax.jws.WebResult «ENDIF »«getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[webServiceParamTypeAndName(it)]») «
-		ExceptionTmpl::throws(it)»;
+		«it.formatJavaDoc()»
+		«IF it.getTypeName() != "void"»@javax.jws.WebResult «ENDIF »«it.getTypeName()» «name»(«it.parameters.map[p | webServiceParamTypeAndName(p)].join(",")») «
+		ExceptionTmpl::throwsDecl(it)»;
 	'''
 }
 
 def static String webServiceParamTypeAndName(Parameter it) {
 	'''
-	«IF this.getTypeName() != serviceContextClass()»@javax.jws.WebParam(name = "«name»") «ENDIF »«IF isGenerateParameterName()» @«fw("annotation.Name")»("«name»")«ENDIF» «getTypeName()» «name»
+	«IF it.getTypeName() != serviceContextClass()»@javax.jws.WebParam(name = "«name»") «ENDIF »«IF isGenerateParameterName()» @«fw("annotation.Name")»("«name»")«ENDIF» «it.getTypeName()» «name»
 	'''
 }
 
 def static String webServicePackageInfo(Service it) {
-	'''
-/*TODO: beautifier has problem with this file, therefore it is placed in TO_SRC */
-	'''
-	fileOutput(javaFileName(getServiceapiPackage() + ".package-info"), 'TO_SRC', '''
-//	to get elementFormDefault='qualified' for schema generated from this package
+	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), 'TO_SRC', '''
+	// TODO: beautifier has problem with this file, therefore it is placed in TO_SRC
+	//	to get elementFormDefault='qualified' for schema generated from this package
 	@javax.xml.bind.annotation.XmlSchema(
-		namespace = "http://«FOR e SEPARATOR '.' : reversePackageName(getServiceapiPackage())»«e»«ENDFOR»/",
+		namespace = "http://«FOR e : reversePackageName(it.getServiceapiPackage()) SEPARATOR '.'»«e»«ENDFOR»/",
 		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-	package «getServiceapiPackage()»;
+	package «it.getServiceapiPackage()»;
 
 	'''
 	)

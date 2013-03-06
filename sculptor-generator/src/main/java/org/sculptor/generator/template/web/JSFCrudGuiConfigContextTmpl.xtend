@@ -17,14 +17,12 @@
 
 package org.sculptor.generator.template.web
 
-import sculptormetamodel.*
+import sculptormetamodel.Application
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
 
 class JSFCrudGuiConfigContextTmpl {
 
@@ -40,27 +38,25 @@ def static String contextXml(Application it) {
 }
 
 def static String tomcatContextXml(Application it) {
-	'''
-	'''
 	fileOutput("META-INF/context.xml", 'TO_WEBROOT', '''
 	<?xml version="1.0" encoding="UTF-8"?>
-	<Context path="/«dataSourceName(this)»" docBase="«dataSourceName(this)»"
+	<Context path="/«dataSourceName(it)»" docBase="«dataSourceName(it)»"
 			debug="5" reloadable="true" crossContext="true">
-		<Resource name="jdbc/«dataSourceName(this)»" auth="Container" type="javax.sql.DataSource"
+		<Resource name="jdbc/«dataSourceName(it)»" auth="Container" type="javax.sql.DataSource"
 				  maxActive="100" maxIdle="30" maxWait="10000"
-		«IF dbProduct() == "hsqldb-inmemory" »
+		«IF dbProduct == "hsqldb-inmemory" »
 				  username="sa" password="" 
 				  driverClassName="org.hsqldb.jdbcDriver"
 				  url="jdbc:hsqldb:mem:applicationDB"
-		«ELSEIF dbProduct() == "mysql" »
+		«ELSEIF dbProduct == "mysql" »
 				  username="root" password="" 
 				  driverClassName="com.mysql.jdbc.Driver"
 				  url="jdbc:mysql://localhost/«name.toLowerCase()»?autoReconnect=true"
-		«ELSEIF dbProduct() == "oracle" »
+		«ELSEIF dbProduct == "oracle" »
 				  username="root" password="root" 
 				  driverClassName="oracle.jdbc.driver.OracleDriver"
 				  url="jdbc:oracle:thin:@localhost:1521:«name.toLowerCase()»"
-		«ELSEIF dbProduct() == "postgresql" »
+		«ELSEIF dbProduct == "postgresql" »
 				  username="root" password="root" 
 				  driverClassName="org.postgresql.Driver"
 				  url="jdbc:postgresql://localhost/«name.toLowerCase()»"
@@ -73,42 +69,38 @@ def static String tomcatContextXml(Application it) {
 	</Context>
 	'''
 	)
-	'''
-	'''
 }
 def static String jettyContextXml(Application it) {
-	'''
-	'''
 	fileOutput("WEB-INF/jetty-env.xml", 'TO_WEBROOT', '''
 	<?xml version="1.0"?>
 	<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
 	<Configure class="org.mortbay.jetty.webapp.WebAppContext">
 	«IF !nosql()»
-	<New id="«dataSourceName(this)»" class="org.mortbay.jetty.plus.naming.Resource">
-		<Arg>jdbc/«dataSourceName(this)»</Arg>
+	<New id="«dataSourceName(it)»" class="org.mortbay.jetty.plus.naming.Resource">
+		<Arg>jdbc/«dataSourceName(it)»</Arg>
 		<Arg>
 			<New class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-			«IF dbProduct() == "hsqldb-inmemory" »
+			«IF dbProduct == "hsqldb-inmemory" »
 				<Set name="DriverClassName">org.hsqldb.jdbcDriver</Set>
 				<Set name="Url">jdbc:hsqldb:mem:applicationDB</Set>
 				<Set name="Username">sa</Set>
 				<Set name="Password"></Set>
-			«ELSEIF dbProduct() == "mysql" »
+			«ELSEIF dbProduct == "mysql" »
 				<Set name="DriverClassName">com.mysql.jdbc.Driver</Set>
 				<Set name="Url">jdbc:mysql://localhost/«name.toLowerCase()»?autoReconnect=true</Set>
 				<Set name="Username">root</Set>
 				<Set name="Password"></Set>
-			«ELSEIF dbProduct() == "oracle" »
+			«ELSEIF dbProduct == "oracle" »
 				<Set name="DriverClassName">oracle.jdbc.driver.OracleDriver</Set>
 				<Set name="Url">jdbc:oracle:thin:@localhost:1521:«name.toLowerCase()»</Set>
 				<Set name="Username">root</Set>
 				<Set name="Password">root</Set>
-			«ELSEIF dbProduct() == "postgresql" »
+			«ELSEIF dbProduct == "postgresql" »
 				<Set name="DriverClassName">org.postgresql.Driver</Set>
 				<Set name="Url">jdbc:postgresql://localhost/«name.toLowerCase()»</Set>
 				<Set name="Username">root</Set>
 				<Set name="Password">root</Set>
-			«ELSE »
+			«ELSE»
 				<Set name="DriverClassName">other.jdbc.driver.OtherDriver</Set>
 				<Set name="Url">jdbc:other:«name.toLowerCase()»</Set>
 				<Set name="Username">root</Set>
@@ -121,7 +113,5 @@ def static String jettyContextXml(Application it) {
 	</Configure>
 	'''
 	)
-	'''
-	'''
 }
 }
