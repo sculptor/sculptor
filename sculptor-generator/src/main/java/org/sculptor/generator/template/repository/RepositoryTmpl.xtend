@@ -317,22 +317,23 @@ def static String baseRepositoryMethod(RepositoryOperation it) {
 			}
 		«ENDIF»
 		ao.execute();
+
 		«IF it.isPagedResult()»
 			«IF isJpa1() && isJpaProviderDataNucleus()»
-				java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
+				«"java.util.ArrayList<" + domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
 				result.addAll(ao.getResult());
 			«ELSE»
 				«it.getAccessObjectResultTypeName()» result = ao.getResult();
 			«ENDIF»
-	
+
 			«calculateMaxPages(it)»
 	
 			«it.getTypeName()» pagedResult = new «it.getTypeName()»(result
-					, pagingParameter.getStartRow()
-					, pagingParameter.getRowCount()
-					, pagingParameter.getPageSize()
-					, rowCount
-					, additionalRows);
+				, pagingParameter.getStartRow()
+				, pagingParameter.getRowCount()
+				, pagingParameter.getPageSize()
+				, rowCount
+				, additionalRows);
 			return pagedResult;
 		«ELSEIF it.getTypeName() != "void" »
 			«IF isJpa1() && isJpaProviderDataNucleus() && it.getTypeName().startsWith("java.util.List")»

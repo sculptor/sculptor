@@ -17,33 +17,33 @@
 
 package org.sculptor.generator.template
 
-import sculptormetamodel.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
-import org.sculptor.generator.template.domain.DomainObjectTmpl
 import org.sculptor.generator.template.common.ExceptionTmpl
-import org.sculptor.generator.template.mongodb.MongoDbMapperTmpl
-import org.sculptor.generator.template.service.ServiceTmpl
-import org.sculptor.generator.template.db.DbUnitTmpl
-import org.sculptor.generator.template.service.ServiceEjbTestTmpl
+import org.sculptor.generator.template.common.LogConfigTmpl
+import org.sculptor.generator.template.consumer.ConsumerTmpl
 import org.sculptor.generator.template.db.DDLTmpl
 import org.sculptor.generator.template.db.DatasourceTmpl
-import org.sculptor.generator.template.common.LogConfigTmpl
+import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.template.doc.ModelDocTmpl
 import org.sculptor.generator.template.doc.UMLGraphTmpl
-import org.sculptor.generator.template.repository.RepositoryTmpl
-import org.sculptor.generator.template.repository.AccessObjectTmpl
-import org.sculptor.generator.template.consumer.ConsumerTmpl
-import org.sculptor.generator.template.spring.SpringTmpl
-import org.sculptor.generator.template.rest.ResourceTmpl
-import org.sculptor.generator.template.rest.RestWebTmpl
+import org.sculptor.generator.template.domain.BuilderTmpl
+import org.sculptor.generator.template.domain.DomainObjectTmpl
 import org.sculptor.generator.template.jpa.HibernateTmpl
 import org.sculptor.generator.template.jpa.JPATmpl
+import org.sculptor.generator.template.mongodb.MongoDbMapperTmpl
+import org.sculptor.generator.template.repository.AccessObjectTmpl
+import org.sculptor.generator.template.repository.RepositoryTmpl
+import org.sculptor.generator.template.rest.ResourceTmpl
+import org.sculptor.generator.template.rest.RestWebTmpl
+import org.sculptor.generator.template.service.ServiceEjbTestTmpl
+import org.sculptor.generator.template.service.ServiceTmpl
+import org.sculptor.generator.template.spring.SpringTmpl
+import sculptormetamodel.Application
+import sculptormetamodel.BasicType
+
+import static org.sculptor.generator.ext.Properties.*
+
+import static extension org.sculptor.generator.ext.Helper.*
+import static extension org.sculptor.generator.util.HelperBase.*
 
 class RootTmpl {
 
