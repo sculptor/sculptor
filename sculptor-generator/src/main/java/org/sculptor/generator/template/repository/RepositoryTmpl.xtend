@@ -319,7 +319,6 @@ def static String baseRepositoryMethod(RepositoryOperation it) {
 		ao.execute();
 		«IF it.isPagedResult()»
 			«IF isJpa1() && isJpaProviderDataNucleus()»
-				// workaround for datanucleus serialization issue
 				java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
 				result.addAll(ao.getResult());
 			«ELSE»

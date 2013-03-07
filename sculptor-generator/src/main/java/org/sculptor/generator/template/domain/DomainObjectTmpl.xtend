@@ -17,14 +17,21 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.common.ExceptionTmpl
+import sculptormetamodel.DataTransferObject
+import sculptormetamodel.DomainObject
+import sculptormetamodel.DomainObjectOperation
+import sculptormetamodel.Enum
+import sculptormetamodel.EnumValue
+import sculptormetamodel.Parameter
+import sculptormetamodel.Trait
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static extension org.sculptor.generator.util.HelperBase.*
+
+import static org.sculptor.generator.template.domain.DomainObjectTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
 
 class DomainObjectTmpl {
 
@@ -90,11 +97,11 @@ def static String domainObjectSubclass(DomainObject it) {
 
 		«DomainObjectConstructorTmpl::propertyConstructorSubclass(it)»
 		«DomainObjectConstructorTmpl::limitedConstructor(it)»
-		«IF isPersistent() && (isJpaProviderAppEngine() || nosql())»
+		«IF it.isPersistent() && (isJpaProviderAppEngine() || nosql())»
 			«DomainObjectConstructorTmpl::propertyConstructorBaseIdReferencesSubclass(it)»
 		«ENDIF»
 
-		«it.operations.filter(e | e.isImplementedInGapClass()).forEach[domainObjectSubclassImplMethod(it)]»
+		«it.operations.filter(e | e.isImplementedInGapClass()).map[o | domainObjectSubclassImplMethod(o)]»
 	}
 
 	'''
@@ -142,7 +149,7 @@ def static String domainObjectBase(DomainObject it) {
 		«it.references.filter(r | !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceAttribute(it)]»
 		«it.references.filter(r | r.many).forEach[DomainObjectReferenceTmpl::manyReferenceAttribute(it)]»
 
-		«IF getLimitedConstructorParameters(it).isEmpty»public«ELSE»«getDefaultConstructorVisibility()»«ENDIF» «name»«IF gapClass»Base«ENDIF»() {
+		«IF getLimitedConstructorParameters(it).isEmpty»public«ELSE»«it.getDefaultConstructorVisibility()»«ENDIF» «name»«IF gapClass»Base«ENDIF»() {
 		}
 
 		«DomainObjectConstructorTmpl::propertyConstructorBase(it)»
@@ -197,7 +204,7 @@ def static String domainObjectBase(DomainObject it) {
 
 def static String domainObjectBase(Trait it) {
 	'''
-	«DomainObjectTraitTmpl::domainObjectBase(it)»
+		«DomainObjectTraitTmpl::domainObjectBase(it)»
 	'''
 }
 
@@ -245,7 +252,7 @@ def static String domainObjectBase(DataTransferObject it) {
 	«formatJavaDoc(it)»
 	«ENDIF »
 	«DomainObjectAnnotationTmpl::domainObjectBaseAnnotations(it)»
-	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «getExtendsAndImplementsLitteral()» {
+	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «it.getExtendsAndImplementsLitteral()» {
 	«serialVersionUID(it)»
 
 			«it.attributes.forEach[DomainObjectAttributeTmpl::attribute(it)]»
@@ -287,8 +294,8 @@ def static String serialVersionUID(DomainObject it) {
 }
 
 def static String prePersist(DomainObject it) {
+	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 	'''
-	«val hasUuidAttribute  = it.attributes.exists(a | a.isUuid()) »
 		«IF hasUuidAttribute && isJpaAnnotationOnFieldToBeGenerated()»
 		@javax.persistence.PrePersist
 		protected void prePersist() {
@@ -351,7 +358,7 @@ def static String toStringStyle(DomainObject it) {
 	'''
 	«IF toStringStyle(it) != null»
 		protected org.apache.commons.lang.builder.ToStringStyle toStringStyle() {
-			return org.apache.commons.lang.builder.ToStringStyle.«toStringStyle()»;
+			return org.apache.commons.lang.builder.ToStringStyle.«it.toStringStyle()»;
 		}
 	«ENDIF»
 	'''
@@ -359,88 +366,89 @@ def static String toStringStyle(DomainObject it) {
 
 def static String domainObject(Enum it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), '''
-	«javaHeader()»
-	package «getDomainPackage()»;
+		«javaHeader()»
+		package «getDomainPackage()»;
 
-	«IF formatJavaDoc() == "" »
-	 /**
-	 * Enum for «name»
-	 */
-	«ELSE »
-	«formatJavaDoc()»
-	«ENDIF »
-	public enum «name» implements java.io.Serializable {
-	«it.values SEPARATOR ",".forEach[enumValue(it)]»;
+		«IF it.formatJavaDoc() == "" »
+			 /**
+			 * Enum for «name»
+			 */
+		«ELSE »
+			«it.formatJavaDoc()»
+		«ENDIF »
+		public enum «name» implements java.io.Serializable {
+			«it.values.map[v | enumValue(v)].join(",")»;
 
-	«enumIdentifierMap(it)»
+			«enumIdentifierMap(it)»
 
-		«it.attributes.forEach[DomainObjectAttributeTmpl::attribute(it)]»
-		«enumConstructor(it)»
-		«enumFromIdentifierMethod(it)»
-		«it.attributes.forEach[DomainObjectAttributeTmpl::propertyGetter(it)]»
-		«enumNamePropertyGetter(it)»
-	}
+			«it.attributes.forEach[DomainObjectAttributeTmpl::attribute(it)]»
+			«enumConstructor(it)»
+			«enumFromIdentifierMethod(it)»
+			«it.attributes.forEach[DomainObjectAttributeTmpl::propertyGetter(it)]»
+			«enumNamePropertyGetter(it)»
+		}
 	'''
 	)
 }
 
 def static String enumValue(EnumValue it) {
 	'''
-	«formatJavaDoc()»
-	«name»«IF !parameters.isEmpty »(«FOR param SEPARATOR "," : parameters»«param.value»«ENDFOR»)«ENDIF-»
+		«it.formatJavaDoc()»
+		«name»«IF !parameters.isEmpty »(«FOR param : parameters SEPARATOR ","»«param.value»«ENDFOR»)«ENDIF»
 	'''
 }
 
 def static String enumIdentifierMap(Enum it) {
+	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-	«val identifierAttribute  = it.getIdentifierAttribute()»
-	«IF identifierAttribute != null »
-		/**
-			*/
-		private static java.util.Map<«identifierAttribute.getTypeName().getObjectTypeName()», «name»> identifierMap = new java.util.HashMap<«identifierAttribute.getTypeName().getObjectTypeName()», «name»>();
-		static {
-			for («name» value : «name».values()) {
-				identifierMap.put(value.«identifierAttribute.getGetAccessor()»(), value);
+		«IF identifierAttribute != null »
+			/**
+			 */
+			private static java.util.Map<«identifierAttribute.getTypeName().getObjectTypeName()», «name»> identifierMap = new java.util.HashMap<«identifierAttribute.getTypeName().getObjectTypeName()», «name»>();
+			static {
+				for («name» value : «name».values()) {
+					identifierMap.put(value.«identifierAttribute.getGetAccessor()»(), value);
+				}
 			}
-		}
-	«ENDIF»
+		«ENDIF»
 	'''
 }
 
 def static String enumFromIdentifierMethod(Enum it) {
+	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-	«val identifierAttribute  = it.getIdentifierAttribute()»
-	«IF identifierAttribute != null »
-		public static «name» from«identifierAttribute.name.toFirstUpper()»(«identifierAttribute.getTypeName()» «identifierAttribute.name») {
-			«name» result = identifierMap.get(«identifierAttribute.name»);
-			if (result == null) {
-				throw new IllegalArgumentException("No «name» for «identifierAttribute.name»: " + «identifierAttribute.name»);
+		«IF identifierAttribute != null »
+			public static «name» from«identifierAttribute.name.toFirstUpper()»(«identifierAttribute.getTypeName()» «identifierAttribute.name») {
+				«name» result = identifierMap.get(«identifierAttribute.name»);
+				if (result == null) {
+					throw new IllegalArgumentException("No «name» for «identifierAttribute.name»: " + «identifierAttribute.name»);
+				}
+				return result;
 			}
-			return result;
-		}
-	/*new enum handling */
-		public static «name» toEnum(java.lang.Object key) {
-			if (!(key instanceof «identifierAttribute.getTypeName().getObjectTypeName()»)) {
-				throw new IllegalArgumentException("key is not of type «identifierAttribute.getTypeName().getObjectTypeName()»");
-			}
-			return from«identifierAttribute.name.toFirstUpper()»((«identifierAttribute.getTypeName().getObjectTypeName()») key);
-		}
 
-		public Object toData() {
-			return get«identifierAttribute.name.toFirstUpper()»();
-		}
-	«ENDIF»
+			/* new enum handling */
+			public static «name» toEnum(java.lang.Object key) {
+				if (!(key instanceof «identifierAttribute.getTypeName().getObjectTypeName()»)) {
+					throw new IllegalArgumentException("key is not of type «identifierAttribute.getTypeName().getObjectTypeName()»");
+				}
+				return from«identifierAttribute.name.toFirstUpper()»((«identifierAttribute.getTypeName().getObjectTypeName()») key);
+			}
+
+			public Object toData() {
+				return get«identifierAttribute.name.toFirstUpper()»();
+			}
+		«ENDIF»
 	'''
 }
 
 
 def static String enumConstructor(Enum it) {
 	'''
-	/**
-	 */
-	private «name»(«it.attributes SEPARATOR ",".forEach[DomainObjectConstructorTmpl::parameterTypeAndName(it)]») {
+		/**
+		 */
+		private «name»(«it.attributes.map[a | DomainObjectConstructorTmpl::parameterTypeAndName(a)].join(",")») {
 			«FOR a : attributes»
-			this.«a.name» = «a.name»;
+				this.«a.name» = «a.name»;
 			«ENDFOR»
 		}
 	'''
@@ -470,7 +478,7 @@ def static String clone(DomainObject it) {
 
 def static String domainObjectSubclassImplMethod(DomainObjectOperation it) {
 	'''
-	«getVisibilityLitteral()» «getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[methodParameterTypeAndName(it)]») « EXPAND ExceptionTmplTmpl::throws» {
+		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | methodParameterTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("«name» not implemented");
 			}
@@ -479,14 +487,14 @@ def static String domainObjectSubclassImplMethod(DomainObjectOperation it) {
 
 def static String abstractMethod(DomainObjectOperation it) {
 	'''
-	«formatJavaDoc()»
-	abstract «getVisibilityLitteral()» «getTypeName()» «name»(«it.parameters SEPARATOR ", ".forEach[methodParameterTypeAndName(it)]») « EXPAND ExceptionTmplTmpl::throws»;
+		«it.formatJavaDoc()»
+		abstract «it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[methodParameterTypeAndName(it)].join(", ")») «ExceptionTmpl::throwsDecl(it)»;
 	'''
 }
 
 def static String methodParameterTypeAndName(Parameter it) {
 	'''
-	«getTypeName()» «name»
+		«it.getTypeName()» «name»
 	'''
 }
 

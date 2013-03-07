@@ -60,8 +60,8 @@ def static String enumPlugin(Application it) {
 	<?xml version="1.0"?>
 	<plugin>
 		<extension point="org.datanucleus.store_mapping">
-		«FOR enum : it.getAllEnums().filter(e|!e.isOrdinaryEnum())»
-			«enumPluginMapping(enum)»
+		«FOR enm : it.getAllEnums().filter(e|!e.isOrdinaryEnum())»
+			«enumPluginMapping(enm)»
 		«ENDFOR»
 		</extension>
 		<extension point="org.datanucleus.store.rdbms.sql_expression">

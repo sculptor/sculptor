@@ -17,14 +17,15 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import sculptormetamodel.DataTransferObject
+import sculptormetamodel.DomainObject
+import sculptormetamodel.NamedElement
+import sculptormetamodel.Trait
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.domain.DomainObjectNamesTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
 
 class DomainObjectNamesTmpl {
 
@@ -39,30 +40,24 @@ def static String propertyNamesInterface(Trait it) {
 }
 
 def static String propertyNamesInterface(DomainObject it) {
-	'''
-	'''
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Names"), '''
-	«javaHeader()»
-	package «getDomainPackage()»;
+		«javaHeader()»
+		package «getDomainPackage()»;
 
-/**
- * This generated interface defines constants for all
- * attributes and associatations in
- * {@link «getDomainPackage()».«name»}.
- * <p>
- * These constants are useful for example when building
- * criterias.
- */
-	public interface «name»Names {
-
-		«it.attributes.forEach[propertyNameConstant(it)]»
-		«it.references.forEach[propertyNameConstant(it)]»
-		
-	}
+		/**
+		 * This generated interface defines constants for all
+		 * attributes and associatations in
+		 * {@link «getDomainPackage()».«name»}.
+		 * <p>
+		 * These constants are useful for example when building
+		 * criterias.
+		 */
+		public interface «name»Names {
+			«it.attributes.forEach[propertyNameConstant(it)]»
+			«it.references.forEach[propertyNameConstant(it)]»
+		}
 	'''
 	)
-	'''
-	'''
 }
 
 def static String propertyNameConstant(NamedElement it) {
@@ -70,6 +65,5 @@ def static String propertyNameConstant(NamedElement it) {
 		public static final String «name.toUpperCase()» = "«name»";
 	'''
 }
-
 
 }

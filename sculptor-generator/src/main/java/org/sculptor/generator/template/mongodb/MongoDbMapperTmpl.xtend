@@ -204,7 +204,7 @@ def static String gapToDomain(DomainObject it) {
 }
 def static String toDomain(DomainObject it) {
 	val constructorParameters = it.getConstructorParameters()
-	val nonEnumReferenceConstructorParameters = (it.getConstructorParameters().filter[e | e.^class == typeof(Reference) && !(e.isEnumReference())] as Iterable<Reference>)
+	val nonEnumReferenceConstructorParameters = it.getConstructorParameters().filter[e | e.^class == typeof(Reference) && !(e.isEnumReference())].map[e | (e as Reference)]
 	val allNonEnumNonConstructorReferences = it.getAllReferences().filter[e | !(e.isEnumReference() || constructorParameters.contains(e))]
 
 	'''
@@ -212,14 +212,14 @@ def static String toDomain(DomainObject it) {
 	public «it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» toDomain(com.mongodb.DBObject from) {
 		«fromNullCheck(it)»
 	
-		«FOR p : (it.constructorParameters.filter[e | e.^class == typeof(Attribute)] as Iterable<Attribute>)»
+		«FOR p : it.constructorParameters.filter[e | e.^class == typeof(Attribute)].map[e | (e as Attribute)]»
 			«IF p.isJodaTemporal() »
 				«p.getTypeName()» «p.name» = «fw("accessimpl.mongodb." + (if (p.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain(from.get("«p.getDatabaseName()»"));
 			«ELSE »
 				«p.getTypeName()» «p.name» = («p.getTypeName().getObjectTypeName()») from.get("«p.getDatabaseName()»");
 			«ENDIF»
 		«ENDFOR»
-		«FOR p  : (constructorParameters.filter(e | e.isEnumReference()) as Iterable<Reference>)»
+		«FOR p  : constructorParameters.filter(e | e.isEnumReference()).map[e | (e as Reference)]»
 			«p.getTypeName()» «p.name» = (from.get("«p.getDatabaseName()»") == null ? null : «p.getTypeName()».valueOf((String) from.get("«p.getDatabaseName()»")));
 		«ENDFOR»
 

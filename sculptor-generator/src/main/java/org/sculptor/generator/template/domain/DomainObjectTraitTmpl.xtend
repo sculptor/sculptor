@@ -17,88 +17,76 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import org.sculptor.generator.template.common.ExceptionTmpl
+import sculptormetamodel.DomainObject
+import sculptormetamodel.DomainObjectOperation
+import sculptormetamodel.Trait
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.domain.DomainObjectTraitTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class DomainObjectTraitTmpl {
 
 def static String domainObjectSubclass(Trait it) {
-	'''
-	'''
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Trait"), 'TO_SRC', '''
-	«javaHeader()»
-	package «getDomainPackage()»;
+		«javaHeader()»
+		package «getDomainPackage()»;
 
-	«IF formatJavaDoc() == "" »
-/**
- * «name» trait
- * @param S self type
- */
-	«ELSE »
-	«formatJavaDoc()»
-	«ENDIF »
-	«DomainObjectAnnotationTmpl::domainObjectSubclassAnnotations(it)»
-	public «getAbstractLitteral()»class «name»Trait<S ^extends  «getDomainPackage()».«name»> ^extends «name»TraitBase<S> {
-	«DomainObjectTmpl::serialVersionUID(it)»
-		«it.operations.reject(e | e.^abstract).forEach[traitImplMethod(it)]»
-	}
-	'''
-	)
-	'''
-	'''
+		«IF it.formatJavaDoc() == "" »
+			/**
+			 * «name» trait
+			 * @param S self type
+			 */
+		«ELSE »
+			«it.formatJavaDoc()»
+		«ENDIF »
+		«DomainObjectAnnotationTmpl::domainObjectSubclassAnnotations(it)»
+		public «it.getAbstractLitteral()»class «name»Trait<S ^extends  «getDomainPackage()».«name»> extends «name»TraitBase<S> {
+		«DomainObjectTmpl::serialVersionUID(it)»
+			«it.operations.filter(e | !e.^abstract).map[traitImplMethod(it)]»
+		}
+	''')
 }
 
 def static String domainObjectBase(Trait it) {
-	'''
-	«traitInterface(it)»
-	'''
+	traitInterface(it)
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), '''
-	«javaHeader()»
-	package «getDomainPackage()»;
+		«javaHeader()»
+		package «getDomainPackage()»;
 
-/**
- * @param S self type
- */
-	public abstract class «name»TraitBase<S ^extends  «getDomainPackage()».«name»> «getExtendsAndImplementsLitteral()» {
-	«DomainObjectTmpl::serialVersionUID(it)»
-
-	«traitBaseSelfMethod(it)»
-	«it.operations.reject(op | op.isPublicVisibility()).forEach[traitBaseMethod(it)]»
-	«it.operations.filter(e | e.^abstract && e.isPublicVisibility()).forEach[traitBaseDelegateToSelfMethod(it)]»
-	«traitBaseHook(it)»
-	}
-	'''
-	)
-	'''
-	'''
+		/**
+		 * @param S self type
+		 */
+		public abstract class «name»TraitBase<S ^extends  «getDomainPackage()».«name»> «it.getExtendsAndImplementsLitteral()» {
+			«DomainObjectTmpl::serialVersionUID(it)»
+		
+			«traitBaseSelfMethod(it)»
+			«operations.filter(op | !op.isPublicVisibility()).map[o | traitBaseMethod(o)]»
+			«operations.filter(e | e.^abstract && e.isPublicVisibility()).map[o | traitBaseDelegateToSelfMethod(o)]»
+			«traitBaseHook(it)»
+		}
+	''')
 }
 
 def static String traitInterface(Trait it) {
-	'''
-	'''
 	fileOutput(javaFileName(getDomainPackage() + "." + name), '''
-	«javaHeader()»
-	package «getDomainPackage()»;
+		«javaHeader()»
+		package «getDomainPackage()»;
 
-	public interface «name» {
-	«it.operations.filter(op | op.isPublicVisibility()).forEach[traitInterfaceMethod(it)]»
-	«traitInterfaceHook(it)»
-	}
-	'''
-	)
-	'''
-	'''
+		public interface «name» {
+			«operations.filter(op | op.isPublicVisibility()).map[o | traitInterfaceMethod(o)]»
+			«traitInterfaceHook(it)»
+		}
+	''')
 }
 
 def static String traitImplMethod(DomainObjectOperation it) {
 	'''
-	«getVisibilityLitteral()» «getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[DomainObjectTmpl::methodParameterTypeAndName(it)]») « EXPAND ExceptionTmpl::throws» {
+		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | DomainObjectTmpl::methodParameterTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("«name» not implemented");
 			}
@@ -107,30 +95,30 @@ def static String traitImplMethod(DomainObjectOperation it) {
 
 def static String traitInterfaceMethod(DomainObjectOperation it) {
 	'''
-		«formatJavaDoc()»
-		«getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[DomainObjectTmpl::methodParameterTypeAndName(it)]») « EXPAND ExceptionTmpl::throws»;
+		«it.formatJavaDoc()»
+		«it.getTypeName()» «name»(«it.parameters.map[p | DomainObjectTmpl::methodParameterTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)»;
 	'''
 }
 
 def static String delegateToTraitMethod(DomainObjectOperation it) {
 	'''
-	«formatJavaDoc()»
-		«IF isPublicVisibility()»@Override«ENDIF»
-	«getVisibilityLitteral()» «getTypeName()» «name»(«it.parameters SEPARATOR ", ".forEach[DomainObjectTmpl::methodParameterTypeAndName(it)]») « EXPAND ExceptionTmpl::throws» {
-			«IF getTypeName() != "void"»return «ENDIF»«getHint("trait").toFirstLower()»Trait.«name»(«FOR p SEPARATOR ", " : parameters»«p.name»«ENDFOR»);
+		«it.formatJavaDoc()»
+		«IF it.isPublicVisibility()»@Override«ENDIF»
+		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | DomainObjectTmpl::methodParameterTypeAndName(p)].join(", ")») «ExceptionTmpl::throwsDecl(it)» {
+				«IF it.getTypeName() != "void"»return «ENDIF»«it.getHint("trait").toFirstLower()»Trait.«name»(«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
 		}
 	'''
 }
 
 def static String traitInstance(Trait it, DomainObject inDomainObject) {
 	'''
-	«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
-		@javax.persistence.Transient
-	«ENDIF»
+		«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
+			@javax.persistence.Transient
+		«ENDIF»
 		private «getDomainPackage()».«name»Trait<«inDomainObject.getDomainPackage()».«inDomainObject.name»> «name.toFirstLower()»Trait = new «getDomainPackage()».«name»Trait<«inDomainObject.getDomainPackage()».«inDomainObject.name»>() {
 			«DomainObjectTmpl::serialVersionUID(it)»
-			«traitInstanceSelfMethod(it)(inDomainObject)»
-			«it.operations.filter(e | e.^abstract && !e.isPublicVisibility()).forEach[traitInstanceMethod(it)(inDomainObject)]»
+			«traitInstanceSelfMethod(it, inDomainObject)»
+			«it.operations.filter(e | e.^abstract && !e.isPublicVisibility()).map[e | traitInstanceMethod(e, inDomainObject)]»
 		}; 
 	'''
 }
@@ -147,9 +135,9 @@ def static String traitInstanceSelfMethod(Trait it, DomainObject inDomainObject)
 def static String traitInstanceMethod(DomainObjectOperation it, DomainObject inDomainObject) {
 	'''
 		@Override
-	«getVisibilityLitteral()» «getTypeName()» «name»(«it.parameters SEPARATOR ", ".forEach[DomainObjectTmpl::methodParameterTypeAndName(it)]») « EXPAND ExceptionTmpl::throws» {
-			«IF getTypeName() != "void"»return «ENDIF»«inDomainObject.getDomainPackage()».«inDomainObject.name»«IF inDomainObject.gapClass»Base«ENDIF».this.«name»(
-				«FOR p SEPARATOR ", " : parameters»«p.name»«ENDFOR»);
+		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[e | DomainObjectTmpl::methodParameterTypeAndName(e)].join(", ")») «ExceptionTmpl::throwsDecl(it)» {
+			«IF it.getTypeName() != "void"»return «ENDIF»«inDomainObject.getDomainPackage()».«inDomainObject.name»«IF inDomainObject.gapClass»Base«ENDIF».this.«name»(
+			«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
 		}
 	'''
 }
@@ -165,17 +153,17 @@ def static String traitBaseSelfMethod(Trait it) {
 
 def static String traitBaseMethod(DomainObjectOperation it) {
 	'''
-		«formatJavaDoc()»
-		«getVisibilityLitteral()» abstract «getTypeName()» «name»(«it.parameters SEPARATOR ",".forEach[DomainObjectTmpl::methodParameterTypeAndName(it)]») « EXPAND ExceptionTmpl::throws»;
+		«it.formatJavaDoc()»
+		«it.getVisibilityLitteral()» abstract «it.getTypeName()» «name»(«it.parameters.map[e | DomainObjectTmpl::methodParameterTypeAndName(e)].join(",")») «ExceptionTmpl::throwsDecl(it)»;
 	'''
 }
 
 def static String traitBaseDelegateToSelfMethod(DomainObjectOperation it) {
 	'''
 		@Override
-	«getVisibilityLitteral()» «getTypeName()» «name»(«it.parameters SEPARATOR ", ".forEach[DomainObjectTmpl::methodParameterTypeAndName(it)]») « EXPAND ExceptionTmpl::throws» {
-			«IF getTypeName() != "void"»return «ENDIF»self().«name»(
-				«FOR p SEPARATOR ", " : parameters»«p.name»«ENDFOR»);
+		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[e | DomainObjectTmpl::methodParameterTypeAndName(e)].join(", ")») «ExceptionTmpl::throwsDecl(it)» {
+			«IF it.getTypeName() != "void"»return «ENDIF»self().«name»(
+				«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
 		}
 	'''
 }

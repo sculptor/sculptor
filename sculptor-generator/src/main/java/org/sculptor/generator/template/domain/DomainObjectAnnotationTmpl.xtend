@@ -17,20 +17,25 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import sculptormetamodel.DataTransferObject
+import sculptormetamodel.DomainObject
+import sculptormetamodel.NamedElement
+import sculptormetamodel.Reference
+import sculptormetamodel.Trait
+
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.domain.DomainObjectAnnotationTmpl.*
 
 import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 import static extension org.sculptor.generator.ext.Helper.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class DomainObjectAnnotationTmpl {
 
 def static String domainObjectSubclassAnnotations(DataTransferObject it) {
 	'''
-	«IF isXmlRootToBeGenerated()»
+	«IF it.isXmlRootToBeGenerated()»
 		«xmlRootAnnotation(it)»
 	«ENDIF»
 	«IF isXstreamAnnotationToBeGenerated()»
@@ -46,7 +51,7 @@ def static String domainObjectSubclassAnnotations(Trait it) {
 
 def static String domainObjectSubclassAnnotations(DomainObject it) {
 	'''
-	«IF isXmlRootToBeGenerated()»
+	«IF it.isXmlRootToBeGenerated()»
 		«xmlRootAnnotation(it)»
 	«ENDIF»
 	«IF isXstreamAnnotationToBeGenerated()»
@@ -58,65 +63,65 @@ def static String domainObjectSubclassAnnotations(DomainObject it) {
 /*We need to format this carefully because it is included in JavaDoc, which is not beautified. */
 def static String domainObjectAnnotations(DomainObject it) {
 	'''
-	«IF isEmbeddable() »
-	@javax.persistence.Embeddable
-	«ENDIF»
-	«IF hasOwnDatabaseRepresentation()»
-	@javax.persistence.Entity
-		«IF !isInheritanceTypeSingleTable(getRootExtends()) || this == getRootExtends()»
-	@javax.persistence.Table(name = "«getDatabaseName()»"« IF hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
+		«IF it.isEmbeddable() »
+			@javax.persistence.Embeddable
 		«ENDIF»
-		«domainObjectInheritanceAnnotations(it)»
-		«IF isJpa2() && cache»
-	@javax.persistence.Cacheable
+		«IF it.hasOwnDatabaseRepresentation()»
+			@javax.persistence.Entity
+			«IF !isInheritanceTypeSingleTable(it.getRootExtends()) || it == it.getRootExtends()»
+				@javax.persistence.Table(name = "«it.getDatabaseName()»"« IF it.hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
+			«ENDIF»
+			«domainObjectInheritanceAnnotations(it)»
+			«IF isJpa2() && cache»
+				@javax.persistence.Cacheable
+			«ENDIF»
+			«IF isJpaProviderHibernate() && cache»
+				@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
+			«ENDIF»
 		«ENDIF»
-		«IF isJpaProviderHibernate() && cache»
-	@org.hibernate.annotations.Cache(usage = «getHibernateCacheStrategy()»)
-		«ENDIF»
-	«ENDIF»
 	'''
 }
 
 def static String domainObjectBaseAnnotations(DataTransferObject it) {
 	'''
- 	«IF isValidationAnnotationToBeGeneratedForObject()»
- 		«getValidationAnnotations()»
-	«ENDIF»
-	«IF !gapClass && isXmlRootToBeGenerated()»
-		«xmlRootAnnotation(it)»
-	«ENDIF»
-	«IF !gapClass && isXstreamAnnotationToBeGenerated()»
-		«xstreamAliasAnnotation(it)»
-	«ENDIF»
+		«IF it.isValidationAnnotationToBeGeneratedForObject()»
+			«it.getValidationAnnotations()»
+		«ENDIF»
+		«IF !gapClass && it.isXmlRootToBeGenerated()»
+			«xmlRootAnnotation(it)»
+		«ENDIF»
+		«IF !gapClass && isXstreamAnnotationToBeGenerated()»
+			«xstreamAliasAnnotation(it)»
+		«ENDIF»
 	'''
 }
 
 def static String domainObjectBaseAnnotations(DomainObject it) {
 	'''
-	«IF isJpaAnnotationToBeGenerated() && hasOwnDatabaseRepresentation() && (getValidationEntityListener() != null || getAuditEntityListener() != null)»
-	«jpaEntityListenersAnnotation(it) FOR this»
-	«ENDIF»
-	«IF isValidationAnnotationToBeGeneratedForObject()»
-	«getValidationAnnotations()»
-	«ENDIF»
-	«IF !gapClass && isXmlRootToBeGenerated()»
-	«xmlRootAnnotation(it)»
-	«ENDIF»
-	«IF !gapClass && isXstreamAnnotationToBeGenerated()»
-	«xstreamAliasAnnotation(it)»
-	«ENDIF»
+		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && (it.getValidationEntityListener() != null || it.getAuditEntityListener() != null)»
+		«jpaEntityListenersAnnotation(it)»
+		«ENDIF»
+		«IF it.isValidationAnnotationToBeGeneratedForObject()»
+		«it.getValidationAnnotations()»
+		«ENDIF»
+		«IF !gapClass && it.isXmlRootToBeGenerated()»
+		«xmlRootAnnotation(it)»
+		«ENDIF»
+		«IF !gapClass && isXstreamAnnotationToBeGenerated()»
+		«xstreamAliasAnnotation(it)»
+		«ENDIF»
 	'''
 }
 
 def static String xmlRootAnnotation(DomainObject it) {
 	'''
-	@javax.xml.bind.annotation.XmlRootElement(name="«getXmlRootElementName()»")
+		@javax.xml.bind.annotation.XmlRootElement(name="«it.getXmlRootElementName()»")
 	'''
 }
 
 def static String xstreamAliasAnnotation(DomainObject it) {
 	'''
-	@com.thoughtworks.xstream.annotations.XStreamAlias("«getXStreamAliasName()»")
+		@com.thoughtworks.xstream.annotations.XStreamAlias("«it.getXStreamAliasName()»")
 	'''
 }
 
@@ -124,51 +129,50 @@ def static String xstreamAliasAnnotation(DomainObject it) {
 /*TODO: optimize this quick solution */
 def static String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
-	@javax.persistence.EntityListeners({
-	«formatAnnotationParameters({ getValidationEntityListener() != null && !isJpa2(), "", getValidationEntityListener() + ".class",
-		getAuditEntityListener() != null, "", getAuditEntityListener() + ".class"
-	})»})
+		@javax.persistence.EntityListeners({
+		«formatAnnotationParameters(<Object>newArrayList(it.getValidationEntityListener() != null && !isJpa2(), "", it.getValidationEntityListener() + ".class",
+			it.getAuditEntityListener() != null, "", it.getAuditEntityListener() + ".class"))»})
 	'''
 }
 
 /*We need to format this carefully beccause it is included in JavaDoc, which is not beautified. */
 def static String domainObjectInheritanceAnnotations(DomainObject it) {
 	'''
-	«IF hasSubClass()»
-		«IF isInheritanceTypeSingleTable()»
-	@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.SINGLE_TABLE)
-	«formatAnnotationParameters("@javax.persistence.DiscriminatorColumn", { inheritance.discriminatorColumnName != null, "name", '"' + inheritance.discriminatorColumnName + '"',
-	getDiscriminatorType() != "javax.persistence.DiscriminatorType.STRING", "discriminatorType", getDiscriminatorType(),
-	inheritance.discriminatorColumnLength != null, "length", inheritance.discriminatorColumnLength,
-	isJpaAnnotationColumnDefinitionToBeGenerated(), "columnDefinition", '"' + inheritance.getDiscriminatorColumnDatabaseType() + '"'
-		}) »
+	«IF it.hasSubClass()»
+		«IF it.isInheritanceTypeSingleTable()»
+			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.SINGLE_TABLE)
+			«formatAnnotationParameters("@javax.persistence.DiscriminatorColumn", <Object>newArrayList( inheritance.discriminatorColumnName != null, "name", '"' + inheritance.discriminatorColumnName + '"',
+				it.getDiscriminatorType() != "javax.persistence.DiscriminatorType.STRING", "discriminatorType", it.getDiscriminatorType(),
+				inheritance.discriminatorColumnLength != null, "length", inheritance.discriminatorColumnLength,
+				isJpaAnnotationColumnDefinitionToBeGenerated(), "columnDefinition", '"' + inheritance.getDiscriminatorColumnDatabaseType() + '"'
+			)) »
 			«IF !^abstract && discriminatorColumnValue != null»
-	@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
+				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
-		«ELSEIF isInheritanceTypeJoined()»
-	@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.JOINED)
-	«IF !isJpa2() && isJpaProviderEclipseLink()»
-/*EclipseLink needs discriminator */
-	@javax.persistence.DiscriminatorColumn(name="DTYPE", discriminatorType=DiscriminatorType.STRING, length=21)
-	«IF !^abstract»
-	@javax.persistence.DiscriminatorValue("«name»")
-	«ENDIF»
-	«ENDIF»
+		«ELSEIF it.isInheritanceTypeJoined()»
+			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.JOINED)
+			«IF !isJpa2() && isJpaProviderEclipseLink()»
+				/* EclipseLink needs discriminator */
+				@javax.persistence.DiscriminatorColumn(name="DTYPE", discriminatorType=DiscriminatorType.STRING, length=21)
+				«IF !^abstract»
+				@javax.persistence.DiscriminatorValue("«name»")
+				«ENDIF»
+			«ENDIF»
 		«ENDIF»
 	«ENDIF»
-	«IF hasSuperClass()»
-		«IF isInheritanceTypeSingleTable(getRootExtends())»
+	«IF it.hasSuperClass()»
+		«IF isInheritanceTypeSingleTable(it.getRootExtends())»
 			«IF discriminatorColumnValue != null»
-	@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
+				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
-		«ELSEIF isInheritanceTypeJoined(getRootExtends())»
-	@javax.persistence.PrimaryKeyJoinColumn(name="«^extends.getExtendsForeignKeyName()»")
+		«ELSEIF isInheritanceTypeJoined(it.getRootExtends())»
+			@javax.persistence.PrimaryKeyJoinColumn(name="«^extends.getExtendsForeignKeyName()»")
 			«IF isJpaProviderHibernate()»
-	@org.hibernate.annotations.ForeignKey(
-		name = "FK_«truncateLongDatabaseName(getDatabaseName(), ^extends.getDatabaseName())»")
+				@org.hibernate.annotations.ForeignKey(
+					name = "FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»")
 			«ELSEIF !isJpa2() && isJpaProviderEclipseLink()»
-/*EclipseLink needs discriminator */
-	@javax.persistence.DiscriminatorValue("«name»")
+				/* EclipseLink needs discriminator */
+				@javax.persistence.DiscriminatorValue("«name»")
 			«ENDIF»
 		«ENDIF»
 	«ENDIF»
@@ -177,23 +181,18 @@ def static String domainObjectInheritanceAnnotations(DomainObject it) {
 
 def static String uniqueConstraints(DomainObject it) {
 	'''
-	, uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys() SEPARATOR ", " .forEach[ uniqueColumns(it)("")]»})«
-	ENDDEFINE»
-
-def static String uniqueColumns(NamedElement it, String columnPrefix) {
-	'''"«getDatabaseName(columnPrefix, this)»"«
-	ENDDEFINE»
-
-def static String uniqueColumns(Reference it, String columnPrefix) {
-	'''« IF isBasicTypeReference() »«
-		uniqueColumns(it)(getDatabaseName(columnPrefix, this) + "_") FOREACH to.getAllNaturalKeys() SEPARATOR ", " »« ELSE»"«getDatabaseName(columnPrefix, this)»"«
-	ENDIF »	'''
+	, uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})
+	'''
 }
 
+def static String uniqueColumns(NamedElement it, String columnPrefix) {
+	'''"«getDatabaseName(columnPrefix, it)»"'''
+}
 
-
-
-
-
+def static String uniqueColumns(Reference it, String columnPrefix) {
+	'''«IF it.isBasicTypeReference()»
+		«to.getAllNaturalKeys().map[k | uniqueColumns(k, getDatabaseName(columnPrefix, it) + "_")].join(", ")»
+		«ELSE»"«getDatabaseName(columnPrefix, it)»"«ENDIF»	'''
+}
 
 }

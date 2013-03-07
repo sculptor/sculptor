@@ -17,173 +17,174 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import sculptormetamodel.Attribute
+
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.domain.DomainObjectAttributeAnnotationTmpl.*
 
 import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 import static extension org.sculptor.generator.ext.Helper.*
+import static extension org.sculptor.generator.util.DbHelperBase.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class DomainObjectAttributeAnnotationTmpl {
 
 def static String attributeAnnotations(Attribute it) {
 	'''
-	«IF isJpaAnnotationOnFieldToBeGenerated()»
-		«IF isJpaAnnotationToBeGenerated() && getDomainObject().isPersistent() »
-			«jpaAnnotations(it)»
+		«IF isJpaAnnotationOnFieldToBeGenerated()»
+			«IF isJpaAnnotationToBeGenerated() && it.getDomainObject().isPersistent() »
+				«jpaAnnotations(it)»
+			«ENDIF»
+			«IF it.isValidationAnnotationToBeGeneratedForObject()»
+				«validationAnnotations(it)»
+			«ENDIF»
 		«ENDIF»
-		«IF isValidationAnnotationToBeGeneratedForObject()»
-			«validationAnnotations(it)»
-		«ENDIF»
-	«ENDIF»
 	'''
 }
 
 def static String propertyGetterAnnotations(Attribute it) {
 	'''
-	«IF !isJpaAnnotationOnFieldToBeGenerated()»
-		«IF isJpaAnnotationToBeGenerated() && getDomainObject().isPersistent() »
-			«jpaAnnotations(it)»
+		«IF !isJpaAnnotationOnFieldToBeGenerated()»
+			«IF isJpaAnnotationToBeGenerated() && it.getDomainObject().isPersistent() »
+				«jpaAnnotations(it)»
+			«ENDIF»
+			«IF it.isValidationAnnotationToBeGeneratedForObject()»
+				«validationAnnotations(it)»
+			«ENDIF»
 		«ENDIF»
-		«IF isValidationAnnotationToBeGeneratedForObject()»
-			«validationAnnotations(it)»
+		«IF it.isXmlElementToBeGenerated()»
+			«xmlElementAnnotation(it)»
 		«ENDIF»
-	«ENDIF»
-	«IF isXmlElementToBeGenerated()»
-		«xmlElementAnnotation(it)»
-	«ENDIF»
 	'''
 }
 
 def static String xmlElementAnnotation(Attribute it) {
 	'''
-	«IF transient»
-	    @javax.xml.bind.annotation.XmlTransient
-	«ELSE»
-	    @javax.xml.bind.annotation.XmlElement(«formatAnnotationParameters({ required, "required", "true",
-		    		nullable, "nillable", "true"
-		    	})»)
-		«IF getTypeName() == "org.joda.time.LocalDate"»
-		@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaLocalDateXmlAdapter")».class)
-		«ELSEIF getTypeName() == "org.joda.time.DateTime"»
-		@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaDateTimeXmlAdapter")».class)
+		«IF transient»
+			@javax.xml.bind.annotation.XmlTransient
+		«ELSE»
+			@javax.xml.bind.annotation.XmlElement(«formatAnnotationParameters(<Object>newArrayList(required, "required", "true",
+				nullable, "nillable", "true"
+			))»)
+			«IF it.getTypeName() == "org.joda.time.LocalDate"»
+				@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaLocalDateXmlAdapter")».class)
+			«ELSEIF it.getTypeName() == "org.joda.time.DateTime"»
+				@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaDateTimeXmlAdapter")».class)
+			«ENDIF»
+			«IF it.isDate()»
+				@javax.xml.bind.annotation.XmlSchemaType(name="date")
+			«ENDIF»
 		«ENDIF»
-		«IF isDate()»
-		@javax.xml.bind.annotation.XmlSchemaType(name="date")
-		«ENDIF»
-	«ENDIF»
 	'''
 }
 
 def static String jpaAnnotations(Attribute it) {
 	'''
-	«IF transient»
-		@javax.persistence.Transient
-	«ELSE»
-		«IF isCollection()»
-			«IF isJpa2()»
-				«elementCollectionAnnotations(it)»
-			«ELSE»
-				@javax.persistence.Transient
-			«ENDIF»
+		«IF transient»
+			@javax.persistence.Transient
 		«ELSE»
-		    «IF name == "id"»
-				«idAnnotations(it)»
-		    «ELSEIF name == "version"»
-		    	«versionAnnotations(it)»
-		    «ELSEIF name == "createdDate" || name == "lastUpdated" »
-		    	«auditAnnotations(it)»
-		    «ELSE»
-				«columnAnnotations(it)»
-		    «ENDIF»
-		    «IF useJpaLobAnnotation()»
-		    	@javax.persistence.Lob
-		    «ENDIF»
-		    «IF useJpaBasicAnnotation()»
-			    @javax.persistence.Basic
-			«ENDIF»
-			«IF index»
-				«indexAnnotations(it)»
+			«IF it.isCollection()»
+				«IF isJpa2()»
+					«elementCollectionAnnotations(it)»
+				«ELSE»
+					@javax.persistence.Transient
+				«ENDIF»
+			«ELSE»
+				«IF name == "id"»
+					«idAnnotations(it)»
+				«ELSEIF name == "version"»
+					«versionAnnotations(it)»
+				«ELSEIF name == "createdDate" || name == "lastUpdated" »
+					«auditAnnotations(it)»
+				«ELSE»
+					«columnAnnotations(it)»
+				«ENDIF»
+				«IF it.useJpaLobAnnotation()»
+					@javax.persistence.Lob
+				«ENDIF»
+				«IF it.useJpaBasicAnnotation()»
+					@javax.persistence.Basic
+				«ENDIF»
+				«IF index»
+					«indexAnnotations(it)»
+				«ENDIF»
 			«ENDIF»
 		«ENDIF»
-	«ENDIF»
 	'''
 }
 
 def static String idAnnotations(Attribute it) {
 	'''
-	@javax.persistence.Id
-	«IF isJpaProviderAppEngine()»
-	@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
-	«ELSEIF isJpa1() && isJpaProviderEclipseLink()»
-		@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
-//    possible bug in eclipselink produces incorrect ddl for hsqldb (IDENTITY)
-//    @javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "«getDomainObject().name»Sequence")
-		@javax.persistence.SequenceGenerator(name = "«getDomainObject().name»Sequence", initialValue = 10)
-	«ELSE»
-	@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
-	«ENDIF»
-		@javax.persistence.Column(name="«getDatabaseName()»")
+		@javax.persistence.Id
+		«IF isJpaProviderAppEngine()»
+			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+		«ELSEIF isJpa1() && isJpaProviderEclipseLink()»
+			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
+			//    possible bug in eclipselink produces incorrect ddl for hsqldb (IDENTITY)
+			//    @javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "«it.getDomainObject().name»Sequence")
+			@javax.persistence.SequenceGenerator(name = "«it.getDomainObject().name»Sequence", initialValue = 10)
+		«ELSE»
+			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
+		«ENDIF»
+		@javax.persistence.Column(name="«it.getDatabaseName()»")
 	'''
 }
 
 def static String versionAnnotations(Attribute it) {
 	'''
 		@javax.persistence.Version
-		@javax.persistence.Column(«formatAnnotationParameters({ true, "name", '"' + getDatabaseName() + '"',
-			!nullable, "nullable", nullable})»)
+		@javax.persistence.Column(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
+			!nullable, "nullable", nullable))»)
 	'''
 }
 
 def static String auditAnnotations(Attribute it) {
+	val dbType = if (isJpaAnnotationColumnDefinitionToBeGenerated()) getDatabaseType() else null
 	'''
-	«val dbType = it.isJpaAnnotationColumnDefinitionToBeGenerated() ? getDatabaseType() : null»
-	«IF isJpaProviderHibernate() && isJodaTemporal()»
-	@org.hibernate.annotations.Type(type="«getHibernateType()»")
-	«ELSEIF isJpaProviderEclipseLink() && isJodaTemporal()»
-		@org.eclipse.persistence.annotations.Convert("JodaConverter")
-	«ELSEIF isJpaProviderOpenJpa() && isJodaTemporal()»
-		@org.apache.openjpa.persistence.jdbc.Strategy("«getApplicationBasePackage()».util.JodaHandler")
-	«ELSE»
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	«ENDIF»
+		«IF isJpaProviderHibernate() && it.isJodaTemporal()»
+			@org.hibernate.annotations.Type(type="«it.getHibernateType()»")
+		«ELSEIF isJpaProviderEclipseLink() && it.isJodaTemporal()»
+			@org.eclipse.persistence.annotations.Convert("JodaConverter")
+		«ELSEIF isJpaProviderOpenJpa() && it.isJodaTemporal()»
+			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
+		«ELSE»
+			@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+		«ENDIF»
 		@javax.persistence.Column(
-		«formatAnnotationParameters({ true, "name", '"' + getDatabaseName() + '"',
+		«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
 			dbType != null, "columnDefinition", '"' + dbType + '"'
-		})»)
+		))»)
 	'''
 }
 
 def static String columnAnnotations(Attribute it) {
+	val dbType = if (isJpaAnnotationColumnDefinitionToBeGenerated()) getDatabaseType() else null
 	'''
-	«val dbType = it.isJpaAnnotationColumnDefinitionToBeGenerated() ? getDatabaseType() : null»
 		@javax.persistence.Column(
-		«formatAnnotationParameters({ true, "name", '"' + getDatabaseName() + '"',
+		«formatAnnotationParameters(<Object>newArrayList( true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
-			getDatabaseLength() != null, "length", getDatabaseLength(),
-			(isUuid() || isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()), "unique", "true",
+			it.getDatabaseLength() != null, "length", it.getDatabaseLength(),
+			(it.isUuid() || it.isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()), "unique", "true",
 			dbType != null, "columnDefinition", '"' + dbType + '"'
-		})»)
+		))»)
 		«columnDateAnnotations(it)»
 	'''
 }
 
 def static String columnDateAnnotations(Attribute it) {
 	'''
-		«IF isJpaProviderHibernate() && getHibernateType() != null»
-		@org.hibernate.annotations.Type(type="«getHibernateType()»")
-		«ELSEIF isJpaProviderEclipseLink() && isJodaTemporal()»
-		@org.eclipse.persistence.annotations.Convert("JodaConverter")
-		«ELSEIF isJpaProviderOpenJpa() && isJodaTemporal()»
-		@org.apache.openjpa.persistence.jdbc.Strategy("«getApplicationBasePackage()».util.JodaHandler")
+		«IF isJpaProviderHibernate() && it.getHibernateType() != null»
+			@org.hibernate.annotations.Type(type="«it.getHibernateType()»")
+		«ELSEIF isJpaProviderEclipseLink() && it.isJodaTemporal()»
+			@org.eclipse.persistence.annotations.Convert("JodaConverter")
+		«ELSEIF isJpaProviderOpenJpa() && it.isJodaTemporal()»
+			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
 		«ELSE»
-			«IF isDate()»
-		@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
-			«ELSEIF isDateTime()»
-		@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+			«IF it.isDate()»
+				@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
+			«ELSEIF it.isDateTime()»
+				@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 			«ENDIF»
 		«ENDIF»
 	'''
@@ -192,22 +193,21 @@ def static String columnDateAnnotations(Attribute it) {
 def static String indexAnnotations(Attribute it) {
 	'''
 		«IF isJpaProviderHibernate()»
-		@org.hibernate.annotations.Index(name="«getDatabaseName()»")
+			@org.hibernate.annotations.Index(name="«it.getDatabaseName()»")
 		«ELSEIF isJpaProviderOpenJpa()»
-		@org.apache.openjpa.persistence.jdbc.Index(name="«getDatabaseName()»")
+			@org.apache.openjpa.persistence.jdbc.Index(name="«it.getDatabaseName()»")
 		«ENDIF»
 	'''
 }
 
 def static String elementCollectionAnnotations(Attribute it) {
 	'''
-	/*TODO: change support for fetchtype, add a keyword */
-	@javax.persistence.ElementCollection(
-			«formatAnnotationParameters({ getFetchType() != null, "fetch", getFetchType()
-			})»)
-	«IF !useJpaDefaults()»
-			«elementCollectionTableJpaAnnotation(it)»
-	«ENDIF»
+		/*TODO: change support for fetchtype, add a keyword */
+		@javax.persistence.ElementCollection(
+			«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() != null, "fetch", it.getFetchType()))»)
+		«IF !useJpaDefaults()»
+				«elementCollectionTableJpaAnnotation(it)»
+		«ENDIF»
 	'''
 }
 
@@ -216,24 +216,23 @@ def static String elementCollectionTableJpaAnnotation(Attribute it) {
 		/*
 			It's not possible to overwrite the collection table later,
 			therefore not set it for embeddabkes
-			*/
-		«IF !getDomainObject().isEmbeddable()»
-				@javax.persistence.CollectionTable(
-				name="«getElementCollectionTableName()»",
-				joinColumns = @javax.persistence.JoinColumn(name = "«getDomainObject().getDatabaseName() + ((useIdSuffixInForeigKey()) ? "_ID" : "")»"))
+		*/
+		«IF !it.getDomainObject().isEmbeddable()»
+			@javax.persistence.CollectionTable(
+			name="«it.getElementCollectionTableName()»",
+			joinColumns = @javax.persistence.JoinColumn(name = "«it.getDomainObject().getDatabaseName() + (if (useIdSuffixInForeigKey()) "_ID" else "")»"))
 			@javax.persistence.Column(
-			«formatAnnotationParameters({ true, "name", '"' + getDatabaseName().toLowerCase().singular().toUpperCase() + '"'
-			})»)
+			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName().toLowerCase().singular().toUpperCase() + '"'))»)
 		«ENDIF»
 	'''
 }
 
 def static String validationAnnotations(Attribute it) {
 	'''
-	/*exclude persistence controlled properties */
-	«IF name != "id" && name != "version" && !isUuid()»
-		«getValidationAnnotations()»
-	«ENDIF»
+		/* exclude persistence controlled properties */
+		«IF name != "id" && name != "version" && !it.isUuid()»
+			«it.getValidationAnnotations()»
+		«ENDIF»
 	'''
 }
 
@@ -241,4 +240,5 @@ def static String propertySetterAnnotations(Attribute it) {
 	'''
 	'''
 }
+
 }

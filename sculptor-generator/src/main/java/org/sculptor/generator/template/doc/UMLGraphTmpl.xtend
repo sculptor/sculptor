@@ -75,10 +75,10 @@ def static String start(Application it, Set<Module> focus, int detail, String su
 		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).forEach[InheritanceToUML(it, focus, detail, subjectArea)]»
 		«RelationGraphProperties(it)»
 		«it.getAllReferences()
-			.filter(e | e.to.metaType == typeof(BasicType))
-			.filter(e | e.to.metaType == typeof(Enum))
-			.filter(e | e.to.includeInDiagram(detail, subjectArea) == false)
-			.filter(e | e.from.includeInDiagram(detail, subjectArea) == false)
+			.filter(e | e.to.metaType != typeof(BasicType))
+			.filter(e | e.to.metaType != typeof(Enum))
+			.filter(e | e.to.includeInDiagram(detail, subjectArea))
+			.filter(e | e.from.includeInDiagram(detail, subjectArea))
 			.sortBy(e | e.from.name + "->" + e.to.name + ": " + e.name)
 			.map[r | RelationToUML(r, focus, detail, subjectArea)]»
 		«it.modules.map[services].flatten.forEach[ServiceDependenciesToUML(it, focus, detail, subjectArea)]»
@@ -230,9 +230,9 @@ def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, St
 	«IF existsAttributesCompartment && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
-		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].forEach[AttributeToUML(it)]»
-		«it.references.filter(e | e.to.metaType == typeof(BasicType) && e.visible()).forEach[BasicTypeAttributeToUML(it)]»
-		«it.references.filter(e | e.to.metaType == typeof(Enum) && e.visible()).forEach[EnumAttributeToUML(it)]»
+		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].map[AttributeToUML(it)]»
+		«it.references.filter(e | e.to.metaType == typeof(BasicType) && e.visible()).map[BasicTypeAttributeToUML(it)]»
+		«it.references.filter(e | e.to.metaType == typeof(Enum) && e.visible()).map[EnumAttributeToUML(it)]»
 		«it.references.filter( e | e.to.metaType != typeof(Enum) && e.to.metaType != typeof(BasicType) && !focus.contains(e.to.module) && e.visible()).forEach[NonFocusReferenceToUML(it)]»
 			</table>		
 		</td></tr>

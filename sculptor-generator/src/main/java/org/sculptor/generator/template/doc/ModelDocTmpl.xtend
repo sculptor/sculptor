@@ -164,7 +164,7 @@ def static String menu(Module it) {
 }
 
 def static String menuItems(Module it) {
-	val List<? extends NamedElement> el = newArrayList()
+	val List<NamedElement> el = newArrayList()
 	el.addAll(services)
 	el.addAll(consumers)
 	el.addAll(domainObjects)
@@ -307,7 +307,7 @@ def static String consumerDoc(Consumer it) {
 }
 
 def static String domainObjectDoc(DomainObject it) {
-	val List<? extends NamedElement> el = newArrayList()
+	val List<NamedElement> el = newArrayList()
 	el.addAll(references.filter(r | !r.transient).toList)
 	el.addAll(attributes.filter(a | !a.transient).toList)
 

@@ -17,14 +17,13 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import sculptormetamodel.DomainObject
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.domain.DomainObjectKeyTmpl.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class DomainObjectKeyTmpl {
 
@@ -32,38 +31,38 @@ def static String keyGetter(DomainObject it) {
 	'''
 		«IF attributes.exists(a | a.isUuid()) »
 			/**
-				* This method is used by equals and hashCode.
-				* @return {{@link #getUuid}
-				*/
-		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
-		«ENDIF»
+			 * This method is used by equals and hashCode.
+			 * @return {{@link #getUuid}
+			 */
+			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
+				@javax.persistence.Transient
+			«ENDIF»
 			public Object getKey() {
 				return getUuid();
 			}
-		«ELSEIF getNaturalKeyAttributes().isEmpty && getNaturalKeyReferences().isEmpty »
-			/*No keys in this class, key implemented by extended class */
-		«ELSEIF getNaturalKeyReferences().size == 1 && getAllNaturalKeyReferences().size == 1 && getAllNaturalKeyAttributes().isEmpty »
+		«ELSEIF it.getNaturalKeyAttributes().isEmpty && it.getNaturalKeyReferences().isEmpty »
+			/* No keys in this class, key implemented by extended class */
+		«ELSEIF it.getNaturalKeyReferences().size == 1 && it.getAllNaturalKeyReferences().size == 1 && it.getAllNaturalKeyAttributes().isEmpty »
 			/**
 				* This method is used by equals and hashCode.
-				* @return {@link #get«getNaturalKeyReferences().first().name.toFirstUpper()»}
+				* @return {@link #get«it.getNaturalKeyReferences().head.name.toFirstUpper()»}
 				*/
-		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
-		«ENDIF»
+			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
+				@javax.persistence.Transient
+			«ENDIF»
 			public Object getKey() {
-				return get«getNaturalKeyReferences().first().name.toFirstUpper()»();
+				return get«it.getNaturalKeyReferences().head.name.toFirstUpper()»();
 			}
-		«ELSEIF getNaturalKeyAttributes().size == 1 && getAllNaturalKeyAttributes().size == 1 && getAllNaturalKeyReferences().isEmpty »
+		«ELSEIF it.getNaturalKeyAttributes().size == 1 && it.getAllNaturalKeyAttributes().size == 1 && it.getAllNaturalKeyReferences().isEmpty »
 			/**
 				* This method is used by equals and hashCode.
-				* @return {@link #«getGetAccessor(attributes.filter(a | a.naturalKey).get(0))»}
+				* @return {@link #«getGetAccessor(attributes.filter(a | a.naturalKey).head)»}
 				*/
-		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
-		«ENDIF»
+			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
+				@javax.persistence.Transient
+			«ENDIF»
 			public Object getKey() {
-				return «getGetAccessor(attributes.filter(a | a.naturalKey).get(0))»();
+				return «getGetAccessor(attributes.filter(a | a.naturalKey).head)»();
 			}
 		«ELSEIF isDomainObjectCompositeKeyClassToBeGenerated() »
 			«compositeKeyGetter(it)»
@@ -76,116 +75,111 @@ def static String keyGetter(DomainObject it) {
 
 def static String compositeKeyGetter(DomainObject it) {
 	'''
-			/**
-				* This method is used by equals and hashCode.
-				* @return {@link #get«name»Key}
-				*/
+		/**
+		 * This method is used by equals and hashCode.
+		 * @return {@link #get«name»Key}
+		 */
 		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
 			@javax.persistence.Transient
 		«ENDIF»
-			public Object getKey() {
-				return get«name»Key();
-			}
-			
-			«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
-		«ENDIF»
-			private transient «name»Key cached«name»Key;
+		public Object getKey() {
+			return get«name»Key();
+		}
 
-			/**
-				* The natural key for the domain object is
-				* a composite key consisting of several attributes.
-				*/
+		«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
+			@javax.persistence.Transient
+		«ENDIF»
+		private transient «name»Key cached«name»Key;
+
+		/**
+		 * The natural key for the domain object is
+		 * a composite key consisting of several attributes.
+		 */
 		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
 			@javax.persistence.Transient
 		«ENDIF»
-			public «name»Key get«name»Key() {
-				if (cached«name»Key == null) {
-				    cached«name»Key = new «name»Key(«FOR a SEPARATOR "," : getAllNaturalKeys()»«a.getGetAccessor()»()«ENDFOR»);
-				}
-				return cached«name»Key;
+		public «name»Key get«name»Key() {
+			if (cached«name»Key == null) {
+			    cached«name»Key = new «name»Key(«FOR a : it.getAllNaturalKeys() SEPARATOR ","»«a.getGetAccessor()»()«ENDFOR»);
 			}
-			«compositeKey(it) »
+			return cached«name»Key;
+		}
+		«compositeKey(it) »
 	'''
 }
 
 def static String compositeKey(DomainObject it) {
+	val allKeys = it.getAllNaturalKeys()
 	'''
-	«val allKeys = it.getAllNaturalKeys()»
-
 		/**
-			* This is the natural key for the domain object.
-			* It is a composite key consisting of several
-			* attributes.
-			*/
+		 * This is the natural key for the domain object.
+		 * It is a composite key consisting of several
+		 * attributes.
+		 */
 		public static class «name»Key {
 
-			«FOR a : getAllNaturalKeyAttributes()»
-			«DomainObjectAttributeTmpl::attribute(it)(false) FOR a »
+			«FOR a : it.getAllNaturalKeyAttributes()»
+				«DomainObjectAttributeTmpl::attribute(a, false)»
 			«ENDFOR»
 
-			«FOR ref : getAllNaturalKeyReferences()»
-			«DomainObjectReferenceTmpl::oneReferenceAttribute(it)(false) FOR ref »
+			«FOR ref : it.getAllNaturalKeyReferences()»
+				«DomainObjectReferenceTmpl::oneReferenceAttribute(ref, false)»
 			«ENDFOR»
 
-			public «name»Key(«it.allKeys SEPARATOR ",".forEach[DomainObjectConstructorTmpl::parameterTypeAndName(it)]») {
+			public «name»Key(«allKeys.map[DomainObjectConstructorTmpl::parameterTypeAndName(it)].join(",")») {
 				«FOR a  : allKeys»
-				this.«a.name» = «a.name»;
+					this.«a.name» = «a.name»;
 				«ENDFOR»
 			}
 
-		/*no annotations for composite key classes */
-			«it.getAllNaturalKeyAttributes().forEach[DomainObjectAttributeTmpl::propertyGetter(it)(false)]»
-			«it.getAllNaturalKeyReferences().forEach[DomainObjectReferenceTmpl::oneReferenceGetter(it)(false)]»
+			/* no annotations for composite key classes */
+			«it.getAllNaturalKeyAttributes().map[k | DomainObjectAttributeTmpl::propertyGetter(k, false)]»
+			«it.getAllNaturalKeyReferences().map[k | DomainObjectReferenceTmpl::oneReferenceGetter(k, false)]»
 
-		«compositeKeyEquals(it)»
+			«compositeKeyEquals(it)»
 			«compositeKeyHashCode(it)»
-
 		}
 	'''
 }
 
 def static String compositeKeyEquals(DomainObject it) {
+	// val allKeys = it.getAllNaturalKeys()
+	val className = if (isDomainObjectCompositeKeyClassToBeGenerated()) name + "Key" else name
 	'''
-	«val allKeys = it.getAllNaturalKeys()»
-	«val className = it.isDomainObjectCompositeKeyClassToBeGenerated() ? name + "Key" : name»
-			@Override
-			public boolean equals(Object obj) {
-				if (this == obj) return true;
-				if (!(obj instanceof «className»)) return false;
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (!(obj instanceof «className»)) return false;
 
-				«className» other = («className») obj;
+			«className» other = («className») obj;
 
-				«FOR a  : getAllNaturalKeyAttributes()»
-					«IF a.isPrimitive() »
-				if («getGetAccessor(a)»() != other.«getGetAccessor(a)»()) return false;
-					«ELSE »
-				if (!«fw("util.EqualsHelper")».equals(«getGetAccessor(a)»(), other.«getGetAccessor(a)»())) return false;
-					«ENDIF »
-				«ENDFOR»
-				«FOR r  : getAllNaturalKeyReferences()»
+			«FOR a  : it.getAllNaturalKeyAttributes()»
+				«IF a.isPrimitive() »
+					if («getGetAccessor(a)»() != other.«getGetAccessor(a)»()) return false;
+				«ELSE »
+					if (!«fw("util.EqualsHelper")».equals(«getGetAccessor(a)»(), other.«getGetAccessor(a)»())) return false;
+				«ENDIF »
+			«ENDFOR»
+			«FOR r  : it.getAllNaturalKeyReferences()»
 				if (!«fw("util.EqualsHelper")».equals(«getGetAccessor(r)»(), other.«getGetAccessor(r)»())) return false;
-				«ENDFOR»
-				return true;
-			}
+			«ENDFOR»
+			return true;
+		}
 	'''
 }
 
 def static String compositeKeyHashCode(DomainObject it) {
+	val allKeys = it.getAllNaturalKeys()
 	'''
-	«val allKeys = it.getAllNaturalKeys()»
-			@Override
-			public int hashCode() {
-				int result = 17;
-				«FOR a  : allKeys»
+		@Override
+		public int hashCode() {
+			int result = 17;
+			«FOR a  : allKeys»
 				result = 37 * result + «fw("util.EqualsHelper")».computeHashCode(«getGetAccessor(a)»());
-				«ENDFOR»
-				return result;
-			}
+			«ENDFOR»
+			return result;
+		}
 	'''
 }
-
-
-
 
 }

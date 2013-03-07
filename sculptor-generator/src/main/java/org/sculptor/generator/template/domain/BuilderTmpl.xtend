@@ -17,28 +17,28 @@
 
 package org.sculptor.generator.template.domain
 
-import sculptormetamodel.*
+import java.util.List
+import sculptormetamodel.Attribute
+import sculptormetamodel.DomainObject
+import sculptormetamodel.NamedElement
+import sculptormetamodel.Reference
 
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import static org.sculptor.generator.ext.Properties.*
+import static org.sculptor.generator.template.domain.BuilderTmpl.*
+import static org.sculptor.generator.util.PropertiesBase.*
+
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
 
 class BuilderTmpl {
 
 def static String builder(DomainObject it) {
-	'''
-	'''
-	fileOutput(javaFileName(getBuilderFqn()), '''
+	fileOutput(javaFileName(it.getBuilderFqn()), '''
 	«javaHeader()»
 	package «getBuilderPackage()»;
-	«builderBody(it) FOR this»
+	«builderBody(it)»
 	'''
 	)
-	'''
-	'''
 }
 
 def static String builderBody(DomainObject it) {
@@ -47,15 +47,15 @@ def static String builderBody(DomainObject it) {
 	/**
 	  * Builder for «name» class.
 	  */
-	public class «getBuilderClassName()»  {
+	public class «it.getBuilderClassName()»  {
 	
-		«it.getBuilderAttributes().forEach[DomainObjectAttributeTmpl::attribute(it)(false)]»
+		«it.getBuilderAttributes().forEach[a | DomainObjectAttributeTmpl::attribute(a, false)]»
 		
-	    «it.this.getBuilderReferences().filter(r| !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceAttribute(it)(false)]»
-	    «it.this.getBuilderReferences().filter(r| r.many).forEach[DomainObjectReferenceTmpl::manyReferenceAttribute(it)(false)]»
+	    «it.getBuilderReferences().filter(r| !r.many).map[DomainObjectReferenceTmpl::oneReferenceAttribute(it)(false)]»
+	    «it.getBuilderReferences().filter(r| r.many).map[DomainObjectReferenceTmpl::manyReferenceAttribute(it)(false)]»
 
 		/**
-		 * Static factory method for «getBuilderClassName()»
+		 * Static factory method for «it.getBuilderClassName()»
 		 */
 		public static «name»Builder «name.toFirstLower()»() {
 			return new «name»Builder();
@@ -64,37 +64,42 @@ def static String builderBody(DomainObject it) {
 		public «name»Builder() {
 		}
 		
-		«IF !getBuilderConstructorParameters().isEmpty »
-		public «name»Builder(«it.getBuilderConstructorParameters() SEPARATOR ",".forEach[DomainObjectConstructorTmpl::parameterTypeAndName(it)]») {
+		«IF !it.getBuilderConstructorParameters().isEmpty »
+		public «name»Builder(«it.getBuilderConstructorParameters().map[p | DomainObjectConstructorTmpl::parameterTypeAndName(p)].join(",")») {
 		
-			«FOR p : getBuilderConstructorParameters()»
-				«assignAttributeInConstructor(it) FOR p»
+			«FOR p : it.getBuilderConstructorParameters()»
+				«assignAttributeInConstructor(p)»
 			«ENDFOR»
 		}
 		«ENDIF»
 		
-		«it.getBuilderAttributes() .forEach[builderAttributeSetter(it)(this)]»
+		«it.getBuilderAttributes() .map[a | builderAttributeSetter(a, it)]»
 		
-		«it.getBuilderReferences().filter(r | !r.many) .forEach[builderSingleReferenceSetter(it)(this)]»
+		«it.getBuilderReferences().filter(r | !r.many).map[r | builderSingleReferenceSetter(r, it)]»
 		
 		
-		«it.getBuilderReferences().filter(r| r.many).forEach[multiReferenceAdd(it)(this)]»
+		«it.getBuilderReferences().filter(r| r.many).map[r | multiReferenceAdd(r, it)]»
 		
-		«it.getBuilderAttributes() .forEach[DomainObjectAttributeTmpl::propertyGetter(it)]»
+		«it.getBuilderAttributes() .map[DomainObjectAttributeTmpl::propertyGetter(it)]»
 
-		«it.getBuilderReferences().filter(r| !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceGetter(it)(false)]»
-		«it.getBuilderReferences().filter(r| r.many).forEach[DomainObjectReferenceTmpl::manyReferenceGetter(it)(false)]»
+		«it.getBuilderReferences().filter(r| !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceGetter(r, false)]»
+		«it.getBuilderReferences().filter(r| r.many).map[r | DomainObjectReferenceTmpl::manyReferenceGetter(r, false)]»
 		
 		/**
 		 * @return new «name» instance constructed based on the values that have been set into this builder
 		 */
 		public «getDomainPackage() + "." + name» build() {
-			«getDomainPackage() + "." + name» obj = new «name»(«FOR attr SEPARATOR ", " : getBuilderConstructorParameters()»«attr.getGetAccessor()»()«ENDFOR»);
-			«FOR prop : getBuilderAttributes() .addAll(getBuilderReferences().filter(r | !r.many)).removeAll(getBuilderConstructorParameters())»
+			«getDomainPackage() + "." + name» obj = new «name»(«FOR attr : it.getBuilderConstructorParameters() SEPARATOR ", "»«attr.getGetAccessor()»()«ENDFOR»);
+			«val List<NamedElement> attrs = newArrayList()»
+			«attrs.addAll(it.getBuilderAttributes())»
+			«attrs.addAll(it.getBuilderReferences().filter(r | !r.many).toList)»
+			«attrs.removeAll(it.getBuilderConstructorParameters())»
+			«FOR prop : attrs»
 				obj.set«prop.name.toFirstUpper()»(«prop.name»);
 			«ENDFOR»
-			
-			«FOR prop : this.getBuilderReferences().filter(r | r.many).removeAll(getBuilderConstructorParameters())»
+			«val refs = it.getBuilderReferences().filter(r | r.many).toList»
+			«refs.removeAll(it.getBuilderConstructorParameters())»
+			«FOR prop : refs»
 				obj.get«prop.name.toFirstUpper()»().addAll(«prop.name»);
 			«ENDFOR»
 
@@ -107,11 +112,11 @@ def static String builderBody(DomainObject it) {
 
 def static String assignAttributeInConstructor(NamedElement it) {
 	'''
-	        «IF metaType == Reference && ((Reference) this).many »
-	        	this.«name».addAll(«name»);
-	        «ELSE»
-	        	this.«name» = «name»;
-	        «ENDIF»
+		«IF it.metaType == typeof(Reference) && (it as Reference).many »
+			this.«name».addAll(«name»);
+		«ELSE»
+			this.«name» = «name»;
+		«ENDIF»
 
 	'''
 }
@@ -123,7 +128,7 @@ def static String multiReferenceAdd(Reference it, DomainObject obj) {
 			* association.
 			* It is added the collection {@link #get«name.toFirstUpper()»}.
 			*/
-		public «obj.name»Builder add«name.toFirstUpper().singular()»(«getTypeName()» «name.singular()»Element) {
+		public «obj.name»Builder add«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 			return this;
 		};
@@ -133,24 +138,24 @@ def static String multiReferenceAdd(Reference it, DomainObject obj) {
 
 def static String builderAttribute(Attribute it) {
 	'''
-	protected «getImplTypeName()» «name»;
+		protected «it.getImplTypeName()» «name»;
 	'''
 }
 
 def static String builderAttributeSetter(Attribute it, DomainObject obj) {
 	'''
-		«formatJavaDoc()»
-	public «obj.name»Builder «name»(«getTypeName()» val) {
-		this.«name» = val;
-		return this;
-	}
+		«it.formatJavaDoc()»
+		public «obj.name»Builder «name»(«it.getTypeName()» val) {
+			this.«name» = val;
+			return this;
+		}
 	'''
 }
 
 def static String builderSingleReferenceSetter(Reference it, DomainObject obj) {
 	'''
-		«formatJavaDoc()»
-		public «obj.name»Builder «name»(«getTypeName()» «name») {
+		«it.formatJavaDoc()»
+		public «obj.name»Builder «name»(«it.getTypeName()» «name») {
 			this.«name» = «name»;
 			return this;
 		};
