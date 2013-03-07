@@ -71,7 +71,7 @@ public class DbHelperBase {
 	/**
 	 * @return all persistent DomainObjects
 	 */
-	private static List<DomainObject> getAllDomainObjects(Application application) {
+	public static List<DomainObject> getAllDomainObjects(Application application) {
 		List<DomainObject> all = new ArrayList<DomainObject>();
 		List<Module> modules = HelperBase.sortByName(application.getModules());
 		for (Module m : modules) {

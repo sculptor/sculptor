@@ -112,7 +112,7 @@ class Helper {
 	}
 
 	// All DomainObjects in the Applications, including those belonging to external modules
-	def static Collection<DomainObject> getAllDomainObjects(Application app) {
+	def public static Collection<DomainObject> getAllDomainObjects(Application app) {
 		getAllDomainObjects(app, true)
 	}
 
