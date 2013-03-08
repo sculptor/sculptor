@@ -51,18 +51,26 @@ import org.sculptor.generator.util.SingularPluralConverter
 import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.ResourceOperation
 import sculptormetamodel.HttpMethod
+import java.io.File
+import java.io.FileWriter
 
 class Helper {
 	def static String fileOutput(String ne, String slot, String text) {
+		var ioDir = System::getProperty("java.io.tmpdir")
+		var fl = new File(ioDir + "/sculptor/" + slot + "/" + ne)
+		fl.parentFile.mkdirs()
+		var out = new FileWriter(fl)
+		out.write(text)
+		out.close()
 		""
 	}
 
 	def static String fileOutput(String ne, String text) {
-		""
+		fileOutput(ne, "EMPTY_SLOT", text)
 	}
 
 	def static String javaFileName(String ne) {
-		ne
+		ne + ".java"
 	}
 
 	def static Class<?> metaType(NamedElement ne) {
