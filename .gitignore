@@ -5,3 +5,4 @@ target/
 src-gen/
 xtend-gen/
 plugin.xml_gen
+sculptor-eclipse/eclipse-mirror/.p2-mirror
