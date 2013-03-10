@@ -28,7 +28,6 @@ public class SculptordslStandaloneSetup extends
 
 	public Injector createInjector() {
 		return Guice.createInjector(
-				new org.sculptor.dsl.SculptordslRuntimeModule(),
-				new SculptorGeneratorModule());
+				new org.sculptor.dsl.SculptordslRuntimeModule());
 	}
 }
