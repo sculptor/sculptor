@@ -82,10 +82,10 @@ cd sculptor-parent
 mvn deploy -Pdeploy
   </pre>
 
-* (Optionally) Build and test the stand-alone Generator JAR (the generator isn't useful right now - it reads the model, creates the file "./src-gen/test.txt" with the text "Hello World!" and prints "Code generation finished.")
+* (Optionally) Build and test the stand-alone Generator JAR (the generator isn't useful right now - it reads the model, validates it and prints "org.eclipse.emf.mwe2.runtime.workflow.Workflow - Done.")
 
   <pre>
 cd sculptor-parent
 mvn install -Pshade
-java -jar ../sculptor-generator/target/sculptor-generator-3.0.0-SNAPSHOT.jar ../sculptor-generator/src/test/resources/model-test.btdesign
+java -jar ../sculptor-generator/target/sculptor-generator-3.0.0-SNAPSHOT.jar -model ../sculptor-generator/src/test/resources/model-test.btdesign
   </pre>

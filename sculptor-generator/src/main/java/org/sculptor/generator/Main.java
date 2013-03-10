@@ -18,7 +18,6 @@
 package org.sculptor.generator;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -29,15 +28,10 @@ import org.apache.commons.cli.ParseException;
 public class Main {
 
 	public static void main(String[] args) {
-		if (args.length == 0) {
-			System.err.println("Aborting: no path to EMF resource provided!");
-			return;
-		}
-		final CommandLineParser parser = new GnuParser();
 		CommandLine line = null;
 		Options options = getOptions();
 		try {
-			line = parser.parse(options, args);
+			line = new GnuParser().parse(options, args);
 		} catch (final ParseException exp) {
 			System.out.println(exp.getMessage());
 			final HelpFormatter formatter = new HelpFormatter();
