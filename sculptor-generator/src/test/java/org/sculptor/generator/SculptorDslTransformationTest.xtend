@@ -27,15 +27,31 @@ import static org.junit.Assert.*
 import static org.sculptor.generator.HelperExtensions.*
 import static org.sculptor.generator.SculptorDslTransformationTest.*
 import org.junit.runners.JUnit4
+import org.junit.Before
+import org.sculptor.dsl.sculptordsl.DslModel
+import org.sculptor.dsl.sculptordsl.DslApplication
+import sculptormetamodel.DomainObject
+
+import static extension org.sculptor.generator.ModuleExtensions.*
+import sculptormetamodel.Entity
+import sculptormetamodel.ValueObject
+import org.sculptor.dsl.sculptordsl.DslInheritanceType
+import sculptormetamodel.InheritanceType
 
 @RunWith(typeof(JUnit4))
 class SculptorDslTransformationTest {
 
 	private static val SculptordslFactory FACTORY = SculptordslFactory::eINSTANCE
 
+	var DslApplication model
+
+	@Before
+	def void setupDslModel() {
+		model =  createDslModel
+	}
+	
 	@Test
 	def testTransformDslModel() {
-		val model = createDslModel
 		val transformation = new SculptorDslTransformation
 		val app = transformation.transform(model)
 		assertNotNull(app)
@@ -61,18 +77,102 @@ class SculptorDslTransformationTest {
 		}
 	}
 	
+	def getTransformedApp() {
+		val transformation = new SculptorDslTransformation
+		transformation.transform(model)
+	}
+	
+	def getModule(String name) {
+		transformedApp.modules.findFirst(Module mod | mod.name == name)
+	}
+	
+	@Test
+	def void testTransformEntity() {
+		val module = getModule("module1Name")
+		assertNotNull(module)
+		assertEquals(2, module.domainObjects.size)
+		val Entity entity1 = module.domainObject("Entity1") as Entity
+		assertNotNull(entity1)
+		entity1 => [
+			assertEquals("Documentation1", doc)
+			assertEquals("some.com.package", getPackage())			
+			assertEquals("hint1", hint)
+			assertEquals(false, auditable)
+			assertEquals(false, cache)
+			assertEquals("SOME_TABLE", databaseTable)
+			assertNull(belongsToAggregate)
+			assertTrue(aggregateRoot)
+			assertEquals("validator1", validate)
+			assertEquals(true, gapClass)
+			assertEquals("disc1", discriminatorColumnValue)
+			assertEquals(InheritanceType::JOINED, inheritance.type)
+			assertNull(extendsName)
+			assertEquals(0, attributes.size)
+			assertEquals(0, references.size)
+			assertEquals(0, operations.size)
+			assertEquals(0, traits.size)
+			assertNull(repository)
+			
+			// TODO: Verify references, attributes, etc
+		]
+	}
+	
+	@Test
+	def void testTransformValueObject() {
+		val module = getModule("module1Name")
+		val ValueObject vo1 = module.domainObject("ValueObject1") as ValueObject
+		assertNotNull(vo1)
+		vo1 => [
+			assertEquals("ValueObject doc1", doc)
+			
+			// TODO
+		]
+	}
+	
 	def createDslModel() {
 		val service1 = FACTORY.createDslService
 		service1.setName("service1Name")
 		service1.setDoc("service1Doc")
 		service1.setHint("key1 = service1Value1 , notRemote, notLocal , key2 = service1Value2 , key3")
 
+		
+		val entity1 = FACTORY.createDslEntity => [
+			name = "Entity1"
+			doc = "Documentation1"
+			setPackage("some.com.package")
+			hint = "hint1"
+			setAbstract(true)
+			notOptimisticLocking = true
+			notAuditable = true
+			cache = false
+			databaseTable = "SOME_TABLE"
+			belongsTo = null
+			notAggregateRoot = false
+			validate = "validator1"
+			gapClass = true
+			discriminatorValue = "disc1"
+			inheritanceType = DslInheritanceType::JOINED
+			
+			
+		]
+
+		val vo1 = FACTORY.createDslValueObject => [
+			name = "ValueObject1"
+			doc = "ValueObject doc1"
+			setPackage("some.com.package")
+			hint = "vohint"
+			
+			// TODO
+		]
+		
+		
 		val module1 = FACTORY.createDslModule
 		module1.setBasePackage("com.acme.module1")
 		module1.setName("module1Name")
 		module1.setDoc("module1Doc")
 		module1.setHint("key1 = module1Value1 , key2 = module1Value2 , key3")
 		module1.services.add(service1)
+		module1.domainObjects.addAll(entity1, vo1)
 
 		val service2 = FACTORY.createDslService
 		service2.setName("service2Name")
