@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.xtext.mwe.RuntimeResourceSetInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This variation of {@link RuntimeResourceSetInitializer} overrides
@@ -32,6 +34,9 @@ import org.eclipse.xtext.mwe.RuntimeResourceSetInitializer;
  * <b>Only {@link URLClassLoader} is supported!</b>
  */
 public class ContextClassLoaderAwareRuntimeResourceSetInitializer extends RuntimeResourceSetInitializer {
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ContextClassLoaderAwareRuntimeResourceSetInitializer.class);
 
 	@Override
 	public List<String> getClassPathEntries() {
@@ -45,11 +50,13 @@ public class ContextClassLoaderAwareRuntimeResourceSetInitializer extends Runtim
 			for (URL url : ((URLClassLoader) contextClassLoader).getURLs()) {
 				classPathEntries.add(url.getFile());
 			}
+			LOGGER.debug("Classpath entries from thread context loader: {}", classPathEntries);
 		} else {
 
 			// Create a list of class path entries from the Java system property
 			// "java.class.path"
 			classPathEntries = super.getClassPathEntries();
+			LOGGER.debug("Classpath entries from system property 'java.class.path': {}", classPathEntries);
 		}
 		return classPathEntries;
 	}
