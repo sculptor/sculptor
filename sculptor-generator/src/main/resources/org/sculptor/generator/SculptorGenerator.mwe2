@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-module org.sculptor.generator.SculptordslGenerator
+module org.sculptor.generator.SculptorGenerator
 
 var modelFile
 
@@ -33,12 +33,12 @@ Workflow {
 	}
 
 	// Validate DSL model
-	component = org.sculptor.generator.SculptordslValidationWorkflowComponent {
+	component = org.sculptor.generator.mwe2.SculptordslValidationWorkflowComponent {
 		modelSlot = "model"
 	}
 
 	// Model transformation from DSL meta model to meta model
-	component = SculptorDslTransformationWorkflowComponent {
+	component = org.sculptor.generator.mwe2.SculptorDslTransformationWorkflowComponent {
 		modelSlot = "model"
 		outputSlot = "transformed"
 	}
