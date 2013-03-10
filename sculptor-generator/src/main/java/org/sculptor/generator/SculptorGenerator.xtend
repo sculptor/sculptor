@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
 
-class SculptordslGenerator implements IGenerator {
+class SculptorGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		fsa.generateFile("test.txt", "Hello World!")
