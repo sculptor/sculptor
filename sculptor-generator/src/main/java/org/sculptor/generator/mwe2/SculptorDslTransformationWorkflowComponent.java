@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator;
+package org.sculptor.generator.mwe2;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +25,7 @@ import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.sculptor.dsl.sculptordsl.DslApplication;
+import org.sculptor.generator.SculptorDslTransformation;
 import org.sculptor.generator.template.RootTmpl;
 
 import sculptormetamodel.Application;
@@ -70,7 +71,7 @@ public class SculptorDslTransformationWorkflowComponent extends AbstractWorkflow
 				// execute the transformation
 				Application transformed = new SculptorDslTransformation().transform(applications.get(0));
 				ctx.set(outputSlot, transformed);
-				RootTmpl.Root(transformed);
+//				RootTmpl.Root(transformed);
 			}
 		}
 	}

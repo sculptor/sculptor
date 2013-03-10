@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator;
+package org.sculptor.generator.mwe2;
 
 import java.util.Collection;
 import java.util.Collections;
