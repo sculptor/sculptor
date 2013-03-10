@@ -17,64 +17,46 @@
 
 package org.sculptor.generator;
 
-import java.util.List;
-
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.generator.IGenerator;
-import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
-import org.eclipse.xtext.util.CancelIndicator;
-import org.eclipse.xtext.validation.CheckMode;
-import org.eclipse.xtext.validation.IResourceValidator;
-import org.eclipse.xtext.validation.Issue;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Provider;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class Main {
-	
+
 	public static void main(String[] args) {
-		if (args.length==0) {
+		if (args.length == 0) {
 			System.err.println("Aborting: no path to EMF resource provided!");
 			return;
 		}
-		Injector injector = new SculptordslStandaloneSetup().createInjectorAndDoEMFRegistration();
-		Main main = injector.getInstance(Main.class);
-		main.runGenerator(args[0]);
-	}
-	
-	@Inject 
-	private Provider<ResourceSet> resourceSetProvider;
-	
-	@Inject
-	private IResourceValidator validator;
-	
-	@Inject
-	private IGenerator generator;
-	
-	@Inject 
-	private JavaIoFileSystemAccess fileAccess;
-
-	protected void runGenerator(String string) {
-		// load the resource
-		ResourceSet set = resourceSetProvider.get();
-		Resource resource = set.getResource(URI.createURI(string), true);
-		
-		// validate the resource
-		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-		if (!list.isEmpty()) {
-			for (Issue issue : list) {
-				System.err.println(issue);
-			}
-			return;
+		final CommandLineParser parser = new GnuParser();
+		CommandLine line = null;
+		Options options = getOptions();
+		try {
+			line = parser.parse(options, args);
+		} catch (final ParseException exp) {
+			System.out.println(exp.getMessage());
+			final HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("java -jar sculptor-generator.jar [OPTIONS]", options);
+			System.exit(-1);
 		}
-		
-		// configure and start the generator
-		fileAccess.setOutputPath("target/generated-sources/sculptor/");
-		generator.doGenerate(resource, fileAccess);
-		
-		System.out.println("Code generation finished.");
+
+		if (!SculptorRunner.run(line.getOptionValue("model"))) {
+			System.exit(1);
+		}
 	}
+
+	@SuppressWarnings("static-access")
+	public static Options getOptions() {
+		final Options options = new Options();
+		Option optModel = OptionBuilder.withArgName("model").withDescription("Model file").hasArg().isRequired()
+				.withValueSeparator(' ').create("model");
+		options.addOption(optModel);
+		return options;
+	}
+
 }
