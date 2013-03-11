@@ -347,7 +347,7 @@ public class DbHelper {
 	}
 
 	def private static boolean hasBasicTypeNaturalKey(DomainObject domainObject) {
-		domainObject.getAllNaturalKeyReferences().filter[e | e.to.metaType == typeof(BasicType)].toList.size == 1
+		domainObject.getAllNaturalKeyReferences().filter[e | e.to instanceof BasicType].toList.size == 1
 	}
 
 	def static boolean hasClassLevelUniqueConstraints(DomainObject domainObject) {

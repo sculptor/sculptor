@@ -64,7 +64,7 @@ def static String Root(Application it) {
 			«it.getAllRepositories(false).map[operations].flatten.filter[op | op.delegateToAccessObject && !op.isGenericAccessObject()].map[AccessObjectTmpl::command(it)]»
 			«it.getAllRepositories(false).forEach[RepositoryTmpl::repository(it)]»
 			«IF mongoDb()»
-				«it.getAllDomainObjects(false).filter(e | e.isPersistent() || e.metaType == typeof(BasicType)).forEach[MongoDbMapperTmpl::mongoDbMapper(it)]»
+				«it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[MongoDbMapperTmpl::mongoDbMapper(it)]»
 			«ENDIF»
 		«ENDIF»
 		«IF isServiceToBeGenerated()»

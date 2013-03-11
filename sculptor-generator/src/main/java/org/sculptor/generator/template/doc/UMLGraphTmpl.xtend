@@ -75,8 +75,8 @@ def static String start(Application it, Set<Module> focus, int detail, String su
 		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).forEach[InheritanceToUML(it, focus, detail, subjectArea)]»
 		«RelationGraphProperties(it)»
 		«it.getAllReferences()
-			.filter(e | e.to.metaType != typeof(BasicType))
-			.filter(e | e.to.metaType != typeof(Enum))
+			.filter(e | !(e.to instanceof BasicType))
+			.filter(e | !(e.to instanceof Enum))
 			.filter(e | e.to.includeInDiagram(detail, subjectArea))
 			.filter(e | e.from.includeInDiagram(detail, subjectArea))
 			.sortBy(e | e.from.name + "->" + e.to.name + ": " + e.name)
@@ -217,23 +217,23 @@ def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, St
 		<tr><td>«IF it.^abstract»<font face="arialbi"  point-size="12.0"> «name» </font>
 				«ELSE»<font face="arialbd"  point-size="12.0"> «name» </font>«ENDIF»</td></tr>
 	</table></td></tr>
-	«IF it.metaType == typeof(Enum) && it.showCompartment(detail)»
+	«IF it instanceof sculptormetamodel.Enum && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
 			«(it as Enum).values.forEach[EnumValueToUML(it)]»
 			</table>		
 		</td></tr> 
 	«ENDIF »
-	«val existsAttributesCompartment = attributes.exists(e | !e.isSystemAttribute() && e.visible()) || references.exists(e | e.to.metaType == typeof(BasicType) && e.visible())
-			|| references.exists(e | e.to.metaType == typeof(Enum) && e.visible())
+	«val existsAttributesCompartment = attributes.exists(e | !e.isSystemAttribute() && e.visible()) || references.exists(e | e.to instanceof BasicType && e.visible())
+			|| references.exists(e | e.to instanceof sculptormetamodel.Enum && e.visible())
 			|| references.exists(e | !focus.contains(e.to.module) && e.visible())»
 	«IF existsAttributesCompartment && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
 		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].map[AttributeToUML(it)]»
-		«it.references.filter(e | e.to.metaType == typeof(BasicType) && e.visible()).map[BasicTypeAttributeToUML(it)]»
-		«it.references.filter(e | e.to.metaType == typeof(Enum) && e.visible()).map[EnumAttributeToUML(it)]»
-		«it.references.filter( e | e.to.metaType != typeof(Enum) && e.to.metaType != typeof(BasicType) && !focus.contains(e.to.module) && e.visible()).forEach[NonFocusReferenceToUML(it)]»
+		«it.references.filter(e | e.to instanceof BasicType && e.visible()).map[BasicTypeAttributeToUML(it)]»
+		«it.references.filter(e | e.to instanceof sculptormetamodel.Enum && e.visible()).map[EnumAttributeToUML(it)]»
+		«it.references.filter( e | !(e.to instanceof sculptormetamodel.Enum) && !(e.to instanceof BasicType) && !focus.contains(e.to.module) && e.visible()).forEach[NonFocusReferenceToUML(it)]»
 			</table>		
 		</td></tr>
 	«ENDIF»

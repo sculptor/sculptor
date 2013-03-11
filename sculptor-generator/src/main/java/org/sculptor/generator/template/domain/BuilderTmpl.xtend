@@ -112,7 +112,7 @@ def static String builderBody(DomainObject it) {
 
 def static String assignAttributeInConstructor(NamedElement it) {
 	'''
-		«IF it.metaType == typeof(Reference) && (it as Reference).many »
+		«IF it instanceof Reference && (it as Reference).many »
 			this.«name».addAll(«name»);
 		«ELSE»
 			this.«name» = «name»;

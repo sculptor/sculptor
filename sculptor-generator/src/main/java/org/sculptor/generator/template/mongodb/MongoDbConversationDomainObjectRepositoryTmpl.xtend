@@ -66,7 +66,7 @@ def static String mappers(Application it) {
 	'''
 	private java.util.Map<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<?, com.mongodb.DBObject>> mappers = new java.util.HashMap<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<?, com.mongodb.DBObject>>();
 	{
-	«FOR each  : it.getAllDomainObjects(false).filter[e | e.isPersistent() || e.metaType == typeof(BasicType)]»
+	«FOR each  : it.getAllDomainObjects(false).filter[e | e.isPersistent() || e instanceof BasicType]»
 		mappers.put(«each.getDomainPackage()».«each.name».class, «each.module.getMapperPackage()».«each.name»Mapper.getInstance());
 	«ENDFOR»
 	}

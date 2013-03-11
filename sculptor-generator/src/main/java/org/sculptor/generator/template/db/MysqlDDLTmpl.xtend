@@ -22,7 +22,6 @@ import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
-import sculptormetamodel.Enum
 import sculptormetamodel.Reference
 
 import static org.sculptor.generator.ext.Properties.*
@@ -143,8 +142,8 @@ def static String column(Attribute it, String prefix, boolean parentIsNullable) 
 def static String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
 	'''
 	«val containedAttributes  = it.to.attributes.filter[e | !e.transient]»
-	«val containedEnumReferences  = it.to.references.filter(r | !r.transient && r.to.metaType == typeof(Enum))»
-	«val containedBasicTypeReferences  = it.to.references.filter(r | !r.transient && r.to.metaType == typeof(BasicType))»
+	«val containedEnumReferences  = it.to.references.filter(r | !r.transient && r.to instanceof sculptormetamodel.Enum)»
+	«val containedBasicTypeReferences  = it.to.references.filter(r | !r.transient && r.to instanceof BasicType)»
 		«containedAttributes.map[a | column(a, getDatabaseName(prefix, it), parentIsNullable || it.nullable)].join(", ")»«IF !containedEnumReferences.isEmpty»«IF !containedAttributes.isEmpty»,
 		«ENDIF»«ENDIF»«containedEnumReferences.map[enumColumn(it, getDatabaseName(prefix, it), parentIsNullable || nullable)].join(", ")»«IF !containedBasicTypeReferences.isEmpty»«IF !containedAttributes.isEmpty || !containedEnumReferences.isEmpty»,
 		«ENDIF»«ENDIF»«containedBasicTypeReferences.map[containedColumns(it, it.getDatabaseName(), parentIsNullable || nullable)].join(", ")»

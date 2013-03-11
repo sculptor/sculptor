@@ -73,12 +73,8 @@ class Helper {
 		ne + ".java"
 	}
 
-	def static Class<?> metaType(NamedElement ne) {
-		(ne as Object).getClass;
-	}
-
 	def static String simpleMetaTypeName(NamedElement element) {
-		element.metaType.simpleName //name.split("::").last();
+		element.^class.simpleName //name.split("::").last();
 	}
 
 	def static String docMetaTypeName(NamedElement element) {
@@ -137,7 +133,7 @@ class Helper {
 
 	def static List<Module> changedModules(Application app) {
 		val result = getChangedModules().map(e | e.moduleFor(app));
-		if (result.contains(null)) {} else result;
+		if (result.contains(null)) newArrayList else result;
 	}
 
 	def static Module moduleFor(String name, Application app) {
@@ -149,7 +145,7 @@ class Helper {
 	}
 
 	def static Collection<DomainObject> getNonEnumDomainObjects(Module module) {
-		module.domainObjects.filter[d | d.metaType != typeof(sculptormetamodel.Enum)].sortBy[e|e.name];
+		module.domainObjects.filter[d | !(d instanceof sculptormetamodel.Enum)].sortBy[e|e.name];
 	}
 
 	def static Collection<Service> getAllServices(Application app) {
@@ -320,7 +316,7 @@ class Helper {
 
 	def static String getEjbInterfaces(Service service) {
 		val pkg = service.getServiceapiPackage()
-		val List<String> list = {}
+		val List<String> list = newArrayList
 		if (!service.localInterface && !service.remoteInterface)
 			list.add(pkg + "." + service.name)
 		if (service.localInterface)
@@ -343,7 +339,7 @@ class Helper {
 	}
 
 	def static String getAccessObjectInterfaceExtends(RepositoryOperation op) {
-		val List<String> list = {}
+		val List<String> list = newArrayList
 		if (op.hasPagingParameter())
 			list.add(fw("accessapi.Pageable"))
 		if (op.hasHint("cache"))
@@ -433,7 +429,7 @@ class Helper {
 
 	def private static Collection<Attribute> getSuperAllAttributes(DomainObject domainObject) {
 		if (domainObject.getExtends == null)
-		 {}
+			newArrayList
 		else
 			domainObject.getExtends.getAllAttributes();
 	}
@@ -446,7 +442,7 @@ class Helper {
 
 	def private static Collection<Reference> getSuperAllReferences(DomainObject domainObject) {
 		if (domainObject.getExtends == null)
-		 {}
+			newArrayList
 		else
 			domainObject.getExtends.getAllReferences();
 	}
@@ -459,7 +455,7 @@ class Helper {
 
 	def static List<NamedElement> getSuperConstructorParameters(DomainObject domainObject) {
 		if (domainObject.getExtends == null)
-		 {}
+			newArrayList()
 		else
 			domainObject.getExtends.getConstructorParameters();
 	}
@@ -631,7 +627,7 @@ class Helper {
 	// Include Entity and persistent ValueObject,
 	// skip BasicType, Enum and non persistent ValueObject
 	def static boolean isEntityOrPersistentValueObject(DomainObject domainObject) {
-		(domainObject.isPersistent() && domainObject.metaType != typeof(BasicType))
+		(domainObject.isPersistent() && ! (domainObject instanceof BasicType))
 	}
 
 	def static boolean isPersistent(DomainObject domainObject) {
@@ -746,7 +742,7 @@ class Helper {
 	}
 
 	def static DomainObject getRootExtends(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject?.getExtends == null)
 			domainObject
 		else
 			domainObject.getExtends.getRootExtends();
@@ -796,7 +792,7 @@ class Helper {
 	}
 
 	def static boolean isBasicTypeReference(Reference ref) {
-		!ref.many && (ref.to.metaType == typeof(BasicType))
+		!ref.many && (ref.to instanceof BasicType)
 	}
 
 	def static List<Reference> getAllBasicTypeReferences(DomainObject domainObject) {
@@ -812,7 +808,7 @@ class Helper {
 	}
 
 	def static boolean isEnumReference(Reference ref) {
-		!ref.many && (ref.to.metaType == typeof(Enum))
+		!ref.many && (ref.to instanceof sculptormetamodel.Enum)
 	}
 
 	def static Collection<Reference> getEnumReferences(DomainObject domainObject) {
@@ -827,7 +823,7 @@ class Helper {
 
 	def private static Collection<Reference> getSuperAllEnumReferences(DomainObject domainObject) {
 		if (domainObject.getExtends == null)
-		 {}
+			newArrayList
 		else
 			domainObject.getExtends.getAllEnumReferences()
 	}
@@ -841,11 +837,11 @@ class Helper {
 
 	def static boolean isEmbeddable(DomainObject domainObject) {
 		// Only BasicType is embeddable
-		((domainObject.metaType == typeof(BasicType)))
+		domainObject instanceof BasicType
 	}
 
 	def static boolean isDataTranferObject(DomainObject domainObject) {
-		((domainObject.metaType == typeof(DataTransferObject)))
+		domainObject instanceof DataTransferObject
 	}
 
 	def static boolean hasSubClass(DomainObject domainObject) {
@@ -870,14 +866,14 @@ class Helper {
 	}
 
 	def static RepositoryOperation getRepositoryOperation(Parameter parameter) {
-		if (parameter.getOperation().metaType == typeof(RepositoryOperation))
+		if (parameter.getOperation() instanceof RepositoryOperation)
 			(parameter.getOperation() as RepositoryOperation)
 		else
 			null;
 	}
 
 	def static ServiceOperation getServiceOperation(Parameter parameter) {
-		if (parameter.getOperation().metaType == typeof(ServiceOperation))
+		if (parameter.getOperation() instanceof ServiceOperation)
 			(parameter.getOperation() as ServiceOperation)
 		else
 			null;
@@ -913,16 +909,16 @@ class Helper {
 
 	def static Collection<sculptormetamodel.Enum> getAllEnums(Application app) {
 		app.modules.map[domainObjects].flatten
-			.filter[d | metaType(d) == typeof(sculptormetamodel.Enum)].map[(it as sculptormetamodel.Enum)].toSet
+			.filter[d | d instanceof sculptormetamodel.Enum].map[(it as sculptormetamodel.Enum)].toSet
 	}
 
 	def static boolean isValueObjectReference(Reference ref) {
-		!ref.many && (ref.to.metaType == typeof(ValueObject));
+		!ref.many && ref.to instanceof ValueObject
 	}
 
 	def static List<String> getEntityListeners(DomainObject domainObject) {
 		var List<String> list = newArrayList()
-		if (domainObject.metaType == typeof(Entity) || domainObject.metaType == typeof(ValueObject))
+		if (domainObject instanceof Entity || domainObject instanceof ValueObject)
 			list.add(validationEntityListener())
 		else
 			list = null
@@ -931,7 +927,7 @@ class Helper {
 	}
 
 	def static String getValidationEntityListener(DomainObject domainObject) {
-		if (isValidationAnnotationToBeGenerated() && (domainObject.metaType == typeof(Entity)) || (domainObject.metaType == typeof(ValueObject)))
+		if (isValidationAnnotationToBeGenerated() && (domainObject instanceof Entity) || (domainObject instanceof ValueObject))
 			validationEntityListener()
 		else
 			null
@@ -1181,7 +1177,7 @@ class Helper {
 	}
 
 	def static Module getModule(NamedElement elem) {
-		if (elem == null || elem.metaType == typeof(Module))
+		if (elem == null || elem instanceof Module)
 			(elem as Module)
 		else
 			(elem.eContainer as NamedElement).getModule();

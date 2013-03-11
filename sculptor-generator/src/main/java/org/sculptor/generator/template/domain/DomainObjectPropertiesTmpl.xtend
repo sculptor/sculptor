@@ -58,7 +58,7 @@ def static String domainObjectProperties(DomainObject it) {
 	}
 
 	/*note that static methods are not generated in BasicType, since they can't be root of the criteria */
-	«IF metaType(it) != typeof(BasicType)»
+	«IF !(it instanceof BasicType)»
 		«sharedInstance(it)»
 		«it.getAllAttributes().forEach[a | staticLeafProperty(a, it)]»
 		«it.getAllReferences().filter(e|e.isEnumReference() || (nosql() && e.isUnownedReference())).forEach[r | staticLeafProperty(r, it)]»

@@ -454,7 +454,7 @@ def static dispatch String fieldDoc(Object it) {
 
 def static dispatch String fieldDoc(Attribute it) {
 	'''
-	«val isDto = it.getDomainObject().metaType == typeof(DataTransferObject)»
+	«val isDto = it.getDomainObject() instanceof DataTransferObject»
 	<tr>
 		<td>«IF naturalKey»<b>«ENDIF»«name»«IF naturalKey»</b>«ENDIF»</td>
 		<td>«IF collectionType != null»«collectionType»&lt;«ENDIF»«type»«IF collectionType != null»&gt;«ENDIF»</td>
@@ -490,7 +490,7 @@ def static String description(Attribute it) {
 
 def static dispatch String fieldDoc(Reference it) {
 	'''
-	«val isDto = it.from.metaType == typeof(DataTransferObject)»
+	«val isDto = it.from instanceof DataTransferObject»
 	<tr>
 		<td>«IF naturalKey»<b>«ENDIF»«name»«IF naturalKey»</b>«ENDIF»</td>
 		<td>«IF collectionType != null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«to.module.name».html#«to.name»">«to.name»</a>«IF collectionType != null»&gt;«ENDIF»</td>

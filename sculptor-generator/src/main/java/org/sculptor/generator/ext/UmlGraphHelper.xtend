@@ -147,12 +147,11 @@ public class UmlGraphHelper {
 	}
 
 	def static boolean isShownInView(DomainObject domainObject, Set<Module> focus, int detail, String subjectArea) {
-		val enumTypeof = typeof(sculptormetamodel.Enum)
 		detail < 4 && domainObject.visible() && focus.contains(domainObject.module)
 			&& (detail != 0 || domainObject.isInSubjectArea(subjectArea))
-			&& (domainObject.metaType != enumTypeof && domainObject.metaType != typeof(BasicType) 
-				|| (domainObject.metaType == enumTypeof && getBooleanProperty("generate.umlgraph.enum"))
-				|| (domainObject.metaType == typeof(BasicType) && getBooleanProperty("generate.umlgraph.basicType"))
+			&& (!(domainObject instanceof sculptormetamodel.Enum) && !(domainObject instanceof BasicType) 
+				|| (domainObject instanceof sculptormetamodel.Enum && getBooleanProperty("generate.umlgraph.enum"))
+				|| (domainObject instanceof BasicType && getBooleanProperty("generate.umlgraph.basicType"))
 				|| (focus.size != domainObject.module.application.visibleModules().size))
 	}
 

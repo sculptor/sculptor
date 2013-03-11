@@ -58,7 +58,7 @@ def static String header(Object it) {
 }
 
 def static String enumTypedefFile(Module it) {
-	val enums = it.domainObjects.filter(d | d.metaType == typeof(Enum))
+	val enums = it.domainObjects.filter(d | d instanceof sculptormetamodel.Enum)
 	if (!enums.isEmpty) {
 		fileOutput(it.getResourceDir("hibernate") + it.getEnumTypeDefFileName(), 'TO_GEN_RESOURCES', '''
 					«header(it) »
@@ -115,7 +115,7 @@ def static String hibenateCfgMappedResources(Application it) {
 def static String hibenateCfgMappedResources(Module it) {
 	'''
 	/* set mapping of Hibernate Types here, can't be set in persistence.xml */
-	«IF !domainObjects.filter[d | d.metaType == typeof(Enum)].isEmpty»
+	«IF !domainObjects.filter[d | d instanceof Enum].isEmpty»
 		<mapping resource="«it.getResourceDir("hibernate") + it.getEnumTypeDefFileName()»"/>
 	«ENDIF»
 	'''

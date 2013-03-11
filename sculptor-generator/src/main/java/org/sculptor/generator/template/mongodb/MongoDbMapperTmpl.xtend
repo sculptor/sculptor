@@ -204,7 +204,7 @@ def static String gapToDomain(DomainObject it) {
 }
 def static String toDomain(DomainObject it) {
 	val constructorParameters = it.getConstructorParameters()
-	val nonEnumReferenceConstructorParameters = it.getConstructorParameters().filter[e | e.^class == typeof(Reference) && !(e.isEnumReference())].map[e | (e as Reference)]
+	val nonEnumReferenceConstructorParameters = it.getConstructorParameters().filter[e | e instanceof Reference && !(e.isEnumReference())].map[e | (e as Reference)]
 	val allNonEnumNonConstructorReferences = it.getAllReferences().filter[e | !(e.isEnumReference() || constructorParameters.contains(e))]
 
 	'''
@@ -212,7 +212,7 @@ def static String toDomain(DomainObject it) {
 	public «it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» toDomain(com.mongodb.DBObject from) {
 		«fromNullCheck(it)»
 	
-		«FOR p : it.constructorParameters.filter[e | e.^class == typeof(Attribute)].map[e | (e as Attribute)]»
+		«FOR p : it.constructorParameters.filter[e | e instanceof Attribute].map[e | (e as Attribute)]»
 			«IF p.isJodaTemporal() »
 				«p.getTypeName()» «p.name» = «fw("accessimpl.mongodb." + (if (p.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain(from.get("«p.getDatabaseName()»"));
 			«ELSE »
@@ -244,7 +244,7 @@ def static String toDomain(DomainObject it) {
 		
 		«getDomainPackage()».«name» result = new «getDomainPackage()».«name»(
 			«FOR p : constructorParameters SEPARATOR ", "»«p.name»«ENDFOR»);
-		«IF it.metaType != typeof(BasicType)»
+		«IF !(it instanceof BasicType)»
 			if (from.containsField("_id")) {
 				org.bson.types.ObjectId objectId = (org.bson.types.ObjectId) from.get("_id");
 				String idString = objectId.toStringMongod();
@@ -380,7 +380,7 @@ def static String toData(DomainObject it) {
 		«fromNullCheck(it)»
 
 		com.mongodb.DBObject result = new com.mongodb.BasicDBObject();
-		«IF it.metaType != typeof(BasicType)»
+		«IF !(it instanceof BasicType)»
 			if (from.getId() != null) {
 				org.bson.types.ObjectId objectId = org.bson.types.ObjectId.massageToObjectId(from.getId());
 				result.put("_id", objectId);

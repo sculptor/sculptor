@@ -94,7 +94,7 @@ def static String propertyConstructorBase(DomainObject it) {
 					«IF a.validateNotNullInConstructor() »
 						«validateNotNull(it, a.name) »
 					«ENDIF»
-					«IF a.metaType == typeof(Reference) && (a as Reference).many »
+					«IF a instanceof Reference && (a as Reference).many »
 						this.«a.name».addAll(«a.name»);
 					«ELSEIF a.isUnownedReference() && mongoDb() »
 						this.«a.name»«a.unownedReferenceSuffix()» = («a.name» == null ? null : «a.name».getId());
@@ -119,7 +119,7 @@ def static String propertyConstructorBaseIdReferences(DomainObject it) {
 				«val par = it.getConstructorParameters()»
 				«par.removeAll(it.getSuperConstructorParameters())»
 				«FOR a : par»
-					«IF a.metaType == typeof(Reference) && (a as Reference).many »
+					«IF a instanceof Reference && (a as Reference).many »
 						«IF a.validateNotNullInConstructor() »
 							«validateNotNull(it, a.name + a.unownedReferenceSuffix()) »
 						«ENDIF»

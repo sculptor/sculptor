@@ -189,8 +189,8 @@ def static String enumColumn(Reference it, String prefix, boolean parentIsNullab
 
 def static String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
 	val containedAttributes  = it.to.attributes.filter[e | !e.transient]
-	val containedEnumReferences  = it.to.references.filter[r | !r.transient && r.to.metaType == typeof(Enum)]
-	val containedBasicTypeReferences  = it.to.references.filter[r | !r.transient && r.to.metaType == typeof(BasicType)]
+	val containedEnumReferences  = it.to.references.filter[r | !r.transient && r.to instanceof Enum]
+	val containedBasicTypeReferences  = it.to.references.filter[r | !r.transient && r.to instanceof BasicType]
 	'''
 		«FOR a : containedAttributes SEPARATOR ", "»
 			«column(a, getDatabaseName(prefix, a), parentIsNullable || nullable)»

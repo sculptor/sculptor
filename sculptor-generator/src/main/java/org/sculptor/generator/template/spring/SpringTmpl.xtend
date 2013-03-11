@@ -22,7 +22,6 @@ import org.sculptor.generator.template.drools.DroolsTmpl
 import org.sculptor.generator.template.springint.SpringIntegrationTmpl
 import sculptormetamodel.Application
 import sculptormetamodel.CommandEvent
-import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.Service
 
@@ -697,7 +696,7 @@ def static String dataSourceAdditions(Application it) {
 
 def static String hibernateResource(Module it) {
 	'''
-	«IF !domainObjects.filter[e | e.metaType == typeof(Enum)].isEmpty »
+	«IF !domainObjects.filter[e | e instanceof sculptormetamodel.Enum].isEmpty »
 		«hibernateEnumTypedefResource(it)»
 	«ENDIF»
 	'''
@@ -1005,7 +1004,7 @@ def static String pubSub(Application it) {
 			<bean id="subscribeBeanPostProcessor" class="«fw("event.annotation.SubscribeBeanPostProcessor")»" />
 			
 			«simpleEventBus(it)»
-			«IF getAllDomainObjects(it).exists(e|e.metaType == typeof(CommandEvent))»
+			«IF getAllDomainObjects(it).exists(e|e instanceof CommandEvent)»
 				«simpleCommandBus(it)»
 			«ENDIF»
 	</beans>
