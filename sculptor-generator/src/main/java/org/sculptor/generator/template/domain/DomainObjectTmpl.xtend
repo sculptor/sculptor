@@ -133,7 +133,7 @@ def static String domainObjectSubclassJavaDoc(DomainObject it) {
 def static String domainObjectBase(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 
-	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -235,7 +235,7 @@ def static String domainObjectBaseJavaDoc(DomainObject it) {
 }
 
 def static String domainObjectBase(DataTransferObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -365,7 +365,7 @@ def static String toStringStyle(DomainObject it) {
 }
 
 def static String domainObject(Enum it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), 'TO_GEN_SRC', '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 

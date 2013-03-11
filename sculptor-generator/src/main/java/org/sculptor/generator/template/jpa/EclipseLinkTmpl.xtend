@@ -79,7 +79,7 @@ def static String jodaConverter(Application it) {
 }
 
 def static String jodaConverterClass(Application it) {
-	fileOutput(javaFileName(basePackage +".util.JodaConverter"), '''
+	fileOutput(javaFileName(basePackage +".util.JodaConverter"), 'TO_GEN_SRC', '''
 	package «basePackage».util;
 
 	import org.eclipse.persistence.mappings.DatabaseMapping;
@@ -129,7 +129,7 @@ def static String jodaConverterClass(Application it) {
 }
 
 def static String enumConverterClass(Application it) {
-	fileOutput(javaFileName(basePackage +".util.EnumConverter"), '''
+	fileOutput(javaFileName(basePackage +".util.EnumConverter"), 'TO_GEN_SRC', '''
 	package «basePackage».util;
 
 	import org.eclipse.persistence.mappings.DatabaseMapping;

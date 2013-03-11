@@ -40,7 +40,7 @@ def static String domainObjectProperties(Trait it) {
 }
 
 def static String domainObjectProperties(DomainObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -54,19 +54,20 @@ def static String domainObjectProperties(DomainObject it) {
 	 * which can be used with findByCondition Repository operation.
 	 */
 	public class «name»Properties {
-	private «name»Properties() {
-	}
 
-	/*note that static methods are not generated in BasicType, since they can't be root of the criteria */
-	«IF !(it instanceof BasicType)»
-		«sharedInstance(it)»
-		«it.getAllAttributes().forEach[a | staticLeafProperty(a, it)]»
-		«it.getAllReferences().filter(e|e.isEnumReference() || (nosql() && e.isUnownedReference())).forEach[r | staticLeafProperty(r, it)]»
-		«it.getAllReferences().filter[e | !(e.isEnumReference() || (nosql() && e.isUnownedReference()))].forEach[r | staticReferenceProperty(r, it)]»
-	«ENDIF»
+		private «name»Properties() {
+		}
 
-	«domainObjectProperty(it)»
-	«domainObjectPropertiesImpl(it)»
+		/* note that static methods are not generated in BasicType, since they can't be root of the criteria */
+		«IF !(it instanceof BasicType)»
+			«sharedInstance(it)»
+			«it.getAllAttributes().forEach[a | staticLeafProperty(a, it)]»
+			«it.getAllReferences().filter(e|e.isEnumReference() || (nosql() && e.isUnownedReference())).forEach[r | staticLeafProperty(r, it)]»
+			«it.getAllReferences().filter[e | !(e.isEnumReference() || (nosql() && e.isUnownedReference()))].forEach[r | staticReferenceProperty(r, it)]»
+		«ENDIF»
+	
+		«domainObjectProperty(it)»
+		«domainObjectPropertiesImpl(it)»
 	}
 	'''
 	)
@@ -76,23 +77,23 @@ def static String domainObjectProperties(DomainObject it) {
 
 def static String sharedInstance(DomainObject it) {
 	'''
-			private static final «name»PropertiesImpl<«getDomainPackage()».«name»> sharedInstance = new «name»PropertiesImpl<«getDomainPackage()».«name»>(«getDomainPackage()».«name».class);
+		private static final «name»PropertiesImpl<«getDomainPackage()».«name»> sharedInstance = new «name»PropertiesImpl<«getDomainPackage()».«name»>(«getDomainPackage()».«name».class);
 	'''
 }
 
 def static String staticLeafProperty(NamedElement it, DomainObject rootType) {
 	'''
-			public static «fw("domain.Property")»<«rootType.getDomainPackage()».«rootType.name»> «name»() {
-				return sharedInstance.«name»();
-			}
+		public static «fw("domain.Property")»<«rootType.getDomainPackage()».«rootType.name»> «name»() {
+			return sharedInstance.«name»();
+		}
 	'''
 }
 
 def static String staticReferenceProperty(Reference it, DomainObject rootType) {
 	'''
-			public static «to.getDomainPackage()».«to.name»Properties.«to.name»Property<«rootType.getDomainPackage()».«rootType.name»> «name»() {
-				return sharedInstance.«name»();
-			}
+		public static «to.getDomainPackage()».«to.name»Properties.«to.name»Property<«rootType.getDomainPackage()».«rootType.name»> «name»() {
+			return sharedInstance.«name»();
+		}
 	'''
 }
 
@@ -100,10 +101,10 @@ def static String domainObjectProperty(DomainObject it) {
 	'''
 
 		/**
-			* This class is used for references to {@link «getDomainPackage()».«name»},
-			* i.e. nested property.
-			*/
-		public static class «name»Property<T> ^extends «name»PropertiesImpl<T> implements «fw("domain.Property")»<T> {
+		 * This class is used for references to {@link «getDomainPackage()».«name»},
+		 * i.e. nested property.
+		 */
+		public static class «name»Property<T> extends «name»PropertiesImpl<T> implements «fw("domain.Property")»<T> {
 			«serialVersionUID(it)»
 			public «name»Property(String parentPath, String additionalPath, Class<T> owningClass) {
 				super(parentPath, additionalPath, owningClass);
@@ -115,7 +116,7 @@ def static String domainObjectProperty(DomainObject it) {
 def static String domainObjectPropertiesImpl(DomainObject it) {
 	'''
 
-		protected static class «name»PropertiesImpl<T> ^extends «fw("domain.PropertiesCollection")» {
+		protected static class «name»PropertiesImpl<T> extends «fw("domain.PropertiesCollection")» {
 			«serialVersionUID(it)»
 			Class<T> owningClass;
 
@@ -127,7 +128,7 @@ def static String domainObjectPropertiesImpl(DomainObject it) {
 			«name»PropertiesImpl(String parentPath, String additionalPath, Class<T> owningClass) {
 				super(parentPath, additionalPath);
 				this.owningClass=owningClass;
-				}
+			}
 
 			«it.getAllAttributes().forEach[a | leafProperty(a, isEmbeddable(it))]»
 			«it.getAllReferences().filter[e|e.isEnumReference() || (nosql() && e.isUnownedReference())].forEach[a | leafProperty(a, isEmbeddable(it))]»
@@ -138,17 +139,17 @@ def static String domainObjectPropertiesImpl(DomainObject it) {
 
 def static String leafProperty(NamedElement it, boolean isEmbeddable) {
 	'''
-			public «fw("domain.Property")»<T> «name»() {
-				return new «fw("domain.LeafProperty")»<T>(getParentPath(), "«IF nosql()»«getDatabaseName(it)»«ELSE»«name»«ENDIF»", «isEmbeddable», owningClass);
-			}
+		public «fw("domain.Property")»<T> «name»() {
+			return new «fw("domain.LeafProperty")»<T>(getParentPath(), "«IF nosql()»«getDatabaseName(it)»«ELSE»«name»«ENDIF»", «isEmbeddable», owningClass);
+		}
 	'''
 }
 
 def static String referenceProperty(Reference it) {
 	'''
-			public «to.getDomainPackage()».«to.name»Properties.«to.name»Property<T> «name»() {
-				return new «to.getDomainPackage()».«to.name»Properties.«to.name»Property<T>(getParentPath(), "«IF nosql()»«getDatabaseName(it)»«ELSE»«name»«ENDIF»", owningClass);
-			}
+		public «to.getDomainPackage()».«to.name»Properties.«to.name»Property<T> «name»() {
+			return new «to.getDomainPackage()».«to.name»Properties.«to.name»Property<T>(getParentPath(), "«IF nosql()»«getDatabaseName(it)»«ELSE»«name»«ENDIF»", owningClass);
+		}
 	'''
 }
 

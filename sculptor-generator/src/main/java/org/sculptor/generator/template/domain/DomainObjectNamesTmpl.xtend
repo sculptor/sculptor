@@ -40,7 +40,7 @@ def static String propertyNamesInterface(Trait it) {
 }
 
 def static String propertyNamesInterface(DomainObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "Names"), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "Names"), 'TO_GEN_SRC', '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 

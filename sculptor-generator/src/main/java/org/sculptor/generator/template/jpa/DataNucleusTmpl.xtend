@@ -93,7 +93,7 @@ def static String manifest(Application it) {
 }
 
 def static String enumMappingClass(Application it) {
-	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), '''
+	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), 'TO_GEN_SRC', '''
 	package «basePackage».util;
 
 	import java.math.BigInteger;
@@ -190,7 +190,7 @@ def static String enumMappingClass(Application it) {
 }
 
 def static String enumLiteralClass(Application it) {
-	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), '''
+	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), 'TO_GEN_SRC', '''
 	package org.datanucleus.store.rdbms.sql.expression;
 
 	import org.datanucleus.ClassNameConstants;

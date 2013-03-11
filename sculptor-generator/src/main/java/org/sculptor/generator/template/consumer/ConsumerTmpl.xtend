@@ -58,7 +58,7 @@ def static String consumer(Consumer it) {
 }
 
 def static String consumerInterface(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name), '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
@@ -71,7 +71,7 @@ def static String consumerInterface(Consumer it) {
 
 
 def static String eventConsumerImplBase(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 

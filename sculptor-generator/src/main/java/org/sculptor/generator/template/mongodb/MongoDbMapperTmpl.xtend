@@ -58,7 +58,7 @@ def static String mongoDbMapperSubclass(DomainObject it) {
 }
 
 def static String mongoDbMapperBase(DomainObject it) {
-	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), '''
+	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
 

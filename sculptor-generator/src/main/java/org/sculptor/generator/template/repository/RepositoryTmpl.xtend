@@ -47,7 +47,7 @@ def static String repository(Repository it) {
 def static String repositoryInterface(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryapiPackage()»;
 
@@ -78,7 +78,7 @@ def static String repositoryInterface(Repository it) {
 def static String repositoryBase(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 

@@ -40,7 +40,7 @@ def static String messageBeanInterceptors(Consumer it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String messageBeanImplBase(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
