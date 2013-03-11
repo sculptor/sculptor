@@ -40,7 +40,7 @@ class Properties {
 		if (hasProperty(propName))
 			getProperty(propName)
 		else
-			"org.fornax.cartridges.sculptor." + propName
+			"org.sculptor." + propName
 	}
 
 	def static String defaultExtendsClass(String typeName) {
@@ -593,7 +593,7 @@ class Properties {
 
 	def static String validationEntityListener() {
 		if (isValidationAnnotationToBeGenerated())
-			"org.fornax.cartridges.sculptor.framework.validation.ValidationEventListener"
+			"org.sculptor.framework.validation.ValidationEventListener"
 		else
 			null;
 	}

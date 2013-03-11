@@ -567,7 +567,7 @@ public class GenericAccessObjectManager {
 				if (PropertiesBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
 					conditionalCriteriaClass = PropertiesBase.getProperty("framework.accessapi.ConditionalCriteria");
 				} else {
-					conditionalCriteriaClass = "org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria";
+					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
 				}
 				addParameterFirst(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
 			}
@@ -600,8 +600,8 @@ public class GenericAccessObjectManager {
 	}
 
 	public static class FindByConditionStatStrategy extends AbstractGenericAccessObjectStrategy {
-		private static final String COLUMN_STAT_REQUEST = "org.fornax.cartridges.sculptor.framework.accessapi.ColumnStatRequest";
-		private static final String COLUMN_STAT_RESULT = "org.fornax.cartridges.sculptor.framework.accessapi.ColumnStatResult";
+		private static final String COLUMN_STAT_REQUEST = "org.sculptor.framework.accessapi.ColumnStatRequest";
+		private static final String COLUMN_STAT_RESULT = "org.sculptor.framework.accessapi.ColumnStatResult";
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -610,7 +610,7 @@ public class GenericAccessObjectManager {
 				if (PropertiesBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
 					conditionalCriteriaClass = PropertiesBase.getProperty("framework.accessapi.ConditionalCriteria");
 				} else {
-					conditionalCriteriaClass = "org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria";
+					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
 				}
 				addParameterFirst(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
 

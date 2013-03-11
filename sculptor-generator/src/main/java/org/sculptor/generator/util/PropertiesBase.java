@@ -286,16 +286,16 @@ public class PropertiesBase {
 		defaultProperties.setProperty("jpa.version", "none");
 		defaultProperties.setProperty("generate.ddl", "false");
 		defaultProperties.setProperty("framework.accessimpl.AccessBase",
-				"org.fornax.cartridges.sculptor.framework.accessimpl.mongodb.MongoDbAccessBase");
+				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBase");
 		defaultProperties.setProperty("framework.accessimpl.AccessBaseWithException",
-				"org.fornax.cartridges.sculptor.framework.accessimpl.mongodb.MongoDbAccessBaseWithException");
+				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBaseWithException");
 		errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
 	}
 
 	private static void errorHandlingInterceptorWithoutHibernateDependency(Properties defaultProperties) {
 		// for ejb3
 		defaultProperties.setProperty("framework.errorhandling.ErrorHandlingInterceptor",
-				"org.fornax.cartridges.sculptor.framework.errorhandling.ErrorHandlingInterceptor2");
+				"org.sculptor.framework.errorhandling.ErrorHandlingInterceptor2");
 	}
 
 	private static void initDerivedDefaultsWithoutPersistence(Properties defaultProperties) {
@@ -313,9 +313,9 @@ public class PropertiesBase {
 		defaultProperties.setProperty("framework.accessimpl.package", fw("accessimpl.todo"));
 		defaultProperties.setProperty("framework.accessimpl.prefix", "");
 		defaultProperties.setProperty("framework.accessimpl.AccessBase",
-				"org.fornax.cartridges.sculptor.framework.accessimpl.todo.AccessBase");
+				"org.sculptor.framework.accessimpl.todo.AccessBase");
 		defaultProperties.setProperty("framework.accessimpl.AccessBaseWithException",
-				"org.fornax.cartridges.sculptor.framework.accessimpl.todo.BaseWithException");
+				"org.sculptor.framework.accessimpl.todo.BaseWithException");
 		errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
 	}
 
@@ -362,20 +362,20 @@ public class PropertiesBase {
 		defaultProperties
 				.setProperty(
 						"propertyEditor.Date",
-						"org.fornax.cartridges.sculptor.framework.propertyeditor.LocalDateEditor(getMessagesAccessor().getMessage(\"format.DatePattern\", \"yyyy-MM-dd\"), true)");
+						"org.sculptor.framework.propertyeditor.LocalDateEditor(getMessagesAccessor().getMessage(\"format.DatePattern\", \"yyyy-MM-dd\"), true)");
 		defaultProperties
 				.setProperty(
 						"propertyEditor.DateTime",
-						"org.fornax.cartridges.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
+						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
 		defaultProperties
 				.setProperty(
 						"propertyEditor.Timestamp",
-						"org.fornax.cartridges.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
+						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
 
 		defaultProperties.setProperty("framework.xml.DateHandler",
-				"org.fornax.cartridges.sculptor.framework.xml.JodaLocalDateHandler");
+				"org.sculptor.framework.xml.JodaLocalDateHandler");
 		defaultProperties.setProperty("framework.xml.TimeStampHandler",
-				"org.fornax.cartridges.sculptor.framework.xml.JodaDateTimeHandler");
+				"org.sculptor.framework.xml.JodaDateTimeHandler");
 
 		defaultProperties.setProperty("generate.auditable.joda", "true");
 	}
@@ -477,7 +477,7 @@ public class PropertiesBase {
 		if (hasProperty(propName)) {
 			return getProperty(propName);
 		} else {
-			return "org.fornax.cartridges.sculptor." + propName;
+			return "org.sculptor." + propName;
 		}
 	}
 
