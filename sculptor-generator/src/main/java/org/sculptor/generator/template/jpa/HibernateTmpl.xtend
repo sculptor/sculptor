@@ -137,7 +137,7 @@ def static String enumType(Application it) {
 	import java.sql.Types;
 	import java.util.Properties;
 
-	import org.fornax.cartridges.sculptor.framework.util.EnumHelper;
+	import org.sculptor.framework.util.EnumHelper;
 	import org.hibernate.HibernateException;
 	«IF isJpaProviderHibernate4()»
 	import org.hibernate.engine.spi.SessionImplementor;

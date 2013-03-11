@@ -284,7 +284,7 @@ def static String serviceMethodAnnotation(ServiceOperation it) {
 		«IF name.startsWith("get") || name.startsWith("find")»
 			@org.springframework.transaction.annotation.Transactional(readOnly=true)
 		«ELSE»
-			@org.springframework.transaction.annotation.Transactional(readOnly=false, rollbackFor=org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException.class)
+			@org.springframework.transaction.annotation.Transactional(readOnly=false, rollbackFor=org.sculptor.framework.errorhandling.ApplicationException.class)
 		«ENDIF»
 	«ENDIF»
 	«IF pureEjb3() && jpa() && !name.startsWith("get") && !name.startsWith("find")»

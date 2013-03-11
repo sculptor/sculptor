@@ -101,7 +101,7 @@ def static String enumMappingClass(Application it) {
 	import org.datanucleus.ClassNameConstants;
 	import org.datanucleus.metadata.FieldRole;
 	import org.datanucleus.store.ExecutionContext;
-	import org.fornax.cartridges.sculptor.framework.util.EnumHelper;
+	import org.sculptor.framework.util.EnumHelper;
 
 	public class EnumMapping ^extends org.datanucleus.store.mapped.mapping.EnumMapping {
 
@@ -196,7 +196,7 @@ def static String enumLiteralClass(Application it) {
 	import org.datanucleus.ClassNameConstants;
 	import org.datanucleus.store.mapped.mapping.JavaTypeMapping;
 	import org.datanucleus.store.rdbms.sql.SQLStatement;
-	import org.fornax.cartridges.sculptor.framework.util.EnumHelper;
+	import org.sculptor.framework.util.EnumHelper;
 
 	/**
 	 * Representation of an Enum literal.

@@ -900,7 +900,7 @@ public class HelperBase {
 		if (PropertiesBase.hasProperty(propName)) {
 			return PropertiesBase.getProperty(propName);
 		} else {
-			return "org.fornax.cartridges.sculptor." + propName;
+			return "org.sculptor." + propName;
 		}
 	}
 

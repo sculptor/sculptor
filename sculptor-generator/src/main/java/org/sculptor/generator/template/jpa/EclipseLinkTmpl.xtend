@@ -136,7 +136,7 @@ def static String enumConverterClass(Application it) {
 	import org.eclipse.persistence.mappings.converters.Converter;
 	import org.eclipse.persistence.sessions.Session;
 
-	import org.fornax.cartridges.sculptor.framework.util.EnumHelper;
+	import org.sculptor.framework.util.EnumHelper;
 
 	@SuppressWarnings("serial")
 	public class EnumConverter implements Converter {

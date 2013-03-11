@@ -65,10 +65,10 @@ def static String webXml(Application it) {
 	<filter>
 		<filter-name>ServiceContextFilter</filter-name>
 		<filter-class>
-			org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContextServletFilter</filter-class>
+			org.sculptor.framework.errorhandling.ServiceContextServletFilter</filter-class>
 		<init-param>
 			<param-name>ServiceContextFactoryImplementationClassName</param-name>
-			<param-value>org.fornax.cartridges.sculptor.framework.errorhandling.ServletContainerServiceContextFactory</param-value>
+			<param-value>org.sculptor.framework.errorhandling.ServletContainerServiceContextFactory</param-value>
 		</init-param>
 	</filter>
 

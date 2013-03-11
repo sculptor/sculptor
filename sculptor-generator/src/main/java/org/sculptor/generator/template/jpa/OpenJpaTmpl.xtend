@@ -126,7 +126,7 @@ def static String enumStrategy(Application it) {
 	import org.apache.openjpa.jdbc.meta.ValueMapping;
 	import org.apache.openjpa.jdbc.meta.strats.EnumValueHandler;
 
-	import org.fornax.cartridges.sculptor.framework.util.EnumHelper;
+	import org.sculptor.framework.util.EnumHelper;
 
 	@SuppressWarnings("serial")
 	public class EnumHandler ^extends EnumValueHandler {
