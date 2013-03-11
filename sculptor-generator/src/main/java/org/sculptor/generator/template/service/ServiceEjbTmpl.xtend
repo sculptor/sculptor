@@ -52,7 +52,7 @@ def static String service(Service it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String ejbBeanImplBase(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -151,7 +151,7 @@ def static String ejbMethod(ServiceOperation it) {
 }
 
 def static String ejbRemoteInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -166,7 +166,7 @@ def static String ejbRemoteInterface(Service it) {
 }
 
 def static String ejbLocalInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -182,7 +182,7 @@ def static String ejbLocalInterface(Service it) {
 
 
 def static String serviceProxy(Service it) {
-	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), '''
+	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceproxyPackage()»;
 
@@ -475,7 +475,7 @@ def static String webServiceAnnotations(Service it) {
 }
 
 def static String webServiceInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 

@@ -38,7 +38,7 @@ def static String command(RepositoryOperation it) {
 
 
 def static String commandInterface(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), '''
+	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getAccessapiPackage(repository.aggregateRoot.module)»;
 
@@ -90,7 +90,7 @@ def static String commandImpl(RepositoryOperation it) {
 }
 
 def static String commandImplBase(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 

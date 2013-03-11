@@ -54,7 +54,7 @@ def static String domainObjectSubclass(Trait it) {
 
 def static String domainObjectBase(Trait it) {
 	traitInterface(it)
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), 'TO_GEN_SRC', '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 
@@ -73,7 +73,7 @@ def static String domainObjectBase(Trait it) {
 }
 
 def static String traitInterface(Trait it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), 'TO_GEN_SRC', '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 

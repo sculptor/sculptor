@@ -72,7 +72,7 @@ def static String service(Service it) {
 }
 
 def static String serviceInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -110,7 +110,7 @@ def static String interfaceMethod(ServiceOperation it) {
 
 
 def static String serviceImplBase(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 

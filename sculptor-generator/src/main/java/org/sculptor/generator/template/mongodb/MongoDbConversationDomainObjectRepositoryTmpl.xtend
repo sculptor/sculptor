@@ -33,7 +33,7 @@ class MongoDbConversationDomainObjectRepositoryTmpl {
 def static String conversationDomainObectRepository(GuiApplication it) {
 	var it = it.guiForApplication
 
-	fileOutput(javaFileName(it.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl") , '''
+	fileOutput(javaFileName(it.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl"), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «basePackage».util.«subPackage("web")»;
 

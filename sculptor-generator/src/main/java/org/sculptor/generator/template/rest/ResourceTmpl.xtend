@@ -27,7 +27,7 @@ def static String resource(Resource it) {
 }
 
 def static String resourceBase(Resource it) {
-	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), '''
+	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getRestPackage()»;
 

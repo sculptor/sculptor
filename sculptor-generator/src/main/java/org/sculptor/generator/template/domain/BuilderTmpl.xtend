@@ -33,7 +33,7 @@ import static extension org.sculptor.generator.util.HelperBase.*
 class BuilderTmpl {
 
 def static String builder(DomainObject it) {
-	fileOutput(javaFileName(it.getBuilderFqn()), '''
+	fileOutput(javaFileName(it.getBuilderFqn()), 'TO_GEN_SRC', '''
 	«javaHeader()»
 	package «getBuilderPackage()»;
 	«builderBody(it)»

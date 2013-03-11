@@ -65,10 +65,6 @@ class Helper {
 		""
 	}
 
-	def static String fileOutput(String ne, String text) {
-		fileOutput(ne, "EMPTY_SLOT", text)
-	}
-
 	def static String javaFileName(String ne) {
 		ne + ".java"
 	}

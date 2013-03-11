@@ -128,7 +128,7 @@ def static String hibenateCfgAdditions(Application it) {
 }
 
 def static String enumType(Application it) {
-	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), '''
+	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), 'TO_GEN_SRC', '''
 	package «basePackage».util;
 
 	import java.sql.PreparedStatement;

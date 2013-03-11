@@ -44,7 +44,7 @@ def static String openJpa(Application it) {
 }
 
 def static String jodaStrategy(Application it) {
-	fileOutput(javaFileName(basePackage +".util.JodaHandler"), '''
+	fileOutput(javaFileName(basePackage +".util.JodaHandler"), 'TO_GEN_SRC', '''
 	package «basePackage».util;
 
 	import org.apache.openjpa.jdbc.identifier.DBIdentifier;
@@ -119,7 +119,7 @@ def static String jodaStrategy(Application it) {
 }
 
 def static String enumStrategy(Application it) {
-	fileOutput(javaFileName(basePackage +".util.EnumHandler"), '''
+	fileOutput(javaFileName(basePackage +".util.EnumHandler"), 'TO_GEN_SRC', '''
 	package «basePackage».util;
 
 	import org.apache.openjpa.jdbc.kernel.JDBCStore;
