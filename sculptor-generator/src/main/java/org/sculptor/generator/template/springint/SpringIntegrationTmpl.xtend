@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.springint
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -27,7 +28,7 @@ import static extension org.sculptor.generator.ext.Properties.*
 class SpringIntegrationTmpl {
 
 def static String springIntegrationConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", OutputSlot::TO_RESOURCES, '''
 	«header(it)»
 
 	«springIntegrationEventBus(it)»
@@ -40,7 +41,7 @@ def static String springIntegrationConfig(Application it) {
 }
 
 def static String springIntegrationTestConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	«header(it)»
 	<beans:import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
 

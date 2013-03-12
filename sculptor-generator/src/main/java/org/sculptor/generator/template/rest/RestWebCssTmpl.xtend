@@ -1,5 +1,6 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -8,7 +9,7 @@ class RestWebCssTmpl {
 
 
 def static String css(Application it) {
-	fileOutput("stylesheets/main.css", 'TO_WEBROOT', '''
+	fileOutput("stylesheets/main.css", OutputSlot::TO_WEBROOT, '''
 /* main elements */
 
 	body,div,td {

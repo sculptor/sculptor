@@ -1,5 +1,6 @@
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -27,7 +28,7 @@ def static String datasource(Application it) {
 }
 
 def static String mysqlDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<datasources> 
 		    <local-tx-datasource> 
 		        <jndi-name>jdbc/«name»DS</jndi-name> 
@@ -42,7 +43,7 @@ def static String mysqlDS(Application it) {
 }
 
 def static String oracleDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<!-- See: http://www.jboss.org/community/wiki/ConfigDataSources -->
 		<datasources>
@@ -72,7 +73,7 @@ def static String oracleDS(Application it) {
 }
 
 def static String postgresqlDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<datasources> 
 		    <local-tx-datasource> 
 		        <jndi-name>jdbc/«name»DS</jndi-name> 
@@ -87,7 +88,7 @@ def static String postgresqlDS(Application it) {
 }
 
 def static String hsqldbInmemoryDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<datasources> 
 		    <local-tx-datasource> 
 		        <jndi-name>jdbc/«name»DS</jndi-name> 

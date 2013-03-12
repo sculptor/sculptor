@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.service
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.PubSubTmpl
 import sculptormetamodel.Parameter
@@ -52,7 +53,7 @@ def static String service(Service it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String ejbBeanImplBase(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -95,7 +96,7 @@ def static String ejbBeanImplBase(Service it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String ejbBeanImplSubclass(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), 'TO_SRC', '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -151,7 +152,7 @@ def static String ejbMethod(ServiceOperation it) {
 }
 
 def static String ejbRemoteInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -166,7 +167,7 @@ def static String ejbRemoteInterface(Service it) {
 }
 
 def static String ejbLocalInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -182,7 +183,7 @@ def static String ejbLocalInterface(Service it) {
 
 
 def static String serviceProxy(Service it) {
-	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceproxyPackage()»;
 
@@ -475,7 +476,7 @@ def static String webServiceAnnotations(Service it) {
 }
 
 def static String webServiceInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -511,7 +512,7 @@ def static String webServiceParamTypeAndName(Parameter it) {
 }
 
 def static String webServicePackageInfo(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), 'TO_SRC', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot::TO_SRC, '''
 	// TODO: beautifier has problem with this file, therefore it is placed in TO_SRC
 	//	to get elementFormDefault='qualified' for schema generated from this package
 	@javax.xml.bind.annotation.XmlSchema(

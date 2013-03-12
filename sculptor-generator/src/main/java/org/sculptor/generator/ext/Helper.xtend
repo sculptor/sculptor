@@ -53,11 +53,12 @@ import sculptormetamodel.ResourceOperation
 import sculptormetamodel.HttpMethod
 import java.io.File
 import java.io.FileWriter
+import org.sculptor.generator.util.OutputSlot
 
 class Helper {
-	def static String fileOutput(String ne, String slot, String text) {
+	def static String fileOutput(String ne, OutputSlot slot, String text) {
 		var ioDir = System::getProperty("java.io.tmpdir")
-		var fl = new File(ioDir + "/sculptor/" + slot + "/" + ne)
+		var fl = new File(ioDir + "/sculptor/" + slot.name + "/" + ne)
 		fl.parentFile.mkdirs()
 		var out = new FileWriter(fl)
 		out.write(text)

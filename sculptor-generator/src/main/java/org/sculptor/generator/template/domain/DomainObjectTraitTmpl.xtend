@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
@@ -32,7 +33,7 @@ import static extension org.sculptor.generator.util.HelperBase.*
 class DomainObjectTraitTmpl {
 
 def static String domainObjectSubclass(Trait it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "Trait"), 'TO_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "Trait"), OutputSlot::TO_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 
@@ -54,7 +55,7 @@ def static String domainObjectSubclass(Trait it) {
 
 def static String domainObjectBase(Trait it) {
 	traitInterface(it)
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 
@@ -73,7 +74,7 @@ def static String domainObjectBase(Trait it) {
 }
 
 def static String traitInterface(Trait it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 

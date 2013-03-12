@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.spring
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.camel.CamelTmpl
 import org.sculptor.generator.template.drools.DroolsTmpl
 import org.sculptor.generator.template.springint.SpringIntegrationTmpl
@@ -104,6 +105,7 @@ def static String header(Object it) {
 	<beans xmlns="http://www.springframework.org/schema/beans"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
 	'''
 }
 
@@ -111,63 +113,63 @@ def static String headerWithMoreNamespaces(Object it) {
 	'''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		http://www.springframework.org/schema/aop
-		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-		http://www.springframework.org/schema/jee
-		http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
-		http://www.springframework.org/schema/tx
-		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/aop
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://www.springframework.org/schema/jee
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
 	'''
 }
 
 def static String applicationContext(Application it) {
-	fileOutput(it.getResourceDir("spring") + "applicationContext.xml", 'TO_GEN_RESOURCES', '''
-		«headerWithMoreNamespaces(it)»
-	«serviceContext(it)»
+	fileOutput(it.getResourceDir("spring") + "applicationContext.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	«headerWithMoreNamespaces(it)»
+		«serviceContext(it)»
 
 		«springPropertyConfig(it)»
 
-	<!-- import additional spring configuration files -->
-	«IF jpa()»
-	    <import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml")»"/>
-	«ENDIF»
-	«IF isPubSubToBeGenerated()»
-		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml")»"/>
-		«IF getProperty("integration.product") == "camel"»
-			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
-		«ELSEIF getProperty("integration.product") == "spring-integration"»
-			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
+		<!-- import additional spring configuration files -->
+		«IF jpa()»
+		    <import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml")»"/>
 		«ENDIF»
-	«ENDIF»
+		«IF isPubSubToBeGenerated()»
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml")»"/>
+			«IF getProperty("integration.product") == "camel"»
+				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
+			«ELSEIF getProperty("integration.product") == "spring-integration"»
+				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
+			«ENDIF»
+		«ENDIF»
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml")»"/>
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more.xml")»"/>
 		«IF it.hasConsumers() && isEar() »
-		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml")»"/>
-	«ENDIF »
-	«IF mongoDb()»
-	<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb.xml")»"/>
-	«ENDIF»
-	«IF isSpringRemotingToBeGenerated()»
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml")»"/>
+		«ENDIF »
+		«IF mongoDb()»
+			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb.xml")»"/>
+		«ENDIF»
+		«IF isSpringRemotingToBeGenerated()»
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml")»"/>
 		«ENDIF»
-
 	</beans>
 	'''
 	)
 }
 
 def static String applicationContextTest(Application it) {
-	fileOutput("applicationContext-test.xml", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput("applicationContext-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		«serviceContext(it)»
 	
@@ -225,7 +227,7 @@ def static String springPropertyConfigTest(Application it) {
 }
 
 def static String springProperties(Application it) {
-	fileOutput(it.getResourceDir("spring") + "spring.properties", 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "spring.properties", OutputSlot::TO_RESOURCES, '''
 	«IF applicationServer() == "jboss"»
 	jndi.port=1099
 	«ENDIF»
@@ -234,14 +236,14 @@ def static String springProperties(Application it) {
 }
 
 def static String springPropertiesTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), OutputSlot::TO_RESOURCES_TEST, '''
 	# Spring properties for test
 	'''
 	)
 }
 
 def static String generatedSpringProperties(Application it) {
-	fileOutput(it.getResourceDir("spring") + "generated-spring.properties", 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "generated-spring.properties", OutputSlot::TO_GEN_RESOURCES, '''
 	# Default configuration properties, possible to override in spring.properties
 	«IF applicationServer() == "jboss"»
 	jndi.port=1099
@@ -338,17 +340,17 @@ def static String componentScanExclusionFilter(Application it) {
 
 def static String loadTimeWeaving(Application it) {
 	'''
-	/*
+	<!--
 	<context:load-time-weaver/>
-	 */
+	-->
 	'''
 }
 
 def static String more(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more.xml"), 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more.xml"), OutputSlot::TO_RESOURCES, '''
 	«headerWithMoreNamespaces(it)»
 		<!-- Import more custom beans
-		<import resource="classpath:/«it.getResourceDir("spring")»moreBeans.xml"/>
+			<import resource="classpath:/«it.getResourceDir("spring")»moreBeans.xml"/>
 		-->
 	</beans>
 	'''
@@ -356,10 +358,10 @@ def static String more(Application it) {
 }
 
 def static String moreTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml"), 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml"), OutputSlot::TO_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		<!-- Import more custom beans for test
-		<import resource="classpath:/«it.getResourceDir("spring")»moreTestBeans.xml"/>
+			<import resource="classpath:/«it.getResourceDir("spring")»moreTestBeans.xml"/>
 		-->
 	</beans>
 	'''
@@ -367,7 +369,7 @@ def static String moreTest(Application it) {
 }
 
 def static String beanRefContext(Application it) {
-	fileOutput("beanRefContext.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("beanRefContext.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it)»
 		<bean id="«basePackage»" lazy-init="true"
 			class="org.springframework.context.support.ClassPathXmlApplicationContext">
@@ -381,7 +383,7 @@ def static String beanRefContext(Application it) {
 }
 
 def static String interceptor(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), OutputSlot::TO_GEN_RESOURCES, '''
 	«IF isWar() »
 	«headerWithMoreNamespaces(it)»
 	«ELSE »
@@ -439,11 +441,11 @@ def static String aspectjAutoproxy(Application it) {
 
 def static String jpaInterceptor(Application it) {
 	'''
-		<bean id="jpaInterceptorFlushEager" class="org.springframework.orm.jpa.JpaInterceptor">
+	<bean id="jpaInterceptorFlushEager" class="org.springframework.orm.jpa.JpaInterceptor">
 		<property name="entityManagerFactory" ref="entityManagerFactory"/>
-			<!-- Need to flush to detect OptimisticLockingException and do proper rollback. -->
+		<!-- Need to flush to detect OptimisticLockingException and do proper rollback. -->
 		<property name="flushEager" value="true"/>
-		</bean>
+	</bean>
 	'''
 }
 
@@ -455,8 +457,7 @@ def static String txAdvice(Application it) {
 			<tx:method name="get*" read-only="true"/>
 			<tx:method name="find*" read-only="true"/>
 			<!-- all other methods are transactional and ApplicationException will cause rollback -->
-			<tx:method name="*" read-only="false"
-				rollback-for="«applicationExceptionClass()»"/>
+			<tx:method name="*" read-only="false" rollback-for="«applicationExceptionClass()»"/>
 		</tx:attributes>
 	</tx:advice>
 	'''
@@ -518,13 +519,12 @@ def static String aopConfig(Application it) {
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="mongodbManagerAdvice" order="5" />
 			«ENDIF»
 		«ENDIF »
-
 	</aop:config>
 	'''
 }
 
 def static String interceptorTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml"), 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml"), OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		<import resource="classpath:/«it.getResourceDir("spring")»Interceptor.xml"/>
 
@@ -537,23 +537,23 @@ def static String interceptorTest(Application it) {
 
 def static String aopConfigTest(Application it) {
 	'''
-	/* When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing */
-	/* TODO remove
+	<!-- When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing -->
+	<!-- TODO remove
 	«IF !isWar() »
 		«txAdvice(it) »
 	«ENDIF»
-	 */
+	-->
 
 	<aop:config>
 
 		<aop:pointcut id="repository"
 			expression="execution(public * «basePackage»..*Repository*.*(..))"/>
 
-		/* TODO remove
+		<!-- TODO remove
 		«IF !isWar()»
 			<aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
 		«ENDIF»
-		*/
+		-->
 
 		<!-- Need this when JUnit directly to Repository -->
 		<aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
@@ -568,7 +568,7 @@ def static String aopConfigTest(Application it) {
 }
 
 def static String sessionFactory(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("SessionFactory.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("SessionFactory.xml"), OutputSlot::TO_GEN_RESOURCES, '''
 	«IF dbProduct == "hsqldb-inmemory" && !isSpringDataSourceSupportToBeGenerated()»
 		«sessionFactoryInMemory(it, false)»
 	«ELSE»
@@ -591,13 +591,13 @@ def static String sessionFactory(Application it) {
 			«IF isSpringDataSourceSupportToBeGenerated()»
 				<property name="dataSource" ref="dataSource"/>
 			«ENDIF»
-			/*extension point for adding additional configuration */
+			<!-- extension point for adding additional configuration -->
 			«sessionFactoryAdditions(it)»
 		</bean>
 		«IF isAuditableToBeGenerated()»
 			<bean id="auditInterceptor" class="«auditInterceptorClass()»"/>
 		«ENDIF»
-		</beans>
+	</beans>
 
 	«ENDIF»
 	'''
@@ -612,14 +612,14 @@ def static String sessionFactoryAdditions(Application it) {
 
 def static String txManager(Application it) {
 	'''
-		<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-			<property name="sessionFactory" ref="sessionFactory" />
-		</bean>
+	<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 	'''
 }
 
 def static String sessionFactoryTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + "SessionFactory-test.xml", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + "SessionFactory-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«sessionFactoryInMemory(it, true)»
 	'''
 	)
@@ -643,7 +643,7 @@ def static String sessionFactoryInMemory(Application it, boolean test) {
 				«ELSE»
 					<property name="configLocation" value="hibernate.cfg.xml"></property>
 				«ENDIF»
-				/* add additional configuration by aop */
+				<!-- add additional configuration by aop -->
 				«additionalSessionFactoryPropertiesTest(it)»
 		«ENDIF»
 	
@@ -667,25 +667,25 @@ def static String additionalSessionFactoryPropertiesTest(Application it) {
 
 def static String hsqldbDataSource(Application it) {
 	'''
-		<bean id="hsqldbDataSource" class="org.apache.commons.dbcp.BasicDataSource">
-			<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-			<property name="url" value="jdbc:hsqldb:mem:«name.toFirstLower()»"/>
-			<property name="username" value="sa"/>
-			<property name="password" value=""/>
-		</bean>
+	<bean id="hsqldbDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+		<property name="url" value="jdbc:hsqldb:mem:«name.toFirstLower()»"/>
+		<property name="username" value="sa"/>
+		<property name="password" value=""/>
+	</bean>
 	'''
 }
 
 def static String dataSource(Application it) {
 	'''
-		<bean id="dataSource" class="${jdbc.dataSourceClassName}">
-			<property name="driverClassName" value="${jdbc.driverClassName}"/>
-			<property name="url" value="${jdbc.url}"/>
-			<property name="username" value="${jdbc.username}"/>
-			<property name="password" value="${jdbc.password}"/>
+	<bean id="dataSource" class="${jdbc.dataSourceClassName}">
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
 		<!-- add additional properties by extending Spring::dataSourceAdditions -->
-	    «dataSourceAdditions(it)»
-		</bean>
+		«dataSourceAdditions(it)»
+	</bean>
 	'''
 }
 
@@ -704,20 +704,20 @@ def static String hibernateResource(Module it) {
 
 def static String hibernateEnumTypedefResource(Module it) {
 	'''
-				<value>«it.getResourceDir("hibernate")»«it.getEnumTypeDefFileName()»</value>
+	<value>«it.getResourceDir("hibernate")»«it.getEnumTypeDefFileName()»</value>
 	'''
 }
 
 def static String jms(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml"), OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it)»
 		«IF isEar() »
-		«jndiTemplate(it)»
-		«jndiTemplateLocal(it)»
-		«jmsQueueConnectionFactory(it)»
-		«invalidMessageQueue(it)»
+			«jndiTemplate(it)»
+			«jndiTemplateLocal(it)»
+			«jmsQueueConnectionFactory(it)»
+			«invalidMessageQueue(it)»
 		«ELSE »
-		<!-- JMS requires deployment in EAR -->
+			<!-- JMS requires deployment in EAR -->
 		«ENDIF»
 	</beans>
 	'''
@@ -726,15 +726,15 @@ def static String jms(Application it) {
 
 def static String jndiTemplate(Application it) {
 	'''
-		<bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
-			<property name="environment">
-				<props>
-				    <prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
-				    <prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-				    <prop key="java.naming.factory.url.pkgs">${java.naming.factory.url.pkgs}</prop>
-				</props>
-			</property>
-		</bean>
+	<bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
+		<property name="environment">
+			<props>
+			    <prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+			    <prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			    <prop key="java.naming.factory.url.pkgs">${java.naming.factory.url.pkgs}</prop>
+			</props>
+		</property>
+	</bean>
 	'''
 }
 
@@ -746,18 +746,18 @@ def static String jndiTemplateLocal(Application it) {
 
 def static String jmsQueueConnectionFactory(Application it) {
 	'''
-		<bean id="jmsQueueConnectionFactory"
-				class="org.springframework.jndi.JndiObjectFactoryBean">
-			<property name="jndiTemplate">
-				<ref bean="jndiTemplateLocal"/>
-			</property>
-			<property name="resourceRef">
-				<value type="boolean">false</value>
-			</property>
-			<property name="jndiName">
-				<value>${connectionFactory.jndiName}</value>
-			</property>
-		</bean>
+	<bean id="jmsQueueConnectionFactory"
+			class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate">
+			<ref bean="jndiTemplateLocal"/>
+		</property>
+		<property name="resourceRef">
+			<value type="boolean">false</value>
+		</property>
+		<property name="jndiName">
+			<value>${connectionFactory.jndiName}</value>
+		</property>
+	</bean>
 	'''
 }
 
@@ -770,35 +770,35 @@ def static String invalidMessageQueue(Application it) {
 
 def static String invalidMessageQueueJmsTemplate(Application it) {
 	'''
-		<bean id="invalidMessageQueueJmsTemplate"
-				class="org.springframework.jms.core.JmsTemplate">
-			<property name="connectionFactory">
-				<ref bean="jmsQueueConnectionFactory"/>
-			</property>
-			<property name="defaultDestination">
-				<ref bean="invalidMessageDestination"/>
-			</property>
-		</bean>
+	<bean id="invalidMessageQueueJmsTemplate"
+			class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<ref bean="jmsQueueConnectionFactory"/>
+		</property>
+		<property name="defaultDestination">
+			<ref bean="invalidMessageDestination"/>
+		</property>
+	</bean>
 	'''
 }
 
 def static String invalidMessageDestination(Application it) {
 	'''
-		<bean id="invalidMessageDestination"
-			class="org.springframework.jndi.JndiObjectFactoryBean">
-			<property name="jndiTemplate">
-				<ref bean="jndiTemplateLocal"/>
-			</property>
-			<property name="jndiName">
-				<value>${invalidMessageDestination.jndiName}</value>
-			</property>
-		</bean>
+	<bean id="invalidMessageDestination"
+		class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate">
+			<ref bean="jndiTemplateLocal"/>
+		</property>
+		<property name="jndiName">
+			<value>${invalidMessageDestination.jndiName}</value>
+		</property>
+	</bean>
 	'''
 }
 
 
 def static String ehcacheProperties(Application it) {
-	fileOutput("ehcache.xml", 'TO_RESOURCES', '''
+	fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<ehcache>
 		<diskStore path="java.io.tmpdir"/>
@@ -816,7 +816,7 @@ def static String ehcacheProperties(Application it) {
 }
 
 def static String testEhcacheProperties(Application it) {
-	fileOutput("ehcache.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<ehcache>
 		<diskStore path="java.io.tmpdir"/>
@@ -834,33 +834,32 @@ def static String testEhcacheProperties(Application it) {
 }
 
 def static String entityManagerFactory(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml") , 'TO_GEN_RESOURCES', '''
-
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml") , OutputSlot::TO_GEN_RESOURCES, '''
 	«headerWithMoreNamespaces(it)»
 
-	«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»
-		<jee:jndi-lookup id="entityManagerFactory" jndi-name="java:/«it.persistenceUnitName()»"/>
-		«entityManagerFactoryTx(it, false)»
-	«ELSE»
-		<!-- Creates a EntityManagerFactory for use with a JPA provider -->
-		«IF isJpaProviderAppEngine()»
-			<bean id="appEngineEntityManagerFactory" class="«fw("persistence.AppEngineEntityManagerFactory")»" />
-			<bean id="entityManagerFactory" factory-bean="appEngineEntityManagerFactory" factory-method="entityManagerFactory" />
+		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»
+			<jee:jndi-lookup id="entityManagerFactory" jndi-name="java:/«it.persistenceUnitName()»"/>
+			«entityManagerFactoryTx(it, false)»
 		«ELSE»
-			«IF isSpringDataSourceSupportToBeGenerated()»
-				«dataSource(it)»
-			«ENDIF»
-			<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+			<!-- Creates a EntityManagerFactory for use with a JPA provider -->
+			«IF isJpaProviderAppEngine()»
+				<bean id="appEngineEntityManagerFactory" class="«fw("persistence.AppEngineEntityManagerFactory")»" />
+				<bean id="entityManagerFactory" factory-bean="appEngineEntityManagerFactory" factory-method="entityManagerFactory" />
+			«ELSE»
 				«IF isSpringDataSourceSupportToBeGenerated()»
-					<property name="dataSource" ref="dataSource"/>
+					«dataSource(it)»
 				«ENDIF»
-				«IF persistenceXml() != "META-INF/persistence.xml"»
-					<property name="persistenceXmlLocation" value="«persistenceXml()»"/>
-				«ENDIF»
-			</bean>
+				<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+					«IF isSpringDataSourceSupportToBeGenerated()»
+						<property name="dataSource" ref="dataSource"/>
+					«ENDIF»
+					«IF persistenceXml() != "META-INF/persistence.xml"»
+						<property name="persistenceXmlLocation" value="«persistenceXml()»"/>
+					«ENDIF»
+				</bean>
+			«ENDIF»
+			«entityManagerFactoryTx(it, false)»
 		«ENDIF»
-		«entityManagerFactoryTx(it, false)»
-	«ENDIF»
 
 	</beans>
 	'''
@@ -868,30 +867,27 @@ def static String entityManagerFactory(Application it) {
 }
 
 def static String entityManagerFactoryTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml") , 'TO_GEN_RESOURCES_TEST', '''
-
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml") , OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
+		«hsqldbDataSource(it)»
 
-	«hsqldbDataSource(it)»
-
-	<!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider -->
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-	    <property name="dataSource" ref="hsqldbDataSource"/>
+		<!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider -->
+		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+			<property name="dataSource" ref="hsqldbDataSource"/>
 			<property name="persistenceXmlLocation" value="META-INF/persistence-test.xml"/>
+			«IF isJpaProviderEclipseLink()»
+				<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+			«ENDIF»
+		</bean>
+	
 		«IF isJpaProviderEclipseLink()»
-			<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+		<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+			<property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
+			<property name="showSql" value="true" />
+			<property name="generateDdl" value="true" />
+		</bean>
 		«ENDIF»
-	</bean>
-
-	«IF isJpaProviderEclipseLink()»
-	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
-	   <property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
-	   <property name="showSql" value="true" />
-	   <property name="generateDdl" value="true" />
-	</bean>
-	«ENDIF»
-
-	«entityManagerFactoryTx(it, true)»
+		«entityManagerFactoryTx(it, true)»
 	</beans>
 	'''
 	)
@@ -909,7 +905,6 @@ def static String entityManagerFactoryTx(Application it, boolean test) {
 		<!-- enables @Transactional support -->
 		<tx:annotation-driven transaction-manager="txManager"/>
 	«ENDIF»
-
 	«persistenceExceptionTranslationPostProcessor(it)»
 	'''
 }
@@ -917,9 +912,10 @@ def static String entityManagerFactoryTx(Application it, boolean test) {
 def static String persistenceExceptionTranslationPostProcessor(Application it) {
 	'''
 	«IF !isJpaProviderAppEngine()»
-		/*TODO: Problem when using jndi lookup of persistent unit, instead of LocalContainerEntityManagerFactoryBean.
-				   PersistenceExceptionTranslationPostProcessor needs a PersistenceExceptionTranslator, e.g. LocalContainerEntityManagerFactoryBean
-		 */
+		<!--
+		  TODO: Problem when using jndi lookup of persistent unit, instead of LocalContainerEntityManagerFactoryBean.
+		  PersistenceExceptionTranslationPostProcessor needs a PersistenceExceptionTranslator, e.g. LocalContainerEntityManagerFactoryBean
+		-->
 		«IF !isEar()»
 			<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 		«ENDIF»
@@ -929,9 +925,9 @@ def static String persistenceExceptionTranslationPostProcessor(Application it) {
 
 def static String jpaTxManager(Application it) {
 	'''
-		<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-			<property name="entityManagerFactory" ref="entityManagerFactory" />
-		</bean>
+	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
 	'''
 }
 
@@ -943,11 +939,11 @@ def static String jtaTxManager(Application it) {
 }
 
 def static String mongodb(Application it) {
-	fileOutput(it.getResourceDir("spring") + "mongodb.xml", 'TO_GEN_RESOURCES', '''
-			«header(it)»
-			«mongodbManager(it)»
-			«mongodbOptions(it)»
-			</beans>
+	fileOutput(it.getResourceDir("spring") + "mongodb.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	«header(it)»
+		«mongodbManager(it)»
+		«mongodbOptions(it)»
+	</beans>
 	'''
 	)
 }
@@ -976,11 +972,11 @@ def static String mongodbOptions(Application it) {
 }
 
 def static String mongodbTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + "mongodb-test.xml", 'TO_GEN_RESOURCES_TEST', '''
-			«header(it)»
-			«mongodbManagerTest(it)»
-			«mongodbOptions(it)»
-			</beans>
+	fileOutput(it.getResourceDir("spring") + "mongodb-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	«header(it)»
+		«mongodbManagerTest(it)»
+		«mongodbOptions(it)»
+	</beans>
 	'''
 	)
 }
@@ -997,16 +993,16 @@ def static String mongodbManagerTest(Application it) {
 }
 
 def static String pubSub(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml"), OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it)»
 		<bean id="publishAdvice" class="«fw("event.annotation.PublishAdvice")»" />
 
-			<bean id="subscribeBeanPostProcessor" class="«fw("event.annotation.SubscribeBeanPostProcessor")»" />
-			
-			«simpleEventBus(it)»
-			«IF getAllDomainObjects(it).exists(e|e instanceof CommandEvent)»
-				«simpleCommandBus(it)»
-			«ENDIF»
+		<bean id="subscribeBeanPostProcessor" class="«fw("event.annotation.SubscribeBeanPostProcessor")»" />
+
+		«simpleEventBus(it)»
+		«IF getAllDomainObjects(it).exists(e|e instanceof CommandEvent)»
+			«simpleCommandBus(it)»
+		«ENDIF»
 	</beans>
 	'''
 	)
@@ -1030,7 +1026,7 @@ def static String simpleCommandBus(Application it) {
 
 def static String springRemoting(Application it) {
 	val remoteServices = it.getAllServices().filter(e|e.remoteInterface)
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml"), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml"), OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it)»
 		«IF getSpringRemotingType() == "rmi"»
 			«remoteServices .map[rmiServiceExporter(it)]»
@@ -1078,18 +1074,18 @@ def static String httpInvokerServiceExporter(Service it) {
 def static String serviceExporter(Service it, String exporterClass) {
 	'''
 	<bean name="«name.toFirstLower()»Exporter" class="«exporterClass»">
-	    <property name="service" ref="«name.toFirstLower()»"/>
-	    <property name="serviceInterface" value="«it.getServiceapiPackage()».«name»"/>
+		<property name="service" ref="«name.toFirstLower()»"/>
+		<property name="serviceInterface" value="«it.getServiceapiPackage()».«name»"/>
 	</bean>
 	<!-- You need to define corresponding servlet in web.xml -->
 	<!--
 	<servlet>
-	    <servlet-name>«name.toFirstLower()»Exporter</servlet-name>
-	    <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+		<servlet-name>«name.toFirstLower()»Exporter</servlet-name>
+		<servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>«name.toFirstLower()»Exporter</servlet-name>
-	    <url-pattern>/remoting/«name»</url-pattern>
+		<servlet-name>«name.toFirstLower()»Exporter</servlet-name>
+		<url-pattern>/remoting/«name»</url-pattern>
 	</servlet-mapping>
 	-->
 	'''

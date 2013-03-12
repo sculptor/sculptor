@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.service
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Service
 
@@ -29,7 +30,7 @@ class ServiceEjbTestTmpl {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String serviceJUnitSubclassOpenEjb(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -56,7 +57,7 @@ def static String serviceJUnitSubclassOpenEjb(Service it) {
 }
 
 def static String ejbJarXml(Application it) {
-	fileOutput("META-INF/ejb-jar.xml", 'TO_RESOURCES', '''
+	fileOutput("META-INF/ejb-jar.xml", OutputSlot::TO_RESOURCES, '''
 	<?xml version="1.0" encoding="UTF-8"?>  
 	<!-- need this for OpenEJB testing -->
 

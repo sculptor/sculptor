@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.consumer
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.db.DbUnitTmpl
 import sculptormetamodel.Consumer
 
@@ -30,7 +31,7 @@ import static extension org.sculptor.generator.util.HelperBase.*
 class ConsumerTestTmpl {
 
 def static String consumerJUnitWithAnnotations(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
@@ -78,14 +79,14 @@ def static String receiveTestMethod(Consumer it) {
 }
 
 def static String dbunitTestData(Consumer it) {
-	fileOutput("dbunit/" + name + "Test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput("dbunit/" + name + "Test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 		«DbUnitTmpl::dbunitTestDataContent(it.module.application)»
 	'''
 	)
 }
 
 def static String consumerDependencyInjectionJUnit(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "DependencyInjectionTest"), 'TO_GEN_SRC_TEST', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 

@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.consumer
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
 
 import static org.sculptor.generator.ext.Properties.*
@@ -40,7 +41,7 @@ def static String messageBeanInterceptors(Consumer it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String messageBeanImplBase(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
@@ -155,7 +156,7 @@ def static String invalidMessageQueue(Consumer it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def static String messageBeanImplSubclass(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), 'TO_SRC', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 

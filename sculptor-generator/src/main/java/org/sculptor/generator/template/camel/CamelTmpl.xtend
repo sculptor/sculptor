@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.camel
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -26,7 +27,7 @@ import static extension org.sculptor.generator.ext.Properties.*
 class CamelTmpl {
 
 def static String camelConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "camel.xml", 'TO_RESOURCES', '''
+	fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot::TO_RESOURCES, '''
 	«header(it)»
 	
 	«camelEventBus(it)»
@@ -40,7 +41,7 @@ def static String camelConfig(Application it) {
 }
 
 def static String camelTestConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "camel-test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput(it.getResourceDir("spring") + "camel-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	«header(it)»
 	<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
 	

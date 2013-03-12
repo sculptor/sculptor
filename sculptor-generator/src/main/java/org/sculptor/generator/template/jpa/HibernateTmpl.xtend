@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
@@ -60,7 +61,7 @@ def static String header(Object it) {
 def static String enumTypedefFile(Module it) {
 	val enums = it.domainObjects.filter(d | d instanceof sculptormetamodel.Enum)
 	if (!enums.isEmpty) {
-		fileOutput(it.getResourceDir("hibernate") + it.getEnumTypeDefFileName(), 'TO_GEN_RESOURCES', '''
+		fileOutput(it.getResourceDir("hibernate") + it.getEnumTypeDefFileName(), OutputSlot::TO_GEN_RESOURCES, '''
 					«header(it) »
 					«enums.map[e | enumTypedef(e as Enum)]»
 				</hibernate-mapping>
@@ -90,7 +91,7 @@ def static String enumReference(Reference it, String dbColumnPrefix) {
 }
 
 def static String hibenateCfgFile(Application it) {
-	fileOutput("hibernate.cfg.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("hibernate.cfg.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
@@ -128,7 +129,7 @@ def static String hibenateCfgAdditions(Application it) {
 }
 
 def static String enumType(Application it) {
-	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
 	import java.sql.PreparedStatement;

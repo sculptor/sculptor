@@ -1,5 +1,6 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -17,7 +18,7 @@ def static String config(Application it) {
 }
 
 def static String webXml(Application it) {
-	fileOutput("WEB-INF/web.xml", 'TO_WEBROOT', '''
+	fileOutput("WEB-INF/web.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
@@ -96,7 +97,7 @@ def static String webXml(Application it) {
 }
 
 def static String restServletXml(Application it) {
-	fileOutput("WEB-INF/rest-servlet.xml", 'TO_WEBROOT', '''
+	fileOutput("WEB-INF/rest-servlet.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"

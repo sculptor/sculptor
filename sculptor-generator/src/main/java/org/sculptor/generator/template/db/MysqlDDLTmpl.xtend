@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.util.OutputSlot
 import java.util.Set
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
@@ -34,7 +35,7 @@ import static extension org.sculptor.generator.util.DbHelperBase.*
 class MysqlDDLTmpl {
 
 def static String ddl(Application it) {
-	fileOutput("dbschema/" + name + "_ddl.sql", 'TO_GEN_RESOURCES', '''
+	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
 	«IF isDdlDropToBeGenerated()»    
 	-- ###########################################
 	-- # Drop entities
@@ -95,34 +96,32 @@ def static String columns(DomainObject it, Boolean manyToManyRelationTable, bool
 	val currentUniManyToThisReferences = if (it.module == null) <Reference>newArrayList() else module.application.modules.map[domainObjects].flatten.map[references].flatten.filter[e | !e.transient && e.to == it && e.many && e.opposite == null && e.isInverse() && !(alreadyDone.contains(e.databaseName))]
 	alreadyDone.addAll(currentUniManyToThisReferences.map[e | e.getDatabaseName()])
 
-/*
-	«val currentOneReferences - = it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).reject(e | (e.isOneToOne() && e.isInverse()) || alreadyDone.contains(e.getDatabaseName()))»
-	«FOR e : currentOneReferences»«alreadyDone.add(e.getDatabaseName()) -> ""»«ENDFOR»
-	«val currentSystemAttributesToPutLast - = it.attributes.reject(e | e.transient || alreadyDone.contains(e.getDatabaseName()) || ! e.isSystemAttributeToPutLast() ) »
-	«FOR e : currentSystemAttributesToPutLast»«alreadyDone.add(e.getDatabaseName()) -> ""»«ENDFOR»
+	val currentOneReferences = it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !( (e.isOneToOne() && e.isInverse()) || alreadyDone.contains(e.getDatabaseName()))]
+	alreadyDone.addAll(currentOneReferences.map[e | e.getDatabaseName()])
+
+	val currentSystemAttributesToPutLast = it.attributes.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()) || ! e.isSystemAttributeToPutLast() )]
+	alreadyDone.addAll(currentSystemAttributesToPutLast.map[e | e.getDatabaseName()])
 
 	'''
 	«IF initialComma && !currentAttributes.isEmpty»,
 	«ENDIF»
-	«it.currentAttributes SEPARATOR ",\n".forEach[column(it)("")]»
+	«currentAttributes.map[a | column(a, "")].join(",\n")»
 	«IF (initialComma || !currentAttributes.isEmpty) && !currentOneReferences.isEmpty»,
 	«ENDIF»
-	«it.currentOneReferences SEPARATOR ",\n".forEach[foreignKey(it)(manyToManyRelationTable)]»
+	«currentOneReferences.map[e | foreignKey(e, manyToManyRelationTable)].join(",\n")»
 	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty) && !currentUniManyToThisReferences.isEmpty»,
 	«ENDIF»
-	«it.currentUniManyToThisReferences SEPARATOR ",\n".forEach[uniManyForeignKey(it)]»
+	«currentUniManyToThisReferences.map[e | uniManyForeignKey(e)].join(",\n")»
 	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty || !currentUniManyToThisReferences.isEmpty) && !currentBasicTypeReferences.isEmpty »,
 	«ENDIF»
-	«it.currentBasicTypeReferences SEPARATOR ",\n".forEach[containedColumns(it)("", false)]»
+	«currentBasicTypeReferences.map[e | containedColumns(e, "", false)].join(",\n")»
 	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty || !currentUniManyToThisReferences.isEmpty || !currentBasicTypeReferences.isEmpty) && !currentEnumReferences.isEmpty »,
 	«ENDIF»
-	«it.currentEnumReferences SEPARATOR ",\n".forEach[enumColumn(it)("", false)]»
+	«currentEnumReferences.map[e | enumColumn(e, "", false)].join(",\n")»
 	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty || !currentUniManyToThisReferences.isEmpty || !currentBasicTypeReferences.isEmpty || !currentEnumReferences.isEmpty) && !currentSystemAttributesToPutLast.isEmpty »,
 	«ENDIF»
-	«it.currentSystemAttributesToPutLast SEPARATOR ",\n".forEach[column(it)("")]»
+	«currentSystemAttributesToPutLast.map[e | column(e, "")].join(",\n")»
 	'''
-	*/
-	""
 }
 
 def static String column(Attribute it, String prefix) {
@@ -133,9 +132,9 @@ def static String column(Attribute it, String prefix) {
 
 def static String column(Attribute it, String prefix, boolean parentIsNullable) {
 	'''
-		«getDatabaseName(prefix, it)» «getDatabaseType()»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»«IF name == "id"» AUTO_INCREMENT PRIMARY KEY«ENDIF»
-		«IF index»,
-		INDEX («getDatabaseName(prefix, it)»)«ENDIF»
+	«getDatabaseName(prefix, it)» «getDatabaseType()»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»«IF name == "id"» AUTO_INCREMENT PRIMARY KEY«ENDIF»
+	«IF index»,
+	INDEX («getDatabaseName(prefix, it)»)«ENDIF»
 	'''
 }
 

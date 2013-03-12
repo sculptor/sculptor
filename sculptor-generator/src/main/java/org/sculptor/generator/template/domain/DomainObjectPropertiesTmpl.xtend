@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
@@ -40,7 +41,7 @@ def static String domainObjectProperties(Trait it) {
 }
 
 def static String domainObjectProperties(DomainObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 

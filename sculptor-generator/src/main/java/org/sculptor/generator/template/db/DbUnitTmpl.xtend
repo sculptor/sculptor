@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -29,7 +30,7 @@ import static extension org.sculptor.generator.util.DbHelperBase.*
 class DbUnitTmpl {
 
 def static String emptyDbunitTestData(Application it) {
-	fileOutput("dbunit/EmptyDatabase.xml", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput("dbunit/EmptyDatabase.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 		«dbunitTestDataContent(it) »
 	'''
 	)
@@ -37,7 +38,7 @@ def static String emptyDbunitTestData(Application it) {
 
 def static String singleDbunitTestData(Application it) {
 	if (getDbUnitDataSetFile != null)
-		fileOutput(getDbUnitDataSetFile(), 'TO_RESOURCES_TEST', dbunitTestDataContent(it))
+		fileOutput(getDbUnitDataSetFile(), OutputSlot::TO_RESOURCES_TEST, dbunitTestDataContent(it))
 	else
 		""
 }

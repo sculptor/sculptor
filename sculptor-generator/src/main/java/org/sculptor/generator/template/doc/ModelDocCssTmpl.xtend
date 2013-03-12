@@ -4,6 +4,7 @@
 
 package org.sculptor.generator.template.doc
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -12,7 +13,7 @@ class ModelDocCssTmpl {
 
 
 def static String docCss(Application it) {
-	fileOutput("DomainModelDoc.css", 'TO_GEN_RESOURCES', '''
+	fileOutput("DomainModelDoc.css", OutputSlot::TO_GEN_RESOURCES, '''
 	/* main elements */
 
 	body,div,td {

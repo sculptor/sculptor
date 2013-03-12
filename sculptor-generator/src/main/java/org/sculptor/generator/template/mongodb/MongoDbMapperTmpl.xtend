@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.mongodb
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
@@ -43,7 +44,7 @@ def static String mongoDbMapper(DomainObject it) {
 }
 
 def static String mongoDbMapperSubclass(DomainObject it) {
-	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper"), 'TO_SRC', '''
+	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
 
@@ -58,7 +59,7 @@ def static String mongoDbMapperSubclass(DomainObject it) {
 }
 
 def static String mongoDbMapperBase(DomainObject it) {
-	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
 

@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.web
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -38,7 +39,7 @@ def static String contextXml(Application it) {
 }
 
 def static String tomcatContextXml(Application it) {
-	fileOutput("META-INF/context.xml", 'TO_WEBROOT', '''
+	fileOutput("META-INF/context.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<Context path="/«dataSourceName(it)»" docBase="«dataSourceName(it)»"
 			debug="5" reloadable="true" crossContext="true">
@@ -71,7 +72,7 @@ def static String tomcatContextXml(Application it) {
 	)
 }
 def static String jettyContextXml(Application it) {
-	fileOutput("WEB-INF/jetty-env.xml", 'TO_WEBROOT', '''
+	fileOutput("WEB-INF/jetty-env.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0"?>
 	<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
 	<Configure class="org.mortbay.jetty.webapp.WebAppContext">

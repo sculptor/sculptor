@@ -1,5 +1,6 @@
 package org.sculptor.generator.template.doc
 
+import org.sculptor.generator.util.OutputSlot
 import java.util.Set
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
@@ -67,7 +68,7 @@ def static String start(Application it, Set<Module> focus, int detail) {
 
 def static String start(Application it, Set<Module> focus, int detail, String subjectArea) {
 	debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)
-	fileOutput(it.dotFileName(focus, detail, subjectArea), 'TO_GEN_RESOURCES', '''
+	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_GEN_RESOURCES, '''
 	«graphPropertiesStart(it)»	
 	«focus.sortBy(e|e.name).forEach[m | subGraphForModule(m, focus, detail, subjectArea)]»
 	«IF detail < 4»

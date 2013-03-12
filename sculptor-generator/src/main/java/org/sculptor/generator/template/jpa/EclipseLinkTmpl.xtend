@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.DbHelper.*
@@ -55,7 +56,7 @@ def static String footer(Application it) {
 }
 
 def static String mapping(Application it) {
-	fileOutput("/META-INF/orm.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("/META-INF/orm.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it)»
 	«enumConverter(it)»
 		«IF isJodaDateTimeLibrary()»
@@ -79,7 +80,7 @@ def static String jodaConverter(Application it) {
 }
 
 def static String jodaConverterClass(Application it) {
-	fileOutput(javaFileName(basePackage +".util.JodaConverter"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(basePackage +".util.JodaConverter"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
 	import org.eclipse.persistence.mappings.DatabaseMapping;
@@ -129,7 +130,7 @@ def static String jodaConverterClass(Application it) {
 }
 
 def static String enumConverterClass(Application it) {
-	fileOutput(javaFileName(basePackage +".util.EnumConverter"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(basePackage +".util.EnumConverter"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
 	import org.eclipse.persistence.mappings.DatabaseMapping;

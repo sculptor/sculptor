@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.consumer
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
 
 import static org.sculptor.generator.ext.Helper.*
@@ -30,7 +31,7 @@ import static extension org.sculptor.generator.util.XmlHelperBase.*
 class ConsumerEjbTestTmpl {
 
 def static String consumerJUnitOpenEjb(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 

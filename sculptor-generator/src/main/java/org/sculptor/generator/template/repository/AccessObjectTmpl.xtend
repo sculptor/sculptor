@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.repository
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import sculptormetamodel.Parameter
 import sculptormetamodel.RepositoryOperation
@@ -38,7 +39,7 @@ def static String command(RepositoryOperation it) {
 
 
 def static String commandInterface(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessapiPackage(repository.aggregateRoot.module)»;
 
@@ -90,7 +91,7 @@ def static String commandImpl(RepositoryOperation it) {
 }
 
 def static String commandImplBase(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 
@@ -221,7 +222,7 @@ def static String jpaHibernateTemplate(RepositoryOperation it) {
 }
 
 def static String commandImplSubclass(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "Impl"), 'TO_SRC', '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 

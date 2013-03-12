@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.repository
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.PubSubTmpl
 import sculptormetamodel.Parameter
@@ -47,7 +48,7 @@ def static String repository(Repository it) {
 def static String repositoryInterface(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryapiPackage()»;
 
@@ -78,7 +79,7 @@ def static String repositoryInterface(Repository it) {
 def static String repositoryBase(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 
@@ -232,7 +233,7 @@ def static String repositoryDependencies(Repository it) {
 def static String repositorySubclass(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), 'TO_SRC', '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 
@@ -825,7 +826,7 @@ def static String subclassRepositoryMethod(RepositoryOperation it) {
 
 
 def static String repositoryDependencyInjectionJUnit(Repository it) {
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), 'TO_GEN_SRC_TEST', '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 

@@ -18,6 +18,7 @@
 
 package org.sculptor.generator.template.service
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.db.DbUnitTmpl
 import sculptormetamodel.Service
 
@@ -30,7 +31,7 @@ import static extension org.sculptor.generator.util.HelperBase.*
 class ServiceTestTmpl {
 
 def static String serviceJUnitBase(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "TestBase"), 'TO_GEN_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "TestBase"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -57,7 +58,7 @@ def static String testInterfaceMethod(String it) {
 }
 
 def static String serviceJUnitSubclassWithAnnotations(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -86,7 +87,7 @@ def static String serviceJUnitDependencyInjection(Service it) {
 }
 
 def static String serviceJUnitSubclassAppEngine(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -144,14 +145,14 @@ def static String testMethod(String it) {
 }
 
 def static String dbunitTestData(Service it) {
-	fileOutput("dbunit/" + name + "Test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput("dbunit/" + name + "Test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 		«DbUnitTmpl::dbunitTestDataContent(it.module.application)»
 	'''
 	)
 }
 
 def static String serviceDependencyInjectionJUnit(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "DependencyInjectionTest"), 'TO_GEN_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 

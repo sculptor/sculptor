@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.db.OracleDDLTmpl
 import sculptormetamodel.Application
 
@@ -44,7 +45,7 @@ def static String openJpa(Application it) {
 }
 
 def static String jodaStrategy(Application it) {
-	fileOutput(javaFileName(basePackage +".util.JodaHandler"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(basePackage +".util.JodaHandler"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
 	import org.apache.openjpa.jdbc.identifier.DBIdentifier;
@@ -119,7 +120,7 @@ def static String jodaStrategy(Application it) {
 }
 
 def static String enumStrategy(Application it) {
-	fileOutput(javaFileName(basePackage +".util.EnumHandler"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(basePackage +".util.EnumHandler"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
 	import org.apache.openjpa.jdbc.kernel.JDBCStore;
@@ -169,7 +170,7 @@ def static String enumStrategy(Application it) {
  */
 def static String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
-	fileOutput("dbunit/ddl.sql", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput("dbunit/ddl.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 		«manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
 	'''
 	)

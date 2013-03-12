@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.common
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Module
 import sculptormetamodel.Operation
 
@@ -43,7 +44,7 @@ def static String applicationExceptions(Module it) {
 }
 
 def static String applicationException(Module it, String exceptionName) {
-	fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getExceptionPackage()»;
 
@@ -68,7 +69,7 @@ def static String applicationException(Module it, String exceptionName) {
 
 
 def static String webServiceApplicationException(Module it, String exceptionName) {
-	fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getExceptionPackage()»;
 

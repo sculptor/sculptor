@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.util.OutputSlot
 import java.util.Set
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
@@ -37,7 +38,7 @@ class OracleDDLTmpl {
 
 def static String ddl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
-	fileOutput("dbschema/" + name + "_ddl.sql", 'TO_GEN_RESOURCES', '''
+	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
 	«IF isDdlDropToBeGenerated()»    
 	-- ###########################################
 	-- # Drop

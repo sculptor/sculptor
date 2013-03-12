@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.mongodb
 
+import org.sculptor.generator.util.OutputSlot
 import sculptorguimetamodel.GuiApplication
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
@@ -33,7 +34,7 @@ class MongoDbConversationDomainObjectRepositoryTmpl {
 def static String conversationDomainObectRepository(GuiApplication it) {
 	var it = it.guiForApplication
 
-	fileOutput(javaFileName(it.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «basePackage».util.«subPackage("web")»;
 

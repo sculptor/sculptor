@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.DomainObject
 
@@ -57,7 +58,7 @@ def static String jpa(Application it) {
 /*###################################################################### */
 
 def static String persistenceUnitXmlFile(Application it) {
-	fileOutput(persistenceXml(), 'TO_GEN_RESOURCES', '''
+	fileOutput(persistenceXml(), OutputSlot::TO_GEN_RESOURCES, '''
 	«persistenceUnitHeader(it)»
 
 	«FOR unitName : modules.filter(e|!e.external).map(e|e.persistenceUnit).toSet()»
@@ -409,7 +410,7 @@ def static String persistenceUnitAdditions(Application it, String unitName) {
 }
 
 def static String persistenceUnitXmlFileTest(Application it) {
-	fileOutput("META-INF/persistence-test.xml", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput("META-INF/persistence-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«persistenceUnitHeader(it)»
 	«FOR unitName : modules.filter(e| !e.external).map(e|e.persistenceUnit).toSet()»
 		«persistenceUnitContentTest(it, unitName)»

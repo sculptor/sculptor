@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.service
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.mongodb.MongoDbServiceTestTmpl
 import sculptormetamodel.Parameter
@@ -72,7 +73,7 @@ def static String service(Service it) {
 }
 
 def static String serviceInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -110,7 +111,7 @@ def static String interfaceMethod(ServiceOperation it) {
 
 
 def static String serviceImplBase(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -196,7 +197,7 @@ def static String delegateServices(Service it) {
 }
 
 def static String serviceImplSubclass(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl"), 'TO_SRC', '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 

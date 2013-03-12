@@ -4,6 +4,7 @@
 
 package org.sculptor.generator.template.doc
 
+import org.sculptor.generator.util.OutputSlot
 import java.util.List
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
@@ -42,7 +43,7 @@ def static void start(Application it) {
 
 def static String docHtml(Application it) {
 	val title = "Summary Documentation of " + name + " Domain Model"
-	fileOutput("DomainModelDoc.html", 'TO_GEN_RESOURCES', '''
+	fileOutput("DomainModelDoc.html", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it, title)»
 
 	<div id="wrap">
@@ -64,7 +65,7 @@ def static String docHtml(Application it) {
 
 def static String moduleDocHtml(Module it) {
 	val title = "Summary Documentation of " + name + " module"
-	fileOutput("DomainModelDoc-" + name + ".html", 'TO_GEN_RESOURCES', '''
+	fileOutput("DomainModelDoc-" + name + ".html", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it, title + "(" + application.name + ")")»
 	<div id="wrap">
 			<a name="module_«name»"></a>

@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.mongodb
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.service.ServiceTestTmpl
 import sculptormetamodel.Service
 
@@ -31,7 +32,7 @@ class MongoDbServiceTestTmpl {
 
 
 def static String serviceJUnitSubclassMongoDb(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), 'TO_SRC_TEST', '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 

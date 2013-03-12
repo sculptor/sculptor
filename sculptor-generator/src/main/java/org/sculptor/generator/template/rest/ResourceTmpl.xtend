@@ -1,5 +1,6 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import sculptormetamodel.DomainObject
 import sculptormetamodel.HttpMethod
@@ -27,7 +28,7 @@ def static String resource(Resource it) {
 }
 
 def static String resourceBase(Resource it) {
-	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getRestPackage()»;
 
@@ -73,7 +74,7 @@ def static String resourceBase(Resource it) {
 }
 
 def static String resourceSubclass(Resource it) {
-	fileOutput(javaFileName(getRestPackage() + "." + name), 'TO_SRC', '''
+	fileOutput(javaFileName(getRestPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getRestPackage()»;
 

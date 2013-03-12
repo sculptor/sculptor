@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.drools
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -34,7 +35,7 @@ def static String droolsSupport(Application it) {
 }
 
 def static String droolsChangeSet(Application it) {
-	fileOutput("CompanyPolicy.xml", 'TO_RESOURCES', '''
+	fileOutput("CompanyPolicy.xml", OutputSlot::TO_RESOURCES, '''
 	<?xml version = '1.0' encoding = 'UTF-8'?>
 	<change-set xmlns='http://drools.org/drools-5.0/change-set'
 		xmlns:xs='http://www.w3.org/2001/XMLSchema-instance'
@@ -49,7 +50,7 @@ def static String droolsChangeSet(Application it) {
 }
 		
 def static String droolsRules(Application it) {
-	fileOutput("CompanyPolicy.dslr", 'TO_RESOURCES', '''
+	fileOutput("CompanyPolicy.dslr", OutputSlot::TO_RESOURCES, '''
 	package CompanyPolicy
 
 	/* ################################################################################
@@ -97,7 +98,7 @@ def static String droolsRules(Application it) {
 }
 
 def static String droolsDsl(Application it) {
-	fileOutput("CompanyPolicy.dsl", 'TO_RESOURCES', '''
+	fileOutput("CompanyPolicy.dsl", OutputSlot::TO_RESOURCES, '''
 	[condition][]Exist request on=$req : RequestDescription()
 	[condition][]- service "{service}"=serviceName=="{service}"
 	[condition][]- method "{method}"=methodName=="{method}"

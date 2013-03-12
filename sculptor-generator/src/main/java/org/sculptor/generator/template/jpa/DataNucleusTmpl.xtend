@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.db.OracleDDLTmpl
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
@@ -46,7 +47,7 @@ def static String dataNucleus(Application it) {
 }
 
 def static String dataNucleusTestProperties(Application it) {
-	fileOutput("datanucleus-test.properties", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput("datanucleus-test.properties", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	datanucleus.ConnectionDriverName=org.hsqldb.jdbcDriver
 	datanucleus.ConnectionURL=jdbc:hsqldb:mem:«name.toLowerCase()»
 	datanucleus.ConnectionUserName=sa
@@ -56,7 +57,7 @@ def static String dataNucleusTestProperties(Application it) {
 }
 
 def static String enumPlugin(Application it) {
-	fileOutput("plugin.xml", 'TO_GEN_RESOURCES', '''
+	fileOutput("plugin.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	<?xml version="1.0"?>
 	<plugin>
 		<extension point="org.datanucleus.store_mapping">
@@ -82,7 +83,7 @@ def static String enumPluginMapping(Enum it) {
 }
 
 def static String manifest(Application it) {
-	fileOutput("META-INF/MANIFEST.MF", 'TO_GEN_RESOURCES', '''
+	fileOutput("META-INF/MANIFEST.MF", OutputSlot::TO_GEN_RESOURCES, '''
 	Manifest-Version: 1.0
 	Bundle-ManifestVersion: 2
 	Bundle-Name: enumplugin
@@ -93,7 +94,7 @@ def static String manifest(Application it) {
 }
 
 def static String enumMappingClass(Application it) {
-	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
 	import java.math.BigInteger;
@@ -190,7 +191,7 @@ def static String enumMappingClass(Application it) {
 }
 
 def static String enumLiteralClass(Application it) {
-	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), OutputSlot::TO_GEN_SRC, '''
 	package org.datanucleus.store.rdbms.sql.expression;
 
 	import org.datanucleus.ClassNameConstants;
@@ -238,7 +239,7 @@ def static String enumLiteralClass(Application it) {
  */
 def static String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
-	fileOutput("dbunit/ddl_additional.sql", 'TO_GEN_RESOURCES_TEST', '''
+	fileOutput("dbunit/ddl_additional.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 		«manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
 	'''
 	)

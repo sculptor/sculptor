@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
@@ -38,31 +39,32 @@ class DomainObjectTmpl {
 def static String domainObject(DomainObject it) {
 	'''
 	«IF gapClass»
- 	   «domainObjectSubclass(it)»
-		«ENDIF»
-		«domainObjectBase(it)»
-		«IF getBooleanProperty("generate.domainObject.conditionalCriteriaProperties")»
-			«DomainObjectPropertiesTmpl::domainObjectProperties(it)»
-		«ENDIF»
-		«IF getBooleanProperty("generate.domainObject.nameConstants")»
-			«DomainObjectNamesTmpl::propertyNamesInterface(it)»
-		«ENDIF»
+		«domainObjectSubclass(it)»
+	«ENDIF»
+	«domainObjectBase(it)»
+	«IF getBooleanProperty("generate.domainObject.conditionalCriteriaProperties")»
+		«DomainObjectPropertiesTmpl::domainObjectProperties(it)»
+	«ENDIF»
+	«IF getBooleanProperty("generate.domainObject.nameConstants")»
+		«DomainObjectNamesTmpl::propertyNamesInterface(it)»
+	«ENDIF»
 	'''
 }
 
 def static String domainObjectSubclass(DataTransferObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), 'TO_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
 	«IF formatJavaDoc(it) == "" »
-	/**
-	 * Data transfer object for «name». Properties and associations are
-	 * implemented in the generated base class {@link «getDomainPackage()».«name»Base}.
-	 */
+		/**
+		 * Data transfer object for «name». Properties and associations are
+		 * implemented in the generated base class {@link «getDomainPackage()».«name»Base}.
+		 */
 	«ELSE »
-	«formatJavaDoc(it)»
+		«formatJavaDoc(it)»
 	«ENDIF »
+
 	«DomainObjectAnnotationTmpl::domainObjectSubclassAnnotations(it)»
 	public «getAbstractLitteral(it)»class «name» ^extends «name»Base {
 		«serialVersionUID(it)»
@@ -72,7 +74,6 @@ def static String domainObjectSubclass(DataTransferObject it) {
 		«DomainObjectConstructorTmpl::propertyConstructorSubclass(it)»
 		«DomainObjectConstructorTmpl::limitedConstructor(it)»
 		«DomainObjectConstructorTmpl::minimumConstructor(it)»
-
 	}
 	'''
 	)
@@ -81,17 +82,18 @@ def static String domainObjectSubclass(DataTransferObject it) {
 
 
 def static String domainObjectSubclass(DomainObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), 'TO_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
 	«domainObjectSubclassJavaDoc(it)»
 	«IF isJpaAnnotationToBeGenerated()»
-	«DomainObjectAnnotationTmpl::domainObjectAnnotations(it)»
+		«DomainObjectAnnotationTmpl::domainObjectAnnotations(it)»
 	«ENDIF»
+
 	«DomainObjectAnnotationTmpl::domainObjectSubclassAnnotations(it)»
 	public «getAbstractLitteral(it)»class «name» ^extends «name»Base {
-	«serialVersionUID(it)»
+		«serialVersionUID(it)»
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
 
@@ -117,15 +119,15 @@ def static String domainObjectSubclass(Trait it) {
 def static String domainObjectSubclassJavaDoc(DomainObject it) {
 	'''
 	«IF formatJavaDoc(it) == "" »
-	/**
-	 * «docMetaTypeName(it)» representing «name».
-	 * <p>
-	 * This class is responsible for the domain object related
-	 * business logic for «name». Properties and associations are
-	 * implemented in the generated base class {@link «getDomainPackage()».«name»Base}.
-	 */
+		/**
+		 * «docMetaTypeName(it)» representing «name».
+		 * <p>
+		 * This class is responsible for the domain object related
+		 * business logic for «name». Properties and associations are
+		 * implemented in the generated base class {@link «getDomainPackage()».«name»Base}.
+		 */
 	«ELSE »
-	«formatJavaDoc(it)»
+		«formatJavaDoc(it)»
 	«ENDIF »
 	'''
 }
@@ -133,7 +135,7 @@ def static String domainObjectSubclassJavaDoc(DomainObject it) {
 def static String domainObjectBase(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 
-	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -143,11 +145,11 @@ def static String domainObjectBase(DomainObject it) {
 	«ENDIF»
 	«DomainObjectAnnotationTmpl::domainObjectBaseAnnotations(it)»
 	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «getExtendsAndImplementsLitteral(it)» {
-	«serialVersionUID(it)»
-		«it.attributes.forEach[DomainObjectAttributeTmpl::attribute(it)]»
+		«serialVersionUID(it)»
+		«it.attributes.map[a | DomainObjectAttributeTmpl::attribute(a)].join()»
 
-		«it.references.filter(r | !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceAttribute(it)]»
-		«it.references.filter(r | r.many).forEach[DomainObjectReferenceTmpl::manyReferenceAttribute(it)]»
+		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAttribute(r)].join()»
+		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAttribute(r)].join()»
 
 		«IF getLimitedConstructorParameters(it).isEmpty»public«ELSE»«it.getDefaultConstructorVisibility()»«ENDIF» «name»«IF gapClass»Base«ENDIF»() {
 		}
@@ -163,21 +165,21 @@ def static String domainObjectBase(DomainObject it) {
 			«DomainObjectConstructorTmpl::factoryMethod(it)»
 		«ENDIF»
 
-		«it.attributes.filter(a | !a.isUuid()) .forEach[DomainObjectAttributeTmpl::propertyAccessors(it)]»
+		«it.attributes.filter(a | !a.isUuid()).map[a | DomainObjectAttributeTmpl::propertyAccessors(a)].join()»
 		«IF hasUuidAttribute »
-	    «DomainObjectAttributeTmpl::uuidAccessor(it)»
+			«DomainObjectAttributeTmpl::uuidAccessor(it)»
 		«ENDIF»
 
-		«it.references.filter(r | !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceAccessors(it)]»
-		«it.references.filter(r | r.many).forEach[DomainObjectReferenceTmpl::manyReferenceAccessors(it)]»
+		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAccessors(r)].join()»
+		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAccessors(r)].join()»
 
 		«IF isImmutable(it) && ^abstract»
-			«it.attributes.filter[a | !(a.isSystemAttribute())].forEach[DomainObjectConstructorTmpl::abstractCopyModifier(it)]»
-			«it.references.filter[r | !(r.many || r.isUnownedReference())].forEach[DomainObjectConstructorTmpl::abstractCopyModifier(it)]»
+			«it.attributes.filter[a | !(a.isSystemAttribute())].map[r | DomainObjectConstructorTmpl::abstractCopyModifier(r)].join()»
+			«it.references.filter[r | !(r.many || r.isUnownedReference())].map[r | DomainObjectConstructorTmpl::abstractCopyModifier(r)].join()»
 		«ENDIF»
 		«IF isImmutable(it) && !^abstract»
-			«it.getAllAttributes().filter[a | !a.isSystemAttribute()].forEach[a | DomainObjectConstructorTmpl::copyModifier(a, it)]»
-			«it.getAllReferences().filter[r | !(r.many || r.isUnownedReference())].forEach[a | DomainObjectConstructorTmpl::copyModifier(a, it)]»
+			«it.getAllAttributes().filter[a | !a.isSystemAttribute()].map[a | DomainObjectConstructorTmpl::copyModifier(a, it)].join()»
+			«it.getAllReferences().filter[r | !(r.many || r.isUnownedReference())].map[a | DomainObjectConstructorTmpl::copyModifier(a, it)].join()»
 		«ENDIF»
 
 		«IF isFullyAuditable() »
@@ -192,9 +194,9 @@ def static String domainObjectBase(DomainObject it) {
 		«acceptToString(it)»
 		«DomainObjectKeyTmpl::keyGetter(it)»
 
-		«it.traits.filter(e | !e.operations.isEmpty).forEach[e | DomainObjectTraitTmpl::traitInstance(e, it)]»
-		«it.operations.filter(e | !e.^abstract && e.hasHint("trait")).forEach[DomainObjectTraitTmpl::delegateToTraitMethod(it)]»
-		«it.operations.filter[e | e.^abstract || !e.hasHint("trait")].forEach[abstractMethod(it)]»
+		«it.traits.filter(e | !e.operations.isEmpty).map[e | DomainObjectTraitTmpl::traitInstance(e, it)].join()»
+		«it.operations.filter(e | !e.^abstract && e.hasHint("trait")).map[DomainObjectTraitTmpl::delegateToTraitMethod(it)].join()»
+		«it.operations.filter[e | e.^abstract || !e.hasHint("trait")].map[abstractMethod(it)].join()»
 
 		«domainObjectHook(it)»
 	}
@@ -204,7 +206,7 @@ def static String domainObjectBase(DomainObject it) {
 
 def static String domainObjectBase(Trait it) {
 	'''
-		«DomainObjectTraitTmpl::domainObjectBase(it)»
+	«DomainObjectTraitTmpl::domainObjectBase(it)»
 	'''
 }
 
@@ -222,10 +224,10 @@ def static String domainObjectBaseJavaDoc(DomainObject it) {
 		«ENDIF»
 		 */
 		«IF isJpaAnnotationToBeGenerated() && isPersistent(it)»
-		@javax.persistence.MappedSuperclass
+			@javax.persistence.MappedSuperclass
 		«ENDIF»
-		«ELSEIF formatJavaDoc(it) == "" »
-		 /**
+	«ELSEIF formatJavaDoc(it) == "" »
+		/**
 		 * «docMetaTypeName(it)» representing «name».
 		 */
 	«ELSE»
@@ -235,30 +237,31 @@ def static String domainObjectBaseJavaDoc(DomainObject it) {
 }
 
 def static String domainObjectBase(DataTransferObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
 	«IF gapClass»
-	/**
-	 * Generated base class, which implements properties and
-	 * associations for the data transfer object.
-	 */
+		/**
+		 * Generated base class, which implements properties and
+		 * associations for the data transfer object.
+		 */
 	«ELSEIF formatJavaDoc(it) == "" »
-	 /**
-	 * Data transfer object for «name».
-	 */
+		 /**
+		 * Data transfer object for «name».
+		 */
 	«ELSE »
-	«formatJavaDoc(it)»
+		«formatJavaDoc(it)»
 	«ENDIF »
+
 	«DomainObjectAnnotationTmpl::domainObjectBaseAnnotations(it)»
 	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «it.getExtendsAndImplementsLitteral()» {
-	«serialVersionUID(it)»
+		«serialVersionUID(it)»
 
-			«it.attributes.forEach[DomainObjectAttributeTmpl::attribute(it)]»
+		«it.attributes.map[e | DomainObjectAttributeTmpl::attribute(e)].join()»
 
-		«it.references.filter(r | !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceAttribute(it)]»
-		«it.references.filter(r | r.many).forEach[DomainObjectReferenceTmpl::manyReferenceAttribute(it)]»
+		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAttribute(r)].join()»
+		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAttribute(r)].join()»
 
 		«IF getLimitedConstructorParameters(it).isEmpty || getMinimumConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»«IF gapClass»Base«ENDIF»() {
 		}
@@ -272,10 +275,10 @@ def static String domainObjectBase(DataTransferObject it) {
 			«DomainObjectConstructorTmpl::factoryMethod(it)»
 		«ENDIF»
 
-		«it.attributes .forEach[DomainObjectAttributeTmpl::propertyAccessors(it)]»
+		«it.attributes.map[a | DomainObjectAttributeTmpl::propertyAccessors(a)].join()»
 
-		«it.references.filter(r | !r.many).forEach[DomainObjectReferenceTmpl::oneReferenceAccessors(it)]»
-		«it.references.filter(r | r.many).forEach[DomainObjectReferenceTmpl::manyReferenceAccessors(it)]»
+		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAccessors(r)].join()»
+		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAccessors(r)].join()»
 
 	«IF ^extends == null»
 		«clone(it)»
@@ -289,68 +292,68 @@ def static String domainObjectBase(DataTransferObject it) {
 
 def static String serialVersionUID(DomainObject it) {
 	'''
-		private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	'''
 }
 
 def static String prePersist(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 	'''
-		«IF hasUuidAttribute && isJpaAnnotationOnFieldToBeGenerated()»
+	«IF hasUuidAttribute && isJpaAnnotationOnFieldToBeGenerated()»
 		@javax.persistence.PrePersist
 		protected void prePersist() {
 			getUuid();
 		}
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
 def static String generateFullAudit(DomainObject it) {
 	'''
-		@javax.persistence.Transient
-		«fw("domain.AuditHandlerImpl")»<«name»> auditHandler = new «fw("domain.AuditHandlerImpl")»<«name»>();
+	@javax.persistence.Transient
+	«fw("domain.AuditHandlerImpl")»<«name»> auditHandler = new «fw("domain.AuditHandlerImpl")»<«name»>();
 
-		public «fw("domain.AuditHandler")»<? ^extends «name»> receiveAuditHandler() {
-			return auditHandler;
-		}
+	public «fw("domain.AuditHandler")»<? ^extends «name»> receiveAuditHandler() {
+		return auditHandler;
+	}
 
-		protected «fw("domain.AuditHandlerImpl")»<? ^extends «name»> receiveInternalAuditHandler() {
-			return auditHandler;
-		}
+	protected «fw("domain.AuditHandlerImpl")»<? ^extends «name»> receiveInternalAuditHandler() {
+		return auditHandler;
+	}
 
-		@javax.persistence.PostLoad
-		protected void startAuditing() {
-			auditHandler.startAuditing();
-		}
+	@javax.persistence.PostLoad
+	protected void startAuditing() {
+		auditHandler.startAuditing();
+	}
 	'''
 }
 
 def static String acceptToString(DomainObject it) {
 	'''
-		«IF !getBasicTypeReferences(it).isEmpty || !getEnumReferences(it).isEmpty »
-			/**
-				* This method is used by toString. It specifies what to
-				* include in the toString result.
-				* @return true if the field is to be included in toString
-				*/
-			protected boolean acceptToString(java.lang.reflect.Field field) {
-				if (super.acceptToString(field)) {
-				    return true;
-				} else {
-				    «FOR r : getBasicTypeReferences(it)»
-				    if (field.getName().equals("«r.name»")) {
-				        return true;
-				    }
-				    «ENDFOR»
-				    «FOR r : getEnumReferences(it)»
-				    if (field.getName().equals("«r.name»")) {
-				        return true;
-				    }
-				    «ENDFOR»
-				    return false;
+	«IF !getBasicTypeReferences(it).isEmpty || !getEnumReferences(it).isEmpty »
+		/**
+		 * This method is used by toString. It specifies what to
+		 * include in the toString result.
+		 * @return true if the field is to be included in toString
+		 */
+		protected boolean acceptToString(java.lang.reflect.Field field) {
+			if (super.acceptToString(field)) {
+				return true;
+			} else {
+			«FOR r : getBasicTypeReferences(it)»
+				if (field.getName().equals("«r.name»")) {
+					return true;
 				}
+			«ENDFOR»
+			«FOR r : getEnumReferences(it)»
+				if (field.getName().equals("«r.name»")) {
+					return true;
+				}
+			«ENDFOR»
+				return false;
 			}
-		«ENDIF»
+		}
+	«ENDIF»
 	'''
 }
 
@@ -365,92 +368,92 @@ def static String toStringStyle(DomainObject it) {
 }
 
 def static String domainObject(Enum it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), 'TO_GEN_SRC', '''
-		«javaHeader()»
-		package «getDomainPackage()»;
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	«javaHeader()»
+	package «getDomainPackage()»;
 
-		«IF it.formatJavaDoc() == "" »
-			 /**
-			 * Enum for «name»
-			 */
-		«ELSE »
-			«it.formatJavaDoc()»
-		«ENDIF »
-		public enum «name» implements java.io.Serializable {
-			«it.values.map[v | enumValue(v)].join(",")»;
+	«IF it.formatJavaDoc() == "" »
+		/**
+		 * Enum for «name»
+		 */
+	«ELSE »
+		«it.formatJavaDoc()»
+	«ENDIF »
+	public enum «name» implements java.io.Serializable {
+		«it.values.map[v | enumValue(v)].join(",")»;
 
-			«enumIdentifierMap(it)»
+		«enumIdentifierMap(it)»
 
-			«it.attributes.forEach[DomainObjectAttributeTmpl::attribute(it)]»
-			«enumConstructor(it)»
-			«enumFromIdentifierMethod(it)»
-			«it.attributes.forEach[DomainObjectAttributeTmpl::propertyGetter(it)]»
-			«enumNamePropertyGetter(it)»
-		}
+		«it.attributes.map[DomainObjectAttributeTmpl::attribute(it)].join()»
+		«enumConstructor(it)»
+		«enumFromIdentifierMethod(it)»
+		«it.attributes.map[DomainObjectAttributeTmpl::propertyGetter(it)].join()»
+		«enumNamePropertyGetter(it)»
+	}
 	'''
 	)
 }
 
 def static String enumValue(EnumValue it) {
 	'''
-		«it.formatJavaDoc()»
-		«name»«IF !parameters.isEmpty »(«FOR param : parameters SEPARATOR ","»«param.value»«ENDFOR»)«ENDIF»
+	«it.formatJavaDoc()»
+	«name»«IF !parameters.isEmpty »(«FOR param : parameters SEPARATOR ","»«param.value»«ENDFOR»)«ENDIF»
 	'''
 }
 
 def static String enumIdentifierMap(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-		«IF identifierAttribute != null »
-			/**
-			 */
-			private static java.util.Map<«identifierAttribute.getTypeName().getObjectTypeName()», «name»> identifierMap = new java.util.HashMap<«identifierAttribute.getTypeName().getObjectTypeName()», «name»>();
-			static {
-				for («name» value : «name».values()) {
-					identifierMap.put(value.«identifierAttribute.getGetAccessor()»(), value);
-				}
+	«IF identifierAttribute != null »
+		/**
+		 */
+		private static java.util.Map<«identifierAttribute.getTypeName().getObjectTypeName()», «name»> identifierMap = new java.util.HashMap<«identifierAttribute.getTypeName().getObjectTypeName()», «name»>();
+		static {
+			for («name» value : «name».values()) {
+				identifierMap.put(value.«identifierAttribute.getGetAccessor()»(), value);
 			}
-		«ENDIF»
+		}
+	«ENDIF»
 	'''
 }
 
 def static String enumFromIdentifierMethod(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-		«IF identifierAttribute != null »
-			public static «name» from«identifierAttribute.name.toFirstUpper()»(«identifierAttribute.getTypeName()» «identifierAttribute.name») {
-				«name» result = identifierMap.get(«identifierAttribute.name»);
-				if (result == null) {
-					throw new IllegalArgumentException("No «name» for «identifierAttribute.name»: " + «identifierAttribute.name»);
-				}
-				return result;
+	«IF identifierAttribute != null »
+		public static «name» from«identifierAttribute.name.toFirstUpper()»(«identifierAttribute.getTypeName()» «identifierAttribute.name») {
+			«name» result = identifierMap.get(«identifierAttribute.name»);
+			if (result == null) {
+				throw new IllegalArgumentException("No «name» for «identifierAttribute.name»: " + «identifierAttribute.name»);
 			}
+			return result;
+		}
 
-			/* new enum handling */
-			public static «name» toEnum(java.lang.Object key) {
-				if (!(key instanceof «identifierAttribute.getTypeName().getObjectTypeName()»)) {
-					throw new IllegalArgumentException("key is not of type «identifierAttribute.getTypeName().getObjectTypeName()»");
-				}
-				return from«identifierAttribute.name.toFirstUpper()»((«identifierAttribute.getTypeName().getObjectTypeName()») key);
+		/* new enum handling */
+		public static «name» toEnum(java.lang.Object key) {
+			if (!(key instanceof «identifierAttribute.getTypeName().getObjectTypeName()»)) {
+				throw new IllegalArgumentException("key is not of type «identifierAttribute.getTypeName().getObjectTypeName()»");
 			}
+			return from«identifierAttribute.name.toFirstUpper()»((«identifierAttribute.getTypeName().getObjectTypeName()») key);
+		}
 
-			public Object toData() {
-				return get«identifierAttribute.name.toFirstUpper()»();
-			}
-		«ENDIF»
+		public Object toData() {
+			return get«identifierAttribute.name.toFirstUpper()»();
+		}
+	«ENDIF»
 	'''
 }
 
 
 def static String enumConstructor(Enum it) {
 	'''
-		/**
-		 */
-		private «name»(«it.attributes.map[a | DomainObjectConstructorTmpl::parameterTypeAndName(a)].join(",")») {
-			«FOR a : attributes»
-				this.«a.name» = «a.name»;
-			«ENDFOR»
-		}
+	/**
+	 */
+	private «name»(«it.attributes.map[a | DomainObjectConstructorTmpl::parameterTypeAndName(a)].join(",")») {
+		«FOR a : attributes»
+			this.«a.name» = «a.name»;
+		«ENDFOR»
+	}
 	'''
 }
 
@@ -464,51 +467,51 @@ def static String enumNamePropertyGetter(Enum it) {
 
 def static String clone(DomainObject it) {
 	'''
-		@Override
-		public Object clone() {
-			try {
-				return super.clone();
-			} catch (CloneNotSupportedException e) {
-				// this shouldn't happen, since we are Cloneable
-				throw new InternalError();
-			}
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// this shouldn't happen, since we are Cloneable
+			throw new InternalError();
 		}
+	}
 	'''
 }
 
 def static String domainObjectSubclassImplMethod(DomainObjectOperation it) {
 	'''
-		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | methodParameterTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("«name» not implemented");
-			}
+	«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | methodParameterTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("«name» not implemented");
+	}
 	'''
 }
 
 def static String abstractMethod(DomainObjectOperation it) {
 	'''
-		«it.formatJavaDoc()»
-		abstract «it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[methodParameterTypeAndName(it)].join(", ")») «ExceptionTmpl::throwsDecl(it)»;
+	«it.formatJavaDoc()»
+	abstract «it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[methodParameterTypeAndName(it)].join(", ")») «ExceptionTmpl::throwsDecl(it)»;
 	'''
 }
 
 def static String methodParameterTypeAndName(Parameter it) {
 	'''
-		«it.getTypeName()» «name»
+	«it.getTypeName()» «name»
 	'''
 }
 
-/*Extension point to generate more stuff in DomainObjects.
-	Use AROUND DomainObjectTmplTmpl::domainObjectHook FOR DomainObject
-	in SpecialCases.xpt */
+/* Extension point to generate more stuff in DomainObjects.
+ * Use AROUND DomainObjectTmplTmpl::domainObjectHook FOR DomainObject
+ * in SpecialCases.xpt */
 def static String domainObjectHook(DomainObject it) {
 	'''
 	'''
 }
 
-/*Extension point to generate more stuff in DataTransferObjects
-	Use AROUND DomainObjectTmplTmpl::dataTransferObjectHook FOR DataTransferObject
-	in SpecialCases.xpt */
+/* Extension point to generate more stuff in DataTransferObjects.
+ * Use AROUND DomainObjectTmplTmpl::dataTransferObjectHook FOR DataTransferObject
+ * in SpecialCases.xpt */
 def static String dataTransferObjectHook(DataTransferObject it) {
 	'''
 	'''

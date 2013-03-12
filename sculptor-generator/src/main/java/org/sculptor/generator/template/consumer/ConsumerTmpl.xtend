@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.consumer
 
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.PubSubTmpl
 import sculptormetamodel.Consumer
 
@@ -58,7 +59,7 @@ def static String consumer(Consumer it) {
 }
 
 def static String consumerInterface(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
@@ -71,7 +72,7 @@ def static String consumerInterface(Consumer it) {
 
 
 def static String eventConsumerImplBase(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), 'TO_GEN_SRC', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
@@ -109,7 +110,7 @@ def static String eventConsumerImplBase(Consumer it) {
 
 
 def static String eventConsumerImplSubclass(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Impl"), 'TO_SRC', '''
+	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
 

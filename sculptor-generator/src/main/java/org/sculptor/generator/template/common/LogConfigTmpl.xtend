@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.template.common
 
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 import static org.sculptor.generator.ext.Helper.*
@@ -30,42 +31,42 @@ def static String logbackConfig(Application it) {
 }
 
 def static String logbackXml(Application it) {
-	fileOutput("logback.xml", 'TO_RESOURCES', '''
-	<?xml version="1.0" encoding="UTF-8" ?>
+	fileOutput("logback.xml", OutputSlot::TO_RESOURCES, '''
+	<?xml version="1.0" encoding="UTF-8"?>
 	<configuration>
-
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-		</encoder>
-	</appender>
-
-	<logger name="de.hunsicker.jalopy.io" level="WARN"/>
-	<root level="INFO">
-		<appender-ref ref="STDOUT" />
-	</root>
-
+	
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+			</encoder>
+		</appender>
+	
+		<logger name="de.hunsicker.jalopy.io" level="WARN"/>
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+		</root>
+	
 	</configuration>	    
 	'''
 	)
 }
 
 def static String logbackTestXml(Application it) {
-	fileOutput("logback-test.xml", 'TO_RESOURCES_TEST', '''
+	fileOutput("logback-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	<?xml version="1.0" encoding="UTF-8" ?>
 	<configuration>
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-		</encoder>
-	</appender>
-	
-	<logger name="«basePackage»" level="DEBUG" />
-	<logger name="de.hunsicker.jalopy.io" level="WARN"/>
-	<root level="INFO">
-		<appender-ref ref="STDOUT" />
-	</root>
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+			</encoder>
+		</appender>
+		
+		<logger name="«basePackage»" level="DEBUG" />
+		<logger name="de.hunsicker.jalopy.io" level="WARN"/>
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+		</root>
 
 	</configuration>	    
 	'''
