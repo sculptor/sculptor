@@ -87,7 +87,7 @@ def static String resourceSubclass(Resource it) {
 		public «name»() {
 		}
 
-		«it.operations.filter(op | op.isImplementedInGapClass()) .forEach[resourceMethod(it)]»
+		«it.operations.filter(op | op.isImplementedInGapClass()) .map[resourceMethod(it)].join()»
 
 	}
 	'''

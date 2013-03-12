@@ -36,7 +36,7 @@ class HibernateTmpl {
 def static String hibernate(Application it) {
 	'''
 	«IF isJpa1()»
-		«it.modules.forEach[enumTypedefFile(it)]»e
+		«it.modules.map[enumTypedefFile(it)].join()»e
 		«IF isJpaAnnotationToBeGenerated()»
 			«hibenateCfgFile(it)»
 		«ENDIF»
@@ -109,7 +109,7 @@ def static String hibenateCfgFile(Application it) {
 
 def static String hibenateCfgMappedResources(Application it) {
 	'''
-	«it.modules.sortBy(e|e.name).forEach[hibenateCfgMappedResources(it)]»
+	«it.modules.sortBy(e|e.name).map[hibenateCfgMappedResources(it)].join()»
 	'''
 }
 

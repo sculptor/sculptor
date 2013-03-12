@@ -62,9 +62,9 @@ def static String domainObjectProperties(DomainObject it) {
 		/* note that static methods are not generated in BasicType, since they can't be root of the criteria */
 		«IF !(it instanceof BasicType)»
 			«sharedInstance(it)»
-			«it.getAllAttributes().forEach[a | staticLeafProperty(a, it)]»
-			«it.getAllReferences().filter(e|e.isEnumReference() || (nosql() && e.isUnownedReference())).forEach[r | staticLeafProperty(r, it)]»
-			«it.getAllReferences().filter[e | !(e.isEnumReference() || (nosql() && e.isUnownedReference()))].forEach[r | staticReferenceProperty(r, it)]»
+			«it.getAllAttributes().map[a | staticLeafProperty(a, it)].join()»
+			«it.getAllReferences().filter(e|e.isEnumReference() || (nosql() && e.isUnownedReference())).map[r | staticLeafProperty(r, it)].join()»
+			«it.getAllReferences().filter[e | !(e.isEnumReference() || (nosql() && e.isUnownedReference()))].map[r | staticReferenceProperty(r, it)].join()»
 		«ENDIF»
 	
 		«domainObjectProperty(it)»
@@ -131,9 +131,9 @@ def static String domainObjectPropertiesImpl(DomainObject it) {
 				this.owningClass=owningClass;
 			}
 
-			«it.getAllAttributes().forEach[a | leafProperty(a, isEmbeddable(it))]»
-			«it.getAllReferences().filter[e|e.isEnumReference() || (nosql() && e.isUnownedReference())].forEach[a | leafProperty(a, isEmbeddable(it))]»
-			«it.getAllReferences().filter[e| ! (e.isEnumReference() || (nosql() && e.isUnownedReference()))].forEach[referenceProperty(it)]»
+			«it.getAllAttributes().map[a | leafProperty(a, isEmbeddable(it))].join()»
+			«it.getAllReferences().filter[e|e.isEnumReference() || (nosql() && e.isUnownedReference())].map[a | leafProperty(a, isEmbeddable(it))].join()»
+			«it.getAllReferences().filter[e| ! (e.isEnumReference() || (nosql() && e.isUnownedReference()))].map[referenceProperty(it)].join()»
 		} 
 	'''
 }

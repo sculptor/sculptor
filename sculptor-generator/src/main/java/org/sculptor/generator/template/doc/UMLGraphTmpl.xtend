@@ -70,10 +70,10 @@ def static String start(Application it, Set<Module> focus, int detail, String su
 	debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)
 	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_GEN_RESOURCES, '''
 	«graphPropertiesStart(it)»	
-	«focus.sortBy(e|e.name).forEach[m | subGraphForModule(m, focus, detail, subjectArea)]»
+	«focus.sortBy(e|e.name).map[m | subGraphForModule(m, focus, detail, subjectArea)].join()»
 	«IF detail < 4»
 		«InheritanceGraphProperties(it)»
-		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).forEach[InheritanceToUML(it, focus, detail, subjectArea)]»
+		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).map[InheritanceToUML(it, focus, detail, subjectArea)].join()»
 		«RelationGraphProperties(it)»
 		«it.getAllReferences()
 			.filter(e | !(e.to instanceof BasicType))
@@ -82,7 +82,7 @@ def static String start(Application it, Set<Module> focus, int detail, String su
 			.filter(e | e.from.includeInDiagram(detail, subjectArea))
 			.sortBy(e | e.from.name + "->" + e.to.name + ": " + e.name)
 			.map[r | RelationToUML(r, focus, detail, subjectArea)]»
-		«it.modules.map[services].flatten.forEach[ServiceDependenciesToUML(it, focus, detail, subjectArea)]»
+		«it.modules.map[services].flatten.map[ServiceDependenciesToUML(it, focus, detail, subjectArea)].join()»
 	«ELSE»
 		«focus.map[ModuleDependenciesToUML(it)]»
 	«ENDIF»
@@ -94,17 +94,17 @@ def static String start(Application it, Set<Module> focus, int detail, String su
 
 def static String graphPropertiesStart(Application it) {
 	'''
-	digraph G {             
-	fontsize = 10        
-	node [                          
-		fontsize = 10                
-		fontname="arial"
-		shape=plaintext
-	     ]        
-	     
-	edge [                            
-		fontsize = 10        
-	     ]        
+	digraph G {
+		fontsize = 10
+		node [
+			fontsize = 10
+			fontname="arial"
+			shape=plaintext
+		]
+
+		edge [
+			fontsize = 10
+		]
 	'''
 }
 
@@ -120,9 +120,9 @@ def static String subGraphForModule(Module it, Set<Module> focus, int detail, St
 		subgraph cluster«name» {
 			label = "«name»"  
 			«IF focus.contains(it)»
-				«it.services.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ServiceToUML(it, focus, detail)]»
-				«it.consumers.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ConsumerToUML(it, focus, detail)]»
-				«it.domainObjects.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).forEach[ObjectToUML(it, focus, detail, subjectArea)]»
+				«it.services.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).map[ServiceToUML(it, focus, detail)].join()»
+				«it.consumers.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).map[ConsumerToUML(it, focus, detail)].join()»
+				«it.domainObjects.filter(e|e.includeInDiagram(detail, subjectArea)).sortBy(e|e.name).map[ObjectToUML(it, focus, detail, subjectArea)].join()»
 			«ENDIF»
 		}
 	«ELSE»
@@ -162,7 +162,7 @@ def static String ServiceToUML(Service it, Set<Module> focus, int detail) {
 	«IF it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
-		«it.operations.forEach[OperationToUML(it)]»
+		«it.operations.map[OperationToUML(it)].join()»
 			</table>		
 		</td></tr>
 	«ENDIF»
@@ -221,7 +221,7 @@ def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, St
 	«IF it instanceof sculptormetamodel.Enum && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
-			«(it as Enum).values.forEach[EnumValueToUML(it)]»
+			«(it as Enum).values.map[EnumValueToUML(it)].join()»
 			</table>		
 		</td></tr> 
 	«ENDIF »
@@ -234,14 +234,14 @@ def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, St
 		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].map[AttributeToUML(it)]»
 		«it.references.filter(e | e.to instanceof BasicType && e.visible()).map[BasicTypeAttributeToUML(it)]»
 		«it.references.filter(e | e.to instanceof sculptormetamodel.Enum && e.visible()).map[EnumAttributeToUML(it)]»
-		«it.references.filter( e | !(e.to instanceof sculptormetamodel.Enum) && !(e.to instanceof BasicType) && !focus.contains(e.to.module) && e.visible()).forEach[NonFocusReferenceToUML(it)]»
+		«it.references.filter( e | !(e.to instanceof sculptormetamodel.Enum) && !(e.to instanceof BasicType) && !focus.contains(e.to.module) && e.visible()).map[NonFocusReferenceToUML(it)].join()»
 			</table>		
 		</td></tr>
 	«ENDIF»
 	«IF operations.exists(e | e.isPublicVisibility() && e.visible()) && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">
-			«it.operations.filter(e | e.isPublicVisibility() && e.visible()).forEach[OperationToUML(it)]»
+			«it.operations.filter(e | e.isPublicVisibility() && e.visible()).map[OperationToUML(it)].join()»
 			</table>		
 		</td></tr>
 	«ENDIF»
@@ -251,7 +251,7 @@ def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, St
 }
 
 /*Skip Traits */
-def static String ObjectToUML(Trait it, Set<Module> focus, int detail, String subjectArea) {
+def static String TraitToUML(Trait it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	'''
 }
@@ -335,7 +335,7 @@ def static String RelationToUML(Reference it, Set<Module> focus, int detail, Str
 
 def static String ModuleDependenciesToUML(Module it) {
 	'''
-	«it.moduleDependencies().forEach[m | ModuleDependencyToUML(m, it)]»
+	«it.moduleDependencies().map[m | ModuleDependencyToUML(m, it)].join()»
 	'''
 }
 

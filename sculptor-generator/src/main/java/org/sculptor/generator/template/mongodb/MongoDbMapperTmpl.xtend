@@ -460,9 +460,9 @@ def static String indexes(DomainObject it) {
 
 def static String populateNaturalKeyIndex(DomainObject it, String parent) {
 	'''
-		«it.getAllNaturalKeyAttributes() .forEach[putNaturalKeyIndex(it, parent)]»
-		«it.getAllNaturalKeyReferences().filter(e|e.isEnumReference()) .forEach[putNaturalKeyIndex(it, parent)]»
-		«it.getAllNaturalKeyReferences().filter(e|e.isUnownedReference()) .forEach[putNaturalKeyIndex(it, parent)]»
+		«it.getAllNaturalKeyAttributes() .map[putNaturalKeyIndex(it, parent)].join()»
+		«it.getAllNaturalKeyReferences().filter(e|e.isEnumReference()) .map[putNaturalKeyIndex(it, parent)].join()»
+		«it.getAllNaturalKeyReferences().filter(e|e.isUnownedReference()) .map[putNaturalKeyIndex(it, parent)].join()»
 		«FOR e : it.getAllNaturalKeyReferences().filter[e | !(e.isEnumReference() || e.isUnownedReference() || e.to.isAggregateRoot())]»
 			«populateNaturalKeyIndex(e.to, parent + e.getDatabaseName() + ".")»
 		«ENDFOR»

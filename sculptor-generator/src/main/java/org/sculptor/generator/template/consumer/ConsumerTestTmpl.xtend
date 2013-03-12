@@ -96,7 +96,7 @@ def static String consumerDependencyInjectionJUnit(Consumer it) {
 	 */
 	public class «name»DependencyInjectionTest ^extends junit.framework.TestCase {
 
-		«it.otherDependencies.forEach[d | consumerDependencyInjectionTestMethod(d, it)]»
+		«it.otherDependencies.map[d | consumerDependencyInjectionTestMethod(d, it)].join()»
 
 	}
 	'''

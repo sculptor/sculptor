@@ -44,12 +44,12 @@ def static String ddl(Application it) {
 	-- # Drop
 	-- ###########################################
 	-- Drop index
-		«it.getDomainObjectsInCreateOrder(false).forEach[dropIndex(it)]»
+		«it.getDomainObjectsInCreateOrder(false).map[dropIndex(it)].join()»
 
 	-- Drop many to many relations
-		«it.resolveManyToManyRelations(false).forEach[dropTable(it)]»
+		«it.resolveManyToManyRelations(false).map[dropTable(it)].join()»
 	-- Drop normal entities
-		«it.getDomainObjectsInCreateOrder(false).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).forEach[dropTable(it)]»
+		«it.getDomainObjectsInCreateOrder(false).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[dropTable(it)].join()»
 
 	-- Drop pk sequence
 		«dropSequence(it)»
@@ -61,26 +61,26 @@ def static String ddl(Application it) {
 		«createSequence(it)»
 
 	-- Create normal entities
-		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).forEach[createTable(it)]»
+		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[createTable(it)].join()»
 
 	-- Create many to many relations
 		«manyToManyRelations.map[createTable(it)]»
 
 	-- Primary keys
-		«it.getDomainObjectsInCreateOrder(true).filter(d | d.attributes.exists(a|a.name == "id")).forEach[idPrimaryKey(it)]»
+		«it.getDomainObjectsInCreateOrder(true).filter(d | d.attributes.exists(a|a.name == "id")).map[idPrimaryKey(it)].join()»
 		«manyToManyRelations.map[manyToManyPrimaryKey(it)]»
 
 	-- Unique constraints
-		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))) .forEach[uniqueConstraint(it)]»
+		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))) .map[uniqueConstraint(it)].join()»
 
 	-- Foreign key constraints
-		«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).forEach[extendsForeignKeyConstraint(it)]»
+		«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[extendsForeignKeyConstraint(it)].join()»
 
-		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).forEach[foreignKeyConstraint(it)]»
-		«manyToManyRelations.forEach[foreignKeyConstraint(it)]»
+		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[foreignKeyConstraint(it)].join()»
+		«manyToManyRelations.map[foreignKeyConstraint(it)].join()»
 
 	-- Index
-		«it.getDomainObjectsInCreateOrder(true).forEach[index(it)]»
+		«it.getDomainObjectsInCreateOrder(true).map[index(it)].join()»
 
 	'''
 	)
@@ -289,7 +289,7 @@ def static String extendsForeignKeyColumn(DomainObject it, boolean initialComma)
 def static String foreignKeyConstraint(DomainObject it) {
 	'''
 		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyConstraint(it)]»
-		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).forEach[uniManyForeignKeyConstraint(it)]»
+		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyConstraint(it)].join()»
 	'''
 }
 
@@ -363,7 +363,7 @@ def static String afterUniqueConstraint(DomainObject it) {
 def static String index(DomainObject it) {
 	'''
 	«it.attributes.filter[a | a.index == true].map[i | index(i, "", it)]»
-	«it.getBasicTypeReferences().forEach[containedColumnIndex(it)]»
+	«it.getBasicTypeReferences().map[containedColumnIndex(it)].join()»
 	«IF isInheritanceTypeSingleTable(it)»
 	«discriminatorIndex(it)»
 	«ENDIF»
@@ -402,7 +402,7 @@ def static String discriminatorIndex(DomainObject it) {
 def static String dropIndex(DomainObject it) {
 	'''
 	«it.attributes.filter(a | a.index == true).map[a | dropIndex(a, "", it)]»
-	«it.getBasicTypeReferences().forEach[dropContainedColumnIndex(it)]»
+	«it.getBasicTypeReferences().map[dropContainedColumnIndex(it)].join()»
 	«IF isInheritanceTypeSingleTable(it)»
 	«dropDiscriminatorIndex(it)»
 	«ENDIF»

@@ -217,7 +217,7 @@ def static String serviceImplSubclass(Service it) {
 
 	«otherDependencies(it)»
 
-		«it.operations.filter(op | op.isImplementedInGapClass()) .forEach[implMethod(it)]»
+		«it.operations.filter(op | op.isImplementedInGapClass()) .map[implMethod(it)].join()»
 
 	}
 	'''

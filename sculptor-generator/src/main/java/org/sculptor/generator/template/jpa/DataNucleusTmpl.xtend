@@ -240,7 +240,7 @@ def static String enumLiteralClass(Application it) {
 def static String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	fileOutput("dbunit/ddl_additional.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
-		«manyToManyRelations.forEach[OracleDDLTmpl::manyToManyPrimaryKey(it)]»
+		«manyToManyRelations.map[OracleDDLTmpl::manyToManyPrimaryKey(it)].join()»
 	'''
 	)
 }

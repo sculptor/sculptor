@@ -294,7 +294,7 @@ def static String serviceProxy(Service it) {
 			«serviceRemoteProxy(it)»
 		«ENDIF»
 
-		«it.operations.filter(op | op.isPublicVisibility()).forEach[proxyMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map[proxyMethod(it)].join()»
 
 	}
 	'''
@@ -490,7 +490,7 @@ def static String webServiceInterface(Service it) {
 	@javax.jws.WebService
 	public interface «name»Endpoint ^extends «name» {
 
-		«it.operations.filter(op | op.isPublicVisibility()).forEach[webServiceInterfaceMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map[webServiceInterfaceMethod(it)].join()»
 
 	}
 	'''

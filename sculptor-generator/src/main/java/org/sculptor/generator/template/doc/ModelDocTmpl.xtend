@@ -38,7 +38,7 @@ class ModelDocTmpl {
 def static void start(Application it) {
 	docHtml(it)
 	ModelDocCssTmpl::docCss(it)
-	it.modules.forEach[m | moduleDocHtml(m)]
+	it.modules.map[m | moduleDocHtml(m)].join()
 }
 
 def static String docHtml(Application it) {
@@ -108,7 +108,7 @@ def static String footer(Application it) {
 def static String main(Application it) {
 	'''
 	<div id="main">
-	«it.modules.sortBy(e|e.name).forEach[moduleDoc(it)]»
+	«it.modules.sortBy(e|e.name).map[moduleDoc(it)].join()»
 	</div>
 	'''
 }
@@ -134,13 +134,13 @@ def static String moduleDocContent(Module it) {
 	
 	<div id="services">
 	<hr/>
-	«it.services.sortBy(e|e.name).forEach[e | serviceDoc(e)]»
+	«it.services.sortBy(e|e.name).map[e | serviceDoc(e)].join()»
 	</div>
 	<div id="consumers">
-	«it.consumers.sortBy(e|e.name).forEach[e | consumerDoc(e)]»
+	«it.consumers.sortBy(e|e.name).map[e | consumerDoc(e)].join()»
 	</div>
 	<div id="domainObjects">
-	«it.domainObjects.sortBy(e|e.name).forEach[e | domainObjectDoc(e)]»
+	«it.domainObjects.sortBy(e|e.name).map[e | domainObjectDoc(e)].join()»
 	</div>
 	'''
 }
@@ -254,7 +254,7 @@ def static String serviceDoc(Service it) {
 	<a name="«name»"></a>
 	<h3>«name»</h3>
 	<p>«doc»</p>
-	«it.operations.sortBy(e| e.name).forEach[operationDoc(it)]»
+	«it.operations.sortBy(e| e.name).map[operationDoc(it)].join()»
 	<hr/>
 	'''
 }
@@ -268,7 +268,7 @@ def static String operationDoc(Operation it) {
 		<div id="operation_parameters">
 		<p>Parameters:</p>
 		<ul>
-		«it.parameters.forEach[operationParameterDoc(it)]»
+		«it.parameters.map[operationParameterDoc(it)].join()»
 		</ul>
 		</div>
 	«ENDIF»
@@ -338,7 +338,7 @@ def static String domainObjectDoc(DomainObject it) {
 	'''
 }
 
-def static String domainObjectDoc(Enum it) {
+def static String enumDoc(Enum it) {
 	'''
 	<a name="«name»"></a>
 	<h3>«name»</h3>

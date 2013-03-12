@@ -253,7 +253,7 @@ def static String repositorySubclass(Repository it) {
 
 	«otherDependencies(it)»
 
-		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).forEach[subclassRepositoryMethod(it)]»
+		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).map[subclassRepositoryMethod(it)].join()»
 
 	}
 	'''
@@ -836,7 +836,7 @@ def static String repositoryDependencyInjectionJUnit(Repository it) {
 	 */
 	public class «name»DependencyInjectionTest ^extends junit.framework.TestCase {
 
-		«it.otherDependencies.forEach[d | repositoryDependencyInjectionTestMethod(d, it)]»
+		«it.otherDependencies.map[d | repositoryDependencyInjectionTestMethod(d, it)].join()»
 
 	}
 	'''

@@ -123,7 +123,7 @@ def static String persistenceUnitAnnotatedClasses(Application it, String unitNam
 	«IF isJpaProviderEclipseLink()»
 	<mapping-file>«it.getResourceDir("META-INF") + "orm.xml"»</mapping-file>
 	«ENDIF»
-		«it.getAllDomainObjects().filter(d | d.module.persistenceUnit == unitName).forEach[persistenceUnitAnnotatedClasses(it)]»
+		«it.getAllDomainObjects().filter(d | d.module.persistenceUnit == unitName).map[persistenceUnitAnnotatedClasses(it)].join()»
 	'''
 }
 

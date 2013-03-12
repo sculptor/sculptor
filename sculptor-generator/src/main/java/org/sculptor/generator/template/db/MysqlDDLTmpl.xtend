@@ -42,20 +42,20 @@ def static String ddl(Application it) {
 	-- ###########################################
 
 	-- Many to many relations
-		«it.resolveManyToManyRelations(false).forEach[dropTable(it)]»
+		«it.resolveManyToManyRelations(false).map[dropTable(it)].join()»
 	-- Normal entities
-		«it.getDomainObjectsInCreateOrder(false).filter(e | !isInheritanceTypeSingleTable(getRootExtends(e.^extends))).forEach[dropTable(it)]»
+		«it.getDomainObjectsInCreateOrder(false).filter(e | !isInheritanceTypeSingleTable(getRootExtends(e.^extends))).map[dropTable(it)].join()»
 	«ENDIF»
 	-- ###########################################
 	-- # Create new entities
 	-- ###########################################
 
 	-- Normal entities
-		«it.getDomainObjectsInCreateOrder(true).filter[d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))].forEach[d | createTable(d,false)]»
-		«it.getDomainObjectsInCreateOrder(true).filter[e | !isInheritanceTypeSingleTable(getRootExtends(e.^extends))].forEach[d | foreignKeyAlter(d)]»
-	«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).forEach[extendsForeignKeyAlter(it)]»
+		«it.getDomainObjectsInCreateOrder(true).filter[d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))].map[d | createTable(d,false)].join()»
+		«it.getDomainObjectsInCreateOrder(true).filter[e | !isInheritanceTypeSingleTable(getRootExtends(e.^extends))].map[d | foreignKeyAlter(d)].join()»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[extendsForeignKeyAlter(it)].join()»
 	-- Many to many relations
-		«it.resolveManyToManyRelations(true).forEach[r | createTable(r, true)]»
+		«it.resolveManyToManyRelations(true).map[r | createTable(r, true)].join()»
 
 	'''
 	)
@@ -159,7 +159,7 @@ def static String inheritanceSingleTable(DomainObject it, Set<String> alreadyUse
 	'''
 	,
 	«discriminatorColumn(it) »
-	«it.getAllSubclasses() .forEach[columns(it, false, true, alreadyUsedColumns)]»
+	«it.getAllSubclasses() .map[columns(it, false, true, alreadyUsedColumns)].join()»
 	'''
 }
 

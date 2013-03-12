@@ -16,7 +16,7 @@ def static String restWeb(Application it) {
 	«IF getBooleanProperty("generate.restWeb.jsp")»
 		«RestWebCssTmpl::css(it)»
 		«RestWebJspTmpl::jsp(it)»
-		«it.getAllResources(false).forEach[RestWebJspTmpl::jsp(it)]»
+		«it.getAllResources(false).map[RestWebJspTmpl::jsp(it)].join()»
 	«ENDIF»
 	'''
 }

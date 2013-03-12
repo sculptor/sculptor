@@ -54,8 +54,8 @@ def static String propertyNamesInterface(DomainObject it) {
 		 * criterias.
 		 */
 		public interface «name»Names {
-			«it.attributes.forEach[propertyNameConstant(it)]»
-			«it.references.forEach[propertyNameConstant(it)]»
+			«it.attributes.map[propertyNameConstant(it)].join()»
+			«it.references.map[propertyNameConstant(it)].join()»
 		}
 	'''
 	)
