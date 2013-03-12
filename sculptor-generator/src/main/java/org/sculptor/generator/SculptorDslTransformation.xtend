@@ -71,7 +71,6 @@ import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 
-import static org.sculptor.generator.SculptorDslTransformation2.*
 import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.util.HelperBase.*
 import static org.sculptor.generator.util.PropertiesBase.*
@@ -333,6 +332,8 @@ class SculptorDslTransformation {
 
 	// this "method" is not used, it is kind of "abstract"
 	def create FACTORY.createEntity transform(DslSimpleDomainObject domainObject) {
+		if (domainObject instanceof DslEntity)
+			(domainObject as DslEntity).transform
 	}
 
 	def create FACTORY.createEntity transform(DslEntity domainObject) {
