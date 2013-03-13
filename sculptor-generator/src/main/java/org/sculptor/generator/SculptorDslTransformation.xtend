@@ -75,7 +75,6 @@ import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.util.HelperBase.*
 import static org.sculptor.generator.util.PropertiesBase.*
 
-import static extension org.eclipse.xtext.EcoreUtil2.*
 import static extension org.sculptor.generator.ext.Helper.*
 import static extension org.sculptor.generator.util.GenerationHelper.*
 
@@ -84,7 +83,7 @@ class SculptorDslTransformation {
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
 
 	def create FACTORY.createApplication transform(DslApplication app) {
-		val allDslModules = app.eAllOfType(typeof(DslModule))
+		val allDslModules = app.modules
 		initPropertiesHook()
 		setGlobalApp(it)
 		// TODO check
@@ -94,9 +93,9 @@ class SculptorDslTransformation {
 		setBasePackage(app.basePackage)
 		modules.addAll(allDslModules.map[e | transform(e)])
 		// have to transform the dependencies afterwards, otherwise strange errors
-		allDslModules.map[services].flatten.forEach[e | transformDependencies(e)]
-		allDslModules.map[resources].flatten.forEach[e | transformDependencies(e)]
-		allDslModules.map[consumers].flatten.forEach[e | transformDependencies(e)]
+		allDslModules.map[services].flatten.forEach[transformDependencies]
+		allDslModules.map[resources].flatten.forEach[transformDependencies(it)]
+		allDslModules.map[consumers].flatten.forEach[it.transformDependencies]
 		// TODO
 		// No transformations for all DslSimpleDomainObject subtypes (DslBasicType, DslEnum, DslDomainObject, DslDataTransferObject, DslTrait)
 		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
@@ -331,9 +330,13 @@ class SculptorDslTransformation {
 	}
 
 	// this "method" is not used, it is kind of "abstract"
-	def create FACTORY.createEntity transform(DslSimpleDomainObject domainObject) {
+	def DomainObject transform(DslSimpleDomainObject domainObject) {
 		if (domainObject instanceof DslEntity)
 			(domainObject as DslEntity).transform
+		else if (domainObject instanceof DslValueObject)
+			(domainObject as DslValueObject).transform
+		else
+			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
 	}
 
 	def create FACTORY.createEntity transform(DslEntity domainObject) {

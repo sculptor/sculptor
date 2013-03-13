@@ -100,7 +100,7 @@ class Helper {
 
 	def static List<Module> collectChangedModules(Application app) {
 		if (!isGenerateQuick())
-			app.modules as List<Module>
+			app.modules
 		else {
 			val changed = changedModulesWithDependingModules(app);
 			if (changed.isEmpty)
