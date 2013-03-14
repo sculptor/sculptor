@@ -90,7 +90,7 @@ def static String serviceInterface(Service it) {
 		public final static String BEAN_ID = "«name.toFirstLower()»";
 		«ENDIF»
 
-		«it.operations.filter(op | op.isPublicVisibility()).map[interfaceMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map[interfaceMethod(it)].join»
 		
 		«serviceInterfaceHook(it)»
 
@@ -118,13 +118,13 @@ def static String serviceImplBase(Service it) {
 	«IF gapClass»
 	/**
 	 * Generated base class for implementation of «name».
-		«IF isSpringToBeGenerated()»
-			 * <p>Make sure that subclass defines the following annotations:
-			 * <pre>
-			«springServiceAnnotation(it)»
-			 * </pre>
-			 *
-		«ENDIF»
+	«IF isSpringToBeGenerated()»
+		 * <p>Make sure that subclass defines the following annotations:
+		 * <pre>
+		«springServiceAnnotation(it)»
+		 * </pre>
+		 *
+	«ENDIF»
 	 */
 	«ELSE»
 		 /**
@@ -146,7 +146,7 @@ def static String serviceImplBase(Service it) {
 		«delegateRepositories(it) »
 		«delegateServices(it) »
 
-		«it.operations.filter(op | !op.isImplementedInGapClass()).map[implMethod(it)]»
+		«it.operations.filter(op | !op.isImplementedInGapClass()).map[implMethod(it)].join»
 		
 		«serviceHook(it)»
 	}

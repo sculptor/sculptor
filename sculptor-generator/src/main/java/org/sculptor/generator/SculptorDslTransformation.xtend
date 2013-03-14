@@ -57,7 +57,6 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
-import org.sculptor.generator.util.GenerationHelper
 import sculptormetamodel.CommandEvent
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DiscriminatorType
@@ -70,13 +69,14 @@ import sculptormetamodel.Repository
 import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
+import org.sculptor.generator.util.HelperBase
 
 import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.util.HelperBase.*
 import static org.sculptor.generator.util.PropertiesBase.*
 
 import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.GenerationHelper.*
+import static extension org.sculptor.generator.util.HelperBase.*
+import sculptormetamodel.DomainEvent
 
 class SculptorDslTransformation {
 
@@ -93,9 +93,9 @@ class SculptorDslTransformation {
 		setBasePackage(app.basePackage)
 		modules.addAll(allDslModules.map[e | transform(e)])
 		// have to transform the dependencies afterwards, otherwise strange errors
-		allDslModules.map[services].flatten.forEach[transformDependencies]
+		allDslModules.map[services].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[resources].flatten.forEach[transformDependencies(it)]
-		allDslModules.map[consumers].flatten.forEach[it.transformDependencies]
+		allDslModules.map[consumers].flatten.forEach[transformDependencies(it)]
 		// TODO
 		// No transformations for all DslSimpleDomainObject subtypes (DslBasicType, DslEnum, DslDomainObject, DslDataTransferObject, DslTrait)
 		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
@@ -301,16 +301,16 @@ class SculptorDslTransformation {
 		if (operation.publish != null)
 			setPublish(operation.publish.transform)
 		if (operation.cache)
-			it.addHint("cache")
+			addHint("cache")
 
 		if (operation.construct) it.addHint("construct")
 		if (operation.build) it.addHint("build")
-		if (operation.gapOperation) it.addHint("gap")
-		if (operation.query != null) it.addHint("query=" + operation.query, ";")
-		if (operation.^select != null) it.addHint("select=" + operation.^select, ";")
-		if (operation.condition != null) it.addHint("condition=" + operation.condition, ";")
-		if (operation.groupBy != null) it.addHint("groupBy=" + operation.groupBy, ";")
-		if (operation.orderBy != null) it.addHint("orderBy=" + operation.orderBy, ";")
+		if (operation.gapOperation) addHint("gap")
+		if (operation.query != null) addHint("query=" + operation.query, ";")
+		if (operation.^select != null) addHint("select=" + operation.^select, ";")
+		if (operation.condition != null) addHint("condition=" + operation.condition, ";")
+		if (operation.groupBy != null) addHint("groupBy=" + operation.groupBy, ";")
+		if (operation.orderBy != null) addHint("orderBy=" + operation.orderBy, ";")
 	}
 
 	def create FACTORY.createParameter transform(DslParameter parameter) {
@@ -335,6 +335,8 @@ class SculptorDslTransformation {
 			(domainObject as DslEntity).transform
 		else if (domainObject instanceof DslValueObject)
 			(domainObject as DslValueObject).transform
+		else if (domainObject instanceof DslEnum)
+			(domainObject as DslEnum).transform
 		else
 			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
 	}
@@ -426,7 +428,7 @@ class SculptorDslTransformation {
 		event.attributes.addAll(dslEvent.attributes.map[e | transform(e)])
 		event.references.addAll(dslEvent.references.map[e | transform(e)])
 		event.operations.addAll(dslEvent.operations.map[e | transform(e)])
-		dslEvent.transformExtends(event)
+		dslEvent.transformExtendsEvent(event)
 		event.traits.addAll(dslEvent.traits.map[e | transform(e)])
 		if (dslEvent.repository != null)
 			event.setRepository(dslEvent.repository.transform)
@@ -492,18 +494,26 @@ class SculptorDslTransformation {
 		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
 	}
 
-	def private transformExtends(DslEvent dslDomainObject, DomainObject domainObject) {
+	def private dispatch transformExtendsEvent(DslEvent dslEvent, DomainObject domainObject) {
 		// Never used, only purpose is to be an 'abstract' placeholder
-		error("Unexpected call to transformExtends(DslEvent): " + dslDomainObject)
+		error("Unexpected call to transformExtends(DslEvent): " + dslEvent)
 	}
 
-//	def private transformExtends(DslCommandEvent dslDomainObject, DomainObject domainObject) {
-//		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
-//	}
-//
-//	def private transformExtends(DslDomainEvent dslDomainObject, DomainObject domainObject) {
-//		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
-//	}
+	def private dispatch transformExtendsEvent(DslCommandEvent dslDomainObject, DomainObject domainObject) {
+		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
+	}
+
+	def private dispatch transformExtendsEvent(DslDomainEvent dslDomainObject, DomainObject domainObject) {
+		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
+	}
+
+	def private dispatch transformExtendsEvent(DslDomainEvent dslEvent, DomainEvent event) {
+		if (dslEvent.^extends != null)
+			event.setExtends(dslEvent.^extends.transform)
+
+		if (dslEvent.extendsName != null)
+			event.setExtendsName(dslEvent.extendsName)
+	}
 
 	def private transformExtendsImpl(DslDomainObject dslDomainObject, DslDomainObject dslExtendsDomainObject, DomainObject domainObject) {
 		if (dslExtendsDomainObject != null)
@@ -520,14 +530,6 @@ class SculptorDslTransformation {
 		if (dslDto.extendsName != null)
 			dto.setExtendsName(dslDto.extendsName)
 	}
-
-//	def private transformExtends(DslDomainEvent dslEvent, DomainEvent event) {
-//		if (dslEvent.^extends != null)
-//			event.setExtends(dslEvent.^extends.transform)
-//
-//		if (dslEvent.extendsName != null)
-//			event.setExtendsName(dslEvent.extendsName)
-//	}
 
 	def create FACTORY.createBasicType transform(DslBasicType domainObject) {
 		setModule((domainObject.eContainer as DslModule).transform)
@@ -762,19 +764,19 @@ class SculptorDslTransformation {
 	}
 
 	def DomainObject addRepository(DomainObject domainObject) {
-		GenerationHelper::addRepository(domainObject)
+		HelperBase::addRepository(domainObject)
 	}
 
 	def Repository addScaffoldOperations(Repository repository) {
-		GenerationHelper::addRepositoryScaffoldOperations(repository)
+		HelperBase::addRepositoryScaffoldOperations(repository)
 	}
 
 	def Module addService(Module module, String serviceName) {
-		GenerationHelper::addService(module, serviceName)
+		HelperBase::addService(module, serviceName)
 	}
 
 	def Service addScaffoldOperations(Service service, Repository delegateRepository) {
-		GenerationHelper::addServiceScaffoldOperations(service, delegateRepository)
+		HelperBase::addServiceScaffoldOperations(service, delegateRepository)
 	}
 
 	def scaffold(DslResource resource) {
@@ -788,7 +790,7 @@ class SculptorDslTransformation {
 	}
 
 	def Resource addScaffoldOperations(Resource resource, Service delegateService) {
-		GenerationHelper::addResourceScaffoldOperations(resource, delegateService)
+		HelperBase::addResourceScaffoldOperations(resource, delegateService)
 	}
 
 	def private boolean isGapClassToBeGenerated(DslService dslService) {
@@ -895,14 +897,14 @@ class SculptorDslTransformation {
 	}
 
 	def private String handleParameterizedAnnotation(String annotation, String parameterNames, String parameters, String validate) {
-		GenerationHelper::handleParameterizedAnnotation(annotation, parameterNames, parameters, validate)
+		HelperBase::handleParameterizedAnnotation(annotation, parameterNames, parameters, validate)
 	}
 
 	def private String handleSimpleAnnotation(String annotation, String value, String validate) {
-		GenerationHelper::handleSimpleAnnotation(annotation, value, validate)
+		HelperBase::handleSimpleAnnotation(annotation, value, validate)
 	}
 
 	def private String handleBooleanAnnotation(String annotation, Boolean value, String message, String validate) {
-		GenerationHelper::handleBooleanAnnotation(annotation, value, message, validate)
+		HelperBase::handleBooleanAnnotation(annotation, value, message, validate)
 	}
 }

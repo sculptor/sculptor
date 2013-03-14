@@ -253,7 +253,7 @@ class Helper {
 	}
 
 	def static List<String> traitInterfaceNames(DomainObject domainObject) {
-		domainObject.traits.map[e | e.getDomainPackage() + "." + e.name];
+		domainObject.traits.map[e | e.getDomainPackage() + "." + e.name]
 	}
 
 	def static String getImplementsLitteral(DomainObject domainObject) {
@@ -268,7 +268,7 @@ class Helper {
 	}
 
 	def static String toCommaSeparatedString(List values) {
-		toSeparatedString(values, ",");
+		values.join(",")
 	}
 
 	def static boolean isIdentifiable(DomainObject domainObject) {
@@ -276,11 +276,18 @@ class Helper {
 	}
 
 	def static String getImplementsInterfaceNames(DomainObject domainObject) {
-		val interfaceNames = domainObject.traitInterfaceNames().toList();
-		if (domainObject.isIdentifiable)
-			interfaceNames.add(identifiableInterface)
+//		val interfaceNames = <String>newArrayList()
+//		interfaceNames.addAll(domainObject.traitInterfaceNames())
+//		if (domainObject.isIdentifiable)
+//			interfaceNames.add(identifiableInterface)
+//
+//		toCommaSeparatedString(interfaceNames)
 
-		toCommaSeparatedString(interfaceNames)
+		val str = domainObject.traitInterfaceNames().join(",")
+		if (domainObject.isIdentifiable)
+			str + if (str.empty) identifiableInterface else "," + identifiableInterface
+		else
+			str
 	}
 
 	def static String getImplementsInterfaceNames(DataTransferObject domainObject) {
@@ -627,23 +634,23 @@ class Helper {
 		(domainObject.isPersistent() && ! (domainObject instanceof BasicType))
 	}
 
-	def static boolean isPersistent(DomainObject domainObject) {
+	def static dispatch boolean isPersistent(DomainObject domainObject) {
 		false
 	}
 
-	def static boolean isPersistent(Entity domainObject) {
+	def static dispatch boolean isPersistent(Entity domainObject) {
 		true
 	}
 
-	def static boolean isPersistent(ValueObject domainObject) {
+	def static dispatch boolean isPersistent(ValueObject domainObject) {
 		domainObject.persistent
 	}
 
-	def static boolean isPersistent(DataTransferObject domainObject) {
+	def static dispatch boolean isPersistent(DataTransferObject domainObject) {
 		false;
 	}
 
-	def static boolean isPersistent(BasicType domainObject) {
+	def static dispatch boolean isPersistent(BasicType domainObject) {
 		true;
 	}
 

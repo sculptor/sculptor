@@ -439,7 +439,7 @@ public class GenericAccessObjectManager {
 			}
 
 			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
-				HelperBase.addHintImpl(operation, "useSingleResult");
+				HelperBase.addHint(operation, "useSingleResult");
 			}
 
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
@@ -520,7 +520,7 @@ public class GenericAccessObjectManager {
 			}
 
 			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
-				HelperBase.addHintImpl(operation, "useSingleResult");
+				HelperBase.addHint(operation, "useSingleResult");
 			}
 
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
@@ -616,7 +616,7 @@ public class GenericAccessObjectManager {
 
 				String colStatParamType = "java.util.List<" + COLUMN_STAT_REQUEST + "<" + aggregateRootClassName(operation) + ">>";
 				addParameter(operation, colStatParamType, "columnStat");
-				HelperBase.addHintImpl(operation, "useSingleResult");
+				HelperBase.addHint(operation, "useSingleResult");
 
 				String colStatResultType = "java.util.List<java.util.List<" + COLUMN_STAT_RESULT + ">>";
 				operation.setType(colStatResultType);

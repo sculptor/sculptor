@@ -471,7 +471,7 @@ def static String manyToManyJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.ManyToMany(
 			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
-				isInverse(), "mappedBy", '"' + opposite.name + '"',
+				isInverse(), "mappedBy", '"' + opposite?.name + '"',
 				it.getFetchType() != null, "fetch", it.getFetchType()
 			))»)
 		«IF !isInverse()»

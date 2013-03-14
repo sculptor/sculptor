@@ -117,7 +117,7 @@ def static String webServiceApplicationException(Module it, String exceptionName
 
 def static String throwsDecl(Operation it) {
 	'''
-		«IF !it.getThrows().isEmpty»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
+		«IF !it.getThrows()?.isEmpty»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
 	'''
 }
 

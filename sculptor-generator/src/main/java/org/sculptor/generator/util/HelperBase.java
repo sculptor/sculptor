@@ -643,7 +643,7 @@ public class HelperBase {
 		return domainObject;
 	}
 
-	public static DomainObject addIdAttribute(DomainObject domainObject) {
+	public static DomainObject addIdAttributeImpl(DomainObject domainObject) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Attribute id = factory.createAttribute();
@@ -680,7 +680,7 @@ public class HelperBase {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Set<String> existingOperations = new HashSet<String>();
-		for (RepositoryOperation op : (List<RepositoryOperation>) repository.getOperations()) {
+		for (RepositoryOperation op : repository.getOperations()) {
 			existingOperations.add(op.getName());
 		}
 
@@ -717,7 +717,7 @@ public class HelperBase {
 				// note that we add one ServiceOperation for each
 				// RepositoryOperation with this name,
 				// there may be several with same name
-				for (RepositoryOperation repositoryOp : (List<RepositoryOperation>) delegateRepository.getOperations()) {
+				for (RepositoryOperation repositoryOp : delegateRepository.getOperations()) {
 					if (repositoryOp.getName().equals(operationName)) {
 						ServiceOperation op = factory.createServiceOperation();
 						op.setName(operationName);
@@ -735,7 +735,7 @@ public class HelperBase {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Set<String> existingOperations = new HashSet<String>();
-		for (ResourceOperation op : (List<ResourceOperation>) resource.getOperations()) {
+		for (ResourceOperation op : resource.getOperations()) {
 			existingOperations.add(op.getName());
 		}
 
@@ -768,7 +768,7 @@ public class HelperBase {
 	}
 
 	public static Repository addDefaultValues(Repository repository) {
-		for (RepositoryOperation op : (List<RepositoryOperation>) repository.getOperations()) {
+		for (RepositoryOperation op : repository.getOperations()) {
 			addDefaultValues(op);
 		}
 		return repository;
@@ -788,7 +788,7 @@ public class HelperBase {
 	 */
 	public static void addDefaultValues(Resource resource) {
 		try {
-			for (ResourceOperation op : (List<ResourceOperation>) resource.getOperations()) {
+			for (ResourceOperation op : resource.getOperations()) {
 				addDefaultValues(op);
 			}
 		} catch (RuntimeException e) {
@@ -1328,11 +1328,11 @@ public class HelperBase {
 		return getHintImpl(hint, parameter) != null;
 	}
 
-	public static void addHintImpl(NamedElement element, String hint) {
-		addHintImpl(element, hint, ",");
+	public static void addHint(NamedElement element, String hint) {
+		addHint(element, hint, ",");
 	}
 
-	public static void addHintImpl(NamedElement element, String hint, String separator) {
+	public static void addHint(NamedElement element, String hint, String separator) {
 		String hintKey;
 		int indexOfEq = hint.indexOf("=");
 		if (indexOfEq == -1) {

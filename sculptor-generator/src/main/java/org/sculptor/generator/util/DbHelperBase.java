@@ -503,7 +503,7 @@ public class DbHelperBase {
 
 		String tablespaceHint = HelperBase.getHintImpl(ref.getFrom().getHint(), "tablespace");
 		if (tablespaceHint != null) {
-			HelperBase.addHintImpl(relObj, "tablespace=" + tablespaceHint);
+			HelperBase.addHint(relObj, "tablespace=" + tablespaceHint);
 		}
 
 		return relObj;
