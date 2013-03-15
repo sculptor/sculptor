@@ -32,13 +32,15 @@ import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
 import static org.sculptor.generator.SculptorDslTransformationTest.*
-
-import static extension org.sculptor.generator.ext.Helper.*
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
 
 @RunWith(typeof(JUnit4))
 class SculptorDslTransformationTest {
 
 	private static val SculptordslFactory FACTORY = SculptordslFactory::eINSTANCE
+
+	extension Helper helper = GeneratorFactory::helper
 
 	var DslApplication model
 

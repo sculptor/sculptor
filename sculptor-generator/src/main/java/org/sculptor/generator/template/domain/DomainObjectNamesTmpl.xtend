@@ -17,30 +17,36 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.GeneratorFactory
+
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Trait
 
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectNamesTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+
+import org.sculptor.generator.util.PropertiesBase
 
 class DomainObjectNamesTmpl {
 
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
 
-def static String propertyNamesInterface(DataTransferObject it) {
+
+def String propertyNamesInterface(DataTransferObject it) {
 	'''
 	'''
 }
-def static String propertyNamesInterface(Trait it) {
+def String propertyNamesInterface(Trait it) {
 	'''
 	'''
 }
 
-def static String propertyNamesInterface(DomainObject it) {
+def String propertyNamesInterface(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Names"), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
@@ -61,7 +67,7 @@ def static String propertyNamesInterface(DomainObject it) {
 	)
 }
 
-def static String propertyNameConstant(NamedElement it) {
+def String propertyNameConstant(NamedElement it) {
 	'''
 		public static final String «name.toUpperCase()» = "«name»";
 	'''

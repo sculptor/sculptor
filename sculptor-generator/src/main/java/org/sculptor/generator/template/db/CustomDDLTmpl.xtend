@@ -17,17 +17,18 @@
 
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.util.HelperBase.*
-
 class CustomDDLTmpl {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
 
 /*CustomDDL.xpt is only a placeholder that is intended to be 
 	overridden by placing a custom template with the same name
 	in the classpath. See Developer's Guide.
  */
-def static String ddl(Application it) {
+def String ddl(Application it) {
 	'''
 	«error("CustomDDL.xpt is intended to be overridden by placing a custom template with the same name in the classpath.")»
 	'''

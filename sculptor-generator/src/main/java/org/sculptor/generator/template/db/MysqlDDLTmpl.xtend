@@ -17,24 +17,27 @@
 
 package org.sculptor.generator.template.db
 
-import org.sculptor.generator.util.OutputSlot
 import java.util.Set
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Reference
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.db.MysqlDDLTmpl.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-
 class MysqlDDLTmpl {
 
-def static String ddl(Application it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String ddl(Application it) {
 	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
 	«IF isDdlDropToBeGenerated()»    
 	-- ###########################################
@@ -61,13 +64,13 @@ def static String ddl(Application it) {
 	)
 }
 
-def static String dropTable(DomainObject it) {
+def String dropTable(DomainObject it) {
 	'''
 	DROP TABLE IF EXISTS «getDatabaseName(it)»;
 	'''
 }
 
-def static String createTable(DomainObject it, Boolean manyToManyRelationTable) {
+def String createTable(DomainObject it, Boolean manyToManyRelationTable) {
 	'''
 	«val Set<String> alreadyUsedColumns = newHashSet()»
 	CREATE TABLE «getDatabaseName(it)» (
@@ -79,12 +82,12 @@ def static String createTable(DomainObject it, Boolean manyToManyRelationTable) 
 	'''
 }
 
-def static String afterCreateTable(DomainObject it) {
+def String afterCreateTable(DomainObject it) {
 	'''
 	'''
 }
 
-def static String columns(DomainObject it, Boolean manyToManyRelationTable, boolean initialComma, Set<String> alreadyDone) {
+def String columns(DomainObject it, Boolean manyToManyRelationTable, boolean initialComma, Set<String> alreadyDone) {
 	val currentAttributes = attributes.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()) || e.isSystemAttributeToPutLast())]
 	alreadyDone.addAll(currentAttributes.map(a | a.databaseName))
 	val currentBasicTypeReferences = it.getBasicTypeReferences().filter[e | ! (e.transient || alreadyDone.contains(e.getDatabaseName()))]
@@ -124,13 +127,13 @@ def static String columns(DomainObject it, Boolean manyToManyRelationTable, bool
 	'''
 }
 
-def static String column(Attribute it, String prefix) {
+def String column(Attribute it, String prefix) {
 	'''
 	«column(it, prefix, false) »
 	'''
 }
 
-def static String column(Attribute it, String prefix, boolean parentIsNullable) {
+def String column(Attribute it, String prefix, boolean parentIsNullable) {
 	'''
 	«getDatabaseName(prefix, it)» «getDatabaseType()»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»«IF name == "id"» AUTO_INCREMENT PRIMARY KEY«ENDIF»
 	«IF index»,
@@ -138,7 +141,7 @@ def static String column(Attribute it, String prefix, boolean parentIsNullable) 
 	'''
 }
 
-def static String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
+def String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
 	'''
 	«val containedAttributes  = it.to.attributes.filter[e | !e.transient]»
 	«val containedEnumReferences  = it.to.references.filter(r | !r.transient && r.to instanceof sculptormetamodel.Enum)»
@@ -149,13 +152,13 @@ def static String containedColumns(Reference it, String prefix, boolean parentIs
 	'''
 }
 
-def static String enumColumn(Reference it, String prefix, boolean parentIsNullable) {
+def String enumColumn(Reference it, String prefix, boolean parentIsNullable) {
 	'''
 		«getDatabaseName(prefix, it)» «getEnumDatabaseType(it)»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»
 	'''
 }
 
-def static String inheritanceSingleTable(DomainObject it, Set<String> alreadyUsedColumns) {
+def String inheritanceSingleTable(DomainObject it, Set<String> alreadyUsedColumns) {
 	'''
 	,
 	«discriminatorColumn(it) »
@@ -163,13 +166,13 @@ def static String inheritanceSingleTable(DomainObject it, Set<String> alreadyUse
 	'''
 }
 
-def static String discriminatorColumn(DomainObject it) {
+def String discriminatorColumn(DomainObject it) {
 	'''
 		«inheritance.discriminatorColumnName()» «inheritance.getDiscriminatorColumnDatabaseType()» NOT NULL,
 		INDEX («inheritance.discriminatorColumnName()»)	'''
 }
 
-def static String foreignKey(Reference it, Boolean manyToManyRelationTable) {
+def String foreignKey(Reference it, Boolean manyToManyRelationTable) {
 	'''
 		«IF it.hasOpposite() && "list" == opposite.getCollectionType()»
 		«opposite.getListIndexColumnName()» «getListIndexDatabaseType()»,
@@ -179,14 +182,14 @@ def static String foreignKey(Reference it, Boolean manyToManyRelationTable) {
 	'''
 }
 
-def static String foreignKeyAlter(DomainObject it) {
+def String foreignKeyAlter(DomainObject it) {
 	'''
 		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyAlter(it)]»
 		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyAlter(it)]»
 	'''
 }
 
-def static String foreignKeyAlter(Reference it) {
+def String foreignKeyAlter(Reference it) {
 	'''
 	-- Reference from «from.name».«getForeignKeyName(it)» to «to.name»
 	ALTER TABLE «from.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(from.getDatabaseName(), getDatabaseName(it))»
@@ -194,14 +197,14 @@ def static String foreignKeyAlter(Reference it) {
 	'''
 }
 
-def static String extendsForeignKey(DomainObject it, boolean initialComma) {
+def String extendsForeignKey(DomainObject it, boolean initialComma) {
 	'''
 	«IF initialComma»,
 	«ENDIF»
 		«it.^extends.getExtendsForeignKeyName()» «it.^extends.getForeignKeyType()» NOT NULL	'''
 }
 
-def static extendsForeignKeyAlter(DomainObject it) {
+def extendsForeignKeyAlter(DomainObject it) {
 	'''
 	-- Entity «name» ^extends «^extends.getRootExtends().name»
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT FK_«getDatabaseName(it)»_«^extends.getExtendsForeignKeyName()»
@@ -210,7 +213,7 @@ def static extendsForeignKeyAlter(DomainObject it) {
 }
 
 /*TODO: never called and possibly incorrect, remove? */
-def static String discriminatorIndex(DomainObject it) {
+def String discriminatorIndex(DomainObject it) {
 	'''
 	-- Index for discriminator in «^extends.getRootExtends().name»
 	ALTER TABLE «getDatabaseName(it)» ADD INDEX `DTYPE`(`DTYPE`);
@@ -219,7 +222,7 @@ def static String discriminatorIndex(DomainObject it) {
 	'''
 }
 
-def static String uniManyForeignKey(Reference it) {
+def String uniManyForeignKey(Reference it) {
 	'''
 		«IF "list" == getCollectionType()»
 		«getListIndexColumnName(it)» «getListIndexDatabaseType()»,
@@ -228,7 +231,7 @@ def static String uniManyForeignKey(Reference it) {
 	'''
 }
 
-def static String uniManyForeignKeyAlter(Reference it) {
+def String uniManyForeignKeyAlter(Reference it) {
 	'''
 	-- Entity «to.name» inverse referenced from «from.name».«name»
 	ALTER TABLE «to.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(to.getDatabaseName(), from.getDatabaseName())»
@@ -236,7 +239,7 @@ def static String uniManyForeignKeyAlter(Reference it) {
 	'''
 }
 
-def static String uniqueConstraint(DomainObject it) {
+def String uniqueConstraint(DomainObject it) {
 	'''
 	«IF hasUniqueConstraints(it)»,
 	«IF attributes.exists(a | a.isUuid()) »

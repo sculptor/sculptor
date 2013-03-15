@@ -17,23 +17,31 @@
 
 package org.sculptor.generator.template.service
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.PubSubTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.service.ServiceEjbTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class ServiceEjbTmpl {
 
-def static String service(Service it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+	private static val PubSubTmpl pubSubTmpl = GeneratorFactory::pubSubTmpl
+	private static val ServiceTmpl serviceTmpl = GeneratorFactory::serviceTmpl
+
+def String service(Service it) {
 	'''
 	«ejbBeanImplBase(it)»
 	«IF gapClass»
@@ -52,7 +60,7 @@ def static String service(Service it) {
 }
 
 /*Used for pure-ejb3, i.e. without spring */
-def static String ejbBeanImplBase(Service it) {
+def String ejbBeanImplBase(Service it) {
 	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
@@ -81,21 +89,21 @@ def static String ejbBeanImplBase(Service it) {
 	«ENDIF»
 	public «IF gapClass»abstract «ENDIF»class «name + getSuffix("Impl")»«IF gapClass»Base«ENDIF» «it.extendsLitteral()» 
 			implements «it.getEjbInterfaces()» {
-		«ServiceTmpl::serialVersionUID(it)»
+		«serviceTmpl.serialVersionUID(it)»
 		public «name + getSuffix("Impl")»«IF gapClass»Base«ENDIF»() {
 		}
 
-		«ServiceTmpl::delegateRepositories(it) »
-		«ServiceTmpl::delegateServices(it) »
+		«serviceTmpl.delegateRepositories(it) »
+		«serviceTmpl.delegateServices(it) »
 
-		«it.operations.filter[op | !op.isImplementedInGapClass()].map[ServiceTmpl::implMethod(it)]»
+		«it.operations.filter[op | !op.isImplementedInGapClass()].map[serviceTmpl.implMethod(it)]»
 	}
 	'''
 	)
 }
 
 /*Used for pure-ejb3, i.e. without spring */
-def static String ejbBeanImplSubclass(Service it) {
+def String ejbBeanImplSubclass(Service it) {
 	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
@@ -108,17 +116,17 @@ def static String ejbBeanImplSubclass(Service it) {
 		«webServiceAnnotations(it)»
 	«ENDIF»
 	«ejbInterceptors(it)»
-	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public class «name + getSuffix("Impl")» «IF gapClass»^extends «name + getSuffix("Impl")»Base«ENDIF» {
-		«ServiceTmpl::serialVersionUID(it)»
+		«serviceTmpl.serialVersionUID(it)»
 		public «name + getSuffix("Impl")»() {
 		}
 
-	«ServiceTmpl::otherDependencies(it)»
+	«serviceTmpl.otherDependencies(it)»
 
-		«it.operations.filter(op | op.isImplementedInGapClass()) .map[ServiceTmpl::implMethod(it)]»
+		«it.operations.filter(op | op.isImplementedInGapClass()) .map[serviceTmpl.implMethod(it)]»
 
-	«ServiceTmpl::serviceHook(it)»
+	«serviceTmpl.serviceHook(it)»
 	}
 	'''
 	)
@@ -126,16 +134,16 @@ def static String ejbBeanImplSubclass(Service it) {
 	'''
 }
 
-def static String ejbInterceptors(Service it) {
+def String ejbInterceptors(Service it) {
 	'''
 	@javax.interceptor.Interceptors({«IF isServiceContextToBeGenerated()»«fw("errorhandling.ServiceContextStoreInterceptor")».class, «ENDIF»
 		«fw("errorhandling.ErrorHandlingInterceptor")».class})
 	'''
 }
 
-def static String ejbMethod(ServiceOperation it) {
+def String ejbMethod(ServiceOperation it) {
 	'''
-	public «it.getTypeName()» «it.name»(«it.parameters.map[p | ServiceTmpl::paramTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+	public «it.getTypeName()» «it.name»(«it.parameters.map[p | serviceTmpl.paramTypeAndName(p)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		initBeanFactory();
 		«IF !it.exceptions().isEmpty »try {«ENDIF»
 			«IF it.getTypeName() != "void" »return «ENDIF»service.«name»(«FOR parameter : parameters SEPARATOR ", "»«parameter.name»«ENDFOR»);
@@ -151,7 +159,7 @@ def static String ejbMethod(ServiceOperation it) {
 	'''
 }
 
-def static String ejbRemoteInterface(Service it) {
+def String ejbRemoteInterface(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -166,7 +174,7 @@ def static String ejbRemoteInterface(Service it) {
 	)
 }
 
-def static String ejbLocalInterface(Service it) {
+def String ejbLocalInterface(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -182,7 +190,7 @@ def static String ejbLocalInterface(Service it) {
 }
 
 
-def static String serviceProxy(Service it) {
+def String serviceProxy(Service it) {
 	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceproxyPackage()»;
@@ -301,7 +309,7 @@ def static String serviceProxy(Service it) {
 	)
 }
 
-def static String serviceRemoteProxy(Service it) {
+def String serviceRemoteProxy(Service it) {
 	'''
 		private boolean remote «IF !localInterface» = true«ENDIF»;
 
@@ -456,15 +464,15 @@ def static String serviceRemoteProxy(Service it) {
 	'''
 }
 
-def static String proxyMethod(ServiceOperation it) {
+def String proxyMethod(ServiceOperation it) {
 	'''
-		public «it.getTypeName()» «name»(«it.parameters.map[ServiceTmpl::paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+		public «it.getTypeName()» «name»(«it.parameters.map[serviceTmpl.paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 			«IF it.getTypeName() != "void" »return «ENDIF »getService().«name»(«FOR parameter : parameters SEPARATOR ", "»«parameter.name»«ENDFOR»);
 		}
 	'''
 }
 
-def static String webServiceAnnotations(Service it) {
+def String webServiceAnnotations(Service it) {
 	'''
 	@javax.jws.WebService(endpointInterface = "«it.getServiceapiPackage()».«name»Endpoint",
 		serviceName = "«name»")
@@ -475,7 +483,7 @@ def static String webServiceAnnotations(Service it) {
 	'''
 }
 
-def static String webServiceInterface(Service it) {
+def String webServiceInterface(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -497,21 +505,21 @@ def static String webServiceInterface(Service it) {
 	)
 }
 
-def static String webServiceInterfaceMethod(ServiceOperation it) {
+def String webServiceInterfaceMethod(ServiceOperation it) {
 	'''
 		«it.formatJavaDoc()»
 		«IF it.getTypeName() != "void"»@javax.jws.WebResult «ENDIF »«it.getTypeName()» «name»(«it.parameters.map[p | webServiceParamTypeAndName(p)].join(",")») «
-		ExceptionTmpl::throwsDecl(it)»;
+		exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
-def static String webServiceParamTypeAndName(Parameter it) {
+def String webServiceParamTypeAndName(Parameter it) {
 	'''
 	«IF it.getTypeName() != serviceContextClass()»@javax.jws.WebParam(name = "«name»") «ENDIF »«IF isGenerateParameterName()» @«fw("annotation.Name")»("«name»")«ENDIF» «it.getTypeName()» «name»
 	'''
 }
 
-def static String webServicePackageInfo(Service it) {
+def String webServicePackageInfo(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot::TO_SRC, '''
 	// TODO: beautifier has problem with this file, therefore it is placed in TO_SRC
 	//	to get elementFormDefault='qualified' for schema generated from this package

@@ -17,17 +17,26 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.GeneratorFactory
+
 import sculptormetamodel.DomainObject
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectKeyTmpl.*
+import org.sculptor.generator.ext.Properties
 
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
+
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.util.HelperBase
 
 class DomainObjectKeyTmpl {
 
-def static String keyGetter(DomainObject it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GeneratorFactory::domainObjectAttributeTmpl
+	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GeneratorFactory::domainObjectReferenceTmpl
+	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GeneratorFactory::domainObjectConstructorTmpl
+
+def String keyGetter(DomainObject it) {
 	'''
 		«IF attributes.exists(a | a.isUuid()) »
 			/**
@@ -73,7 +82,7 @@ def static String keyGetter(DomainObject it) {
 	'''
 }
 
-def static String compositeKeyGetter(DomainObject it) {
+def String compositeKeyGetter(DomainObject it) {
 	'''
 		/**
 		 * This method is used by equals and hashCode.
@@ -108,7 +117,7 @@ def static String compositeKeyGetter(DomainObject it) {
 	'''
 }
 
-def static String compositeKey(DomainObject it) {
+def String compositeKey(DomainObject it) {
 	val allKeys = it.getAllNaturalKeys()
 	'''
 		/**
@@ -119,22 +128,22 @@ def static String compositeKey(DomainObject it) {
 		public static class «name»Key {
 
 			«FOR a : it.getAllNaturalKeyAttributes()»
-				«DomainObjectAttributeTmpl::attribute(a, false)»
+				«domainObjectAttributeTmpl.attribute(a, false)»
 			«ENDFOR»
 
 			«FOR ref : it.getAllNaturalKeyReferences()»
-				«DomainObjectReferenceTmpl::oneReferenceAttribute(ref, false)»
+				«domainObjectReferenceTmpl.oneReferenceAttribute(ref, false)»
 			«ENDFOR»
 
-			public «name»Key(«allKeys.map[DomainObjectConstructorTmpl::parameterTypeAndName(it)].join(",")») {
+			public «name»Key(«allKeys.map[domainObjectConstructorTmpl.parameterTypeAndName(it)].join(",")») {
 				«FOR a  : allKeys»
 					this.«a.name» = «a.name»;
 				«ENDFOR»
 			}
 
 			/* no annotations for composite key classes */
-			«it.getAllNaturalKeyAttributes().map[k | DomainObjectAttributeTmpl::propertyGetter(k, false)]»
-			«it.getAllNaturalKeyReferences().map[k | DomainObjectReferenceTmpl::oneReferenceGetter(k, false)]»
+			«it.getAllNaturalKeyAttributes().map[k | domainObjectAttributeTmpl.propertyGetter(k, false)]»
+			«it.getAllNaturalKeyReferences().map[k | domainObjectReferenceTmpl.oneReferenceGetter(k, false)]»
 
 			«compositeKeyEquals(it)»
 			«compositeKeyHashCode(it)»
@@ -142,7 +151,7 @@ def static String compositeKey(DomainObject it) {
 	'''
 }
 
-def static String compositeKeyEquals(DomainObject it) {
+def String compositeKeyEquals(DomainObject it) {
 	// val allKeys = it.getAllNaturalKeys()
 	val className = if (isDomainObjectCompositeKeyClassToBeGenerated()) name + "Key" else name
 	'''
@@ -168,7 +177,7 @@ def static String compositeKeyEquals(DomainObject it) {
 	'''
 }
 
-def static String compositeKeyHashCode(DomainObject it) {
+def String compositeKeyHashCode(DomainObject it) {
 	val allKeys = it.getAllNaturalKeys()
 	'''
 		@Override

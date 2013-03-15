@@ -1,19 +1,22 @@
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
-
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.db.DatasourceTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class DatasourceTmpl {
 
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
 
-def static String datasource(Application it) {
+
+def String datasource(Application it) {
 	'''
 	«IF dbProduct == "mysql"»
 		«mysqlDS(it) »
@@ -27,7 +30,7 @@ def static String datasource(Application it) {
 	'''
 }
 
-def static String mysqlDS(Application it) {
+def String mysqlDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<datasources> 
 		    <local-tx-datasource> 
@@ -42,7 +45,7 @@ def static String mysqlDS(Application it) {
 	)
 }
 
-def static String oracleDS(Application it) {
+def String oracleDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<!-- See: http://www.jboss.org/community/wiki/ConfigDataSources -->
@@ -72,7 +75,7 @@ def static String oracleDS(Application it) {
 	'''
 }
 
-def static String postgresqlDS(Application it) {
+def String postgresqlDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<datasources> 
 		    <local-tx-datasource> 
@@ -87,7 +90,7 @@ def static String postgresqlDS(Application it) {
 	)
 }
 
-def static String hsqldbInmemoryDS(Application it) {
+def String hsqldbInmemoryDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
 		<datasources> 
 		    <local-tx-datasource> 

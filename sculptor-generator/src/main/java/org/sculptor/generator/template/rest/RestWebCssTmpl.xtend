@@ -1,14 +1,17 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.ext.GeneratorFactory
+
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Helper.*
+import org.sculptor.generator.ext.Helper
 
 class RestWebCssTmpl {
+	extension Helper helper = GeneratorFactory::helper
 
 
-def static String css(Application it) {
+def String css(Application it) {
 	fileOutput("stylesheets/main.css", OutputSlot::TO_WEBROOT, '''
 /* main elements */
 

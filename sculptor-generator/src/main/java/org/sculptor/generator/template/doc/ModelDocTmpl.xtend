@@ -4,8 +4,13 @@
 
 package org.sculptor.generator.template.doc
 
-import org.sculptor.generator.util.OutputSlot
 import java.util.List
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.ext.UmlGraphHelper
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -26,22 +31,22 @@ import sculptormetamodel.Service
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.doc.ModelDocTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.ext.UmlGraphHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-
 class ModelDocTmpl {
 
-def static void start(Application it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	extension UmlGraphHelper umlGraphHelper = GeneratorFactory::umlGraphHelper
+
+	private static val ModelDocCssTmpl modelDocCssTmpl = GeneratorFactory::modelDocCssTmpl
+
+def void start(Application it) {
 	docHtml(it)
-	ModelDocCssTmpl::docCss(it)
+	modelDocCssTmpl.docCss(it)
 	it.modules.map[m | moduleDocHtml(m)].join()
 }
 
-def static String docHtml(Application it) {
+def String docHtml(Application it) {
 	val title = "Summary Documentation of " + name + " Domain Model"
 	fileOutput("DomainModelDoc.html", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it, title)»
@@ -63,7 +68,7 @@ def static String docHtml(Application it) {
 	)
 }
 
-def static String moduleDocHtml(Module it) {
+def String moduleDocHtml(Module it) {
 	val title = "Summary Documentation of " + name + " module"
 	fileOutput("DomainModelDoc-" + name + ".html", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it, title + "(" + application.name + ")")»
@@ -81,7 +86,7 @@ def static String moduleDocHtml(Module it) {
 	)
 }
 
-def static String header(Object it, String title) {
+def String header(Object it, String title) {
 	'''
 	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	<html>
@@ -96,7 +101,7 @@ def static String header(Object it, String title) {
 	'''
 }
 
-def static String footer(Application it) {
+def String footer(Application it) {
 	'''
 	<div id="footer">
 	<br/>
@@ -105,7 +110,7 @@ def static String footer(Application it) {
 	'''
 }
 
-def static String main(Application it) {
+def String main(Application it) {
 	'''
 	<div id="main">
 	«it.modules.sortBy(e|e.name).map[moduleDoc(it)].join()»
@@ -114,7 +119,7 @@ def static String main(Application it) {
 }
 
 
-def static String moduleDoc(Module it) {
+def String moduleDoc(Module it) {
 	'''
 	<a name="module_«name»"></a>
 	<h2>Module «name»</h2>
@@ -124,7 +129,7 @@ def static String moduleDoc(Module it) {
 	'''
 }
 
-def static String moduleDocContent(Module it) {
+def String moduleDocContent(Module it) {
 	'''
 	<p>«doc»</p>
 	«menu(it)»
@@ -145,7 +150,7 @@ def static String moduleDocContent(Module it) {
 	'''
 }
 
-def static String menu(Application it) {
+def String menu(Application it) {
 	'''
 	<div id="menu">
 	«FOR m : modules.sortBy(e|e.name)»
@@ -156,7 +161,7 @@ def static String menu(Application it) {
 	'''
 }
 
-def static String menu(Module it) {
+def String menu(Module it) {
 	'''
 	<div id="menu">
 			«menuItems(it)»
@@ -164,7 +169,7 @@ def static String menu(Module it) {
 	'''
 }
 
-def static String menuItems(Module it) {
+def String menuItems(Module it) {
 	val List<NamedElement> el = newArrayList()
 	el.addAll(services)
 	el.addAll(consumers)
@@ -177,18 +182,18 @@ def static String menuItems(Module it) {
 	'''
 }
 
-def static String menuItem(Object it) {
+def String menuItem(Object it) {
 	'''
 	'''
 }
 
-def static String menuItem(NamedElement it) {
+def String menuItem(NamedElement it) {
 	'''
 				<li><a href="DomainModelDoc-«it.getModule().name».html#«name»">«name»</a></li>
 	'''
 }
 
-def static String graph(Application it) {
+def String graph(Application it) {
 	'''
 	<div id="graph">
 		<hr/>
@@ -232,7 +237,7 @@ def static String graph(Application it) {
 	'''
 }
 
-def static String graph(Module it) {
+def String graph(Module it) {
 	'''
 	<div id="module_graph">
 	    <hr/>
@@ -249,7 +254,7 @@ def static String graph(Module it) {
 	'''
 }
 
-def static String serviceDoc(Service it) {
+def String serviceDoc(Service it) {
 	'''
 	<a name="«name»"></a>
 	<h3>«name»</h3>
@@ -259,7 +264,7 @@ def static String serviceDoc(Service it) {
 	'''
 }
 
-def static String operationDoc(Operation it) {
+def String operationDoc(Operation it) {
 	'''
 	<div id="operation">
 	<b>«name»</b>
@@ -282,13 +287,13 @@ def static String operationDoc(Operation it) {
 	'''
 }
 
-def static String operationParameterDoc(Parameter it) {
+def String operationParameterDoc(Parameter it) {
 	'''
 	<li>«operationTypeDoc(it)» «name»«IF doc != null»<br/>«doc»«ENDIF»</li>
 	'''
 }
 
-def static String operationTypeDoc(DomainObjectTypedElement it) {
+def String operationTypeDoc(DomainObjectTypedElement it) {
 	'''
 	«IF domainObjectType != null»
 		«IF collectionType != null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«domainObjectType.module.name».html#«domainObjectType.name»">«domainObjectType.name»</a>«IF collectionType != null»&gt;«ENDIF»
@@ -298,7 +303,7 @@ def static String operationTypeDoc(DomainObjectTypedElement it) {
 	'''
 }
 
-def static String consumerDoc(Consumer it) {
+def String consumerDoc(Consumer it) {
 	'''
 	<a name="«name»"></a>
 	<h3>«name»</h3>
@@ -307,7 +312,7 @@ def static String consumerDoc(Consumer it) {
 	'''
 }
 
-def static String domainObjectDoc(DomainObject it) {
+def String domainObjectDoc(DomainObject it) {
 	val List<NamedElement> el = newArrayList()
 	el.addAll(references.filter(r | !r.transient).toList)
 	el.addAll(attributes.filter(a | !a.transient).toList)
@@ -338,7 +343,7 @@ def static String domainObjectDoc(DomainObject it) {
 	'''
 }
 
-def static String enumDoc(Enum it) {
+def String enumDoc(Enum it) {
 	'''
 	<a name="«name»"></a>
 	<h3>«name»</h3>
@@ -361,13 +366,13 @@ def static String enumDoc(Enum it) {
 	'''
 }
 
-def static String extendsCharacteristics (DomainObject it) {
+def String extendsCharacteristics (DomainObject it) {
 	'''
 	«IF ^extends != null»<p><i>^extends <a href="DomainModelDoc-«^extends.getModule().name».html#«^extends.name»">«^extends.name»</a></i></p>«ENDIF»
 	'''
 }
 
-def static String domainObjectCharacteristics(DomainObject it) {
+def String domainObjectCharacteristics(DomainObject it) {
 	'''
 	<p>«IF it.isImmutable()»<i>Immutable</i>«ENDIF»</p>
 	«extendsCharacteristics(it)»
@@ -375,7 +380,7 @@ def static String domainObjectCharacteristics(DomainObject it) {
 	'''
 }
 
-def static String domainObjectCharacteristics(Entity it) {
+def String domainObjectCharacteristics(Entity it) {
 	'''
 	<p><i>Entity</i>«IF !isAggregateRoot()», «notAggregateRootInfo(it)»«ENDIF»</p>
 	«IF it.isImmutable()»<p><i>Immutable</i></p>«ENDIF»
@@ -384,7 +389,7 @@ def static String domainObjectCharacteristics(Entity it) {
 	'''
 }
 
-def static String notAggregateRootInfo(DomainObject it) {
+def String notAggregateRootInfo(DomainObject it) {
 	'''
 	«val aggregateRootObject  = it.getAggregateRootObject()»
 	not aggregate root, belongs to 
@@ -392,7 +397,7 @@ def static String notAggregateRootInfo(DomainObject it) {
 	'''
 }
 
-def static String domainObjectCharacteristics(ValueObject it) {
+def String domainObjectCharacteristics(ValueObject it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» ValueObject</i>«IF !persistent», not persistent«ELSEIF !isAggregateRoot()», «notAggregateRootInfo(it)»«ENDIF»</p>
 	«extendsCharacteristics(it)»
@@ -400,27 +405,27 @@ def static String domainObjectCharacteristics(ValueObject it) {
 	'''
 }
 
-def static String domainObjectCharacteristics(BasicType it) {
+def String domainObjectCharacteristics(BasicType it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» BasicType</i></p>
 	«traitsCharacteristics(it)»
 	'''
 }
 
-def static String domainObjectCharacteristics(Enum it) {
+def String domainObjectCharacteristics(Enum it) {
 	'''
 	<p><i>Enum</i></p>
 	'''
 }
 
-def static String domainObjectCharacteristics(DataTransferObject it) {
+def String domainObjectCharacteristics(DataTransferObject it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» DTO</i></p>
 	«extendsCharacteristics(it)»
 	'''
 }
 
-def static String domainObjectCharacteristics(DomainEvent it) {
+def String domainObjectCharacteristics(DomainEvent it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» DomainEvent</i></p>
 	«extendsCharacteristics(it)»
@@ -428,7 +433,7 @@ def static String domainObjectCharacteristics(DomainEvent it) {
 	'''
 }
 
-def static String domainObjectCharacteristics(CommandEvent it) {
+def String domainObjectCharacteristics(CommandEvent it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» CommandEvent</i></p>
 	«extendsCharacteristics(it)»
@@ -436,24 +441,24 @@ def static String domainObjectCharacteristics(CommandEvent it) {
 	'''
 }
 
-def static String domainObjectCharacteristics(Trait it) {
+def String domainObjectCharacteristics(Trait it) {
 	'''
 	<p><i>Trait</i></p>
 	'''
 }
 
-def static String traitsCharacteristics(DomainObject it) {
+def String traitsCharacteristics(DomainObject it) {
 	'''
 	«IF !traits.isEmpty»<p><i>«FOR t : traits» with <a href="DomainModelDoc-«t.getModule().name».html#«t.name»">«t.name»</a>«ENDFOR»</i></p>«ENDIF»
 	'''
 }
 
-def static dispatch String fieldDoc(Object it) {
+def dispatch String fieldDoc(Object it) {
 	'''
 	'''
 }
 
-def static dispatch String fieldDoc(Attribute it) {
+def dispatch String fieldDoc(Attribute it) {
 	'''
 	«val isDto = it.getDomainObject() instanceof DataTransferObject»
 	<tr>
@@ -467,7 +472,7 @@ def static dispatch String fieldDoc(Attribute it) {
 	'''
 }
 
-def static String description(Attribute it) {
+def String description(Attribute it) {
 	'''
 	«IF name == "id" && doc == null »
 		Generated unique id (GID pk)
@@ -489,7 +494,7 @@ def static String description(Attribute it) {
 	'''
 }
 
-def static dispatch String fieldDoc(Reference it) {
+def dispatch String fieldDoc(Reference it) {
 	'''
 	«val isDto = it.from instanceof DataTransferObject»
 	<tr>

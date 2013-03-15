@@ -17,107 +17,110 @@
 
 package org.sculptor.generator.template.drools
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.drools.DroolsTmpl.*
 
 class DroolsTmpl {
 
-def static String droolsSupport(Application it) {
-	'''
-	«droolsChangeSet(it)»
-	«droolsRules(it)»
-	«droolsDsl(it)»
-	'''
-}
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
 
-def static String droolsChangeSet(Application it) {
-	fileOutput("CompanyPolicy.xml", OutputSlot::TO_RESOURCES, '''
-	<?xml version = '1.0' encoding = 'UTF-8'?>
-	<change-set xmlns='http://drools.org/drools-5.0/change-set'
-		xmlns:xs='http://www.w3.org/2001/XMLSchema-instance'
-		xs:schemaLocation='drools-change-set-5.0.xsd' >
-	<add>
-		<resource source='classpath:/CompanyPolicy.dslr' type='DSLR'/>
-		<resource source='classpath:/CompanyPolicy.dsl' type='DSL'/>
-	</add>
-	</change-set>
-	'''
-	)
-}
-		
-def static String droolsRules(Application it) {
-	fileOutput("CompanyPolicy.dslr", OutputSlot::TO_RESOURCES, '''
-	package CompanyPolicy
-
-	/* ################################################################################
-	   # Declaration
-	   ################################################################################ */
-	import java.util.Set;
-	import java.util.Date;
-	import java.util.Calendar;
-	import org.apache.commons.logging.Log;
-
-	import «fw("drools.RequestDescription")»;
-	import «fw("domain.AuditHandler")»;
-	import «fw("domain.FullAuditLog")»;
-	import «fw("errorhandling.ServiceContext")»;
-	import «fw("errorhandling.ApplicationException")»;
-	import org.springframework.context.ApplicationContext;
-
-	global ServiceContext serviceContext;
-	global ApplicationContext appContext;
-	global Log log;
-	global Calendar currentDate;
-	global Long currentTimestamp;
-
-	/* ################################################################################
-	   # Support functions
-	   ################################################################################ */
-	function Object findService(ApplicationContext appContext, String serviceName) {
-	return appContext.getBean(serviceName);
+	def String droolsSupport(Application it) {
+		'''
+		«droolsChangeSet(it)»
+		«droolsRules(it)»
+		«droolsDsl(it)»
+		'''
 	}
+	
+	def String droolsChangeSet(Application it) {
+		fileOutput("CompanyPolicy.xml", OutputSlot::TO_RESOURCES, '''
+		<?xml version = '1.0' encoding = 'UTF-8'?>
+		<change-set xmlns='http://drools.org/drools-5.0/change-set'
+			xmlns:xs='http://www.w3.org/2001/XMLSchema-instance'
+			xs:schemaLocation='drools-change-set-5.0.xsd' >
+		<add>
+			<resource source='classpath:/CompanyPolicy.dslr' type='DSLR'/>
+			<resource source='classpath:/CompanyPolicy.dsl' type='DSL'/>
+		</add>
+		</change-set>
+		'''
+		)
+	}
+			
+	def String droolsRules(Application it) {
+		fileOutput("CompanyPolicy.dslr", OutputSlot::TO_RESOURCES, '''
+		package CompanyPolicy
 
-	/* ################################################################################
-	   # Auditing rules
-	   ################################################################################ */
-	RULE "Zobraz poziadavku"
-	unique-group "Log"
-	priority -100
-	WHEN
-	Exist request
-	THAN
-	Log "    serviceName: "+$req.getServiceName()
-	Log "    methodName: "+$req.getMethodName()
-	END
-	'''
-	)
-}
+		/* ################################################################################
+		   # Declaration
+		   ################################################################################ */
+		import java.util.Set;
+		import java.util.Date;
+		import java.util.Calendar;
+		import org.apache.commons.logging.Log;
 
-def static String droolsDsl(Application it) {
-	fileOutput("CompanyPolicy.dsl", OutputSlot::TO_RESOURCES, '''
-	[condition][]Exist request on=$req : RequestDescription()
-	[condition][]- service "{service}"=serviceName=="{service}"
-	[condition][]- method "{method}"=methodName=="{method}"
-	[condition][]Exist request=$req : RequestDescription()
+		import «fw("drools.RequestDescription")»;
+		import «fw("domain.AuditHandler")»;
+		import «fw("domain.FullAuditLog")»;
+		import «fw("errorhandling.ServiceContext")»;
+		import «fw("errorhandling.ApplicationException")»;
+		import org.springframework.context.ApplicationContext;
 
-	[consequence][]Log {message}=log.info({message});
-	[consequence][]LogError {message}=log.warn({message});
-	[consequence][]LogFatal {message}=log.error({message});
-	[consequence][]Audit request {description}=makeAuditRecord(serviceContext, servlet, $req.getServiceName(),  $req.getOperationType(), $req.getMethodName(), {description});
-	[consequence][]Audit {audit}=makeAuditRecord(serviceContext, servlet, {audit});
+		global ServiceContext serviceContext;
+		global ApplicationContext appContext;
+		global Log log;
+		global Calendar currentDate;
+		global Long currentTimestamp;
 
-	[keyword][]RULE=rule
-	[keyword][]WHEN=when
-	[keyword][]THAN=then
-	[keyword][]END=end
-	[keyword][]unique-group=activation-group
-	[keyword][]priority=salience
-	'''
-	)
-}
+		/* ################################################################################
+		   # Support functions
+		   ################################################################################ */
+		function Object findService(ApplicationContext appContext, String serviceName) {
+		return appContext.getBean(serviceName);
+		}
+
+		/* ################################################################################
+		   # Auditing rules
+		   ################################################################################ */
+		RULE "Zobraz poziadavku"
+		unique-group "Log"
+		priority -100
+		WHEN
+		Exist request
+		THAN
+		Log "    serviceName: "+$req.getServiceName()
+		Log "    methodName: "+$req.getMethodName()
+		END
+		'''
+		)
+	}
+	
+	def String droolsDsl(Application it) {
+		fileOutput("CompanyPolicy.dsl", OutputSlot::TO_RESOURCES, '''
+		[condition][]Exist request on=$req : RequestDescription()
+		[condition][]- service "{service}"=serviceName=="{service}"
+		[condition][]- method "{method}"=methodName=="{method}"
+		[condition][]Exist request=$req : RequestDescription()
+
+		[consequence][]Log {message}=log.info({message});
+		[consequence][]LogError {message}=log.warn({message});
+		[consequence][]LogFatal {message}=log.error({message});
+		[consequence][]Audit request {description}=makeAuditRecord(serviceContext, servlet, $req.getServiceName(),  $req.getOperationType(), $req.getMethodName(), {description});
+		[consequence][]Audit {audit}=makeAuditRecord(serviceContext, servlet, {audit});
+
+		[keyword][]RULE=rule
+		[keyword][]WHEN=when
+		[keyword][]THAN=then
+		[keyword][]END=end
+		[keyword][]unique-group=activation-group
+		[keyword][]priority=salience
+		'''
+		)
+	}
 
 }

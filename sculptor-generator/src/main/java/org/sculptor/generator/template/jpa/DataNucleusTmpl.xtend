@@ -17,21 +17,27 @@
 
 package org.sculptor.generator.template.jpa
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.OracleDDLTmpl
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.jpa.DataNucleusTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 
 class DataNucleusTmpl {
 
-def static String dataNucleus(Application it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val OracleDDLTmpl oracleDDLTmpl = GeneratorFactory::oracleDDLTmpl
+
+def String dataNucleus(Application it) {
 	'''
 		«IF it.containsNonOrdinaryEnums()»
 			«enumMappingClass(it)»
@@ -46,7 +52,7 @@ def static String dataNucleus(Application it) {
 	'''
 }
 
-def static String dataNucleusTestProperties(Application it) {
+def String dataNucleusTestProperties(Application it) {
 	fileOutput("datanucleus-test.properties", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	datanucleus.ConnectionDriverName=org.hsqldb.jdbcDriver
 	datanucleus.ConnectionURL=jdbc:hsqldb:mem:«name.toLowerCase()»
@@ -56,7 +62,7 @@ def static String dataNucleusTestProperties(Application it) {
 	)
 }
 
-def static String enumPlugin(Application it) {
+def String enumPlugin(Application it) {
 	fileOutput("plugin.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	<?xml version="1.0"?>
 	<plugin>
@@ -75,14 +81,14 @@ def static String enumPlugin(Application it) {
 	)
 }
 
-def static String enumPluginMapping(Enum it) {
+def String enumPluginMapping(Enum it) {
 	'''
 		<mapping java-type="«getDomainPackage() + "." + name»"
 			mapping-class="«it.getApplicationBasePackage()».util.EnumMapping"/>
 	'''
 }
 
-def static String manifest(Application it) {
+def String manifest(Application it) {
 	fileOutput("META-INF/MANIFEST.MF", OutputSlot::TO_GEN_RESOURCES, '''
 	Manifest-Version: 1.0
 	Bundle-ManifestVersion: 2
@@ -93,7 +99,7 @@ def static String manifest(Application it) {
 	)
 }
 
-def static String enumMappingClass(Application it) {
+def String enumMappingClass(Application it) {
 	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
@@ -190,7 +196,7 @@ def static String enumMappingClass(Application it) {
 	)
 }
 
-def static String enumLiteralClass(Application it) {
+def String enumLiteralClass(Application it) {
 	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), OutputSlot::TO_GEN_SRC, '''
 	package org.datanucleus.store.rdbms.sql.expression;
 
@@ -237,10 +243,10 @@ def static String enumLiteralClass(Application it) {
 		This is hopefully a temporary workaround for DataNucleus.
 		DataNucleus is not generating primary keys on manytomany jointables
  */
-def static String testDdl(Application it) {
+def String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	fileOutput("dbunit/ddl_additional.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
-		«manyToManyRelations.map[OracleDDLTmpl::manyToManyPrimaryKey(it)].join()»
+		«manyToManyRelations.map[oracleDDLTmpl.manyToManyPrimaryKey(it)].join()»
 	'''
 	)
 }

@@ -1,7 +1,12 @@
 package org.sculptor.generator.template.doc
 
-import org.sculptor.generator.util.OutputSlot
 import java.util.Set
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.ext.UmlGraphHelper
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -16,17 +21,14 @@ import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
 
-import static org.sculptor.generator.template.doc.UMLGraphTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.ext.UmlGraphHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class UMLGraphTmpl {
 
-def static String start(Application it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	extension UmlGraphHelper umlGraphHelper = GeneratorFactory::umlGraphHelper
+
+def String start(Application it) {
 	val mods = it.visibleModules().toSet()
 	'''
 		/*detail 0 => subject area diagrams, including persistence diagram */
@@ -51,7 +53,7 @@ def static String start(Application it) {
 	'''
 }
 
-def static String startSubjectAreaDiagrams(Application it, Set<Module> focus) {
+def String startSubjectAreaDiagrams(Application it, Set<Module> focus) {
 	'''
 	«val subjectAreas = it.getSubjectAreas()»
 		«FOR area : subjectAreas»
@@ -60,13 +62,13 @@ def static String startSubjectAreaDiagrams(Application it, Set<Module> focus) {
 	'''
 }
 
-def static String start(Application it, Set<Module> focus, int detail) {
+def String start(Application it, Set<Module> focus, int detail) {
 	'''
 	«start(it, focus, detail, null)»
 	'''
 }
 
-def static String start(Application it, Set<Module> focus, int detail, String subjectArea) {
+def String start(Application it, Set<Module> focus, int detail, String subjectArea) {
 	debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)
 	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_GEN_RESOURCES, '''
 	«graphPropertiesStart(it)»	
@@ -92,7 +94,7 @@ def static String start(Application it, Set<Module> focus, int detail, String su
 }
 
 
-def static String graphPropertiesStart(Application it) {
+def String graphPropertiesStart(Application it) {
 	'''
 	digraph G {
 		fontsize = 10
@@ -108,13 +110,13 @@ def static String graphPropertiesStart(Application it) {
 	'''
 }
 
-def static String graphPropertiesEnd(Application it) {
+def String graphPropertiesEnd(Application it) {
 	'''
 	}
 	'''
 }
 
-def static String subGraphForModule(Module it, Set<Module> focus, int detail, String subjectArea) {
+def String subGraphForModule(Module it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF detail < 4»
 		subgraph cluster«name» {
@@ -139,19 +141,19 @@ def static String subGraphForModule(Module it, Set<Module> focus, int detail, St
 }
 
 
-def static String InheritanceGraphProperties(Application it) {
+def String InheritanceGraphProperties(Application it) {
 	'''
 	edge [arrowhead = "empty"]
 	'''
 }
 
-def static String RelationGraphProperties(Application it) {
+def String RelationGraphProperties(Application it) {
 	'''
 	edge [arrowhead = "none"]
 	'''
 }
 
-def static String ServiceToUML(Service it, Set<Module> focus, int detail) {
+def String ServiceToUML(Service it, Set<Module> focus, int detail) {
 	'''
 	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«it.bgcolor()»" >
 	<tr><td>
@@ -170,13 +172,13 @@ def static String ServiceToUML(Service it, Set<Module> focus, int detail) {
 	'''
 }
 
-def static String OperationToUML(Operation it) {
+def String OperationToUML(Operation it) {
 	'''
 				<tr><td align="left">«it.name»</td></tr>			
 	'''
 }
 
-def static String ServiceDependenciesToUML(Service it, Set<Module> focus, int detail, String subjectArea) {
+def String ServiceDependenciesToUML(Service it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF focus.contains(module) && it.includeInDiagram(detail, subjectArea)»
 		edge [arrowtail="none" arrowhead = "open" headlabel = "" taillabel = "" style = "dashed"]
@@ -189,7 +191,7 @@ def static String ServiceDependenciesToUML(Service it, Set<Module> focus, int de
 	'''
 }
 
-def static String ConsumerToUML(Consumer it, Set<Module> focus, int detail) {
+def String ConsumerToUML(Consumer it, Set<Module> focus, int detail) {
 	'''
 	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«it.bgcolor()»">
 	<tr><td>
@@ -208,7 +210,7 @@ def static String ConsumerToUML(Consumer it, Set<Module> focus, int detail) {
 	'''
 }
 
-def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, String subjectArea) {
+def String ObjectToUML(DomainObject it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF it.isShownInView(focus, detail, subjectArea) »
 	«name» [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="0" port="p" bgcolor="#«it.bgcolor()»">
@@ -251,12 +253,12 @@ def static String ObjectToUML(DomainObject it, Set<Module> focus, int detail, St
 }
 
 /*Skip Traits */
-def static String TraitToUML(Trait it, Set<Module> focus, int detail, String subjectArea) {
+def String TraitToUML(Trait it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	'''
 }
 
-def static String AttributeToUML(Attribute it) {
+def String AttributeToUML(Attribute it) {
 	'''
 		«IF !it.isSystemAttribute()»
 			«IF naturalKey» 
@@ -268,7 +270,7 @@ def static String AttributeToUML(Attribute it) {
 	'''
 }
 
-def static String BasicTypeAttributeToUML(Reference it) {
+def String BasicTypeAttributeToUML(Reference it) {
 	'''
 		«IF naturalKey» 
 			<tr><td align="left"><font face="arialbd"> * «name» : «to.name» </font> </td></tr>			
@@ -278,7 +280,7 @@ def static String BasicTypeAttributeToUML(Reference it) {
 	'''
 }
 
-def static String EnumAttributeToUML(Reference it) {
+def String EnumAttributeToUML(Reference it) {
 	'''
 		«IF naturalKey» 
 			<tr><td align="left"><font face="arialbd"> * «name» : «to.name» </font> </td></tr>			
@@ -288,7 +290,7 @@ def static String EnumAttributeToUML(Reference it) {
 	'''
 }
 
-def static String NonFocusReferenceToUML(Reference it) {
+def String NonFocusReferenceToUML(Reference it) {
 	val typeStr = (if (collectionType != null) collectionType + "&lt;" else "") + to.name + (if (collectionType != null) "&gt;" else "")
 	'''
 		«IF naturalKey» 
@@ -299,19 +301,19 @@ def static String NonFocusReferenceToUML(Reference it) {
 	'''
 }
 
-def static String EnumValueToUML(EnumValue it) {
+def String EnumValueToUML(EnumValue it) {
 	'''
 			<tr><td align="left"> + «name»</td></tr>
 	'''
 }
 
-def static String OperationToUML(DomainObjectOperation it) {
+def String OperationToUML(DomainObjectOperation it) {
 	'''
 			<tr><td align="left">«name»()</td></tr>
 	'''
 }
 
-def static String InheritanceToUML(DomainObject it, Set<Module> focus, int detail, String subjectArea) {
+def String InheritanceToUML(DomainObject it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF it.isShownInView(focus, detail, subjectArea) && ^extends.isShownInView(focus, detail, subjectArea) »
 		«name»:p -> «^extends.name»:p
@@ -319,7 +321,7 @@ def static String InheritanceToUML(DomainObject it, Set<Module> focus, int detai
 	'''
 }
 
-def static String RelationToUML(Reference it, Set<Module> focus, int detail, String subjectArea) {
+def String RelationToUML(Reference it, Set<Module> focus, int detail, String subjectArea) {
 	'''
 	«IF from.isShownInView(focus, detail, subjectArea) && to.isShownInView(focus, detail, subjectArea)»
 
@@ -333,13 +335,13 @@ def static String RelationToUML(Reference it, Set<Module> focus, int detail, Str
 	'''
 }
 
-def static String ModuleDependenciesToUML(Module it) {
+def String ModuleDependenciesToUML(Module it) {
 	'''
 	«it.moduleDependencies().map[m | ModuleDependencyToUML(m, it)].join()»
 	'''
 }
 
-def static String ModuleDependencyToUML(Module it, Module from) {
+def String ModuleDependencyToUML(Module it, Module from) {
 	'''
 		edge [arrowtail="none" arrowhead = "open" headlabel = "" taillabel = "" style = "dashed"]
 		«from.name» -> «name»

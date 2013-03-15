@@ -17,28 +17,38 @@
 
 package org.sculptor.generator.template.service
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
+import org.sculptor.generator.template.common.PubSubTmpl
 import org.sculptor.generator.template.mongodb.MongoDbServiceTestTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.service.ServiceTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import org.sculptor.generator.template.common.PubSubTmpl
 
 class ServiceTmpl {
 
-def static String service(Service it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+	private static val MongoDbServiceTestTmpl mongoDbServiceTestTmpl = GeneratorFactory::mongoDbServiceTestTmpl
+	private static val PubSubTmpl pubSubTmpl = GeneratorFactory::pubSubTmpl
+	private static val ServiceEjbTestTmpl serviceEjbTestTmpl = GeneratorFactory::serviceEjbTestTmpl
+	private static val ServiceTestTmpl serviceTestTmpl = GeneratorFactory::serviceTestTmpl
+	private static val ServiceEjbTmpl serviceEjbTmpl = GeneratorFactory::serviceEjbTmpl
+
+def String service(Service it) {
 	'''
 	«serviceInterface(it)»
 	
 	«IF pureEjb3()»
-		«ServiceEjbTmpl::service(it)»
+		«serviceEjbTmpl.service(it)»
 	«ELSE»
 		«serviceImplBase(it)»
 		«IF gapClass»
@@ -47,32 +57,32 @@ def static String service(Service it) {
 	«ENDIF»
 
 	«IF webService»
-		«ServiceEjbTmpl::webServiceInterface(it)»
-		«ServiceEjbTmpl::webServicePackageInfo(it)»
+		«serviceEjbTmpl.webServiceInterface(it)»
+		«serviceEjbTmpl.webServicePackageInfo(it)»
 	«ENDIF»
 
 	«IF isTestToBeGenerated()»
-		«ServiceTestTmpl::serviceJUnitBase(it)»
+		«serviceTestTmpl.serviceJUnitBase(it)»
 		«IF pureEjb3()»
-			«ServiceEjbTestTmpl::serviceJUnitSubclassOpenEjb(it)»
+			«serviceEjbTestTmpl.serviceJUnitSubclassOpenEjb(it)»
 		«ELSEIF applicationServer() == "appengine"»
-			«ServiceTestTmpl::serviceJUnitSubclassAppEngine(it)»
+			«serviceTestTmpl.serviceJUnitSubclassAppEngine(it)»
 		«ELSEIF mongoDb()»
-			«MongoDbServiceTestTmpl::serviceJUnitSubclassMongoDb(it)»
+			«mongoDbServiceTestTmpl.serviceJUnitSubclassMongoDb(it)»
 		«ELSE»
-			«ServiceTestTmpl::serviceJUnitSubclassWithAnnotations(it)»
+			«serviceTestTmpl.serviceJUnitSubclassWithAnnotations(it)»
 		«ENDIF»
 		«IF isDbUnitTestDataToBeGenerated()»
-			«ServiceTestTmpl::dbunitTestData(it)»
+			«serviceTestTmpl.dbunitTestData(it)»
 		«ENDIF»
 		«IF !otherDependencies.isEmpty»
-			«ServiceTestTmpl::serviceDependencyInjectionJUnit(it)»
+			«serviceTestTmpl.serviceDependencyInjectionJUnit(it)»
 		«ENDIF»
 	«ENDIF»
 	'''
 }
 
-def static String serviceInterface(Service it) {
+def String serviceInterface(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -101,16 +111,16 @@ def static String serviceInterface(Service it) {
 	'''
 }
 
-def static String interfaceMethod(ServiceOperation it) {
+def String interfaceMethod(ServiceOperation it) {
 	'''
 		«it.formatJavaDoc()»
-		public «it.getTypeName()» «name»(«it.parameters.map[e | anotParamTypeAndName(e)].join(",")») «ExceptionTmpl::throwsDecl(it)»;
+		public «it.getTypeName()» «name»(«it.parameters.map[e | anotParamTypeAndName(e)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
 
 
-def static String serviceImplBase(Service it) {
+def String serviceImplBase(Service it) {
 	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
@@ -134,10 +144,10 @@ def static String serviceImplBase(Service it) {
 			«springServiceAnnotation(it)»
 		«ENDIF»
 		«IF !gapClass && webService»
-			«ServiceEjbTmpl::webServiceAnnotations(it)»
+			«serviceEjbTmpl.webServiceAnnotations(it)»
 		«ENDIF»
 	«ENDIF»
-	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public «IF gapClass»abstract «ENDIF»class «name»Impl«IF gapClass»Base«ENDIF» «it.extendsLitteral()» implements «it.getServiceapiPackage()».«name» {
 
 		public «name»Impl«IF gapClass»Base«ENDIF»() {
@@ -154,13 +164,13 @@ def static String serviceImplBase(Service it) {
 	)
 }
 
-def static String springServiceAnnotation(Service it) {
+def String springServiceAnnotation(Service it) {
 	'''
 	@org.springframework.stereotype.Service("«name.toFirstLower()»")
 	'''
 }
 
-def static String delegateRepositories(Service it) {
+def String delegateRepositories(Service it) {
 	'''
 	«FOR delegateRepository  : it.getDelegateRepositories()»
 		«IF isSpringToBeGenerated()»
@@ -178,7 +188,7 @@ def static String delegateRepositories(Service it) {
 	'''
 }
 
-def static String delegateServices(Service it) {
+def String delegateServices(Service it) {
 	'''
 	«FOR delegateService  : it.getDelegateServices()»
 		«IF isSpringToBeGenerated()»
@@ -196,7 +206,7 @@ def static String delegateServices(Service it) {
 	'''
 }
 
-def static String serviceImplSubclass(Service it) {
+def String serviceImplSubclass(Service it) {
 	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
@@ -208,7 +218,7 @@ def static String serviceImplSubclass(Service it) {
 		@org.springframework.stereotype.Service("«name.toFirstLower()»")
 	«ENDIF»
 	«IF webService»
-		«ServiceEjbTmpl::webServiceAnnotations(it)»
+		«serviceEjbTmpl.webServiceAnnotations(it)»
 	«ENDIF»
 	public class «name»Impl ^extends «name»ImplBase {
 
@@ -224,7 +234,7 @@ def static String serviceImplSubclass(Service it) {
 	)
 }
 
-def static String otherDependencies(Service it) {
+def String otherDependencies(Service it) {
 	'''
 	«FOR dependency  : otherDependencies»
 		/**
@@ -245,7 +255,7 @@ def static String otherDependencies(Service it) {
 	'''
 }
 
-def static String implMethod(ServiceOperation it) {
+def String implMethod(ServiceOperation it) {
 	'''
 	«IF delegate != null »
 		/**
@@ -257,7 +267,7 @@ def static String implMethod(ServiceOperation it) {
 		 */
 	«ENDIF »
 	«serviceMethodAnnotation(it)»
-	«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | paramTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+	«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | paramTypeAndName(p)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 	«IF delegate != null »
 		«IF it.delegate.getTypeName() == "void" && it.getTypeName() != "void"»
 			/*This is a special case which is used for save operations, when rcp nature */
@@ -278,7 +288,7 @@ def static String implMethod(ServiceOperation it) {
 	'''
 }
 
-def static String serviceMethodAnnotation(ServiceOperation it) {
+def String serviceMethodAnnotation(ServiceOperation it) {
 	'''
 	/*spring transaction support */
 	«IF isSpringAnnotationTxToBeGenerated()»
@@ -294,23 +304,23 @@ def static String serviceMethodAnnotation(ServiceOperation it) {
 	«IF service.webService»
 		@javax.jws.WebMethod
 	«ENDIF»
-	«IF publish != null»«PubSubTmpl::publishAnnotation(it.publish)»«ENDIF»
+	«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
 	'''
 }
 
-def static String paramTypeAndName(Parameter it) {
+def String paramTypeAndName(Parameter it) {
 	'''
 	«it.getTypeName()» «name»
 	'''
 }
 
-def static String anotParamTypeAndName(Parameter it) {
+def String anotParamTypeAndName(Parameter it) {
 	'''
 	«IF isGenerateParameterName()» @«fw("annotation.Name")»("«name»")«ENDIF» «it.getTypeName()» «name»
 	'''
 }
 
-def static String serialVersionUID(Service it) {
+def String serialVersionUID(Service it) {
 	'''
 		private static final long serialVersionUID = 1L;
 	'''
@@ -318,17 +328,17 @@ def static String serialVersionUID(Service it) {
 
 
 /*Extension point to generate more stuff in service interface.
-	User AROUND ServiceTmpl::serviceInterfaceHook FOR Service
+	User AROUND serviceTmpl.serviceInterfaceHook FOR Service
 	in SpecialCases.xpt */
-def static String serviceInterfaceHook(Service it) {
+def String serviceInterfaceHook(Service it) {
 	'''
 	'''
 }
 
 /*Extension point to generate more stuff in service implementation.
-	User AROUND ServiceTmpl::serviceHook FOR Service
+	User AROUND serviceTmpl.serviceHook FOR Service
 	in SpecialCases.xpt */
-def static String serviceHook(Service it) {
+def String serviceHook(Service it) {
 	'''
 	'''
 }

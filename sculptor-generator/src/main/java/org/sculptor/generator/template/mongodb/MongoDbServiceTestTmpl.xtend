@@ -17,21 +17,25 @@
 
 package org.sculptor.generator.template.mongodb
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.service.ServiceTestTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Service
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.mongodb.MongoDbServiceTestTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class MongoDbServiceTestTmpl {
 
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val ServiceTestTmpl serviceTestTmpl = GeneratorFactory::serviceTestTmpl
 
 
-def static String serviceJUnitSubclassMongoDb(Service it) {
+def String serviceJUnitSubclassMongoDb(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -52,13 +56,13 @@ def static String serviceJUnitSubclassMongoDb(Service it) {
 	«dropDatabase(it)»
 	«countRows(it)»
 	
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet.map[ServiceTestTmpl::testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet.map[serviceTestTmpl.testMethod(it)]»
 	}
 	'''
 	)
 }
 
-def static String dependencyInjection(Service it) {
+def String dependencyInjection(Service it) {
 	'''
 	@org.springframework.beans.factory.annotation.Autowired
 	private «fw("accessimpl.mongodb.DbManager")» dbManager;
@@ -68,7 +72,7 @@ def static String dependencyInjection(Service it) {
 	'''
 }
 
-def static String initTestData(Service it) {
+def String initTestData(Service it) {
 	'''
 		@org.junit.Before
 		public void initTestData() {
@@ -76,7 +80,7 @@ def static String initTestData(Service it) {
 	'''
 } 
 
-def static String initDbManagerThreadInstance(Service it) {
+def String initDbManagerThreadInstance(Service it) {
 	'''
 	@org.junit.Before
 		public void initDbManagerThreadInstance() throws Exception {
@@ -86,7 +90,7 @@ def static String initDbManagerThreadInstance(Service it) {
 	'''
 }
 
-def static String dropDatabase(Service it) {
+def String dropDatabase(Service it) {
 	'''
 		@org.junit.After
 		public void dropDatabase() {
@@ -101,7 +105,7 @@ def static String dropDatabase(Service it) {
 	'''
 }
 
-def static String countRows(Service it) {
+def String countRows(Service it) {
 	'''
 		private int countRowsInDBCollection(String name) {
 			return (int) dbManager.getDBCollection(name).getCount();

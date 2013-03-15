@@ -18,19 +18,24 @@
 
 package org.sculptor.generator.template.service
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.DbUnitTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Service
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.service.ServiceTestTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class ServiceTestTmpl {
 
-def static String serviceJUnitBase(Service it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val DbUnitTmpl dbUnitTmpl = GeneratorFactory::dbUnitTmpl
+
+def String serviceJUnitBase(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "TestBase"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -51,13 +56,13 @@ def static String serviceJUnitBase(Service it) {
 }
 
 /*this (FOR String) is the name of the operation */
-def static String testInterfaceMethod(String it) {
+def String testInterfaceMethod(String it) {
 	'''
 		public void test«it.toFirstUpper()»() throws Exception;
 	'''
 }
 
-def static String serviceJUnitSubclassWithAnnotations(Service it) {
+def String serviceJUnitSubclassWithAnnotations(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -79,14 +84,14 @@ def static String serviceJUnitSubclassWithAnnotations(Service it) {
 	)
 }
 
-def static String serviceJUnitDependencyInjection(Service it) {
+def String serviceJUnitDependencyInjection(Service it) {
 	'''
 		@org.springframework.beans.factory.annotation.Autowired
 		protected «it.getServiceapiPackage()».«name» «name.toFirstLower()»;
 	'''
 }
 
-def static String serviceJUnitSubclassAppEngine(Service it) {
+def String serviceJUnitSubclassAppEngine(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -110,7 +115,7 @@ def static String serviceJUnitSubclassAppEngine(Service it) {
 	)
 }
 
-def static String serviceJUnitSubclassAppEnginePopulateDataStore(Service it) {
+def String serviceJUnitSubclassAppEnginePopulateDataStore(Service it) {
 	'''
 		@org.junit.Before
 		public void populateDatastore() {
@@ -122,7 +127,7 @@ def static String serviceJUnitSubclassAppEnginePopulateDataStore(Service it) {
 
 
 
-def static String serviceJUnitGetDataSetFile(Service it) {
+def String serviceJUnitGetDataSetFile(Service it) {
 	'''
 	«IF getDbUnitDataSetFile() != null»
 		@Override
@@ -134,7 +139,7 @@ def static String serviceJUnitGetDataSetFile(Service it) {
 }
 
 /*this (FOR String) is the name of the operation */
-def static String testMethod(String it) {
+def String testMethod(String it) {
 	'''
 	@org.junit.Test
 		public void test«it.toFirstUpper()»() throws Exception {
@@ -144,14 +149,14 @@ def static String testMethod(String it) {
 	'''
 }
 
-def static String dbunitTestData(Service it) {
+def String dbunitTestData(Service it) {
 	fileOutput("dbunit/" + name + "Test.xml", OutputSlot::TO_RESOURCES_TEST, '''
-		«DbUnitTmpl::dbunitTestDataContent(it.module.application)»
+		«dbUnitTmpl.dbunitTestDataContent(it.module.application)»
 	'''
 	)
 }
 
-def static String serviceDependencyInjectionJUnit(Service it) {
+def String serviceDependencyInjectionJUnit(Service it) {
 	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
@@ -170,7 +175,7 @@ def static String serviceDependencyInjectionJUnit(Service it) {
 }
 
 /*This (String) is the name of the dependency */
-def static String serviceDependencyInjectionTestMethod(String it, Service service) {
+def String serviceDependencyInjectionTestMethod(String it, Service service) {
 	'''
 	public void test«it.toFirstUpper()»Setter() throws Exception {
 		Class clazz = «service.getServiceimplPackage()».«service.name»Impl.class;

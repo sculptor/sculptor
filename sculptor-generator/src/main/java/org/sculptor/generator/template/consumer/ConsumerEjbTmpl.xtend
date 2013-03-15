@@ -17,182 +17,188 @@
 
 package org.sculptor.generator.template.consumer
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.consumer.ConsumerEjbTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class ConsumerEjbTmpl {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
 
-/*Used for pure-ejb3, i.e. without spring */
-def static String messageBeanInterceptors(Consumer it) {
-	'''
-	@javax.interceptor.Interceptors({
-	«fw("errorhandling.ServiceContextStoreInterceptor")».class,
-		«fw("errorhandling.ErrorHandlingInterceptor")».class«IF jpa()»,
-		«module.getJpaFlushEagerInterceptorClass()».class}«ENDIF»)
-	'''
-}
+	private static val ConsumerTmpl consumerTmpl = GeneratorFactory::consumerTmpl
 
-/*Used for pure-ejb3, i.e. without spring */
-def static String messageBeanImplBase(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
-	«javaHeader()»
-	package «getConsumerPackage()»;
-
-	/**
-	 * Generated EJB MessageDrivenBean implementation of «name»
-	 * <p>
-	 * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
-	 * like this in jboss.xml:
-	 * <pre>
-	 *       &lt;message-driven&gt;
-	 *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
-	 *             &lt;resource-ref&gt;
-	 *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
-	 *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
-	 *             &lt;/resource-ref&gt;
-	 *             &lt;resource-ref&gt;
-	 *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
-	 *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
-	 *             &lt;/resource-ref&gt;
-	 *         &lt;/message-driven&gt;
-	 * </pre>
-	 *
-	 * <p>Make sure that subclass defines the following annotations:
-	 * <pre>
-	«messageBeanAnnotation(it)»
-	«messageBeanInterceptors(it)»
-	 * </pre>
-	 */
-	public abstract class «name + getSuffix("Impl")»Base ^extends «^abstractMessageBeanClass()» {
-	«ConsumerTmpl::serialVersionUID(it)»
-		public «name + getSuffix("Impl")»Base() {
-		}
-
-		«ConsumerTmpl::serviceDependencies(it)»
-		«ConsumerTmpl::repositoryDependencies(it)»
-
-		«jmsConnection(it)»
-		«invalidMessageQueue(it)»
-
-		«ConsumerTmpl::consumeMethodBase(it)»
-		
-		«ConsumerTmpl::consumerHook(it)»
-
+	/*Used for pure-ejb3, i.e. without spring */
+	def String messageBeanInterceptors(Consumer it) {
+		'''
+		@javax.interceptor.Interceptors({
+		«fw("errorhandling.ServiceContextStoreInterceptor")».class,
+			«fw("errorhandling.ErrorHandlingInterceptor")».class«IF jpa()»,
+			«module.getJpaFlushEagerInterceptorClass()».class}«ENDIF»)
+		'''
 	}
-	'''
-	)
-}
 
-def static String messageBeanAnnotation(Consumer it) {
-	'''
-	@javax.ejb.MessageDriven(name="«name.toFirstLower()»",
-	messageListenerInterface=javax.jms.MessageListener.class,
-	activationConfig =
-	{
-		@javax.ejb.ActivationConfigProperty(propertyName="destinationType",
-		propertyValue="javax.jms.Queue"),
-		@javax.ejb.ActivationConfigProperty(propertyName="destination",
-		propertyValue="«IF channel == null || channel == ""»queue/«name»Queue«ELSE»«channel»«ENDIF»")
-	})
-	'''
-}
+	/*Used for pure-ejb3, i.e. without spring */
+	def String messageBeanImplBase(Consumer it) {
+		fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
+		«javaHeader()»
+		package «getConsumerPackage()»;
 
-def static String jmsConnection(Consumer it) {
-	'''
-	@javax.annotation.Resource(name = "jms/QueueFactory")
-	private javax.jms.ConnectionFactory connectionFactory;
-	private javax.jms.Connection connection;
-	
+		/**
+		 * Generated EJB MessageDrivenBean implementation of «name»
+		 * <p>
+		 * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
+		 * like this in jboss.xml:
+		 * <pre>
+		 *       &lt;message-driven&gt;
+		 *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
+		 *             &lt;resource-ref&gt;
+		 *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
+		 *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
+		 *             &lt;/resource-ref&gt;
+		 *             &lt;resource-ref&gt;
+		 *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
+		 *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
+		 *             &lt;/resource-ref&gt;
+		 *         &lt;/message-driven&gt;
+		 * </pre>
+		 *
+		 * <p>Make sure that subclass defines the following annotations:
+		 * <pre>
+		«messageBeanAnnotation(it)»
+		«messageBeanInterceptors(it)»
+		 * </pre>
+		 */
+		public abstract class «name + getSuffix("Impl")»Base ^extends «^abstractMessageBeanClass()» {
+		«consumerTmpl.serialVersionUID(it)»
+			public «name + getSuffix("Impl")»Base() {
+			}
+
+			«consumerTmpl.serviceDependencies(it)»
+			«consumerTmpl.repositoryDependencies(it)»
+
+			«jmsConnection(it)»
+			«invalidMessageQueue(it)»
+
+			«consumerTmpl.consumeMethodBase(it)»
+			
+			«consumerTmpl.consumerHook(it)»
+
+		}
+		'''
+		)
+	}
+
+	def String messageBeanAnnotation(Consumer it) {
+		'''
+		@javax.ejb.MessageDriven(name="«name.toFirstLower()»",
+		messageListenerInterface=javax.jms.MessageListener.class,
+		activationConfig =
+		{
+			@javax.ejb.ActivationConfigProperty(propertyName="destinationType",
+			propertyValue="javax.jms.Queue"),
+			@javax.ejb.ActivationConfigProperty(propertyName="destination",
+			propertyValue="«IF channel == null || channel == ""»queue/«name»Queue«ELSE»«channel»«ENDIF»")
+		})
+		'''
+	}
+
+	def String jmsConnection(Consumer it) {
+		'''
+		@javax.annotation.Resource(name = "jms/QueueFactory")
+		private javax.jms.ConnectionFactory connectionFactory;
+		private javax.jms.Connection connection;
+
+			@Override
+			protected javax.jms.Connection getJmsConnection() {
+				try {
+					if (connection == null) {
+					    connection = connectionFactory.createConnection();
+					    connection.start();
+					}
+					return connection;
+				} catch (Exception e) {
+					getLog().error("Can't create JmsConnection: " + e.getMessage(), e);
+					return null;
+				}
+			}
+			
+			@javax.annotation.PreDestroy
+			public void ejbRemove() {
+				closeConnection();
+			}
+
 		@Override
-		protected javax.jms.Connection getJmsConnection() {
-			try {
-				if (connection == null) {
-				    connection = connectionFactory.createConnection();
-				    connection.start();
+			protected void closeConnection() {
+				try {
+					if (connection != null) {
+					    connection.close();
+					}
+				} catch (Exception ignore) {
+				} finally {
+					connection = null;
 				}
-				return connection;
-			} catch (Exception e) {
-				getLog().error("Can't create JmsConnection: " + e.getMessage(), e);
-				return null;
 			}
-		}
-		
-		@javax.annotation.PreDestroy
-		public void ejbRemove() {
-			closeConnection();
-		}
+		'''
+	}
 
-	@Override
-		protected void closeConnection() {
-			try {
-				if (connection != null) {
-				    connection.close();
-				}
-			} catch (Exception ignore) {
-			} finally {
-				connection = null;
+	def String invalidMessageQueue(Consumer it) {
+		'''
+		@javax.annotation.Resource(name = "jms/invalidMessageQueue")
+		private javax.jms.Queue invalidMessageQueue;
+
+		protected javax.jms.Destination getInvalidMessageQueue() {
+			return invalidMessageQueue;
+		}
+		'''
+	}
+
+	/*Used for pure-ejb3, i.e. without spring */
+	def String messageBeanImplSubclass(Consumer it) {
+		fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
+		«javaHeader()»
+		package «getConsumerPackage()»;
+
+		/**
+		 * EJB MessageDrivenBean implementation of «name».
+		 * <p>
+		 * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
+		 * like this in jboss.xml:
+		 * <pre>
+		 *       &lt;message-driven&gt;
+		 *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
+		 *             &lt;resource-ref&gt;
+		 *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
+		 *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
+		 *             &lt;/resource-ref&gt;
+		 *             &lt;resource-ref&gt;
+		 *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
+		 *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
+		 *             &lt;/resource-ref&gt;
+		 *         &lt;/message-driven&gt;
+		 * </pre>
+		 */
+		«messageBeanAnnotation(it)»
+		«messageBeanInterceptors(it)»
+		public class «name + getSuffix("Impl")» ^extends «name + getSuffix("Impl")»Base implements javax.jms.MessageListener {
+		«consumerTmpl.serialVersionUID(it)»
+			public «name + getSuffix("Impl")»() {
 			}
+
+			«consumerTmpl.otherDependencies(it)»
+
+		«consumerTmpl.consumeMethodSubclass(it)»
+
 		}
-	'''
-}
-
-def static String invalidMessageQueue(Consumer it) {
-	'''
-	@javax.annotation.Resource(name = "jms/invalidMessageQueue")
-	private javax.jms.Queue invalidMessageQueue;
-	
-	protected javax.jms.Destination getInvalidMessageQueue() {
-		return invalidMessageQueue;
+		'''
+		)
 	}
-	'''
-}
-
-/*Used for pure-ejb3, i.e. without spring */
-def static String messageBeanImplSubclass(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
-	«javaHeader()»
-	package «getConsumerPackage()»;
-
-	/**
-	 * EJB MessageDrivenBean implementation of «name».
-	 * <p>
-	 * You must define resource mapping ConnectionFactory and invalidMessageQueue, 
-	 * like this in jboss.xml:
-	 * <pre>
-	 *       &lt;message-driven&gt;
-	 *             &lt;ejb-name&gt;eventConsumer&lt;/ejb-name&gt;
-	 *             &lt;resource-ref&gt;
-	 *                 &lt;res-ref-name&gt;jms/QueueFactory&lt;/res-ref-name&gt;
-	 *                 &lt;jndi-name&gt;ConnectionFactory&lt;/jndi-name&gt;
-	 *             &lt;/resource-ref&gt;
-	 *             &lt;resource-ref&gt;
-	 *                 &lt;res-ref-name&gt;jms/invalidMessageQueue&lt;/res-ref-name&gt;
-	 *                 &lt;jndi-name&gt;queue/«module.application.name.toLowerCase()».invalidMessageQueue&lt;/jndi-name&gt;
-	 *             &lt;/resource-ref&gt;
-	 *         &lt;/message-driven&gt;
-	 * </pre>
-	 */
-	«messageBeanAnnotation(it)»
-	«messageBeanInterceptors(it)»
-	public class «name + getSuffix("Impl")» ^extends «name + getSuffix("Impl")»Base implements javax.jms.MessageListener {
-	«ConsumerTmpl::serialVersionUID(it)»
-		public «name + getSuffix("Impl")»() {
-		}
-
-		«ConsumerTmpl::otherDependencies(it)»
-
-	«ConsumerTmpl::consumeMethodSubclass(it)»
-
-	}
-	'''
-	)
-}
 
 }

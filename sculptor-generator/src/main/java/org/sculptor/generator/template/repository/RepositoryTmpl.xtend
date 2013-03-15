@@ -17,22 +17,29 @@
 
 package org.sculptor.generator.template.repository
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.PubSubTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.repository.RepositoryTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class RepositoryTmpl {
 
-def static String repository(Repository it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+	private static val PubSubTmpl pubSubTmpl = GeneratorFactory::pubSubTmpl
+	private static val AccessObjectFactoryTmpl accessObjectFactoryTmpl = GeneratorFactory::accessObjectFactoryTmpl
+
+def String repository(Repository it) {
 	'''
 		«repositoryInterface(it)»
 		«repositoryBase(it)»
@@ -45,7 +52,7 @@ def static String repository(Repository it) {
 	'''
 }
 
-def static String repositoryInterface(Repository it) {
+def String repositoryInterface(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
@@ -76,7 +83,7 @@ def static String repositoryInterface(Repository it) {
 	)
 }
 
-def static String repositoryBase(Repository it) {
+def String repositoryBase(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), OutputSlot::TO_GEN_SRC, '''
@@ -112,7 +119,7 @@ def static String repositoryBase(Repository it) {
 			@javax.ejb.Stateless(name="«name.toFirstLower()»")
 		«ENDIF»
 	«ENDIF»
-	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public «IF gapClass»abstract «ENDIF»class «name»«if (gapClass) "Base" else getSuffix("Impl")» «it.extendsLitteral()»
 		implements «aggregateRoot.module.getRepositoryapiPackage()».«name» {
 
@@ -150,19 +157,19 @@ def static String repositoryBase(Repository it) {
 	)
 }
 
-def static String accessObjectFactory(Repository it) {
+def String accessObjectFactory(Repository it) {
 	'''
-	«it.distinctOperations.filter(op | op.isGenericAccessObject()).map[op | AccessObjectFactoryTmpl::genericFactoryMethod(op)]»
-	«it.distinctOperations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | AccessObjectFactoryTmpl::factoryMethod(op)]»
-	«AccessObjectFactoryTmpl::getPersistentClass(it)»
+	«it.distinctOperations.filter(op | op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.genericFactoryMethod(op)]»
+	«it.distinctOperations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.factoryMethod(op)]»
+	«accessObjectFactoryTmpl.getPersistentClass(it)»
 	«IF mongoDb()»
-		«AccessObjectFactoryTmpl::getAdditionalDataMappers(it)»
-		«AccessObjectFactoryTmpl::ensureIndex(it)»
+		«accessObjectFactoryTmpl.getAdditionalDataMappers(it)»
+		«accessObjectFactoryTmpl.ensureIndex(it)»
 	«ENDIF»
 	'''
 }
 
-def static String entityManagerDependency(Repository it) {
+def String entityManagerDependency(Repository it) {
 	'''
 	@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
 	private javax.persistence.EntityManager entityManager;
@@ -181,7 +188,7 @@ def static String entityManagerDependency(Repository it) {
 	'''
 }
 
-def static String dbManagerDependency(Repository it) {
+def String dbManagerDependency(Repository it) {
 	'''
 	@org.springframework.beans.factory.annotation.Autowired
 	private «fw("accessimpl.mongodb.DbManager")» dbManager;
@@ -192,7 +199,7 @@ def static String dbManagerDependency(Repository it) {
 	'''
 }
 
-def static String daoSupportEntityManagerDependency(Repository it) {
+def String daoSupportEntityManagerDependency(Repository it) {
 	'''
 		private javax.persistence.EntityManager entityManager;
 
@@ -212,7 +219,7 @@ def static String daoSupportEntityManagerDependency(Repository it) {
 	'''
 }
 
-def static String repositoryDependencies(Repository it) {
+def String repositoryDependencies(Repository it) {
 	'''
 	«FOR dependency  : repositoryDependencies»
 		«IF isSpringToBeGenerated()»
@@ -230,7 +237,7 @@ def static String repositoryDependencies(Repository it) {
 	'''
 }
 
-def static String repositorySubclass(Repository it) {
+def String repositorySubclass(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
@@ -260,7 +267,7 @@ def static String repositorySubclass(Repository it) {
 	)
 }
 
-def static String otherDependencies(Repository it) {
+def String otherDependencies(Repository it) {
 	'''
 	«FOR dependency  : otherDependencies»
 	/**
@@ -280,7 +287,7 @@ def static String otherDependencies(Repository it) {
 	'''
 }
 
-def static String baseRepositoryMethod(RepositoryOperation it) {
+def String baseRepositoryMethod(RepositoryOperation it) {
 	val pagingParameter  = it.getPagingParameter()
 
 	'''
@@ -289,12 +296,12 @@ def static String baseRepositoryMethod(RepositoryOperation it) {
 	 */
 	«repositoryMethodAnnotation(it)»
 	«IF it.useGenericAccessStrategy()»
-		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | paramTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+		«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | paramTypeAndName(p)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 			return «name»(«it.parameters.map[paramTypeAndName(it)].join(",")», getPersistentClass());
 		}
-		«it.getVisibilityLitteral()» <R> «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")», Class<R> resultType) «ExceptionTmpl::throwsDecl(it)» {
+		«it.getVisibilityLitteral()» <R> «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")», Class<R> resultType) «exceptionTmpl.throwsDecl(it)» {
 	«ELSE»
-		«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+		«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 	«ENDIF»
 		«IF it.useGenericAccessStrategy()»
 			«IF name != "findByExample"»
@@ -350,7 +357,7 @@ def static String baseRepositoryMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String setCache(RepositoryOperation it) {
+def String setCache(RepositoryOperation it) {
 	'''
 		«IF it.hasHint("cache")»
 			ao.setCache(true);
@@ -358,7 +365,7 @@ def static String setCache(RepositoryOperation it) {
 	'''
 }
 
-def static String setOrdered(RepositoryOperation it) {
+def String setOrdered(RepositoryOperation it) {
 	'''
 		/*JPA2 supports multiple ordering columns, e.g. hint="orderBy=col1 asc, col2 desc" */
 		«IF isJpa2()»
@@ -376,7 +383,7 @@ def static String setOrdered(RepositoryOperation it) {
 	'''
 }
 
-def static String setQueryHint(RepositoryOperation it) {
+def String setQueryHint(RepositoryOperation it) {
 	'''
 		/*TODO: complete queryHint */
 		«IF it.hasHint("queryHint")»
@@ -385,20 +392,20 @@ def static String setQueryHint(RepositoryOperation it) {
 	'''
 }
 
-def static String genericBaseRepositoryMethod(RepositoryOperation it) {
+def String genericBaseRepositoryMethod(RepositoryOperation it) {
 	'''
 		/**
 		 * Delegates to {@link «genericAccessObjectInterface(name)»}
 		 */
 		«repositoryMethodAnnotation(it)»
 		«IF it.useGenericAccessStrategy()»
-			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 				return «name»(«FOR param : parameters SEPARATOR ","»«param.name»«ENDFOR»«IF it.hasParameters()»,«ENDIF»getPersistentClass());
 			}
 
-			«it.getVisibilityLitteral()» <R> «it.getGenericResultTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»«IF it.hasParameters()»,«ENDIF» Class<R> resultType) «ExceptionTmpl::throwsDecl(it)» {
+			«it.getVisibilityLitteral()» <R> «it.getGenericResultTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»«IF it.hasParameters()»,«ENDIF» Class<R> resultType) «exceptionTmpl.throwsDecl(it)» {
 		«ELSE»
-			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		«ENDIF»
 
 			/* TODO:implement a better solution */
@@ -446,12 +453,12 @@ def static String genericBaseRepositoryMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
+def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 	val pagingParameter = it.getPagingParameter()
 
 	'''
 	«repositoryMethodAnnotation(it)»
-	«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+	«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		«IF it.useGenericAccessStrategy()»
 			«genericAccessObjectInterface(name)»2«it.getGenericType()» ao = create«getAccessObjectName()»();
 		«ELSE»
@@ -495,7 +502,7 @@ def static String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String calculateMaxPages(RepositoryOperation it) {
+def String calculateMaxPages(RepositoryOperation it) {
 	val pagingParameter  = it.getPagingParameter()
 	val countOperationHint = it.getHint("countOperation")
 	val countQueryHint = it.getHint("countQuery")
@@ -570,7 +577,7 @@ def static String calculateMaxPages(RepositoryOperation it) {
 	'''
 }
 
-def static String findByNaturalKeys(RepositoryOperation it) {
+def String findByNaturalKeys(RepositoryOperation it) {
 	'''
 		«IF (name == "findByKeys") && repository.aggregateRoot.hasNaturalKey() »
 			«IF repository.aggregateRoot.getAllNaturalKeyAttributes().size == 1 && repository.aggregateRoot.getAllNaturalKeyReferences().isEmpty»
@@ -587,7 +594,7 @@ def static String findByNaturalKeys(RepositoryOperation it) {
 	'''
 }
 
-def static String findByNaturalKeys(RepositoryOperation it, Repository repository, String naturalKeyTypeName, String keyPropertyName) {
+def String findByNaturalKeys(RepositoryOperation it, Repository repository, String naturalKeyTypeName, String keyPropertyName) {
 	val fullAggregateRootName  = it.repository.aggregateRoot.getDomainPackage() + "." + repository.aggregateRoot.name
 	val naturalKeyObjectType  = naturalKeyTypeName.getObjectTypeName()
 	'''
@@ -613,7 +620,7 @@ def static String findByNaturalKeys(RepositoryOperation it, Repository repositor
 	'''
 }
 
-def static String findByKeysSpecialCase(RepositoryOperation it) {
+def String findByKeysSpecialCase(RepositoryOperation it) {
 	'''
 		«IF (name == "findByKeys") »
 			«IF !parameters.exists(p | p.name == "keyPropertyName") »
@@ -637,7 +644,7 @@ def static String findByKeysSpecialCase(RepositoryOperation it) {
 	'''
 }
 
-def static String findByKeySpecialCase(RepositoryOperation it) {
+def String findByKeySpecialCase(RepositoryOperation it) {
 	'''
 		«IF (name == "findByKey")»
 			«IF repository.aggregateRoot.hasNaturalKey() »
@@ -651,7 +658,7 @@ def static String findByKeySpecialCase(RepositoryOperation it) {
 	'''
 }
 
-def static String findByKeySpecialCase2(RepositoryOperation it) {
+def String findByKeySpecialCase2(RepositoryOperation it) {
 	'''
 		«IF (name == "findByKey") && repository.aggregateRoot.hasNaturalKey() »
 			«IF isJpa1() && isJpaProviderDataNucleus()»
@@ -663,7 +670,7 @@ def static String findByKeySpecialCase2(RepositoryOperation it) {
 	'''
 }
 
-def static String nullThrowsNotFoundExcpetion(RepositoryOperation it) {
+def String nullThrowsNotFoundExcpetion(RepositoryOperation it) {
 	'''
 		«IF it.hasNotFoundException()»
 		«val baseName  = it.repository.getRepositoryBaseName()»
@@ -674,15 +681,15 @@ def static String nullThrowsNotFoundExcpetion(RepositoryOperation it) {
 	'''
 }
 
-def static String interfaceRepositoryMethod(RepositoryOperation it) {
+def String interfaceRepositoryMethod(RepositoryOperation it) {
 	'''
 		«it.formatJavaDoc()»
-		public «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)»;
+		public «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 		«findByNaturalKeysInterfaceRepositoryMethod(it) »
 	'''
 }
 
-def static String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation it) {
+def String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation it) {
 	'''
 		«IF (name == "findByKeys") && repository.aggregateRoot.hasNaturalKey()»
 			«IF repository.aggregateRoot.getAllNaturalKeyAttributes().size == 1 && repository.aggregateRoot.getAllNaturalKeyReferences().isEmpty»
@@ -696,7 +703,7 @@ def static String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation
 	'''
 }
 
-def static String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation it, String naturalKeyTypeName) {
+def String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation it, String naturalKeyTypeName) {
 	'''
 		«IF (name == "findByKeys") && repository.aggregateRoot.hasNaturalKey()»
 		«val fullAggregateRootName  = it.repository.aggregateRoot.getDomainPackage() + "." + repository.aggregateRoot.name»
@@ -709,13 +716,13 @@ def static String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation
 	'''
 }
 
-def static String abstractBaseRepositoryMethod(RepositoryOperation it) {
+def String abstractBaseRepositoryMethod(RepositoryOperation it) {
 	'''
-		«it.getVisibilityLitteral()»abstract «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)»;
+		«it.getVisibilityLitteral()»abstract «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
-def static String finderMethod(RepositoryOperation it) {
+def String finderMethod(RepositoryOperation it) {
 	'''
 		«IF it.isQueryBased()»
 			«queryBasedFinderMethod(it)»
@@ -725,10 +732,10 @@ def static String finderMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String queryBasedFinderMethod(RepositoryOperation it) {
+def String queryBasedFinderMethod(RepositoryOperation it) {
 	'''
 			«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»)
-			«ExceptionTmpl::throwsDecl(it)» {
+			«exceptionTmpl.throwsDecl(it)» {
 			«IF it.hasParameters()»
 				java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
 				«FOR param : parameters.filter(e|!e.isPagingParameter())»
@@ -753,10 +760,10 @@ def static String queryBasedFinderMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String conditionBasedFinderMethod(RepositoryOperation it) {
+def String conditionBasedFinderMethod(RepositoryOperation it) {
 	'''
 			«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»)
-			«ExceptionTmpl::throwsDecl(it)» {
+			«exceptionTmpl.throwsDecl(it)» {
 			java.util.List<«fw("accessapi.ConditionalCriteria")»> condition =
 				«fw("accessapi.ConditionalCriteriaBuilder")».criteriaFor(«it.getAggregateRootTypeName()».class)
 				    «toConditionalCriteria(it.buildConditionalCriteria(), it.getAggregateRootTypeName())»
@@ -793,7 +800,7 @@ def static String conditionBasedFinderMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String throwNotFoundException(RepositoryOperation it) {
+def String throwNotFoundException(RepositoryOperation it) {
 	'''
 		«IF it.throwsNotFoundException()»
 			if (result == null «IF collectionType != null» || result.isEmpty()«ENDIF») {
@@ -803,7 +810,7 @@ def static String throwNotFoundException(RepositoryOperation it) {
 	'''
 }
 
-def static String subclassRepositoryMethod(RepositoryOperation it) {
+def String subclassRepositoryMethod(RepositoryOperation it) {
 	'''
 		«repositoryMethodAnnotation(it)»
 		«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») {
@@ -825,7 +832,7 @@ def static String subclassRepositoryMethod(RepositoryOperation it) {
 }
 
 
-def static String repositoryDependencyInjectionJUnit(Repository it) {
+def String repositoryDependencyInjectionJUnit(Repository it) {
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
@@ -844,7 +851,7 @@ def static String repositoryDependencyInjectionJUnit(Repository it) {
 }
 
 /*This (String) is the name of the dependency */
-def static String repositoryDependencyInjectionTestMethod(String it, Repository repository) {
+def String repositoryDependencyInjectionTestMethod(String it, Repository repository) {
 	'''
 		public void test«it.toFirstUpper()»Setter() throws Exception {
 			Class clazz = «repository.aggregateRoot.module.getRepositoryimplPackage()».«repository.name + getSuffix("Impl")».class;
@@ -879,34 +886,34 @@ def static String repositoryDependencyInjectionTestMethod(String it, Repository 
 	'''
 }
 
-def static String paramTypeAndName(Parameter it) {
+def String paramTypeAndName(Parameter it) {
 	'''
 	«it.getTypeName()» «name»
 	'''
 }
 
 /*Extension point to generate more stuff in repository interface.
-	Use AROUND RepositoryTmpl::repositoryInterfaceHook FOR Repository
+	Use AROUND repositoryTmpl.repositoryInterfaceHook FOR Repository
 	in SpecialCases.xpt */
-def static String repositoryInterfaceHook(Repository it) {
+def String repositoryInterfaceHook(Repository it) {
 	'''
 	'''
 }
 
 /*Extension point to generate more stuff in repository implementation.
-	Use AROUND RepositoryTmpl::repositoryHook FOR Repository
+	Use AROUND repositoryTmpl.repositoryHook FOR Repository
 	in SpecialCases.xpt */
-def static String repositoryHook(Repository it) {
+def String repositoryHook(Repository it) {
 	'''
 	'''
 }
 
 /*Extension point to generate annotations for repository methods.
-	Use AROUND RepositoryTmpl::repositoryMethodAnnotation FOR RepositoryOperation
+	Use AROUND repositoryTmpl.repositoryMethodAnnotation FOR RepositoryOperation
 	in SpecialCases.xpt */
-def static String repositoryMethodAnnotation(RepositoryOperation it) {
+def String repositoryMethodAnnotation(RepositoryOperation it) {
 	'''
-	«IF publish != null»«PubSubTmpl::publishAnnotation(it.publish)»«ENDIF»
+	«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
 	'''
 }
 }

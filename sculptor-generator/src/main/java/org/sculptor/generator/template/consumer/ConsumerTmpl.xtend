@@ -17,24 +17,33 @@
 
 package org.sculptor.generator.template.consumer
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.PubSubTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.consumer.ConsumerTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class ConsumerTmpl {
 
-def static String consumer(Consumer it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val PubSubTmpl pubSubTmpl = GeneratorFactory::pubSubTmpl
+	private static val ConsumerEjbTmpl consumerEjbTmpl = GeneratorFactory::consumerEjbTmpl
+	private static val ConsumerEjbTestTmpl consumerEjbTestTmpl = GeneratorFactory::consumerEjbTestTmpl
+	private static val ConsumerTestTmpl consumerTestTmpl = GeneratorFactory::consumerTestTmpl
+
+def String consumer(Consumer it) {
 	'''
 	«IF pureEjb3()»
-		«ConsumerEjbTmpl::messageBeanImplBase(it)»
-			«ConsumerEjbTmpl::messageBeanImplSubclass(it)»
+		«consumerEjbTmpl.messageBeanImplBase(it)»
+			«consumerEjbTmpl.messageBeanImplSubclass(it)»
 	«ELSE»
 		«consumerInterface(it)»
 		«eventConsumerImplBase(it)»
@@ -43,22 +52,22 @@ def static String consumer(Consumer it) {
 		
 		«IF isTestToBeGenerated()»
 	    «IF pureEjb3()»
-	    	«ConsumerEjbTestTmpl::consumerJUnitOpenEjb(it)»
+	    	«consumerEjbTestTmpl.consumerJUnitOpenEjb(it)»
 	    «ELSEIF applicationServer() == "appengine"»
 	    	/*TODO */
 	    «ELSEIF mongoDb()»
 	    	/*TODO */
 	    «ELSE»
-		    «ConsumerTestTmpl::consumerJUnitWithAnnotations(it)»
+		    «consumerTestTmpl.consumerJUnitWithAnnotations(it)»
 		«ENDIF»
 		«IF isDbUnitTestDataToBeGenerated()»
-			«ConsumerTestTmpl::dbunitTestData(it)»
+			«consumerTestTmpl.dbunitTestData(it)»
 		«ENDIF»
 	«ENDIF»
 	'''
 }
 
-def static String consumerInterface(Consumer it) {
+def String consumerInterface(Consumer it) {
 	fileOutput(javaFileName(getConsumerPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -71,7 +80,7 @@ def static String consumerInterface(Consumer it) {
 }
 
 
-def static String eventConsumerImplBase(Consumer it) {
+def String eventConsumerImplBase(Consumer it) {
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -90,7 +99,7 @@ def static String eventConsumerImplBase(Consumer it) {
 	«ELSE »
 		«it.formatJavaDoc()»
 	«ENDIF »
-	«IF subscribe != null»«PubSubTmpl::subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public abstract class «name»ImplBase implements «name» {
 
 		public final static String BEAN_ID = "«name.toFirstLower()»";
@@ -109,7 +118,7 @@ def static String eventConsumerImplBase(Consumer it) {
 }
 
 
-def static String eventConsumerImplSubclass(Consumer it) {
+def String eventConsumerImplSubclass(Consumer it) {
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -134,7 +143,7 @@ def static String eventConsumerImplSubclass(Consumer it) {
 	)
 }
 
-def static String receiveMethodSubclass(Consumer it) {
+def String receiveMethodSubclass(Consumer it) {
 	'''
 	public void receive(«fw("event.Event")» event) {
 		// TODO Auto-generated method stub
@@ -143,7 +152,7 @@ def static String receiveMethodSubclass(Consumer it) {
 	'''
 }
 
-def static String serviceDependencies(Consumer it) {
+def String serviceDependencies(Consumer it) {
 	'''
 	«FOR serviceDependency  : serviceDependencies»
 		«IF isSpringToBeGenerated()»
@@ -161,7 +170,7 @@ def static String serviceDependencies(Consumer it) {
 	'''
 }
 
-def static String repositoryDependencies(Consumer it) {
+def String repositoryDependencies(Consumer it) {
 	'''
 	«FOR repositoryDependency  : repositoryDependencies»
 		«IF isSpringToBeGenerated()»
@@ -179,7 +188,7 @@ def static String repositoryDependencies(Consumer it) {
 	'''
 }
 
-def static String otherDependencies(Consumer it) {
+def String otherDependencies(Consumer it) {
 	'''
 	«FOR dependency  : otherDependencies»
 		/**
@@ -200,7 +209,7 @@ def static String otherDependencies(Consumer it) {
 	'''
 }
 
-def static String consumeMethodBase(Consumer it) {
+def String consumeMethodBase(Consumer it) {
 	'''
 	«IF messageRoot != null»
 		public String consume(String textMessage)
@@ -216,7 +225,7 @@ def static String consumeMethodBase(Consumer it) {
 	'''
 }
 
-def static String consumeMethodSubclass(Consumer it) {
+def String consumeMethodSubclass(Consumer it) {
 	'''
 	«IF messageRoot == null»
 		public String consume(String textMessage) throws «applicationExceptionClass()» {
@@ -239,16 +248,16 @@ def static String consumeMethodSubclass(Consumer it) {
 }
 
 /*TODO move to common template */
-def static String serialVersionUID(Consumer it) {
+def String serialVersionUID(Consumer it) {
 	'''
 		private static final long serialVersionUID = 1L;
 	'''
 }
 
 /*Extension point to generate more stuff in consumer implementation.
-	User AROUND ConsumerTmpl::consumerHook FOR Consumer
+	User AROUND consumerTmpl.consumerHook FOR Consumer
 	in SpecialCases.xpt */
-def static String consumerHook(Consumer it) {
+def String consumerHook(Consumer it) {
 	'''
 	'''
 }

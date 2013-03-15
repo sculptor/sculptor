@@ -17,27 +17,32 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.DomainObject
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.domain.DomainObjectAttributeTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class DomainObjectAttributeTmpl {
 
-def static String attribute(Attribute it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val DomainObjectAttributeAnnotationTmpl domainObjectAttributeAnnotationTmpl = GeneratorFactory::domainObjectAttributeAnnotationTmpl
+
+def String attribute(Attribute it) {
 	'''
 		«attribute(it, true)»
 	'''
 }
 
-def static String attribute(Attribute it, boolean annotations) {
+def String attribute(Attribute it, boolean annotations) {
 	'''
 		«IF annotations»
-			«DomainObjectAttributeAnnotationTmpl::attributeAnnotations(it)»
+			«domainObjectAttributeAnnotationTmpl.attributeAnnotations(it)»
 		«ENDIF»
 		private «IF transient»transient «ENDIF»«it.getTypeName()» «name»«IF collectionType != null» = new «it.getImplTypeName()»()«ENDIF»«attributeDefaultValue(it)»;
 	'''
@@ -46,12 +51,12 @@ def static String attribute(Attribute it, boolean annotations) {
 /*Possibility to overwrite and set custom default initialization for some attributes,
 	e.g. using hint. Note that you must include =.
  */
-def static String attributeDefaultValue(Attribute it) {
+def String attributeDefaultValue(Attribute it) {
 	'''
 	'''
 }
 
-def static String propertyAccessors(Attribute it) {
+def String propertyAccessors(Attribute it) {
 	'''
 		«propertyGetter(it)»
 		«IF name == "id" && it.getDomainObject().isPersistent()»
@@ -66,17 +71,17 @@ def static String propertyAccessors(Attribute it) {
 	'''
 }
 
-def static String propertyGetter(Attribute it) {
+def String propertyGetter(Attribute it) {
 	'''
 		«propertyGetter(it, true)»
 	'''
 }
 
-def static String propertyGetter(Attribute it, boolean annotations) {
+def String propertyGetter(Attribute it, boolean annotations) {
 	'''
 		«it.formatJavaDoc()»
 		«IF annotations»
-			«DomainObjectAttributeAnnotationTmpl::propertyGetterAnnotations(it)»
+			«domainObjectAttributeAnnotationTmpl.propertyGetterAnnotations(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getTypeName()» «it.getGetAccessor()»() {
 			«IF isJpaProviderAppEngine() && collectionType != null && it.getDomainObject().isPersistent() »
@@ -90,11 +95,11 @@ def static String propertyGetter(Attribute it, boolean annotations) {
 	'''
 }
 
-def static String propertySetter(Attribute it) {
+def String propertySetter(Attribute it) {
 	'''
 		«IF it.isSetterNeeded()»
 			«it.formatJavaDoc()»
-			«DomainObjectAttributeAnnotationTmpl::propertySetterAnnotations(it)»
+			«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 			«it.getVisibilityLitteralSetter()»void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 				«IF isFullyAuditable() && !transient»
 				receiveInternalAuditHandler().recordChange(«it.getDomainObject().name»Properties.«name»(), this.«name», «name»);
@@ -105,7 +110,7 @@ def static String propertySetter(Attribute it) {
 	'''
 }
 
-def static String notChangeablePropertySetter(Attribute it) {
+def String notChangeablePropertySetter(Attribute it) {
 	'''
 		«IF it.isSetterNeeded()»
 		«IF notChangeablePropertySetterVisibility() == "private"»
@@ -113,7 +118,7 @@ def static String notChangeablePropertySetter(Attribute it) {
 		«ELSE»
 		«notChangeablePropertySetterJavaDoc(it) »
 		«ENDIF »
-		«DomainObjectAttributeAnnotationTmpl::propertySetterAnnotations(it)»
+		«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 		«notChangeablePropertySetterVisibility()» void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			if ((this.«name» != null) && !this.«name».equals(«name»)) {
 				throw new IllegalArgumentException("Not allowed to change the «name» property.");
@@ -124,7 +129,7 @@ def static String notChangeablePropertySetter(Attribute it) {
 	'''
 }
 
-def static String notChangeablePrimitivePropertySetter(Attribute it) {
+def String notChangeablePrimitivePropertySetter(Attribute it) {
 	'''
 		«IF it.isSetterNeeded()»
 			«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
@@ -136,7 +141,7 @@ def static String notChangeablePrimitivePropertySetter(Attribute it) {
 			«ELSE»
 				«notChangeablePropertySetterJavaDoc(it) »
 			«ENDIF »
-			«DomainObjectAttributeAnnotationTmpl::propertySetterAnnotations(it)»
+			«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 			«notChangeablePropertySetterVisibility()» void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 				if (this.«name»IsSet && (this.«name» != «name»)) {
 					throw new IllegalArgumentException("Not allowed to change the «name» property.");
@@ -148,7 +153,7 @@ def static String notChangeablePrimitivePropertySetter(Attribute it) {
 	'''
 }
 
-def static String notChangeablePropertySetterJavaDoc(Attribute it) {
+def String notChangeablePropertySetterJavaDoc(Attribute it) {
 	'''
 		/**
 			* This property can't be changed. Use constructor to assign value.
@@ -158,13 +163,13 @@ def static String notChangeablePropertySetterJavaDoc(Attribute it) {
 	'''
 }
 
-def static String idPropertySetter(Attribute it) {
+def String idPropertySetter(Attribute it) {
 	'''
 		/**
 			* The id is not intended to be changed or assigned manually, but
 			* for test purpose it is allowed to assign the id.
 			*/
-		«DomainObjectAttributeAnnotationTmpl::propertySetterAnnotations(it)»
+		«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 		protected void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			if ((this.«name» != null) && !this.«name».equals(«name»)) {
 				throw new IllegalArgumentException("Not allowed to change the id property.");
@@ -174,7 +179,7 @@ def static String idPropertySetter(Attribute it) {
 	'''
 }
 
-def static String uuidAccessor(DomainObject it) {
+def String uuidAccessor(DomainObject it) {
 	'''
 		/**
 		 * This domain object doesn't have a natural key
@@ -182,7 +187,7 @@ def static String uuidAccessor(DomainObject it) {
 		 * unique identifier for this domain object.
 		 */
 		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-			«DomainObjectAttributeAnnotationTmpl::jpaAnnotations(attributes.findFirst(e|e.isUuid()))»
+			«domainObjectAttributeAnnotationTmpl.jpaAnnotations(attributes.findFirst(e|e.isUuid()))»
 		«ENDIF»
 		public String getUuid() {
 			// lazy init of UUID

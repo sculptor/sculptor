@@ -21,20 +21,20 @@ import java.util.Collection
 import sculptormetamodel.Application
 import sculptormetamodel.Module
 import sculptormetamodel.Attribute
-
-import static org.sculptor.generator.util.PropertiesBase.*
+import org.sculptor.generator.util.PropertiesBase
 
 class Properties {
+	extension PropertiesBase propBase = GeneratorFactory::propertiesBase
 
-	def static boolean getBooleanProperty(String propertyName) {
+	def boolean getBooleanProperty(String propertyName) {
 		getProperty(propertyName).toLowerCase() == "true";
 	}
 
-	def static String getProperty(String propertyName, String defaultValue) {
+	def String getProperty(String propertyName, String defaultValue) {
 		if (hasProperty(propertyName)) getProperty(propertyName) else defaultValue;
 	}
 
-	def static String fw(String fwClassName) {
+	def String fw(String fwClassName) {
 		val propName = "framework." + fwClassName
 
 		if (hasProperty(propName))
@@ -43,7 +43,7 @@ class Properties {
 			"org.sculptor." + propName
 	}
 
-	def static String defaultExtendsClass(String typeName) {
+	def String defaultExtendsClass(String typeName) {
 		val propName = typeName.toFirstLower() + ".extends"
 		if (hasProperty(propName))
 			getProperty(propName)
@@ -51,73 +51,73 @@ class Properties {
 			"";
 	}
 
-	def static String abstractDomainObjectClass() {
+	def String abstractDomainObjectClass() {
 		fw("domain.AbstractDomainObject");
 	}
 
-	def static String consumerInterface() {
+	def String consumerInterface() {
 		fw("event.EventSubscriber");
 	}
 
-	def static String abstractMessageBeanClass() {
+	def String abstractMessageBeanClass() {
 		fw("consumer.AbstractMessageBean2");
 	}
 
-	def static String serviceContextClass() {
+	def String serviceContextClass() {
 		fw("errorhandling.ServiceContext");
 	}
 
-	def static String serviceContextStoreAdviceClass() {
+	def String serviceContextStoreAdviceClass() {
 		fw("errorhandling.ServiceContextStoreAdvice");
 	}
 
-	def static String serviceContextStoreClass() {
+	def String serviceContextStoreClass() {
 		fw("errorhandling.ServiceContextStore");
 	}
 
-	def static String serviceContextServletFilterClass() {
+	def String serviceContextServletFilterClass() {
 		fw("errorhandling.ServiceContextServletFilter");
 	}
 
-	def static String servletContainerServiceContextFactoryClass() {
+	def String servletContainerServiceContextFactoryClass() {
 		fw("errorhandling.ServletContainerServiceContextFactory");
 	}
 
-	def static String auditInterceptorClass() {
+	def String auditInterceptorClass() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditInterceptor")
 		else 
 			fw("domain.AuditInterceptor")
 	}
 
-	def static String auditableInterface() {
+	def String auditableInterface() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditable")
 		else
 			fw("domain.Auditable");
 	}
 
-	def static String identifiableInterface() {
+	def String identifiableInterface() {
 		fw("domain.Identifiable");
 	}
 
-	def static String applicationExceptionClass() {
+	def String applicationExceptionClass() {
 		fw("errorhandling.ApplicationException");
 	}
 
-	def static String systemExceptionClass() {
+	def String systemExceptionClass() {
 		fw("errorhandling.SystemException");
 	}
 
-	def static String accessBaseWithExceptionClass() {
+	def String accessBaseWithExceptionClass() {
 		fw("accessimpl.AccessBaseWithException");
 	}
 
-	def static String accessBaseClass() {
+	def String accessBaseClass() {
 		fw("accessimpl.AccessBase");
 	}
 
-	def static String genericAccessObjectInterface(String name) {
+	def String genericAccessObjectInterface(String name) {
 		val apiName = name.toFirstUpper() + "Access"
 
 		if (hasProperty("framework.accessapi." + apiName))
@@ -132,7 +132,7 @@ class Properties {
 	// Configuration of access object is pretty flexible.
 	// It is documented in default-sculptor-generator.properties
 	// and in Developer's Guide.
-	def static String genericAccessObjectImplementation(String name) {
+	def String genericAccessObjectImplementation(String name) {
 		val jpa = isJpaAnnotationToBeGenerated()
 		val hibernate = (!jpa || isJpaProviderHibernate()) && !isJpa2()
 
@@ -146,7 +146,7 @@ class Properties {
 				mapGenericAccessObjectImplementationPrefix(jpa, hibernate, spring) + implName
 	}
 
-	def private static String mapGenericAccessObjectImplementationPrefix(boolean jpa, boolean hibernate, boolean spring) {
+	def private String mapGenericAccessObjectImplementationPrefix(boolean jpa, boolean hibernate, boolean spring) {
 		if (hasProperty("framework.accessimpl.prefix"))
 			getProperty("framework.accessimpl.prefix")
 		else
@@ -155,7 +155,7 @@ class Properties {
 			(if (spring) "Sp" else "")
 	}
 
-	def private static String mapGenericAccessObjectImplementationPackage(boolean jpa, boolean hibernate, boolean spring) {
+	def private String mapGenericAccessObjectImplementationPackage(boolean jpa, boolean hibernate, boolean spring) {
 		if (hasProperty("framework.accessimpl.package"))
 			getProperty("framework.accessimpl.package")
 		else {
@@ -168,201 +168,201 @@ class Properties {
 	}
 
 	// Attributes defined by system that should appear last in attribute listings, such as in DDL
-	def static Collection<String> getSystemAttributesToPutLast() {
+	def Collection<String> getSystemAttributesToPutLast() {
 		getProperty("systemAttributesToPutLast").split(",");
 	}
 
-	def static String databaseTestCaseClass() {
+	def String databaseTestCaseClass() {
 		fw("util.db.IsolatedDatabaseTestCase");
 	}
 
-	def static String fakeObjectInstantiatorClass() {
+	def String fakeObjectInstantiatorClass() {
 		fw("util.FakeObjectInstantiator");
 	}
 
-	def static String enumUserTypeClass() {
+	def String enumUserTypeClass() {
 		fw("accessimpl.GenericEnumUserType");
 	}
 
-	def static String jpaFlowExecutionListenerListenerClass() {
+	def String jpaFlowExecutionListenerListenerClass() {
 	if (isJpaProviderEclipseLink() || isJpaProviderDataNucleus())
 			fw("web.jpa.JpaFlowExecutionListener")
 		else
 			"org.springframework.webflow.persistence.JpaFlowExecutionListener";
 	}
 
-	def static String openHibernateSessionInConversationListenerClass() {
+	def String openHibernateSessionInConversationListenerClass() {
 		fw("web.hibernate.OpenHibernateSessionInConversationListener");
 	}
 
-	def static String disconnectHibernateInterceptor() {
+	def String disconnectHibernateInterceptor() {
 		fw("web.hibernate.DisconnectHibernateInterceptor");
 	}
 
-	def static String webExceptionUtilClass() {
+	def String webExceptionUtilClass() {
 		fw("web.errorhandling.ExceptionUtil");
 	}
 
-	def static String webExceptionAdviceClass() {
+	def String webExceptionAdviceClass() {
 		fw("web.errorhandling.ExceptionAdvice");
 	}
 
-	def static String conversationDomainObjectRepositoryInterface() {
+	def String conversationDomainObjectRepositoryInterface() {
 		fw("web.hibernate.ConversationDomainObjectRepository");
 	}
 
-	def static String conversationDomainObjectJpaRepositoryImplClass() {
+	def String conversationDomainObjectJpaRepositoryImplClass() {
 		fw("web.jpa.ConversationDomainObjectJpaRepositoryImpl");
 	}
 
-	def static String optionEditorClass() {
+	def String optionEditorClass() {
 		fw("propertyeditor.OptionEditor");
 	}
 
-	def static String optionClass() {
+	def String optionClass() {
 		fw("propertyeditor.Option");
 	}
 
-	def static String enumEditorClass() {
+	def String enumEditorClass() {
 		fw("propertyeditor.EnumEditor");
 	}
 
-	def static String cacheProvider() {
+	def String cacheProvider() {
 		getProperty("cache.provider");
 	}
 
-	def static Boolean pureEjb3() {
+	def Boolean pureEjb3() {
 		hasProjectNature("pure-ejb3");
 	}
 
-	def static Boolean isEar() {
+	def Boolean isEar() {
 		getProperty("deployment.type") == "ear";
 	}
 
-	def static Boolean isWar() {
+	def Boolean isWar() {
 		getProperty("deployment.type") == "war";
 	}
 
-	def static Boolean isRunningInServletContainer() {
+	def Boolean isRunningInServletContainer() {
 		applicationServer() == "tomcat" || applicationServer() == "jetty";
 	}
 
-	def static String applicationServer() {
+	def String applicationServer() {
 		getProperty("deployment.applicationServer").toLowerCase();
 	}
 
-	def static String notChangeablePropertySetterVisibility() {
+	def String notChangeablePropertySetterVisibility() {
 		getProperty("notChangeablePropertySetter.visibility");
 	}
 
-	def static String notChangeableReferenceSetterVisibility() {
+	def String notChangeableReferenceSetterVisibility() {
 		getProperty("notChangeableReferenceSetter.visibility");
 	}
 
-	def static boolean isGuiDefaultsToBeCreated() {
+	def boolean isGuiDefaultsToBeCreated() {
 		getBooleanProperty("gui.createDefaults");
 	}
 
-	def static boolean isJSFCrudGuiToBeGenerated() {
+	def boolean isJSFCrudGuiToBeGenerated() {
 		getBooleanProperty("generate.jsfCrudGui");
 	}
 
-	def static boolean isRcpCrudGuiToBeGenerated() {
+	def boolean isRcpCrudGuiToBeGenerated() {
 		getBooleanProperty("generate.rcpCrudGui");
 	}
 
-	def static boolean isRapCrudGuiToBeGenerated() {
+	def boolean isRapCrudGuiToBeGenerated() {
 		getBooleanProperty("generate.rapCrudGui");
 	}
 
-	def static boolean isBuilderToBeGenerated() {
+	def boolean isBuilderToBeGenerated() {
 		getBooleanProperty("generate.domainObject.builder");
 	}
 
-	def static boolean isDomainObjectToBeGenerated() {
+	def boolean isDomainObjectToBeGenerated() {
 		getBooleanProperty("generate.domainObject");
 	}
 
-	def static boolean isDomainObjectCompositeKeyClassToBeGenerated() {
+	def boolean isDomainObjectCompositeKeyClassToBeGenerated() {
 		getBooleanProperty("generate.domainObject.compositeKeyClass");
 	}
 
-	def static boolean isExceptionToBeGenerated() {
+	def boolean isExceptionToBeGenerated() {
 		getBooleanProperty("generate.exception");
 	}
 
-	def static boolean isRepositoryToBeGenerated() {
+	def boolean isRepositoryToBeGenerated() {
 		getBooleanProperty("generate.repository");
 	}
 
-	def static boolean isServiceToBeGenerated() {
+	def boolean isServiceToBeGenerated() {
 		getBooleanProperty("generate.service");
 	}
 
-	def static boolean isServiceProxyToBeGenerated() {
+	def boolean isServiceProxyToBeGenerated() {
 		getBooleanProperty("generate.service.proxy");
 	}
 
-	def static boolean isResourceToBeGenerated() {
+	def boolean isResourceToBeGenerated() {
 		getBooleanProperty("generate.resource");
 	}
 
-	def static boolean isRestWebToBeGenerated() {
+	def boolean isRestWebToBeGenerated() {
 		getBooleanProperty("generate.restWeb");
 	}
 
-	def static boolean isSpringRemotingToBeGenerated() {
+	def boolean isSpringRemotingToBeGenerated() {
 		getBooleanProperty("generate.springRemoting");
 	}
 
-	def static String getSpringRemotingType() {
+	def String getSpringRemotingType() {
 		if (isSpringRemotingToBeGenerated())
 			getProperty("spring.remoting.type").toLowerCase()
 		else
 			"N/A";
 	}
 
-	def static boolean isConsumerToBeGenerated() {
+	def boolean isConsumerToBeGenerated() {
 		getBooleanProperty("generate.consumer");
 	}
 
-	def static boolean isSpringToBeGenerated() {
+	def boolean isSpringToBeGenerated() {
 		getBooleanProperty("generate.spring");
 	}
 
-	def static boolean isHibernateToBeGenerated() {
+	def boolean isHibernateToBeGenerated() {
 		getBooleanProperty("generate.hibernate");
 	}
 
-	def static boolean isDdlToBeGenerated() {
+	def boolean isDdlToBeGenerated() {
 		getBooleanProperty("generate.ddl");
 	}
 
-	def static boolean isDdlDropToBeGenerated() {
+	def boolean isDdlDropToBeGenerated() {
 		getBooleanProperty("generate.ddl.drop");
 	}
 
-	def static boolean isDatasourceToBeGenerated() {
+	def boolean isDatasourceToBeGenerated() {
 		getBooleanProperty("generate.datasource");
 	}
 
-	def static boolean isLogbackConfigToBeGenerated() {
+	def boolean isLogbackConfigToBeGenerated() {
 		getBooleanProperty("generate.logbackConfig");
 	}
 
-	def static boolean isTestToBeGenerated() {
+	def boolean isTestToBeGenerated() {
 		getBooleanProperty("generate.test");
 	}
 
-	def static boolean isDbUnitTestDataToBeGenerated() {
+	def boolean isDbUnitTestDataToBeGenerated() {
 		getBooleanProperty("generate.test.dbunitTestData");
 	}
 
-	def static boolean isEmptyDbUnitTestDataToBeGenerated() {
+	def boolean isEmptyDbUnitTestDataToBeGenerated() {
 		getBooleanProperty("generate.test.emptyDbunitTestData");
 	}
 
-	def static boolean isModuleToBeGenerated(String moduleName) {
+	def boolean isModuleToBeGenerated(String moduleName) {
 		val propertyName = "generate.module." + moduleName;
 		if (hasProperty(propertyName))
 			getBooleanProperty(propertyName)
@@ -370,42 +370,42 @@ class Properties {
 			true;
 	}
 
-	def static String getDbUnitDataSetFile() {
+	def String getDbUnitDataSetFile() {
 		if (hasProperty("test.dbunit.dataSetFile"))
 			getProperty("test.dbunit.dataSetFile")
 		else
 			null;
 	}
 
-	def static boolean isServiceContextToBeGenerated() {
+	def boolean isServiceContextToBeGenerated() {
 		getBooleanProperty("generate.serviceContext");
 	}
 
-	def static boolean isAuditableToBeGenerated() {
+	def boolean isAuditableToBeGenerated() {
 		getBooleanProperty("generate.auditable");
 	}
 
-	def static boolean isUMLToBeGenerated() {
+	def boolean isUMLToBeGenerated() {
 		getBooleanProperty("generate.umlgraph");
 	}
 
-	def static boolean isModelDocToBeGenerated() {
+	def boolean isModelDocToBeGenerated() {
 		getBooleanProperty("generate.modeldoc");
 	}
 
-	def static boolean isOptimisticLockingToBeGenerated() {
+	def boolean isOptimisticLockingToBeGenerated() {
 		getBooleanProperty("generate.optimisticLocking");
 	}
 
-	def static boolean isPubSubToBeGenerated() {
+	def boolean isPubSubToBeGenerated() {
 		getBooleanProperty("generate.pubSub");
 	}
 
-	def static boolean isGapClassToBeGenerated() {
+	def boolean isGapClassToBeGenerated() {
 		getBooleanProperty("generate.gapClass");
 	}
 
-	def static boolean isGapClassToBeGenerated(String module, String clazz) {
+	def boolean isGapClassToBeGenerated(String module, String clazz) {
 		if (hasProperty("generate.gapClass." + module + "." + clazz))
 			getBooleanProperty("generate.gapClass." + module + "." + clazz)
 		else if (hasProperty("generate.gapClass." + clazz))
@@ -414,251 +414,251 @@ class Properties {
 			isGapClassToBeGenerated();
 	}
 
-	def static boolean isGapClassToBeGenerated(boolean dslGapClass, boolean dslNoGapClass) {
+	def boolean isGapClassToBeGenerated(boolean dslGapClass, boolean dslNoGapClass) {
 		if (dslGapClass)
 			true
 		else
 			( if (dslNoGapClass) false else isGapClassToBeGenerated() );
 	}
 
-	def static String subPackage(String packageKey) {
+	def String subPackage(String packageKey) {
 		getProperty("package." + packageKey);
 	}
 
-	def static String getDateTimeLibrary() {
+	def String getDateTimeLibrary() {
 		getProperty("datetime.library");
 	}
 
-	def static boolean isHighlightMissingMessageResources() {
+	def boolean isHighlightMissingMessageResources() {
 		getBooleanProperty("gui.highlightMissingMessageResources");
 	}
 
-	def static boolean isStubService() {
+	def boolean isStubService() {
 		getBooleanProperty("gui.stubService");
 	}
 
-	def static String getResourceDir(Application application, String name) {
+	def String getResourceDir(Application application, String name) {
 		getResourceDirImpl(name);
 	}
 
-	def static String getResourceDir(Module module, String name) {
+	def String getResourceDir(Module module, String name) {
 		getResourceDirImpl(name);
 	}
 
-	def private static String getResourceDirImpl(String name) {
+	def private String getResourceDirImpl(String name) {
 		switch (name) {
 			case "spring" : ""
 			default: name + "/"
 		}
 	}
 
-	def static String getEnumTypeDefFileName(Module module) {
+	def String getEnumTypeDefFileName(Module module) {
 		"Enums-" + module.name + ".hbm.xml";
 	}
 
-	def static String javaHeader() {
+	def String javaHeader() {
 		if (getProperty("javaHeader") == "")
 			""
 		else
 		"/* " + getProperty("javaHeader").replaceAll("\n", "\n * ") + "\n */"
 	}
 
-	def static boolean jpa() {
+	def boolean jpa() {
 		jpaProvider() != "none"
 	}
 
-	def static boolean nosql() {
+	def boolean nosql() {
 		getProperty("nosql.provider") != "none";
 	}
 
-	def static boolean mongoDb() {
+	def boolean mongoDb() {
 		getProperty("nosql.provider") == "mongoDb";
 	}
 
-	def static boolean isJpaAnnotationToBeGenerated() {
+	def boolean isJpaAnnotationToBeGenerated() {
 		getBooleanProperty("generate.jpa.annotation");
 	}
 
-	def static boolean isJpaAnnotationColumnDefinitionToBeGenerated() {
+	def boolean isJpaAnnotationColumnDefinitionToBeGenerated() {
 		getBooleanProperty("generate.jpa.annotation.columnDefinition");
 	}
 
-	def static boolean isJpaAnnotationOnFieldToBeGenerated() {
+	def boolean isJpaAnnotationOnFieldToBeGenerated() {
 		getBooleanProperty("generate.jpa.annotation.onField");
 	}
 
-	def static boolean isValidationAnnotationToBeGenerated() {
+	def boolean isValidationAnnotationToBeGenerated() {
 		getBooleanProperty("generate.validation.annotation");
 	}
 
-	def static boolean isDtoValidationAnnotationToBeGenerated() {
+	def boolean isDtoValidationAnnotationToBeGenerated() {
 		getBooleanProperty("generate.validation.annotation.dataTransferObject");
 	}
 
-	def static boolean isSpringAnnotationTxToBeGenerated() {
+	def boolean isSpringAnnotationTxToBeGenerated() {
 		getBooleanProperty("generate.spring.annotation.tx");
 	}
 
-	def static boolean isSpringDataSourceSupportToBeGenerated() {
+	def boolean isSpringDataSourceSupportToBeGenerated() {
 		getBooleanProperty("generate.spring.dataSourceSupport");
 	}
 
-	def static boolean isXstreamAnnotationToBeGenerated() {
+	def boolean isXstreamAnnotationToBeGenerated() {
 		getBooleanProperty("generate.xstream.annotation");
 	}
 
-	def static boolean isXmlBindAnnotationToBeGenerated() {
+	def boolean isXmlBindAnnotationToBeGenerated() {
 		getBooleanProperty("generate.xml.bind.annotation");
 	}
 
-	def static boolean isXmlBindAnnotationToBeGenerated(String typeName) {
+	def boolean isXmlBindAnnotationToBeGenerated(String typeName) {
 		val propName = "generate.xml.bind.annotation." + typeName.toFirstLower()
 		if (hasProperty(propName)) getBooleanProperty(propName) else false;
 	}
 
-	def static boolean isFullyAuditable() {
+	def boolean isFullyAuditable() {
 		getBooleanProperty("generate.fullAuditable");
 	}
 
-	def static boolean isInjectDrools() {
+	def boolean isInjectDrools() {
 		getBooleanProperty("generate.injectDrools");
 	}
 
-	def static boolean isGenerateParameterName() {
+	def boolean isGenerateParameterName() {
 		getBooleanProperty("generate.parameterName");
 	}
 
-	def static String jpaProvider() {
+	def String jpaProvider() {
 		getProperty("jpa.provider").toLowerCase();
 	}
 
-	def static boolean isJpaProviderHibernate() {
+	def boolean isJpaProviderHibernate() {
 		jpaProvider() == "hibernate" || jpaProvider() == "hibernate3";
 	}
 
-	def static boolean isJpaProviderHibernate3() {
+	def boolean isJpaProviderHibernate3() {
 		jpaProvider() == "hibernate3";
 	}
 
-	def static boolean isJpaProviderHibernate4() {
+	def boolean isJpaProviderHibernate4() {
 		jpaProvider() == "hibernate";
 	}
 
-	def static boolean isJpaProviderEclipseLink() {
+	def boolean isJpaProviderEclipseLink() {
 		jpaProvider() == "eclipselink";
 	}
 
-	def static boolean isJpaProviderDataNucleus() {
+	def boolean isJpaProviderDataNucleus() {
 		jpaProvider() == "datanucleus";
 	}
 
-	def static boolean isJpaProviderAppEngine() {
+	def boolean isJpaProviderAppEngine() {
 		jpaProvider() == "appengine";
 	}
 
-	def static boolean isJpaProviderOpenJpa() {
+	def boolean isJpaProviderOpenJpa() {
 		jpaProvider() == "openjpa";
 	}
 
-	def static String jpaVersion() {
+	def String jpaVersion() {
 		getProperty("jpa.version");
 	}
 
-	def static boolean isJpa1() {
+	def boolean isJpa1() {
 		"1.0" == jpaVersion() && jpa();
 	}
 
-	def static boolean isJpa2() {
+	def boolean isJpa2() {
 		"2.0" == jpaVersion() && jpa();
 	}
 
-	def static String validationProvider() {
+	def String validationProvider() {
 		getProperty("validation.provider");
 	}
 
-	def static String testProvider() {
+	def String testProvider() {
 		getProperty("test.provider");
 	}
 
-	def static String databaseJpaTestCaseClass() {
+	def String databaseJpaTestCaseClass() {
 		fw("test.AbstractDbUnitJpaTests");
 	}
 
-	def static String auditEntityListener() {
+	def String auditEntityListener() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditListener")
 		else
 			fw("domain.AuditListener");
 	}
 
-	def static String validationEntityListener() {
+	def String validationEntityListener() {
 		if (isValidationAnnotationToBeGenerated())
 			"org.sculptor.framework.validation.ValidationEventListener"
 		else
 			null;
 	}
 
-	def static String getApplicationContextFile(Application application, String fileName) {
+	def String getApplicationContextFile(Application application, String fileName) {
 		fileName;
 	}
 
-	def static String getApplicationContextFile(Module module, String fileName) {
+	def String getApplicationContextFile(Module module, String fileName) {
 		fileName;
 	}
 
-	def static Collection<String> getSystemAttributes() {
+	def Collection<String> getSystemAttributes() {
 		getProperty("systemAttributes").split(",");
 	}
 
-	def static boolean isSystemAttribute(Attribute att) {
+	def boolean isSystemAttribute(Attribute att) {
 		getSystemAttributes().contains(att.name);
 	}
 
-	def static Collection<String> getAuditableAttributes() {
+	def Collection<String> getAuditableAttributes() {
 		getProperty("auditableAttributes").split(",");
 	}
 
-	def static boolean isAuditableAttribute(Attribute att) {
+	def boolean isAuditableAttribute(Attribute att) {
 		getAuditableAttributes().contains(att.name);
 	}
 
-	def static Collection<String> getNotRestRequestParameter() {
+	def Collection<String> getNotRestRequestParameter() {
 		getProperty("rest.notRequestParameter").split(",");
 	}
 
-	def static boolean isDynamicMenu() {
+	def boolean isDynamicMenu() {
 		if (hasProperty("menu.type"))
 			getProperty("menu.type") != "linkbased"
 		else
 			true;
 	}
 
-	def static String getSuffix(String key) {
+	def String getSuffix(String key) {
 		getProperty("naming.suffix." + key);
 	}
 
-	def static String persistenceXml() {
+	def String persistenceXml() {
 		getProperty("jpa.persistenceXmlFile");
 	}
 
-	def static boolean usePersistenceContextUnitName() {
+	def boolean usePersistenceContextUnitName() {
 	!isJpaProviderAppEngine() && !(isEar() && isSpringToBeGenerated());
 	}
 
-	def static boolean useJpaDefaults() {
+	def boolean useJpaDefaults() {
 		getBooleanProperty("jpa.useJpaDefaults");
 	}
 
-	def static boolean generateFinders() {
+	def boolean generateFinders() {
 		getBooleanProperty("generate.repository.finders");
 	}
 
-	def static boolean useIdSuffixInForeigKey() {
+	def boolean useIdSuffixInForeigKey() {
 		getBooleanProperty("db.useIdSuffixInForeigKey");
 	}
 
 	// hook to be overwritten to make additional programatic configuration of properties
-	def static initPropertiesHook() {
+	def initPropertiesHook() {
 		null;
 	}
 }

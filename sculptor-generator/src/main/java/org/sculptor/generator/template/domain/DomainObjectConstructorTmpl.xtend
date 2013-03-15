@@ -17,6 +17,10 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
@@ -25,21 +29,19 @@ import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.TypedElement
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectConstructorTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class DomainObjectConstructorTmpl {
 
-def static String parameterTypeAndNameIdReference(NamedElement it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String parameterTypeAndNameIdReference(NamedElement it) {
 	'''
 		«parameterTypeAndName(it)»
 	'''
 }
 
-def static String parameterTypeAndNameIdReference(Reference it) {
+def String parameterTypeAndNameIdReference(Reference it) {
 	'''
 		«IF !it.isUnownedReference()»
 			«parameterTypeAndName(it)»
@@ -53,18 +55,18 @@ def static String parameterTypeAndNameIdReference(Reference it) {
 	'''
 }
 
-def static String parameterTypeAndName(NamedElement it) {
+def String parameterTypeAndName(NamedElement it) {
 	'''
 	'''
 }
 
-def static String parameterTypeAndName(TypedElement it) {
+def String parameterTypeAndName(TypedElement it) {
 	'''
 		«parameterAnnotations(it)» «it.getTypeName()» «name»
 	'''
 }
 
-def static String parameterTypeAndName(Reference it) {
+def String parameterTypeAndName(Reference it) {
 	'''
 		«IF many»
 			«parameterAnnotations(it)» «it.getCollectionInterfaceType()»<«it.getTypeName()»> «name»
@@ -74,14 +76,14 @@ def static String parameterTypeAndName(Reference it) {
 	'''
 }
 
-def static String parameterAnnotations(NamedElement it) {
+def String parameterAnnotations(NamedElement it) {
 	'''
 		«IF isGenerateParameterName()» @«fw("annotation.Name")»("«name»")«ENDIF»
 	'''
 }
 
 
-def static String propertyConstructorBase(DomainObject it) {
+def String propertyConstructorBase(DomainObject it) {
 	'''
 		«IF !getConstructorParameters(it).isEmpty »
 			public «name»«IF gapClass»Base«ENDIF»(«it.getConstructorParameters().map[parameterTypeAndName(it)].join(",")») {
@@ -109,7 +111,7 @@ def static String propertyConstructorBase(DomainObject it) {
 	'''
 }
 
-def static String propertyConstructorBaseIdReferences(DomainObject it) {
+def String propertyConstructorBaseIdReferences(DomainObject it) {
 	'''
 		«IF !it.getConstructorParameters().isEmpty && it.getConstructorParameters().exists(e|e.isUnownedReference()) »
 			public «name»«IF gapClass»Base«ENDIF»(«it.getConstructorParameters().map[parameterTypeAndNameIdReference(it)].join(",")») {
@@ -141,7 +143,7 @@ def static String propertyConstructorBaseIdReferences(DomainObject it) {
 	'''
 }
 
-def static String propertyConstructorBaseIdReferencesSubclass(DomainObject it) {
+def String propertyConstructorBaseIdReferencesSubclass(DomainObject it) {
 	'''
 		«IF !it.getConstructorParameters().isEmpty && it.getConstructorParameters().exists(e|e.isUnownedReference()) »
 			public «name»(«it.getConstructorParameters().map[parameterTypeAndNameIdReference(it)].join(",")») {
@@ -151,13 +153,13 @@ def static String propertyConstructorBaseIdReferencesSubclass(DomainObject it) {
 	'''
 }
 
-def static String validateNotNull(DomainObject it, String field) {
+def String validateNotNull(DomainObject it, String field) {
 	'''
 		org.apache.commons.lang.Validate.notNull(«field», "«name».«field» must not be null");
 	'''
 }
 
-def static String validateNotNull(DataTransferObject it, String field) {
+def String validateNotNull(DataTransferObject it, String field) {
 	'''
 		if («field» == null) {
 			throw new IllegalArgumentException("«name».«field» must not be null");
@@ -165,7 +167,7 @@ def static String validateNotNull(DataTransferObject it, String field) {
 	'''
 }
 
-def static String propertyConstructorSubclass(DomainObject it) {
+def String propertyConstructorSubclass(DomainObject it) {
 	'''
 		«IF !it.getConstructorParameters().isEmpty »
 		public «name»(«it.getConstructorParameters().map[parameterTypeAndName(it)].join(",")») {
@@ -175,7 +177,7 @@ def static String propertyConstructorSubclass(DomainObject it) {
 	'''
 }
 
-def static String limitedConstructor(DomainObject it) {
+def String limitedConstructor(DomainObject it) {
 	'''
 		«val allParameters = it.getConstructorParameters()»
 		«val parameters = it.getLimitedConstructorParameters()»
@@ -187,13 +189,13 @@ def static String limitedConstructor(DomainObject it) {
 	'''
 }
 
-def static String limitedConstructor(Event it) {
+def String limitedConstructor(Event it) {
 	'''
 	«limitedEventConstructor(it)»
 	'''
 }
 
-def static String limitedEventConstructor(DomainObject it) {
+def String limitedEventConstructor(DomainObject it) {
 	'''
 		«val allParameters = it.getConstructorParameters()»
 		«val parameters = it.getLimitedConstructorParameters()»
@@ -217,7 +219,7 @@ def static String limitedEventConstructor(DomainObject it) {
 	'''
 }
 
-def static String minimumConstructor(DomainObject it) {
+def String minimumConstructor(DomainObject it) {
 	'''
 	«val limitedParameters = it.getLimitedConstructorParameters()»
 	«val parameters = it.getMinimumConstructorParameters()»
@@ -229,7 +231,7 @@ def static String minimumConstructor(DomainObject it) {
 	'''
 }
 
-def static String factoryMethod(DomainObject it) {
+def String factoryMethod(DomainObject it) {
 	'''
 		«val allParameters = it.getConstructorParameters()»
 		«val parameters = it.getLimitedConstructorParameters()»
@@ -245,13 +247,13 @@ def static String factoryMethod(DomainObject it) {
 	'''
 }
 
-def static String factoryMethod(Event it) {
+def String factoryMethod(Event it) {
 	'''
 		«eventFactoryMethod(it)»
 	'''
 }
 
-def static String eventFactoryMethod(DomainObject it) {
+def String eventFactoryMethod(DomainObject it) {
 	'''
 		«val allParameters = it.getConstructorParameters()»
 		«val parameters = it.getLimitedConstructorParameters().filter(e|e.name!="recorded").toList»
@@ -268,7 +270,7 @@ def static String eventFactoryMethod(DomainObject it) {
 	'''
 }
 
-def static String copyModifier(Attribute it, DomainObject target) {
+def String copyModifier(Attribute it, DomainObject target) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».
@@ -282,7 +284,7 @@ def static String copyModifier(Attribute it, DomainObject target) {
 	'''
 }
 
-def static String copyModifier(Reference it, DomainObject target) {
+def String copyModifier(Reference it, DomainObject target) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».
@@ -296,7 +298,7 @@ def static String copyModifier(Reference it, DomainObject target) {
 	'''
 }
 
-def static String abstractCopyModifier(Attribute it) {
+def String abstractCopyModifier(Attribute it) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».
@@ -305,7 +307,7 @@ def static String abstractCopyModifier(Attribute it) {
 	'''
 }
 
-def static String abstractCopyModifier(Reference it) {
+def String abstractCopyModifier(Reference it) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».

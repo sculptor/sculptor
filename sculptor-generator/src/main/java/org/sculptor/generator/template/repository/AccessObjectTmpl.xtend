@@ -17,20 +17,25 @@
 
 package org.sculptor.generator.template.repository
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.RepositoryOperation
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.repository.AccessObjectTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class AccessObjectTmpl {
 
-def static String command(RepositoryOperation it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+
+def String command(RepositoryOperation it) {
 	'''
 		«commandInterface(it)»
 		«commandImpl(it)»
@@ -38,7 +43,7 @@ def static String command(RepositoryOperation it) {
 }
 
 
-def static String commandInterface(RepositoryOperation it) {
+def String commandInterface(RepositoryOperation it) {
 	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessapiPackage(repository.aggregateRoot.module)»;
@@ -62,7 +67,7 @@ def static String commandInterface(RepositoryOperation it) {
 
 		«it.parameters.filter(e|!e.isPagingParameter()).map[interfaceParameterSetter(it)]»
 
-		void execute() «ExceptionTmpl::throwsDecl(it)»;
+		void execute() «exceptionTmpl.throwsDecl(it)»;
 
 		«IF it.getTypeName() != "void"»
 		/**
@@ -76,21 +81,21 @@ def static String commandInterface(RepositoryOperation it) {
 	)
 }
 
-def static String interfaceParameterSetter(Parameter it) {
+def String interfaceParameterSetter(Parameter it) {
 	'''
 
 		void set«name.toFirstUpper()»(«it.getTypeName()» «name»);
 	'''
 }
 
-def static String commandImpl(RepositoryOperation it) {
+def String commandImpl(RepositoryOperation it) {
 	'''
 		«commandImplBase(it)»
 		«commandImplSubclass(it)»
 	'''
 }
 
-def static String commandImplBase(RepositoryOperation it) {
+def String commandImplBase(RepositoryOperation it) {
 	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
@@ -129,7 +134,7 @@ def static String commandImplBase(RepositoryOperation it) {
 		«ENDIF»
 
 		«IF !it.exceptions.isEmpty»
-		public void execute() «ExceptionTmpl::throwsDecl(it)» {
+		public void execute() «exceptionTmpl.throwsDecl(it)» {
 			try {
 				super.execute();
 			«FOR exc : it.exceptions»
@@ -161,7 +166,7 @@ def static String commandImplBase(RepositoryOperation it) {
 	)
 }
 
-def static String pageableProperties(RepositoryOperation it) {
+def String pageableProperties(RepositoryOperation it) {
 	'''
 		private int firstResult = -1;
 		private int maxResult = 0;
@@ -184,7 +189,7 @@ def static String pageableProperties(RepositoryOperation it) {
 	'''
 }
 
-def static String jpaTemplate(RepositoryOperation it) {
+def String jpaTemplate(RepositoryOperation it) {
 	'''
 		private org.springframework.orm.jpa.JpaTemplate jpaTemplate;
 		
@@ -202,7 +207,7 @@ def static String jpaTemplate(RepositoryOperation it) {
 	'''
 }
 
-def static String jpaHibernateTemplate(RepositoryOperation it) {
+def String jpaHibernateTemplate(RepositoryOperation it) {
 	'''
 		private org.springframework.orm.hibernate3.HibernateTemplate hibernateTemplate;
 		
@@ -221,7 +226,7 @@ def static String jpaHibernateTemplate(RepositoryOperation it) {
 	'''
 }
 
-def static String commandImplSubclass(RepositoryOperation it) {
+def String commandImplSubclass(RepositoryOperation it) {
 	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
@@ -239,29 +244,29 @@ def static String commandImplSubclass(RepositoryOperation it) {
 	)
 }
 
-def static String performExecute(RepositoryOperation it) {
+def String performExecute(RepositoryOperation it) {
 	'''
-	public void performExecute() «ExceptionTmpl::throwsDecl(it)» {
+	public void performExecute() «exceptionTmpl.throwsDecl(it)» {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("«getAccessObjectName()»Impl not implemented");
 		}
 	'''
 }
 
-def static String parameterAttribute(Parameter it) {
+def String parameterAttribute(Parameter it) {
 	'''
 		private «it.getTypeName()» «name»;
 	'''
 }
 
-def static String parameterAccessors(Parameter it) {
+def String parameterAccessors(Parameter it) {
 	'''
 		«parameterGetter(it)»
 		«parameterSetter(it)»
 	'''
 }
 
-def static String parameterGetter(Parameter it) {
+def String parameterGetter(Parameter it) {
 	'''
 		public «it.getTypeName()» get«name.toFirstUpper()»() {
 			return «name»;
@@ -269,7 +274,7 @@ def static String parameterGetter(Parameter it) {
 	'''
 }
 
-def static String parameterSetter(Parameter it) {
+def String parameterSetter(Parameter it) {
 	'''
 		public void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			this.«name» = «name»;

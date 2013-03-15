@@ -17,6 +17,8 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.GeneratorFactory
+
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
 import sculptormetamodel.DataTransferObject
@@ -27,31 +29,45 @@ import sculptormetamodel.EnumValue
 import sculptormetamodel.Parameter
 import sculptormetamodel.Trait
 
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.HelperBase.*
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 
-import static org.sculptor.generator.template.domain.DomainObjectTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
+
+import org.sculptor.generator.util.PropertiesBase
 
 class DomainObjectTmpl {
 
-def static String domainObject(DomainObject it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+	private static val DomainObjectPropertiesTmpl domainObjectPropertiesTmpl = GeneratorFactory::domainObjectPropertiesTmpl
+	private static val DomainObjectNamesTmpl domainObjectNamesTmpl = GeneratorFactory::domainObjectNamesTmpl
+	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GeneratorFactory::domainObjectConstructorTmpl
+	private static val DomainObjectAnnotationTmpl domainObjectAnnotationTmpl = GeneratorFactory::domainObjectAnnotationTmpl
+	private static val DomainObjectTraitTmpl domainObjectTraitTmpl = GeneratorFactory::domainObjectTraitTmpl
+	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GeneratorFactory::domainObjectAttributeTmpl
+	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GeneratorFactory::domainObjectReferenceTmpl
+	private static val DomainObjectKeyTmpl domainObjectKeyTmpl = GeneratorFactory::domainObjectKeyTmpl
+
+def String domainObject(DomainObject it) {
 	'''
 	«IF gapClass»
 		«domainObjectSubclass(it)»
 	«ENDIF»
 	«domainObjectBase(it)»
 	«IF getBooleanProperty("generate.domainObject.conditionalCriteriaProperties")»
-		«DomainObjectPropertiesTmpl::domainObjectProperties(it)»
+		«domainObjectPropertiesTmpl.domainObjectProperties(it)»
 	«ENDIF»
 	«IF getBooleanProperty("generate.domainObject.nameConstants")»
-		«DomainObjectNamesTmpl::propertyNamesInterface(it)»
+		«domainObjectNamesTmpl.propertyNamesInterface(it)»
 	«ENDIF»
 	'''
 }
 
-def static String domainObjectSubclass(DataTransferObject it) {
+def String domainObjectSubclass(DataTransferObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -65,15 +81,15 @@ def static String domainObjectSubclass(DataTransferObject it) {
 		«formatJavaDoc(it)»
 	«ENDIF »
 
-	«DomainObjectAnnotationTmpl::domainObjectSubclassAnnotations(it)»
+	«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
 	public «getAbstractLitteral(it)»class «name» ^extends «name»Base {
 		«serialVersionUID(it)»
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty || getMinimumConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
 
-		«DomainObjectConstructorTmpl::propertyConstructorSubclass(it)»
-		«DomainObjectConstructorTmpl::limitedConstructor(it)»
-		«DomainObjectConstructorTmpl::minimumConstructor(it)»
+		«domainObjectConstructorTmpl.propertyConstructorSubclass(it)»
+		«domainObjectConstructorTmpl.limitedConstructor(it)»
+		«domainObjectConstructorTmpl.minimumConstructor(it)»
 	}
 	'''
 	)
@@ -81,26 +97,26 @@ def static String domainObjectSubclass(DataTransferObject it) {
 
 
 
-def static String domainObjectSubclass(DomainObject it) {
+def String domainObjectSubclass(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
 	«domainObjectSubclassJavaDoc(it)»
 	«IF isJpaAnnotationToBeGenerated()»
-		«DomainObjectAnnotationTmpl::domainObjectAnnotations(it)»
+		«domainObjectAnnotationTmpl.domainObjectAnnotations(it)»
 	«ENDIF»
 
-	«DomainObjectAnnotationTmpl::domainObjectSubclassAnnotations(it)»
+	«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
 	public «getAbstractLitteral(it)»class «name» ^extends «name»Base {
 		«serialVersionUID(it)»
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
 
-		«DomainObjectConstructorTmpl::propertyConstructorSubclass(it)»
-		«DomainObjectConstructorTmpl::limitedConstructor(it)»
+		«domainObjectConstructorTmpl.propertyConstructorSubclass(it)»
+		«domainObjectConstructorTmpl.limitedConstructor(it)»
 		«IF it.isPersistent() && (isJpaProviderAppEngine() || nosql())»
-			«DomainObjectConstructorTmpl::propertyConstructorBaseIdReferencesSubclass(it)»
+			«domainObjectConstructorTmpl.propertyConstructorBaseIdReferencesSubclass(it)»
 		«ENDIF»
 
 		«it.operations.filter(e | e.isImplementedInGapClass()).map[o | domainObjectSubclassImplMethod(o)]»
@@ -110,13 +126,13 @@ def static String domainObjectSubclass(DomainObject it) {
 	)
 }
 
-def static String domainObjectSubclass(Trait it) {
+def String domainObjectSubclass(Trait it) {
 	'''
-	«DomainObjectTraitTmpl::domainObjectSubclass(it)»
+	«domainObjectTraitTmpl.domainObjectSubclass(it)»
 	'''
 }
 
-def static String domainObjectSubclassJavaDoc(DomainObject it) {
+def String domainObjectSubclassJavaDoc(DomainObject it) {
 	'''
 	«IF formatJavaDoc(it) == "" »
 		/**
@@ -132,7 +148,7 @@ def static String domainObjectSubclassJavaDoc(DomainObject it) {
 	'''
 }
 
-def static String domainObjectBase(DomainObject it) {
+def String domainObjectBase(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 
 	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
@@ -141,45 +157,45 @@ def static String domainObjectBase(DomainObject it) {
 
 	«domainObjectBaseJavaDoc(it)»
 	«IF !gapClass && isJpaAnnotationToBeGenerated()»
-		«DomainObjectAnnotationTmpl::domainObjectAnnotations(it) »
+		«domainObjectAnnotationTmpl.domainObjectAnnotations(it) »
 	«ENDIF»
-	«DomainObjectAnnotationTmpl::domainObjectBaseAnnotations(it)»
+	«domainObjectAnnotationTmpl.domainObjectBaseAnnotations(it)»
 	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «getExtendsAndImplementsLitteral(it)» {
 		«serialVersionUID(it)»
-		«it.attributes.map[a | DomainObjectAttributeTmpl::attribute(a)].join()»
+		«it.attributes.map[a | domainObjectAttributeTmpl.attribute(a)].join()»
 
-		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAttribute(r)].join()»
-		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAttribute(r)].join()»
+		«it.references.filter(r | !r.many).map[r | domainObjectReferenceTmpl.oneReferenceAttribute(r)].join()»
+		«it.references.filter(r | r.many).map[r | domainObjectReferenceTmpl.manyReferenceAttribute(r)].join()»
 
 		«IF getLimitedConstructorParameters(it).isEmpty»public«ELSE»«it.getDefaultConstructorVisibility()»«ENDIF» «name»«IF gapClass»Base«ENDIF»() {
 		}
 
-		«DomainObjectConstructorTmpl::propertyConstructorBase(it)»
+		«domainObjectConstructorTmpl.propertyConstructorBase(it)»
 		«IF isPersistent(it) && (isJpaProviderAppEngine() || nosql())»
-			«DomainObjectConstructorTmpl::propertyConstructorBaseIdReferences(it)»
+			«domainObjectConstructorTmpl.propertyConstructorBaseIdReferences(it)»
 		«ENDIF»
 		«IF !gapClass»
-			«DomainObjectConstructorTmpl::limitedConstructor(it)»
+			«domainObjectConstructorTmpl.limitedConstructor(it)»
 		«ENDIF»
 		«IF isImmutable(it) && !^abstract»
-			«DomainObjectConstructorTmpl::factoryMethod(it)»
+			«domainObjectConstructorTmpl.factoryMethod(it)»
 		«ENDIF»
 
-		«it.attributes.filter(a | !a.isUuid()).map[a | DomainObjectAttributeTmpl::propertyAccessors(a)].join()»
+		«it.attributes.filter(a | !a.isUuid()).map[a | domainObjectAttributeTmpl.propertyAccessors(a)].join()»
 		«IF hasUuidAttribute »
-			«DomainObjectAttributeTmpl::uuidAccessor(it)»
+			«domainObjectAttributeTmpl.uuidAccessor(it)»
 		«ENDIF»
 
-		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAccessors(r)].join()»
-		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAccessors(r)].join()»
+		«it.references.filter(r | !r.many).map[r | domainObjectReferenceTmpl.oneReferenceAccessors(r)].join()»
+		«it.references.filter(r | r.many).map[r | domainObjectReferenceTmpl.manyReferenceAccessors(r)].join()»
 
 		«IF isImmutable(it) && ^abstract»
-			«it.attributes.filter[a | !(a.isSystemAttribute())].map[r | DomainObjectConstructorTmpl::abstractCopyModifier(r)].join()»
-			«it.references.filter[r | !(r.many || r.isUnownedReference())].map[r | DomainObjectConstructorTmpl::abstractCopyModifier(r)].join()»
+			«it.attributes.filter[a | !(a.isSystemAttribute())].map[r | domainObjectConstructorTmpl.abstractCopyModifier(r)].join()»
+			«it.references.filter[r | !(r.many || r.isUnownedReference())].map[r | domainObjectConstructorTmpl.abstractCopyModifier(r)].join()»
 		«ENDIF»
 		«IF isImmutable(it) && !^abstract»
-			«it.getAllAttributes().filter[a | !a.isSystemAttribute()].map[a | DomainObjectConstructorTmpl::copyModifier(a, it)].join()»
-			«it.getAllReferences().filter[r | !(r.many || r.isUnownedReference())].map[a | DomainObjectConstructorTmpl::copyModifier(a, it)].join()»
+			«it.getAllAttributes().filter[a | !a.isSystemAttribute()].map[a | domainObjectConstructorTmpl.copyModifier(a, it)].join()»
+			«it.getAllReferences().filter[r | !(r.many || r.isUnownedReference())].map[a | domainObjectConstructorTmpl.copyModifier(a, it)].join()»
 		«ENDIF»
 
 		«IF isFullyAuditable() »
@@ -192,10 +208,10 @@ def static String domainObjectBase(DomainObject it) {
 
 		«toStringStyle(it)»
 		«acceptToString(it)»
-		«DomainObjectKeyTmpl::keyGetter(it)»
+		«domainObjectKeyTmpl.keyGetter(it)»
 
-		«it.traits.filter(e | !e.operations.isEmpty).map[e | DomainObjectTraitTmpl::traitInstance(e, it)].join()»
-		«it.operations.filter(e | !e.^abstract && e.hasHint("trait")).map[DomainObjectTraitTmpl::delegateToTraitMethod(it)].join()»
+		«it.traits.filter(e | !e.operations.isEmpty).map[e | domainObjectTraitTmpl.traitInstance(e, it)].join()»
+		«it.operations.filter(e | !e.^abstract && e.hasHint("trait")).map[domainObjectTraitTmpl.delegateToTraitMethod(it)].join()»
 		«it.operations.filter[e | e.^abstract || !e.hasHint("trait")].map[abstractMethod(it)].join()»
 
 		«domainObjectHook(it)»
@@ -204,13 +220,13 @@ def static String domainObjectBase(DomainObject it) {
 	)
 }
 
-def static String domainObjectBase(Trait it) {
+def String domainObjectBase(Trait it) {
 	'''
-	«DomainObjectTraitTmpl::domainObjectBase(it)»
+	«domainObjectTraitTmpl.domainObjectBase(it)»
 	'''
 }
 
-def static String domainObjectBaseJavaDoc(DomainObject it) {
+def String domainObjectBaseJavaDoc(DomainObject it) {
 	'''
 	«IF gapClass»
 		/**
@@ -219,7 +235,7 @@ def static String domainObjectBaseJavaDoc(DomainObject it) {
 		«IF isJpaAnnotationToBeGenerated() »
 			 * <p>Make sure that subclass defines the following annotations:
 			 * <pre>
-			 «DomainObjectAnnotationTmpl::domainObjectAnnotations(it) »
+			 «domainObjectAnnotationTmpl.domainObjectAnnotations(it) »
 			 * </pre>
 		«ENDIF»
 		 */
@@ -236,7 +252,7 @@ def static String domainObjectBaseJavaDoc(DomainObject it) {
 	'''
 }
 
-def static String domainObjectBase(DataTransferObject it) {
+def String domainObjectBase(DataTransferObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -254,31 +270,31 @@ def static String domainObjectBase(DataTransferObject it) {
 		«formatJavaDoc(it)»
 	«ENDIF »
 
-	«DomainObjectAnnotationTmpl::domainObjectBaseAnnotations(it)»
+	«domainObjectAnnotationTmpl.domainObjectBaseAnnotations(it)»
 	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «it.getExtendsAndImplementsLitteral()» {
 		«serialVersionUID(it)»
 
-		«it.attributes.map[e | DomainObjectAttributeTmpl::attribute(e)].join()»
+		«it.attributes.map[e | domainObjectAttributeTmpl.attribute(e)].join()»
 
-		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAttribute(r)].join()»
-		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAttribute(r)].join()»
+		«it.references.filter(r | !r.many).map[r | domainObjectReferenceTmpl.oneReferenceAttribute(r)].join()»
+		«it.references.filter(r | r.many).map[r | domainObjectReferenceTmpl.manyReferenceAttribute(r)].join()»
 
 		«IF getLimitedConstructorParameters(it).isEmpty || getMinimumConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»«IF gapClass»Base«ENDIF»() {
 		}
 
-		«DomainObjectConstructorTmpl::propertyConstructorBase(it)»
+		«domainObjectConstructorTmpl.propertyConstructorBase(it)»
 		«IF !gapClass»
-			«DomainObjectConstructorTmpl::limitedConstructor(it)»
-			«DomainObjectConstructorTmpl::minimumConstructor(it)»
+			«domainObjectConstructorTmpl.limitedConstructor(it)»
+			«domainObjectConstructorTmpl.minimumConstructor(it)»
 		«ENDIF»
 		«IF isImmutable() && !^abstract»
-			«DomainObjectConstructorTmpl::factoryMethod(it)»
+			«domainObjectConstructorTmpl.factoryMethod(it)»
 		«ENDIF»
 
-		«it.attributes.map[a | DomainObjectAttributeTmpl::propertyAccessors(a)].join()»
+		«it.attributes.map[a | domainObjectAttributeTmpl.propertyAccessors(a)].join()»
 
-		«it.references.filter(r | !r.many).map[r | DomainObjectReferenceTmpl::oneReferenceAccessors(r)].join()»
-		«it.references.filter(r | r.many).map[r | DomainObjectReferenceTmpl::manyReferenceAccessors(r)].join()»
+		«it.references.filter(r | !r.many).map[r | domainObjectReferenceTmpl.oneReferenceAccessors(r)].join()»
+		«it.references.filter(r | r.many).map[r | domainObjectReferenceTmpl.manyReferenceAccessors(r)].join()»
 
 	«IF ^extends == null»
 		«clone(it)»
@@ -290,13 +306,13 @@ def static String domainObjectBase(DataTransferObject it) {
 	)
 }
 
-def static String serialVersionUID(DomainObject it) {
+def String serialVersionUID(DomainObject it) {
 	'''
 	private static final long serialVersionUID = 1L;
 	'''
 }
 
-def static String prePersist(DomainObject it) {
+def String prePersist(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 	'''
 	«IF hasUuidAttribute && isJpaAnnotationOnFieldToBeGenerated()»
@@ -308,7 +324,7 @@ def static String prePersist(DomainObject it) {
 	'''
 }
 
-def static String generateFullAudit(DomainObject it) {
+def String generateFullAudit(DomainObject it) {
 	'''
 	@javax.persistence.Transient
 	«fw("domain.AuditHandlerImpl")»<«name»> auditHandler = new «fw("domain.AuditHandlerImpl")»<«name»>();
@@ -328,7 +344,7 @@ def static String generateFullAudit(DomainObject it) {
 	'''
 }
 
-def static String acceptToString(DomainObject it) {
+def String acceptToString(DomainObject it) {
 	'''
 	«IF !getBasicTypeReferences(it).isEmpty || !getEnumReferences(it).isEmpty »
 		/**
@@ -357,7 +373,7 @@ def static String acceptToString(DomainObject it) {
 	'''
 }
 
-def static String toStringStyle(DomainObject it) {
+def String toStringStyle(DomainObject it) {
 	'''
 	«IF toStringStyle(it) != null»
 		protected org.apache.commons.lang.builder.ToStringStyle toStringStyle() {
@@ -367,7 +383,7 @@ def static String toStringStyle(DomainObject it) {
 	'''
 }
 
-def static String domainObject(Enum it) {
+def String domainObject(Enum it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -384,24 +400,24 @@ def static String domainObject(Enum it) {
 
 		«enumIdentifierMap(it)»
 
-		«it.attributes.map[DomainObjectAttributeTmpl::attribute(it)].join()»
+		«it.attributes.map[domainObjectAttributeTmpl.attribute(it)].join()»
 		«enumConstructor(it)»
 		«enumFromIdentifierMethod(it)»
-		«it.attributes.map[DomainObjectAttributeTmpl::propertyGetter(it)].join()»
+		«it.attributes.map[domainObjectAttributeTmpl.propertyGetter(it)].join()»
 		«enumNamePropertyGetter(it)»
 	}
 	'''
 	)
 }
 
-def static String enumValue(EnumValue it) {
+def String enumValue(EnumValue it) {
 	'''
 	«it.formatJavaDoc()»
 	«name»«IF !parameters.isEmpty »(«FOR param : parameters SEPARATOR ","»«param.value»«ENDFOR»)«ENDIF»
 	'''
 }
 
-def static String enumIdentifierMap(Enum it) {
+def String enumIdentifierMap(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
 	«IF identifierAttribute != null »
@@ -417,7 +433,7 @@ def static String enumIdentifierMap(Enum it) {
 	'''
 }
 
-def static String enumFromIdentifierMethod(Enum it) {
+def String enumFromIdentifierMethod(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
 	«IF identifierAttribute != null »
@@ -445,11 +461,11 @@ def static String enumFromIdentifierMethod(Enum it) {
 }
 
 
-def static String enumConstructor(Enum it) {
+def String enumConstructor(Enum it) {
 	'''
 	/**
 	 */
-	private «name»(«it.attributes.map[a | DomainObjectConstructorTmpl::parameterTypeAndName(a)].join(",")») {
+	private «name»(«it.attributes.map[a | domainObjectConstructorTmpl.parameterTypeAndName(a)].join(",")») {
 		«FOR a : attributes»
 			this.«a.name» = «a.name»;
 		«ENDFOR»
@@ -457,7 +473,7 @@ def static String enumConstructor(Enum it) {
 	'''
 }
 
-def static String enumNamePropertyGetter(Enum it) {
+def String enumNamePropertyGetter(Enum it) {
 	'''
 	public String getName() {
 		return name();
@@ -465,7 +481,7 @@ def static String enumNamePropertyGetter(Enum it) {
 	'''
 }
 
-def static String clone(DomainObject it) {
+def String clone(DomainObject it) {
 	'''
 	@Override
 	public Object clone() {
@@ -479,40 +495,40 @@ def static String clone(DomainObject it) {
 	'''
 }
 
-def static String domainObjectSubclassImplMethod(DomainObjectOperation it) {
+def String domainObjectSubclassImplMethod(DomainObjectOperation it) {
 	'''
-	«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | methodParameterTypeAndName(p)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+	«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | methodParameterTypeAndName(p)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("«name» not implemented");
 	}
 	'''
 }
 
-def static String abstractMethod(DomainObjectOperation it) {
+def String abstractMethod(DomainObjectOperation it) {
 	'''
 	«it.formatJavaDoc()»
-	abstract «it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[methodParameterTypeAndName(it)].join(", ")») «ExceptionTmpl::throwsDecl(it)»;
+	abstract «it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[methodParameterTypeAndName(it)].join(", ")») «exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
-def static String methodParameterTypeAndName(Parameter it) {
+def String methodParameterTypeAndName(Parameter it) {
 	'''
 	«it.getTypeName()» «name»
 	'''
 }
 
 /* Extension point to generate more stuff in DomainObjects.
- * Use AROUND DomainObjectTmplTmpl::domainObjectHook FOR DomainObject
+ * Use AROUND domainObjectTmplTmpl.domainObjectHook FOR DomainObject
  * in SpecialCases.xpt */
-def static String domainObjectHook(DomainObject it) {
+def String domainObjectHook(DomainObject it) {
 	'''
 	'''
 }
 
 /* Extension point to generate more stuff in DataTransferObjects.
- * Use AROUND DomainObjectTmplTmpl::dataTransferObjectHook FOR DataTransferObject
+ * Use AROUND domainObjectTmplTmpl.dataTransferObjectHook FOR DataTransferObject
  * in SpecialCases.xpt */
-def static String dataTransferObjectHook(DataTransferObject it) {
+def String dataTransferObjectHook(DataTransferObject it) {
 	'''
 	'''
 }

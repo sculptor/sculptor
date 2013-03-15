@@ -17,20 +17,26 @@
 
 package org.sculptor.generator.template.jpa
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.OracleDDLTmpl
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.DbHelper.*
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.jpa.OpenJpaTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 
 class OpenJpaTmpl {
 
-def static String openJpa(Application it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val OracleDDLTmpl oracleDDLTmpl = GeneratorFactory::oracleDDLTmpl
+
+def String openJpa(Application it) {
 	'''
 		«IF isJodaDateTimeLibrary()»
 		«jodaStrategy(it)»
@@ -44,7 +50,7 @@ def static String openJpa(Application it) {
 	'''
 }
 
-def static String jodaStrategy(Application it) {
+def String jodaStrategy(Application it) {
 	fileOutput(javaFileName(basePackage +".util.JodaHandler"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
@@ -119,7 +125,7 @@ def static String jodaStrategy(Application it) {
 	)
 }
 
-def static String enumStrategy(Application it) {
+def String enumStrategy(Application it) {
 	fileOutput(javaFileName(basePackage +".util.EnumHandler"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
@@ -168,10 +174,10 @@ def static String enumStrategy(Application it) {
 		This is hopefully a temporary workaround for OpenJPA.
 		OpenJPA is not generating primary keys on manytomany jointables
  */
-def static String testDdl(Application it) {
+def String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	fileOutput("dbunit/ddl.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
-		«manyToManyRelations.map[OracleDDLTmpl::manyToManyPrimaryKey(it)].join()»
+		«manyToManyRelations.map[oracleDDLTmpl.manyToManyPrimaryKey(it)].join()»
 	'''
 	)
 }

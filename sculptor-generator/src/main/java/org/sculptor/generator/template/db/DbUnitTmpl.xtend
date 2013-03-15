@@ -17,33 +17,36 @@
 
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.db.DbUnitTmpl.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-
 class DbUnitTmpl {
 
-def static String emptyDbunitTestData(Application it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String emptyDbunitTestData(Application it) {
 	fileOutput("dbunit/EmptyDatabase.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 		«dbunitTestDataContent(it) »
 	'''
 	)
 }
 
-def static String singleDbunitTestData(Application it) {
+def String singleDbunitTestData(Application it) {
 	if (getDbUnitDataSetFile != null)
 		fileOutput(getDbUnitDataSetFile(), OutputSlot::TO_RESOURCES_TEST, dbunitTestDataContent(it))
 	else
 		""
 }
 
-def static String dbunitTestDataContent(Application it) {
+def String dbunitTestDataContent(Application it) {
 	'''
 	<?xml version='1.0' encoding='UTF-8'?>
 	<dataset>

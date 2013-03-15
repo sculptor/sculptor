@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.sculptor.generator.ext.GeneratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,23 +76,24 @@ public class HelperBase {
 	private static PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
 	private static Map<String, String> collectionInterfaceTypeMapper = new HashMap<String, String>();
 	private static Map<String, String> collectionImplTypeMapper = new HashMap<String, String>();
+	private static PropertiesBase propBase = GeneratorFactory.propertiesBase();
 	static {
-		collectionInterfaceTypeMapper.put("list", PropertiesBase.getJavaType("List"));
-		collectionInterfaceTypeMapper.put("bag", PropertiesBase.getJavaType("Bag"));
-		collectionInterfaceTypeMapper.put("map", PropertiesBase.getJavaType("Map"));
-		collectionInterfaceTypeMapper.put("set", PropertiesBase.getJavaType("Set"));
-		collectionInterfaceTypeMapper.put(null, PropertiesBase.getJavaType("Set"));
+		collectionInterfaceTypeMapper.put("list", propBase.getJavaType("List"));
+		collectionInterfaceTypeMapper.put("bag", propBase.getJavaType("Bag"));
+		collectionInterfaceTypeMapper.put("map", propBase.getJavaType("Map"));
+		collectionInterfaceTypeMapper.put("set", propBase.getJavaType("Set"));
+		collectionInterfaceTypeMapper.put(null, propBase.getJavaType("Set"));
 
-		collectionImplTypeMapper.put("list", PropertiesBase.getJavaTypeImpl("List"));
-		collectionImplTypeMapper.put("bag", PropertiesBase.getJavaTypeImpl("Bag"));
-		collectionImplTypeMapper.put("map", PropertiesBase.getJavaTypeImpl("Map"));
-		collectionImplTypeMapper.put("set", PropertiesBase.getJavaTypeImpl("Set"));
-		collectionImplTypeMapper.put(null, PropertiesBase.getJavaTypeImpl("Set"));
+		collectionImplTypeMapper.put("list", propBase.getJavaTypeImpl("List"));
+		collectionImplTypeMapper.put("bag", propBase.getJavaTypeImpl("Bag"));
+		collectionImplTypeMapper.put("map", propBase.getJavaTypeImpl("Map"));
+		collectionImplTypeMapper.put("set", propBase.getJavaTypeImpl("Set"));
+		collectionImplTypeMapper.put(null, propBase.getJavaTypeImpl("Set"));
 	}
 
 	private static Application app;
 
-	public static String getDomainPackage(DomainObject domainObject) {
+	public String getDomainPackage(DomainObject domainObject) {
 		if (domainObject instanceof DataTransferObject) {
 			return getDomainPackage((DataTransferObject) domainObject);
 		}
@@ -108,7 +110,7 @@ public class HelperBase {
 		}
 	}
 
-	public static String getDomainPackage(DataTransferObject dto) {
+	public String getDomainPackage(DataTransferObject dto) {
 		if (dto.getPackage() == null || dto.getPackage().equals("")) {
 			return getDtoPackage(dto.getModule());
 		} else {
@@ -116,7 +118,7 @@ public class HelperBase {
 		}
 	}
 
-	public static String getDomainPackage(DomainEvent event) {
+	public String getDomainPackage(DomainEvent event) {
 		if (event.getPackage() == null || event.getPackage().equals("")) {
 			return getDomainEventPackage(event.getModule());
 		} else {
@@ -124,7 +126,7 @@ public class HelperBase {
 		}
 	}
 
-	public static String getDomainPackage(CommandEvent event) {
+	public String getDomainPackage(CommandEvent event) {
 		if (event.getPackage() == null || event.getPackage().equals("")) {
 			return getCommandEventPackage(event.getModule());
 		} else {
@@ -132,82 +134,82 @@ public class HelperBase {
 		}
 	}
 
-	public static String getServiceapiPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getServiceInterfacePackage());
+	public String getServiceapiPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getServiceInterfacePackage());
 	}
 
-	public static String getServiceimplPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getServiceImplementationPackage());
+	public String getServiceimplPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getServiceImplementationPackage());
 	}
 
-	public static String getRestPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getRestPackage());
+	public String getRestPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getRestPackage());
 	}
 
-	public static String getServiceproxyPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getServiceProxyPackage());
+	public String getServiceproxyPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getServiceProxyPackage());
 	}
 
-	public static String getServicestubPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getServiceStubPackage());
+	public String getServicestubPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getServiceStubPackage());
 	}
 
-	public static String getConsumerPackage(Consumer consumer) {
-		return concatPackage(getBasePackage(consumer.getModule()), PropertiesBase.getConsumerPackage());
+	public String getConsumerPackage(Consumer consumer) {
+		return concatPackage(getBasePackage(consumer.getModule()), propBase.getConsumerPackage());
 	}
 
-	public static String getXmlMapperPackage(Consumer consumer) {
-		return concatPackage(getBasePackage(consumer.getModule()), PropertiesBase.getXmlMapperPackage());
+	public String getXmlMapperPackage(Consumer consumer) {
+		return concatPackage(getBasePackage(consumer.getModule()), propBase.getXmlMapperPackage());
 	}
 
-	public static String getAccessapiPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getAccessInterfacePackage());
+	public String getAccessapiPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getAccessInterfacePackage());
 	}
 
-	public static String getAccessimplPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getAccessImplementationPackage());
+	public String getAccessimplPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getAccessImplementationPackage());
 	}
 
-	public static String getDomainPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getDomainPackage());
+	public String getDomainPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getDomainPackage());
 	}
 
-	public static String getDtoPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getDtoPackage());
+	public String getDtoPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getDtoPackage());
 	}
 
-	public static String getDomainEventPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getDomainEventPackage());
+	public String getDomainEventPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getDomainEventPackage());
 	}
 
-	public static String getCommandEventPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getCommandEventPackage());
+	public String getCommandEventPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getCommandEventPackage());
 	}
 
-	public static String getRepositoryimplPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getRepositoryImplementationPackage());
+	public String getRepositoryimplPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getRepositoryImplementationPackage());
 	}
 
-	public static String getRepositoryapiPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getRepositoryInterfacePackage());
+	public String getRepositoryapiPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getRepositoryInterfacePackage());
 	}
 
-	public static String getExceptionPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getExceptionPackage());
+	public String getExceptionPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getExceptionPackage());
 	}
 
-	public static String getMapperPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getMapperPackage());
+	public String getMapperPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getMapperPackage());
 	}
 
-	private static String concatPackage(String pkg1, String pkg2) {
+	private String concatPackage(String pkg1, String pkg2) {
 		if (pkg2 == null || pkg2.equals("")) {
 			return pkg1;
 		}
 		return pkg1 + "." + pkg2;
 	}
 
-	public static String getBasePackage(Module module) {
+	public String getBasePackage(Module module) {
 		String base = module.getBasePackage();
 		if (base == null) {
 			base = module.getApplication().getBasePackage();
@@ -218,7 +220,7 @@ public class HelperBase {
 		return base;
 	}
 
-	public static Collection<RepositoryOperation> distinctOperations(Repository repository) {
+	public Collection<RepositoryOperation> distinctOperations(Repository repository) {
 		LinkedHashMap<String, RepositoryOperation> distinctOperations = new LinkedHashMap<String, RepositoryOperation>();
 		for (RepositoryOperation op : (List<RepositoryOperation>) repository.getOperations()) {
 			String opKey = distinctOperationKey(op);
@@ -229,7 +231,7 @@ public class HelperBase {
 		return distinctOperations.values();
 	}
 
-	private static String distinctOperationKey(RepositoryOperation op) {
+	private String distinctOperationKey(RepositoryOperation op) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(op.getName());
 		if (op.isDelegateToAccessObject()) {
@@ -241,7 +243,7 @@ public class HelperBase {
 		return buf.toString();
 	}
 
-	public static Collection<String> exceptions(Operation op) {
+	public Collection<String> exceptions(Operation op) {
 		String throwsString = op.getThrows();
 		if (throwsString == null || throwsString.equals("")) {
 			return new ArrayList<String>();
@@ -254,7 +256,7 @@ public class HelperBase {
 		return Arrays.asList(exceptions);
 	}
 
-	private static String fullyQualifiedException(String e, Module module) {
+	private String fullyQualifiedException(String e, Module module) {
 		String mappedName = getJavaType(e.trim()).trim();
 		if (isGeneratedException(mappedName)) {
 			return getExceptionPackage(module) + "." + mappedName;
@@ -263,7 +265,7 @@ public class HelperBase {
 		}
 	}
 
-	private static String fullyQualifiedThrows(Operation op) {
+	private String fullyQualifiedThrows(Operation op) {
 		Collection<String> exceptions = exceptions(op);
 		Module module = operationModule(op);
 		StringBuffer sb = new StringBuffer();
@@ -276,11 +278,11 @@ public class HelperBase {
 		return sb.toString();
 	}
 
-	private static boolean isGeneratedException(String e) {
+	private boolean isGeneratedException(String e) {
 		return e.indexOf('.') == -1;
 	}
 
-	public static Collection<String> getGeneratedExceptions(Operation op) {
+	public Collection<String> getGeneratedExceptions(Operation op) {
 		String throwsString = op.getThrows();
 		if (throwsString == null || throwsString.equals("")) {
 			return new ArrayList<String>();
@@ -297,20 +299,20 @@ public class HelperBase {
 		return generatedExceptions;
 	}
 
-	public static String getTypeName(Reference ref) {
+	public String getTypeName(Reference ref) {
 		return getDomainPackage(ref.getTo()) + "." + ref.getTo().getName();
 	}
 
-	public static String getTypeName(TypedElement element) {
+	public String getTypeName(TypedElement element) {
 		String type = getJavaTypeOrVoid(element.getType());
 		return surroundWithCollectionType(type, element, false);
 	}
 
-	public static String getTypeName(DomainObjectTypedElement element) {
+	public String getTypeName(DomainObjectTypedElement element) {
 		return getTypeName(element, true);
 	}
 
-	public static String getTypeName(DomainObjectTypedElement element, boolean surroundWithCollectionType) {
+	public String getTypeName(DomainObjectTypedElement element, boolean surroundWithCollectionType) {
 		String typeName = getJavaTypeOrVoid(element.getType());
 		String type = typeName;
 		String domainObjectTypeName = null;
@@ -327,12 +329,12 @@ public class HelperBase {
 		return (surroundWithCollectionType ? surroundWithCollectionType(type, element, false) : type);
 	}
 
-	public static String getImplTypeName(TypedElement element) {
+	public String getImplTypeName(TypedElement element) {
 		String type = getJavaTypeImpl(element.getType());
 		return surroundWithCollectionType(type, element, true);
 	}
 
-	private static String surroundWithCollectionType(String type, TypedElement typedElement, boolean collectionImpl) {
+	private String surroundWithCollectionType(String type, TypedElement typedElement, boolean collectionImpl) {
 		if (typedElement.getCollectionType() == null || typedElement.getCollectionType().equals("") || type == null
 				|| type.equals("") || type.equals("void")) {
 			return type;
@@ -349,7 +351,7 @@ public class HelperBase {
 		}
 	}
 
-	private static String getMapKeyType(DomainObjectTypedElement element) {
+	private String getMapKeyType(DomainObjectTypedElement element) {
 		// DomainObject domainObject = element.getMapKeyDomainObjectType();
 		// if (domainObject != null) {
 		// return getJavaTypeOrVoid(getDomainPackage(domainObject) + "." +
@@ -362,15 +364,15 @@ public class HelperBase {
 		return "Object";
 	}
 
-	private static String getJavaTypeOrVoid(String type) {
+	private String getJavaTypeOrVoid(String type) {
 		if (type == null || type.equals("")) {
 			return "void";
 		}
 		return getJavaType(type);
 	}
 
-	public static String getJavaType(String modelType) {
-		String javaType = PropertiesBase.getJavaType(modelType);
+	public String getJavaType(String modelType) {
+		String javaType = propBase.getJavaType(modelType);
 		if (javaType == null) {
 			return modelType;
 		} else {
@@ -378,8 +380,8 @@ public class HelperBase {
 		}
 	}
 
-	private static String getJavaTypeImpl(String modelType) {
-		String javaType = PropertiesBase.getJavaTypeImpl(modelType);
+	private String getJavaTypeImpl(String modelType) {
+		String javaType = propBase.getJavaTypeImpl(modelType);
 		if (javaType == null) {
 			return getJavaType(modelType);
 		} else {
@@ -392,12 +394,12 @@ public class HelperBase {
 	 * 
 	 * @see #getCollectionType(sculptormetamodel.Reference)
 	 */
-	public static String getCollectionInterfaceType(Reference ref) {
+	public String getCollectionInterfaceType(Reference ref) {
 		String collectionType = getCollectionType(ref);
 		return getCollectionInterfaceType(collectionType);
 	}
 
-	private static String getCollectionInterfaceType(String collectionType) {
+	private String getCollectionInterfaceType(String collectionType) {
 		String result = collectionInterfaceTypeMapper.get(collectionType);
 		if (result == null) {
 			result = collectionInterfaceTypeMapper.get(null);
@@ -410,12 +412,12 @@ public class HelperBase {
 	 * 
 	 * @see #getCollectionType(sculptormetamodel.Reference)
 	 */
-	public static String getCollectionImplType(Reference ref) {
+	public String getCollectionImplType(Reference ref) {
 		String collectionType = getCollectionType(ref);
 		return getCollectionImplType(collectionType);
 	}
 
-	private static String getCollectionImplType(String collectionType) {
+	private String getCollectionImplType(String collectionType) {
 		String result = collectionImplTypeMapper.get(collectionType);
 		if (result == null) {
 			result = collectionImplTypeMapper.get(null);
@@ -427,12 +429,12 @@ public class HelperBase {
 	 * Collection type can be set, list, bag or map. It corresponds to the
 	 * Hibernate collection types.
 	 */
-	public static String getCollectionType(Reference ref) {
+	public String getCollectionType(Reference ref) {
 		String type = ref.getCollectionType();
 		return (type == null ? "set" : type.toLowerCase());
 	}
 
-	public static String getCollectionType(Attribute attr) {
+	public String getCollectionType(Attribute attr) {
 		String type = attr.getCollectionType();
 		return (type == null ? "set" : type.toLowerCase());
 	}
@@ -441,7 +443,7 @@ public class HelperBase {
 	 * Get-accessor method name of a property, according to JavaBeans naming
 	 * conventions.
 	 */
-	public static String getGetAccessor(TypedElement e, String prefix) {
+	public String getGetAccessor(TypedElement e, String prefix) {
 		String capName = toFirstUpper(e.getName());
 		if (prefix != null) {
 			capName = toFirstUpper(prefix) + capName;
@@ -455,7 +457,7 @@ public class HelperBase {
 	/**
 	 * First character to upper case.
 	 */
-	public static String toFirstUpper(String name) {
+	public String toFirstUpper(String name) {
 		if (name.length() == 0) {
 			return name;
 		} else {
@@ -466,7 +468,7 @@ public class HelperBase {
 	/**
 	 * First character to lower case.
 	 */
-	public static String toFirstLower(String name) {
+	public String toFirstLower(String name) {
 		if (name.length() == 0) {
 			return name;
 		} else {
@@ -540,14 +542,14 @@ public class HelperBase {
 		return null;
 	}
 
-	private static boolean isBooleanPrimitiveType(TypedElement e) {
+	private boolean isBooleanPrimitiveType(TypedElement e) {
 		if (e.getType() == null) {
 			return false;
 		}
 		return "boolean".equals(getTypeName(e));
 	}
 
-	public static String getRepositoryBaseName(Repository repository) {
+	public String getRepositoryBaseName(Repository repository) {
 		if (!repository.getName().endsWith("Repository")) {
 			throw new IllegalArgumentException("Expect name of repository argument to end with \"Repository\"");
 		}
@@ -558,31 +560,31 @@ public class HelperBase {
 	/**
 	 * Get the generic type declaration for generic access objects.
 	 */
-	public static String getGenericType(RepositoryOperation op) {
+	public String getGenericType(RepositoryOperation op) {
 		return genericAccessObjectManager.getGenericType(op);
 	}
 
-	public static boolean isGenericAccessObject(RepositoryOperation op) {
+	public boolean isGenericAccessObject(RepositoryOperation op) {
 		return genericAccessObjectManager.isGenericAccessObject(op);
 	}
 
-	public static boolean hasAccessObjectPersistentClassConstructor(RepositoryOperation op) {
+	public boolean hasAccessObjectPersistentClassConstructor(RepositoryOperation op) {
 		return genericAccessObjectManager.isPersistentClassConstructor(op);
 	}
 
-	public static List<?> addServiceContextParameter(ServiceOperation operation) {
+	public List<?> addServiceContextParameter(ServiceOperation operation) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 		Parameter ctxParameter = factory.createParameter();
 		ctxParameter.setName("ctx");
-		ctxParameter.setType(PropertiesBase.getServiceContextClass());
+		ctxParameter.setType(propBase.getServiceContextClass());
 		operation.getParameters().add(0, ctxParameter);
 		return operation.getParameters();
 	}
 
-	public static Entity addAuditable(Entity entity) {
+	public Entity addAuditable(Entity entity) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
-		boolean useJoda = PropertiesBase.getBooleanProperty("generate.auditable.joda");
+		boolean useJoda = propBase.getBooleanProperty("generate.auditable.joda");
 		String timestampType = useJoda ? "DateTime" : "java.util.Date";
 
 		if (!hasElement("createdDate", entity.getAttributes())) {
@@ -622,7 +624,7 @@ public class HelperBase {
 		return entity;
 	}
 
-	private static boolean hasElement(String name, List<? extends NamedElement> namedElements) {
+	private boolean hasElement(String name, List<? extends NamedElement> namedElements) {
 		for (NamedElement each : namedElements) {
 			if (name.equals(each.getName())) {
 				return true;
@@ -631,7 +633,7 @@ public class HelperBase {
 		return false;
 	}
 
-	public static DomainObject addVersionAttribute(DomainObject domainObject) {
+	public DomainObject addVersionAttribute(DomainObject domainObject) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Attribute version = factory.createAttribute();
@@ -643,18 +645,18 @@ public class HelperBase {
 		return domainObject;
 	}
 
-	public static DomainObject addIdAttributeImpl(DomainObject domainObject) {
+	public DomainObject addIdAttributeImpl(DomainObject domainObject) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Attribute id = factory.createAttribute();
 		id.setName("id");
-		id.setType(PropertiesBase.getIdType());
+		id.setType(propBase.getIdType());
 		domainObject.getAttributes().add(0, id);
 
 		return domainObject;
 	}
 
-	public static DomainObject addUuidAttribute(DomainObject domainObject) {
+	public DomainObject addUuidAttribute(DomainObject domainObject) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Attribute uuid = factory.createAttribute();
@@ -665,18 +667,18 @@ public class HelperBase {
 		return domainObject;
 	}
 
-	public static DomainObject addRepository(DomainObject domainObject) {
+	public DomainObject addRepository(DomainObject domainObject) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Repository repository = factory.createRepository();
 		repository.setName(domainObject.getName() + "Repository");
-		repository.setGapClass(PropertiesBase.getBooleanProperty("generate.gapClass"));
+		repository.setGapClass(propBase.getBooleanProperty("generate.gapClass"));
 		domainObject.setRepository(repository);
 
 		return domainObject;
 	}
 
-	public static Repository addRepositoryScaffoldOperations(Repository repository) {
+	public Repository addRepositoryScaffoldOperations(Repository repository) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Set<String> existingOperations = new HashSet<String>();
@@ -684,7 +686,7 @@ public class HelperBase {
 			existingOperations.add(op.getName());
 		}
 
-		for (String operationName : PropertiesBase.scaffoldOperations()) {
+		for (String operationName : propBase.scaffoldOperations()) {
 			if (!existingOperations.contains(operationName)) {
 				RepositoryOperation op = factory.createRepositoryOperation();
 				op.setName(operationName);
@@ -695,16 +697,16 @@ public class HelperBase {
 		return repository;
 	}
 
-	public static Module addService(Module module, String serviceName) {
+	public Module addService(Module module, String serviceName) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 		Service service = factory.createService();
 		service.setName(serviceName);
-		service.setGapClass(PropertiesBase.getBooleanProperty("generate.gapClass"));
+		service.setGapClass(propBase.getBooleanProperty("generate.gapClass"));
 		module.getServices().add(service);
 		return module;
 	}
 
-	public static Service addServiceScaffoldOperations(Service service, Repository delegateRepository) {
+	public Service addServiceScaffoldOperations(Service service, Repository delegateRepository) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Set<String> existingOperations = new HashSet<String>();
@@ -712,7 +714,7 @@ public class HelperBase {
 			existingOperations.add(op.getName());
 		}
 
-		for (String operationName : PropertiesBase.scaffoldOperations()) {
+		for (String operationName : propBase.scaffoldOperations()) {
 			if (!existingOperations.contains(operationName)) {
 				// note that we add one ServiceOperation for each
 				// RepositoryOperation with this name,
@@ -731,7 +733,7 @@ public class HelperBase {
 		return service;
 	}
 
-	public static Resource addResourceScaffoldOperations(Resource resource, Service delegateService) {
+	public Resource addResourceScaffoldOperations(Resource resource, Service delegateService) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
 		Set<String> existingOperations = new HashSet<String>();
@@ -739,9 +741,9 @@ public class HelperBase {
 			existingOperations.add(op.getName());
 		}
 
-		for (String operationName : PropertiesBase.restScaffoldOperations()) {
+		for (String operationName : propBase.restScaffoldOperations()) {
 			if (!existingOperations.contains(operationName)) {
-				String serviceOperationName = PropertiesBase.restServiceDelegateOperation(operationName);
+				String serviceOperationName = propBase.restServiceDelegateOperation(operationName);
 				ServiceOperation serviceOp;
 				if (serviceOperationName == null || delegateService == null) {
 					serviceOp = null;
@@ -758,7 +760,7 @@ public class HelperBase {
 		return resource;
 	}
 
-	private static ServiceOperation operation(Service service, String operationName) {
+	private ServiceOperation operation(Service service, String operationName) {
 		for (ServiceOperation serviceOp : (List<ServiceOperation>) service.getOperations()) {
 			if (serviceOp.getName().equals(operationName)) {
 				return serviceOp;
@@ -767,14 +769,14 @@ public class HelperBase {
 		return null;
 	}
 
-	public static Repository addDefaultValues(Repository repository) {
+	public Repository addDefaultValues(Repository repository) {
 		for (RepositoryOperation op : repository.getOperations()) {
 			addDefaultValues(op);
 		}
 		return repository;
 	}
 
-	private static void addDefaultValues(RepositoryOperation operation) {
+	private void addDefaultValues(RepositoryOperation operation) {
 
 		GenericAccessObjectStrategy strategy = genericAccessObjectManager.getStrategy(operation.getName());
 		if (strategy != null) {
@@ -786,7 +788,7 @@ public class HelperBase {
 	 * Fill in parameters and return values for operations that delegate to
 	 * Service.
 	 */
-	public static void addDefaultValues(Resource resource) {
+	public void addDefaultValues(Resource resource) {
 		try {
 			for (ResourceOperation op : resource.getOperations()) {
 				addDefaultValues(op);
@@ -801,7 +803,7 @@ public class HelperBase {
 	 * Fill in parameters and return values for operations that delegate to
 	 * Repository.
 	 */
-	public static void addDefaultValues(Service service) {
+	public void addDefaultValues(Service service) {
 		try {
 			for (ServiceOperation op : (List<ServiceOperation>) service.getOperations()) {
 				addDefaultValues(op);
@@ -815,7 +817,7 @@ public class HelperBase {
 	/**
 	 * Copy values from delegate RepositoryOperation to this ServiceOperation
 	 */
-	private static void addDefaultValues(ServiceOperation operation) {
+	private void addDefaultValues(ServiceOperation operation) {
 		if (operation.getDelegate() != null) {
 			copyFromDelegate(operation, operation.getDelegate(), true);
 			// special case for rcp nature save methods
@@ -832,17 +834,17 @@ public class HelperBase {
 	/**
 	 * Copy values from delegate ServiceOperation to this ResourceOperation
 	 */
-	private static void addDefaultValues(ResourceOperation operation) {
+	private void addDefaultValues(ResourceOperation operation) {
 		if (operation.getDelegate() != null) {
 			copyFromDelegate(operation, operation.getDelegate(), false);
 		}
 	}
 
-	private static void adjustRcpServiceSaveScaffoldOperation(ServiceOperation serviceOp, RepositoryOperation repositoryOp) {
+	private void adjustRcpServiceSaveScaffoldOperation(ServiceOperation serviceOp, RepositoryOperation repositoryOp) {
 		if (!"save".equals(serviceOp.getName())) {
 			return;
 		}
-		if (!PropertiesBase.hasProjectNature("rcp")) {
+		if (!propBase.hasProjectNature("rcp")) {
 			return;
 		}
 		if (serviceOp.getType() == null && serviceOp.getDomainObjectType() == null && serviceOp.getParameters().size() > 0) {
@@ -852,7 +854,7 @@ public class HelperBase {
 		}
 	}
 
-	private static void copyFromDelegate(Operation operation, Operation delegate, boolean inclServiceContext) {
+	private void copyFromDelegate(Operation operation, Operation delegate, boolean inclServiceContext) {
 		if (operation.getParameters().isEmpty()) {
 			SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 			String serviceContextClass = serviceContextClass();
@@ -895,16 +897,16 @@ public class HelperBase {
 
 	}
 
-	public static String serviceContextClass() {
+	public String serviceContextClass() {
 		String propName = "framework.errorhandling.ServiceContext";
-		if (PropertiesBase.hasProperty(propName)) {
-			return PropertiesBase.getProperty(propName);
+		if (propBase.hasProperty(propName)) {
+			return propBase.getProperty(propName);
 		} else {
 			return "org.sculptor." + propName;
 		}
 	}
 
-	private static Module operationModule(Operation op) {
+	private Module operationModule(Operation op) {
 		if (op instanceof RepositoryOperation) {
 			return ((RepositoryOperation) op).getRepository().getAggregateRoot().getModule();
 		} else if (op instanceof ServiceOperation) {
@@ -916,7 +918,7 @@ public class HelperBase {
 		}
 	}
 
-	public static void debugTrace(String msg) {
+	public void debugTrace(String msg) {
 		LOG.info(msg);
 	}
 
@@ -926,16 +928,16 @@ public class HelperBase {
 	 * @param msg
 	 *            message to log
 	 */
-	public static void error(String msg) {
+	public void error(String msg) {
 		LOG.error(msg);
 		throw new RuntimeException(msg);
 	}
 
-	public static Long currentTimeMillis() {
+	public Long currentTimeMillis() {
 		return System.currentTimeMillis();
 	}
 
-	public static String formatJavaDoc(String doc) {
+	public String formatJavaDoc(String doc) {
 		if (doc == null || doc.trim().equals("")) {
 			return "";
 		}
@@ -950,7 +952,7 @@ public class HelperBase {
 		return sb.toString();
 	}
 
-	public static Set<Reference> getAllReferences(Application application) {
+	public Set<Reference> getAllReferences(Application application) {
 		Set<Reference> all = new HashSet<Reference>();
 		for (DomainObject d : getAllDomainObjects(application)) {
 			for (Reference ref : (List<Reference>) d.getReferences()) {
@@ -963,7 +965,7 @@ public class HelperBase {
 		return all;
 	}
 
-	private static List<DomainObject> getAllDomainObjects(Application application) {
+	private List<DomainObject> getAllDomainObjects(Application application) {
 		List<DomainObject> all = new ArrayList<DomainObject>();
 		List<Module> modules = application.getModules();
 		for (Module m : modules) {
@@ -975,22 +977,22 @@ public class HelperBase {
 		return result;
 	}
 
-	public static boolean isPrimitiveType(String typeName) {
+	public boolean isPrimitiveType(String typeName) {
 		return primitiveTypeMapper.isPrimitiveType(typeName);
 	}
 
-	public static String getObjectTypeName(String typeName) {
+	public String getObjectTypeName(String typeName) {
 		return primitiveTypeMapper.mapPrimitiveType2ObjectTypeName(typeName);
 	}
 
-	public static sculptormetamodel.Enum modifyEnum(sculptormetamodel.Enum enumObject) {
+	public sculptormetamodel.Enum modifyEnum(sculptormetamodel.Enum enumObject) {
 		modifyEnumImplicitAttribute(enumObject);
 		modifyEnumConstructorParameters(enumObject);
 
 		return enumObject;
 	}
 
-	private static void modifyEnumImplicitAttribute(sculptormetamodel.Enum enumObject) {
+	private void modifyEnumImplicitAttribute(sculptormetamodel.Enum enumObject) {
 		if (!enumObject.getAttributes().isEmpty()) {
 			return;
 		}
@@ -1008,7 +1010,7 @@ public class HelperBase {
 		enumObject.getAttributes().add(value);
 	}
 
-	private static String resolveEnumImplicitAttributeType(EnumConstructorParameter param) {
+	private String resolveEnumImplicitAttributeType(EnumConstructorParameter param) {
 		if (isEnclosedWithQuotes(param.getValue())) {
 			return "String";
 		}
@@ -1021,7 +1023,7 @@ public class HelperBase {
 		return "String";
 	}
 
-	private static void modifyEnumConstructorParameters(sculptormetamodel.Enum enumObject) {
+	private void modifyEnumConstructorParameters(sculptormetamodel.Enum enumObject) {
 		if (enumObject.getAttributes().isEmpty()) {
 			return;
 		}
@@ -1037,15 +1039,15 @@ public class HelperBase {
 		}
 	}
 
-	private static boolean isEnclosedWithQuotes(String value) {
+	private boolean isEnclosedWithQuotes(String value) {
 		return value.startsWith("\"") && value.endsWith("\"");
 	}
 
-	public static Application getGlobalApp() {
+	public Application getGlobalApp() {
 		return app;
 	}
 
-	public static void setGlobalApp(Application app) {
+	public void setGlobalApp(Application app) {
 		HelperBase.app = app;
 	}
 
@@ -1055,7 +1057,7 @@ public class HelperBase {
 	 * @param domainObject
 	 * @return validation annotations
 	 */
-	public static String getValidationAnnotations(DomainObject domainObject) {
+	public String getValidationAnnotations(DomainObject domainObject) {
 		return handleValidationAnnotations(domainObject.getValidate());
 	}
 
@@ -1065,7 +1067,7 @@ public class HelperBase {
 	 * @param attribute
 	 * @return validation annotations
 	 */
-	public static String getValidationAnnotations(Attribute attribute) {
+	public String getValidationAnnotations(Attribute attribute) {
 		return handleValidationAnnotations(attribute.getValidate());
 	}
 
@@ -1075,7 +1077,7 @@ public class HelperBase {
 	 * @param reference
 	 * @return validation annotations
 	 */
-	public static String getValidationAnnotations(Reference reference) {
+	public String getValidationAnnotations(Reference reference) {
 		return handleValidationAnnotations(reference.getValidate());
 	}
 
@@ -1087,7 +1089,7 @@ public class HelperBase {
 	 *            String with validation information
 	 * @return validation annotations
 	 */
-	private static String handleValidationAnnotations(String validate) {
+	private String handleValidationAnnotations(String validate) {
 
 		if (validate == null)
 			return "";
@@ -1100,7 +1102,7 @@ public class HelperBase {
 		// parsing the validate string is simple text replacement
 		validate = validate.replaceAll("&&", " ");
 		validate = validate.replaceAll("'", "\"");
-		for (Map.Entry<String, String> entry : PropertiesBase.validationAnnotationDefinitions().entrySet()) {
+		for (Map.Entry<String, String> entry : propBase.validationAnnotationDefinitions().entrySet()) {
 			String firstChar = entry.getKey().substring(0, 1);
 			String keyPattern = "[" + firstChar.toUpperCase() + firstChar.toLowerCase() + "]" + entry.getKey().substring(1);
 
@@ -1124,7 +1126,7 @@ public class HelperBase {
 	 *            the validate string
 	 * @return annotation validation string
 	 */
-	public static String handleParameterizedAnnotation(String annotation, String parameterNames, String parameters, String validate) {
+	public String handleParameterizedAnnotation(String annotation, String parameterNames, String parameters, String validate) {
 
 		if (parameters == null)
 			return "";
@@ -1174,7 +1176,7 @@ public class HelperBase {
 	 *            the validate string
 	 * @return annotation validation string
 	 */
-	public static String handleSimpleAnnotation(String annotation, String value, String validate) {
+	public String handleSimpleAnnotation(String annotation, String value, String validate) {
 
 		if (value == null)
 			return "";
@@ -1212,7 +1214,7 @@ public class HelperBase {
 	 *            the validate string
 	 * @return annotation validation string
 	 */
-	public static String handleBooleanAnnotation(String annotation, Boolean value, String message, String validate) {
+	public String handleBooleanAnnotation(String annotation, Boolean value, String message, String validate) {
 
 		if (!Boolean.TRUE.equals(value))
 			return "";
@@ -1249,11 +1251,11 @@ public class HelperBase {
 		}
 	}
 
-	public static String formatAnnotationParameters(List<Object> list) {
+	public String formatAnnotationParameters(List<Object> list) {
 		return formatAnnotationParameters(null, list);
 	}
 
-	public static String formatAnnotationParameters(String annotation, List<Object> list) {
+	public String formatAnnotationParameters(String annotation, List<Object> list) {
 		Map<String, Object> collected = new LinkedHashMap<String, Object>();
 		for (int i = 0; i < list.size(); i += 3) {
 			Boolean condition = (Boolean) list.get(i);
@@ -1292,13 +1294,13 @@ public class HelperBase {
 		return result.toString();
 	}
 
-	public static String getHintImpl(String hint, String parameter) {
+	public String getHintImpl(String hint, String parameter) {
 		return getHintImpl(hint, parameter, ",;");
 	}
 
 	// need to specify the separator in case the hint value contains a ','
 	// TODO: very quick solution
-	public static String getHintImpl(String hint, String parameter, String separator) {
+	public String getHintImpl(String hint, String parameter, String separator) {
 		if (hint == null) {
 			return null;
 		}
@@ -1324,15 +1326,15 @@ public class HelperBase {
 		return null;
 	}
 
-	public static boolean hasHintImpl(String hint, String parameter) {
+	public boolean hasHintImpl(String hint, String parameter) {
 		return getHintImpl(hint, parameter) != null;
 	}
 
-	public static void addHint(NamedElement element, String hint) {
+	public void addHint(NamedElement element, String hint) {
 		addHint(element, hint, ",");
 	}
 
-	public static void addHint(NamedElement element, String hint, String separator) {
+	public void addHint(NamedElement element, String hint, String separator) {
 		String hintKey;
 		int indexOfEq = hint.indexOf("=");
 		if (indexOfEq == -1) {
@@ -1353,7 +1355,7 @@ public class HelperBase {
 		element.setHint(fullHintStr);
 	}
 
-	private static String[] trim(String[] array) {
+	private String[] trim(String[] array) {
 		String[] result = new String[array.length];
 		for (int i = 0; i < array.length; i++) {
 			result[i] = array[i].trim();
@@ -1361,7 +1363,7 @@ public class HelperBase {
 		return result;
 	}
 
-	public static List<Object> filterValues(List<Object> keys, List<Object> values) {
+	public List<Object> filterValues(List<Object> keys, List<Object> values) {
 		List<Object> result = new ArrayList<Object>();
 		Set<Object> used = new HashSet<Object>();
 		for (int i = 0; i < keys.size(); i++) {
@@ -1373,7 +1375,7 @@ public class HelperBase {
 		return result;
 	}
 
-	public static String toSeparatedString(List<?> values, String separator) {
+	public String toSeparatedString(List<?> values, String separator) {
 		StringBuilder result = new StringBuilder();
 		for (Object each : values) {
 			if (each == null) {
@@ -1387,14 +1389,14 @@ public class HelperBase {
 		return result.toString();
 	}
 
-	public static boolean isEntityOrPersistentValueObject(DomainObject d) {
+	public boolean isEntityOrPersistentValueObject(DomainObject d) {
 		if ((d instanceof BasicType) || (d instanceof sculptormetamodel.Enum)) {
 			return false;
 		}
 		return isPersistent(d);
 	}
 
-	public static boolean isPersistent(DomainObject domainObject) {
+	public boolean isPersistent(DomainObject domainObject) {
 		if (domainObject instanceof Entity) {
 			return true;
 		} else if (domainObject instanceof ValueObject) {
@@ -1405,17 +1407,17 @@ public class HelperBase {
 		}
 	}
 
-	public static List<Object> addFirst(List<Object> list, Object values) {
+	public List<Object> addFirst(List<Object> list, Object values) {
 		list.add(0, values);
 		return list;
 	}
 
-	public static String replaceParamNamePlaceholders(String str, Operation op) {
+	public String replaceParamNamePlaceholders(String str, Operation op) {
 		if (str.indexOf("${p") == -1) {
 			// nothing to replace
 			return str;
 		}
-		String serviceContextClass = PropertiesBase.getServiceContextClass();
+		String serviceContextClass = propBase.getServiceContextClass();
 		int i = 0;
 		String result = str;
 		for (Parameter each : (Iterable<Parameter>) op.getParameters()) {
@@ -1428,7 +1430,7 @@ public class HelperBase {
 		return result;
 	}
 
-	public static String replacePlaceholder(String str, String placeholder, String replacement) {
+	public String replacePlaceholder(String str, String placeholder, String replacement) {
 		// Strange, regexp is not cooperating with me for this, so I use
 		// substring instead
 		int i = str.indexOf(placeholder);
@@ -1441,26 +1443,26 @@ public class HelperBase {
 
 	private static final HashMap<String, Integer> counters = new HashMap<String, Integer>();
 
-	public static String counterInc(String counter) {
+	public String counterInc(String counter) {
 		Integer i = counters.get(counter);
 		i = i != null ? i + 1 : 0;
 		counters.put(counter, i);
 		return i.toString();
 	}
 
-	public static void counterReset(String counter, Integer initValue) {
+	public void counterReset(String counter, Integer initValue) {
 		counters.put(counter, initValue);
 	}
 
-	public static String getBuilderPackage(DomainObject domainObject) {
+	public String getBuilderPackage(DomainObject domainObject) {
 		return getBuilderPackage(domainObject.getModule());
 	}
 
-	public static String getBuilderPackage(Module module) {
-		return concatPackage(getBasePackage(module), PropertiesBase.getBuilderPackage());
+	public String getBuilderPackage(Module module) {
+		return concatPackage(getBasePackage(module), propBase.getBuilderPackage());
 	}
 
-	public static String getReferencePathFromReturnType(RepositoryOperation op) {
+	public String getReferencePathFromReturnType(RepositoryOperation op) {
 		DomainObject returnType = op.getDomainObjectType();
 		if (returnType == null) {
 			return null;
@@ -1486,7 +1488,7 @@ public class HelperBase {
 	}
 
 	// TODO FIND QUERYCONVERTER
-	public static String toConditionalCriteria(String condition, String root) {
+	public String toConditionalCriteria(String condition, String root) {
 		// return new QueryConverter.ConditionalCriteriaStrategy(condition,root).toQueryDsl();
 		return "";
 	}

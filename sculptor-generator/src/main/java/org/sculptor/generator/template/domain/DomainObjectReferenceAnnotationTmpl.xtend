@@ -17,21 +17,25 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectReferenceAnnotationTmpl.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class DomainObjectReferenceAnnotationTmpl {
 
-def static String xmlElementAnnotation(Reference it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String xmlElementAnnotation(Reference it) {
 	'''
 		«IF transient»
 			@javax.xml.bind.annotation.XmlTransient
@@ -46,7 +50,7 @@ def static String xmlElementAnnotation(Reference it) {
 	'''
 }
 
-def static String oneReferenceAttributeAnnotations(Reference it) {
+def String oneReferenceAttributeAnnotations(Reference it) {
 	'''
 	«IF isJpaAnnotationOnFieldToBeGenerated()»
 		«IF isJpaAnnotationToBeGenerated() && from.isPersistent()»
@@ -59,7 +63,7 @@ def static String oneReferenceAttributeAnnotations(Reference it) {
 	'''
 }
 
-def static String oneReferenceAppEngineKeyAnnotation(Reference it) {
+def String oneReferenceAppEngineKeyAnnotation(Reference it) {
 	'''
 		@javax.persistence.Basic
 		@javax.persistence.Column(
@@ -69,7 +73,7 @@ def static String oneReferenceAppEngineKeyAnnotation(Reference it) {
 	'''
 }
 
-def static String oneReferenceGetterAnnotations(Reference it) {
+def String oneReferenceGetterAnnotations(Reference it) {
 	'''
 	«IF !isJpaAnnotationOnFieldToBeGenerated()»
 		«IF isJpaAnnotationToBeGenerated()»
@@ -85,7 +89,7 @@ def static String oneReferenceGetterAnnotations(Reference it) {
 	'''
 }
 
-def static String oneReferenceJpaAnnotations(Reference it) {
+def String oneReferenceJpaAnnotations(Reference it) {
 	'''
 	«IF isJpaAnnotationToBeGenerated() && (from.isPersistent() || (isJpa2() && from.isEmbeddable()))»
 		«IF transient»
@@ -118,7 +122,7 @@ def static String oneReferenceJpaAnnotations(Reference it) {
 	'''
 }
 
-def static String oneReferenceOnDeleteJpaAnnotation(Reference it) {
+def String oneReferenceOnDeleteJpaAnnotation(Reference it) {
 	'''
 		/* use orphanRemoval in JPA2 */
 		«IF isJpa1() && isJpaProviderHibernate() && it.hasOpposite() && isDbOnDeleteCascade(opposite)»
@@ -127,7 +131,7 @@ def static String oneReferenceOnDeleteJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String basicTypeJpaAnnotation(Reference it) {
+def String basicTypeJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.Embedded
 		«IF isJpaProviderAppEngine() »
@@ -150,7 +154,7 @@ def static String basicTypeJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String enumJpaAnnotation(Reference it) {
+def String enumJpaAnnotation(Reference it) {
 	val enum = it.getEnum()
 	'''
 		@javax.persistence.Column(
@@ -170,7 +174,7 @@ def static String enumJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String nonOrdinaryEnumTypeAnnotation(Reference it) {
+def String nonOrdinaryEnumTypeAnnotation(Reference it) {
 	// val enum = it.getEnum()
 	'''
 		«IF isJpaProviderHibernate()»
@@ -183,7 +187,7 @@ def static String nonOrdinaryEnumTypeAnnotation(Reference it) {
 	'''
 }
 
-def static String hibernateEnumTypeAnnotation(Reference it) {
+def String hibernateEnumTypeAnnotation(Reference it) {
 	'''
 		«val enum = it.getEnum()»
 		«IF isJpa1()»
@@ -202,7 +206,7 @@ def static String hibernateEnumTypeAnnotation(Reference it) {
 	'''
 }
 
-def static String oneToOneJpaAnnotation(Reference it) {
+def String oneToOneJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.OneToOne(
 			«formatAnnotationParameters(<Object>newArrayList(!nullable, "optional", false,
@@ -227,7 +231,7 @@ def static String oneToOneJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String manyToOneJpaAnnotation(Reference it) {
+def String manyToOneJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.ManyToOne(
 		«formatAnnotationParameters(<Object>newArrayList(!nullable, "optional", false,
@@ -266,18 +270,18 @@ def static String manyToOneJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String oneReferenceValidationAnnotations(Reference it) {
+def String oneReferenceValidationAnnotations(Reference it) {
 	'''
 		«it.getValidationAnnotations()»
 	'''
 }
 
-def static String attributeOverride(Object it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
+def String attributeOverride(Object it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
 	'''
 }
 
-def static String attributeOverride(Attribute it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
+def String attributeOverride(Attribute it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
 		@javax.persistence.AttributeOverride(
 			name="«attributePrefix + name»",
@@ -289,7 +293,7 @@ def static String attributeOverride(Attribute it, String columnPrefix, String at
 	'''
 }
 
-def static String attributeOverride(Reference it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
+def String attributeOverride(Reference it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
 		«IF it.isBasicTypeReference()»
 			«it.to.attributes.map[a | attributeOverride(a, getDatabaseName(columnPrefix, it), name + ".", it.nullable)].join(",")»
@@ -306,7 +310,7 @@ def static String attributeOverride(Reference it, String columnPrefix, String at
 	'''
 }
 
-def static String associationOverride(Reference it, String prefix, boolean referenceIsNullable) {
+def String associationOverride(Reference it, String prefix, boolean referenceIsNullable) {
 	'''
 		/*TODO: verify the table and column naming */
 		«IF many»
@@ -330,12 +334,12 @@ def static String associationOverride(Reference it, String prefix, boolean refer
 	'''
 }
 
-def static String oneReferenceSetterAnnotations(Reference it) {
+def String oneReferenceSetterAnnotations(Reference it) {
 	'''
 	'''
 }
 
-def static String manyReferenceAttributeAnnotations(Reference it) {
+def String manyReferenceAttributeAnnotations(Reference it) {
 	'''
 		«IF isJpaAnnotationOnFieldToBeGenerated()»
 			«IF isJpaAnnotationToBeGenerated()»
@@ -348,7 +352,7 @@ def static String manyReferenceAttributeAnnotations(Reference it) {
 	'''
 }
 
-def static String manyReferenceGetterAnnotations(Reference it) {
+def String manyReferenceGetterAnnotations(Reference it) {
 	'''
 		«IF !isJpaAnnotationOnFieldToBeGenerated()»
 			«IF isJpaAnnotationToBeGenerated()»
@@ -364,7 +368,7 @@ def static String manyReferenceGetterAnnotations(Reference it) {
 	'''
 }
 
-def static String manyReferenceAppEngineKeyAnnotation(Reference it) {
+def String manyReferenceAppEngineKeyAnnotation(Reference it) {
 	'''
 		@javax.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
@@ -373,7 +377,7 @@ def static String manyReferenceAppEngineKeyAnnotation(Reference it) {
 	'''
 }
 
-def static String manyReferenceJpaAnnotations(Reference it) {
+def String manyReferenceJpaAnnotations(Reference it) {
 	'''
 	«IF isJpaAnnotationToBeGenerated() && from.isPersistent()»
 		«IF !transient»
@@ -410,7 +414,7 @@ def static String manyReferenceJpaAnnotations(Reference it) {
 	'''
 }
 
-def static String oneToManyJpaAnnotation(Reference it) {
+def String oneToManyJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.OneToMany(
 			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
@@ -447,7 +451,7 @@ def static String oneToManyJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String elementCollectionJpaAnnotation(Reference it) {
+def String elementCollectionJpaAnnotation(Reference it) {
 	'''
 		/* nested element collections are not allowed by jpa, some provider may support this, we not */
 		/* TODO: add a constraint for to avoid nested element collections */
@@ -456,7 +460,7 @@ def static String elementCollectionJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String elementCollectionTableJpaAnnotation(Reference it) {
+def String elementCollectionTableJpaAnnotation(Reference it) {
 	'''
 		/* It's not possible to overwrite the collection table later, therefore we can not use it here */
 		/*
@@ -467,7 +471,7 @@ def static String elementCollectionTableJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String manyToManyJpaAnnotation(Reference it) {
+def String manyToManyJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.ManyToMany(
 			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
@@ -488,7 +492,7 @@ def static String manyToManyJpaAnnotation(Reference it) {
 	'''
 }
 
-def static String manyReferenceValidationAnnotations(Reference it) {
+def String manyReferenceValidationAnnotations(Reference it) {
 	'''
 		«it.getValidationAnnotations()»
 	'''

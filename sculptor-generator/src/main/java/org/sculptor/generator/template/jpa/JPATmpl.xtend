@@ -17,34 +17,42 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.DomainObject
 
-import static org.sculptor.generator.ext.DbHelper.*
 import static org.sculptor.generator.template.jpa.JPATmpl.*
-
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
 
 class JPATmpl {
 
-def static String jpa(Application it) {
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val HibernateTmpl hibernateTmpl = GeneratorFactory::hibernateTmpl
+	private static val EclipseLinkTmpl eclipseLinkTmpl = GeneratorFactory::eclipseLinkTmpl
+	private static val DataNucleusTmpl dataNucleusTmpl = GeneratorFactory::dataNucleusTmpl
+	private static val OpenJpaTmpl openJpaTmpl = GeneratorFactory::openJpaTmpl
+
+def String jpa(Application it) {
 	'''
 	«persistenceUnitXmlFile(it)»
 	«IF isJpaProviderHibernate()»
-		«HibernateTmpl::hibernate(it)»
+		«hibernateTmpl.hibernate(it)»
 	«ENDIF»
 	«IF isJpaProviderEclipseLink()»
-		«EclipseLinkTmpl::eclipseLink(it)»
+		«eclipseLinkTmpl.eclipseLink(it)»
 	«ENDIF»
 	«IF isJpaProviderDataNucleus()»
-		«DataNucleusTmpl::dataNucleus(it)»
+		«dataNucleusTmpl.dataNucleus(it)»
 	«ENDIF»
 	«IF isJpaProviderOpenJpa()»
-		«OpenJpaTmpl::openJpa(it)»
+		«openJpaTmpl.openJpa(it)»
 	«ENDIF»
 	«IF isTestToBeGenerated() && !pureEjb3()»
 		«persistenceUnitXmlFileTest(it)»
@@ -57,7 +65,7 @@ def static String jpa(Application it) {
 /*JPA PersistenceUnit configuration                                      */
 /*###################################################################### */
 
-def static String persistenceUnitXmlFile(Application it) {
+def String persistenceUnitXmlFile(Application it) {
 	fileOutput(persistenceXml(), OutputSlot::TO_GEN_RESOURCES, '''
 	«persistenceUnitHeader(it)»
 
@@ -70,7 +78,7 @@ def static String persistenceUnitXmlFile(Application it) {
 	)
 }
 
-def static String persistenceUnitHeader(Application it) {
+def String persistenceUnitHeader(Application it) {
 	'''
 	«IF isJpa1()»
 	<?xml version="1.0" encoding="UTF-8"?>
@@ -88,7 +96,7 @@ def static String persistenceUnitHeader(Application it) {
 	'''
 }
 
-def static String persistenceUnitContent(Application it, String unitName) {
+def String persistenceUnitContent(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»" «IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»transaction-type="JTA"«ELSE»transaction-type="RESOURCE_LOCAL"«ENDIF»>
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
@@ -104,13 +112,13 @@ def static String persistenceUnitContent(Application it, String unitName) {
 		<!-- properties  -->
 		«persistenceUnitProperties(it, unitName)»
 		/*extension point for additional configuration of the PersistenceUnit */
-		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND JPATmpl::persistenceUnitAdditions FOR Application" -->
+		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditions FOR Application" -->
 		«persistenceUnitAdditions(it, unitName)»
 	</persistence-unit>
 	'''
 }
 
-def static String persistenceUnit(Application it, String unitName) {
+def String persistenceUnit(Application it, String unitName) {
 	'''
 		/*
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
@@ -118,7 +126,7 @@ def static String persistenceUnit(Application it, String unitName) {
 	'''
 }
 
-def static String persistenceUnitAnnotatedClasses(Application it, String unitName) {
+def String persistenceUnitAnnotatedClasses(Application it, String unitName) {
 	'''
 	«IF isJpaProviderEclipseLink()»
 	<mapping-file>«it.getResourceDir("META-INF") + "orm.xml"»</mapping-file>
@@ -127,7 +135,7 @@ def static String persistenceUnitAnnotatedClasses(Application it, String unitNam
 	'''
 }
 
-def static String persistenceUnitAnnotatedClasses(DomainObject it) {
+def String persistenceUnitAnnotatedClasses(DomainObject it) {
 	'''
 	«IF it.hasOwnDatabaseRepresentation()»
 		<class>«getDomainPackage()».«name»</class>
@@ -144,7 +152,7 @@ def static String persistenceUnitAnnotatedClasses(DomainObject it) {
 	'''
 }
 
-def static String persistenceUnitDataSource(Application it, String unitName) {
+def String persistenceUnitDataSource(Application it, String unitName) {
 	/* TODO: add additional support for jta */
 	/* Invoke old dataSourceName() for backwards compatibility reasons */
 	val dataSourceName = if (it.isDefaultPersistenceUnitName(unitName)) it.dataSourceName() else it.dataSourceName(unitName)
@@ -170,7 +178,7 @@ def static String persistenceUnitDataSource(Application it, String unitName) {
 	'''
 }
 
-def static String persistenceUnitProvider(Application it) {
+def String persistenceUnitProvider(Application it) {
 	'''
 	«IF isJpaProviderHibernate()»
 	<provider>org.hibernate.ejb.HibernatePersistence</provider>
@@ -186,19 +194,19 @@ def static String persistenceUnitProvider(Application it) {
 	'''
 }
 
-def static String persistenceUnitSharedCacheMode(Application it) {
+def String persistenceUnitSharedCacheMode(Application it) {
 	'''
 	<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
 	'''
 }
 
-def static String persistenceUnitValidationMode(Application it) {
+def String persistenceUnitValidationMode(Application it) {
 	'''
  	<validation-mode>AUTO</validation-mode>
 	'''
 }
 
-def static String persistenceUnitProperties(Application it, String unitName) {
+def String persistenceUnitProperties(Application it, String unitName) {
 	'''
 	<properties>
 	«IF isJpaProviderHibernate()»
@@ -213,24 +221,24 @@ def static String persistenceUnitProperties(Application it, String unitName) {
 		«persistenceUnitPropertiesOpenJpa(it)»
 	«ENDIF»
 	/*extension point for additional configuration of the PersistenceUnit */
-	<!-- add additional configuration properties by using SpecialCases.xpt "AROUND JPATmpl::persistenceUnitAdditionalProperties FOR Application" -->
+	<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditionalProperties FOR Application" -->
 		«persistenceUnitAdditionalProperties(it, unitName)»
 	</properties>
 	'''
 }
 
-def static String persistenceUnitAdditionalProperties(Application it, String unitName) {
+def String persistenceUnitAdditionalProperties(Application it, String unitName) {
 	'''
 	«persistenceUnitAdditionalProperties(it)»
 	'''
 }
 
-def static String persistenceUnitAdditionalProperties(Application it) {
+def String persistenceUnitAdditionalProperties(Application it) {
 	'''
 	'''
 }
 
-def static String persistenceUnitPropertiesHibernate(Application it, String unitName) {
+def String persistenceUnitPropertiesHibernate(Application it, String unitName) {
 	'''
 		<property name="hibernate.dialect" value="«hibernateDialect»" />
 		<property name="query.substitutions" value="true 1, false 0" />
@@ -249,7 +257,7 @@ def static String persistenceUnitPropertiesHibernate(Application it, String unit
 	'''
 }
 
-def static String persistenceUnitPropertiesEclipseLink(Application it, String unitName) {
+def String persistenceUnitPropertiesEclipseLink(Application it, String unitName) {
 	'''
 		<property name="eclipselink.weaving" value="static"/>
 		<property name="eclipselink.target-database" value="«getEclipseLinkTargetDatabase(unitName)»"/>
@@ -264,7 +272,7 @@ def static String persistenceUnitPropertiesEclipseLink(Application it, String un
 	'''
 }
 
-def static String persistenceUnitPropertiesDataNucleus(Application it, String unitName) {
+def String persistenceUnitPropertiesDataNucleus(Application it, String unitName) {
 	'''
 		<property name="datanucleus.storeManagerType" value="rdbms"/>
 		<property name="datanucleus.ConnectionFactoryName" value="java:comp/env/jdbc/«it.dataSourceName(unitName)»"/>
@@ -274,7 +282,7 @@ def static String persistenceUnitPropertiesDataNucleus(Application it, String un
 	'''
 }
 
-def static String persistenceUnitPropertiesAppEngine(Application it) {
+def String persistenceUnitPropertiesAppEngine(Application it) {
 	'''
 			<property name="datanucleus.NontransactionalRead" value="true"/>
 			<property name="datanucleus.NontransactionalWrite" value="true"/>
@@ -284,14 +292,14 @@ def static String persistenceUnitPropertiesAppEngine(Application it) {
 	'''
 }
 
-def static String persistenceUnitPropertiesOpenJpa(Application it, String unitName) {
+def String persistenceUnitPropertiesOpenJpa(Application it, String unitName) {
 	'''
 			<property name="openjpa.Log" value="DefaultLevel=INFO"/>
 			<property name="openjpa.Compatibility" value="AbstractMappingUniDirectional=false"/>
 	'''
 }
 
-def static String persistenceUnitCacheProperties(Application it, String unitName) {
+def String persistenceUnitCacheProperties(Application it, String unitName) {
 	'''
 	«IF isJpaProviderHibernate()»
 		«persistenceUnitCachePropertiesHibernate(it, unitName)»
@@ -305,7 +313,7 @@ def static String persistenceUnitCacheProperties(Application it, String unitName
 	'''
 }
 
-def static String persistenceUnitCachePropertiesHibernate(Application it, String unitName) {
+def String persistenceUnitCachePropertiesHibernate(Application it, String unitName) {
 	'''
 		<property name="hibernate.cache.use_query_cache" value="true"/>
 		<property name="hibernate.cache.use_second_level_cache" value="true"/>
@@ -331,12 +339,12 @@ def static String persistenceUnitCachePropertiesHibernate(Application it, String
 	'''
 }
 
-def static String persistenceUnitCachePropertiesEclipseLink(Application it, String unitName) {
+def String persistenceUnitCachePropertiesEclipseLink(Application it, String unitName) {
 	'''
 	'''
 }
 
-def static String persistenceUnitCachePropertiesDataNucleus(Application it, String unitName) {
+def String persistenceUnitCachePropertiesDataNucleus(Application it, String unitName) {
 	'''
 	/* TODO: add more cache providers, oscache, swarmcache, ... */
 	«IF cacheProvider() == "EhCache"»
@@ -353,18 +361,18 @@ def static String persistenceUnitCachePropertiesDataNucleus(Application it, Stri
 	'''
 }
 
-def static String persistenceUnitCachePropertiesOpenJpa(Application it, String unitName) {
+def String persistenceUnitCachePropertiesOpenJpa(Application it, String unitName) {
 	'''
 	'''
 }
 
-def static String persistenceUnitPropertiesOpenJpa(Application it) {
+def String persistenceUnitPropertiesOpenJpa(Application it) {
 	'''
 		<property name="openjpa.Log" value="DefaultLevel=WARN"/>
 	'''
 }
 
-def static String persistenceUnitTransactionProperties(Application it, String unitName) {
+def String persistenceUnitTransactionProperties(Application it, String unitName) {
 	'''
 	«IF isJpaProviderHibernate()»
 		«persistenceUnitTransactionPropertiesHibernate(it, unitName)»
@@ -372,7 +380,7 @@ def static String persistenceUnitTransactionProperties(Application it, String un
 	'''
 }
 
-def static String persistenceUnitTransactionPropertiesHibernate(Application it, String unitName) {
+def String persistenceUnitTransactionPropertiesHibernate(Application it, String unitName) {
 	'''
 		/*TODO remove
 		<property name="hibernate.transaction.factory_class" value="org.hibernate.ejb.transaction.JoinableCMTTransactionFactory"/>
@@ -387,12 +395,12 @@ def static String persistenceUnitTransactionPropertiesHibernate(Application it, 
 	'''
 }
 
-def static String persistenceUnitTransactionPropertiesEclipseLink(Application it, String unitName) {
+def String persistenceUnitTransactionPropertiesEclipseLink(Application it, String unitName) {
 	'''
 	'''
 }
 
-def static String persistenceUnitTransactionPropertiesDataNucleus(Application it, String unitName) {
+def String persistenceUnitTransactionPropertiesDataNucleus(Application it, String unitName) {
 	'''
 		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated()) »
 		<property name="datanucleus.jtaLocator" value="«applicationServer()»"/>
@@ -404,12 +412,12 @@ def static String persistenceUnitTransactionPropertiesDataNucleus(Application it
 }
 
 /*extension point for additional configuration of the PersistenceUnit */
-def static String persistenceUnitAdditions(Application it, String unitName) {
+def String persistenceUnitAdditions(Application it, String unitName) {
 	'''
 	'''
 }
 
-def static String persistenceUnitXmlFileTest(Application it) {
+def String persistenceUnitXmlFileTest(Application it) {
 	fileOutput("META-INF/persistence-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«persistenceUnitHeader(it)»
 	«FOR unitName : modules.filter(e| !e.external).map(e|e.persistenceUnit).toSet()»
@@ -420,7 +428,7 @@ def static String persistenceUnitXmlFileTest(Application it) {
 	)
 }
 
-def static String persistenceUnitContentTest(Application it, String unitName) {
+def String persistenceUnitContentTest(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»">
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
@@ -435,13 +443,13 @@ def static String persistenceUnitContentTest(Application it, String unitName) {
 		<!-- propeties  -->
 	    «persistenceUnitPropertiesTest(it, unitName)»
 		/*extension point for additional configuration of the PersistenceUnit */
-		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND JPATmpl::persistenceUnitAdditions FOR Application" -->
+		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditions FOR Application" -->
 	    «persistenceUnitAdditions(it, unitName)»
 		</persistence-unit>
 	'''
 }
 
-def static String persistenceUnitPropertiesTest(Application it, String unitName) {
+def String persistenceUnitPropertiesTest(Application it, String unitName) {
 	'''
 		<properties>
 			«IF isJpaProviderHibernate()»
@@ -454,24 +462,24 @@ def static String persistenceUnitPropertiesTest(Application it, String unitName)
 				«persistenceUnitPropertiesTestOpenJpa(it, unitName)»
 			«ENDIF»
 			/* extension point for additional configuration of the PersistenceUnit */
-			<!-- add additional configuration properties by using SpecialCases.xpt "AROUND JPATmpl::persistenceUnitAdditionalPropertiesTest FOR Application" -->
+			<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditionalPropertiesTest FOR Application" -->
 			«persistenceUnitAdditionalPropertiesTest(it, unitName)»
 		</properties>
 	'''
 }
 
-def static String persistenceUnitAdditionalPropertiesTest(Application it, String unitName) {
+def String persistenceUnitAdditionalPropertiesTest(Application it, String unitName) {
 	'''
 	«persistenceUnitAdditionalPropertiesTest(it)»
 	'''
 }
 
-def static String persistenceUnitAdditionalPropertiesTest(Application it) {
+def String persistenceUnitAdditionalPropertiesTest(Application it) {
 	'''
 	'''
 }
 
-def static String persistenceUnitPropertiesTestHibernate(Application it, String unitName) {
+def String persistenceUnitPropertiesTestHibernate(Application it, String unitName) {
 	'''
 		<property name="hibernate.dialect" value="«fw("persistence.CustomHSQLDialect")»" />
 		<property name="hibernate.show_sql" value="true" />
@@ -490,7 +498,7 @@ def static String persistenceUnitPropertiesTestHibernate(Application it, String 
 	'''
 }
 
-def static String persistenceUnitPropertiesTestEclipseLink(Application it, String unitName) {
+def String persistenceUnitPropertiesTestEclipseLink(Application it, String unitName) {
 	'''
 		<property name="eclipselink.target-database" value="HSQL"/>
 		<property name="eclipselink.ddl-generation" value="create-tables"/>
@@ -500,7 +508,7 @@ def static String persistenceUnitPropertiesTestEclipseLink(Application it, Strin
 	'''
 }
 
-def static String persistenceUnitPropertiesTestDataNucleus(Application it, String unitName) {
+def String persistenceUnitPropertiesTestDataNucleus(Application it, String unitName) {
 	'''
 		<property name="datanucleus.storeManagerType" value="rdbms"/>
 		<property name="datanucleus.jpa.addClassTransformer" value="false"/>
@@ -509,7 +517,7 @@ def static String persistenceUnitPropertiesTestDataNucleus(Application it, Strin
 	'''
 }
 
-def static String persistenceUnitPropertiesTestOpenJpa(Application it, String unitName) {
+def String persistenceUnitPropertiesTestOpenJpa(Application it, String unitName) {
 	'''
 		<property name="openjpa.Log" value="DefaultLevel=TRACE"/>
 		<property name="openjpa.DynamicEnhancementAgent" value="false"/>

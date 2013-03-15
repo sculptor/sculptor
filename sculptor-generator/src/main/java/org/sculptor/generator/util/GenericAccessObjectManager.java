@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.sculptor.generator.ext.GeneratorFactory;
 import org.sculptor.generator.ext.Helper;
 
 import sculptormetamodel.Attribute;
@@ -33,6 +34,9 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
 
 public class GenericAccessObjectManager {
 	private final Map<String, GenericAccessObjectStrategy> genericAccessObjectStrategies = new HashMap<String, GenericAccessObjectStrategy>();
+	private final static PropertiesBase propBase = GeneratorFactory.propertiesBase();
+	private final static HelperBase helperBase = GeneratorFactory.helperBase();
+	private final static Helper helper = GeneratorFactory.helper();
 
 	protected GenericAccessObjectManager() {
 	}
@@ -48,12 +52,12 @@ public class GenericAccessObjectManager {
 		// By default the NullStrategy is used if only the access object class
 		// is defined
 		NullStrategy nullStrategy = new NullStrategy();
-		for (String propertyName : PropertiesBase.getPropertyNames()) {
+		for (String propertyName : propBase.getPropertyNames()) {
 			if (propertyName.startsWith("framework.accessapi.")) {
 				String key = propertyName.split("\\.")[2]; // last part
 				if (key.endsWith("Access")) {
 					key = key.substring(0, key.length() - "Access".length());
-					key = HelperBase.toFirstLower(key);
+					key = helperBase.toFirstLower(key);
 					genericAccessObjectStrategies.put(key, nullStrategy);
 				}
 			}
@@ -61,16 +65,16 @@ public class GenericAccessObjectManager {
 				String key = propertyName.split("\\.")[2]; // last part
 				if (key.endsWith("AccessImpl")) {
 					key = key.substring(0, key.length() - "AccessImpl".length());
-					key = HelperBase.toFirstLower(key);
+					key = helperBase.toFirstLower(key);
 					genericAccessObjectStrategies.put(key, nullStrategy);
 				}
 			}
 		}
 
-		for (String propertyName : PropertiesBase.getPropertyNames()) {
+		for (String propertyName : propBase.getPropertyNames()) {
 			if (propertyName.startsWith("genericAccessObjectStrategy.")) {
 				String key = propertyName.split("\\.")[1]; // last part
-				String propertyValue = PropertiesBase.getProperty(propertyName);
+				String propertyValue = propBase.getProperty(propertyName);
 				if (propertyValue == null || propertyValue.trim().equals("")) {
 					genericAccessObjectStrategies.put(key, nullStrategy);
 				} else {
@@ -151,7 +155,7 @@ public class GenericAccessObjectManager {
 
 		protected String aggregateRootClassName(RepositoryOperation operation) {
 			DomainObject aggregateRoot = operation.getRepository().getAggregateRoot();
-			String pkg = HelperBase.getDomainPackage(aggregateRoot);
+			String pkg = helperBase.getDomainPackage(aggregateRoot);
 			return pkg + "." + aggregateRoot.getName();
 		}
 
@@ -175,7 +179,7 @@ public class GenericAccessObjectManager {
 		}
 
 		protected void addNotFoundException(RepositoryOperation operation) {
-			if (PropertiesBase.getBooleanProperty("generate.NotFoundException")
+			if (propBase.getBooleanProperty("generate.NotFoundException")
 					&& (operation.getThrows() == null || operation.getThrows().equals(""))) {
 				String objectNotFoundExc = operation.getRepository().getAggregateRoot().getName() + "NotFoundException";
 				operation.setThrows(objectNotFoundExc);
@@ -192,7 +196,7 @@ public class GenericAccessObjectManager {
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
 			DomainObject aggregateRoot = operation.getRepository().getAggregateRoot();
-			String aggregateRootName = HelperBase.getDomainPackage(aggregateRoot) + "." + aggregateRoot.getName();
+			String aggregateRootName = helperBase.getDomainPackage(aggregateRoot) + "." + aggregateRoot.getName();
 			return "<" + aggregateRootName + ">";
 		}
 
@@ -225,8 +229,8 @@ public class GenericAccessObjectManager {
 
 			if (operation.getParameters().isEmpty()) {
 				String dslDeclaredIdType = findDslDeclaredIdType(operation.getRepository().getAggregateRoot());
-				String idType = PropertiesBase.getIdType();
-				String javaType = PropertiesBase.getJavaType(idType);
+				String idType = propBase.getIdType();
+				String javaType = propBase.getJavaType(idType);
 				// id declared in dsl has precedence
 				if (dslDeclaredIdType != null) {
 					javaType = dslDeclaredIdType;
@@ -246,7 +250,7 @@ public class GenericAccessObjectManager {
 			String idTypeName = idParam.getType();
 			// use object types
 			idTypeName = primitiveTypeMapper.mapPrimitiveType2ObjectTypeName(idTypeName);
-			return "<" + HelperBase.getTypeName(operation, false) + ", " + idTypeName + ">";
+			return "<" + helperBase.getTypeName(operation, false) + ", " + idTypeName + ">";
 		}
 
 		@Override
@@ -262,7 +266,7 @@ public class GenericAccessObjectManager {
 		public void addDefaultValues(RepositoryOperation operation) {
 			if (operation.getParameters().isEmpty()) {
 				addDefaultAggregateRootParameter(operation, "entity");
-				addParameter(operation, PropertiesBase.getJavaType("AssociationSpecification"), "associationSpecification");
+				addParameter(operation, propBase.getJavaType("AssociationSpecification"), "associationSpecification");
 			}
 			addDefaultDomainObjectType(operation);
 
@@ -272,7 +276,7 @@ public class GenericAccessObjectManager {
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
 			Parameter firstParam = (Parameter) operation.getParameters().get(0);
-			return "<" + HelperBase.getTypeName(firstParam, false) + ">";
+			return "<" + helperBase.getTypeName(firstParam, false) + ">";
 		}
 
 		@Override
@@ -301,7 +305,7 @@ public class GenericAccessObjectManager {
 
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
-			return "<" + HelperBase.getTypeName(operation, false) + ">";
+			return "<" + helperBase.getTypeName(operation, false) + ">";
 		}
 
 		@Override
@@ -317,20 +321,20 @@ public class GenericAccessObjectManager {
 		public void addDefaultValues(RepositoryOperation operation) {
 			if (operation.getParameters().isEmpty()) {
 				DomainObject aggregateRoot = operation.getRepository().getAggregateRoot();
-				List<Attribute> allNaturalKeyAttributes = Helper.getAllNaturalKeyAttributes(aggregateRoot);
-				List<Reference> allNaturalKeyReferences = Helper.getAllNaturalKeyReferences(aggregateRoot);
+				List<Attribute> allNaturalKeyAttributes = helper.getAllNaturalKeyAttributes(aggregateRoot);
+				List<Reference> allNaturalKeyReferences = helper.getAllNaturalKeyReferences(aggregateRoot);
 
 				if (allNaturalKeyAttributes.isEmpty() && allNaturalKeyReferences.isEmpty()) {
-					Attribute uuidAttribute = Helper.getUuid(aggregateRoot);
+					Attribute uuidAttribute = helper.getUuid(aggregateRoot);
 					if (uuidAttribute != null) {
-						addParameter(operation, HelperBase.getTypeName(uuidAttribute), uuidAttribute.getName());
+						addParameter(operation, helperBase.getTypeName(uuidAttribute), uuidAttribute.getName());
 					}
 				} else {
 					for (Attribute each : allNaturalKeyAttributes) {
-						addParameter(operation, HelperBase.getTypeName(each), each.getName());
+						addParameter(operation, helperBase.getTypeName(each), each.getName());
 					}
 					for (Reference each : allNaturalKeyReferences) {
-						addParameter(operation, HelperBase.getTypeName(each), each.getName());
+						addParameter(operation, helperBase.getTypeName(each), each.getName());
 					}
 				}
 			}
@@ -342,7 +346,7 @@ public class GenericAccessObjectManager {
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
 			DomainObject aggregateRoot = operation.getRepository().getAggregateRoot();
-			String aggregateRootName = HelperBase.getDomainPackage(aggregateRoot) + "." + aggregateRoot.getName();
+			String aggregateRootName = helperBase.getDomainPackage(aggregateRoot) + "." + aggregateRoot.getName();
 			return "<" + aggregateRootName + ">";
 		}
 
@@ -357,7 +361,7 @@ public class GenericAccessObjectManager {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
-			if (PropertiesBase.getBooleanProperty("findAll.paging") && operation.getParameters().isEmpty()) {
+			if (propBase.getBooleanProperty("findAll.paging") && operation.getParameters().isEmpty()) {
 				addParameter(operation, "PagingParameter", "pagingParameter");
 			}
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
@@ -376,7 +380,7 @@ public class GenericAccessObjectManager {
 			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
 				return "<" + aggregateRootClassName(operation) + ">";
 			} else {
-				return "<" + HelperBase.getTypeName(operation, false) + ">";
+				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
 		}
 
@@ -417,7 +421,7 @@ public class GenericAccessObjectManager {
 
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
-			return "<" + HelperBase.getTypeName(operation, false) + ">";
+			return "<" + helperBase.getTypeName(operation, false) + ">";
 		}
 
 		@Override
@@ -439,7 +443,7 @@ public class GenericAccessObjectManager {
 			}
 
 			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
-				HelperBase.addHint(operation, "useSingleResult");
+				helperBase.addHint(operation, "useSingleResult");
 			}
 
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
@@ -447,7 +451,7 @@ public class GenericAccessObjectManager {
 					operation.setType("PagedResult");
 					addDefaultDomainObjectType(operation);
 				} else if (hasParameter(operation, "useSingleResult")
-						|| HelperBase.hasHintImpl(operation.getHint(), "useSingleResult")) {
+						|| helperBase.hasHintImpl(operation.getHint(), "useSingleResult")) {
 					operation.setType("Object");
 				} else {
 					addDefaultDomainObjectType(operation);
@@ -461,7 +465,7 @@ public class GenericAccessObjectManager {
 			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
 				return "<" + aggregateRootClassName(operation) + ">";
 			} else {
-				return "<" + HelperBase.getTypeName(operation, false) + ">";
+				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
 		}
 
@@ -497,7 +501,7 @@ public class GenericAccessObjectManager {
 			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
 				return "<" + aggregateRootClassName(operation) + ">";
 			} else {
-				return "<" + HelperBase.getTypeName(operation, false) + ">";
+				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
 		}
 
@@ -520,7 +524,7 @@ public class GenericAccessObjectManager {
 			}
 
 			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
-				HelperBase.addHint(operation, "useSingleResult");
+				helperBase.addHint(operation, "useSingleResult");
 			}
 
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
@@ -528,7 +532,7 @@ public class GenericAccessObjectManager {
 					operation.setType("PagedResult");
 					addDefaultDomainObjectType(operation);
 				} else if (hasParameter(operation, "useSingleResult")
-						|| HelperBase.hasHintImpl(operation.getHint(), "useSingleResult")) {
+						|| helperBase.hasHintImpl(operation.getHint(), "useSingleResult")) {
 					operation.setType("Object");
 				} else {
 					addDefaultDomainObjectType(operation);
@@ -542,7 +546,7 @@ public class GenericAccessObjectManager {
 			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
 				return "<" + aggregateRootClassName(operation) + ">";
 			} else {
-				return "<" + HelperBase.getTypeName(operation, false) + ">";
+				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
 		}
 
@@ -557,15 +561,15 @@ public class GenericAccessObjectManager {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
-			if (PropertiesBase.getBooleanProperty("findByCondition.paging") && operation.getParameters().isEmpty()) {
+			if (propBase.getBooleanProperty("findByCondition.paging") && operation.getParameters().isEmpty()) {
 				addParameter(operation, "PagingParameter", "pagingParameter");
 			}
 			if (operation.getParameters().isEmpty()
 					|| (operation.getParameters().size() == 1 && hasParameter(operation, "pagingParameter"))) {
 
 				String conditionalCriteriaClass;
-				if (PropertiesBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
-					conditionalCriteriaClass = PropertiesBase.getProperty("framework.accessapi.ConditionalCriteria");
+				if (propBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
+					conditionalCriteriaClass = propBase.getProperty("framework.accessapi.ConditionalCriteria");
 				} else {
 					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
 				}
@@ -588,7 +592,7 @@ public class GenericAccessObjectManager {
 			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
 				return "<" + aggregateRootClassName(operation) + ">";
 			} else {
-				return "<" + HelperBase.getTypeName(operation, false) + ">";
+				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
 		}
 
@@ -607,8 +611,8 @@ public class GenericAccessObjectManager {
 		public void addDefaultValues(RepositoryOperation operation) {
 			if (operation.getParameters().isEmpty()) {
 				String conditionalCriteriaClass;
-				if (PropertiesBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
-					conditionalCriteriaClass = PropertiesBase.getProperty("framework.accessapi.ConditionalCriteria");
+				if (propBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
+					conditionalCriteriaClass = propBase.getProperty("framework.accessapi.ConditionalCriteria");
 				} else {
 					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
 				}
@@ -616,7 +620,7 @@ public class GenericAccessObjectManager {
 
 				String colStatParamType = "java.util.List<" + COLUMN_STAT_REQUEST + "<" + aggregateRootClassName(operation) + ">>";
 				addParameter(operation, colStatParamType, "columnStat");
-				HelperBase.addHint(operation, "useSingleResult");
+				helperBase.addHint(operation, "useSingleResult");
 
 				String colStatResultType = "java.util.List<java.util.List<" + COLUMN_STAT_RESULT + ">>";
 				operation.setType(colStatResultType);
@@ -633,7 +637,7 @@ public class GenericAccessObjectManager {
 			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
 				return "<" + aggregateRootClassName(operation) + ">";
 			} else {
-				return "<" + HelperBase.getTypeName(operation, false) + ">";
+				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
 		}
 
@@ -655,7 +659,7 @@ public class GenericAccessObjectManager {
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
 			Parameter firstParam = (Parameter) operation.getParameters().get(0);
-			return "<" + HelperBase.getTypeName(firstParam, false) + ">";
+			return "<" + helperBase.getTypeName(firstParam, false) + ">";
 		}
 
 		@Override
@@ -676,7 +680,7 @@ public class GenericAccessObjectManager {
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
 			Parameter firstParam = (Parameter) operation.getParameters().get(0);
-			return "<" + HelperBase.getTypeName(firstParam, false) + ">";
+			return "<" + helperBase.getTypeName(firstParam, false) + ">";
 		}
 
 		@Override
@@ -696,7 +700,7 @@ public class GenericAccessObjectManager {
 		@Override
 		public String getGenericType(RepositoryOperation operation) {
 			Parameter firstParam = (Parameter) operation.getParameters().get(0);
-			return "<" + HelperBase.getTypeName(firstParam, false) + ">";
+			return "<" + helperBase.getTypeName(firstParam, false) + ">";
 		}
 
 		@Override

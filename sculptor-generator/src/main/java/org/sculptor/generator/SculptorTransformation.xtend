@@ -17,6 +17,11 @@
 
 package org.sculptor.generator
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -40,16 +45,14 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
 
-import static org.sculptor.generator.SculptorTransformation.*
-import static org.sculptor.generator.ext.Properties.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class SculptorTransformation {
-
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
+
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
 
 	def modify(Application app) {
 		initPropertiesHook()

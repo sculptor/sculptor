@@ -17,17 +17,22 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Reference
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.domain.DomainObjectReferenceTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class DomainObjectReferenceTmpl {
 
-def static String oneReferenceAttribute(Reference it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val DomainObjectReferenceAnnotationTmpl domainObjectReferenceAnnotationTmpl = GeneratorFactory::domainObjectReferenceAnnotationTmpl
+
+def String oneReferenceAttribute(Reference it) {
 	'''
 		«IF it.isUnownedReference()»
 			«oneReferenceIdAttribute(it)»
@@ -40,10 +45,10 @@ def static String oneReferenceAttribute(Reference it) {
 	'''
 }
 
-def static String oneReferenceAttribute(Reference it, boolean annotations) {
+def String oneReferenceAttribute(Reference it, boolean annotations) {
 	'''
 		«IF annotations»
-			«DomainObjectReferenceAnnotationTmpl::oneReferenceAttributeAnnotations(it)»
+			«domainObjectReferenceAnnotationTmpl.oneReferenceAttributeAnnotations(it)»
 		«ENDIF»
 		private «IF transient»transient «ENDIF»«it.getTypeName()» «name»«oneReferenceAttributeDefaultValue(it)»;
 	'''
@@ -52,28 +57,28 @@ def static String oneReferenceAttribute(Reference it, boolean annotations) {
 /*Possibility to overwrite and set custom default initialization for some attributes,
 	e.g. using hint. Note that you must include =.
  */
-def static String oneReferenceAttributeDefaultValue(Reference it) {
+def String oneReferenceAttributeDefaultValue(Reference it) {
 	'''
 	'''
 }
 
-def static String oneReferenceIdAttribute(Reference it) {
+def String oneReferenceIdAttribute(Reference it) {
 	'''
 		«IF isJpaProviderAppEngine() && isJpaAnnotationOnFieldToBeGenerated()»
-		«DomainObjectReferenceAnnotationTmpl::oneReferenceAppEngineKeyAnnotation(it)»
+		«domainObjectReferenceAnnotationTmpl.oneReferenceAppEngineKeyAnnotation(it)»
 		«ENDIF»
 		private «getJavaType("IDTYPE")» «name»«it.unownedReferenceSuffix()»;
 	'''
 }
 
-def static String oneReferenceLazyAttribute(Reference it) {
+def String oneReferenceLazyAttribute(Reference it) {
 	'''
 	private boolean «name»IsLoaded = false;
 		private «it.getTypeName()» «name»;
 	'''
 }
 
-def static String oneReferenceAccessors(Reference it) {
+def String oneReferenceAccessors(Reference it) {
 	'''
 		«IF it.isUnownedReference()»
 			«oneReferenceIdGetter(it)»
@@ -98,17 +103,17 @@ def static String oneReferenceAccessors(Reference it) {
 	'''
 }
 
-def static String oneReferenceGetter(Reference it) {
+def String oneReferenceGetter(Reference it) {
 	'''
 		«oneReferenceGetter(it, true)»
 	'''
 }
 
-def static String oneReferenceGetter(Reference it, boolean annotations) {
+def String oneReferenceGetter(Reference it, boolean annotations) {
 	'''
 		«it.formatJavaDoc()»
 		«IF annotations»
-			«DomainObjectReferenceAnnotationTmpl::oneReferenceGetterAnnotations(it)»
+			«domainObjectReferenceAnnotationTmpl.oneReferenceGetterAnnotations(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getTypeName()» get«name.toFirstUpper()»() {
 			return «name»;
@@ -116,11 +121,11 @@ def static String oneReferenceGetter(Reference it, boolean annotations) {
 	'''
 }
 
-def static String oneReferenceIdGetter(Reference it) {
+def String oneReferenceIdGetter(Reference it) {
 	'''
 		«it.formatJavaDoc()»
 		«IF isJpaProviderAppEngine() && !isJpaAnnotationOnFieldToBeGenerated()»
-		«DomainObjectReferenceAnnotationTmpl::oneReferenceAppEngineKeyAnnotation(it)»
+		«domainObjectReferenceAnnotationTmpl.oneReferenceAppEngineKeyAnnotation(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«getJavaType("IDTYPE")» get«name.toFirstUpper()»«it.unownedReferenceSuffix()»() {
 			«IF mongoDb()»
@@ -143,7 +148,7 @@ def static String oneReferenceIdGetter(Reference it) {
 	'''
 }
 
-def static String oneReferenceMongoDbLazyGetter(Reference it) {
+def String oneReferenceMongoDbLazyGetter(Reference it) {
 	'''
 		«it.formatJavaDoc()»
 		«it.getVisibilityLitteralGetter()»«it.getTypeName()» get«name.toFirstUpper()»() {
@@ -172,7 +177,7 @@ def static String oneReferenceMongoDbLazyGetter(Reference it) {
 	'''
 }
 
-def static String oneReferenceIdSetter(Reference it) {
+def String oneReferenceIdSetter(Reference it) {
 	'''
 	«IF it.isSetterNeeded()»
 		«it.formatJavaDoc()»
@@ -187,7 +192,7 @@ def static String oneReferenceIdSetter(Reference it) {
 	'''
 }
 
-def static String oneReferenceMongoDbLazySetter(Reference it) {
+def String oneReferenceMongoDbLazySetter(Reference it) {
 	'''
 	«IF it.isSetterNeeded()»
 		«it.formatJavaDoc()»
@@ -200,11 +205,11 @@ def static String oneReferenceMongoDbLazySetter(Reference it) {
 	'''
 }
 
-def static String oneReferenceSetter(Reference it) {
+def String oneReferenceSetter(Reference it) {
 	'''
 	«IF it.isSetterNeeded()»
 		«it.formatJavaDoc()»
-		«DomainObjectReferenceAnnotationTmpl::oneReferenceSetterAnnotations(it)»
+		«domainObjectReferenceAnnotationTmpl.oneReferenceSetterAnnotations(it)»
 		«it.getVisibilityLitteralSetter()»void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			«IF isFullyAuditable() && !transient»
 			receiveInternalAuditHandler().recordChange(«it.getDomainObject().name»Properties.«name»(), this.«name», «name»);
@@ -215,7 +220,7 @@ def static String oneReferenceSetter(Reference it) {
 	'''
 }
 
-def static String notChangeableOneReferenceSetter(Reference it) {
+def String notChangeableOneReferenceSetter(Reference it) {
 	'''
 		«IF it.isSetterNeeded()»
 		«IF notChangeableReferenceSetterVisibility() == "private"»
@@ -229,7 +234,7 @@ def static String notChangeableOneReferenceSetter(Reference it) {
 			* once it is assigned.
 			*/
 		«ENDIF »
-		«DomainObjectReferenceAnnotationTmpl::oneReferenceSetterAnnotations(it)»
+		«domainObjectReferenceAnnotationTmpl.oneReferenceSetterAnnotations(it)»
 		«notChangeableReferenceSetterVisibility()» void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			// it must be possible to set null when deleting objects
 			if ((«name» != null) && (this.«name» != null) && !this.«name».equals(«name»)) {
@@ -241,7 +246,7 @@ def static String notChangeableOneReferenceSetter(Reference it) {
 	'''
 }
 
-def static String manyReferenceAttribute(Reference it) {
+def String manyReferenceAttribute(Reference it) {
 	'''
 	«IF it.isUnownedReference()»
 		«manyReferenceIdsAttribute(it)»
@@ -254,10 +259,10 @@ def static String manyReferenceAttribute(Reference it) {
 	'''
 }
 
-def static String manyReferenceAttribute(Reference it, boolean annotations) {
+def String manyReferenceAttribute(Reference it, boolean annotations) {
 	'''
 	«IF annotations»
-		«DomainObjectReferenceAnnotationTmpl::manyReferenceAttributeAnnotations(it)»
+		«domainObjectReferenceAnnotationTmpl.manyReferenceAttributeAnnotations(it)»
 	«ENDIF»
 	
 	private «IF transient»transient «ENDIF»«it.getCollectionInterfaceType()»<«it.getTypeName()»> «name» = new «it.getCollectionImplType()»<«it.getTypeName()»>();
@@ -266,26 +271,26 @@ def static String manyReferenceAttribute(Reference it, boolean annotations) {
 }
 
 
-def static String manyReferenceIdsAttribute(Reference it) {
+def String manyReferenceIdsAttribute(Reference it) {
 	'''
 	«IF isJpaProviderAppEngine() && isJpaAnnotationOnFieldToBeGenerated()»
-	    «DomainObjectReferenceAnnotationTmpl::manyReferenceAppEngineKeyAnnotation(it)»
+	    «domainObjectReferenceAnnotationTmpl.manyReferenceAppEngineKeyAnnotation(it)»
 	«ENDIF»
 		private «it.getCollectionInterfaceType()»<«getJavaType("IDTYPE")»> «name»«it.unownedReferenceSuffix()» = new «it.getCollectionImplType()»<«getJavaType("IDTYPE")»>();
 	'''
 }
 
-def static String manyReferenceLazyAttribute(Reference it) {
+def String manyReferenceLazyAttribute(Reference it) {
 	'''
 		private «it.getCollectionInterfaceType()»<«it.getTypeName()»> «name»;
 	'''
 }
 
-def static String manyReferenceIdsGetter(Reference it) {
+def String manyReferenceIdsGetter(Reference it) {
 	'''
 		«it.formatJavaDoc()»
 		«IF isJpaProviderAppEngine() && !isJpaAnnotationOnFieldToBeGenerated()»
-			«DomainObjectReferenceAnnotationTmpl::manyReferenceAppEngineKeyAnnotation(it)»
+			«domainObjectReferenceAnnotationTmpl.manyReferenceAppEngineKeyAnnotation(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getCollectionInterfaceType()»<«getJavaType("IDTYPE")»> get«name.toFirstUpper()»«it.unownedReferenceSuffix()»() {
 			// appengine sometimes stores the collection as null
@@ -315,7 +320,7 @@ def static String manyReferenceIdsGetter(Reference it) {
 	'''
 }
 
-def static String manyReferenceAccessors(Reference it) {
+def String manyReferenceAccessors(Reference it) {
 	'''
 	«IF it.isUnownedReference()»
 		«manyReferenceIdsGetter(it)»
@@ -332,7 +337,7 @@ def static String manyReferenceAccessors(Reference it) {
 }
 
 
-def static String additionalManyReferenceAccessors(Reference it) {
+def String additionalManyReferenceAccessors(Reference it) {
 	'''
 	«IF opposite != null && !opposite.many && (opposite.changeable || (notChangeableReferenceSetterVisibility() != "private"))»«bidirectionalReferenceAccessors(it)»«ENDIF »
 	«IF opposite != null && opposite.many »«many2manyBidirectionalReferenceAccessors(it)»«ENDIF »
@@ -340,17 +345,17 @@ def static String additionalManyReferenceAccessors(Reference it) {
 	'''
 }
 
-def static String manyReferenceGetter(Reference it) {
+def String manyReferenceGetter(Reference it) {
 	'''
 	«manyReferenceGetter(it, true)»
 	'''
 }
 
-def static String manyReferenceGetter(Reference it, boolean annotations) {
+def String manyReferenceGetter(Reference it, boolean annotations) {
 	'''
 		«it.formatJavaDoc()»
 		«IF annotations»
-		«DomainObjectReferenceAnnotationTmpl::manyReferenceGetterAnnotations(it)»
+		«domainObjectReferenceAnnotationTmpl.manyReferenceGetterAnnotations(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getCollectionInterfaceType()»<«it.getTypeName()»> get«name.toFirstUpper()»() {
 			return «name»;
@@ -358,7 +363,7 @@ def static String manyReferenceGetter(Reference it, boolean annotations) {
 	'''
 }
 
-def static String manyReferenceSetter(Reference it) {
+def String manyReferenceSetter(Reference it) {
 	'''
 	«IF !isJpaAnnotationToBeGenerated()»
 		@SuppressWarnings("unused")
@@ -369,7 +374,7 @@ def static String manyReferenceSetter(Reference it) {
 	'''
 }
 
-def static String manyReferenceMongoDbLazyGetter(Reference it) {
+def String manyReferenceMongoDbLazyGetter(Reference it) {
 	'''
 		«it.formatJavaDoc()»
 		«it.getVisibilityLitteralGetter()»«it.getCollectionInterfaceType()»<«it.getTypeName()»> get«name.toFirstUpper()»() {
@@ -403,7 +408,7 @@ def static String manyReferenceMongoDbLazyGetter(Reference it) {
 	'''
 }
 
-def static String bidirectionalReferenceAccessors(Reference it) {
+def String bidirectionalReferenceAccessors(Reference it) {
 	'''
 		«bidirectionalReferenceAdd(it)»
 		«bidirectionalReferenceRemove(it)»
@@ -411,7 +416,7 @@ def static String bidirectionalReferenceAccessors(Reference it) {
 	'''
 }
 
-def static String bidirectionalReferenceAdd(Reference it) {
+def String bidirectionalReferenceAdd(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
@@ -430,7 +435,7 @@ def static String bidirectionalReferenceAdd(Reference it) {
 	'''
 }
 
-def static String bidirectionalReferenceRemove(Reference it) {
+def String bidirectionalReferenceRemove(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/*
@@ -457,7 +462,7 @@ def static String bidirectionalReferenceRemove(Reference it) {
 	'''
 }
 
-def static String bidirectionalReferenceRemoveAll(Reference it) {
+def String bidirectionalReferenceRemoveAll(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/*
@@ -485,7 +490,7 @@ def static String bidirectionalReferenceRemoveAll(Reference it) {
 	'''
 }
 
-def static String unidirectionalReferenceAccessors(Reference it) {
+def String unidirectionalReferenceAccessors(Reference it) {
 	'''
 		«unidirectionalReferenceAdd(it)»
 		«unidirectionalReferenceRemove(it)»
@@ -493,7 +498,7 @@ def static String unidirectionalReferenceAccessors(Reference it) {
 	'''
 }
 
-def static String unidirectionalReferenceAdd(Reference it) {
+def String unidirectionalReferenceAdd(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
@@ -508,7 +513,7 @@ def static String unidirectionalReferenceAdd(Reference it) {
 	'''
 }
 
-def static String unidirectionalReferenceRemove(Reference it) {
+def String unidirectionalReferenceRemove(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
@@ -523,7 +528,7 @@ def static String unidirectionalReferenceRemove(Reference it) {
 	'''
 }
 
-def static String unidirectionalReferenceRemoveAll(Reference it) {
+def String unidirectionalReferenceRemoveAll(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
@@ -539,7 +544,7 @@ def static String unidirectionalReferenceRemoveAll(Reference it) {
 }
 
 
-def static String many2manyBidirectionalReferenceAccessors(Reference it) {
+def String many2manyBidirectionalReferenceAccessors(Reference it) {
 	'''
 		«many2manyBidirectionalReferenceAdd(it)»
 		«many2manyBidirectionalReferenceRemove(it)»
@@ -547,7 +552,7 @@ def static String many2manyBidirectionalReferenceAccessors(Reference it) {
 	'''
 }
 
-def static String many2manyBidirectionalReferenceAdd(Reference it) {
+def String many2manyBidirectionalReferenceAdd(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
@@ -566,7 +571,7 @@ def static String many2manyBidirectionalReferenceAdd(Reference it) {
 	'''
 }
 
-def static String many2manyBidirectionalReferenceRemove(Reference it) {
+def String many2manyBidirectionalReferenceRemove(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
@@ -585,7 +590,7 @@ def static String many2manyBidirectionalReferenceRemove(Reference it) {
 	'''
 }
 
-def static String many2manyBidirectionalReferenceRemoveAll(Reference it) {
+def String many2manyBidirectionalReferenceRemoveAll(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**

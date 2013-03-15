@@ -17,17 +17,18 @@
 
 package org.sculptor.generator.template.springint
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.template.springint.SpringIntegrationTmpl.*
-
-import static extension org.sculptor.generator.ext.Properties.*
-
 class SpringIntegrationTmpl {
 
-def static String springIntegrationConfig(Application it) {
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String springIntegrationConfig(Application it) {
 	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", OutputSlot::TO_RESOURCES, '''
 	«header(it)»
 
@@ -40,7 +41,7 @@ def static String springIntegrationConfig(Application it) {
 	)
 }
 
-def static String springIntegrationTestConfig(Application it) {
+def String springIntegrationTestConfig(Application it) {
 	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	«header(it)»
 	<beans:import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
@@ -51,19 +52,19 @@ def static String springIntegrationTestConfig(Application it) {
 	)
 }
 
-def static String springIntegrationConfigHook(Application it) {
+def String springIntegrationConfigHook(Application it) {
 	'''
 	<publish-subscribe-channel id="testChannel" />
 	'''
 }
 
-def static String springIntegrationTestConfigHook(Application it) {
+def String springIntegrationTestConfigHook(Application it) {
 	'''
 	'''
 }
 
 
-def static String header(Application it) {
+def String header(Application it) {
 	'''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans:beans xmlns="http://www.springframework.org/schema/integration"
@@ -85,7 +86,7 @@ def static String header(Application it) {
 	'''
 }
 
-def static String springIntegrationEventBus(Application it) {
+def String springIntegrationEventBus(Application it) {
 	'''
 	<beans:bean id="springIntegrationEventBusImpl" class="«fw("event.SpringIntegrationEventBusImpl")»" />
 	<beans:alias name="springIntegrationEventBusImpl" alias="eventBus" />

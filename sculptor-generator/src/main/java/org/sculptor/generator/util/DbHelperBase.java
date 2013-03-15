@@ -17,16 +17,13 @@
 
 package org.sculptor.generator.util;
 
-import static org.sculptor.generator.util.HelperBase.getHintImpl;
-import static org.sculptor.generator.util.HelperBase.hasHintImpl;
-import static org.sculptor.generator.util.HelperBase.isEntityOrPersistentValueObject;
-import static org.sculptor.generator.util.HelperBase.isPersistent;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.sculptor.generator.ext.GeneratorFactory;
 
 import sculptormetamodel.Application;
 import sculptormetamodel.Attribute;
@@ -51,8 +48,10 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
 public class DbHelperBase {
 
 	private static final String ID_ATTRIBUTE_NAME = "id";
+	private static final HelperBase helperBase = GeneratorFactory.helperBase();
+	private static final PropertiesBase propBase = GeneratorFactory.propertiesBase();
 
-	public static List<DomainObject> getDomainObjectsInCreateOrder(Application application, Boolean ascending) {
+	public List<DomainObject> getDomainObjectsInCreateOrder(Application application, Boolean ascending) {
 		List<DomainObject> all = getAllDomainObjects(application);
 		List<DomainObject> orderedClasses = new ArrayList<DomainObject>();
 		Set<DomainObject> handledClasses = new HashSet<DomainObject>();
@@ -71,7 +70,7 @@ public class DbHelperBase {
 	/**
 	 * @return all persistent DomainObjects
 	 */
-	public static List<DomainObject> getAllDomainObjects(Application application) {
+	public List<DomainObject> getAllDomainObjects(Application application) {
 		List<DomainObject> all = new ArrayList<DomainObject>();
 		List<Module> modules = HelperBase.sortByName(application.getModules());
 		for (Module m : modules) {
@@ -80,7 +79,7 @@ public class DbHelperBase {
 			}
 			List<DomainObject> domainObjects = HelperBase.sortByName(m.getDomainObjects());
 			for (DomainObject d : domainObjects) {
-				if (isPersistent(d) && includeInDdl(d)) {
+				if (helperBase.isPersistent(d) && includeInDdl(d)) {
 					all.add(d);
 				}
 			}
@@ -88,11 +87,11 @@ public class DbHelperBase {
 		return all;
 	}
 
-	private static boolean includeInDdl(DomainObject domainObj) {
-		return !hasHintImpl(domainObj.getHint(), "skipddl");
+	private boolean includeInDdl(DomainObject domainObj) {
+		return !helperBase.hasHintImpl(domainObj.getHint(), "skipddl");
 	}
 
-	private static void addClassRecursive(DomainObject domainObject, List<DomainObject> orderedClasses,
+	private void addClassRecursive(DomainObject domainObject, List<DomainObject> orderedClasses,
 			Set<DomainObject> handledClasses) {
 		if (handledClasses.contains(domainObject)) {
 			// already added
@@ -103,7 +102,7 @@ public class DbHelperBase {
 			return;
 		}
 
-		if (!isPersistent(domainObject) || !includeInDdl(domainObject)) {
+		if (!helperBase.isPersistent(domainObject) || !includeInDdl(domainObject)) {
 			// no tables for non persistent ValueObject
 			return;
 		}
@@ -131,13 +130,13 @@ public class DbHelperBase {
 
 	}
 
-	public static String getDiscriminatorColumnDatabaseType(Inheritance inheritance) {
+	public String getDiscriminatorColumnDatabaseType(Inheritance inheritance) {
 		// create an Attribute so that we can reuse existing logic for
 		// databaseType
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 		Attribute attr = factory.createAttribute();
 		if (inheritance.getDiscriminatorColumnName() == null) {
-			attr.setName(PropertiesBase.getProperty("db.discriminatorColumnName"));
+			attr.setName(propBase.getProperty("db.discriminatorColumnName"));
 		} else {
 			attr.setName(inheritance.getDiscriminatorColumnName());
 		}
@@ -149,7 +148,7 @@ public class DbHelperBase {
 		return getDatabaseType(attr);
 	}
 
-	public static String getDatabaseType(Attribute attribute) {
+	public String getDatabaseType(Attribute attribute) {
 		String databaseTypeProperty = attribute.getDatabaseType();
 		String databaseType;
 		if (databaseTypeProperty == null) {
@@ -166,26 +165,26 @@ public class DbHelperBase {
 		return databaseType;
 	}
 
-	public static String getEnumDatabaseType(Reference reference) {
+	public String getEnumDatabaseType(Reference reference) {
 		Attribute enumAttribute = getEnumAttribute((Enum) reference.getTo());
-		if (hasHintImpl(reference.getHint(), "databaseLength"))
-			enumAttribute.setLength(getHintImpl(reference.getHint(), "databaseLength"));
+		if (helperBase.hasHintImpl(reference.getHint(), "databaseLength"))
+			enumAttribute.setLength(helperBase.getHintImpl(reference.getHint(), "databaseLength"));
 		return getDatabaseType(enumAttribute);
 	}
 
-	public static String getEnumDatabaseType(Enum _enum) {
+	public String getEnumDatabaseType(Enum _enum) {
 		return getDatabaseType(getEnumAttribute(_enum));
 	}
 
-	public static String getEnumType(Enum _enum) {
+	public String getEnumType(Enum _enum) {
 		return getEnumAttribute(_enum).getType();
 	}
 
-	public static String getEnumDatabaseLength(Enum _enum) {
+	public String getEnumDatabaseLength(Enum _enum) {
 		return getEnumAttribute(_enum).getLength();
 	}
 
-	private static Attribute getEnumKeyAttribute(Enum _enum) {
+	private Attribute getEnumKeyAttribute(Enum _enum) {
 		List<Attribute> enumAttributes = _enum.getAttributes();
 		for (Attribute attribute : enumAttributes) {
 			if (attribute.isNaturalKey()) {
@@ -196,26 +195,26 @@ public class DbHelperBase {
 		return createDefaultEnumAttribute();
 	}
 
-	private static Attribute createDefaultEnumAttribute() {
+	private Attribute createDefaultEnumAttribute() {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 		Attribute attr = factory.createAttribute();
 		attr.setType("String");
 		return attr;
 	}
 
-	private static boolean hasNaturalKeyAttribute(Enum _enum) {
+	private boolean hasNaturalKeyAttribute(Enum _enum) {
 		return (getEnumKeyAttribute(_enum).isNaturalKey());
 	}
 
-	private static Attribute getEnumAttribute(Enum _enum) {
+	private Attribute getEnumAttribute(Enum _enum) {
 		Attribute attribute = getEnumKeyAttribute(_enum);
 		if (_enum.isOrdinal()) {
 			attribute.setType("int");
 			attribute.setLength(null);
 		} else {
-			if (hasHintImpl(_enum.getHint(), "databaseLength")) {
+			if (helperBase.hasHintImpl(_enum.getHint(), "databaseLength")) {
 				attribute.setType("String");
-				attribute.setLength(getHintImpl(_enum.getHint(), "databaseLength"));
+				attribute.setLength(helperBase.getHintImpl(_enum.getHint(), "databaseLength"));
 			} else {
 				attribute.setType("String");
 				attribute.setLength(calcEnumDatabaseLength(_enum));
@@ -224,7 +223,7 @@ public class DbHelperBase {
 		return attribute;
 	}
 
-	private static String calcEnumDatabaseLength(Enum _enum) {
+	private String calcEnumDatabaseLength(Enum _enum) {
 		int maxLength = 0;
 		if (hasNaturalKeyAttribute(_enum)) {
 			int attributePosition = 0;
@@ -248,7 +247,7 @@ public class DbHelperBase {
 		return "" + maxLength;
 	}
 
-	private static int calcMaxLength(String value, int maxLength) {
+	private int calcMaxLength(String value, int maxLength) {
 		int length = value.length();
 		if (value.startsWith("\"")) {
 			length = length - 2;
@@ -256,21 +255,21 @@ public class DbHelperBase {
 		return (maxLength < length) ? length : maxLength;
 	}
 
-	public static String getDatabaseTypeNullability(Attribute attribute) {
+	public String getDatabaseTypeNullability(Attribute attribute) {
 		if (!attribute.isNullable() || attribute.isNaturalKey()) {
 			return " NOT NULL";
 		}
 		return "";
 	}
 
-	public static String getDatabaseTypeNullability(Reference reference) {
+	public String getDatabaseTypeNullability(Reference reference) {
 		if (!reference.isNullable() || reference.isNaturalKey()) {
 			return " NOT NULL";
 		}
 		return "";
 	}
 
-	public static String getDatabaseLength(Attribute attribute) {
+	public String getDatabaseLength(Attribute attribute) {
 		if (attribute.getLength() == null) {
 			return getDefaultDbLength(attribute.getType());
 		} else {
@@ -278,22 +277,22 @@ public class DbHelperBase {
 		}
 	}
 
-	private static String getDefaultDbType(String javaType) {
-		return PropertiesBase.getDbType(javaType);
+	private String getDefaultDbType(String javaType) {
+		return propBase.getDbType(javaType);
 	}
 
-	private static String getDefaultDbLength(String javaType) {
-		return PropertiesBase.getDbLength(javaType);
+	private String getDefaultDbLength(String javaType) {
+		return propBase.getDbLength(javaType);
 	}
 
-	public static String getDatabaseName(NamedElement element) {
+	public String getDatabaseName(NamedElement element) {
 		String name = element.getName();
 		name = convertDatabaseName(name);
 		return name;
 	}
 
-	private static String convertDatabaseName(String name) {
-		if (PropertiesBase.getBooleanProperty("db.useUnderscoreNaming")) {
+	private String convertDatabaseName(String name) {
+		if (propBase.getBooleanProperty("db.useUnderscoreNaming")) {
 			name = CamelCaseConverter.camelCaseToUnderscore(name);
 		}
 		name = truncateLongDatabaseName(name);
@@ -301,15 +300,15 @@ public class DbHelperBase {
 		return name;
 	}
 
-	public static String truncateLongDatabaseName(String name) {
-		int max = PropertiesBase.getMaxDbName();
+	public String truncateLongDatabaseName(String name) {
+		int max = propBase.getMaxDbName();
 		return truncateLongDatabaseName(name, max);
 	}
 
-	public static String truncateLongDatabaseName(String name, Integer max) {
+	public String truncateLongDatabaseName(String name, Integer max) {
 		if (name.length() <= max) {
 			return name; // no problem
-		} else if (PropertiesBase.getBooleanProperty("db.errorWhenTooLongName")) {
+		} else if (propBase.getBooleanProperty("db.errorWhenTooLongName")) {
 			throw new RuntimeException("Generation aborted due to too long database name: " + name);
 		} else {
 			String hash = String.valueOf(Math.abs(name.hashCode()));
@@ -320,7 +319,7 @@ public class DbHelperBase {
 		}
 	}
 
-	public static String getDefaultForeignKeyName(Reference ref) {
+	public String getDefaultForeignKeyName(Reference ref) {
 		String name;
 		if (ref.isMany()) {
 			name = SingularPluralConverter.toSingular(ref.getName());
@@ -332,7 +331,7 @@ public class DbHelperBase {
 		return convertDatabaseName(name);
 	}
 
-	public static String getDefaultOppositeForeignKeyName(Reference ref) {
+	public String getDefaultOppositeForeignKeyName(Reference ref) {
 		if (ref.getOpposite() == null) {
 			return getForeignKeyNameForUnidirectionalToManyWithJoinTable(ref);
 		} else {
@@ -340,7 +339,7 @@ public class DbHelperBase {
 		}
 	}
 
-	private static String getForeignKeyNameForUnidirectionalToManyWithJoinTable(Reference ref) {
+	private String getForeignKeyNameForUnidirectionalToManyWithJoinTable(Reference ref) {
 		if (ref.getDatabaseJoinColumn() != null) {
 			return ref.getDatabaseJoinColumn();
 		}
@@ -354,7 +353,7 @@ public class DbHelperBase {
 		return convertDatabaseName(name);
 	}
 
-	public static String getExtendsForeignKeyName(DomainObject extendedClass) {
+	public String getExtendsForeignKeyName(DomainObject extendedClass) {
 		Attribute idAttribute = getIdAttribute(extendedClass);
 		checkIdAttribute(extendedClass, idAttribute);
 		String name = extendedClass.getDatabaseTable();
@@ -362,7 +361,7 @@ public class DbHelperBase {
 		return name;
 	}
 
-	private static String idSuffix(String name, DomainObject to) {
+	private String idSuffix(String name, DomainObject to) {
 		if (useIdSuffixInForeignKey()) {
 			Attribute idAttribute = getIdAttribute(to);
 			if (idAttribute != null) {
@@ -383,11 +382,11 @@ public class DbHelperBase {
 		return "";
 	}
 
-	private static boolean useIdSuffixInForeignKey() {
-		return PropertiesBase.getBooleanProperty("db.useIdSuffixInForeigKey");
+	private boolean useIdSuffixInForeignKey() {
+		return propBase.getBooleanProperty("db.useIdSuffixInForeigKey");
 	}
 
-	public static Attribute getIdAttribute(DomainObject domainObject) {
+	public Attribute getIdAttribute(DomainObject domainObject) {
 		Attribute idAttribute = getAttributeWithName(ID_ATTRIBUTE_NAME, domainObject);
 		if ((idAttribute == null) && (domainObject.getExtends() != null)) {
 			// look in extended DomainOject, recursive call
@@ -396,7 +395,7 @@ public class DbHelperBase {
 		return idAttribute;
 	}
 
-	private static Attribute getAttributeWithName(String name, DomainObject domainObject) {
+	private Attribute getAttributeWithName(String name, DomainObject domainObject) {
 		for (Object obj : domainObject.getAttributes()) {
 			Attribute attribute = (Attribute) obj;
 			if (attribute.getName().equals(name)) {
@@ -407,31 +406,31 @@ public class DbHelperBase {
 		return null;
 	}
 
-	public static String getForeignKeyType(Reference ref) {
+	public String getForeignKeyType(Reference ref) {
 		DomainObject referencedClass = ref.getTo();
 		return getForeignKeyType(referencedClass) + getDatabaseTypeNullability(ref);
 	}
 
-	public static String getForeignKeyType(DomainObject referencedClass) {
+	public String getForeignKeyType(DomainObject referencedClass) {
 		Attribute idAttribute = getIdAttribute(referencedClass);
 		checkIdAttribute(referencedClass, idAttribute);
 		String type = getDatabaseType(idAttribute);
 		return type;
 	}
 
-	private static void checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
+	private void checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
 		if (idAttribute == null) {
 			throw new IllegalArgumentException("Referenced class " + referencedClass.getName() + " doesn't contain 'id' attribute");
 		}
 	}
 
-	public static List<DomainObject> resolveManyToManyRelations(Application application, Boolean ascending) {
+	public List<DomainObject> resolveManyToManyRelations(Application application, Boolean ascending) {
 		// first, find all many-to-many references
 		Set<Reference> manyToManyReferences = new HashSet<Reference>();
 		List<DomainObject> domainObjects = getAllDomainObjects(application);
 		for (DomainObject domainObject : domainObjects) {
 			for (Reference ref : getAllManyReferences(domainObject)) {
-				if (!isPersistent(ref.getTo()) || !includeInDdl(ref.getTo())) {
+				if (!helperBase.isPersistent(ref.getTo()) || !includeInDdl(ref.getTo())) {
 					// skip this reference, since it refers to a non persistent
 					// object
 					continue;
@@ -466,7 +465,7 @@ public class DbHelperBase {
 
 	}
 
-	public static DomainObject createFictiveManyToManyObject(Reference ref) {
+	public DomainObject createFictiveManyToManyObject(Reference ref) {
 		DomainObject relObj;
 		if (ref.getFrom() instanceof Entity || ref.getTo() instanceof Entity) {
 			relObj = SculptormetamodelFactory.eINSTANCE.createEntity();
@@ -492,7 +491,7 @@ public class DbHelperBase {
 		if (ref.getOpposite() == null) {
 			// use table name of from obj, it doesn't matter that we loose
 			// upper/lower case
-			ref2.setName(HelperBase.toFirstLower(ref.getFrom().getName()));
+			ref2.setName(helperBase.toFirstLower(ref.getFrom().getName()));
 			ref2.setDatabaseColumn(getForeignKeyNameForUnidirectionalToManyWithJoinTable(ref));
 		} else {
 			ref2.setName(SingularPluralConverter.toSingular(ref.getOpposite().getName()));
@@ -501,15 +500,15 @@ public class DbHelperBase {
 		ref2.setFrom(relObj);
 		relObj.getReferences().add(ref2);
 
-		String tablespaceHint = HelperBase.getHintImpl(ref.getFrom().getHint(), "tablespace");
+		String tablespaceHint = helperBase.getHintImpl(ref.getFrom().getHint(), "tablespace");
 		if (tablespaceHint != null) {
-			HelperBase.addHint(relObj, "tablespace=" + tablespaceHint);
+			helperBase.addHint(relObj, "tablespace=" + tablespaceHint);
 		}
 
 		return relObj;
 	}
 
-	public static String getManyToManyJoinTableName(Reference ref) {
+	public String getManyToManyJoinTableName(Reference ref) {
 		if (ref.getDatabaseJoinTable() != null) {
 			return ref.getDatabaseJoinTable();
 		}
@@ -531,10 +530,10 @@ public class DbHelperBase {
 		return getJoinTableName(name1, name2, true);
 	}
 
-	public static String getElementCollectionTableName(Attribute attribute) {
+	public String getElementCollectionTableName(Attribute attribute) {
 		String hintParam = "databaseJoinTableName";
-		if (HelperBase.hasHintImpl(attribute.getHint(), hintParam)) {
-			return HelperBase.getHintImpl(attribute.getHint(), hintParam);
+		if (helperBase.hasHintImpl(attribute.getHint(), hintParam)) {
+			return helperBase.getHintImpl(attribute.getHint(), hintParam);
 		}
 
 		String name1 = SingularPluralConverter.toSingular(attribute.getDatabaseColumn().toLowerCase()).toUpperCase();
@@ -543,7 +542,7 @@ public class DbHelperBase {
 		return getJoinTableName(name1, name2, false);
 	}
 
-	public static String getElementCollectionTableName(Reference reference) {
+	public String getElementCollectionTableName(Reference reference) {
 		if (reference.getDatabaseJoinTable() != null) {
 			return reference.getDatabaseJoinTable();
 		}
@@ -562,8 +561,8 @@ public class DbHelperBase {
 		return getJoinTableName(name1, name2, false);
 	}
 
-	private static String getJoinTableName(String name1, String name2, boolean ordered) {
-		int max = PropertiesBase.getMaxDbName();
+	private String getJoinTableName(String name1, String name2, boolean ordered) {
+		int max = propBase.getMaxDbName();
 		if ((name1.length() > (max - 6)) && (name2.length() > (max - 6))) {
 			// both names are long, truncate both
 			name1 = name1.substring(0, (max / 2));
@@ -593,7 +592,7 @@ public class DbHelperBase {
 		return name2 + "_" + name1;
 	}
 
-	private static String removeIdSuffix(String name, DomainObject to) {
+	private String removeIdSuffix(String name, DomainObject to) {
 		String idSuffix = idSuffix(name, to);
 		if (idSuffix.equals("")) {
 			return name;
@@ -607,7 +606,7 @@ public class DbHelperBase {
 	/**
 	 * Inverse attribute for many-to-many associations.
 	 */
-	public static boolean isInverse(Reference ref) {
+	public boolean isInverse(Reference ref) {
 		if (ref.isInverse()) {
 			return true;
 		}
@@ -630,7 +629,7 @@ public class DbHelperBase {
 	/**
 	 * List of references with multiplicity > 1
 	 */
-	private static List<Reference> getAllManyReferences(DomainObject domainObject) {
+	private List<Reference> getAllManyReferences(DomainObject domainObject) {
 		List<Reference> allReferences = domainObject.getReferences();
 		List<Reference> allManyReferences = new ArrayList<Reference>();
 		for (Reference ref : allReferences) {
@@ -644,7 +643,7 @@ public class DbHelperBase {
 	/**
 	 * List of references with multiplicity = 1
 	 */
-	private static List<Reference> getAllOneReferences(DomainObject domainObject) {
+	private List<Reference> getAllOneReferences(DomainObject domainObject) {
 		List<Reference> allReferences = domainObject.getReferences();
 		List<Reference> allOneReferences = new ArrayList<Reference>();
 		for (Reference ref : allReferences) {
@@ -655,19 +654,19 @@ public class DbHelperBase {
 		return allOneReferences;
 	}
 
-	public static String getDerivedCascade(Reference ref) {
+	public String getDerivedCascade(Reference ref) {
 		boolean inSameModule = ref.getFrom().getModule().equals(ref.getTo().getModule());
 		boolean biDirectional = ref.getOpposite() != null;
-		boolean aggregate = isEntityOrPersistentValueObject(ref.getTo()) && !ref.getTo().isAggregateRoot();
+		boolean aggregate = helperBase.isEntityOrPersistentValueObject(ref.getTo()) && !ref.getTo().isAggregateRoot();
 		boolean oneToMany = biDirectional && ref.isMany() && !ref.getOpposite().isMany();
 		boolean manyToMany = biDirectional && ref.isMany() && ref.getOpposite().isMany();
 		boolean oneToOne = biDirectional && !ref.isMany() && !ref.getOpposite().isMany();
 
 		if (aggregate) {
 			if (oneToMany) {
-				return PropertiesBase.getDefaultCascade("aggregate.oneToMany");
+				return propBase.getDefaultCascade("aggregate.oneToMany");
 			} else {
-				return PropertiesBase.getDefaultCascade("aggregate");
+				return propBase.getDefaultCascade("aggregate");
 			}
 		}
 
@@ -676,23 +675,23 @@ public class DbHelperBase {
 		}
 
 		if (manyToMany) {
-			return isInverse(ref) ? null : PropertiesBase.getDefaultCascade("manyToMany");
+			return isInverse(ref) ? null : propBase.getDefaultCascade("manyToMany");
 		}
 
 		if (oneToMany) {
-			return PropertiesBase.getDefaultCascade("oneToMany");
+			return propBase.getDefaultCascade("oneToMany");
 		}
 
 		if (oneToOne) {
-			return PropertiesBase.getDefaultCascade("oneToOne");
+			return propBase.getDefaultCascade("oneToOne");
 		}
 
 		if (!biDirectional && ref.isMany()) {
-			return PropertiesBase.getDefaultCascade("toMany");
+			return propBase.getDefaultCascade("toMany");
 		}
 
 		if (!biDirectional && !ref.isMany()) {
-			return PropertiesBase.getDefaultCascade("toOne");
+			return propBase.getDefaultCascade("toOne");
 		}
 
 		return null;

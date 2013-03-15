@@ -28,7 +28,7 @@ public class XmlHelperBase {
 
 	private static final String IGNORE_PREFIX = "xml";
 
-	public static String toXmlName(String s) {
+	public String toXmlName(String s) {
 		s = removePrefix(s);
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < s.length(); i++) {
@@ -41,7 +41,7 @@ public class XmlHelperBase {
 		return sb.toString();
 	}
 
-	private static String removePrefix(String s) {
+	private String removePrefix(String s) {
 		if (s.length() <= IGNORE_PREFIX.length()) {
 			return s;
 		}
@@ -51,7 +51,7 @@ public class XmlHelperBase {
 		return s;
 	}
 
-	public static String schemaUrl(Application app) {
+	public String schemaUrl(Application app) {
 		String[] packs = app.getBasePackage().split("\\.");
 		String host;
 		if (packs.length < 2) {
@@ -63,7 +63,5 @@ public class XmlHelperBase {
 
 		String url = "http://www." + host + "/" + app.getName().toLowerCase();
 		return url;
-
 	}
-
 }

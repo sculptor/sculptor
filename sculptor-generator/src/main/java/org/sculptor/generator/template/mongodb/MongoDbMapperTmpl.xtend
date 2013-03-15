@@ -17,24 +17,28 @@
 
 package org.sculptor.generator.template.mongodb
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.mongodb.MongoDbMapperTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class MongoDbMapperTmpl {
 
-def static String mongoDbMapper(DomainObject it) {
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+
+def String mongoDbMapper(DomainObject it) {
 	'''
 	«IF it.hasHint("gapMapper")»
  	   «mongoDbMapperSubclass(it)»
@@ -43,7 +47,7 @@ def static String mongoDbMapper(DomainObject it) {
 	'''
 }
 
-def static String mongoDbMapperSubclass(DomainObject it) {
+def String mongoDbMapperSubclass(DomainObject it) {
 	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
@@ -58,7 +62,7 @@ def static String mongoDbMapperSubclass(DomainObject it) {
 	)
 }
 
-def static String mongoDbMapperBase(DomainObject it) {
+def String mongoDbMapperBase(DomainObject it) {
 	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
@@ -94,14 +98,14 @@ def static String mongoDbMapperBase(DomainObject it) {
 	)
 }
 
-def static String constructor(DomainObject it) {
+def String constructor(DomainObject it) {
 	'''
 	protected «name»Mapper() {
 		}
 	'''
 }
 
-def static String constructorBase(DomainObject it) {
+def String constructorBase(DomainObject it) {
 	'''
 	protected «name»Mapper«IF it.hasHint("gapMapper")»Base«ENDIF»() {
 		«IF it.^abstract || it.hasSubClass()»
@@ -111,7 +115,7 @@ def static String constructorBase(DomainObject it) {
 	'''
 }
 
-def static String getInstance(DomainObject it) {
+def String getInstance(DomainObject it) {
 	'''
 		private static final «name»Mapper instance = new «name»Mapper();
 		
@@ -122,13 +126,13 @@ def static String getInstance(DomainObject it) {
 	'''
 }
 
-def static String discriminator(DomainObject it) {
+def String discriminator(DomainObject it) {
 	'''
 		public static final String «it.getRootExtends().inheritance.discriminatorColumnName()» = «IF discriminatorColumnValue == null»«getDomainPackage()».«name».class.getSimpleName()«ELSE»"«discriminatorColumnValue»"«ENDIF»;
 	'''
 }
 
-def static String registerSubclassMappers(DomainObject it) {
+def String registerSubclassMappers(DomainObject it) {
 	'''
 		private final java.util.Map<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>> subclassMapperByClass = new java.util.concurrent.ConcurrentHashMap<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>>();
 		private final java.util.Map<String, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>> subclassMapperByDtype = new java.util.concurrent.ConcurrentHashMap<String, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>>();
@@ -149,7 +153,7 @@ def static String registerSubclassMappers(DomainObject it) {
 	'''
 }
 
-def static String delegateToDomainToSubclassMapper(DomainObject it) {
+def String delegateToDomainToSubclassMapper(DomainObject it) {
 	'''
 	String dtype;
 	if (from.containsField("«it.getRootExtends().inheritance.discriminatorColumnName()»")) {
@@ -166,7 +170,7 @@ def static String delegateToDomainToSubclassMapper(DomainObject it) {
 	'''
 }
 
-def static String delegateToDataToSubclassMapper(DomainObject it) {
+def String delegateToDataToSubclassMapper(DomainObject it) {
 	'''
 			«fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject> subclassMapper = subclassMapperByClass.get(from.getClass());
 			if (subclassMapper == null) {
@@ -177,7 +181,7 @@ def static String delegateToDataToSubclassMapper(DomainObject it) {
 	'''
 }
 
-def static String fromNullCheck(DomainObject it) {
+def String fromNullCheck(DomainObject it) {
 	'''
 		if (from == null) {
 			return null;
@@ -185,7 +189,7 @@ def static String fromNullCheck(DomainObject it) {
 	'''
 }
 
-def static String abstractToDomain(DomainObject it) {
+def String abstractToDomain(DomainObject it) {
 	'''
 		@Override
 	public «it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» toDomain(com.mongodb.DBObject from) {
@@ -195,7 +199,7 @@ def static String abstractToDomain(DomainObject it) {
 	'''
 }
 
-def static String gapToDomain(DomainObject it) {
+def String gapToDomain(DomainObject it) {
 	'''
 		@Override
 	public «it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» toDomain(com.mongodb.DBObject from) {
@@ -203,7 +207,7 @@ def static String gapToDomain(DomainObject it) {
 	}
 	'''
 }
-def static String toDomain(DomainObject it) {
+def String toDomain(DomainObject it) {
 	val constructorParameters = it.getConstructorParameters()
 	val nonEnumReferenceConstructorParameters = it.getConstructorParameters().filter[e | e instanceof Reference && !(e.isEnumReference())].map[e | (e as Reference)]
 	val allNonEnumNonConstructorReferences = it.getAllReferences().filter[e | !(e.isEnumReference() || constructorParameters.contains(e))]
@@ -319,7 +323,7 @@ def static String toDomain(DomainObject it) {
 	'''
 }
 
-def static String getDBCollectionName(DomainObject it) {
+def String getDBCollectionName(DomainObject it) {
 	'''
 		@Override
 		public String getDBCollectionName() {
@@ -328,7 +332,7 @@ def static String getDBCollectionName(DomainObject it) {
 	'''
 }
 
-def static String getDBCollectionName(BasicType it) {
+def String getDBCollectionName(BasicType it) {
 	'''
 		@Override
 		public String getDBCollectionName() {
@@ -337,7 +341,7 @@ def static String getDBCollectionName(BasicType it) {
 	'''
 }
 
-def static String canMapToData(DomainObject it) {
+def String canMapToData(DomainObject it) {
 	'''
 		@Override
 	public boolean canMapToData(Class<?> domainObjectClass) {
@@ -350,7 +354,7 @@ def static String canMapToData(DomainObject it) {
 }
 
 
-def static String abstractToData(DomainObject it) {
+def String abstractToData(DomainObject it) {
 	'''
 		@Override
 	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» from) {
@@ -360,7 +364,7 @@ def static String abstractToData(DomainObject it) {
 	'''
 }	
 
-def static String gapToData(DomainObject it) {
+def String gapToData(DomainObject it) {
 	'''
 		@Override
 	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» from) {
@@ -369,7 +373,7 @@ def static String gapToData(DomainObject it) {
 	'''
 }
 
-def static String toData(DomainObject it) {
+def String toData(DomainObject it) {
 	val allNonEnumNonTransientReferences = it.getAllReferences().filter[e | !(e.isEnumReference() || e.transient)]
 
 	'''
@@ -436,7 +440,7 @@ def static String toData(DomainObject it) {
 	'''
 }
 
-def static String indexes(DomainObject it) {
+def String indexes(DomainObject it) {
 	'''
 		@Override
 	public java.util.List<«fw("accessimpl.mongodb.IndexSpecification")»> indexes() {
@@ -458,7 +462,7 @@ def static String indexes(DomainObject it) {
 	'''
 }
 
-def static String populateNaturalKeyIndex(DomainObject it, String parent) {
+def String populateNaturalKeyIndex(DomainObject it, String parent) {
 	'''
 		«it.getAllNaturalKeyAttributes() .map[putNaturalKeyIndex(it, parent)].join()»
 		«it.getAllNaturalKeyReferences().filter(e|e.isEnumReference()) .map[putNaturalKeyIndex(it, parent)].join()»
@@ -469,7 +473,7 @@ def static String populateNaturalKeyIndex(DomainObject it, String parent) {
 	'''
 }
 
-def static String putNaturalKeyIndex(NamedElement it, String parent) {
+def String putNaturalKeyIndex(NamedElement it, String parent) {
 	'''
 		    naturalKey.put("«parent»«it.getDatabaseName()»", 1);
 	'''

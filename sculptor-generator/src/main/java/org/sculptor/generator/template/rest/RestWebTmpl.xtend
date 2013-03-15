@@ -1,22 +1,28 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Properties.*
-
-import static extension org.sculptor.generator.ext.Helper.*
+import static org.sculptor.generator.template.rest.RestWebTmpl.*
 
 class RestWebTmpl {
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val RestWebConfigTmpl restWebConfigTmpl = GeneratorFactory::restWebConfigTmpl
+	private static val RestWebCssTmpl restWebCssTmpl = GeneratorFactory::restWebCssTmpl
+	private static val RestWebJspTmpl restWebJspTmpl = GeneratorFactory::restWebJspTmpl
 
-def static String restWeb(Application it) {
+def String restWeb(Application it) {
 	'''
 	«IF getBooleanProperty("generate.restWeb.config")»
-		«RestWebConfigTmpl::config(it)»
+		«restWebConfigTmpl.config(it)»
 	«ENDIF»
 	«IF getBooleanProperty("generate.restWeb.jsp")»
-		«RestWebCssTmpl::css(it)»
-		«RestWebJspTmpl::jsp(it)»
-		«it.getAllResources(false).map[RestWebJspTmpl::jsp(it)].join()»
+		«restWebCssTmpl.css(it)»
+		«restWebJspTmpl.jsp(it)»
+		«it.getAllResources(false).map[restWebJspTmpl.jsp(it)].join()»
 	«ENDIF»
 	'''
 }

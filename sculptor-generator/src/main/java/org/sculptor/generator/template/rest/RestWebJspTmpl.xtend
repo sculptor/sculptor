@@ -1,21 +1,22 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.HttpMethod
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
 
-import static org.sculptor.generator.template.rest.RestWebJspTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class RestWebJspTmpl {
 
-def static String jsp(Application it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String jsp(Application it) {
 	'''
 		«index(it)»
 		«header(it)»
@@ -25,14 +26,14 @@ def static String jsp(Application it) {
 	'''
 }
 
-def static String index(Application it) {
+def String index(Application it) {
 	fileOutput("index.jsp", OutputSlot::TO_WEBROOT, '''
 		<META http-equiv="refresh" content="0;URL=rest/front">
 	'''
 	)
 }
 
-def static String header(Application it) {
+def String header(Application it) {
 	fileOutput("WEB-INF/jsp/header.jsp", OutputSlot::TO_WEBROOT, '''
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
@@ -50,7 +51,7 @@ def static String header(Application it) {
 	)
 }
 
-def static String footer(Application it) {
+def String footer(Application it) {
 	fileOutput("WEB-INF/jsp/footer.jsp", OutputSlot::TO_WEBROOT, '''
 	<br/>
 	  <table class="footer">
@@ -70,7 +71,7 @@ def static String footer(Application it) {
 	)
 }
 
-def static String includes(Application it) {
+def String includes(Application it) {
 	fileOutput("WEB-INF/jsp/includes.jsp", OutputSlot::TO_WEBROOT, '''
 	<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -81,7 +82,7 @@ def static String includes(Application it) {
 	)
 }
 
-def static String uncaughtException(Application it) {
+def String uncaughtException(Application it) {
 	fileOutput("WEB-INF/jsp/uncaughtException.jsp", OutputSlot::TO_WEBROOT, '''
 	<h2/>Internal error</h2>
 	<p/>
@@ -130,7 +131,7 @@ def static String uncaughtException(Application it) {
 	)
 }
 
-def static String jsp(Resource it) {
+def String jsp(Resource it) {
 	val postOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
 	val putOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
 	val deleteOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::DELETE)
@@ -157,7 +158,7 @@ def static String jsp(Resource it) {
 	'''
 }
 
-def static String emptyPage(ResourceOperation it) {
+def String emptyPage(ResourceOperation it) {
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
@@ -179,7 +180,7 @@ def static String emptyPage(ResourceOperation it) {
 	)
 }
 
-def static String createForm(ResourceOperation it, ResourceOperation postOperation) {
+def String createForm(ResourceOperation it, ResourceOperation postOperation) {
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
@@ -207,7 +208,7 @@ def static String createForm(ResourceOperation it, ResourceOperation postOperati
 	)
 }
 
-def static String updateForm(ResourceOperation it, ResourceOperation putOperation) {
+def String updateForm(ResourceOperation it, ResourceOperation putOperation) {
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
@@ -240,7 +241,7 @@ def static String updateForm(ResourceOperation it, ResourceOperation putOperatio
 	)
 }
 
-def static String show(ResourceOperation it) {
+def String show(ResourceOperation it) {
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
@@ -263,7 +264,7 @@ def static String show(ResourceOperation it) {
 	)
 }
 
-def static String list(ResourceOperation it, ResourceOperation getOperation, ResourceOperation updateFormOperation, ResourceOperation deleteOperation, ResourceOperation createFormOperation) {
+def String list(ResourceOperation it, ResourceOperation getOperation, ResourceOperation updateFormOperation, ResourceOperation deleteOperation, ResourceOperation createFormOperation) {
 	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>

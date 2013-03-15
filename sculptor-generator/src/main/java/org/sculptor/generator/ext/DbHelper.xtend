@@ -29,26 +29,29 @@ import sculptormetamodel.InheritanceType
 import sculptormetamodel.DiscriminatorType
 import sculptormetamodel.Inheritance
 
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.PropertiesBase.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.PropertiesBase
+import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.DbHelperBase
 
 public class DbHelper {
-	def static String getCascade(Reference ref) {
+	extension Properties properties = GeneratorFactory::properties
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Helper helper = GeneratorFactory::helper
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+
+	def String getCascade(Reference ref) {
 		if (ref.cascade == null || ref.cascade == "")
 			ref.getDerivedCascade()
 		else
 			ref.cascade
 	}
 
-	def static boolean isDbOnDeleteCascade(Reference ref) {
+	def boolean isDbOnDeleteCascade(Reference ref) {
 		isDbResponsibleForOnDeleteCascade() && (ref.getCascade() != null) && (ref.getCascade().contains("delete") || ref.getCascade().contains("all"))
 	}
 
-	def static String getFetch(Reference ref) {
+	def String getFetch(Reference ref) {
 		if (ref.fetch == "none")
 			null
 		else if (ref.fetch == null || ref.fetch == "")
@@ -57,7 +60,7 @@ public class DbHelper {
 			ref.fetch
 	}
 
-	def private static String getDerivedFetch(Reference ref) {
+	def private String getDerivedFetch(Reference ref) {
 		if (isManyToMany(ref))
 			null // no default fetch for manyToMany
 		else  if (ref.to.isEntityOrPersistentValueObject() && !ref.to.aggregateRoot)
@@ -66,7 +69,7 @@ public class DbHelper {
 			null
 	}
 
-	def static String getHibernateCacheUsage(Object obj) {
+	def String getHibernateCacheUsage(Object obj) {
 		switch (cacheProvider()) {
 			case "EhCache" : "nonstrict-read-write"
 			case "TreeCache" : "nonstrict-read-write"
@@ -76,40 +79,40 @@ public class DbHelper {
 		}
 	}
 
-	def static String getDatabaseName(DomainObject domainObject) {
+	def String getDatabaseName(DomainObject domainObject) {
 		domainObject.databaseTable
 	}
 
-	def static String getDatabaseName(BasicType basicType) {
+	def String getDatabaseName(BasicType basicType) {
 		basicType.name.toUpperCase()
 	}
 
-	def static String getDatabaseName(Attribute attribute) {
+	def String getDatabaseName(Attribute attribute) {
 		attribute.databaseColumn
 	}
 
-	def static String getDatabaseName(Reference reference) {
+	def String getDatabaseName(Reference reference) {
 		reference.databaseColumn
 	}
 
-	def static String getDatabaseName(NamedElement element) {
+	def String getDatabaseName(NamedElement element) {
 		"UNKNOWN"
 	}
 
-	def static String getDatabaseName(String dbColumnPrefix, NamedElement element) {
+	def String getDatabaseName(String dbColumnPrefix, NamedElement element) {
 		var prefix=if (dbColumnPrefix != "" && !dbColumnPrefix.endsWith("_")) (dbColumnPrefix + "_") else dbColumnPrefix
 
 		return (prefix + element.getDatabaseName()).removeTrailingUnderscore()
 	}
 
-	def private static String removeTrailingUnderscore(String s) {
+	def private String removeTrailingUnderscore(String s) {
 		if (s.endsWith("_"))
 			s.substring(0, s.length - 1)
 		else
 			s
 	}
 
-	def static String getDefaultDatabaseName(NamedElement element) {
+	def String getDefaultDatabaseName(NamedElement element) {
 		if (mongoDb() && element.name == "id")
 			"_id"
 		else if (isJpaProviderAppEngine() || nosql())
@@ -118,34 +121,34 @@ public class DbHelper {
 			element.getDefaultDatabaseName2()
 	}
 
-	def private static String getDefaultDatabaseName2(NamedElement element) {
+	def private String getDefaultDatabaseName2(NamedElement element) {
 		element.getDatabaseName()
 	}
 
-	def static String truncateLongDatabaseName(String part1, String part2) {
+	def String truncateLongDatabaseName(String part1, String part2) {
 		truncateLongDatabaseName(part1 + "_" + part2)
 	}
 
-	def static String getListIndexDatabaseType() {
+	def String getListIndexDatabaseType() {
 		createListIndexAttribute().getDatabaseType()
 	}
 
-	def private static Attribute createListIndexAttribute() {
+	def private Attribute createListIndexAttribute() {
 		val attr = SculptormetamodelFactory::eINSTANCE.createAttribute
 		attr.setName("index")
 		attr.setType("Integer")
 		attr
 	}
 
-	def static String getHibernateType(Attribute attribute) {
+	def String getHibernateType(Attribute attribute) {
 		mapHibernateType(attribute.type)
 	}
 
-	def static String getForeignKeyName(Reference ref) {
+	def String getForeignKeyName(Reference ref) {
 		ref.databaseColumn
 	}
 
-	def static String getDefaultForeignKeyName(Reference ref) {
+	def String getDefaultForeignKeyName(Reference ref) {
 		if (isJpaProviderAppEngine())
 			ref.name
 		else if (nosql())
@@ -157,10 +160,10 @@ public class DbHelper {
 			if (ref.isUnidirectionalToManyWithoutJoinTable())
 				ref.getDefaultOppositeForeignKeyName()
 			else
-				DbHelperBase::getDefaultForeignKeyName(ref)
+				getDefaultForeignKeyName(ref)
 	}
 
-	def static String getOppositeForeignKeyName(Reference ref) {
+	def String getOppositeForeignKeyName(Reference ref) {
 		if (ref.opposite != null)
 			ref.opposite.getForeignKeyName()
 		else if (ref.isUnidirectionalToManyWithoutJoinTable())
@@ -176,27 +179,27 @@ public class DbHelper {
 //	  JAVA org.fornax.cartridges.sculptor.generator.util.DatabaseGenerationHelper.getOneToManyJoinTableName(sculptormetamodel.Reference);
 
 	// get unique list of join tables
-	def static Set<? extends String> getJoinTableNames(Collection<DomainObject> domainObjects) {
+	def Set<? extends String> getJoinTableNames(Collection<DomainObject> domainObjects) {
 		domainObjects.map[d | getJoinTableNames(d)].flatten().toSet()
 	}
 
 	// get join tables for this domain object
-	def static Set<String> getJoinTableNames(DomainObject domainObject) {
+	def Set<String> getJoinTableNames(DomainObject domainObject) {
 		domainObject.references.filter[r | !r.transient && isManyToMany(r)
 				&& r.to.hasOwnDatabaseRepresentation()].map[r | getManyToManyJoinTableName(r)].toSet
 
 	}
 
-	def static String getEnumDatabaseLength(Reference ref) {
+	def String getEnumDatabaseLength(Reference ref) {
 		val length = getEnumDatabaseLength(ref.getEnum())
 		getHintOrDefault(ref, "databaseLength", length)
 	}
 
-	def static boolean isOfTypeString(sculptormetamodel.Enum enum) {
+	def boolean isOfTypeString(sculptormetamodel.Enum enum) {
 		"String" == enum.getEnumType()
 	}
 
-	def static String getCascadeType(Reference ref) {
+	def String getCascadeType(Reference ref) {
 		val values = if (ref.getCascade() == null)
 			null
 		else
@@ -204,7 +207,7 @@ public class DbHelper {
 		toAnnotationFormat(values)
 	}
 
-	def private static String toAnnotationFormat(List<String> values) {
+	def private String toAnnotationFormat(List<String> values) {
 		if (values == null || values.isEmpty)
 			null
 		else if (values.size == 1)
@@ -213,7 +216,7 @@ public class DbHelper {
 			"{" + values.toCommaSeparatedString() + "}"
 	}
 
-	def static String mapCascadeType(String cascade) {
+	def String mapCascadeType(String cascade) {
 		switch (cascade.trim()) {
 			case "persist" : "javax.persistence.CascadeType.PERSIST"
 			case "merge" : "javax.persistence.CascadeType.MERGE"
@@ -225,16 +228,16 @@ public class DbHelper {
 		}
 	}
 
-	def static boolean isOrphanRemoval(String cascade) {
+	def boolean isOrphanRemoval(String cascade) {
 	isJpa2() && cascade != null && cascade.contains("all-delete-orphan")
 
 	}
 
-	def static boolean isOrphanRemoval(String cascade, Reference ref) {
+	def boolean isOrphanRemoval(String cascade, Reference ref) {
 		isJpa2() && (isOrphanRemoval(cascade) || !isAggregateRoot(ref.to))
 	}
 
-	def static String getHibernateCascadeType(Reference ref) {
+	def String getHibernateCascadeType(Reference ref) {
 		val values = if (ref.getCascade() == null)
 			null
 		else
@@ -242,7 +245,7 @@ public class DbHelper {
 		toAnnotationFormat(values)
 	}
 
-	def static String mapHibernateCascadeType(String cascade) {
+	def String mapHibernateCascadeType(String cascade) {
 		switch (cascade.trim()) {
 			case "all-delete-orphan" : (if (isJpa2()) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
 			case "delete-orphan" : (if (isJpa2()) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
@@ -255,7 +258,7 @@ public class DbHelper {
 		}
 	}
 
-	def static String getHibernateCacheStrategy(Object obj) {
+	def String getHibernateCacheStrategy(Object obj) {
 		switch (cacheProvider()) {
 			case "EhCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE"
 			case "TreeCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE"
@@ -265,7 +268,7 @@ public class DbHelper {
 		}
 	}
 
-	def static String getFetchType(Reference ref) {
+	def String getFetchType(Reference ref) {
 		switch (getFetch(ref)) {
 			// case "select" : "javax.persistence.FetchType.LAZY"
 			case "join" : "javax.persistence.FetchType.EAGER"
@@ -275,11 +278,11 @@ public class DbHelper {
 		}
 	}
 
-	def static String getFetchType(Attribute att) {
+	def String getFetchType(Attribute att) {
 		if (att.hasHint("fetch")) getFetchType(att.getHint("fetch")) else null
 	}
 
-	def static String getFetchType(String fetch) {
+	def String getFetchType(String fetch) {
 	switch (fetch) {
 		// case "select" : "javax.persistence.FetchType.LAZY"
 		case "join" : "javax.persistence.FetchType.EAGER"
@@ -290,7 +293,7 @@ public class DbHelper {
 
 	}
 
-	def static String getHibernateFetchType(Reference ref) {
+	def String getHibernateFetchType(Reference ref) {
 	switch (getFetch(ref)) {
 		// case "join" : "org.hibernate.annotations.FetchMode.JOIN"
 		// case "select" : "org.hibernate.annotations.FetchMode.SELECT"
@@ -300,22 +303,22 @@ public class DbHelper {
 
 	}
 
-	def static boolean isInheritanceTypeSingleTable(DomainObject domainObject) {
+	def boolean isInheritanceTypeSingleTable(DomainObject domainObject) {
 		(domainObject != null && domainObject.inheritance != null && domainObject.inheritance.type == InheritanceType::SINGLE_TABLE)
 	}
 
-	def static boolean isInheritanceTypeJoined(DomainObject domainObject) {
+	def boolean isInheritanceTypeJoined(DomainObject domainObject) {
 		(domainObject != null && domainObject.inheritance != null && domainObject.inheritance.type == InheritanceType::JOINED)
 	}
 
-	def static String getDiscriminatorType(DomainObject domainObject) {
+	def String getDiscriminatorType(DomainObject domainObject) {
 		if (domainObject.inheritance.discriminatorType == null)
 			null
 		else
 			"javax.persistence.DiscriminatorType." + domainObject.inheritance.discriminatorType
 	}
 
-	def static String getHbmDiscriminatorType(DomainObject domainObject) {
+	def String getHbmDiscriminatorType(DomainObject domainObject) {
 		switch (domainObject.inheritance.discriminatorType) {
 			case DiscriminatorType::INTEGER :
 				"int"
@@ -326,36 +329,36 @@ public class DbHelper {
 		}
 	}
 
-	def static boolean isJodaDateTimeLibrary() {
+	def boolean isJodaDateTimeLibrary() {
 		getDateTimeLibrary() == "joda"
 	}
 
-	def static boolean isJodaTemporal(Attribute attribute) {
+	def boolean isJodaTemporal(Attribute attribute) {
 		isTemporal(attribute) && isJodaDateTimeLibrary()
 	}
 
-	def static boolean hasOpposite(Reference ref) {
+	def boolean hasOpposite(Reference ref) {
 		ref.opposite != null
 	}
 
-	def static boolean isUnidirectionalToManyWithoutJoinTable(Reference ref) {
+	def boolean isUnidirectionalToManyWithoutJoinTable(Reference ref) {
 		ref.many && ref.isInverse() && !ref.hasOpposite
 	}
 
-	def static boolean isAggregateRoot(DomainObject domainObject) {
+	def boolean isAggregateRoot(DomainObject domainObject) {
 		domainObject.aggregateRoot
 	}
 
-	def private static boolean hasBasicTypeNaturalKey(DomainObject domainObject) {
+	def private boolean hasBasicTypeNaturalKey(DomainObject domainObject) {
 		domainObject.getAllNaturalKeyReferences().filter[e | e.to instanceof BasicType].toList.size == 1
 	}
 
-	def static boolean hasClassLevelUniqueConstraints(DomainObject domainObject) {
+	def boolean hasClassLevelUniqueConstraints(DomainObject domainObject) {
 		(domainObject.hasCompositeNaturalKey() || domainObject.hasBasicTypeNaturalKey())
 			&& (domainObject == domainObject.getRootExtends()) && domainObject.getSubclasses().isEmpty
 	}
 
-	def static boolean hasUniqueConstraints(DomainObject domainObject) {
+	def boolean hasUniqueConstraints(DomainObject domainObject) {
 		domainObject.attributes.exists[a | a.isUuid()]
 			|| (domainObject.hasNaturalKey()
 				&& domainObject.getNaturalKeyAttributes() == domainObject.getAllNaturalKeyAttributes()
@@ -363,14 +366,14 @@ public class DbHelper {
 			)
 	}
 
-	def static String discriminatorColumnName(Inheritance inheritance) {
+	def String discriminatorColumnName(Inheritance inheritance) {
 		if (inheritance.discriminatorColumnName != null)
 			inheritance.discriminatorColumnName
 		else
 			getProperty("db.discriminatorColumnName")
 	}
 
-	def static String discriminatorColumnLength(Inheritance inheritance) {
+	def String discriminatorColumnLength(Inheritance inheritance) {
 		val propertyName = getDbProduct + ".length.discriminatorType." + inheritance.discriminatorType
 		if (inheritance.discriminatorColumnLength != null)
 			inheritance.discriminatorColumnLength
@@ -380,11 +383,11 @@ public class DbHelper {
 			null
 	}
 
-	def static String getEclipseLinkTargetDatabase(String persistenceUnitName) {
+	def String getEclipseLinkTargetDatabase(String persistenceUnitName) {
 		getEclipseLinkTargetDatabase()
 	}
 
-	def static String getEclipseLinkTargetDatabase() {
+	def String getEclipseLinkTargetDatabase() {
 		switch (getDbProduct) {
 			case "oracle" :
 				"Oracle"
@@ -399,17 +402,17 @@ public class DbHelper {
 		}
 	}
 
-	def static String getListIndexColumnName(Reference ref) {
+	def String getListIndexColumnName(Reference ref) {
 		val defaultName = ref.getDefaultDatabaseName() + "_INDEX"
 		ifNullOrEmpty(ref.getHint("orderColumn"), defaultName)
 	}
 
-	def static boolean isAssociationOverrideNeeded(Reference ref) {
+	def boolean isAssociationOverrideNeeded(Reference ref) {
 		ref.to.references.exists[e | !e.isBasicTypeReference() && !e.isEnumReference()]
 	}
 
 	// Return true if this is an attribute to put last in the DDL
-	def static boolean isSystemAttributeToPutLast(Attribute attr) {
+	def boolean isSystemAttributeToPutLast(Attribute attr) {
 		getSystemAttributesToPutLast().contains(attr.name)
 	}
 }

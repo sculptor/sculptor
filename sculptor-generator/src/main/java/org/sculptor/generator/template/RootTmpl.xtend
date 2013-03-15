@@ -17,6 +17,9 @@
 
 package org.sculptor.generator.template
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.LogConfigTmpl
 import org.sculptor.generator.template.consumer.ConsumerTmpl
@@ -35,86 +38,103 @@ import org.sculptor.generator.template.repository.RepositoryTmpl
 import org.sculptor.generator.template.rest.ResourceTmpl
 import org.sculptor.generator.template.rest.RestWebTmpl
 import org.sculptor.generator.template.service.ServiceEjbTestTmpl
-import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
 
-import static org.sculptor.generator.ext.Properties.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class RootTmpl {
+	private static val AccessObjectTmpl accessObjectTmpl = GeneratorFactory::accessObjectTmpl
+	private static val BuilderTmpl builderTmpl = GeneratorFactory::builderTmpl
+	private static val ConsumerTmpl consumerTmpl = GeneratorFactory::consumerTmpl
+	private static val DatasourceTmpl datasourceTmpl = GeneratorFactory::datasourceTmpl
+	private static val DbUnitTmpl dbUnitTmpl = GeneratorFactory::dbUnitTmpl
+	private static val DDLTmpl dDLTmpl = GeneratorFactory::dDLTmpl
+	private static val DomainObjectTmpl domainObjectTmpl = GeneratorFactory::domainObjectTmpl
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+	private static val HibernateTmpl hibernateTmpl = GeneratorFactory::hibernateTmpl
+	private static val JPATmpl jPATmpl = GeneratorFactory::jPATmpl
+	private static val LogConfigTmpl logConfigTmpl = GeneratorFactory::logConfigTmpl
+	private static val ModelDocTmpl modelDocTmpl = GeneratorFactory::modelDocTmpl
+	private static val MongoDbMapperTmpl mongoDbMapperTmpl = GeneratorFactory::mongoDbMapperTmpl
+	private static val RepositoryTmpl repositoryTmpl = GeneratorFactory::repositoryTmpl
+	private static val ResourceTmpl resourceTmpl = GeneratorFactory::resourceTmpl
+	private static val RestWebTmpl restWebTmpl = GeneratorFactory::restWebTmpl
+	private static val ServiceEjbTestTmpl serviceEjbTestTmpl = GeneratorFactory::serviceEjbTestTmpl
+	private static val SpringTmpl springTmpl = GeneratorFactory::springTmpl
+	private static val UMLGraphTmpl uMLGraphTmpl = GeneratorFactory::uMLGraphTmpl
+	extension Properties properties = GeneratorFactory::properties
+	extension Helper helper = GeneratorFactory::helper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
 
-def static String Root(Application it) {
-	'''
-	«IF !modules.isEmpty»
-		«IF isDomainObjectToBeGenerated()»
-			«it.getAllDomainObjects(false).forEach[DomainObjectTmpl::domainObject(it)]»
-			
-			«IF isBuilderToBeGenerated()»
-				«it.getAllDomainObjects(false).filter[e | e.needsBuilder()].map[BuilderTmpl::builder(it)]»    
+	private static val serviceTmpl = GeneratorFactory::serviceTmpl
+
+	def String Root(Application it) {
+		'''
+		«IF !modules.isEmpty»
+			«IF isDomainObjectToBeGenerated()»
+				«it.getAllDomainObjects(false).forEach[domainObjectTmpl.domainObject(it)]»
+				
+				«IF isBuilderToBeGenerated()»
+					«it.getAllDomainObjects(false).filter[e | e.needsBuilder()].map[builderTmpl.builder(it)]»    
+				«ENDIF»
+			«ENDIF»
+			«IF isExceptionToBeGenerated()»
+				«it.modules.filter[e|!e.external].forEach[exceptionTmpl.applicationExceptions(it)]»
+			«ENDIF»
+			«IF isRepositoryToBeGenerated()»
+				«it.getAllRepositories(false).map[operations].flatten.filter[op | op.delegateToAccessObject && !op.isGenericAccessObject()].map[accessObjectTmpl.command(it)]»
+				«it.getAllRepositories(false).forEach[repositoryTmpl.repository(it)]»
+				«IF mongoDb()»
+					«it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[mongoDbMapperTmpl.mongoDbMapper(it)]»
+				«ENDIF»
+			«ENDIF»
+			«IF isServiceToBeGenerated()»
+				«it.getAllServices(false).forEach[serviceTmpl.service(it)]»
+			«ENDIF»
+			«IF isResourceToBeGenerated()»
+				«it.getAllResources(false).forEach[resourceTmpl.resource(it)]»
+			«ENDIF»
+			«IF isRestWebToBeGenerated() && !it.getAllResources(false).isEmpty»
+				«restWebTmpl.restWeb(it)»
+			«ENDIF»
+			«IF isConsumerToBeGenerated()»
+				«it.getAllConsumers(false).forEach[consumerTmpl.consumer(it)]»
+			«ENDIF»
+			«IF isEmptyDbUnitTestDataToBeGenerated()»
+				«dbUnitTmpl.emptyDbunitTestData(it)»
+			«ENDIF»
+			«IF getDbUnitDataSetFile() != null»
+				«dbUnitTmpl.singleDbunitTestData(it)»
+			«ENDIF»
+			«IF pureEjb3() && isTestToBeGenerated() && !jpa()»
+				«serviceEjbTestTmpl.ejbJarXml(it)»
+			«ENDIF»
+			«IF isSpringToBeGenerated()»
+				«springTmpl.spring(it)»
+			«ENDIF»
+			«IF isDdlToBeGenerated()»
+				«dDLTmpl.ddl(it)»
+			«ENDIF»
+			«IF isDatasourceToBeGenerated()»
+				«datasourceTmpl.datasource(it)»
+			«ENDIF»
+			«IF isLogbackConfigToBeGenerated()»
+				«logConfigTmpl.logbackConfig(it)»
+			«ENDIF»
+			«IF isHibernateToBeGenerated()»
+				«hibernateTmpl.hibernate(it)»
+			«ENDIF»
+			«IF isJpaAnnotationToBeGenerated()»
+				«jPATmpl.jpa(it)»
+			«ENDIF»
+			«IF isUMLToBeGenerated()»
+				«uMLGraphTmpl.start(it)»
+			«ENDIF»
+			«IF isModelDocToBeGenerated()»
+				«modelDocTmpl.start(it)»
 			«ENDIF»
 		«ENDIF»
-		«IF isExceptionToBeGenerated()»
-			«it.modules.filter[e|!e.external].forEach[ExceptionTmpl::applicationExceptions(it)]»
-		«ENDIF»
-		«IF isRepositoryToBeGenerated()»
-			«it.getAllRepositories(false).map[operations].flatten.filter[op | op.delegateToAccessObject && !op.isGenericAccessObject()].map[AccessObjectTmpl::command(it)]»
-			«it.getAllRepositories(false).forEach[RepositoryTmpl::repository(it)]»
-			«IF mongoDb()»
-				«it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[MongoDbMapperTmpl::mongoDbMapper(it)]»
-			«ENDIF»
-		«ENDIF»
-		«IF isServiceToBeGenerated()»
-			«it.getAllServices(false).forEach[ServiceTmpl::service(it)]»
-		«ENDIF»
-		«IF isResourceToBeGenerated()»
-			«it.getAllResources(false).forEach[ResourceTmpl::resource(it)]»
-		«ENDIF»
-		«IF isRestWebToBeGenerated() && !it.getAllResources(false).isEmpty»
-			«RestWebTmpl::restWeb(it)»
-		«ENDIF»
-		«IF isConsumerToBeGenerated()»
-		    «it.getAllConsumers(false).forEach[ConsumerTmpl::consumer(it)]»
-		«ENDIF»
-		«IF isEmptyDbUnitTestDataToBeGenerated()»
-			«DbUnitTmpl::emptyDbunitTestData(it)»
-		«ENDIF»
-		«IF getDbUnitDataSetFile() != null»
-			«DbUnitTmpl::singleDbunitTestData(it)»
-		«ENDIF»
-		«IF pureEjb3() && isTestToBeGenerated() && !jpa()»
-			«ServiceEjbTestTmpl::ejbJarXml(it)»
-		«ENDIF»
-		«IF isSpringToBeGenerated()»
-			«SpringTmpl::spring(it)»
-		«ENDIF»
-		«IF isDdlToBeGenerated()»
-			«DDLTmpl::ddl(it)»
-		«ENDIF»
-		«IF isDatasourceToBeGenerated()»
-			«DatasourceTmpl::datasource(it)»
-		«ENDIF»
-		«IF isLogbackConfigToBeGenerated()»
-			«LogConfigTmpl::logbackConfig(it)»
-		«ENDIF»
-		«IF isHibernateToBeGenerated()»
-			«HibernateTmpl::hibernate(it)»
-		«ENDIF»
-		«IF isJpaAnnotationToBeGenerated()»
-			«JPATmpl::jpa(it)»
-		«ENDIF»
-		«IF isUMLToBeGenerated()»
-			«UMLGraphTmpl::start(it)»
-		«ENDIF»
-		«IF isModelDocToBeGenerated()»
-			«ModelDocTmpl::start(it)»
-		«ENDIF»
-	«ENDIF»
-	'''
-}
-
-
+		'''
+	}
 }

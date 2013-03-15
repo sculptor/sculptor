@@ -17,19 +17,22 @@
 
 package org.sculptor.generator.template.service
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Service
 
-import static org.sculptor.generator.ext.Properties.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class ServiceEjbTestTmpl {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+	private static val ServiceTestTmpl serviceTestTmpl = GeneratorFactory::serviceTestTmpl
 
 /*Used for pure-ejb3, i.e. without spring */
-def static String serviceJUnitSubclassOpenEjb(Service it) {
+def String serviceJUnitSubclassOpenEjb(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
@@ -46,9 +49,9 @@ def static String serviceJUnitSubclassOpenEjb(Service it) {
 	@javax.ejb.EJB
 		private «it.getServiceapiPackage()».«name» «name.toFirstLower()»;
 
-		«ServiceTestTmpl::serviceJUnitGetDataSetFile(it)»
+		«serviceTestTmpl.serviceJUnitGetDataSetFile(it)»
 
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[ServiceTestTmpl::testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[serviceTestTmpl.testMethod(it)]»
 	}
 	'''
 	)
@@ -56,7 +59,7 @@ def static String serviceJUnitSubclassOpenEjb(Service it) {
 	'''
 }
 
-def static String ejbJarXml(Application it) {
+def String ejbJarXml(Application it) {
 	fileOutput("META-INF/ejb-jar.xml", OutputSlot::TO_RESOURCES, '''
 	<?xml version="1.0" encoding="UTF-8"?>  
 	<!-- need this for OpenEJB testing -->

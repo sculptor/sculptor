@@ -17,25 +17,31 @@
 
 package org.sculptor.generator.template.db
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.util.PropertiesBase.*
+import static org.sculptor.generator.template.db.DDLTmpl.*
 
 class DDLTmpl {
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	private static val mysqlDDLTmpl = GeneratorFactory::mysqlDDLTmpl
+	private static val oracleDDLTmpl = GeneratorFactory::oracleDDLTmpl
+	private static val customDDLTmpl = GeneratorFactory::customDDLTmpl
 
-def static String ddl(Application it) {
+def String ddl(Application it) {
 	'''
 		«IF dbProduct == "mysql"»
-			«MysqlDDLTmpl::ddl(it) »
+			«mysqlDDLTmpl.ddl(it) »
 		«ENDIF»
 		«IF dbProduct == "oracle"»
-			«OracleDDLTmpl::ddl(it) »
+			«oracleDDLTmpl.ddl(it) »
 		«ENDIF»
 		«IF dbProduct == "postgresql"»
-			«OracleDDLTmpl::ddl(it) »
+			«oracleDDLTmpl.ddl(it) »
 		«ENDIF»
 		«IF dbProduct == "custom"»
-			«CustomDDLTmpl::ddl(it) »
+			«customDDLTmpl.ddl(it) »
 		«ENDIF»
 	'''
 }

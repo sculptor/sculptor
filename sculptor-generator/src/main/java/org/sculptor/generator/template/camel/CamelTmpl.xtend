@@ -17,104 +17,104 @@
 
 package org.sculptor.generator.template.camel
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Helper.*
-
-import static extension org.sculptor.generator.ext.Properties.*
-
 class CamelTmpl {
-
-def static String camelConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot::TO_RESOURCES, '''
-	«header(it)»
+	extension Properties properties = GeneratorFactory::properties
+	extension Helper helper = GeneratorFactory::helper
 	
-	«camelEventBus(it)»
+	def String camelConfig(Application it) {
+		fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot::TO_RESOURCES, '''
+		«header(it)»
 
-	«camelContext(it)»
-	«camelJmsEndpoint(it)»
+		«camelEventBus(it)»
 
-	</beans>
-	'''
-	)
-}
+		«camelContext(it)»
+		«camelJmsEndpoint(it)»
 
-def static String camelTestConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "camel-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
-	«header(it)»
-	<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
+		</beans>
+		''')
+	}
 	
-	«camelTestJmsEndpoint(it)»
+	def String camelTestConfig(Application it) {
+		fileOutput(it.getResourceDir("spring") + "camel-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
+		«header(it)»
+		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
 
-	</beans>
-	'''
-	)
-}
+		«camelTestJmsEndpoint(it)»
 
+		</beans>
+		'''
+		)
+	}
+	
+	
+	def String header(Application it) {
+		'''
+		<?xml version="1.0" encoding="UTF-8"?>
 
-def static String header(Application it) {
-	'''
-	<?xml version="1.0" encoding="UTF-8"?>
-
-	<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:broker="http://activemq.apache.org/schema/core"
-	xsi:schemaLocation="
-			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-			http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-			http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
-	'''
-}
-
-def static String camelContext(Application it) {
-	'''
-	<camel:camelContext id="camel">
-		<camel:package>«basePackage»</camel:package>
-		«camelProducerTemplate(it)»
-		«camelContextHook(it)»
-	</camel:camelContext>
-	'''
-}
-
-def static String camelEventBus(Application it) {
-	'''
-	<bean id="camelEventBusImpl" class="«fw("event.CamelEventBusImpl")»" />
-	<alias name="camelEventBusImpl" alias="eventBus" />
-	'''
-}
-
-def static String camelProducerTemplate(Application it) {
-	'''
-		<camel:template id="producerTemplate"/>
-	'''
-}
-
-def static String camelContextHook(Application it) {
-	'''
-	'''
-}
-
-def static String camelJmsEndpoint(Application it) {
-	'''
-	<!--
-		Camel ActiveMQ to use the ActiveMQ broker 
-	-->
-	<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<property name="brokerURL" value="tcp://localhost:61616" />
-	</bean>
-	'''
-}
-
-def static String camelTestJmsEndpoint(Application it) {
-	'''
-	<!--
-		Camel ActiveMQ to use the inmemory ActiveMQ broker 
-	-->
-	<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<property name="brokerURL" value="vm://localhost?broker.persistent=false" />
-	</bean>
-	'''
-}
+		<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:camel="http://camel.apache.org/schema/spring" xmlns:broker="http://activemq.apache.org/schema/core"
+		xsi:schemaLocation="
+				http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+				http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+		'''
+	}
+	
+	def String camelContext(Application it) {
+		'''
+		<camel:camelContext id="camel">
+			<camel:package>«basePackage»</camel:package>
+			«camelProducerTemplate(it)»
+			«camelContextHook(it)»
+		</camel:camelContext>
+		'''
+	}
+	
+	def String camelEventBus(Application it) {
+		'''
+		<bean id="camelEventBusImpl" class="«fw("event.CamelEventBusImpl")»" />
+		<alias name="camelEventBusImpl" alias="eventBus" />
+		'''
+	}
+	
+	def String camelProducerTemplate(Application it) {
+		'''
+			<camel:template id="producerTemplate"/>
+		'''
+	}
+	
+	def String camelContextHook(Application it) {
+		'''
+		'''
+	}
+	
+	def String camelJmsEndpoint(Application it) {
+		'''
+		<!--
+			Camel ActiveMQ to use the ActiveMQ broker 
+		-->
+		<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+			<property name="brokerURL" value="tcp://localhost:61616" />
+		</bean>
+		'''
+	}
+	
+	def String camelTestJmsEndpoint(Application it) {
+		'''
+		<!--
+			Camel ActiveMQ to use the inmemory ActiveMQ broker 
+		-->
+		<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+			<property name="brokerURL" value="vm://localhost?broker.persistent=false" />
+		</bean>
+		'''
+	}
 }

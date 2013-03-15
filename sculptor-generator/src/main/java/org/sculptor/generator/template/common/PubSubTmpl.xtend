@@ -17,33 +17,37 @@
 
 package org.sculptor.generator.template.common
 
+import org.sculptor.generator.ext.GeneratorFactory
+
 import sculptormetamodel.Publish
 import sculptormetamodel.Subscribe
 
-import static org.sculptor.generator.ext.Properties.*
+import org.sculptor.generator.ext.Properties
 
-import static extension org.sculptor.generator.util.HelperBase.*
+import org.sculptor.generator.util.HelperBase
 
 class PubSubTmpl {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Properties properties = GeneratorFactory::properties
 
-def static String publishAnnotation(Publish it) {
-	val eventTypeClass = if (it.eventType == null) null else eventType.getDomainPackage() + "." + eventType.name + ".class"
-	'''
-	«formatAnnotationParameters("@" + fw("event.annotation.Publish"), <Object>newArrayList(
-			eventTypeClass != null, "eventType", eventTypeClass,
-			topic != null, "topic", '"' + topic + '"',
-			eventBus != null, "eventBus", '"' + eventBus + '"'
-		))»
-	'''
-}
-
-def static String subscribeAnnotation(Subscribe it) {
-	'''
-	«formatAnnotationParameters("@" + fw("event.annotation.Subscribe"), <Object>newArrayList(
-			topic != null, "topic", '"' + topic + '"',
-			eventBus != null, "eventBus", '"' + eventBus + '"'
-		)) »
-	'''
-}
+	def String publishAnnotation(Publish it) {
+		val eventTypeClass = if (it.eventType == null) null else eventType.getDomainPackage() + "." + eventType.name + ".class"
+		'''
+		«formatAnnotationParameters("@" + fw("event.annotation.Publish"), <Object>newArrayList(
+				eventTypeClass != null, "eventType", eventTypeClass,
+				topic != null, "topic", '"' + topic + '"',
+				eventBus != null, "eventBus", '"' + eventBus + '"'
+			))»
+		'''
+	}
+	
+	def String subscribeAnnotation(Subscribe it) {
+		'''
+		«formatAnnotationParameters("@" + fw("event.annotation.Subscribe"), <Object>newArrayList(
+				topic != null, "topic", '"' + topic + '"',
+				eventBus != null, "eventBus", '"' + eventBus + '"'
+			)) »
+		'''
+	}
 
 }

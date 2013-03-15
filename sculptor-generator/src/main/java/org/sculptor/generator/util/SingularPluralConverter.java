@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.sculptor.generator.ext.GeneratorFactory;
+
 /**
  * Conversion of English words to plural and singular. By default words become
  * plural by appending -s. Some algorithmic rules are implemented, such as words
@@ -37,7 +39,7 @@ public class SingularPluralConverter {
 	}
 
 	static void init() {
-		singular2pluralDefinitions = PropertiesBase.singular2pluralDefinitions();
+		singular2pluralDefinitions = GeneratorFactory.propertiesBase().singular2pluralDefinitions();
 		plural2singularDefinitions = new HashMap<String, String>();
 		for (Entry<String, String> entry : singular2pluralDefinitions.entrySet()) {
 			plural2singularDefinitions.put(entry.getValue(), entry.getKey());

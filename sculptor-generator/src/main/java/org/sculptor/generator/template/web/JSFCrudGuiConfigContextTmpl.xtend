@@ -17,17 +17,20 @@
 
 package org.sculptor.generator.template.web
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
-
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
 
 class JSFCrudGuiConfigContextTmpl {
 
-def static String contextXml(Application it) {
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+
+def String contextXml(Application it) {
 	'''
 	«IF applicationServer() == "tomcat"»
 	    «tomcatContextXml(it) »
@@ -38,7 +41,7 @@ def static String contextXml(Application it) {
 	'''
 }
 
-def static String tomcatContextXml(Application it) {
+def String tomcatContextXml(Application it) {
 	fileOutput("META-INF/context.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<Context path="/«dataSourceName(it)»" docBase="«dataSourceName(it)»"
@@ -71,7 +74,7 @@ def static String tomcatContextXml(Application it) {
 	'''
 	)
 }
-def static String jettyContextXml(Application it) {
+def String jettyContextXml(Application it) {
 	fileOutput("WEB-INF/jetty-env.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0"?>
 	<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">

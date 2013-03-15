@@ -17,17 +17,18 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.DbHelper.*
-import static org.sculptor.generator.template.jpa.EclipseLinkTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-
 class EclipseLinkTmpl {
 
-def static String eclipseLink(Application it) {
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension Helper helper = GeneratorFactory::helper
+
+def String eclipseLink(Application it) {
 	'''
 		«mapping(it)»
 		«IF isJodaDateTimeLibrary()»
@@ -39,7 +40,7 @@ def static String eclipseLink(Application it) {
 	'''
 }
 
-def static String header(Application it) {
+def String header(Application it) {
 	'''
 	<?xml version="1.0" encoding="utf-8" ?>
 	<entity-mappings
@@ -49,13 +50,13 @@ def static String header(Application it) {
 	'''
 }
 
-def static String footer(Application it) {
+def String footer(Application it) {
 	'''
 	</entity-mappings>
 	'''
 }
 
-def static String mapping(Application it) {
+def String mapping(Application it) {
 	fileOutput("/META-INF/orm.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	«header(it)»
 	«enumConverter(it)»
@@ -67,19 +68,19 @@ def static String mapping(Application it) {
 	)
 }
 
-def static String enumConverter(Application it) {
+def String enumConverter(Application it) {
 	'''
 	<converter name="EnumConverter" class="«basePackage».util.EnumConverter"></converter>
 	'''
 }
 
-def static String jodaConverter(Application it) {
+def String jodaConverter(Application it) {
 	'''
 	<converter name="JodaConverter" class="«basePackage».util.JodaConverter"></converter>
 	'''
 }
 
-def static String jodaConverterClass(Application it) {
+def String jodaConverterClass(Application it) {
 	fileOutput(javaFileName(basePackage +".util.JodaConverter"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
@@ -129,7 +130,7 @@ def static String jodaConverterClass(Application it) {
 	)
 }
 
-def static String enumConverterClass(Application it) {
+def String enumConverterClass(Application it) {
 	fileOutput(javaFileName(basePackage +".util.EnumConverter"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 

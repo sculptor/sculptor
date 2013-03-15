@@ -66,22 +66,22 @@ public class PropertiesBase {
 	 * constructor will load properties files (again)
 	 */
 	public PropertiesBase() {
-		PropertiesBase.initProperties(true);
+		initProperties(true);
 	}
 
 	/**
 	 * Dependency injection, to avoid loading from files.
 	 */
-	public static void setProperties(Properties p) {
+	public void setProperties(Properties p) {
 		properties = p;
 	}
 
-	private static Properties getProperties() {
+	private Properties getProperties() {
 		initProperties(false);
 		return properties;
 	}
 
-	public static void initProperties(boolean reload) {
+	public void initProperties(boolean reload) {
 		if (!reload && properties != null) {
 			// already initialized
 			return;
@@ -111,14 +111,14 @@ public class PropertiesBase {
 		initDerivedDefaults(defaultProperties);
 	}
 
-	private static void copySystemProperties(Properties p) {
+	private void copySystemProperties(Properties p) {
 		Properties sysProperties = System.getProperties();
 		for (Object key : sysProperties.keySet()) {
 			p.put(key, sysProperties.get(key));
 		}
 	}
 
-	private static void loadProperties(Properties properties, String resource) {
+	private void loadProperties(Properties properties, String resource) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		if (classLoader == null) {
 			classLoader = PropertiesBase.class.getClassLoader();
@@ -135,7 +135,7 @@ public class PropertiesBase {
 		}
 	}
 
-	private static void initDerivedDefaults(Properties defaultProperties) {
+	private void initDerivedDefaults(Properties defaultProperties) {
 
 		if (hasProperty("test.dbunit.dataSetFile")) {
 			// don't generate data set file for each service/consumer
@@ -218,7 +218,7 @@ public class PropertiesBase {
 
 	}
 
-	private static void initDerivedDefaultsForRest(Properties defaultProperties) {
+	private void initDerivedDefaultsForRest(Properties defaultProperties) {
 		if (!getBooleanProperty("generate.resource")) {
 			defaultProperties.setProperty("generate.restWeb", "false");
 		}
@@ -230,13 +230,13 @@ public class PropertiesBase {
 		}
 	}
 
-	private static void initQuick(Properties defaultProperties) {
+	private void initQuick(Properties defaultProperties) {
 		defaultProperties.setProperty("generate.ddl", "false");
 		defaultProperties.setProperty("generate.umlgraph", "false");
 		defaultProperties.setProperty("generate.modeldoc", "false");
 	}
 
-	private static void initDerivedDefaultsForNonBusinessTier(Properties defaultProperties) {
+	private void initDerivedDefaultsForNonBusinessTier(Properties defaultProperties) {
 		defaultProperties.setProperty("generate.domainObject", "false");
 		defaultProperties.setProperty("generate.exception", "false");
 		defaultProperties.setProperty("generate.repository", "false");
@@ -249,7 +249,7 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.modeldoc", "false");
 	}
 
-	private static void initDerivedDefaultsForPresentationTier(Properties defaultProperties) {
+	private void initDerivedDefaultsForPresentationTier(Properties defaultProperties) {
 		if (hasProjectNature("rcp")) {
 			defaultProperties.setProperty("generate.jsfCrudGui", "false");
 			defaultProperties.setProperty("generate.rcpCrudGui", "true");
@@ -262,7 +262,7 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.restWeb", "false");
 	}
 
-	private static void initDerivedDefaultsForJpa(Properties defaultProperties) {
+	private void initDerivedDefaultsForJpa(Properties defaultProperties) {
 		if (getBooleanProperty("generate.jpa.annotation")) {
 			if (!getProperty("jpa.provider").equals("hibernate")) {
 				defaultProperties.setProperty("generate.hibernate", "false");
@@ -272,7 +272,7 @@ public class PropertiesBase {
 		}
 	}
 
-	private static void initDerivedDefaultsForNosql(Properties defaultProperties) {
+	private void initDerivedDefaultsForNosql(Properties defaultProperties) {
 		defaultProperties.setProperty("generate.jpa.annotation", "false");
 		defaultProperties.setProperty("generate.hibernate", "false");
 		defaultProperties.setProperty("generate.test.dbunitTestData", "false");
@@ -292,13 +292,13 @@ public class PropertiesBase {
 		errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
 	}
 
-	private static void errorHandlingInterceptorWithoutHibernateDependency(Properties defaultProperties) {
+	private void errorHandlingInterceptorWithoutHibernateDependency(Properties defaultProperties) {
 		// for ejb3
 		defaultProperties.setProperty("framework.errorhandling.ErrorHandlingInterceptor",
 				"org.sculptor.framework.errorhandling.ErrorHandlingInterceptor2");
 	}
 
-	private static void initDerivedDefaultsWithoutPersistence(Properties defaultProperties) {
+	private void initDerivedDefaultsWithoutPersistence(Properties defaultProperties) {
 		defaultProperties.setProperty("generate.jpa.annotation", "false");
 		defaultProperties.setProperty("generate.hibernate", "false");
 		defaultProperties.setProperty("generate.test.dbunitTestData", "false");
@@ -319,7 +319,7 @@ public class PropertiesBase {
 		errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
 	}
 
-	private static void initDerivedDefaultsForPureEjb3(Properties defaultProperties) {
+	private void initDerivedDefaultsForPureEjb3(Properties defaultProperties) {
 		defaultProperties.setProperty("generate.spring", "false");
 		defaultProperties.setProperty("generate.resource", "false");
 		defaultProperties.setProperty("generate.restWeb", "false");
@@ -331,7 +331,7 @@ public class PropertiesBase {
 		// spring in presentation-tier
 	}
 
-	private static void initDerivedDefaultsForAppengine(Properties defaultProperties) {
+	private void initDerivedDefaultsForAppengine(Properties defaultProperties) {
 		defaultProperties.setProperty("deployment.type", "war");
 		defaultProperties.setProperty("jpa.provider", "appengine");
 		defaultProperties.setProperty("jpa.version", "1.0");
@@ -345,7 +345,7 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.logbackConfig", "false");
 	}
 
-	private static void initDerivedDefaultsForJoda(Properties defaultProperties) {
+	private void initDerivedDefaultsForJoda(Properties defaultProperties) {
 		defaultProperties.setProperty("javaType.Date", "org.joda.time.LocalDate");
 		defaultProperties.setProperty("javaType.DateTime", "org.joda.time.DateTime");
 		defaultProperties.setProperty("javaType.Timestamp", "org.joda.time.DateTime");
@@ -380,7 +380,7 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.auditable.joda", "true");
 	}
 
-	private static void initDerivedDefaultsSystemAttributes(Properties defaultProperties) {
+	private void initDerivedDefaultsSystemAttributes(Properties defaultProperties) {
 		if (!getBooleanProperty("generate.auditable")) {
 			String value = defaultProperties.getProperty("systemAttributes");
 			value = value.replaceAll(",createdBy", "");
@@ -393,7 +393,7 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String getProperty(String propertyName) {
+	public String getProperty(String propertyName) {
 		String value = getProperties().getProperty(propertyName);
 		if (value == null) {
 			throw new MissingResourceException("Property not found: " + propertyName, "GeneratorProperties",
@@ -402,7 +402,7 @@ public class PropertiesBase {
 		return value;
 	}
 
-	public static boolean hasProperty(String propertyName) {
+	public boolean hasProperty(String propertyName) {
 		try {
 			getProperty(propertyName);
 			return true;
@@ -411,12 +411,12 @@ public class PropertiesBase {
 		}
 	}
 
-	public static boolean getBooleanProperty(String propertyName) {
+	public boolean getBooleanProperty(String propertyName) {
 		String value = getProperty(propertyName);
 		return value.equalsIgnoreCase("true");
 	}
 
-	static Set<String> getPropertyNames() {
+	Set<String> getPropertyNames() {
 		return getPropertyNames(getProperties());
 	}
 
@@ -436,7 +436,7 @@ public class PropertiesBase {
 	 * @param prefix
 	 * @return properties starting with prefix
 	 */
-	static Properties getProperties(String prefix) {
+	Properties getProperties(String prefix) {
 		return getProperties(prefix, false);
 	}
 
@@ -448,7 +448,7 @@ public class PropertiesBase {
 	 *			  remove prefix in the resulting properties or not
 	 * @return properties starting with prefix
 	 */
-	static Properties getProperties(String prefix, boolean removePrefix) {
+	Properties getProperties(String prefix, boolean removePrefix) {
 		Properties result = new Properties();
 		for (String key : getPropertyNames()) {
 			if (key.startsWith(prefix))
@@ -464,7 +464,7 @@ public class PropertiesBase {
 	 *			  to transform
 	 * @return map containing transformed properties
 	 */
-	public static Map<String, String> getPropertiesAsMap(Properties properties) {
+	public Map<String, String> getPropertiesAsMap(Properties properties) {
 		Map<String, String> result = new HashMap<String, String>();
 		for (String key : getPropertyNames(properties)) {
 			result.put(key, properties.getProperty(key));
@@ -472,7 +472,7 @@ public class PropertiesBase {
 		return result;
 	}
 
-	private static String fw(String className) {
+	private String fw(String className) {
 		String propName = "framework." + className;
 		if (hasProperty(propName)) {
 			return getProperty(propName);
@@ -481,25 +481,25 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String getServiceContextClass() {
+	public String getServiceContextClass() {
 		return fw("errorhandling.ServiceContext");
 	}
 
-	public static String getDbProduct() {
+	public String getDbProduct() {
 		return getProperty("db.product");
 	}
 
-	public static String getHibernateDialect() {
+	public String getHibernateDialect() {
 		String key = "db." + getDbProduct() + ".hibernate.dialect";
 		return getProperty(key);
 	}
 
-	public static String getDbType(String javaType) {
+	public String getDbType(String javaType) {
 		String key = "db." + getDbProduct() + ".type." + javaType;
 		return getProperty(key);
 	}
 
-	public static String getDbLength(String javaType) {
+	public String getDbLength(String javaType) {
 		String key = "db." + getDbProduct() + ".length." + javaType;
 		if (hasProperty(key)) {
 			return getProperty(key);
@@ -508,17 +508,17 @@ public class PropertiesBase {
 		}
 	}
 
-	public static Integer getMaxDbName() {
+	public Integer getMaxDbName() {
 		String key = "db." + getDbProduct() + ".maxNameLength";
 		return new Integer(getProperty(key));
 	}
 
-	public static boolean isDbResponsibleForOnDeleteCascade() {
+	public boolean isDbResponsibleForOnDeleteCascade() {
 		String key = "db." + getDbProduct() + ".onDeleteCascade";
 		return Boolean.valueOf(getProperty(key));
 	}
 
-	public static String getDefaultCascade(String referenceType) {
+	public String getDefaultCascade(String referenceType) {
 		String propertyName = "cascade." + referenceType;
 		if (hasProperty(propertyName)) {
 			String value = getProperty(propertyName);
@@ -528,7 +528,7 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String getJavaType(String modelType) {
+	public String getJavaType(String modelType) {
 		String key = "javaType." + modelType;
 		if (hasProperty(key)) {
 			return getProperty(key);
@@ -537,7 +537,7 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String getJavaTypeImpl(String modelType) {
+	public String getJavaTypeImpl(String modelType) {
 		String key = "javaType.impl." + modelType;
 		if (hasProperty(key)) {
 			return getProperty(key);
@@ -546,7 +546,7 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String mapHibernateType(String modelType) {
+	public String mapHibernateType(String modelType) {
 		String key = "hibernateType." + modelType;
 		if (hasProperty(key)) {
 			return getProperty(key);
@@ -555,11 +555,11 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String getIdType() {
+	public String getIdType() {
 		return getProperty("id.type");
 	}
 
-	public static String mapPropertyEditor(String modelType) {
+	public String mapPropertyEditor(String modelType) {
 		String key = "propertyEditor." + modelType;
 		if (hasProperty(key)) {
 			return getProperty(key);
@@ -568,101 +568,101 @@ public class PropertiesBase {
 		}
 	}
 
-	public static String getServiceInterfacePackage() {
+	public String getServiceInterfacePackage() {
 		return getProperty("package.serviceInterface");
 	}
 
-	public static String getServiceImplementationPackage() {
+	public String getServiceImplementationPackage() {
 		return getProperty("package.serviceImplementation");
 	}
 
-	public static String getControllerInterfacePackage() {
+	public String getControllerInterfacePackage() {
 		return getProperty("package.controllerInterface");
 	}
 
-	public static String getRestPackage() {
+	public String getRestPackage() {
 		return getProperty("package.rest");
 	}
 
-	public static String getServiceProxyPackage() {
+	public String getServiceProxyPackage() {
 		return getProperty("package.serviceProxy");
 	}
 
-	public static String getServiceStubPackage() {
+	public String getServiceStubPackage() {
 		return getProperty("package.serviceStub");
 	}
 
-	public static String getConsumerPackage() {
+	public String getConsumerPackage() {
 		return getProperty("package.consumer");
 	}
 
-	public static String getXmlMapperPackage() {
+	public String getXmlMapperPackage() {
 		return getProperty("package.xmlmapper");
 	}
 
-	public static String getDomainPackage() {
+	public String getDomainPackage() {
 		return getProperty("package.domain");
 	}
 
-	public static String getDtoPackage() {
+	public String getDtoPackage() {
 		return getProperty("package.dto");
 	}
 
-	public static String getDomainEventPackage() {
+	public String getDomainEventPackage() {
 		return getProperty("package.domainEvent");
 	}
 
-	public static String getCommandEventPackage() {
+	public String getCommandEventPackage() {
 		return getProperty("package.commandEvent");
 	}
 
-	public static String getRepositoryInterfacePackage() {
+	public String getRepositoryInterfacePackage() {
 		return getProperty("package.repositoryInterface");
 	}
 
-	public static String getExceptionPackage() {
+	public String getExceptionPackage() {
 		return getProperty("package.exception");
 	}
 
-	public static String getRepositoryImplementationPackage() {
+	public String getRepositoryImplementationPackage() {
 		return getProperty("package.repositoryImplementation");
 	}
 
-	public static String getAccessInterfacePackage() {
+	public String getAccessInterfacePackage() {
 		return getProperty("package.accessInterface");
 	}
 
-	public static String getAccessImplementationPackage() {
+	public String getAccessImplementationPackage() {
 		return getProperty("package.accessImplementation");
 	}
 
-	public static String getMapperPackage() {
+	public String getMapperPackage() {
 		return getProperty("package.mapper");
 	}
 
-	public static String getWebPackage() {
+	public String getWebPackage() {
 		return getProperty("package.web");
 	}
 
-	public static String getRichClientPackage() {
+	public String getRichClientPackage() {
 		return getProperty("package.richClient");
 	}
 
-	public static List<String> scaffoldOperations() {
+	public List<String> scaffoldOperations() {
 		String value = getProperty("scaffold.operations");
 		String[] operations = value.split(",");
 		trim(operations);
 		return new ArrayList<String>(Arrays.asList(operations));
 	}
 
-	public static List<String> restScaffoldOperations() {
+	public List<String> restScaffoldOperations() {
 		String value = getProperty("rest.scaffold.operations");
 		String[] operations = value.split(",");
 		trim(operations);
 		return new ArrayList<String>(Arrays.asList(operations));
 	}
 
-	public static String restServiceDelegateOperation(String name) {
+	public String restServiceDelegateOperation(String name) {
 		String propName = "rest." + name + ".delegate";
 		if (hasProperty(propName)) {
 			return getProperty(propName);
@@ -671,24 +671,24 @@ public class PropertiesBase {
 		}
 	}
 
-	public static List<String> projectNature() {
+	public List<String> projectNature() {
 		String value = getProperty("project.nature");
 		String[] operations = value.split(",");
 		trim(operations);
 		return new ArrayList<String>(Arrays.asList(operations));
 	}
 
-	private static void trim(String[] strings) {
+	private void trim(String[] strings) {
 		for (int i = 0; i < strings.length; i++) {
 			strings[i] = strings[i].trim();
 		}
 	}
 
-	public static boolean hasProjectNature(String nature) {
+	public boolean hasProjectNature(String nature) {
 		return projectNature().contains(nature);
 	}
 
-	static Map<String, String> singular2pluralDefinitions() {
+	Map<String, String> singular2pluralDefinitions() {
 		Map<String, String> result = new HashMap<String, String>();
 		String prefix = "singular2plural.";
 		Set<String> names = getPropertyNames();
@@ -707,7 +707,7 @@ public class PropertiesBase {
 	 *			  shortcut for annotation
 	 * @return fully qualified Annotation Class (without leading @)
 	 */
-	public static String mapValidationAnnotation(String annotation) {
+	public String mapValidationAnnotation(String annotation) {
 		return mapValidationAnnotation(annotation, null);
 	}
 
@@ -720,7 +720,7 @@ public class PropertiesBase {
 	 *			  default annotation in case annotation could not be found
 	 * @return fully qualified Annotation Class (without leading @)
 	 */
-	public static String mapValidationAnnotation(String annotation, String defaultAnnotation) {
+	public String mapValidationAnnotation(String annotation, String defaultAnnotation) {
 		String key = "validation.annotation." + toFirstUpper(annotation);
 		if (hasProperty(key)) {
 			return getProperty(key);
@@ -732,7 +732,7 @@ public class PropertiesBase {
 	/**
 	 * First character to upper case.
 	 */
-	private static String toFirstUpper(String name) {
+	private String toFirstUpper(String name) {
 		if (name.length() == 0) {
 			return name;
 		} else {
@@ -745,15 +745,15 @@ public class PropertiesBase {
 	 *
 	 * @return map with validation annotations
 	 */
-	public static Map<String, String> validationAnnotationDefinitions() {
+	public Map<String, String> validationAnnotationDefinitions() {
 		return getPropertiesAsMap(getProperties("validation.annotation.", true));
 	}
 
-	public static void setProperty(String key, String value) {
+	public void setProperty(String key, String value) {
 		getProperties().setProperty(key, value);
 	}
 
-	public static List<String> getChangedModules() {
+	public List<String> getChangedModules() {
 		if (hasProperty(CHANGED_MODULE)) {
 			String s = getProperty(CHANGED_MODULE);
 			String[] split = s.split(",");
@@ -774,7 +774,7 @@ public class PropertiesBase {
 		}
 	}
 
-	private static String moduleFromFileName(String fileName) {
+	private String moduleFromFileName(String fileName) {
 		File file = new File(fileName);
 		String name = file.getName();
 		if (!name.endsWith(".btdesign")) {
@@ -787,11 +787,11 @@ public class PropertiesBase {
 		return name;
 	}
 
-	public static String getBuilderPackage() {
+	public String getBuilderPackage() {
 		return getProperty("package.builder");
 	}
 
-	public static boolean getGenerateBuilder() {
+	public boolean getGenerateBuilder() {
 		return Boolean.valueOf(getProperty("generate.domainObject.builder"));
 	}
 

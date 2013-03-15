@@ -17,64 +17,71 @@
 
 package org.sculptor.generator.template.consumer
 
+import org.sculptor.generator.ext.GeneratorFactory
+
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
 
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.consumer.ConsumerEjbTestTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 
-import static extension org.sculptor.generator.util.HelperBase.*
-import static extension org.sculptor.generator.util.XmlHelperBase.*
+import org.sculptor.generator.util.PropertiesBase
+
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.XmlHelperBase
 
 class ConsumerEjbTestTmpl {
+	private static val ConsumerTestTmpl consumerTestTmpl = GeneratorFactory::consumerTestTmpl
 
-def static String consumerJUnitOpenEjb(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
-	«javaHeader()»
-	package «getConsumerPackage()»;
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	extension XmlHelperBase xmlHelperBase = GeneratorFactory::xmlHelperBase
 
-	import static org.junit.Assert.assertNotNull;
-	import static org.junit.Assert.assertTrue;
-	import static org.junit.Assert.fail;
+	def String consumerJUnitOpenEjb(Consumer it) {
+		fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+		«javaHeader()»
+		package «getConsumerPackage()»;
 
-	/**
-	 * JUnit test with OpenEJB and DbUnit support.
-	 */
-	public class «name»Test ^extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» {
+		import static org.junit.Assert.assertNotNull;
+		import static org.junit.Assert.assertTrue;
+		import static org.junit.Assert.fail;
 
-		@javax.annotation.Resource(mappedName="«name.toFirstLower()»")
-		private javax.jms.Queue queue;
+		/**
+		 * JUnit test with OpenEJB and DbUnit support.
+		 */
+		public class «name»Test ^extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» {
 
-	«ConsumerTestTmpl::consumerJUnitGetDataSetFile(it)»
+			@javax.annotation.Resource(mappedName="«name.toFirstLower()»")
+			private javax.jms.Queue queue;
 
-		«openEjbTestMethod(it)»
+		«consumerTestTmpl.consumerJUnitGetDataSetFile(it)»
 
-		«junitCreateMessage(it)»
+			«openEjbTestMethod(it)»
 
-	}
-	'''
-	)
-	'''
-	'''
-}
+			«junitCreateMessage(it)»
 
-def static String openEjbTestMethod(Consumer it) {
-	'''
-	@org.junit.Test
-		public void testConsume() throws Exception {
-			// TODO Auto-generated method stub
-			String message = createMessage();
-			javax.jms.Destination replyTo = sendMessage(queue, message);
-			waitForReply(replyTo);
-			fail("testConsume not implemented");
 		}
-	'''
-}
-
-def static String junitCreateMessage(Consumer it) {
-	'''
+		'''
+		)
+	}
+	
+	def String openEjbTestMethod(Consumer it) {
+		'''
+		@org.junit.Test
+			public void testConsume() throws Exception {
+				// TODO Auto-generated method stub
+				String message = createMessage();
+				javax.jms.Destination replyTo = sendMessage(queue, message);
+				waitForReply(replyTo);
+				fail("testConsume not implemented");
+			}
+		'''
+	}
+	
+	def String junitCreateMessage(Consumer it) {
+		'''
 		«IF messageRoot == null»
 		private String createMessage() {
 			String msg =
@@ -94,6 +101,6 @@ def static String junitCreateMessage(Consumer it) {
 			return msg;
 		}
 		«ENDIF»
-	'''
-}
+		'''
+	}
 }

@@ -17,30 +17,34 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Trait
 
-import static org.sculptor.generator.ext.DbHelper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectPropertiesTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class DomainObjectPropertiesTmpl {
 
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
 
-def static String domainObjectProperties(Trait it) {
+
+def String domainObjectProperties(Trait it) {
 	'''
 	'''
 }
 
-def static String domainObjectProperties(DomainObject it) {
+def String domainObjectProperties(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -76,13 +80,13 @@ def static String domainObjectProperties(DomainObject it) {
 	'''
 }
 
-def static String sharedInstance(DomainObject it) {
+def String sharedInstance(DomainObject it) {
 	'''
 		private static final «name»PropertiesImpl<«getDomainPackage()».«name»> sharedInstance = new «name»PropertiesImpl<«getDomainPackage()».«name»>(«getDomainPackage()».«name».class);
 	'''
 }
 
-def static String staticLeafProperty(NamedElement it, DomainObject rootType) {
+def String staticLeafProperty(NamedElement it, DomainObject rootType) {
 	'''
 		public static «fw("domain.Property")»<«rootType.getDomainPackage()».«rootType.name»> «name»() {
 			return sharedInstance.«name»();
@@ -90,7 +94,7 @@ def static String staticLeafProperty(NamedElement it, DomainObject rootType) {
 	'''
 }
 
-def static String staticReferenceProperty(Reference it, DomainObject rootType) {
+def String staticReferenceProperty(Reference it, DomainObject rootType) {
 	'''
 		public static «to.getDomainPackage()».«to.name»Properties.«to.name»Property<«rootType.getDomainPackage()».«rootType.name»> «name»() {
 			return sharedInstance.«name»();
@@ -98,7 +102,7 @@ def static String staticReferenceProperty(Reference it, DomainObject rootType) {
 	'''
 }
 
-def static String domainObjectProperty(DomainObject it) {
+def String domainObjectProperty(DomainObject it) {
 	'''
 
 		/**
@@ -114,7 +118,7 @@ def static String domainObjectProperty(DomainObject it) {
 	'''
 }
 
-def static String domainObjectPropertiesImpl(DomainObject it) {
+def String domainObjectPropertiesImpl(DomainObject it) {
 	'''
 
 		protected static class «name»PropertiesImpl<T> extends «fw("domain.PropertiesCollection")» {
@@ -138,7 +142,7 @@ def static String domainObjectPropertiesImpl(DomainObject it) {
 	'''
 }
 
-def static String leafProperty(NamedElement it, boolean isEmbeddable) {
+def String leafProperty(NamedElement it, boolean isEmbeddable) {
 	'''
 		public «fw("domain.Property")»<T> «name»() {
 			return new «fw("domain.LeafProperty")»<T>(getParentPath(), "«IF nosql()»«getDatabaseName(it)»«ELSE»«name»«ENDIF»", «isEmbeddable», owningClass);
@@ -146,7 +150,7 @@ def static String leafProperty(NamedElement it, boolean isEmbeddable) {
 	'''
 }
 
-def static String referenceProperty(Reference it) {
+def String referenceProperty(Reference it) {
 	'''
 		public «to.getDomainPackage()».«to.name»Properties.«to.name»Property<T> «name»() {
 			return new «to.getDomainPackage()».«to.name»Properties.«to.name»Property<T>(getParentPath(), "«IF nosql()»«getDatabaseName(it)»«ELSE»«name»«ENDIF»", owningClass);
@@ -154,7 +158,7 @@ def static String referenceProperty(Reference it) {
 	'''
 }
 
-def static String serialVersionUID(Object it) {
+def String serialVersionUID(Object it) {
 	'''
 		private static final long serialVersionUID = 1L;
 	'''

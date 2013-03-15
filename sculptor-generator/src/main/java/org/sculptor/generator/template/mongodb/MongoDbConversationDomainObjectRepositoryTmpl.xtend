@@ -17,21 +17,22 @@
 
 package org.sculptor.generator.template.mongodb
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptorguimetamodel.GuiApplication
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.mongodb.MongoDbConversationDomainObjectRepositoryTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class MongoDbConversationDomainObjectRepositoryTmpl {
 
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
 
-def static String conversationDomainObectRepository(GuiApplication it) {
+def String conversationDomainObectRepository(GuiApplication it) {
 	var it = it.guiForApplication
 
 	fileOutput(javaFileName(it.basePackage + ".util." + subPackage("web") + "." + "ConversationDomainObjectMongoDbRepositoryImpl"), OutputSlot::TO_GEN_SRC, '''
@@ -51,7 +52,7 @@ def static String conversationDomainObectRepository(GuiApplication it) {
 	)
 }
 
-def static String dbManager(Application it) {
+def String dbManager(Application it) {
 	'''
 	private «fw("accessimpl.mongodb.DbManager")» dbManager;
 	public «fw("accessimpl.mongodb.DbManager")» getDbManager() {
@@ -63,7 +64,7 @@ def static String dbManager(Application it) {
 	'''
 }
 
-def static String mappers(Application it) {
+def String mappers(Application it) {
 	'''
 	private java.util.Map<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<?, com.mongodb.DBObject>> mappers = new java.util.HashMap<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<?, com.mongodb.DBObject>>();
 	{
@@ -74,7 +75,7 @@ def static String mappers(Application it) {
 	'''
 }
 
-def static String get(Application it) {
+def String get(Application it) {
 	'''
 	@SuppressWarnings("unchecked")
 		public <T> T get(Class<T> domainObjectClass, java.io.Serializable id) {
@@ -90,7 +91,7 @@ def static String get(Application it) {
 	'''
 }
 
-def static String revert(Application it) {
+def String revert(Application it) {
 	'''
 		public void revert(Object domainObject) {
 			// TODO revert
@@ -99,7 +100,7 @@ def static String revert(Application it) {
 	'''
 }
 
-def static String clear(Application it) {
+def String clear(Application it) {
 	'''
 	public void clear() {
 	}

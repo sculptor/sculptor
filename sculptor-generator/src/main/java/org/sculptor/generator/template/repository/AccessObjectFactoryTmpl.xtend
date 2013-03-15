@@ -17,19 +17,22 @@
 
 package org.sculptor.generator.template.repository
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
 
-import static org.sculptor.generator.ext.DbHelper.*
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.repository.AccessObjectFactoryTmpl.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class AccessObjectFactoryTmpl {
 
-def static String getPersistentClass(Repository it) {
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String getPersistentClass(Repository it) {
 	'''
 		protected Class<«getDomainPackage(aggregateRoot)».«aggregateRoot.name»> getPersistentClass() {
 			return «getDomainPackage(aggregateRoot)».«aggregateRoot.name».class;
@@ -37,7 +40,7 @@ def static String getPersistentClass(Repository it) {
 	'''
 }
 
-def static String genericFactoryMethod(RepositoryOperation it) {
+def String genericFactoryMethod(RepositoryOperation it) {
 	'''
 	«IF useGenericAccessStrategy(it)»
 		«IF name != "findByExample"»
@@ -73,7 +76,7 @@ def static String genericFactoryMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String factoryMethod(RepositoryOperation it) {
+def String factoryMethod(RepositoryOperation it) {
 	'''
 		protected «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()» create«getAccessObjectName()»() {
 			«getAccessimplPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()»Impl«it.getGenericType()» ao = new «getAccessimplPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()»Impl«it.getGenericType()»();
@@ -83,7 +86,7 @@ def static String factoryMethod(RepositoryOperation it) {
 	'''
 }
 
-def static String factoryMethodInit(RepositoryOperation it) {
+def String factoryMethodInit(RepositoryOperation it) {
 	'''
 	«IF jpa()»
 		ao.setEntityManager(getEntityManager());
@@ -95,7 +98,7 @@ def static String factoryMethodInit(RepositoryOperation it) {
 	'''
 }
 
-def static String getAdditionalDataMappers(Repository it) {
+def String getAdditionalDataMappers(Repository it) {
 	val allUnownedReferences = it.aggregateRoot.getAggregate().map[ag | ag.getAllReferences()].flatten.filter[e | e.isUnownedReference()]
 	val allNonEnumNaturalKeyReferences = it.aggregateRoot.getNaturalKeyReferences().filter[e | !e.isEnumReference()]
 
@@ -123,7 +126,7 @@ def static String getAdditionalDataMappers(Repository it) {
 	'''
 }
 
-def static String ensureIndex(Repository it) {
+def String ensureIndex(Repository it) {
 	'''
 		@javax.annotation.PostConstruct
 		protected void ensureIndex() {

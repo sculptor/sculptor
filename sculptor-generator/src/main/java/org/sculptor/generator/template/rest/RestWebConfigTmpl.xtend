@@ -1,23 +1,27 @@
 package org.sculptor.generator.template.rest
 
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.ext.Helper.*
 import static org.sculptor.generator.template.rest.RestWebConfigTmpl.*
-import org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl
 
 class RestWebConfigTmpl {
 
-def static String config(Application it) {
+	extension Helper helper = GeneratorFactory::helper
+	private static val JSFCrudGuiConfigContextTmpl jSFCrudGuiConfigContextTmpl = GeneratorFactory::jSFCrudGuiConfigContextTmpl
+
+def String config(Application it) {
 	'''
 		«webXml(it)»
 		«restServletXml(it)»
-		«JSFCrudGuiConfigContextTmpl::contextXml(it)»
+		«jSFCrudGuiConfigContextTmpl.contextXml(it)»
 	'''
 }
 
-def static String webXml(Application it) {
+def String webXml(Application it) {
 	fileOutput("WEB-INF/web.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -96,7 +100,7 @@ def static String webXml(Application it) {
 	'''
 }
 
-def static String restServletXml(Application it) {
+def String restServletXml(Application it) {
 	fileOutput("WEB-INF/rest-servlet.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

@@ -17,20 +17,26 @@
 
 package org.sculptor.generator.template.consumer
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.DbUnitTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
 
-import static org.sculptor.generator.ext.Helper.*
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.consumer.ConsumerTestTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class ConsumerTestTmpl {
 
-def static String consumerJUnitWithAnnotations(Consumer it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val DbUnitTmpl dbUnitTmpl = GeneratorFactory::dbUnitTmpl
+
+def String consumerJUnitWithAnnotations(Consumer it) {
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -56,7 +62,7 @@ def static String consumerJUnitWithAnnotations(Consumer it) {
 	)
 }
 
-def static String consumerJUnitGetDataSetFile(Consumer it) {
+def String consumerJUnitGetDataSetFile(Consumer it) {
 	'''
 	«IF getDbUnitDataSetFile() != null»
 		@Override
@@ -67,7 +73,7 @@ def static String consumerJUnitGetDataSetFile(Consumer it) {
 	'''
 }
 
-def static String receiveTestMethod(Consumer it) {
+def String receiveTestMethod(Consumer it) {
 	'''
 	@org.junit.Test
 		public void testReceive() throws Exception {
@@ -78,14 +84,14 @@ def static String receiveTestMethod(Consumer it) {
 	'''
 }
 
-def static String dbunitTestData(Consumer it) {
+def String dbunitTestData(Consumer it) {
 	fileOutput("dbunit/" + name + "Test.xml", OutputSlot::TO_RESOURCES_TEST, '''
-		«DbUnitTmpl::dbunitTestDataContent(it.module.application)»
+		«dbUnitTmpl.dbunitTestDataContent(it.module.application)»
 	'''
 	)
 }
 
-def static String consumerDependencyInjectionJUnit(Consumer it) {
+def String consumerDependencyInjectionJUnit(Consumer it) {
 	fileOutput(javaFileName(getConsumerPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage()»;
@@ -104,7 +110,7 @@ def static String consumerDependencyInjectionJUnit(Consumer it) {
 }
 
 /*This (String) is the name of the dependency */
-def static String consumerDependencyInjectionTestMethod(String it, Consumer consumer) {
+def String consumerDependencyInjectionTestMethod(String it, Consumer consumer) {
 	'''
 		public void test«it.toFirstUpper()»Setter() throws Exception {
 			Class clazz = «consumer.getConsumerPackage()».«consumer.name».class;

@@ -57,30 +57,34 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.CommandEvent
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DiscriminatorType
+import sculptormetamodel.DomainEvent
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Event
 import sculptormetamodel.InheritanceType
-import sculptormetamodel.Module
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Repository
 import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
-import org.sculptor.generator.util.HelperBase
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.HelperBase.*
-import sculptormetamodel.DomainEvent
+import static org.sculptor.generator.SculptorDslTransformation.*
 
 class SculptorDslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
+
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
 
 	def create FACTORY.createApplication transform(DslApplication app) {
 		val allDslModules = app.modules
@@ -757,26 +761,10 @@ class SculptorDslTransformation {
 		if (domainObject.repository == null)
 			domainObject.addRepository()
 
-		domainObject.repository.addScaffoldOperations()
+		domainObject.repository.addRepositoryScaffoldOperations()
 		if (!domainObject.module.services.exists(s | s.name == (domainObject.name + "Service")))
 			domainObject.module.addService(domainObject.name + "Service")
-		domainObject.module.services.filter(s | s.name == (domainObject.name + "Service")).forEach[addScaffoldOperations(domainObject.repository)]
-	}
-
-	def DomainObject addRepository(DomainObject domainObject) {
-		HelperBase::addRepository(domainObject)
-	}
-
-	def Repository addScaffoldOperations(Repository repository) {
-		HelperBase::addRepositoryScaffoldOperations(repository)
-	}
-
-	def Module addService(Module module, String serviceName) {
-		HelperBase::addService(module, serviceName)
-	}
-
-	def Service addScaffoldOperations(Service service, Repository delegateRepository) {
-		HelperBase::addServiceScaffoldOperations(service, delegateRepository)
+		domainObject.module.services.filter(s | s.name == (domainObject.name + "Service")).forEach[addServiceScaffoldOperations(domainObject.repository)]
 	}
 
 	def scaffold(DslResource resource) {
@@ -786,11 +774,7 @@ class SculptorDslTransformation {
 	def scaffold(Resource resource) {
 		val serviceName = resource.getDomainResourceName() + "Service"
 		val delegateService = resource.module.application.modules.map[services].flatten.findFirst(e|e.name == serviceName)
-		resource.addScaffoldOperations(delegateService)
-	}
-
-	def Resource addScaffoldOperations(Resource resource, Service delegateService) {
-		HelperBase::addResourceScaffoldOperations(resource, delegateService)
+		resource.addResourceScaffoldOperations(delegateService)
 	}
 
 	def private boolean isGapClassToBeGenerated(DslService dslService) {
@@ -894,17 +878,5 @@ class SculptorDslTransformation {
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
 		
-	}
-
-	def private String handleParameterizedAnnotation(String annotation, String parameterNames, String parameters, String validate) {
-		HelperBase::handleParameterizedAnnotation(annotation, parameterNames, parameters, validate)
-	}
-
-	def private String handleSimpleAnnotation(String annotation, String value, String validate) {
-		HelperBase::handleSimpleAnnotation(annotation, value, validate)
-	}
-
-	def private String handleBooleanAnnotation(String annotation, Boolean value, String message, String validate) {
-		HelperBase::handleBooleanAnnotation(annotation, value, message, validate)
 	}
 }

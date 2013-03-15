@@ -17,19 +17,23 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
-
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectAttributeAnnotationTmpl.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class DomainObjectAttributeAnnotationTmpl {
 
-def static String attributeAnnotations(Attribute it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String attributeAnnotations(Attribute it) {
 	'''
 		«IF isJpaAnnotationOnFieldToBeGenerated()»
 			«IF isJpaAnnotationToBeGenerated() && it.getDomainObject().isPersistent() »
@@ -42,7 +46,7 @@ def static String attributeAnnotations(Attribute it) {
 	'''
 }
 
-def static String propertyGetterAnnotations(Attribute it) {
+def String propertyGetterAnnotations(Attribute it) {
 	'''
 		«IF !isJpaAnnotationOnFieldToBeGenerated()»
 			«IF isJpaAnnotationToBeGenerated() && it.getDomainObject().isPersistent() »
@@ -58,7 +62,7 @@ def static String propertyGetterAnnotations(Attribute it) {
 	'''
 }
 
-def static String xmlElementAnnotation(Attribute it) {
+def String xmlElementAnnotation(Attribute it) {
 	'''
 		«IF transient»
 			@javax.xml.bind.annotation.XmlTransient
@@ -78,7 +82,7 @@ def static String xmlElementAnnotation(Attribute it) {
 	'''
 }
 
-def static String jpaAnnotations(Attribute it) {
+def String jpaAnnotations(Attribute it) {
 	'''
 		«IF transient»
 			@javax.persistence.Transient
@@ -113,7 +117,7 @@ def static String jpaAnnotations(Attribute it) {
 	'''
 }
 
-def static String idAnnotations(Attribute it) {
+def String idAnnotations(Attribute it) {
 	'''
 		@javax.persistence.Id
 		«IF isJpaProviderAppEngine()»
@@ -130,7 +134,7 @@ def static String idAnnotations(Attribute it) {
 	'''
 }
 
-def static String versionAnnotations(Attribute it) {
+def String versionAnnotations(Attribute it) {
 	'''
 		@javax.persistence.Version
 		@javax.persistence.Column(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
@@ -138,7 +142,7 @@ def static String versionAnnotations(Attribute it) {
 	'''
 }
 
-def static String auditAnnotations(Attribute it) {
+def String auditAnnotations(Attribute it) {
 	val dbType = if (isJpaAnnotationColumnDefinitionToBeGenerated()) getDatabaseType() else null
 	'''
 		«IF isJpaProviderHibernate() && it.isJodaTemporal()»
@@ -158,7 +162,7 @@ def static String auditAnnotations(Attribute it) {
 	'''
 }
 
-def static String columnAnnotations(Attribute it) {
+def String columnAnnotations(Attribute it) {
 	val dbType = if (isJpaAnnotationColumnDefinitionToBeGenerated()) getDatabaseType() else null
 	'''
 		@javax.persistence.Column(
@@ -172,7 +176,7 @@ def static String columnAnnotations(Attribute it) {
 	'''
 }
 
-def static String columnDateAnnotations(Attribute it) {
+def String columnDateAnnotations(Attribute it) {
 	'''
 		«IF isJpaProviderHibernate() && it.getHibernateType() != null»
 			@org.hibernate.annotations.Type(type="«it.getHibernateType()»")
@@ -190,7 +194,7 @@ def static String columnDateAnnotations(Attribute it) {
 	'''
 }
 
-def static String indexAnnotations(Attribute it) {
+def String indexAnnotations(Attribute it) {
 	'''
 		«IF isJpaProviderHibernate()»
 			@org.hibernate.annotations.Index(name="«it.getDatabaseName()»")
@@ -200,7 +204,7 @@ def static String indexAnnotations(Attribute it) {
 	'''
 }
 
-def static String elementCollectionAnnotations(Attribute it) {
+def String elementCollectionAnnotations(Attribute it) {
 	'''
 		/*TODO: change support for fetchtype, add a keyword */
 		@javax.persistence.ElementCollection(
@@ -211,7 +215,7 @@ def static String elementCollectionAnnotations(Attribute it) {
 	'''
 }
 
-def static String elementCollectionTableJpaAnnotation(Attribute it) {
+def String elementCollectionTableJpaAnnotation(Attribute it) {
 	'''
 		/*
 			It's not possible to overwrite the collection table later,
@@ -227,7 +231,7 @@ def static String elementCollectionTableJpaAnnotation(Attribute it) {
 	'''
 }
 
-def static String validationAnnotations(Attribute it) {
+def String validationAnnotations(Attribute it) {
 	'''
 		/* exclude persistence controlled properties */
 		«IF name != "id" && name != "version" && !it.isUuid()»
@@ -236,7 +240,7 @@ def static String validationAnnotations(Attribute it) {
 	'''
 }
 
-def static String propertySetterAnnotations(Attribute it) {
+def String propertySetterAnnotations(Attribute it) {
 	'''
 	'''
 }

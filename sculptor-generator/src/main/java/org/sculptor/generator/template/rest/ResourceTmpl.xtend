@@ -1,24 +1,29 @@
 package org.sculptor.generator.template.rest
 
-import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DomainObject
 import sculptormetamodel.HttpMethod
 import sculptormetamodel.Parameter
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
 
-import static org.sculptor.generator.ext.Properties.*
 import static org.sculptor.generator.template.rest.ResourceTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.util.HelperBase.*
 
 class ResourceTmpl {
 
-def static String resource(Resource it) {
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
+
+def String resource(Resource it) {
 	'''
 	«resourceBase(it)»
 	«IF gapClass»
@@ -27,7 +32,7 @@ def static String resource(Resource it) {
 	'''
 }
 
-def static String resourceBase(Resource it) {
+def String resourceBase(Resource it) {
 	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getRestPackage()»;
@@ -73,7 +78,7 @@ def static String resourceBase(Resource it) {
 	)
 }
 
-def static String resourceSubclass(Resource it) {
+def String resourceSubclass(Resource it) {
 	fileOutput(javaFileName(getRestPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getRestPackage()»;
@@ -96,7 +101,7 @@ def static String resourceSubclass(Resource it) {
 	'''
 }
 
-def static String initBinder(Resource it) {
+def String initBinder(Resource it) {
 	val primaryDomainObject = it.operations.filter(e|e.httpMethod == HttpMethod::GET && e.domainObjectType != null).map(e|e.domainObjectType).head
 	'''
 	@org.springframework.web.bind.annotation.InitBinder
@@ -113,7 +118,7 @@ def static String initBinder(Resource it) {
 	'''
 }
 
-def static String gaeKeyIdPropertyEditor(DomainObject it) {
+def String gaeKeyIdPropertyEditor(DomainObject it) {
 	'''
 		private static class «name»IdKeyEditor ^extends java.beans.PropertyEditorSupport {
 			@Override
@@ -136,7 +141,7 @@ def static String gaeKeyIdPropertyEditor(DomainObject it) {
 	'''
 }
 
-def static String serviceContext(Resource it) {
+def String serviceContext(Resource it) {
 	'''
 		protected «fw("errorhandling.ServiceContext")» serviceContext() {
 			return «fw("errorhandling.ServiceContextStore")».get();
@@ -144,13 +149,13 @@ def static String serviceContext(Resource it) {
 	'''
 }
 
-def static String springControllerAnnotation(Resource it) {
+def String springControllerAnnotation(Resource it) {
 	'''
 	@org.springframework.stereotype.Controller
 	'''
 }
 
-def static String delegateServices(Resource it) {
+def String delegateServices(Resource it) {
 	'''
 	«FOR delegateService  : it.getDelegateServices()»
 			@org.springframework.beans.factory.annotation.Autowired
@@ -163,7 +168,7 @@ def static String delegateServices(Resource it) {
 	'''
 }
 
-def static String resourceMethod(ResourceOperation it) {
+def String resourceMethod(ResourceOperation it) {
 	'''
 		«IF it.formatJavaDoc() == "" »
 			«it.formatJavaDoc()»
@@ -188,27 +193,27 @@ def static String resourceMethod(ResourceOperation it) {
 	'''
 }
 
-def static String resourceMethodSignature(ResourceOperation it) {
+def String resourceMethodSignature(ResourceOperation it) {
 	'''
-	«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[p | annotatedParamTypeAndName(p, it, false)].join(", ")») «ExceptionTmpl::throwsDecl(it)»
+	«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[p | annotatedParamTypeAndName(p, it, false)].join(", ")») «exceptionTmpl.throwsDecl(it)»
 	'''
 }
 
-def static String resourceMethodFromForm(ResourceOperation it) {
+def String resourceMethodFromForm(ResourceOperation it) {
 	'''
 	«IF !it.hasHint("headers") || (it.getHint("headers") != "content-type=application/x-www-form-urlencoded")»
 		/**
 			* This method is needed for form data «httpMethod.toString()». Delegates to {@link #«name»}
 			*/
 		«resourceMethodAnnotation(it, true)»
-		«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»FromForm(«it.parameters.map[p | annotatedParamTypeAndName(p, it, true)].join(",")») «ExceptionTmpl::throwsDecl(it)» {
+		«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»FromForm(«it.parameters.map[p | annotatedParamTypeAndName(p, it, true)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 			«IF returnString != null || it.getTypeName() != "void"»return «ENDIF»«name»(«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
 		}
 	«ENDIF»
 	'''
 }
 
-def static String resourceMethodHandWritten(ResourceOperation it) {
+def String resourceMethodHandWritten(ResourceOperation it) {
 	val postOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
 	val putOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
 	val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")
@@ -228,7 +233,7 @@ def static String resourceMethodHandWritten(ResourceOperation it) {
 	'''
 }
 
-def static String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation postOperation) {
+def String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation postOperation) {
 	'''
 	«val firstParam = postOperation.parameters.head»
 		«IF firstParam.domainObjectType != null »
@@ -239,7 +244,7 @@ def static String resourceCreateFormMethodHandWritten(ResourceOperation it, Para
 	'''
 }
 
-def static String resourceUpdateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation putOperation) {
+def String resourceUpdateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation putOperation) {
 	'''
 	«val firstParam  = putOperation.parameters.head»
 	«val getOperation = resource.operations .findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.domainObjectType == firstParam.domainObjectType && e.type == null && e.collectionType == null)»
@@ -258,12 +263,12 @@ def static String resourceUpdateFormMethodHandWritten(ResourceOperation it, Para
 
 
 
-def static String resourceMethodValidation(ResourceOperation it) {
+def String resourceMethodValidation(ResourceOperation it) {
 	'''
 	'''
 }
 
-def static String resourceMethodDelegation(ResourceOperation it) {
+def String resourceMethodDelegation(ResourceOperation it) {
 	'''
 	«IF httpMethod == HttpMethod::DELETE && path.contains("{id}") && !parameters.exists(e|e.name == "id") && parameters.exists(e | e.domainObjectType != null) »
 		«resourceMethodDeleteDelegation(it)»
@@ -275,7 +280,7 @@ def static String resourceMethodDelegation(ResourceOperation it) {
 	'''
 }
 
-def static String resourceMethodDeleteDelegation(ResourceOperation it) {
+def String resourceMethodDeleteDelegation(ResourceOperation it) {
 	'''
 		«val findByIdOperation = it.delegate.service.operations.filter(e|e.domainObjectType != null && e.collectionType == null && e.parameters.exists(p|p.type == e.domainObjectType.getIdAttributeType())).head »
 		«IF findByIdOperation == null »
@@ -290,7 +295,7 @@ def static String resourceMethodDeleteDelegation(ResourceOperation it) {
 	'''
 }
 
-def static String resourceMethodReturn(ResourceOperation it) {
+def String resourceMethodReturn(ResourceOperation it) {
 	'''
 	«IF returnString != null && returnString.contains("{id}")»
 			return String.format("«returnString.replacePlaceholder("{id}", "%s") »", result.getId()«IF isJpaProviderAppEngine()».getId()«ENDIF»);
@@ -302,7 +307,7 @@ def static String resourceMethodReturn(ResourceOperation it) {
 	'''
 }
 
-def static String resourceMethodModelMapResult(ResourceOperation it) {
+def String resourceMethodModelMapResult(ResourceOperation it) {
 	'''
 	«val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")»
 		«IF modelMapParam != null && delegate.getTypeName() != "void"»
@@ -311,36 +316,36 @@ def static String resourceMethodModelMapResult(ResourceOperation it) {
 	'''
 }
 
-def static String resourceAbstractMethod(ResourceOperation it) {
+def String resourceAbstractMethod(ResourceOperation it) {
 	'''
 		/* 
 		«resourceMethodAnnotation(it, false) »
 		«resourceMethodSignature(it)» */
-	«it.getVisibilityLitteral()» abstract «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «ExceptionTmpl::throwsDecl(it)»;
+	«it.getVisibilityLitteral()» abstract «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
-def static String resourceMethodAnnotation(ResourceOperation it, boolean formDataHeader) {
+def String resourceMethodAnnotation(ResourceOperation it, boolean formDataHeader) {
 	'''
 	@org.springframework.web.bind.annotation.RequestMapping(value = "«path»", method=org.springframework.web.bind.annotation.RequestMethod.«httpMethod.toString()»«
 	IF formDataHeader», headers = "content-type=application/x-www-form-urlencoded"«ELSEIF it.hasHint("headers")», headers = "«it.getHint("headers")»"«ENDIF»« IF it.hasHint("params")», params = "«it.getHint("params")»"«ENDIF»)
 	'''
 }
 
-def static String generatedName(ResourceOperation it) {
+def String generatedName(ResourceOperation it) {
 	'''
 	«IF returnString != null»"«it.getHint('return')»"«ELSE»""«ENDIF»
 	'''
 }
 
-def static String paramTypeAndName(Parameter it) {
+def String paramTypeAndName(Parameter it) {
 	'''
 	«it.getTypeName()» «name»
 	'''
 }
 
 /*Must format this carefully because it is included in comment */
-def static String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean formData) {
+def String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean formData) {
 	'''« IF op.httpMethod == HttpMethod::DELETE && domainObjectType != null && domainObjectType.getIdAttribute() != null && op.path.contains("{id}")
 	»@org.springframework.web.bind.annotation.PathVariable("id") «domainObjectType.getIdAttributeType()» id« ELSE
 	»«IF op.path.contains("{" + name + "}") »@org.springframework.web.bind.annotation.PathVariable("«name»") «
@@ -352,7 +357,7 @@ def static String annotatedParamTypeAndName(Parameter it, ResourceOperation op, 
 »	'''
 }
 
-def static String handleExceptions(Resource it) {
+def String handleExceptions(Resource it) {
 	'''
 	«val allExceptions = it.operations.filter(e | e.^throws != null).map(e | e.exceptions()).flatten.toSet()»
 	«allExceptions.filter(e|e.endsWith("NotFoundException")).map[handleNotFoundException(it)]»
@@ -365,7 +370,7 @@ def static String handleExceptions(Resource it) {
 	'''
 }
 
-def static String handleNotFoundException(String it) {
+def String handleNotFoundException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
 		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
@@ -374,7 +379,7 @@ def static String handleNotFoundException(String it) {
 	'''
 }
 
-def static String handleOptimisticLockingException(String it) {
+def String handleOptimisticLockingException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
 		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
@@ -383,7 +388,7 @@ def static String handleOptimisticLockingException(String it) {
 	'''
 }
 
-def static String handleIllegalArgumentException(String it) {
+def String handleIllegalArgumentException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
 		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
@@ -392,7 +397,7 @@ def static String handleIllegalArgumentException(String it) {
 	'''
 }
 
-def static String handleSystemException(String it) {
+def String handleSystemException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
 		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
@@ -403,9 +408,9 @@ def static String handleSystemException(String it) {
 
 
 /*Extension point to generate more stuff in service implementation.
-	User AROUND ResourceTmpl::resourceHook FOR Resource
+	User AROUND resourceTmpl.resourceHook FOR Resource
 	in SpecialCases.xpt */
-def static String resourceHook(Resource it) {
+def String resourceHook(Resource it) {
 	'''
 	'''
 }

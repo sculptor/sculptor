@@ -17,23 +17,27 @@
 
 package org.sculptor.generator.template.domain
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Trait
 
-import static org.sculptor.generator.ext.Properties.*
-import static org.sculptor.generator.template.domain.DomainObjectAnnotationTmpl.*
-
-import static extension org.sculptor.generator.ext.DbHelper.*
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.DbHelperBase.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class DomainObjectAnnotationTmpl {
 
-def static String domainObjectSubclassAnnotations(DataTransferObject it) {
+	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension Properties properties = GeneratorFactory::properties
+
+def String domainObjectSubclassAnnotations(DataTransferObject it) {
 	'''
 	«IF it.isXmlRootToBeGenerated()»
 		«xmlRootAnnotation(it)»
@@ -44,12 +48,12 @@ def static String domainObjectSubclassAnnotations(DataTransferObject it) {
 	'''
 }
 
-def static String domainObjectSubclassAnnotations(Trait it) {
+def String domainObjectSubclassAnnotations(Trait it) {
 	'''
 	'''
 }
 
-def static String domainObjectSubclassAnnotations(DomainObject it) {
+def String domainObjectSubclassAnnotations(DomainObject it) {
 	'''
 	«IF it.isXmlRootToBeGenerated()»
 		«xmlRootAnnotation(it)»
@@ -61,7 +65,7 @@ def static String domainObjectSubclassAnnotations(DomainObject it) {
 }
 
 /*We need to format this carefully because it is included in JavaDoc, which is not beautified. */
-def static String domainObjectAnnotations(DomainObject it) {
+def String domainObjectAnnotations(DomainObject it) {
 	'''
 		«IF it.isEmbeddable() »
 			@javax.persistence.Embeddable
@@ -82,7 +86,7 @@ def static String domainObjectAnnotations(DomainObject it) {
 	'''
 }
 
-def static String domainObjectBaseAnnotations(DataTransferObject it) {
+def String domainObjectBaseAnnotations(DataTransferObject it) {
 	'''
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
 			«it.getValidationAnnotations()»
@@ -96,7 +100,7 @@ def static String domainObjectBaseAnnotations(DataTransferObject it) {
 	'''
 }
 
-def static String domainObjectBaseAnnotations(DomainObject it) {
+def String domainObjectBaseAnnotations(DomainObject it) {
 	'''
 		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && (it.getValidationEntityListener() != null || it.getAuditEntityListener() != null)»
 		«jpaEntityListenersAnnotation(it)»
@@ -113,13 +117,13 @@ def static String domainObjectBaseAnnotations(DomainObject it) {
 	'''
 }
 
-def static String xmlRootAnnotation(DomainObject it) {
+def String xmlRootAnnotation(DomainObject it) {
 	'''
 		@javax.xml.bind.annotation.XmlRootElement(name="«it.getXmlRootElementName()»")
 	'''
 }
 
-def static String xstreamAliasAnnotation(DomainObject it) {
+def String xstreamAliasAnnotation(DomainObject it) {
 	'''
 		@com.thoughtworks.xstream.annotations.XStreamAlias("«it.getXStreamAliasName()»")
 	'''
@@ -127,7 +131,7 @@ def static String xstreamAliasAnnotation(DomainObject it) {
 
 /*set EntityListerners for Validation and Audit */
 /*TODO: optimize this quick solution */
-def static String jpaEntityListenersAnnotation(DomainObject it) {
+def String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
 		@javax.persistence.EntityListeners({
 		«formatAnnotationParameters(<Object>newArrayList(it.getValidationEntityListener() != null && !isJpa2(), "", it.getValidationEntityListener() + ".class",
@@ -136,7 +140,7 @@ def static String jpaEntityListenersAnnotation(DomainObject it) {
 }
 
 /*We need to format this carefully beccause it is included in JavaDoc, which is not beautified. */
-def static String domainObjectInheritanceAnnotations(DomainObject it) {
+def String domainObjectInheritanceAnnotations(DomainObject it) {
 	'''
 	«IF it.hasSubClass()»
 		«IF it.isInheritanceTypeSingleTable()»
@@ -179,17 +183,17 @@ def static String domainObjectInheritanceAnnotations(DomainObject it) {
 	'''
 }
 
-def static String uniqueConstraints(DomainObject it) {
+def String uniqueConstraints(DomainObject it) {
 	'''
 	, uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})
 	'''
 }
 
-def static String uniqueColumns(NamedElement it, String columnPrefix) {
+def String uniqueColumns(NamedElement it, String columnPrefix) {
 	'''"«getDatabaseName(columnPrefix, it)»"'''
 }
 
-def static String uniqueColumns(Reference it, String columnPrefix) {
+def String uniqueColumns(Reference it, String columnPrefix) {
 	'''«IF it.isBasicTypeReference()»
 		«to.getAllNaturalKeys().map[k | uniqueColumns(k, getDatabaseName(columnPrefix, it) + "_")].join(", ")»
 		«ELSE»"«getDatabaseName(columnPrefix, it)»"«ENDIF»	'''

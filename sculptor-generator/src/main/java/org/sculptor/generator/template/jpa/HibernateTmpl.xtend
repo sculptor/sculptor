@@ -17,23 +17,27 @@
 
 package org.sculptor.generator.template.jpa
 
+import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.Reference
 
-import static org.sculptor.generator.ext.DbHelper.*
-import static org.sculptor.generator.template.jpa.HibernateTmpl.*
-import static org.sculptor.generator.util.PropertiesBase.*
-
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.ext.Properties.*
-import static extension org.sculptor.generator.util.HelperBase.*
-
 class HibernateTmpl {
 
-def static String hibernate(Application it) {
+	extension DbHelper dbHelper = GeneratorFactory::dbHelper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension Helper helper = GeneratorFactory::helper
+	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	extension Properties properties = GeneratorFactory::properties
+
+def String hibernate(Application it) {
 	'''
 	«IF isJpa1()»
 		«it.modules.map[enumTypedefFile(it)].join()»e
@@ -47,7 +51,7 @@ def static String hibernate(Application it) {
 	'''
 }
 
-def static String header(Object it) {
+def String header(Object it) {
 	'''
 	<?xml version="1.0"?>
 	<!DOCTYPE hibernate-mapping PUBLIC
@@ -58,7 +62,7 @@ def static String header(Object it) {
 	'''
 }
 
-def static String enumTypedefFile(Module it) {
+def String enumTypedefFile(Module it) {
 	val enums = it.domainObjects.filter(d | d instanceof sculptormetamodel.Enum)
 	if (!enums.isEmpty) {
 		fileOutput(it.getResourceDir("hibernate") + it.getEnumTypeDefFileName(), OutputSlot::TO_GEN_RESOURCES, '''
@@ -70,7 +74,7 @@ def static String enumTypedefFile(Module it) {
 	}
 }
 
-def static String enumTypedef(Enum it) {
+def String enumTypedef(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
 		<typedef name="«name»"
@@ -84,13 +88,13 @@ def static String enumTypedef(Enum it) {
 	'''
 }
 
-def static String enumReference(Reference it, String dbColumnPrefix) {
+def String enumReference(Reference it, String dbColumnPrefix) {
 	'''
 		<property name="«name»" type="«to.name»" «IF !nullable» not-null="true"«ENDIF»  «IF (getDatabaseName(dbColumnPrefix, it)) != name.toUpperCase()»column="«getDatabaseName(dbColumnPrefix, it)»"«ENDIF»/>
 	'''
 }
 
-def static String hibenateCfgFile(Application it) {
+def String hibenateCfgFile(Application it) {
 	fileOutput("hibernate.cfg.xml", OutputSlot::TO_GEN_RESOURCES, '''
 	<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
@@ -99,7 +103,7 @@ def static String hibenateCfgFile(Application it) {
 	    <session-factory>
 	    «hibenateCfgMappedResources(it)»
 		/*extension point for additional configuration of the Hibernate SessionFactory */
-		<!-- add additional configuration properties in SpecialCases.xpt by "AROUND HibernateTmpl::hibenateCfgAdditions FOR Application" -->
+		<!-- add additional configuration properties in SpecialCases.xpt by "AROUND hibernateTmpl.hibenateCfgAdditions FOR Application" -->
 	    «hibenateCfgAdditions(it)»
 	    </session-factory>
 	</hibernate-configuration>
@@ -107,13 +111,13 @@ def static String hibenateCfgFile(Application it) {
 	)
 }
 
-def static String hibenateCfgMappedResources(Application it) {
+def String hibenateCfgMappedResources(Application it) {
 	'''
 	«it.modules.sortBy(e|e.name).map[hibenateCfgMappedResources(it)].join()»
 	'''
 }
 
-def static String hibenateCfgMappedResources(Module it) {
+def String hibenateCfgMappedResources(Module it) {
 	'''
 	/* set mapping of Hibernate Types here, can't be set in persistence.xml */
 	«IF !domainObjects.filter[d | d instanceof Enum].isEmpty»
@@ -123,12 +127,12 @@ def static String hibenateCfgMappedResources(Module it) {
 }
 
 /*extension point for additional configuration of the Hibernate SessionFactory */
-def static String hibenateCfgAdditions(Application it) {
+def String hibenateCfgAdditions(Application it) {
 	'''
 	'''
 }
 
-def static String enumType(Application it) {
+def String enumType(Application it) {
 	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
