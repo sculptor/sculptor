@@ -17,8 +17,6 @@
 
 package org.sculptor.generator
 
-import static extension org.sculptor.generator.ext.Helper.*
-import static extension org.sculptor.generator.util.GenerationHelper.*
 import org.sculptor.dsl.sculptordsl.DslModule
 import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
 import org.sculptor.dsl.sculptordsl.DslValueObject
@@ -36,6 +34,9 @@ import org.sculptor.dsl.sculptordsl.DslService
 import org.sculptor.dsl.sculptordsl.DslRepositoryOperation
 import org.sculptor.dsl.sculptordsl.DslRepository
 import org.sculptor.dsl.sculptordsl.DslDomainObject
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.util.HelperBase
 
 // These checks fixes CSC-650, i.e. the problem that cross references are not linked in 
 // imported resources. It would have been better to force the linking and validation in 
@@ -43,6 +44,9 @@ import org.sculptor.dsl.sculptordsl.DslDomainObject
 // http://www.eclipse.org/forums/index.php/mv/msg/136903/440479/#msg_440479
 
 class SculptorCheckCrossLink {
+
+	extension Helper helper = GeneratorFactory::helper
+	extension HelperBase helperBase = GeneratorFactory::helperBase
 
 	def checkCrossLink(DslModule module) {
 
