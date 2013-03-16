@@ -65,8 +65,8 @@ import org.sculptor.generator.util.XmlHelperBase
 class GeneratorFactory {
 	// Extensions
 	private static val propertiesBaseImpl = new PropertiesBase
-	private static val helperImpl = new Helper
 	private static val helperBaseImpl = new HelperBase
+	private static val helperImpl = new Helper
 	private static val propertiesImpl = new Properties
 	private static val dbHelperImpl = new DbHelper
 	private static val dbHelperBaseImpl = new DbHelperBase
