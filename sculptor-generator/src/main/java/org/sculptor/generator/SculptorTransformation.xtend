@@ -44,15 +44,17 @@ import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 
 class SculptorTransformation {
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension DbHelper dbHelper = GeneratorFactory::dbHelper
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
+	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
 
 	def modify(Application app) {
 		initPropertiesHook()

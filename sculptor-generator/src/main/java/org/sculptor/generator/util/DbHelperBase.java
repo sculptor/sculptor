@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sculptor.generator.ext.GeneratorFactory;
+import org.sculptor.generator.ext.GeneratorFactoryImpl;
 
 import sculptormetamodel.Application;
 import sculptormetamodel.Attribute;
@@ -46,10 +47,11 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
  * 
  */
 public class DbHelperBase {
+	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
 
 	private static final String ID_ATTRIBUTE_NAME = "id";
-	private static final HelperBase helperBase = GeneratorFactory.helperBase();
-	private static final PropertiesBase propBase = GeneratorFactory.propertiesBase();
+	private static final HelperBase helperBase = GEN_FACTORY.helperBase();
+	private static final PropertiesBase propBase = GEN_FACTORY.propertiesBase();
 
 	public List<DomainObject> getDomainObjectsInCreateOrder(Application application, Boolean ascending) {
 		List<DomainObject> all = getAllDomainObjects(application);

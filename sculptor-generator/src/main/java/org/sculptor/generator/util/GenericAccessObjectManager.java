@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sculptor.generator.ext.GeneratorFactory;
+import org.sculptor.generator.ext.GeneratorFactoryImpl;
 import org.sculptor.generator.ext.Helper;
 
 import sculptormetamodel.Attribute;
@@ -34,9 +35,11 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
 
 public class GenericAccessObjectManager {
 	private final Map<String, GenericAccessObjectStrategy> genericAccessObjectStrategies = new HashMap<String, GenericAccessObjectStrategy>();
-	private final static PropertiesBase propBase = GeneratorFactory.propertiesBase();
-	private final static HelperBase helperBase = GeneratorFactory.helperBase();
-	private final static Helper helper = GeneratorFactory.helper();
+	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
+
+	private final static PropertiesBase propBase = GEN_FACTORY.propertiesBase();
+	private final static HelperBase helperBase = GEN_FACTORY.helperBase();
+	private final static Helper helper = GEN_FACTORY.helper();
 
 	protected GenericAccessObjectManager() {
 	}

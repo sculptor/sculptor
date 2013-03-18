@@ -16,29 +16,30 @@
  */
 package org.sculptor.generator.ext
 
-import java.util.Set
 import java.util.Collection
 import java.util.List
-import sculptormetamodel.SculptormetamodelFactory
-import sculptormetamodel.DomainObject
-import sculptormetamodel.BasicType
+import java.util.Set
+import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
+import sculptormetamodel.BasicType
+import sculptormetamodel.DiscriminatorType
+import sculptormetamodel.DomainObject
+import sculptormetamodel.Inheritance
+import sculptormetamodel.InheritanceType
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
-import sculptormetamodel.InheritanceType
-import sculptormetamodel.DiscriminatorType
-import sculptormetamodel.Inheritance
+import sculptormetamodel.SculptormetamodelFactory
 
-import org.sculptor.generator.ext.Properties
-import org.sculptor.generator.util.PropertiesBase
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.util.DbHelperBase
+import static org.sculptor.generator.ext.DbHelper.*
 
 public class DbHelper {
-	extension Properties properties = GeneratorFactory::properties
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
-	extension Helper helper = GeneratorFactory::helper
-	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension Properties properties = GEN_FACTORY.properties
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension DbHelperBase dbHelperBase = GEN_FACTORY.dbHelperBase
 
 	def String getCascade(Reference ref) {
 		if (ref.cascade == null || ref.cascade == "")

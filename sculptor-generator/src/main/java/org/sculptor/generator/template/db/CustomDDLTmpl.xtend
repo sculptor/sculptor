@@ -18,11 +18,14 @@
 package org.sculptor.generator.template.db
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 
 class CustomDDLTmpl {
-	extension HelperBase helperBase = GeneratorFactory::helperBase
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
 
 /*CustomDDL.xpt is only a placeholder that is intended to be 
 	overridden by placing a custom template with the same name

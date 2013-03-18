@@ -20,6 +20,7 @@ package org.sculptor.generator.template.db
 import java.util.Set
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
@@ -31,11 +32,13 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.Reference
 
 class MysqlDDLTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension DbHelperBase dbHelperBase = GeneratorFactory::dbHelperBase
-	extension DbHelper dbHelper = GeneratorFactory::dbHelper
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
+
+	extension DbHelperBase dbHelperBase = GEN_FACTORY.dbHelperBase
+	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
 
 def String ddl(Application it) {
 	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''

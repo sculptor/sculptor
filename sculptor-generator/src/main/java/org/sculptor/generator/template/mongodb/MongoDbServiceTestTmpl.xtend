@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.mongodb
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.service.ServiceTestTmpl
@@ -28,11 +29,13 @@ import sculptormetamodel.Service
 import static org.sculptor.generator.template.mongodb.MongoDbServiceTestTmpl.*
 
 class MongoDbServiceTestTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
-	private static val ServiceTestTmpl serviceTestTmpl = GeneratorFactory::serviceTestTmpl
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
+	private static val ServiceTestTmpl serviceTestTmpl = GEN_FACTORY.serviceTestTmpl
 
 
 def String serviceJUnitSubclassMongoDb(Service it) {

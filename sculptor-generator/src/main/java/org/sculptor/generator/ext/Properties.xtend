@@ -24,7 +24,8 @@ import sculptormetamodel.Attribute
 import org.sculptor.generator.util.PropertiesBase
 
 class Properties {
-	extension PropertiesBase propBase = GeneratorFactory::propertiesBase
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
 
 	def boolean getBooleanProperty(String propertyName) {
 		getProperty(propertyName).toLowerCase() == "true";

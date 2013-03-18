@@ -53,9 +53,11 @@ import sculptormetamodel.ResourceOperation
 import sculptormetamodel.HttpMethod
 
 class Helper {
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Properties properties = GeneratorFactory::properties
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension Properties properties = GEN_FACTORY.properties
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
 
 	def public String fileOutput(String ne, OutputSlot slot, String text) {
 		var ioDir = System::getProperty("java.io.tmpdir")

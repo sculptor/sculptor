@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.spring
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.camel.CamelTmpl
@@ -34,13 +35,15 @@ import sculptormetamodel.Service
 import static org.sculptor.generator.template.spring.SpringTmpl.*
 
 class SpringTmpl {
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
-	extension Properties properties = GeneratorFactory::properties
-	private static val CamelTmpl camelTmpl = GeneratorFactory::camelTmpl
-	private static val DroolsTmpl droolsTmpl = GeneratorFactory::droolsTmpl
-	private static val SpringIntegrationTmpl springIntegrationTmpl = GeneratorFactory::springIntegrationTmpl
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Properties properties = GEN_FACTORY.properties
+	private static val CamelTmpl camelTmpl = GEN_FACTORY.camelTmpl
+	private static val DroolsTmpl droolsTmpl = GEN_FACTORY.droolsTmpl
+	private static val SpringIntegrationTmpl springIntegrationTmpl = GEN_FACTORY.springIntegrationTmpl
 
 def String spring(Application it) {
 	'''

@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.web
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
@@ -25,10 +26,12 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 
 class JSFCrudGuiConfigContextTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension Helper helper = GeneratorFactory::helper
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
-	extension Properties properties = GeneratorFactory::properties
+
+	extension Helper helper = GEN_FACTORY.helper
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Properties properties = GEN_FACTORY.properties
 
 def String contextXml(Application it) {
 	'''

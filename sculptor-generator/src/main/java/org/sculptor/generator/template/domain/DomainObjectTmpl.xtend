@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.domain
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -37,20 +38,22 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.PropertiesBase
 
 class DomainObjectTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
-	extension Properties properties = GeneratorFactory::properties
-	private static val ExceptionTmpl exceptionTmpl = GeneratorFactory::exceptionTmpl
-	private static val DomainObjectPropertiesTmpl domainObjectPropertiesTmpl = GeneratorFactory::domainObjectPropertiesTmpl
-	private static val DomainObjectNamesTmpl domainObjectNamesTmpl = GeneratorFactory::domainObjectNamesTmpl
-	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GeneratorFactory::domainObjectConstructorTmpl
-	private static val DomainObjectAnnotationTmpl domainObjectAnnotationTmpl = GeneratorFactory::domainObjectAnnotationTmpl
-	private static val DomainObjectTraitTmpl domainObjectTraitTmpl = GeneratorFactory::domainObjectTraitTmpl
-	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GeneratorFactory::domainObjectAttributeTmpl
-	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GeneratorFactory::domainObjectReferenceTmpl
-	private static val DomainObjectKeyTmpl domainObjectKeyTmpl = GeneratorFactory::domainObjectKeyTmpl
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Properties properties = GEN_FACTORY.properties
+	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
+	private static val DomainObjectPropertiesTmpl domainObjectPropertiesTmpl = GEN_FACTORY.domainObjectPropertiesTmpl
+	private static val DomainObjectNamesTmpl domainObjectNamesTmpl = GEN_FACTORY.domainObjectNamesTmpl
+	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GEN_FACTORY.domainObjectConstructorTmpl
+	private static val DomainObjectAnnotationTmpl domainObjectAnnotationTmpl = GEN_FACTORY.domainObjectAnnotationTmpl
+	private static val DomainObjectTraitTmpl domainObjectTraitTmpl = GEN_FACTORY.domainObjectTraitTmpl
+	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GEN_FACTORY.domainObjectAttributeTmpl
+	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GEN_FACTORY.domainObjectReferenceTmpl
+	private static val DomainObjectKeyTmpl domainObjectKeyTmpl = GEN_FACTORY.domainObjectKeyTmpl
 
 def String domainObject(DomainObject it) {
 	'''

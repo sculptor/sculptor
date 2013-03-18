@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.common
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 import sculptormetamodel.Publish
 import sculptormetamodel.Subscribe
@@ -27,8 +28,10 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 
 class PubSubTmpl {
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Properties properties = GeneratorFactory::properties
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Properties properties = GEN_FACTORY.properties
 
 	def String publishAnnotation(Publish it) {
 		val eventTypeClass = if (it.eventType == null) null else eventType.getDomainPackage() + "." + eventType.name + ".class"

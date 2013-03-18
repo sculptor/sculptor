@@ -1,6 +1,7 @@
 package org.sculptor.generator.template.rest
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import sculptormetamodel.Application
@@ -8,11 +9,13 @@ import sculptormetamodel.Application
 import static org.sculptor.generator.template.rest.RestWebTmpl.*
 
 class RestWebTmpl {
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
-	private static val RestWebConfigTmpl restWebConfigTmpl = GeneratorFactory::restWebConfigTmpl
-	private static val RestWebCssTmpl restWebCssTmpl = GeneratorFactory::restWebCssTmpl
-	private static val RestWebJspTmpl restWebJspTmpl = GeneratorFactory::restWebJspTmpl
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
+	private static val RestWebConfigTmpl restWebConfigTmpl = GEN_FACTORY.restWebConfigTmpl
+	private static val RestWebCssTmpl restWebCssTmpl = GEN_FACTORY.restWebCssTmpl
+	private static val RestWebJspTmpl restWebJspTmpl = GEN_FACTORY.restWebJspTmpl
 
 def String restWeb(Application it) {
 	'''

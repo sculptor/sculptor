@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.domain
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -30,10 +31,12 @@ import sculptormetamodel.Reference
 import sculptormetamodel.TypedElement
 
 class DomainObjectConstructorTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
 
 def String parameterTypeAndNameIdReference(NamedElement it) {
 	'''

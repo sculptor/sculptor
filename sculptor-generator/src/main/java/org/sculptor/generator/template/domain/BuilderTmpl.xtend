@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.domain
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 import org.sculptor.generator.util.OutputSlot
 import java.util.List
@@ -34,14 +35,16 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.HelperBase
 
 class BuilderTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
-	extension Properties properties = GeneratorFactory::properties
-	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GeneratorFactory::domainObjectAttributeTmpl
-	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GeneratorFactory::domainObjectReferenceTmpl
-	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GeneratorFactory::domainObjectConstructorTmpl
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Properties properties = GEN_FACTORY.properties
+	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GEN_FACTORY.domainObjectAttributeTmpl
+	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GEN_FACTORY.domainObjectReferenceTmpl
+	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GEN_FACTORY.domainObjectConstructorTmpl
 
 def String builder(DomainObject it) {
 	fileOutput(javaFileName(it.getBuilderFqn()), OutputSlot::TO_GEN_SRC, '''

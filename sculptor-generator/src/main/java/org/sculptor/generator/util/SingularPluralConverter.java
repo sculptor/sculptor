@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.sculptor.generator.ext.GeneratorFactory;
+import org.sculptor.generator.ext.GeneratorFactoryImpl;
 
 /**
  * Conversion of English words to plural and singular. By default words become
@@ -31,6 +32,7 @@ import org.sculptor.generator.ext.GeneratorFactory;
  * 
  */
 public class SingularPluralConverter {
+	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
 
 	private static Map<String, String> singular2pluralDefinitions;
 	private static Map<String, String> plural2singularDefinitions;
@@ -39,7 +41,7 @@ public class SingularPluralConverter {
 	}
 
 	static void init() {
-		singular2pluralDefinitions = GeneratorFactory.propertiesBase().singular2pluralDefinitions();
+		singular2pluralDefinitions = GEN_FACTORY.propertiesBase().singular2pluralDefinitions();
 		plural2singularDefinitions = new HashMap<String, String>();
 		for (Entry<String, String> entry : singular2pluralDefinitions.entrySet()) {
 			plural2singularDefinitions.put(entry.getValue(), entry.getKey());

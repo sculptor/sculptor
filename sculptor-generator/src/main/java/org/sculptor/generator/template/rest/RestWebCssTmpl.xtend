@@ -1,6 +1,7 @@
 package org.sculptor.generator.template.rest
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
@@ -8,7 +9,9 @@ import sculptormetamodel.Application
 import org.sculptor.generator.ext.Helper
 
 class RestWebCssTmpl {
-	extension Helper helper = GeneratorFactory::helper
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension Helper helper = GEN_FACTORY.helper
 
 
 def String css(Application it) {

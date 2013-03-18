@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.sculptor.generator.ext.GeneratorFactory;
+import org.sculptor.generator.ext.GeneratorFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,13 +71,14 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
  */
 public class HelperBase {
 
-	private static Logger LOG = LoggerFactory.getLogger(HelperBase.class);
+	private static final Logger LOG = LoggerFactory.getLogger(HelperBase.class);
+	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
 
 	private static GenericAccessObjectManager genericAccessObjectManager = GenericAccessObjectManager.createInstance();
 	private static PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
 	private static Map<String, String> collectionInterfaceTypeMapper = new HashMap<String, String>();
 	private static Map<String, String> collectionImplTypeMapper = new HashMap<String, String>();
-	private static PropertiesBase propBase = GeneratorFactory.propertiesBase();
+	private static PropertiesBase propBase = GEN_FACTORY.propertiesBase();
 	static {
 		collectionInterfaceTypeMapper.put("list", propBase.getJavaType("List"));
 		collectionInterfaceTypeMapper.put("bag", propBase.getJavaType("Bag"));

@@ -19,6 +19,7 @@ package org.sculptor.generator.template.repository
 
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -26,11 +27,13 @@ import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
 
 class AccessObjectFactoryTmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension DbHelper dbHelper = GeneratorFactory::dbHelper
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
+
+	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
 
 def String getPersistentClass(Repository it) {
 	'''

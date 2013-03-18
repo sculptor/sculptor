@@ -34,13 +34,15 @@ import static org.junit.Assert.*
 import static org.sculptor.generator.SculptorDslTransformationTest.*
 import org.sculptor.generator.ext.GeneratorFactory
 import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 @RunWith(typeof(JUnit4))
 class SculptorDslTransformationTest {
 
 	private static val SculptordslFactory FACTORY = SculptordslFactory::eINSTANCE
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension Helper helper = GeneratorFactory::helper
+	extension Helper helper = GEN_FACTORY.helper
 
 	var DslApplication model
 

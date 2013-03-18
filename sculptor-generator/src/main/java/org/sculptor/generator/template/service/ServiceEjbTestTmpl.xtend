@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.service
 
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -26,10 +27,12 @@ import sculptormetamodel.Application
 import sculptormetamodel.Service
 
 class ServiceEjbTestTmpl {
-	extension HelperBase helperBase = GeneratorFactory::helperBase
-	extension Helper helper = GeneratorFactory::helper
-	extension Properties properties = GeneratorFactory::properties
-	private static val ServiceTestTmpl serviceTestTmpl = GeneratorFactory::serviceTestTmpl
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	extension Helper helper = GEN_FACTORY.helper
+	extension Properties properties = GEN_FACTORY.properties
+	private static val ServiceTestTmpl serviceTestTmpl = GEN_FACTORY.serviceTestTmpl
 
 /*Used for pure-ejb3, i.e. without spring */
 def String serviceJUnitSubclassOpenEjb(Service it) {

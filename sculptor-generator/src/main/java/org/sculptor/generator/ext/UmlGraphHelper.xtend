@@ -34,8 +34,10 @@ import org.sculptor.generator.util.SingularPluralConverter
 import org.sculptor.generator.util.PropertiesBase
 
 public class UmlGraphHelper {
-	extension Helper helper = GeneratorFactory::helper
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Helper helper = GEN_FACTORY.helper
 
 	def String referenceHeadLabel(Reference ref) {
 		(if (ref.many) "0..n " else "") + ref.referenceLabelText()

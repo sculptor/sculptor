@@ -17,26 +17,27 @@
 
 package org.sculptor.generator
 
-import org.sculptor.dsl.sculptordsl.DslModule
-import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
-import org.sculptor.dsl.sculptordsl.DslValueObject
-import org.sculptor.dsl.sculptordsl.DslEntity
-import org.sculptor.dsl.sculptordsl.DslReference
-
 import org.sculptor.dsl.sculptordsl.DslBasicType
-import org.sculptor.dsl.sculptordsl.DslDomainEvent
 import org.sculptor.dsl.sculptordsl.DslCommandEvent
 import org.sculptor.dsl.sculptordsl.DslDataTransferObject
-import org.sculptor.dsl.sculptordsl.DslDtoReference
-import org.sculptor.dsl.sculptordsl.DslServiceOperation
-import org.sculptor.dsl.sculptordsl.DslParameter
-import org.sculptor.dsl.sculptordsl.DslService
-import org.sculptor.dsl.sculptordsl.DslRepositoryOperation
-import org.sculptor.dsl.sculptordsl.DslRepository
+import org.sculptor.dsl.sculptordsl.DslDomainEvent
 import org.sculptor.dsl.sculptordsl.DslDomainObject
-import org.sculptor.generator.ext.Helper
+import org.sculptor.dsl.sculptordsl.DslDtoReference
+import org.sculptor.dsl.sculptordsl.DslEntity
+import org.sculptor.dsl.sculptordsl.DslModule
+import org.sculptor.dsl.sculptordsl.DslParameter
+import org.sculptor.dsl.sculptordsl.DslReference
+import org.sculptor.dsl.sculptordsl.DslRepository
+import org.sculptor.dsl.sculptordsl.DslRepositoryOperation
+import org.sculptor.dsl.sculptordsl.DslService
+import org.sculptor.dsl.sculptordsl.DslServiceOperation
+import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
+import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.util.HelperBase
+
+import static org.sculptor.generator.SculptorCheckCrossLink.*
 
 // These checks fixes CSC-650, i.e. the problem that cross references are not linked in 
 // imported resources. It would have been better to force the linking and validation in 
@@ -44,9 +45,9 @@ import org.sculptor.generator.util.HelperBase
 // http://www.eclipse.org/forums/index.php/mv/msg/136903/440479/#msg_440479
 
 class SculptorCheckCrossLink {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension Helper helper = GeneratorFactory::helper
-	extension HelperBase helperBase = GeneratorFactory::helperBase
+	extension HelperBase helperBase = GEN_FACTORY.helperBase
 
 	def checkCrossLink(DslModule module) {
 

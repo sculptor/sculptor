@@ -62,7 +62,7 @@ import org.sculptor.generator.template.rest.RestWebTmpl
 import org.sculptor.generator.template.RootTmpl
 import org.sculptor.generator.util.XmlHelperBase
 
-class GeneratorFactory {
+class GeneratorFactoryStaticImpl implements GeneratorFactory {
 	// Extensions
 	private static val propertiesBaseImpl = new PropertiesBase
 	private static val helperBaseImpl = new HelperBase
@@ -129,251 +129,251 @@ class GeneratorFactory {
 	private static val restWebConfigTmplImpl = new RestWebConfigTmpl
 	private static val restWebTmplImpl = new RestWebTmpl
 
-	def static Helper helper() {
+	override Helper helper() {
 		helperImpl
 	}
 
-	def static HelperBase helperBase() {
+	override HelperBase helperBase() {
 		helperBaseImpl
 	}
 
-	def static Properties properties() {
+	override Properties properties() {
 		propertiesImpl
 	}
 
-	def static PropertiesBase propertiesBase() {
+	override PropertiesBase propertiesBase() {
 		propertiesBaseImpl
 	}
 
-	def static DbHelperBase dbHelperBase() {
+	override DbHelperBase dbHelperBase() {
 		dbHelperBaseImpl
 	}
 
-	def static DbHelper dbHelper() {
+	override DbHelper dbHelper() {
 		dbHelperImpl
 	}
 
-	def static XmlHelperBase xmlHelperBase() {
+	override XmlHelperBase xmlHelperBase() {
 		xmlHelperBaseImpl
 	}
 
-	def static UmlGraphHelper umlGraphHelper() {
+	override UmlGraphHelper umlGraphHelper() {
 		umlGraphHelperImpl
 	}
 
-	def static ServiceTmpl serviceTmpl() {
+	override ServiceTmpl serviceTmpl() {
 		serviceTmplImpl
 	}
 	
-	def static ServiceEjbTestTmpl serviceEjbTestTmpl() {
+	override ServiceEjbTestTmpl serviceEjbTestTmpl() {
 		serviceEjbTestTmplImpl
 	}
 	
-	def static ServiceTestTmpl serviceTestTmpl() {
+	override ServiceTestTmpl serviceTestTmpl() {
 		serviceTestTmplImpl
 	}
 	
-	def static ServiceEjbTmpl serviceEjbTmpl() {
+	override ServiceEjbTmpl serviceEjbTmpl() {
 		serviceEjbTmplImpl
 	}
 	
-	def static JSFCrudGuiConfigContextTmpl jSFCrudGuiConfigContextTmpl() {
+	override JSFCrudGuiConfigContextTmpl jSFCrudGuiConfigContextTmpl() {
 		jSFCrudGuiConfigContextTmplImpl
 	}
 	
-	def static DroolsTmpl droolsTmpl() {
+	override DroolsTmpl droolsTmpl() {
 		droolsTmplImpl
 	}
 	
-	def static ModelDocTmpl modelDocTmpl() {
+	override ModelDocTmpl modelDocTmpl() {
 		modelDocTmplImpl
 	}
 	
-	def static UMLGraphTmpl uMLGraphTmpl() {
+	override UMLGraphTmpl uMLGraphTmpl() {
 		uMLGraphTmplImpl
 	}
 	
-	def static ModelDocCssTmpl modelDocCssTmpl() {
+	override ModelDocCssTmpl modelDocCssTmpl() {
 		modelDocCssTmplImpl
 	}
 	
-	def static SpringTmpl springTmpl() {
+	override SpringTmpl springTmpl() {
 		springTmplImpl
 	}
 	
-	def static SpringIntegrationTmpl springIntegrationTmpl() {
+	override SpringIntegrationTmpl springIntegrationTmpl() {
 		springIntegrationTmplImpl
 	}
 	
-	def static DDLTmpl dDLTmpl() {
+	override DDLTmpl dDLTmpl() {
 		dDLTmplImpl
 	}
 	
-	def static MysqlDDLTmpl mysqlDDLTmpl() {
+	override MysqlDDLTmpl mysqlDDLTmpl() {
 		mysqlDDLTmplImpl
 	}
 	
-	def static OracleDDLTmpl oracleDDLTmpl() {
+	override OracleDDLTmpl oracleDDLTmpl() {
 		oracleDDLTmplImpl
 	}
 	
-	def static CustomDDLTmpl customDDLTmpl() {
+	override CustomDDLTmpl customDDLTmpl() {
 		customDDLTmplImpl
 	}
 	
-	def static DatasourceTmpl datasourceTmpl() {
+	override DatasourceTmpl datasourceTmpl() {
 		datasourceTmplImpl
 	}
 	
-	def static DbUnitTmpl dbUnitTmpl() {
+	override DbUnitTmpl dbUnitTmpl() {
 		dbUnitTmplImpl
 	}
 	
-	def static DomainObjectAnnotationTmpl domainObjectAnnotationTmpl() {
+	override DomainObjectAnnotationTmpl domainObjectAnnotationTmpl() {
 		domainObjectAnnotationTmplImpl
 	}
 	
-	def static DomainObjectReferenceAnnotationTmpl domainObjectReferenceAnnotationTmpl() {
+	override DomainObjectReferenceAnnotationTmpl domainObjectReferenceAnnotationTmpl() {
 		domainObjectReferenceAnnotationTmplImpl
 	}
 	
-	def static DomainObjectNamesTmpl domainObjectNamesTmpl() {
+	override DomainObjectNamesTmpl domainObjectNamesTmpl() {
 		domainObjectNamesTmplImpl
 	}
 	
-	def static DomainObjectConstructorTmpl domainObjectConstructorTmpl() {
+	override DomainObjectConstructorTmpl domainObjectConstructorTmpl() {
 		domainObjectConstructorTmplImpl
 	}
 	
-	def static DomainObjectTraitTmpl domainObjectTraitTmpl() {
+	override DomainObjectTraitTmpl domainObjectTraitTmpl() {
 		domainObjectTraitTmplImpl
 	}
 	
-	def static DomainObjectReferenceTmpl domainObjectReferenceTmpl() {
+	override DomainObjectReferenceTmpl domainObjectReferenceTmpl() {
 		domainObjectReferenceTmplImpl
 	}
 	
-	def static DomainObjectKeyTmpl domainObjectKeyTmpl() {
+	override DomainObjectKeyTmpl domainObjectKeyTmpl() {
 		domainObjectKeyTmplImpl
 	}
 	
-	def static DomainObjectPropertiesTmpl domainObjectPropertiesTmpl() {
+	override DomainObjectPropertiesTmpl domainObjectPropertiesTmpl() {
 		domainObjectPropertiesTmplImpl
 	}
 	
-	def static DomainObjectAttributeAnnotationTmpl domainObjectAttributeAnnotationTmpl() {
+	override DomainObjectAttributeAnnotationTmpl domainObjectAttributeAnnotationTmpl() {
 		domainObjectAttributeAnnotationTmplImpl
 	}
 	
-	def static DomainObjectAttributeTmpl domainObjectAttributeTmpl() {
+	override DomainObjectAttributeTmpl domainObjectAttributeTmpl() {
 		domainObjectAttributeTmplImpl
 	}
 	
-	def static BuilderTmpl builderTmpl() {
+	override BuilderTmpl builderTmpl() {
 		builderTmplImpl
 	}
 	
-	def static DomainObjectTmpl domainObjectTmpl() {
+	override DomainObjectTmpl domainObjectTmpl() {
 		domainObjectTmplImpl
 	}
 	
-	def static MongoDbConversationDomainObjectRepositoryTmpl mongoDbConversationDomainObjectRepositoryTmpl() {
+	override MongoDbConversationDomainObjectRepositoryTmpl mongoDbConversationDomainObjectRepositoryTmpl() {
 		mongoDbConversationDomainObjectRepositoryTmplImpl
 	}
 	
-	def static MongoDbServiceTestTmpl mongoDbServiceTestTmpl() {
+	override MongoDbServiceTestTmpl mongoDbServiceTestTmpl() {
 		mongoDbServiceTestTmplImpl
 	}
 	
-	def static MongoDbMapperTmpl mongoDbMapperTmpl() {
+	override MongoDbMapperTmpl mongoDbMapperTmpl() {
 		mongoDbMapperTmplImpl
 	}
 	
-	def static EclipseLinkTmpl eclipseLinkTmpl() {
+	override EclipseLinkTmpl eclipseLinkTmpl() {
 		eclipseLinkTmplImpl
 	}
 	
-	def static DataNucleusTmpl dataNucleusTmpl() {
+	override DataNucleusTmpl dataNucleusTmpl() {
 		dataNucleusTmplImpl
 	}
 	
-	def static JPATmpl jPATmpl() {
+	override JPATmpl jPATmpl() {
 		jPATmplImpl
 	}
 	
-	def static OpenJpaTmpl openJpaTmpl() {
+	override OpenJpaTmpl openJpaTmpl() {
 		openJpaTmplImpl
 	}
 	
-	def static HibernateTmpl hibernateTmpl() {
+	override HibernateTmpl hibernateTmpl() {
 		hibernateTmplImpl
 	}
 	
-	def static CamelTmpl camelTmpl() {
+	override CamelTmpl camelTmpl() {
 		camelTmplImpl
 	}
 	
-	def static LogConfigTmpl logConfigTmpl() {
+	override LogConfigTmpl logConfigTmpl() {
 		logConfigTmplImpl
 	}
 	
-	def static PubSubTmpl pubSubTmpl() {
+	override PubSubTmpl pubSubTmpl() {
 		pubSubTmplImpl
 	}
 	
-	def static ExceptionTmpl exceptionTmpl() {
+	override ExceptionTmpl exceptionTmpl() {
 		exceptionTmplImpl
 	}
 	
-	def static ConsumerTmpl consumerTmpl() {
+	override ConsumerTmpl consumerTmpl() {
 		consumerTmplImpl
 	}
 	
-	def static ConsumerTestTmpl consumerTestTmpl() {
+	override ConsumerTestTmpl consumerTestTmpl() {
 		consumerTestTmplImpl
 	}
 	
-	def static ConsumerEjbTmpl consumerEjbTmpl() {
+	override ConsumerEjbTmpl consumerEjbTmpl() {
 		consumerEjbTmplImpl
 	}
 	
-	def static ConsumerEjbTestTmpl consumerEjbTestTmpl() {
+	override ConsumerEjbTestTmpl consumerEjbTestTmpl() {
 		consumerEjbTestTmplImpl
 	}
 	
-	def static AccessObjectTmpl accessObjectTmpl() {
+	override AccessObjectTmpl accessObjectTmpl() {
 		accessObjectTmplImpl
 	}
 	
-	def static AccessObjectFactoryTmpl accessObjectFactoryTmpl() {
+	override AccessObjectFactoryTmpl accessObjectFactoryTmpl() {
 		accessObjectFactoryTmplImpl
 	}
 	
-	def static RepositoryTmpl repositoryTmpl() {
+	override RepositoryTmpl repositoryTmpl() {
 		repositoryTmplImpl
 	}
 	
-	def static RootTmpl rootTmpl() {
+	override RootTmpl rootTmpl() {
 		rootTmplImpl
 	}
 
-	def static RestWebCssTmpl restWebCssTmpl() {
+	override RestWebCssTmpl restWebCssTmpl() {
 		restWebCssTmplImpl
 	}
 	
-	def static RestWebJspTmpl restWebJspTmpl() {
+	override RestWebJspTmpl restWebJspTmpl() {
 		restWebJspTmplImpl
 	}
 	
-	def static ResourceTmpl resourceTmpl() {
+	override ResourceTmpl resourceTmpl() {
 		resourceTmplImpl
 	}
 	
-	def static RestWebConfigTmpl restWebConfigTmpl() {
+	override RestWebConfigTmpl restWebConfigTmpl() {
 		restWebConfigTmplImpl
 	}
 	
-	def static RestWebTmpl restWebTmpl() {
+	override RestWebTmpl restWebTmpl() {
 		restWebTmplImpl
 	}
 }

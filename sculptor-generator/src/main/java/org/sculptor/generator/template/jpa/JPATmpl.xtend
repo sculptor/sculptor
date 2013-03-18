@@ -19,6 +19,7 @@ package org.sculptor.generator.template.jpa
 
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.GeneratorFactory
+import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
@@ -29,15 +30,17 @@ import sculptormetamodel.DomainObject
 import static org.sculptor.generator.template.jpa.JPATmpl.*
 
 class JPATmpl {
+	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension DbHelper dbHelper = GeneratorFactory::dbHelper
-	extension Helper helper = GeneratorFactory::helper
-	extension PropertiesBase propertiesBase = GeneratorFactory::propertiesBase
-	extension Properties properties = GeneratorFactory::properties
-	private static val HibernateTmpl hibernateTmpl = GeneratorFactory::hibernateTmpl
-	private static val EclipseLinkTmpl eclipseLinkTmpl = GeneratorFactory::eclipseLinkTmpl
-	private static val DataNucleusTmpl dataNucleusTmpl = GeneratorFactory::dataNucleusTmpl
-	private static val OpenJpaTmpl openJpaTmpl = GeneratorFactory::openJpaTmpl
+
+	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
+	extension Helper helper = GEN_FACTORY.helper
+	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	extension Properties properties = GEN_FACTORY.properties
+	private static val HibernateTmpl hibernateTmpl = GEN_FACTORY.hibernateTmpl
+	private static val EclipseLinkTmpl eclipseLinkTmpl = GEN_FACTORY.eclipseLinkTmpl
+	private static val DataNucleusTmpl dataNucleusTmpl = GEN_FACTORY.dataNucleusTmpl
+	private static val OpenJpaTmpl openJpaTmpl = GEN_FACTORY.openJpaTmpl
 
 def String jpa(Application it) {
 	'''
