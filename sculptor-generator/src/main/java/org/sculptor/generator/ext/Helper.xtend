@@ -64,8 +64,9 @@ class Helper {
 	@Inject extension HelperBase helperBase
 
 	def public String fileOutput(String fileName, OutputSlot slot, String text) {
-		val fName = if (fileName.endsWith(".java"))
-			fileName.substring(0, fileName.length - 5).replaceAll("\\.", "/") + ".java"
+		val JAVA_EXT = ".java"
+		val fName = if (fileName.endsWith(JAVA_EXT))
+			fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
 		else
 			fileName
 		val ioDir = System::getProperty("java.io.tmpdir")
