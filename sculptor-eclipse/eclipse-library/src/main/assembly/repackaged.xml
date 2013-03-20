@@ -23,6 +23,9 @@
 				<include>org/eclipse/xtend2/**</include>
 				<include>org/eclipse/xtext/**</include>
 			</includes>
+			<excludes>
+				<exclude>org/eclipse/xtext/junit4/**</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/src/main/resources/</directory>
