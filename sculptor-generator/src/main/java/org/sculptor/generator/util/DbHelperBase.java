@@ -315,7 +315,7 @@ public class DbHelperBase {
 		}
 	}
 
-	public String getDefaultForeignKeyName(Reference ref) {
+	public String getDefaultForeignKeyNameBase(Reference ref) {
 		String name;
 		if (ref.isMany()) {
 			name = singularPluralConverter.toSingular(ref.getName());
@@ -331,7 +331,7 @@ public class DbHelperBase {
 		if (ref.getOpposite() == null) {
 			return getForeignKeyNameForUnidirectionalToManyWithJoinTable(ref);
 		} else {
-			return getDefaultForeignKeyName(ref.getOpposite());
+			return getDefaultForeignKeyNameBase(ref.getOpposite());
 		}
 	}
 

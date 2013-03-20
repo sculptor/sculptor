@@ -63,9 +63,13 @@ class Helper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension HelperBase helperBase
 
-	def public String fileOutput(String ne, OutputSlot slot, String text) {
-		var ioDir = System::getProperty("java.io.tmpdir")
-		var fl = new File(ioDir + "/sculptor/" + slot.name + "/" + ne)
+	def public String fileOutput(String fileName, OutputSlot slot, String text) {
+		val fName = if (fileName.endsWith(".java"))
+			fileName.substring(0, fileName.length - 5).replaceAll("\\.", "/") + ".java"
+		else
+			fileName
+		val ioDir = System::getProperty("java.io.tmpdir")
+		val fl = new File(ioDir + "/sculptor/" + slot.name + "/" + fName)
 		fl.parentFile.mkdirs()
 		var out = new FileWriter(fl)
 		out.write(text)

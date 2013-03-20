@@ -23,7 +23,6 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
@@ -33,7 +32,6 @@ class BuilderTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 	@Inject private var DomainObjectAttributeTmpl domainObjectAttributeTmpl
 	@Inject private var DomainObjectReferenceTmpl domainObjectReferenceTmpl

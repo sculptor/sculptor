@@ -20,8 +20,8 @@ package org.sculptor.generator.template.domain
 import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
@@ -30,7 +30,7 @@ import sculptormetamodel.Trait
 class DomainObjectNamesTmpl {
 
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
+	@Inject extension HelperBase helperBase
 	@Inject extension Properties properties
 
 def String propertyNamesInterface(DataTransferObject it) {

@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.transform
 
+import javax.inject.Inject
 import org.sculptor.dsl.sculptordsl.DslAnyProperty
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslAttribute
@@ -75,7 +76,6 @@ import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 
 import static org.sculptor.generator.transform.DslTransformation.*
-import javax.inject.Inject
 
 class DslTransformation {
 
@@ -341,6 +341,8 @@ class DslTransformation {
 			(domainObject as DslValueObject).transform
 		else if (domainObject instanceof DslEnum)
 			(domainObject as DslEnum).transform
+		else if (domainObject instanceof DslBasicType)
+			(domainObject as DslBasicType).transform
 		else
 			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
 	}

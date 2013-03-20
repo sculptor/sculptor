@@ -23,7 +23,6 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.Trait
@@ -36,7 +35,6 @@ class DomainObjectTraitTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 def String domainObjectSubclass(Trait it) {

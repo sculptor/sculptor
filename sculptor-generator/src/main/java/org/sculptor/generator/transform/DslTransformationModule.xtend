@@ -6,5 +6,6 @@ class DslTransformationModule extends ExtensionModule {
 	override protected configure() {
 		super.configure()
 		bind(typeof(DslTransformation))
+		bind(typeof(Transformation))
 	}
 }

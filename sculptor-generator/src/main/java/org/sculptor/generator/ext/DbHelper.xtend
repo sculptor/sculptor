@@ -158,7 +158,7 @@ public class DbHelper {
 			if (ref.isUnidirectionalToManyWithoutJoinTable())
 				ref.getDefaultOppositeForeignKeyName()
 			else
-				getDefaultForeignKeyName(ref)
+				getDefaultForeignKeyNameBase(ref)
 	}
 
 	def String getOppositeForeignKeyName(Reference ref) {

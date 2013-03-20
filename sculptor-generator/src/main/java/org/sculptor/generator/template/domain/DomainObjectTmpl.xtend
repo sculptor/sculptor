@@ -23,7 +23,6 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
@@ -46,7 +45,6 @@ class DomainObjectTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 def String domainObject(DomainObject it) {
@@ -79,7 +77,7 @@ def String domainObjectSubclass(DataTransferObject it) {
 	«ENDIF »
 
 	«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
-	public «getAbstractLitteral(it)»class «name» ^extends «name»Base {
+	public «getAbstractLitteral(it)»class «name» extends «name»Base {
 		«serialVersionUID(it)»
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty || getMinimumConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
@@ -105,7 +103,7 @@ def String domainObjectSubclass(DomainObject it) {
 	«ENDIF»
 
 	«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
-	public «getAbstractLitteral(it)»class «name» ^extends «name»Base {
+	public «getAbstractLitteral(it)»class «name» extends «name»Base {
 		«serialVersionUID(it)»
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
@@ -118,7 +116,6 @@ def String domainObjectSubclass(DomainObject it) {
 
 		«it.operations.filter(e | e.isImplementedInGapClass()).map[o | domainObjectSubclassImplMethod(o)]»
 	}
-
 	'''
 	)
 }
@@ -203,7 +200,7 @@ def String domainObjectBase(DomainObject it) {
 			«prePersist(it)»
 		«ENDIF»
 
-		«toStringStyle(it)»
+		«toStringStyleMethod(it)»
 		«acceptToString(it)»
 		«domainObjectKeyTmpl.keyGetter(it)»
 
@@ -370,9 +367,9 @@ def String acceptToString(DomainObject it) {
 	'''
 }
 
-def String toStringStyle(DomainObject it) {
+def String toStringStyleMethod(DomainObject it) {
 	'''
-	«IF toStringStyle(it) != null»
+	«IF it.toStringStyle() != null»
 		protected org.apache.commons.lang.builder.ToStringStyle toStringStyle() {
 			return org.apache.commons.lang.builder.ToStringStyle.«it.toStringStyle()»;
 		}

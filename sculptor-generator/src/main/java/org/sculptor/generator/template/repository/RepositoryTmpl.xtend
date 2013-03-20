@@ -27,6 +27,8 @@ import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
+import sculptormetamodel.Reference
+import sculptormetamodel.Attribute
 
 class RepositoryTmpl {
 
@@ -580,14 +582,13 @@ def String findByNaturalKeys(RepositoryOperation it) {
 	'''
 		«IF (name == "findByKeys") && repository.aggregateRoot.hasNaturalKey() »
 			«IF repository.aggregateRoot.getAllNaturalKeyAttributes().size == 1 && repository.aggregateRoot.getAllNaturalKeyReferences().isEmpty»
-			«findByNaturalKeys(it, repository, repository.aggregateRoot.getAllNaturalKeyAttributes().head.getTypeName(),
-				repository.aggregateRoot.getAllNaturalKeyAttributes().head.name)»
+				«val Attribute naturalAttr = repository.aggregateRoot.getAllNaturalKeyAttributes().head»
+				«findByNaturalKeys(it, repository, naturalAttr.getTypeName(), naturalAttr.name)»
 			«ELSEIF repository.aggregateRoot.getAllNaturalKeyReferences().size == 1 && repository.aggregateRoot.getAllNaturalKeyAttributes().isEmpty»
-			«findByNaturalKeys(it, repository, repository.aggregateRoot.getAllNaturalKeyReferences().head.to.getDomainPackage() + "." + repository.aggregateRoot.getAllNaturalKeyReferences().head.to.name,
-				repository.aggregateRoot.getAllNaturalKeyAttributes().head.name)»
+				«val Reference naturalKey = repository.aggregateRoot.getAllNaturalKeyReferences().head»
+				«findByNaturalKeys(it, repository, naturalKey.to.getDomainPackage() + "." + naturalKey.to.name, naturalKey.name)»
 			«ELSE»
-			«findByNaturalKeys(it, repository, repository.aggregateRoot.getDomainPackage() + "." + repository.aggregateRoot.name + (if (repository.aggregateRoot.gapClass) "Base" else "") + "." + repository.aggregateRoot.name + "Key",
-				"key") »
+				«findByNaturalKeys(it, repository, repository.aggregateRoot.getDomainPackage() + "." + repository.aggregateRoot.name + (if (repository.aggregateRoot.gapClass) "Base" else "") + "." + repository.aggregateRoot.name + "Key", "key") »
 			«ENDIF»
 		«ENDIF»
 	'''
