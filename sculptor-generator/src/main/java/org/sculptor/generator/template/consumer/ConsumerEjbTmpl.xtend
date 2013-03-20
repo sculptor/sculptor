@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.consumer
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -26,17 +25,14 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
 
-import static org.sculptor.generator.template.consumer.ConsumerEjbTmpl.*
-
 class ConsumerEjbTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject private var ConsumerTmpl consumerTmpl
 
-	private static val ConsumerTmpl consumerTmpl = GEN_FACTORY.consumerTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 	/*Used for pure-ejb3, i.e. without spring */
 	def String messageBeanInterceptors(Consumer it) {

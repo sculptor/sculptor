@@ -17,9 +17,8 @@
 
 package org.sculptor.generator.template.jpa
 
+import javax.inject.Inject
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
@@ -27,20 +26,17 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.DomainObject
 
-import static org.sculptor.generator.template.jpa.JPATmpl.*
-
 class JPATmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var HibernateTmpl hibernateTmpl
+	@Inject private var EclipseLinkTmpl eclipseLinkTmpl
+	@Inject private var DataNucleusTmpl dataNucleusTmpl
+	@Inject private var OpenJpaTmpl openJpaTmpl
 
-	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	private static val HibernateTmpl hibernateTmpl = GEN_FACTORY.hibernateTmpl
-	private static val EclipseLinkTmpl eclipseLinkTmpl = GEN_FACTORY.eclipseLinkTmpl
-	private static val DataNucleusTmpl dataNucleusTmpl = GEN_FACTORY.dataNucleusTmpl
-	private static val OpenJpaTmpl openJpaTmpl = GEN_FACTORY.openJpaTmpl
+	@Inject extension DbHelper dbHelper
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 def String jpa(Application it) {
 	'''

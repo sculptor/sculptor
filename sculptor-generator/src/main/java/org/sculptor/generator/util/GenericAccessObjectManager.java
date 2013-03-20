@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.sculptor.generator.ext.GeneratorFactory;
-import org.sculptor.generator.ext.GeneratorFactoryImpl;
+import javax.inject.Inject;
+
 import org.sculptor.generator.ext.Helper;
 
 import sculptormetamodel.Attribute;
@@ -35,23 +35,21 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
 
 public class GenericAccessObjectManager {
 	private final Map<String, GenericAccessObjectStrategy> genericAccessObjectStrategies = new HashMap<String, GenericAccessObjectStrategy>();
-	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
 
-	private final static PropertiesBase propBase = GEN_FACTORY.propertiesBase();
-	private final static HelperBase helperBase = GEN_FACTORY.helperBase();
-	private final static Helper helper = GEN_FACTORY.helper();
+	private PropertiesBase propBase;
+	private HelperBase helperBase;
 
-	protected GenericAccessObjectManager() {
+	@Inject
+	private Helper helper;
+
+	@Inject
+	protected GenericAccessObjectManager(PropertiesBase propBase, HelperBase helperBase) {
+		this.propBase = propBase;
+		this.helperBase = helperBase;
+		initGenericAccessObjectStrategies();
 	}
 
-	public static GenericAccessObjectManager createInstance() {
-		GenericAccessObjectManager manager = new GenericAccessObjectManager();
-		manager.initGenericAccessObjectStrategies();
-		return manager;
-	}
-
-	protected void initGenericAccessObjectStrategies() {
-
+	private void initGenericAccessObjectStrategies() {
 		// By default the NullStrategy is used if only the access object class
 		// is defined
 		NullStrategy nullStrategy = new NullStrategy();
@@ -82,7 +80,7 @@ public class GenericAccessObjectManager {
 					genericAccessObjectStrategies.put(key, nullStrategy);
 				} else {
 					GenericAccessObjectStrategy strategy = (GenericAccessObjectStrategy) FactoryHelper
-							.newInstanceFromName(propertyValue);
+							.newInstanceFromName(this, propertyValue);
 					genericAccessObjectStrategies.put(key, strategy);
 				}
 			}
@@ -118,7 +116,7 @@ public class GenericAccessObjectManager {
 		return genericAccessObjectStrategies.get(operationName);
 	}
 
-	public abstract static class AbstractGenericAccessObjectStrategy implements GenericAccessObjectStrategy {
+	public abstract class AbstractGenericAccessObjectStrategy implements GenericAccessObjectStrategy {
 
 		protected void addParameter(RepositoryOperation operation, String type, String name) {
 			Parameter param = createParameter(type, name);
@@ -190,7 +188,7 @@ public class GenericAccessObjectManager {
 		}
 	}
 
-	public static class NullStrategy extends AbstractGenericAccessObjectStrategy {
+	public class NullStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -223,7 +221,7 @@ public class GenericAccessObjectManager {
 		return dslDeclaredIdType;
 	}
 
-	public static class FindByIdStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByIdStrategy extends AbstractGenericAccessObjectStrategy {
 
 		private final PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
 
@@ -263,7 +261,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class PopulateAssociationsStrategy extends AbstractGenericAccessObjectStrategy {
+	public class PopulateAssociationsStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -289,7 +287,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByKeysStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByKeysStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -318,7 +316,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByKeyStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByKeyStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -360,7 +358,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindAllStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindAllStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -394,7 +392,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class CountAllStrategy extends AbstractGenericAccessObjectStrategy {
+	public class CountAllStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -413,7 +411,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByExampleStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByExampleStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -434,7 +432,9 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByQueryStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByQueryStrategy extends AbstractGenericAccessObjectStrategy {
+		public FindByQueryStrategy() {
+		}
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -479,7 +479,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByCriteriaStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByCriteriaStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -515,7 +515,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByCriteriaQueryStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByCriteriaQueryStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -560,7 +560,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByConditionStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByConditionStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -606,7 +606,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class FindByConditionStatStrategy extends AbstractGenericAccessObjectStrategy {
+	public class FindByConditionStatStrategy extends AbstractGenericAccessObjectStrategy {
 		private static final String COLUMN_STAT_REQUEST = "org.sculptor.framework.accessapi.ColumnStatRequest";
 		private static final String COLUMN_STAT_RESULT = "org.sculptor.framework.accessapi.ColumnStatResult";
 
@@ -651,7 +651,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class MergeStrategy extends AbstractGenericAccessObjectStrategy {
+	public class MergeStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -672,7 +672,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class SaveStrategy extends AbstractGenericAccessObjectStrategy {
+	public class SaveStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {
@@ -693,7 +693,7 @@ public class GenericAccessObjectManager {
 
 	}
 
-	public static class DeleteStrategy extends AbstractGenericAccessObjectStrategy {
+	public class DeleteStrategy extends AbstractGenericAccessObjectStrategy {
 
 		@Override
 		public void addDefaultValues(RepositoryOperation operation) {

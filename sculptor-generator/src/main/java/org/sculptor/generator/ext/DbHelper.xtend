@@ -19,6 +19,7 @@ package org.sculptor.generator.ext
 import java.util.Collection
 import java.util.List
 import java.util.Set
+import javax.inject.Inject
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
@@ -31,15 +32,11 @@ import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.SculptormetamodelFactory
 
-import static org.sculptor.generator.ext.DbHelper.*
-
 public class DbHelper {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
-
-	extension Properties properties = GEN_FACTORY.properties
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension DbHelperBase dbHelperBase = GEN_FACTORY.dbHelperBase
+	@Inject extension Properties properties
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Helper helper
+	@Inject extension DbHelperBase dbHelperBase
 
 	def String getCascade(Reference ref) {
 		if (ref.cascade == null || ref.cascade == "")

@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.jpa
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.OracleDDLTmpl
@@ -28,17 +27,13 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
 
-import static org.sculptor.generator.template.jpa.DataNucleusTmpl.*
-
 class DataNucleusTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension DbHelperBase dbHelperBase = GEN_FACTORY.dbHelperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	private static val OracleDDLTmpl oracleDDLTmpl = GEN_FACTORY.oracleDDLTmpl
+	@Inject extension DbHelperBase dbHelperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
+	@Inject private var OracleDDLTmpl oracleDDLTmpl
 
 def String dataNucleus(Application it) {
 	'''

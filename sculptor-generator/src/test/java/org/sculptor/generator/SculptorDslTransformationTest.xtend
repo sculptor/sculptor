@@ -17,6 +17,9 @@
 
 package org.sculptor.generator
 
+import com.google.inject.Guice
+import com.google.inject.Injector
+import javax.inject.Provider
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +27,9 @@ import org.junit.runners.JUnit4
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslInheritanceType
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.transform.DslTransformation
+import org.sculptor.generator.transform.DslTransformationModule
 import sculptormetamodel.Entity
 import sculptormetamodel.InheritanceType
 import sculptormetamodel.Module
@@ -32,28 +38,29 @@ import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
 import static org.sculptor.generator.SculptorDslTransformationTest.*
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.ext.GeneratorFactoryImpl
 
 @RunWith(typeof(JUnit4))
 class SculptorDslTransformationTest {
 
 	private static val SculptordslFactory FACTORY = SculptordslFactory::eINSTANCE
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension Helper helper = GEN_FACTORY.helper
+	extension Helper helper
 
 	var DslApplication model
+	var Provider<DslTransformation> dslTransformProvider
 
 	@Before
 	def void setupDslModel() {
-		model =  createDslModel
+		val Injector injector = Guice::createInjector(new DslTransformationModule)
+		helper = injector.getInstance(typeof(Helper))
+		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
+
+		model = createDslModel
 	}
-	
+
 	@Test
 	def testTransformDslModel() {
-		val transformation = new SculptorDslTransformation
+		val transformation = dslTransformProvider.get
 		val app = transformation.transform(model)
 		assertNotNull(app)
 		assertEquals("appName", app.name)
@@ -79,10 +86,10 @@ class SculptorDslTransformationTest {
 	}
 	
 	def getTransformedApp() {
-		val transformation = new SculptorDslTransformation
+		val transformation = dslTransformProvider.get
 		transformation.transform(model)
 	}
-	
+
 	def getModule(String name) {
 		transformedApp.modules.findFirst(mod | mod.name == name)
 	}

@@ -17,27 +17,27 @@
 
 package org.sculptor.generator.ext
 
-import java.util.Set
 import java.util.List
-
+import java.util.Set
+import javax.inject.Inject
+import org.sculptor.generator.util.PropertiesBase
+import org.sculptor.generator.util.SingularPluralConverter
 import sculptormetamodel.Application
+import sculptormetamodel.BasicType
+import sculptormetamodel.Consumer
 import sculptormetamodel.DomainObject
+import sculptormetamodel.Entity
 import sculptormetamodel.Module
+import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Service
-import sculptormetamodel.NamedElement
-import sculptormetamodel.Consumer
-import sculptormetamodel.BasicType
 import sculptormetamodel.ValueObject
-import sculptormetamodel.Entity
-import org.sculptor.generator.util.SingularPluralConverter
-import org.sculptor.generator.util.PropertiesBase
 
 public class UmlGraphHelper {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+	@Inject var SingularPluralConverter singularPluralConverter
 
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Helper helper = GEN_FACTORY.helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Helper helper
 
 	def String referenceHeadLabel(Reference ref) {
 		(if (ref.many) "0..n " else "") + ref.referenceLabelText()
@@ -253,6 +253,6 @@ public class UmlGraphHelper {
 	}
 
 	def String toSingular(String str) {
-		SingularPluralConverter::toSingular(str)
+		singularPluralConverter.toSingular(str)
 	}
 }

@@ -17,18 +17,16 @@
 
 package org.sculptor.generator.template.camel
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 class CamelTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension Properties properties = GEN_FACTORY.properties
-	extension Helper helper = GEN_FACTORY.helper
+	@Inject extension Properties properties
+	@Inject extension Helper helper
 	
 	def String camelConfig(Application it) {
 		fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot::TO_RESOURCES, '''

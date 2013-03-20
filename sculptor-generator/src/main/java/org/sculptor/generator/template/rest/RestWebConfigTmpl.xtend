@@ -1,20 +1,16 @@
 package org.sculptor.generator.template.rest
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.template.rest.RestWebConfigTmpl.*
-
 class RestWebConfigTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var JSFCrudGuiConfigContextTmpl jSFCrudGuiConfigContextTmpl
 
-	extension Helper helper = GEN_FACTORY.helper
-	private static val JSFCrudGuiConfigContextTmpl jSFCrudGuiConfigContextTmpl = GEN_FACTORY.jSFCrudGuiConfigContextTmpl
+	@Inject extension Helper helper
 
 def String config(Application it) {
 	'''

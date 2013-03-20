@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator
+package org.sculptor.generator.transform
 
 import org.sculptor.dsl.sculptordsl.DslAnyProperty
 import org.sculptor.dsl.sculptordsl.DslApplication
@@ -57,8 +57,6 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -76,17 +74,17 @@ import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 
-import static org.sculptor.generator.SculptorDslTransformation.*
+import static org.sculptor.generator.transform.DslTransformation.*
+import javax.inject.Inject
 
-class SculptorDslTransformation {
+class DslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 	def create FACTORY.createApplication transform(DslApplication app) {
 		val allDslModules = app.modules

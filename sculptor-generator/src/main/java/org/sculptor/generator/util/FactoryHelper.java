@@ -17,6 +17,8 @@
 
 package org.sculptor.generator.util;
 
+import java.lang.reflect.Constructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ public class FactoryHelper {
 
 	/**
 	 * Creates an instance from a String class name.
+	 * @param genericAccessObjectManager 
 	 * 
 	 * @param className
 	 *            full class name
@@ -43,8 +46,8 @@ public class FactoryHelper {
 	 * @throws RuntimeException
 	 *             if class not found or could not be instantiated
 	 */
-	public static Object newInstanceFromName(String className) {
-		return newInstanceFromName(className, FactoryHelper.class.getClassLoader());
+	public static Object newInstanceFromName(Object enclosingObject, String className) {
+		return newInstanceFromName(enclosingObject, className, FactoryHelper.class.getClassLoader());
 	}
 
 	/**
@@ -58,9 +61,17 @@ public class FactoryHelper {
 	 * @throws RuntimeException
 	 *             if class not found or could not be instantiated
 	 */
-	public static Object newInstanceFromName(String className, ClassLoader classLoader) {
+	public static Object newInstanceFromName(Object enclosingObject, String className, ClassLoader classLoader) {
 		try {
-			Class<?> clazz = Class.forName(className, true, classLoader);
+			Class<?> clazz = Class.forName(className, false, classLoader);
+			for (Constructor<?> c : clazz.getConstructors()) {
+				Class<?>[] parameterTypes = c.getParameterTypes();
+				if (parameterTypes.length == 0) {
+					return c.newInstance();
+				} else if (parameterTypes.length == 1 && enclosingObject != null && parameterTypes[0].equals(enclosingObject.getClass())) {
+					return c.newInstance(enclosingObject);
+				}
+			}
 			return clazz.newInstance();
 		} catch (Exception e) {
 			String m = "Couldn't create instance from name " + className + " (" + e.getMessage() + ")";

@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.repository
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -29,18 +28,15 @@ import sculptormetamodel.Parameter
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
 
-import static org.sculptor.generator.template.repository.RepositoryTmpl.*
-
 class RepositoryTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var ExceptionTmpl exceptionTmpl
+	@Inject private var PubSubTmpl pubSubTmpl
+	@Inject private var AccessObjectFactoryTmpl accessObjectFactoryTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
-	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
-	private static val PubSubTmpl pubSubTmpl = GEN_FACTORY.pubSubTmpl
-	private static val AccessObjectFactoryTmpl accessObjectFactoryTmpl = GEN_FACTORY.accessObjectFactoryTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 def String repository(Repository it) {
 	'''

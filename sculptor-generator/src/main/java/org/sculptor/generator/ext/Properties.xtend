@@ -18,14 +18,14 @@
 package org.sculptor.generator.ext
 
 import java.util.Collection
-import sculptormetamodel.Application
-import sculptormetamodel.Module
-import sculptormetamodel.Attribute
+import javax.inject.Inject
 import org.sculptor.generator.util.PropertiesBase
+import sculptormetamodel.Application
+import sculptormetamodel.Attribute
+import sculptormetamodel.Module
 
 class Properties {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
+	@Inject extension PropertiesBase propertiesBase
 
 	def boolean getBooleanProperty(String propertyName) {
 		getProperty(propertyName).toLowerCase() == "true";

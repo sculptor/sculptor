@@ -1,7 +1,6 @@
 package org.sculptor.generator.template.rest
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -14,17 +13,14 @@ import sculptormetamodel.Parameter
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
 
-import static org.sculptor.generator.template.rest.ResourceTmpl.*
-
 class ResourceTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var ExceptionTmpl exceptionTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 def String resource(Resource it) {
 	'''

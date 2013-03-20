@@ -25,13 +25,15 @@ import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.sculptor.dsl.sculptordsl.DslApplication;
-import org.sculptor.generator.SculptorDslTransformation;
-import org.sculptor.generator.template.RootTmpl;
+import org.sculptor.generator.transform.DslTransformation;
+import org.sculptor.generator.transform.DslTransformationModule;
 
 import sculptormetamodel.Application;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class SculptorDslTransformationWorkflowComponent extends AbstractWorkflowComponent2 {
 
@@ -67,9 +69,11 @@ public class SculptorDslTransformationWorkflowComponent extends AbstractWorkflow
 			if (applications.isEmpty()) {
 				issues.addError(this, "No DslApplication instance found in model slot", slotContent, null, null);
 			} else {
+				Injector injector = Guice.createInjector(new DslTransformationModule());
+				DslTransformation dslTransform = injector.getInstance(DslTransformation.class);
 
 				// execute the transformation
-				Application transformed = new SculptorDslTransformation().transform(applications.get(0));
+				Application transformed = dslTransform.transform(applications.get(0));
 				ctx.set(outputSlot, transformed);
 //				RootTmpl.Root(transformed);
 			}

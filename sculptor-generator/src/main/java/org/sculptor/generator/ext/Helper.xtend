@@ -16,15 +16,16 @@
  */
 package org.sculptor.generator.ext
 
-import java.util.Collection
-import java.util.List
 import java.io.File
 import java.io.FileWriter
+import java.util.Collection
+import java.util.List
+import javax.inject.Inject
 import org.sculptor.generator.util.DependencyConstraints
-import org.sculptor.generator.util.SingularPluralConverter
-import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
+import org.sculptor.generator.util.SingularPluralConverter
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -33,8 +34,10 @@ import sculptormetamodel.Consumer
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainEvent
 import sculptormetamodel.DomainObject
+import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.Entity
 import sculptormetamodel.Enum
+import sculptormetamodel.HttpMethod
 import sculptormetamodel.Module
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Operation
@@ -43,21 +46,22 @@ import sculptormetamodel.Reference
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
 import sculptormetamodel.Resource
+import sculptormetamodel.ResourceOperation
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
-import sculptormetamodel.DomainObjectOperation
-import sculptormetamodel.ResourceOperation
-import sculptormetamodel.HttpMethod
+import org.sculptor.generator.util.GenericAccessObjectManager
+import org.sculptor.generator.util.GenericAccessObjectStrategy
 
 class Helper {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
+	@Inject var SingularPluralConverter singularPluralConverter
+	@Inject var GenericAccessObjectManager genericAccessObjectManager
 
-	extension Properties properties = GEN_FACTORY.properties
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	@Inject extension Properties properties
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension HelperBase helperBase
 
 	def public String fileOutput(String ne, OutputSlot slot, String text) {
 		var ioDir = System::getProperty("java.io.tmpdir")
@@ -740,12 +744,12 @@ class Helper {
 
 	// removes last s to make the word into singular
 	def String singular(String str) {
-		SingularPluralConverter::toSingular(str)
+		singularPluralConverter.toSingular(str)
 	}
 
 	// adds s to the end to make the word into plural
 	def String plural(String str) {
-		SingularPluralConverter::toPlural(str)
+		singularPluralConverter.toPlural(str)
 	}
 
 	def DomainObject getRootExtends(DomainObject domainObject) {
@@ -1596,5 +1600,32 @@ class Helper {
 
 	def boolean needsBuilder(Enum domainObject) {
 		false;
+	}
+
+	/**
+	 * Get the generic type declaration for generic access objects.
+	 */
+	def String getGenericType(RepositoryOperation op) {
+		genericAccessObjectManager.getGenericType(op)
+	}
+
+	def boolean isGenericAccessObject(RepositoryOperation op) {
+		genericAccessObjectManager.isGenericAccessObject(op)
+	}
+
+	def boolean hasAccessObjectPersistentClassConstructor(RepositoryOperation op) {
+		genericAccessObjectManager.isPersistentClassConstructor(op)
+	}
+
+	def Repository addDefaultValues(Repository repository) {
+		repository.getOperations().forEach[op | addDefaultValues(op)]
+		repository
+	}
+
+	def void addDefaultValues(RepositoryOperation operation) {
+		val GenericAccessObjectStrategy strategy = genericAccessObjectManager.getStrategy(operation.getName());
+		if (strategy != null) {
+			strategy.addDefaultValues(operation);
+		}
 	}
 }

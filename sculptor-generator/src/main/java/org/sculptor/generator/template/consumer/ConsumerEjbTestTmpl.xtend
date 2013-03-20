@@ -17,30 +17,24 @@
 
 package org.sculptor.generator.template.consumer
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
-
-import org.sculptor.generator.util.OutputSlot
-import sculptormetamodel.Consumer
-
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
-
-import org.sculptor.generator.util.PropertiesBase
-
 import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import org.sculptor.generator.util.XmlHelperBase
+import sculptormetamodel.Consumer
 
 class ConsumerEjbTestTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	private static val ConsumerTestTmpl consumerTestTmpl = GEN_FACTORY.consumerTestTmpl
+	@Inject private var ConsumerTestTmpl consumerTestTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	extension XmlHelperBase xmlHelperBase = GEN_FACTORY.xmlHelperBase
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
+	@Inject extension XmlHelperBase xmlHelperBase
 
 	def String consumerJUnitOpenEjb(Consumer it) {
 		fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''

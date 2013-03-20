@@ -17,27 +17,20 @@
 
 package org.sculptor.generator.template.domain
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
-
+import javax.inject.Inject
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.DomainObject
 
-import org.sculptor.generator.ext.Properties
-
-
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.util.HelperBase
-
 class DomainObjectKeyTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
-	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GEN_FACTORY.domainObjectAttributeTmpl
-	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GEN_FACTORY.domainObjectReferenceTmpl
-	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GEN_FACTORY.domainObjectConstructorTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension Properties properties
+	@Inject private var DomainObjectAttributeTmpl domainObjectAttributeTmpl
+	@Inject private var DomainObjectReferenceTmpl domainObjectReferenceTmpl
+	@Inject private var DomainObjectConstructorTmpl domainObjectConstructorTmpl
 
 def String keyGetter(DomainObject it) {
 	'''

@@ -17,20 +17,17 @@
 
 package org.sculptor.generator.template.db
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 
-import static org.sculptor.generator.template.db.DDLTmpl.*
-
 class DDLTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	private static val mysqlDDLTmpl = GEN_FACTORY.mysqlDDLTmpl
-	private static val oracleDDLTmpl = GEN_FACTORY.oracleDDLTmpl
-	private static val customDDLTmpl = GEN_FACTORY.customDDLTmpl
+	@Inject private var MysqlDDLTmpl mysqlDDLTmpl
+	@Inject private var OracleDDLTmpl oracleDDLTmpl
+	@Inject private var CustomDDLTmpl customDDLTmpl
+
+	@Inject extension PropertiesBase propertiesBase
 
 def String ddl(Application it) {
 	'''

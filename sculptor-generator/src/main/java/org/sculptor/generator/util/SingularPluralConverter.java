@@ -21,8 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.sculptor.generator.ext.GeneratorFactory;
-import org.sculptor.generator.ext.GeneratorFactoryImpl;
+import javax.inject.Inject;
 
 /**
  * Conversion of English words to plural and singular. By default words become
@@ -32,23 +31,19 @@ import org.sculptor.generator.ext.GeneratorFactoryImpl;
  * 
  */
 public class SingularPluralConverter {
-	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
-
 	private static Map<String, String> singular2pluralDefinitions;
 	private static Map<String, String> plural2singularDefinitions;
-	static {
-		init();
-	}
 
-	static void init() {
-		singular2pluralDefinitions = GEN_FACTORY.propertiesBase().singular2pluralDefinitions();
+	@Inject
+	protected SingularPluralConverter(PropertiesBase propertiesBase) {
+		singular2pluralDefinitions = propertiesBase.singular2pluralDefinitions();
 		plural2singularDefinitions = new HashMap<String, String>();
 		for (Entry<String, String> entry : singular2pluralDefinitions.entrySet()) {
 			plural2singularDefinitions.put(entry.getValue(), entry.getKey());
 		}
 	}
 
-	public static String toPlural(String input) {
+	public String toPlural(String input) {
 		if (isEmpty(input)) {
 			return input;
 		}
@@ -68,7 +63,7 @@ public class SingularPluralConverter {
 		return input;
 	}
 
-	public static String toSingular(String input) {
+	public String toSingular(String input) {
 		if (isEmpty(input)) {
 			return input;
 		}
@@ -88,7 +83,7 @@ public class SingularPluralConverter {
 		return input;
 	}
 
-	private static String lookup(String input, Map<String, String> lookupTable) {
+	private String lookup(String input, Map<String, String> lookupTable) {
 		String lookupValue = lookupTable.get(input);
 		if (lookupValue == null) {
 			lookupValue = lookupTable.get(input.toLowerCase());
@@ -103,11 +98,11 @@ public class SingularPluralConverter {
 		return lookupValue;
 	}
 
-	private static boolean isEmpty(String input) {
+	private boolean isEmpty(String input) {
 		return input == null || input.length() == 0;
 	}
 
-	private static String chop(String input) {
+	private String chop(String input) {
 		return chop(input, 1);
 	}
 

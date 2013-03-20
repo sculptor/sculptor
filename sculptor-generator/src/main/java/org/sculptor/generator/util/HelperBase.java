@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.sculptor.generator.ext.GeneratorFactory;
-import org.sculptor.generator.ext.GeneratorFactoryImpl;
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,16 +70,16 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
  * 
  */
 public class HelperBase {
-
 	private static final Logger LOG = LoggerFactory.getLogger(HelperBase.class);
-	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
+	private PropertiesBase propBase;
 
-	private static GenericAccessObjectManager genericAccessObjectManager = GenericAccessObjectManager.createInstance();
-	private static PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
-	private static Map<String, String> collectionInterfaceTypeMapper = new HashMap<String, String>();
-	private static Map<String, String> collectionImplTypeMapper = new HashMap<String, String>();
-	private static PropertiesBase propBase = GEN_FACTORY.propertiesBase();
-	static {
+	private PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
+	private Map<String, String> collectionInterfaceTypeMapper = new HashMap<String, String>();
+	private Map<String, String> collectionImplTypeMapper = new HashMap<String, String>();
+
+	@Inject
+	protected HelperBase (PropertiesBase propBase) {
+		this.propBase = propBase;
 		collectionInterfaceTypeMapper.put("list", propBase.getJavaType("List"));
 		collectionInterfaceTypeMapper.put("bag", propBase.getJavaType("Bag"));
 		collectionInterfaceTypeMapper.put("map", propBase.getJavaType("Map"));
@@ -559,21 +559,6 @@ public class HelperBase {
 		return baseName;
 	}
 
-	/**
-	 * Get the generic type declaration for generic access objects.
-	 */
-	public String getGenericType(RepositoryOperation op) {
-		return genericAccessObjectManager.getGenericType(op);
-	}
-
-	public boolean isGenericAccessObject(RepositoryOperation op) {
-		return genericAccessObjectManager.isGenericAccessObject(op);
-	}
-
-	public boolean hasAccessObjectPersistentClassConstructor(RepositoryOperation op) {
-		return genericAccessObjectManager.isPersistentClassConstructor(op);
-	}
-
 	public List<?> addServiceContextParameter(ServiceOperation operation) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 		Parameter ctxParameter = factory.createParameter();
@@ -769,21 +754,6 @@ public class HelperBase {
 			}
 		}
 		return null;
-	}
-
-	public Repository addDefaultValues(Repository repository) {
-		for (RepositoryOperation op : repository.getOperations()) {
-			addDefaultValues(op);
-		}
-		return repository;
-	}
-
-	private void addDefaultValues(RepositoryOperation operation) {
-
-		GenericAccessObjectStrategy strategy = genericAccessObjectManager.getStrategy(operation.getName());
-		if (strategy != null) {
-			strategy.addDefaultValues(operation);
-		}
 	}
 
 	/**

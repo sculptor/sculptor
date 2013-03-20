@@ -5,8 +5,7 @@
 package org.sculptor.generator.template.doc
 
 import java.util.List
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.ext.UmlGraphHelper
@@ -33,15 +32,13 @@ import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
 
 class ModelDocTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var ModelDocCssTmpl modelDocCssTmpl
 
-	extension DbHelperBase dbHelperBase = GEN_FACTORY.dbHelperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
-	extension UmlGraphHelper umlGraphHelper = GEN_FACTORY.umlGraphHelper
-
-	private static val ModelDocCssTmpl modelDocCssTmpl = GEN_FACTORY.modelDocCssTmpl
+	@Inject extension DbHelperBase dbHelperBase
+	@Inject extension Helper helper
+	@Inject extension Properties properties
+	@Inject extension UmlGraphHelper umlGraphHelper
 
 def void start(Application it) {
 	docHtml(it)

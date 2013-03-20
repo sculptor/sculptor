@@ -17,9 +17,8 @@
 
 package org.sculptor.generator.template.db
 
+import javax.inject.Inject
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
@@ -27,13 +26,11 @@ import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 class DbUnitTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension DbHelperBase dbHelperBase = GEN_FACTORY.dbHelperBase
-	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject extension DbHelperBase dbHelperBase
+	@Inject extension DbHelper dbHelper
+	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 def String emptyDbunitTestData(Application it) {
 	fileOutput("dbunit/EmptyDatabase.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''

@@ -17,19 +17,16 @@
 
 package org.sculptor.generator.template.springint
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 class SpringIntegrationTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 def String springIntegrationConfig(Application it) {
 	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", OutputSlot::TO_RESOURCES, '''

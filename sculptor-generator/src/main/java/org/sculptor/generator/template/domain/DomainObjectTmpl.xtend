@@ -17,11 +17,13 @@
 
 package org.sculptor.generator.template.domain
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
-
-import org.sculptor.generator.util.OutputSlot
+import javax.inject.Inject
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
+import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.util.OutputSlot
+import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
@@ -30,30 +32,22 @@ import sculptormetamodel.EnumValue
 import sculptormetamodel.Parameter
 import sculptormetamodel.Trait
 
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.ext.Properties
-import org.sculptor.generator.util.HelperBase
-
-
-import org.sculptor.generator.util.PropertiesBase
-
 class DomainObjectTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var ExceptionTmpl exceptionTmpl
+	@Inject private var DomainObjectPropertiesTmpl domainObjectPropertiesTmpl
+	@Inject private var DomainObjectNamesTmpl domainObjectNamesTmpl
+	@Inject private var DomainObjectConstructorTmpl domainObjectConstructorTmpl
+	@Inject private var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
+	@Inject private var DomainObjectTraitTmpl domainObjectTraitTmpl
+	@Inject private var DomainObjectAttributeTmpl domainObjectAttributeTmpl
+	@Inject private var DomainObjectReferenceTmpl domainObjectReferenceTmpl
+	@Inject private var DomainObjectKeyTmpl domainObjectKeyTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
-	private static val DomainObjectPropertiesTmpl domainObjectPropertiesTmpl = GEN_FACTORY.domainObjectPropertiesTmpl
-	private static val DomainObjectNamesTmpl domainObjectNamesTmpl = GEN_FACTORY.domainObjectNamesTmpl
-	private static val DomainObjectConstructorTmpl domainObjectConstructorTmpl = GEN_FACTORY.domainObjectConstructorTmpl
-	private static val DomainObjectAnnotationTmpl domainObjectAnnotationTmpl = GEN_FACTORY.domainObjectAnnotationTmpl
-	private static val DomainObjectTraitTmpl domainObjectTraitTmpl = GEN_FACTORY.domainObjectTraitTmpl
-	private static val DomainObjectAttributeTmpl domainObjectAttributeTmpl = GEN_FACTORY.domainObjectAttributeTmpl
-	private static val DomainObjectReferenceTmpl domainObjectReferenceTmpl = GEN_FACTORY.domainObjectReferenceTmpl
-	private static val DomainObjectKeyTmpl domainObjectKeyTmpl = GEN_FACTORY.domainObjectKeyTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 def String domainObject(DomainObject it) {
 	'''

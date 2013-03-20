@@ -17,9 +17,8 @@
 
 package org.sculptor.generator.template.jpa
 
+import javax.inject.Inject
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -31,14 +30,12 @@ import sculptormetamodel.Module
 import sculptormetamodel.Reference
 
 class HibernateTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject extension DbHelper dbHelper
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 def String hibernate(Application it) {
 	'''

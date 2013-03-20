@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator
+package org.sculptor.generator.transform
 
+import javax.inject.Inject
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.GeneratorFactory
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -44,17 +44,17 @@ import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+
+import static org.sculptor.generator.transform.Transformation.*
 
 
-class SculptorTransformation {
+class Transformation {
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject extension DbHelper dbHelper
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 	def modify(Application app) {
 		initPropertiesHook()

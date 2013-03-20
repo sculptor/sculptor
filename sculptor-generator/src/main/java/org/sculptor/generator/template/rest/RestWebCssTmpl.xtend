@@ -1,18 +1,13 @@
 package org.sculptor.generator.template.rest
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
-
+import javax.inject.Inject
+import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-import org.sculptor.generator.ext.Helper
-
 class RestWebCssTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	extension Helper helper = GEN_FACTORY.helper
-
+	@Inject extension Helper helper
 
 def String css(Application it) {
 	fileOutput("stylesheets/main.css", OutputSlot::TO_WEBROOT, '''

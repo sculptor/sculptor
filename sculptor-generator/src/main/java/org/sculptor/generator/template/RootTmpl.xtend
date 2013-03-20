@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -43,34 +42,34 @@ import org.sculptor.generator.template.spring.SpringTmpl
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
+import org.sculptor.generator.template.service.ServiceTmpl
 
 class RootTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-	private static val AccessObjectTmpl accessObjectTmpl = GEN_FACTORY.accessObjectTmpl
-	private static val BuilderTmpl builderTmpl = GEN_FACTORY.builderTmpl
-	private static val ConsumerTmpl consumerTmpl = GEN_FACTORY.consumerTmpl
-	private static val DatasourceTmpl datasourceTmpl = GEN_FACTORY.datasourceTmpl
-	private static val DbUnitTmpl dbUnitTmpl = GEN_FACTORY.dbUnitTmpl
-	private static val DDLTmpl dDLTmpl = GEN_FACTORY.dDLTmpl
-	private static val DomainObjectTmpl domainObjectTmpl = GEN_FACTORY.domainObjectTmpl
-	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
-	private static val HibernateTmpl hibernateTmpl = GEN_FACTORY.hibernateTmpl
-	private static val JPATmpl jPATmpl = GEN_FACTORY.jPATmpl
-	private static val LogConfigTmpl logConfigTmpl = GEN_FACTORY.logConfigTmpl
-	private static val ModelDocTmpl modelDocTmpl = GEN_FACTORY.modelDocTmpl
-	private static val MongoDbMapperTmpl mongoDbMapperTmpl = GEN_FACTORY.mongoDbMapperTmpl
-	private static val RepositoryTmpl repositoryTmpl = GEN_FACTORY.repositoryTmpl
-	private static val ResourceTmpl resourceTmpl = GEN_FACTORY.resourceTmpl
-	private static val RestWebTmpl restWebTmpl = GEN_FACTORY.restWebTmpl
-	private static val ServiceEjbTestTmpl serviceEjbTestTmpl = GEN_FACTORY.serviceEjbTestTmpl
-	private static val SpringTmpl springTmpl = GEN_FACTORY.springTmpl
-	private static val UMLGraphTmpl uMLGraphTmpl = GEN_FACTORY.uMLGraphTmpl
-	extension Properties properties = GEN_FACTORY.properties
-	extension Helper helper = GEN_FACTORY.helper
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
+	@Inject private var AccessObjectTmpl accessObjectTmpl
+	@Inject private var BuilderTmpl builderTmpl
+	@Inject private var ConsumerTmpl consumerTmpl
+	@Inject private var DatasourceTmpl datasourceTmpl
+	@Inject private var DbUnitTmpl dbUnitTmpl
+	@Inject private var DDLTmpl dDLTmpl
+	@Inject private var DomainObjectTmpl domainObjectTmpl
+	@Inject private var ExceptionTmpl exceptionTmpl
+	@Inject private var HibernateTmpl hibernateTmpl
+	@Inject private var JPATmpl jPATmpl
+	@Inject private var LogConfigTmpl logConfigTmpl
+	@Inject private var ModelDocTmpl modelDocTmpl
+	@Inject private var MongoDbMapperTmpl mongoDbMapperTmpl
+	@Inject private var RepositoryTmpl repositoryTmpl
+	@Inject private var ResourceTmpl resourceTmpl
+	@Inject private var RestWebTmpl restWebTmpl
+	@Inject private var ServiceEjbTestTmpl serviceEjbTestTmpl
+	@Inject private var SpringTmpl springTmpl
+	@Inject private var UMLGraphTmpl uMLGraphTmpl
+	@Inject private var ServiceTmpl serviceTmpl
 
-	private static val serviceTmpl = GEN_FACTORY.serviceTmpl
+	@Inject extension Properties properties
+	@Inject extension Helper helper
+	@Inject extension HelperBase helperBase
 
 	def String Root(Application it) {
 		'''

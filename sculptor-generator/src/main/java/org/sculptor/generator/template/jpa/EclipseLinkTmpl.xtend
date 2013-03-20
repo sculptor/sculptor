@@ -17,19 +17,16 @@
 
 package org.sculptor.generator.template.jpa
 
+import javax.inject.Inject
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 class EclipseLinkTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension DbHelper dbHelper = GEN_FACTORY.dbHelper
-	extension Helper helper = GEN_FACTORY.helper
+	@Inject extension DbHelper dbHelper
+	@Inject extension Helper helper
 
 def String eclipseLink(Application it) {
 	'''

@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.service
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -30,21 +29,18 @@ import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
 
-import static org.sculptor.generator.template.service.ServiceTmpl.*
-
 class ServiceTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var ExceptionTmpl exceptionTmpl
+	@Inject private var MongoDbServiceTestTmpl mongoDbServiceTestTmpl
+	@Inject private var PubSubTmpl pubSubTmpl
+	@Inject private var ServiceEjbTestTmpl serviceEjbTestTmpl
+	@Inject private var ServiceTestTmpl serviceTestTmpl
+	@Inject private var ServiceEjbTmpl serviceEjbTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
-	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
-	private static val MongoDbServiceTestTmpl mongoDbServiceTestTmpl = GEN_FACTORY.mongoDbServiceTestTmpl
-	private static val PubSubTmpl pubSubTmpl = GEN_FACTORY.pubSubTmpl
-	private static val ServiceEjbTestTmpl serviceEjbTestTmpl = GEN_FACTORY.serviceEjbTestTmpl
-	private static val ServiceTestTmpl serviceTestTmpl = GEN_FACTORY.serviceTestTmpl
-	private static val ServiceEjbTmpl serviceEjbTmpl = GEN_FACTORY.serviceEjbTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 def String service(Service it) {
 	'''

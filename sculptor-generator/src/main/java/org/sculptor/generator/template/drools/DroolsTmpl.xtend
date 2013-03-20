@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.drools
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
@@ -26,11 +25,9 @@ import sculptormetamodel.Application
 
 
 class DroolsTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension Helper helper = GEN_FACTORY.helper
-	extension Properties properties = GEN_FACTORY.properties
+	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 	def String droolsSupport(Application it) {
 		'''

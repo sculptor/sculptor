@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.consumer
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.PubSubTmpl
@@ -27,20 +26,17 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
 
-import static org.sculptor.generator.template.consumer.ConsumerTmpl.*
-
 class ConsumerTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var PubSubTmpl pubSubTmpl
+	@Inject private var ConsumerEjbTmpl consumerEjbTmpl
+	@Inject private var ConsumerEjbTestTmpl consumerEjbTestTmpl
+	@Inject private var ConsumerTestTmpl consumerTestTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	private static val PubSubTmpl pubSubTmpl = GEN_FACTORY.pubSubTmpl
-	private static val ConsumerEjbTmpl consumerEjbTmpl = GEN_FACTORY.consumerEjbTmpl
-	private static val ConsumerEjbTestTmpl consumerEjbTestTmpl = GEN_FACTORY.consumerEjbTestTmpl
-	private static val ConsumerTestTmpl consumerTestTmpl = GEN_FACTORY.consumerTestTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 def String consumer(Consumer it) {
 	'''

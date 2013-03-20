@@ -17,8 +17,7 @@
 
 package org.sculptor.generator.template.domain
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -29,19 +28,16 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.Trait
 
-import static org.sculptor.generator.template.domain.DomainObjectTraitTmpl.*
-
 class DomainObjectTraitTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
+	@Inject private var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
+	@Inject private var DomainObjectTmpl domainObjectTmpl
+	@Inject private var ExceptionTmpl exceptionTmpl
 
-	extension HelperBase helperBase = GEN_FACTORY.helperBase
-	extension Helper helper = GEN_FACTORY.helper
-	extension PropertiesBase propertiesBase = GEN_FACTORY.propertiesBase
-	extension Properties properties = GEN_FACTORY.properties
-	private static val DomainObjectAnnotationTmpl domainObjectAnnotationTmpl = GEN_FACTORY.domainObjectAnnotationTmpl
-	private static val DomainObjectTmpl domainObjectTmpl = GEN_FACTORY.domainObjectTmpl
-	private static val ExceptionTmpl exceptionTmpl = GEN_FACTORY.exceptionTmpl
+	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 def String domainObjectSubclass(Trait it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Trait"), OutputSlot::TO_SRC, '''

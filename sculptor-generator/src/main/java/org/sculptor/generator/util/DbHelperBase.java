@@ -23,8 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sculptor.generator.ext.GeneratorFactory;
-import org.sculptor.generator.ext.GeneratorFactoryImpl;
+import javax.inject.Inject;
 
 import sculptormetamodel.Application;
 import sculptormetamodel.Attribute;
@@ -41,17 +40,12 @@ import sculptormetamodel.Reference;
 import sculptormetamodel.SculptormetamodelFactory;
 import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
 
-/**
- * Database and Hibernate related utilities, used by templates and
- * transformations.
- * 
- */
 public class DbHelperBase {
-	private static final GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl.getInstance();
-
 	private static final String ID_ATTRIBUTE_NAME = "id";
-	private static final HelperBase helperBase = GEN_FACTORY.helperBase();
-	private static final PropertiesBase propBase = GEN_FACTORY.propertiesBase();
+
+	@Inject private HelperBase helperBase;
+	@Inject private PropertiesBase propBase;
+	@Inject private SingularPluralConverter singularPluralConverter;
 
 	public List<DomainObject> getDomainObjectsInCreateOrder(Application application, Boolean ascending) {
 		List<DomainObject> all = getAllDomainObjects(application);
@@ -324,7 +318,7 @@ public class DbHelperBase {
 	public String getDefaultForeignKeyName(Reference ref) {
 		String name;
 		if (ref.isMany()) {
-			name = SingularPluralConverter.toSingular(ref.getName());
+			name = singularPluralConverter.toSingular(ref.getName());
 		} else {
 			name = ref.getName();
 		}
@@ -483,7 +477,7 @@ public class DbHelperBase {
 
 		Reference ref1 = SculptormetamodelFactory.eINSTANCE.createReference();
 		ref1.setTo(ref.getTo());
-		ref1.setName(SingularPluralConverter.toSingular(ref.getName()));
+		ref1.setName(singularPluralConverter.toSingular(ref.getName()));
 		ref1.setDatabaseColumn(ref.getDatabaseColumn());
 		ref1.setFrom(relObj);
 		relObj.getReferences().add(ref1);
@@ -496,7 +490,7 @@ public class DbHelperBase {
 			ref2.setName(helperBase.toFirstLower(ref.getFrom().getName()));
 			ref2.setDatabaseColumn(getForeignKeyNameForUnidirectionalToManyWithJoinTable(ref));
 		} else {
-			ref2.setName(SingularPluralConverter.toSingular(ref.getOpposite().getName()));
+			ref2.setName(singularPluralConverter.toSingular(ref.getOpposite().getName()));
 			ref2.setDatabaseColumn(ref.getOpposite().getDatabaseColumn());
 		}
 		ref2.setFrom(relObj);
@@ -538,7 +532,7 @@ public class DbHelperBase {
 			return helperBase.getHintImpl(attribute.getHint(), hintParam);
 		}
 
-		String name1 = SingularPluralConverter.toSingular(attribute.getDatabaseColumn().toLowerCase()).toUpperCase();
+		String name1 = singularPluralConverter.toSingular(attribute.getDatabaseColumn().toLowerCase()).toUpperCase();
 		String name2 = ((DomainObject) attribute.eContainer()).getDatabaseTable();
 
 		return getJoinTableName(name1, name2, false);

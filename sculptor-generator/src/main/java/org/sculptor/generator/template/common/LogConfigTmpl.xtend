@@ -17,18 +17,15 @@
 
 package org.sculptor.generator.template.common
 
-import org.sculptor.generator.ext.GeneratorFactory
-import org.sculptor.generator.ext.GeneratorFactoryImpl
+import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 
 class LogConfigTmpl {
-	private static val GeneratorFactory GEN_FACTORY = GeneratorFactoryImpl::getInstance()
 
-
-	extension Helper helper = GEN_FACTORY.helper
+	@Inject extension Helper helper
 
 	def String logbackConfig(Application it) {
 		logbackXml(it)
