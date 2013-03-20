@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 module org.sculptor.generator.SculptorGenerator
+
+import org.sculptor.generator.mwe2.SculptorUniversalGuiceWorkflowComponent
 
 var modelFile
 
 Workflow {
-
 	// Read DSL model instance
 	component = org.eclipse.xtext.mwe.UriBasedReader {
 		uri = modelFile
@@ -38,9 +38,24 @@ Workflow {
 	}
 
 	// Model transformation from DSL meta model to meta model
-	component = org.sculptor.generator.mwe2.SculptorDslTransformationWorkflowComponent {
-		modelSlot = "model"
+	component = SculptorUniversalGuiceWorkflowComponent {
+		inputSlot = "model"
 		outputSlot = "transformed"
+		moduleClass = "org.sculptor.generator.transform.DslTransformationModule"
+		action = "org.sculptor.generator.transform.DslTransformation.transform"
 	}
 
+	component = SculptorUniversalGuiceWorkflowComponent {
+		inputSlot = "transformed"
+		outputSlot = "pass2transformation"
+		moduleClass = "org.sculptor.generator.transform.DslTransformationModule"
+		action = "org.sculptor.generator.transform.Transformation.modify"
+	}
+
+	component = SculptorUniversalGuiceWorkflowComponent {
+		inputSlot = "pass2transformation"
+		outputSlot = "product"
+		moduleClass = "org.sculptor.generator.template.TemplateModule"
+		action = "org.sculptor.generator.template.RootTmpl.Root"
+	}
 }
