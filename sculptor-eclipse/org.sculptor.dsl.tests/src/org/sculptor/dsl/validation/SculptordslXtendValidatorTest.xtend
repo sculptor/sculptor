@@ -101,15 +101,15 @@ class SculptordslXtendValidatorTest extends XtextTest {
 	def void testBadServiceAndRepositoryOperationReturnTypeOfDomainObject() {
 		val issues = testFile("operation_return_type_bad.btdesign")
 		assertEquals(2, issues.warningsOnly.size)
-		assertConstraints(issues.warningsOnly().inLine(5).under(typeof(DslServiceOperation), "anOperation").named("anOperation").oneOfThemContains("Use @SomeTypee"))
-		assertConstraints(issues.warningsOnly().inLine(9).under(typeof(DslRepositoryOperation), "findIt").named("findIt").oneOfThemContains("Use @SomeTypo"))
+		assertConstraints(issues.warningsOnly().inLine(5).under(typeof(DslServiceOperation), "anOperation").named("anOperation").oneOfThemContains("Use @SomeType"))
+		assertConstraints(issues.warningsOnly().inLine(9).under(typeof(DslRepositoryOperation), "findIt").named("findIt").oneOfThemContains("Use @SomeType"))
 	}
 
 	@Test
 	def void testBadParameterTypeOfDomainObject() {
 		val issues = testFile("operation_parameter_type_bad.btdesign")
 		assertEquals(1, issues.warningsOnly.size)
-		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslParameter), "toMatch").named("toMatch").oneOfThemContains("Use @SomeTypo"))
+		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslParameter), "toMatch").named("toMatch").oneOfThemContains("Use @SomeType"))
 	}
 
 }
