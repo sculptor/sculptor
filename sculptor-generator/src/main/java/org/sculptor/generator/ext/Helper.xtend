@@ -66,15 +66,18 @@ class Helper {
 	def public String fileOutput(String fileName, OutputSlot slot, String text) {
 		val JAVA_EXT = ".java"
 		val fName = if (fileName.endsWith(JAVA_EXT))
-			fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
-		else
-			fileName
+				fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
+			else
+				fileName
 		val ioDir = System::getProperty("java.io.tmpdir")
-		val fl = new File(ioDir + "/sculptor/" + slot.name + "/" + fName)
-		fl.parentFile.mkdirs()
-		var out = new FileWriter(fl)
-		out.write(text)
-		out.close()
+		val fl = new File(ioDir + "/sculptor/" + getProperty("outputSlot.path."+slot.name) + "/" + fName)
+		val overwrite = getProperty("outputSlot.path."+slot.name, "false")
+		if (!fl.exists || (fl.exists && "true" == overwrite)) {
+			fl.parentFile.mkdirs()
+			var out = new FileWriter(fl)
+			out.write(text)
+			out.close()
+		}
 		""
 	}
 

@@ -41,21 +41,20 @@ Workflow {
 	component = SculptorUniversalGuiceWorkflowComponent {
 		inputSlot = "model"
 		outputSlot = "transformed"
-		moduleClass = "org.sculptor.generator.transform.DslTransformationModule"
+		guiceModule = "org.sculptor.generator.transform.DslTransformationModule"
 		action = "org.sculptor.generator.transform.DslTransformation.transform"
 	}
 
 	component = SculptorUniversalGuiceWorkflowComponent {
 		inputSlot = "transformed"
 		outputSlot = "pass2transformation"
-		moduleClass = "org.sculptor.generator.transform.DslTransformationModule"
+		guiceModule = "org.sculptor.generator.transform.DslTransformationModule"
 		action = "org.sculptor.generator.transform.Transformation.modify"
 	}
 
 	component = SculptorUniversalGuiceWorkflowComponent {
 		inputSlot = "pass2transformation"
-		outputSlot = "product"
-		moduleClass = "org.sculptor.generator.template.TemplateModule"
+		guiceModule = "org.sculptor.generator.template.TemplateModule"
 		action = "org.sculptor.generator.template.RootTmpl.Root"
 	}
 }

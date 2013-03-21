@@ -33,7 +33,7 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 
 	private String inputSlot;
 	private String outputSlot;
-	private String moduleClass;
+	private String guiceModule;
 	private String action;
 
 	public void setInputSlot(String modelSlot) {
@@ -44,8 +44,8 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 		this.outputSlot = outputSlot;
 	}
 
-	public void setModuleClass(String moduleClass) {
-		this.moduleClass = moduleClass;
+	public void setGuiceModule(String guiceModule) {
+		this.guiceModule = guiceModule;
 	}
 
 	public void setAction(String action) {
@@ -55,8 +55,7 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 	@Override
 	protected void checkConfigurationInternal(Issues issues) {
 		checkRequiredConfigProperty("inputSlot", inputSlot, issues);
-		checkRequiredConfigProperty("outputSlot", outputSlot, issues);
-		checkRequiredConfigProperty("moduleClass", moduleClass, issues);
+		checkRequiredConfigProperty("moduleClass", guiceModule, issues);
 		checkRequiredConfigProperty("action", action, issues);
 	}
 
@@ -78,15 +77,15 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 		// Resolve module
 		Module module=null;
 		try {
-			Class<?> forName = Class.forName(moduleClass);
+			Class<?> forName = Class.forName(guiceModule);
 			Object moduleInst = forName.newInstance();
 			if (moduleInst instanceof Module) {
 				module = (Module) moduleInst;
 			} else {
-				issues.addError("Module '"+moduleClass+"' is not instance of com.google.inject.Module");
+				issues.addError("Module '"+guiceModule+"' is not instance of com.google.inject.Module");
 			}
 		} catch (Throwable th) {
-			issues.addError("Error creating module '"+moduleClass+"': " + th.getMessage());
+			issues.addError("Error creating module '"+guiceModule+"': " + th.getMessage());
 		}
 
 		// Resolve action (method to run)
@@ -113,7 +112,9 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 			Object result;
 			try {
 				result = actionMethod.invoke(actionObj, inputData);
-				ctx.set(outputSlot, result);
+				if (outputSlot != null) {
+					ctx.set(outputSlot, result);
+				}
 			} catch (Throwable th) {
 				issues.addError("Error invoking action '"+action+"': " + th.getMessage());
 			}
