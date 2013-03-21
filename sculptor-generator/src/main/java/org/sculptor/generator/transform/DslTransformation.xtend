@@ -76,6 +76,7 @@ import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 
 import static org.sculptor.generator.transform.DslTransformation.*
+import org.sculptor.generator.check.CheckCrossLink
 
 class DslTransformation {
 
@@ -86,12 +87,13 @@ class DslTransformation {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
+	@Inject extension CheckCrossLink checkCrossLink
+	
 	def create FACTORY.createApplication transform(DslApplication app) {
 		val allDslModules = app.modules
 		initPropertiesHook()
 		setGlobalApp(it)
-		// TODO check
-		// allDslModules.checkCrossLink()
+		allDslModules.forEach[checkCrossLink()]
 		setDoc(app.doc)
 		setName(app.name)
 		setBasePackage(app.basePackage)
