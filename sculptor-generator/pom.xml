@@ -111,6 +111,15 @@
 			<artifactId>eclipse-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.sculptor.eclipse</groupId>
+			<artifactId>eclipse-library</artifactId>
+			<classifier>test</classifier>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.sculptor.eclipse</groupId>
 			<artifactId>org.sculptor.dsl</artifactId>

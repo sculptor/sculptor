@@ -1,0 +1,189 @@
+Application Library {
+    basePackage = org.fornax.cartridges.sculptor.examples.library
+
+    Module media {
+
+        Service LibraryService {
+            hint="umlgraph=core"
+
+            findLibraryByName => LibraryRepository.findLibraryByName;
+            findMediaByName => MediaRepository.findMediaByName;
+            findMediaByCharacter => MediaRepository.findMediaByCharacter;
+            findPersonByName => PersonService.findPersonByName;
+            findByCondition => LibraryRepository.findByCondition;
+        }
+
+        Entity Library {
+            scaffold
+            gap
+            hint="umlgraph=core"
+
+            String name key
+            - Set<@PhysicalMedia> media <-> library
+
+            Repository LibraryRepository {
+                @Library findLibraryByName(String name) throws LibraryNotFoundException query="Library.findLibraryByName";
+                findByCondition(PagingParameter pagingParameter);
+            }
+        }
+
+        Entity PhysicalMedia {
+            scaffold
+            hint="umlgraph=core"
+
+            String status length="3"
+            String location
+            - @Library library nullable <-> media
+            - Set<@Media> media <-> physicalMedia
+
+            Repository PhysicalMediaRepository {
+                PagedResult findByCondition(PagingParameter pagingParameter);
+            }
+        }
+
+        Service MediaService {
+            findAll => MediaRepository.findAll;
+        }
+
+        abstract Entity Media {
+            gap
+            hint="umlgraph=core"
+
+            String title !changeable
+            - Set<@PhysicalMedia> physicalMedia inverse <-> media
+            - Set<@Engagement> engagements <-> media
+            - Set<@MediaCharacter> mediaCharacters <-> existsInMedia
+
+            Repository MediaRepository {
+                > @MediaCharacterRepository
+                save;
+                findById;
+                findAll;
+                findByQuery;
+                findByCondition;
+                protected findByKeys(Set<String> keys, String keyPropertyName, MediaClass persistentClass);
+                long getNumberOfMovies(IDTYPE libraryId) query="Movie.getNumberOfMovies";
+                List<@Media> findMediaByCharacter(IDTYPE libraryId, String characterName) gap;
+                Map<String, @Movie> findMovieByUrlIMDB(Set<String> keys) gap;
+                List<@Media> findMediaByName(IDTYPE libraryId, String title) query="Media.findMediaByTitle";
+            }
+        }
+
+        Entity Book extends @Media {
+            hint="umlgraph=core"
+            !auditable
+
+            String isbn key length="20"
+        }
+
+        Entity Movie extends @Media {
+            hint="umlgraph=core"
+            gap
+            !auditable
+
+            String urlIMDB key
+            Integer playLength
+            - @Genre category nullable
+        }
+
+        enum Genre {
+            ACTION,
+            COMEDY,
+            DRAMA,
+            SCI_FI,
+            SHORT
+        }
+
+        ValueObject Engagement {
+            belongsTo Media
+            String role
+            - @Person person
+            - @Media media <-> engagements
+        }
+
+        Service MediaCharacterService {
+            findAll => MediaCharacterRepository.findAll;
+        }
+
+        ValueObject MediaCharacter {
+            gap
+
+            String name !changeable
+            - Set<@Person> playedBy
+            - Set<@Media> existsInMedia <-> mediaCharacters
+
+            Repository MediaCharacterRepository {
+                findByQuery;
+                findAll;
+            }
+        }
+    }
+
+    Module person {
+        Service PersonService {
+          findPersonByName => PersonRepository.findPersonByName;
+          findByCondition => PersonRepository.findByCondition;
+        }
+
+        Entity Person {
+          gap
+          scaffold
+          Date birthDate past
+          Set<String> nicknames nullable
+          - @Gender sex !changeable
+          - @Ssn ssn key
+          - @PersonName name
+          - @Contact contact nullable
+
+          Repository PersonRepository {
+              List<@Person> findPersonByName(String name);
+              save;
+              save(Collection<@Person> entities);
+              findByQuery;
+              findByQuery(PagingParameter pagingParameter);
+              findByExample;
+              findByKeys;
+              findByKey hint="cache";
+              findByCriteria;
+              findByCriteria(PagingParameter pagingParameter);
+              findByCondition;
+              findAll(PagingParameter pagingParameter) hint="orderBy=name.last,name.first desc";
+          }
+        }
+
+		Entity Contact {
+			- @PersonName personName nullable;
+			String adress nullable;
+			String city nullable;
+			String zip nullable;
+			String state nullable;
+		}
+
+        BasicType Ssn {
+          String number key length="20"
+          - @Country country key
+        }
+
+        BasicType PersonName {
+          String first
+          String last
+        }
+
+        enum Gender {
+            FEMALE("F"),
+            MALE("M")
+        }
+
+        enum Country {
+            String alpha2 key
+            String alpha3
+            int numeric
+            SWEDEN("SE", "SWE", "752"),
+            NORWAY("NO", "NOR", "578"),
+            DENMARK("DK", "DNK", "208"),
+            US("US", "USA", "840")
+        }
+
+    }
+
+}
