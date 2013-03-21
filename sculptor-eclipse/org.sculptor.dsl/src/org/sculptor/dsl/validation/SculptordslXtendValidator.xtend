@@ -39,10 +39,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 
 	@Check
 	def checkDomainObjectDuplicateName(DslSimpleDomainObject obj) {
-		if (obj.name == null) {
-			return
-		}
-		if (obj.rootContainer.eAllOfClass(typeof(DslSimpleDomainObject)).filter [it.name == obj.name].size > 1) {
+		if (obj.name != null && obj.rootContainer.eAllOfClass(typeof(DslSimpleDomainObject)).filter [it.name == obj.name].size > 1) {
 			error("Duplicate name.  There is already an existing Domain Object named '"
 				+ obj.name + "'.", DSL_SIMPLE_DOMAIN_OBJECT__NAME, obj.name
 			);  
@@ -51,10 +48,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 
 	@Check
 	def checkServiceDuplicateName(DslService service) {
-		if (service.name == null) {
-			return
-		}
-		if (service.rootContainer.eAllOfType(typeof(DslService)).filter [it.name == service.name].size > 1) {
+		if (service.name != null && service.rootContainer.eAllOfType(typeof(DslService)).filter [it.name == service.name].size > 1) {
 			error("Duplicate name.  There is already an existing Service named '"
 				+ service.name + "'.", DSL_SERVICE_REPOSITORY_OPTION__NAME, service.name
 			);  
@@ -63,10 +57,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 
 	@Check
 	def checkRepositoryDuplicateName(DslRepository repository) {
-		if (repository.name == null) {
-			return
-		}
-		if (repository.rootContainer.eAllOfClass(typeof(DslRepository)).filter [it.name == repository.name].size > 1) {
+		if (repository.name != null && repository.rootContainer.eAllOfClass(typeof(DslRepository)).filter [it.name == repository.name].size > 1) {
 			error("Duplicate name.  There is already an existing Repository named '"
 				+ repository.name + "'.", DSL_SERVICE_REPOSITORY_OPTION__NAME, repository.name
 			);  
@@ -75,10 +66,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 
 	@Check
 	def checkModuleDuplicateName(DslModule module) {
-		if (module.name == null) {
-			return
-		}
-		if (module.rootContainer.eAllOfClass(typeof(DslModule)).filter [it.name == module.name].size > 1) {
+		if (module.name != null && module.rootContainer.eAllOfClass(typeof(DslModule)).filter [it.name == module.name].size > 1) {
 			error("Duplicate name.  There is already an existing Module named '"
 				+ module.name + "'.", DSL_MODULE__NAME, module.name
 			);  
@@ -87,10 +75,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 	
 	@Check
 	def checkApplicationDuplicateName(DslApplication app) {
-		if (app.name == null) {
-			return
-		}
-		if (app.rootContainer.eAllOfClass(typeof(DslApplication)).filter [it.name == app.name].size > 1) {
+		if (app.name != null && app.rootContainer.eAllOfClass(typeof(DslApplication)).filter [it.name == app.name].size > 1) {
 			error("Duplicate name.  There is already an existing Application named '"
 				+ app.name + "'.", DSL_APPLICATION__NAME, app.name
 			);  
@@ -122,7 +107,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 	@Check
 	def checkMissingDomainObjectInServiceOperationReturnType(DslServiceOperation it) {
 		if(returnType != null && returnType.domainObjectType == null && returnType.type != null &&
-		   returnType.firstDomainObjectForType == null) {
+		   returnType.firstDomainObjectForType != null) {
 			warning("Use @" + returnType.type, DSL_SERVICE_OPERATION__RETURN_TYPE, returnType.type)
 		}
 	}
@@ -130,7 +115,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 	@Check
 	def checkMissingDomainObjectInRepositoryOperationReturnType(DslRepositoryOperation it) {
 		if(returnType != null && returnType.domainObjectType == null && returnType.type != null &&
-		   returnType.firstDomainObjectForType == null) {
+		   returnType.firstDomainObjectForType != null) {
 			warning("Use @" + returnType.type, DSL_REPOSITORY_OPERATION__RETURN_TYPE, returnType.type)
 		}
 	}
@@ -138,7 +123,7 @@ class SculptordslXtendValidator extends SculptordslJavaValidator {
 	@Check
 	def checkMissingDomainObjectInParameter(DslParameter it) {
 		if(parameterType != null && parameterType.domainObjectType == null && parameterType.type != null &&
-		   parameterType.firstDomainObjectForType == null) {
+		   parameterType.firstDomainObjectForType != null) {
 			warning("Use @" + parameterType.type, DSL_PARAMETER__PARAMETER_TYPE, parameterType.type)
 		}
 	}

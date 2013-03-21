@@ -45,7 +45,7 @@ class CheckCrossLink {
 
 	@Inject extension HelperBase helperBase
 
-	def checkCrossLink(DslModule module) {
+	def void checkCrossLink(DslModule module) {
 
 		module.domainObjects.forEach[checkSimpleDomainObjectCrossLink()]
 		

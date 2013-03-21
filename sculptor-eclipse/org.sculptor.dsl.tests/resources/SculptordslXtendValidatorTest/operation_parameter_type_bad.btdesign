@@ -3,7 +3,8 @@ Application App {
 	Module mod {
 		Entity SomeType {
 			Repository SomeTypeRepository {
-				@SomeType findSomeTypeMatching(SomeTypo toMatch);
+				@SomeType findSomeTypeMatching(SomeType toMatch, String aParam);
+				@SomeType findSomeTypeMatching2(@SomeType toMatch);
 			}
 		}
 	}
