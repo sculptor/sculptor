@@ -70,7 +70,7 @@ def String repositoryInterface(Repository it) {
 	«IF pureEjb3()»
 	@javax.ejb.Local
 	«ENDIF »
-	public interface «name» «IF subscribe != null»^extends «fw("event.EventSubscriber")» «ENDIF» {
+	public interface «name» «IF subscribe != null»extends «fw("event.EventSubscriber")» «ENDIF» {
 
 	«IF isSpringToBeGenerated()»
 		public final static String BEAN_ID = "«name.toFirstLower()»";
@@ -129,30 +129,30 @@ def String repositoryBase(Repository it) {
 
 		«repositoryDependencies(it)»
 
-		«it.operations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | baseRepositoryMethod(op)]»
-		«it.operations.filter(op | op.isGenericAccessObject()).filter(e|!e.hasPagingParameter()).map[op | genericBaseRepositoryMethod(op)]»
-		«it.operations.filter(op | op.isGenericAccessObject() && op.hasPagingParameter()).map[op | pagedGenericBaseRepositoryMethod(op)]»
+		«it.operations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | baseRepositoryMethod(op)].join()»
+		«it.operations.filter(op | op.isGenericAccessObject()).filter(e|!e.hasPagingParameter()).map[op | genericBaseRepositoryMethod(op)].join()»
+		«it.operations.filter(op | op.isGenericAccessObject() && op.hasPagingParameter()).map[op | pagedGenericBaseRepositoryMethod(op)].join()»
 
-		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).map[op | abstractBaseRepositoryMethod(op)]»
-		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && op.isGeneratedFinder()).map[op | finderMethod(op)]»
+		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).map[op | abstractBaseRepositoryMethod(op)].join()»
+		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && op.isGeneratedFinder()).map[op | finderMethod(op)].join()»
 
-	«IF isJpa1() && isJpaProviderDataNucleus() && !pureEjb3()»
-		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
-		private javax.persistence.EntityManager entityManager;
-	«ENDIF»
-
-	«IF pureEjb3() && jpa()»
-		«entityManagerDependency(it) »
-	«ELSEIF isSpringToBeGenerated() && jpa()»
-		«daoSupportEntityManagerDependency(it) »
-	«ELSEIF mongoDb()»
-		«dbManagerDependency(it)»
-	«ENDIF»
-
-	«accessObjectFactory(it)»
-
-	«repositoryHook(it)»
-
+		«IF isJpa1() && isJpaProviderDataNucleus() && !pureEjb3()»
+			@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
+			private javax.persistence.EntityManager entityManager;
+		«ENDIF»
+	
+		«IF pureEjb3() && jpa()»
+			«entityManagerDependency(it) »
+		«ELSEIF isSpringToBeGenerated() && jpa()»
+			«daoSupportEntityManagerDependency(it) »
+		«ELSEIF mongoDb()»
+			«dbManagerDependency(it)»
+		«ENDIF»
+	
+		«accessObjectFactory(it)»
+	
+		«repositoryHook(it)»
+	
 	}
 	'''
 	)
@@ -176,8 +176,8 @@ def String entityManagerDependency(Repository it) {
 	private javax.persistence.EntityManager entityManager;
 
 		/**
-			* Dependency injection
-			*/
+		 * Dependency injection
+		 */
 		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
 		protected void setEntityManager(javax.persistence.EntityManager entityManager) {
 			this.entityManager = entityManager;
@@ -195,7 +195,7 @@ def String dbManagerDependency(Repository it) {
 	private «fw("accessimpl.mongodb.DbManager")» dbManager;
 
 	protected «fw("accessimpl.mongodb.DbManager")» getDbManager() {
-	    return dbManager;
+		return dbManager;
 	}
 	'''
 }
@@ -205,8 +205,8 @@ def String daoSupportEntityManagerDependency(Repository it) {
 		private javax.persistence.EntityManager entityManager;
 
 		/**
-			* Dependency injection
-			*/
+		 * Dependency injection
+		 */
 		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
 		protected void setEntityManagerDependency(javax.persistence.EntityManager entityManager) {
 			this.entityManager = entityManager;
@@ -254,12 +254,12 @@ def String repositorySubclass(Repository it) {
 	«IF pureEjb3()»
 	@javax.ejb.Stateless(name="«name.toFirstLower()»")
 	«ENDIF»
-	public class «name + getSuffix("Impl")» ^extends «name»Base {
+	public class «name + getSuffix("Impl")» extends «name»Base {
 
 		public «name + getSuffix("Impl")»() {
 		}
 
-	«otherDependencies(it)»
+		«otherDependencies(it)»
 
 		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).map[subclassRepositoryMethod(it)].join()»
 
@@ -368,7 +368,7 @@ def String setCache(RepositoryOperation it) {
 
 def String setOrdered(RepositoryOperation it) {
 	'''
-		/*JPA2 supports multiple ordering columns, e.g. hint="orderBy=col1 asc, col2 desc" */
+		«/* JPA2 supports multiple ordering columns, e.g. hint="orderBy=col1 asc, col2 desc" */»
 		«IF isJpa2()»
 			«IF it.hasHint("orderBy")»
 				ao.setOrderBy("«it.getHint("orderBy",";")»");
@@ -386,7 +386,7 @@ def String setOrdered(RepositoryOperation it) {
 
 def String setQueryHint(RepositoryOperation it) {
 	'''
-		/*TODO: complete queryHint */
+		« /* TODO: complete queryHint */ »
 		«IF it.hasHint("queryHint")»
 			ao.setHint("«it.getHint("queryHint")»);
 		«ENDIF»
@@ -409,7 +409,7 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		«ENDIF»
 
-			/* TODO:implement a better solution */
+			«/* TODO:implement a better solution */»
 			«IF it.useGenericAccessStrategy()»
 				«IF name != "findByExample"»
 					«genericAccessObjectInterface(name)»2<R> ao = create«getAccessObjectName()»(resultType);
@@ -424,8 +424,8 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 			«IF it.hasHint("useSingleResult")»
 				ao.setUseSingleResult(true);
 			«ENDIF»
-			«IF name != "findByKey" »
-				/* TODO: why do you need to remove persistentClass from parameter list? */
+			«IF name != "findByKey"»
+				«/* TODO: why do you need to remove persistentClass from parameter list? */»
 				«FOR parameter : parameters.filter[e | !(isJpa2() && e.name == "persistentClass")]»
 					ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
 				«ENDFOR»
@@ -709,8 +709,8 @@ def String findByNaturalKeysInterfaceRepositoryMethod(RepositoryOperation it, St
 		«val fullAggregateRootName  = it.repository.aggregateRoot.getDomainPackage() + "." + repository.aggregateRoot.name»
 		«val naturalKeyObjectType  = naturalKeyTypeName.getObjectTypeName()»
 		/**
-		* Find by the natural keys.
-		*/
+		 * Find by the natural keys.
+		 */
 		public java.util.Map<«naturalKeyObjectType», «fullAggregateRootName»> findByNaturalKeys(java.util.Set<«naturalKeyObjectType»> naturalKeys);
 		«ENDIF»
 	'''
@@ -813,21 +813,21 @@ def String throwNotFoundException(RepositoryOperation it) {
 def String subclassRepositoryMethod(RepositoryOperation it) {
 	'''
 		«repositoryMethodAnnotation(it)»
-		«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») {
-		«IF !delegateToAccessObject»
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("«name» not implemented");
-		«ELSE»
-			«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()» ao = create«getAccessObjectName()»();
-		«FOR parameter : parameters»
-			ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
-		«ENDFOR»
-			ao.execute();
-		«IF it.getTypeName() != "void" »
-			return ao.getResult();
-		«ENDIF»
-		«ENDIF»
-			}
+		«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(", ")») {
+			«IF !delegateToAccessObject»
+				// TODO Auto-generated method stub
+				throw new UnsupportedOperationException("«name» not implemented");
+			«ELSE»
+				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()» ao = create«getAccessObjectName()»();
+				«FOR parameter : parameters»
+					ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
+				«ENDFOR»
+				ao.execute();
+				«IF it.getTypeName() != "void" »
+					return ao.getResult();
+				«ENDIF»
+			«ENDIF»
+		}
 	'''
 }
 
@@ -841,7 +841,7 @@ def String repositoryDependencyInjectionJUnit(Repository it) {
 	 * JUnit test to verify that dependency injection setter methods
 	 * of other Spring beans have been implemented.
 	 */
-	public class «name»DependencyInjectionTest ^extends junit.framework.TestCase {
+	public class «name»DependencyInjectionTest extends junit.framework.TestCase {
 
 		«it.otherDependencies.map[d | repositoryDependencyInjectionTestMethod(d, it)].join()»
 
@@ -850,7 +850,9 @@ def String repositoryDependencyInjectionJUnit(Repository it) {
 	)
 }
 
-/*This (String) is the name of the dependency */
+/*
+ * This (String) is the name of the dependency
+ */
 def String repositoryDependencyInjectionTestMethod(String it, Repository repository) {
 	'''
 		public void test«it.toFirstUpper()»Setter() throws Exception {
@@ -887,33 +889,33 @@ def String repositoryDependencyInjectionTestMethod(String it, Repository reposit
 }
 
 def String paramTypeAndName(Parameter it) {
-	'''
-	«it.getTypeName()» «name»
-	'''
+	'''«it.getTypeName()» «name»'''
 }
 
-/*Extension point to generate more stuff in repository interface.
-	Use AROUND repositoryTmpl.repositoryInterfaceHook FOR Repository
-	in SpecialCases.xpt */
+/*
+ * Extension point to generate more stuff in repository interface.
+ * Use AROUND repositoryTmpl.repositoryInterfaceHook FOR Repository
+ * in SpecialCases.xpt
+ */
 def String repositoryInterfaceHook(Repository it) {
-	'''
-	'''
+	""
 }
 
-/*Extension point to generate more stuff in repository implementation.
-	Use AROUND repositoryTmpl.repositoryHook FOR Repository
-	in SpecialCases.xpt */
+/*
+ * Extension point to generate more stuff in repository implementation.
+ * Use AROUND repositoryTmpl.repositoryHook FOR Repository
+ * in SpecialCases.xpt
+ */
 def String repositoryHook(Repository it) {
-	'''
-	'''
+	""
 }
 
-/*Extension point to generate annotations for repository methods.
-	Use AROUND repositoryTmpl.repositoryMethodAnnotation FOR RepositoryOperation
-	in SpecialCases.xpt */
+/*
+ * Extension point to generate annotations for repository methods.
+ * Use AROUND repositoryTmpl.repositoryMethodAnnotation FOR RepositoryOperation
+ * in SpecialCases.xpt
+ */
 def String repositoryMethodAnnotation(RepositoryOperation it) {
-	'''
-	«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
-	'''
+	'''«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»'''
 }
 }

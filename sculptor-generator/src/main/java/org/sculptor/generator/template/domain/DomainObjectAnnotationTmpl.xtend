@@ -64,7 +64,7 @@ def String domainObjectSubclassAnnotations(DomainObject it) {
 	'''
 }
 
-/*We need to format this carefully because it is included in JavaDoc, which is not beautified. */
+/* We need to format this carefully because it is included in JavaDoc, which is not beautified. */
 def String domainObjectAnnotations(DomainObject it) {
 	'''
 		«IF it.isEmbeddable() »
@@ -118,15 +118,11 @@ def String domainObjectBaseAnnotations(DomainObject it) {
 }
 
 def String xmlRootAnnotation(DomainObject it) {
-	'''
-		@javax.xml.bind.annotation.XmlRootElement(name="«it.getXmlRootElementName()»")
-	'''
+	'''@javax.xml.bind.annotation.XmlRootElement(name="«it.getXmlRootElementName()»")'''
 }
 
 def String xstreamAliasAnnotation(DomainObject it) {
-	'''
-		@com.thoughtworks.xstream.annotations.XStreamAlias("«it.getXStreamAliasName()»")
-	'''
+	'''@com.thoughtworks.xstream.annotations.XStreamAlias("«it.getXStreamAliasName()»")'''
 }
 
 /*set EntityListerners for Validation and Audit */
@@ -184,9 +180,7 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 }
 
 def String uniqueConstraints(DomainObject it) {
-	'''
-	, uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})
-	'''
+	''', uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})'''
 }
 
 def String uniqueColumns(NamedElement it, String columnPrefix) {
@@ -196,7 +190,7 @@ def String uniqueColumns(NamedElement it, String columnPrefix) {
 def String uniqueColumns(Reference it, String columnPrefix) {
 	'''«IF it.isBasicTypeReference()»
 		«to.getAllNaturalKeys().map[k | uniqueColumns(k, getDatabaseName(columnPrefix, it) + "_")].join(", ")»
-		«ELSE»"«getDatabaseName(columnPrefix, it)»"«ENDIF»	'''
+		«ELSE»"«getDatabaseName(columnPrefix, it)»"«ENDIF»'''
 }
 
 }

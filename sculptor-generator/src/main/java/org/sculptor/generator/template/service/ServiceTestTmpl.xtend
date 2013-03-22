@@ -43,12 +43,10 @@ def String serviceJUnitBase(Service it) {
 	 * Definition of test methods to implement.
 	 */
 	public interface «name»TestBase {
-
-		/*There may be several operations with the same name
-				and to avoid name collision we only generate one test method.
-			*/
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[testInterfaceMethod(it)]»
-
+		«/* There may be several operations with the same name
+		  * and to avoid name collision we only generate one test method.
+		  */»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[testInterfaceMethod(it)].join()»
 	}
 	'''
 	)
@@ -71,13 +69,13 @@ def String serviceJUnitSubclassWithAnnotations(Service it) {
 	/**
 	 * Spring based transactional test with DbUnit support.
 	 */
-	public class «name»Test ^extends «databaseJpaTestCaseClass()» implements «name»TestBase {
+	public class «name»Test extends «databaseJpaTestCaseClass()» implements «name»TestBase {
 
 		«serviceJUnitDependencyInjection(it)»
-		
+
 		«serviceJUnitGetDataSetFile(it)»
 
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[testMethod(it)].join()»
 	}
 	'''
 	)
@@ -130,9 +128,9 @@ def String serviceJUnitGetDataSetFile(Service it) {
 	'''
 	«IF getDbUnitDataSetFile() != null»
 		@Override
-			protected String getDataSetFile() {
-				return "«getDbUnitDataSetFile()»";
-			}
+		protected String getDataSetFile() {
+			return "«getDbUnitDataSetFile()»";
+		}
 	«ENDIF»
 	'''
 }
@@ -141,10 +139,10 @@ def String serviceJUnitGetDataSetFile(Service it) {
 def String testMethod(String it) {
 	'''
 	@org.junit.Test
-		public void test«it.toFirstUpper()»() throws Exception {
-			// TODO Auto-generated method stub
-			fail("test«it.toFirstUpper()» not implemented");
-		}
+	public void test«it.toFirstUpper()»() throws Exception {
+		// TODO Auto-generated method stub
+		fail("test«it.toFirstUpper()» not implemented");
+	}
 	'''
 }
 

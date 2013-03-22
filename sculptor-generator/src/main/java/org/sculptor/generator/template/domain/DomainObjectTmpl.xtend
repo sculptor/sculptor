@@ -78,7 +78,9 @@ def String domainObjectSubclass(DataTransferObject it) {
 
 	«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
 	public «getAbstractLitteral(it)»class «name» extends «name»Base {
+
 		«serialVersionUID(it)»
+
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty || getMinimumConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
 
@@ -98,13 +100,15 @@ def String domainObjectSubclass(DomainObject it) {
 	package «getDomainPackage()»;
 
 	«domainObjectSubclassJavaDoc(it)»
+
 	«IF isJpaAnnotationToBeGenerated()»
 		«domainObjectAnnotationTmpl.domainObjectAnnotations(it)»
 	«ENDIF»
-
 	«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
 	public «getAbstractLitteral(it)»class «name» extends «name»Base {
+
 		«serialVersionUID(it)»
+
 		«IF isJpaProviderDataNucleus() || getLimitedConstructorParameters(it).isEmpty»public«ELSE»protected«ENDIF» «name»() {
 		}
 
@@ -114,7 +118,7 @@ def String domainObjectSubclass(DomainObject it) {
 			«domainObjectConstructorTmpl.propertyConstructorBaseIdReferencesSubclass(it)»
 		«ENDIF»
 
-		«it.operations.filter(e | e.isImplementedInGapClass()).map[o | domainObjectSubclassImplMethod(o)]»
+		«it.operations.filter(e | e.isImplementedInGapClass()).map[o | domainObjectSubclassImplMethod(o)].join()»
 	}
 	'''
 	)
@@ -150,12 +154,15 @@ def String domainObjectBase(DomainObject it) {
 	package «getDomainPackage()»;
 
 	«domainObjectBaseJavaDoc(it)»
+
 	«IF !gapClass && isJpaAnnotationToBeGenerated()»
 		«domainObjectAnnotationTmpl.domainObjectAnnotations(it) »
 	«ENDIF»
 	«domainObjectAnnotationTmpl.domainObjectBaseAnnotations(it)»
 	public «IF gapClass || ^abstract»abstract «ENDIF»class «name»«IF gapClass»Base«ENDIF» «getExtendsAndImplementsLitteral(it)» {
+
 		«serialVersionUID(it)»
+
 		«it.attributes.map[a | domainObjectAttributeTmpl.attribute(a)].join()»
 
 		«it.references.filter(r | !r.many).map[r | domainObjectReferenceTmpl.oneReferenceAttribute(r)].join()»
@@ -471,7 +478,7 @@ def String enumNamePropertyGetter(Enum it) {
 	'''
 	public String getName() {
 		return name();
-		}
+	}
 	'''
 }
 
@@ -506,9 +513,7 @@ def String abstractMethod(DomainObjectOperation it) {
 }
 
 def String methodParameterTypeAndName(Parameter it) {
-	'''
-	«it.getTypeName()» «name»
-	'''
+	'''«it.getTypeName()» «name»'''
 }
 
 /* Extension point to generate more stuff in DomainObjects.

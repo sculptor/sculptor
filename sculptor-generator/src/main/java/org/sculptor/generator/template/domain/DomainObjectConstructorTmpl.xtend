@@ -35,13 +35,11 @@ class DomainObjectConstructorTmpl {
 	@Inject extension Helper helper
 	@Inject extension Properties properties
 
-def String parameterTypeAndNameIdReference(NamedElement it) {
-	'''
-		«parameterTypeAndName(it)»
-	'''
+def dispatch String parameterTypeAndNameIdReference(NamedElement it) {
+	'''«parameterTypeAndName(it)»'''
 }
 
-def String parameterTypeAndNameIdReference(Reference it) {
+def dispatch String parameterTypeAndNameIdReference(Reference it) {
 	'''
 		«IF !it.isUnownedReference()»
 			«parameterTypeAndName(it)»
@@ -55,31 +53,26 @@ def String parameterTypeAndNameIdReference(Reference it) {
 	'''
 }
 
-def String parameterTypeAndName(NamedElement it) {
+def dispatch String parameterTypeAndName(NamedElement it) {
+	error("DomainObjectConstructorTmpl.parameterTypeAndName wrong element type " + it.^class)
 	'''
 	'''
 }
 
-def String parameterTypeAndName(TypedElement it) {
-	'''
-		«parameterAnnotations(it)» «it.getTypeName()» «name»
-	'''
+def dispatch String parameterTypeAndName(TypedElement it) {
+	'''«parameterAnnotations(it)» «it.getTypeName()» «name»'''
 }
 
-def String parameterTypeAndName(Reference it) {
-	'''
-		«IF many»
-			«parameterAnnotations(it)» «it.getCollectionInterfaceType()»<«it.getTypeName()»> «name»
-		«ELSE»
-			«parameterAnnotations(it)» «it.getTypeName()» «name»
-		«ENDIF»
-	'''
+def dispatch String parameterTypeAndName(Reference it) {
+	'''«IF many»«
+			parameterAnnotations(it)» «it.getCollectionInterfaceType()»<«it.getTypeName()»> «name»«
+		ELSE»«
+			parameterAnnotations(it)» «it.getTypeName()» «name»«
+		ENDIF»'''
 }
 
 def String parameterAnnotations(NamedElement it) {
-	'''
-		«IF isGenerateParameterName()» @«fw("annotation.Name")»("«name»")«ENDIF»
-	'''
+	'''«IF isGenerateParameterName()»@«fw("annotation.Name")»("«name»")«ENDIF»'''
 }
 
 

@@ -157,13 +157,13 @@ def String springControllerAnnotation(Resource it) {
 def String delegateServices(Resource it) {
 	'''
 	«FOR delegateService  : it.getDelegateServices()»
-			@org.springframework.beans.factory.annotation.Autowired
-			private «getServiceapiPackage(delegateService)».«delegateService.name» «delegateService.name.toFirstLower()»;
+		@org.springframework.beans.factory.annotation.Autowired
+		private «getServiceapiPackage(delegateService)».«delegateService.name» «delegateService.name.toFirstLower()»;
 
-			protected «getServiceapiPackage(delegateService)».«delegateService.name» get«delegateService.name»() {
-				return «delegateService.name.toFirstLower()»;
-			}
-		«ENDFOR»
+		protected «getServiceapiPackage(delegateService)».«delegateService.name» get«delegateService.name»() {
+			return «delegateService.name.toFirstLower()»;
+		}
+	«ENDFOR»
 	'''
 }
 
@@ -202,8 +202,8 @@ def String resourceMethodFromForm(ResourceOperation it) {
 	'''
 	«IF !it.hasHint("headers") || (it.getHint("headers") != "content-type=application/x-www-form-urlencoded")»
 		/**
-			* This method is needed for form data «httpMethod.toString()». Delegates to {@link #«name»}
-			*/
+		 * This method is needed for form data «httpMethod.toString()». Delegates to {@link #«name»}
+		 */
 		«resourceMethodAnnotation(it, true)»
 		«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»FromForm(«it.parameters.map[p | annotatedParamTypeAndName(p, it, true)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 			«IF returnString != null || it.getTypeName() != "void"»return «ENDIF»«name»(«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
@@ -221,14 +221,14 @@ def String resourceMethodHandWritten(ResourceOperation it) {
 		«resourceCreateFormMethodHandWritten(it, modelMapParam, postOperation)»
 	«ELSEIF name == "updateForm" && returnString != null && modelMapParam != null»
 		«resourceUpdateFormMethodHandWritten(it, modelMapParam, putOperation)»
-	«ELSE»	
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("«name» not implemented");
-			«IF modelMapParam != null »
+	«ELSE»
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("«name» not implemented");
+		«IF modelMapParam != null »
 			// «modelMapParam.name».addAttribute("result", result);
 		«ENDIF »
-			«IF returnString != null»// return "«returnString»";«ENDIF»
-		«ENDIF»
+		«IF returnString != null»// return "«returnString»";«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -260,8 +260,6 @@ def String resourceUpdateFormMethodHandWritten(ResourceOperation it, Parameter m
 	'''
 }
 
-
-
 def String resourceMethodValidation(ResourceOperation it) {
 	'''
 	'''
@@ -273,9 +271,9 @@ def String resourceMethodDelegation(ResourceOperation it) {
 		«resourceMethodDeleteDelegation(it)»
 	«ELSE »
 		«IF delegate.getTypeName() != "void"»«delegate.getTypeName()» result = «ENDIF»
-	    	«delegate.service.name.toFirstLower()».«delegate.name»(«FOR parameter : delegate.parameters SEPARATOR ", "»«IF parameter.getTypeName() == serviceContextClass()
-	            	»serviceContext()«ELSE»«parameter.name»«ENDIF»«ENDFOR»);
-		«ENDIF»
+			«delegate.service.name.toFirstLower()».«delegate.name»(«FOR parameter : delegate.parameters SEPARATOR ", "»«IF parameter.getTypeName() == serviceContextClass()
+			»serviceContext()«ELSE»«parameter.name»«ENDIF»«ENDFOR»);
+	«ENDIF»
 	'''
 }
 
@@ -318,9 +316,9 @@ def String resourceMethodModelMapResult(ResourceOperation it) {
 def String resourceAbstractMethod(ResourceOperation it) {
 	'''
 		/* 
-		«resourceMethodAnnotation(it, false) »
+		«resourceMethodAnnotation(it, false)»
 		«resourceMethodSignature(it)» */
-	«it.getVisibilityLitteral()» abstract «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
+		«it.getVisibilityLitteral()» abstract «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
@@ -343,7 +341,7 @@ def String paramTypeAndName(Parameter it) {
 	'''
 }
 
-/*Must format this carefully because it is included in comment */
+/* Must format this carefully because it is included in comment */
 def String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean formData) {
 	'''« IF op.httpMethod == HttpMethod::DELETE && domainObjectType != null && domainObjectType.getIdAttribute() != null && op.path.contains("{id}")
 	»@org.springframework.web.bind.annotation.PathVariable("id") «domainObjectType.getIdAttributeType()» id« ELSE
@@ -353,7 +351,7 @@ def String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean
 	»@org.springframework.web.bind.annotation.RequestBody « ELSEIF it.isRestRequestParameter()
 	»@org.springframework.web.bind.annotation.RequestParam("«name»") « ENDIF
 	»«it.getTypeName()» «name»« ENDIF
-»	'''
+»'''
 }
 
 def String handleExceptions(Resource it) {
@@ -406,9 +404,9 @@ def String handleSystemException(String it) {
 }
 
 
-/*Extension point to generate more stuff in service implementation.
-	User AROUND resourceTmpl.resourceHook FOR Resource
-	in SpecialCases.xpt */
+/* Extension point to generate more stuff in service implementation.
+ * User AROUND resourceTmpl.resourceHook FOR Resource in SpecialCases.xpt
+ */
 def String resourceHook(Resource it) {
 	'''
 	'''
