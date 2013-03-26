@@ -20,28 +20,29 @@ package org.sculptor.dsl.validation
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
+import org.junit.Before
 import org.junit.Test
-import static org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
-import org.junit.Before
-import org.sculptor.dsl.sculptordsl.DslEntity
-import org.sculptor.dsl.sculptordsl.DslValueObject
-import org.sculptor.dsl.sculptordsl.DslService
-import org.sculptor.dsl.sculptordsl.DslAttribute
-import org.sculptor.dsl.sculptordsl.DslRepository
-import org.sculptor.dsl.sculptordsl.DslModule
 import org.sculptor.dsl.sculptordsl.DslApplication
-import org.sculptor.dsl.sculptordsl.DslServiceOperation
-import org.sculptor.dsl.sculptordsl.DslRepositoryOperation
+import org.sculptor.dsl.sculptordsl.DslAttribute
+import org.sculptor.dsl.sculptordsl.DslEntity
+import org.sculptor.dsl.sculptordsl.DslModule
 import org.sculptor.dsl.sculptordsl.DslParameter
+import org.sculptor.dsl.sculptordsl.DslRepository
+import org.sculptor.dsl.sculptordsl.DslRepositoryOperation
+import org.sculptor.dsl.sculptordsl.DslService
+import org.sculptor.dsl.sculptordsl.DslServiceOperation
+import org.sculptor.dsl.sculptordsl.DslValueObject
+
+import static org.junit.Assert.*
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
-class SculptordslXtendValidatorTest extends XtextTest {
+class SculptordslValidatorITest extends XtextTest {
 
 	new() {
-		super("SculptordslXtendValidatorTest")
+		super("SculptordslValidatorITest")
 	}
 
 	@Before
@@ -81,7 +82,7 @@ class SculptordslXtendValidatorTest extends XtextTest {
 		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
 	}
 
-//	@Test()  - Disabled for now.  The testFile() method is only validating resources in main file, so can't get duplicate Application/ApplicationPart objects
+//	@Test Disabled for now.  The testFile() method is only validating resources in main file, so can't get duplicate Application/ApplicationPart objects
 	def void testCheckAppDuplicateName() {
 		val issues = testFile("app_duplicate_name.btdesign", "app_duplicate_name_part.btdesign")
 		assertEquals(4, issues.errorsOnly.size)

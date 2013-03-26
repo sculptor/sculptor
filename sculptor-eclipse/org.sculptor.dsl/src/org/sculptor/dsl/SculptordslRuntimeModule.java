@@ -20,11 +20,6 @@ package org.sculptor.dsl;
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-public class SculptordslRuntimeModule extends org.sculptor.dsl.AbstractSculptordslRuntimeModule {
-
-	@Override
-	@org.eclipse.xtext.service.SingletonBinding(eager=true)	public Class<? extends org.sculptor.dsl.validation.SculptordslJavaValidator> bindSculptordslJavaValidator() {
-		return org.sculptor.dsl.validation.SculptordslXtendValidator.class;
-	}
+public class SculptordslRuntimeModule extends AbstractSculptordslRuntimeModule {
 
 }

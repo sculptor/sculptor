@@ -15,27 +15,12 @@
  * limitations under the License.
  */
 
-package org.sculptor.dsl.ui.labeling;
+package org.sculptor.dsl.ui.contentassist
 
-import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider;
+import org.sculptor.dsl.ui.contentassist.AbstractSculptordslProposalProvider
 
 /**
- * Provides labels for a IEObjectDescriptions and IResourceDescriptions.
- * 
- * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
+ * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
-public class SculptordslDescriptionLabelProvider extends DefaultDescriptionLabelProvider {
-
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(IEObjectDescription ele) {
-	  return "my "+ele.getName();
-	}
-	 
-    String image(IEObjectDescription ele) {
-      return ele.getEClass().getName() + ".gif";
-    }	 
-*/
-
+class SculptordslProposalProvider extends AbstractSculptordslProposalProvider {
 }

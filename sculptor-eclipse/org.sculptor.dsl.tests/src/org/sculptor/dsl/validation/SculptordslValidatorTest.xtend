@@ -20,25 +20,26 @@ package org.sculptor.dsl.validation
 import com.google.inject.Injector
 import javax.inject.Inject
 import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.validation.ValidatorTester
+import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
+import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 
-@RunWith(typeof(XtextRunner))
+@RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
-class SculptordslJavaValidatorTest {
+class SculptordslValidatorTest extends XtextTest {
 
 	@Inject Injector injector
-	@Inject SculptordslJavaValidator validator  
-	ValidatorTester<SculptordslJavaValidator> tester;
+	@Inject SculptordslValidator validator  
+	ValidatorTester<SculptordslValidator> tester;
 
 	@Before
 	def void prepareTester() {
-		tester = new ValidatorTester<SculptordslJavaValidator>(validator, injector)
+		tester = new ValidatorTester<SculptordslValidator>(validator, injector)
 	}
 
 	@Test
