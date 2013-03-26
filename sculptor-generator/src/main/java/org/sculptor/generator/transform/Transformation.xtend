@@ -102,24 +102,24 @@ class Transformation {
 		domainObject.addIfNotExists(op.mixinClone(domainObject))
 	}
 
-	def addIfNotExists(DomainObject domainObject, Attribute a) {
+	def dispatch addIfNotExists(DomainObject domainObject, Attribute a) {
 		if (!domainObject.attributes.exists(e | e.name == a.name))
 			domainObject.attributes.add(a)
 	}
 
-	def addIfNotExists(DomainObject domainObject, Reference r) {
+	def dispatch addIfNotExists(DomainObject domainObject, Reference r) {
 		if (!domainObject.references.exists(e | r.name == r.name))
 			domainObject.references.add(r)
 	}
 
-	def addIfNotExists(DomainObject domainObject, DomainObjectOperation op) {
+	def dispatch addIfNotExists(DomainObject domainObject, DomainObjectOperation op) {
 		if (((op.parameters.size != 1) || !domainObject.attributes.exists(e | "set" + e.name.toFirstUpper() == op.name))
 			&& (!op.parameters.isEmpty || !domainObject.attributes.exists(e | e.getGetAccessor() == op.name))
 			&& !domainObject.operations.exists(e | e.name == op.name && e.type == op.type && e.parameters.size == op.parameters.size))
 			domainObject.operations.add(op)
 	}
 
-	def create FACTORY.createAttribute mixinClone(Attribute att, DomainObject domainObject) {
+	def dispatch create FACTORY.createAttribute mixinClone(Attribute att, DomainObject domainObject) {
 		setChangeable(att.changeable)
 		setCollectionType(att.collectionType)
 		setDatabaseColumn(att.databaseColumn)
@@ -140,7 +140,7 @@ class Transformation {
 		setVisibility(att.visibility)
 	}
 
-	def create FACTORY.createReference mixinClone(Reference ref, DomainObject domainObject) {
+	def dispatch create FACTORY.createReference mixinClone(Reference ref, DomainObject domainObject) {
 		setCache(ref.cache)
 		setCascade(ref.cascade)
 		setChangeable(ref.changeable)
@@ -167,7 +167,7 @@ class Transformation {
 		setVisibility(ref.visibility)
 	}
 
-	def create FACTORY.createDomainObjectOperation mixinClone(DomainObjectOperation op, DomainObject domainObject) {
+	def dispatch create FACTORY.createDomainObjectOperation mixinClone(DomainObjectOperation op, DomainObject domainObject) {
 		setAbstract(op.^abstract)
 		setCollectionType(op.collectionType)
 		setDoc(op.doc)
@@ -222,20 +222,20 @@ class Transformation {
 		module.domainObjects.forEach[modifyInheritance()]
 	}
 
-	def modifyDatabaseNames(Module module) {
+	def dispatch modifyDatabaseNames(Module module) {
 		module.getNonEnumDomainObjects().forEach[it.modifyDatabaseNames()]
 	}
 
-	def modifyReferencesDatabaseNames(Module module) {
+	def dispatch modifyReferencesDatabaseNames(Module module) {
 		module.getNonEnumDomainObjects().forEach[it.modifyReferencesDatabaseNames()]
 	}
 
-	def modifyServiceContextParameter(Service service) {
+	def dispatch void modifyServiceContextParameter(Service service) {
 		if (!service.webService)
 			service.operations.forEach[it.modifyServiceContextParameter]
 	}
 
-	def modifyServiceContextParameter(ServiceOperation operation) {
+	def dispatch void modifyServiceContextParameter(ServiceOperation operation) {
 		if (!operation.isEventSubscriberOperation())
 			// no method in ext language to add obj first in a list, using Java instead
 			addServiceContextParameter(operation)
@@ -251,17 +251,17 @@ class Transformation {
 	}
 
 	// when using scaffold method names gapClass is wrong and must be redefined
-	def modifyGapClass(Service service) {
+	def dispatch modifyGapClass(Service service) {
 		if (!service.gapClass && !service.operations.isEmpty && service.operations.exists(op | op.isImplementedInGapClass()))
 			service.setGapClass(true)
 	}
 
-	def modifyGapClass(Resource resource) {
+	def dispatch modifyGapClass(Resource resource) {
 		if (!resource.gapClass && !resource.operations.isEmpty && resource.operations.exists(op | op.isImplementedInGapClass()))
 			resource.setGapClass(true)
 	}
 
-	def modifyGapClass(DomainObject domainObject) {
+	def dispatch modifyGapClass(DomainObject domainObject) {
 		if (domainObject.operations.exists(op | op.isImplementedInGapClass()))
 			domainObject.setGapClass(true)
 	}
@@ -275,25 +275,24 @@ class Transformation {
 		reference.setTransient(true)
 	}
 
-	def modifyChangeable(DomainObject domainObject) {
+	def dispatch void modifyChangeable(DomainObject domainObject) {
 		defaultModifyChangeable(domainObject)
 	}
 
-	def modifyChangeable(ValueObject valueObject) {
+	def dispatch void modifyChangeable(ValueObject valueObject) {
 		defaultModifyChangeable(valueObject)
 		if (valueObject.immutable) {
 			valueObject.attributes.filter(a | a.name != "uuid").forEach[modifyChangeableToFalse()]
 			valueObject.references.filter(r | !r.many).forEach[modifyChangeableToFalse()]
-		} else
-			null
+		}
 	}
 
-	def modifyChangeable(DataTransferObject dto) {
+	def dispatch void modifyChangeable(DataTransferObject dto) {
 		dto.attributes.filter(a | a.naturalKey).forEach[it.modifyChangeableToFalse()]
 		dto.references.filter(r | r.naturalKey).forEach[it.modifyChangeableToFalse()]
 	}
 
-	def modifyChangeable(Trait trait) {
+	def dispatch void modifyChangeable(Trait trait) {
 		trait.attributes.filter(a | a.naturalKey).forEach[modifyChangeableToFalse()]
 		trait.references.filter(r | r.naturalKey).forEach[modifyChangeableToFalse()]
 	}
@@ -304,15 +303,15 @@ class Transformation {
 		domainObject.references.filter(r | r.naturalKey).forEach[modifyChangeableToFalse()]
 	}
 
-	def modifyChangeableToFalse(Attribute attribute) {
+	def dispatch modifyChangeableToFalse(Attribute attribute) {
 		attribute.setChangeable(false)
 	}
 
-	def modifyChangeableToFalse(Reference reference) {
+	def dispatch modifyChangeableToFalse(Reference reference) {
 		reference.setChangeable(false)
 	}
 
-	def modifyAuditable(Entity entity) {
+	def dispatch modifyAuditable(Entity entity) {
 		if (!isAuditableToBeGenerated())
 			entity.setAuditable(false)
 
@@ -322,7 +321,7 @@ class Transformation {
 			null
 	}
 
-	def modifyAuditable(DomainObject domainObject) {
+	def dispatch modifyAuditable(DomainObject domainObject) {
 		null
 	}
 
@@ -352,7 +351,7 @@ class Transformation {
 		it.setChangeable(false)
 	}
 
-	def modifySubscriber(Service service) {
+	def dispatch modifySubscriber(Service service) {
 		if (service.subscribe != null && !service.operations.exists(e|e.name == "receive"))
 			service.operations.add(createSubscriberRecieve(service))
 	}
@@ -362,7 +361,7 @@ class Transformation {
 		parameters.add(createSubscriberRecieveEventParam(it))
 	}
 
-	def modifySubscriber(Repository repository) {
+	def dispatch modifySubscriber(Repository repository) {
 		if (repository.subscribe != null && !repository.operations.exists(e|e.name == "receive"))
 			repository.operations.add(createSubscriberRecieve(repository))
 	}
@@ -377,35 +376,35 @@ class Transformation {
 		setType(fw("event.Event"))
 	}
 
-	def modifyOptimisticLocking(DomainObject domainObject) {
+	def dispatch modifyOptimisticLocking(DomainObject domainObject) {
 		if (isOptimisticLockingToBeGenerated() && domainObject.optimisticLocking && (domainObject.^extends == null || !domainObject.^extends.optimisticLocking))
 			addVersionAttribute(domainObject)
 		else
 			null
 	}
 
-	def modifyOptimisticLocking(ValueObject valueObject) {
+	def dispatch modifyOptimisticLocking(ValueObject valueObject) {
 		if (isOptimisticLockingToBeGenerated() && valueObject.persistent && !valueObject.immutable && valueObject.optimisticLocking && (valueObject.^extends == null || !valueObject.^extends.optimisticLocking))
 			addVersionAttribute(valueObject)
 		else
 			null
 	}
 
-	def modifyOptimisticLocking(Trait trait) {
+	def dispatch modifyOptimisticLocking(Trait trait) {
 		null
 	}
 
-	def modifyOptimisticLocking(BasicType basicType) {
+	def dispatch modifyOptimisticLocking(BasicType basicType) {
 		null
 	}
 
-	def modifyDatabaseNames(DomainObject domainObject) {
+	def dispatch modifyDatabaseNames(DomainObject domainObject) {
 		if (domainObject.databaseTable == null)
 			domainObject.setDatabaseTable(domainObject.getDefaultDatabaseName())
 		domainObject.attributes.forEach[it.modifyDatabaseColumn()]
 	}
 
-	def modifyDatabaseNames(ValueObject valueObject) {
+	def dispatch modifyDatabaseNames(ValueObject valueObject) {
 		if (valueObject.persistent) {
 			if (valueObject.databaseTable == null)
 				valueObject.setDatabaseTable(valueObject.getDefaultDatabaseName())
@@ -413,16 +412,16 @@ class Transformation {
 		}
 	}
 
-	def modifyDatabaseNames(BasicType basicType) {
+	def dispatch modifyDatabaseNames(BasicType basicType) {
 		basicType.attributes.forEach[modifyDatabaseColumn()]
 	}
 
-	def modifyReferencesDatabaseNames(DomainObject domainObject) {
+	def dispatch modifyReferencesDatabaseNames(DomainObject domainObject) {
 		if (domainObject.isPersistent())
 			domainObject.references.forEach[modifyDatabaseColumn()]
 	}
 
-	def modifyDatabaseColumn(Attribute attribute) {
+	def dispatch void modifyDatabaseColumn(Attribute attribute) {
 		if (attribute.databaseColumn == null)
 			(if (attribute.name == "id" && getBooleanProperty("db.useTablePrefixedIdColumn"))
 				attribute.setDatabaseColumn(attribute.getDomainObject().getDatabaseName() + "_" + attribute.getDefaultDatabaseName())
@@ -430,33 +429,31 @@ class Transformation {
 				attribute.setDatabaseColumn(attribute.getDefaultDatabaseName()))
 	}
 
-	def modifyDatabaseColumn(Reference reference) {
+	def dispatch void modifyDatabaseColumn(Reference reference) {
 		if (reference.databaseColumn == null)
 			reference.setDatabaseColumn(reference.getDefaultForeignKeyName())
-		else
-			null
 	}
 
-	def modifyIdAttribute(BasicType basicType) {
+	def dispatch modifyIdAttribute(BasicType basicType) {
 		null
 	}
 
-	def modifyIdAttribute(DataTransferObject dto) {
+	def dispatch modifyIdAttribute(DataTransferObject dto) {
 		null
 	}
 
-	def modifyIdAttribute(Trait trait) {
+	def dispatch modifyIdAttribute(Trait trait) {
 		null
 	}
 
-	def modifyIdAttribute(ValueObject valueObject) {
+	def dispatch modifyIdAttribute(ValueObject valueObject) {
 		if (valueObject.persistent)
 			addIdAttribute(valueObject)
 		else
 			null
 	}
 
-	def modifyIdAttribute(DomainObject domainObject) {
+	def dispatch modifyIdAttribute(DomainObject domainObject) {
 		addIdAttribute(domainObject)
 	}
 
@@ -487,13 +484,13 @@ class Transformation {
 		if (match.isEmpty) null else match.head
 	}
 
-	def modifySubclassesPersistent(ValueObject domainObject) {
+	def dispatch modifySubclassesPersistent(ValueObject domainObject) {
 		if (!domainObject.persistent)
 			domainObject.getAllSubclasses().filter[it instanceof ValueObject].forEach[(it as ValueObject).setPersistent(false)]
 	}
 
 	// different defaults for DomainEvent
-	def modifySubclassesPersistent(DomainEvent domainObject) {
+	def dispatch modifySubclassesPersistent(DomainEvent domainObject) {
 		if (domainObject.persistent)
 			domainObject.getAllSubclasses().filter[it instanceof ValueObject].forEach[(it as ValueObject).setPersistent(true)]
 	}
@@ -508,7 +505,7 @@ class Transformation {
 		trait.references.forEach[addDerivedTraitPropertyAccessors(trait)]
 	}
 
-	def addDerivedTraitPropertyAccessors(Attribute att, Trait trait) {
+	def dispatch addDerivedTraitPropertyAccessors(Attribute att, Trait trait) {
 		val getter = createDerivedTraitGetter(trait, att)
 		val setter = createDerivedTraitSetter(trait, att)
 		if (!trait.operations.exists(e|e.name == getter.name && e.type == getter.type && e.parameters.isEmpty))
@@ -517,7 +514,7 @@ class Transformation {
 			trait.operations.add(setter)
 	}
 
-	def addDerivedTraitPropertyAccessors(Reference ref, Trait trait) {
+	def dispatch addDerivedTraitPropertyAccessors(Reference ref, Trait trait) {
 		val getter = createDerivedTraitGetter(trait, ref)
 		val setter = createDerivedTraitSetter(trait, ref)
 		if (!trait.operations.exists(e|e.name == getter.name && e.domainObjectType == getter.domainObjectType && e.parameters.isEmpty))
@@ -526,7 +523,7 @@ class Transformation {
 			trait.operations.add(setter)
 	}
 
-	def create FACTORY.createDomainObjectOperation createDerivedTraitGetter(Trait trait, Attribute att) {
+	def dispatch create FACTORY.createDomainObjectOperation createDerivedTraitGetter(Trait trait, Attribute att) {
 		it.setName(att.getGetAccessor())
 		it.setAbstract(true)
 		it.addHint("trait=" + trait.name)
@@ -537,7 +534,7 @@ class Transformation {
 		it.setVisibility(att.visibility)
 	}
 
-	def create FACTORY.createDomainObjectOperation createDerivedTraitGetter(Trait trait, Reference ref) {
+	def dispatch create FACTORY.createDomainObjectOperation createDerivedTraitGetter(Trait trait, Reference ref) {
 		it.setName("get" + ref.name.toFirstUpper())
 		it.setAbstract(true)
 		it.addHint("trait=" + trait.name)
@@ -547,7 +544,7 @@ class Transformation {
 		it.setVisibility(ref.visibility)
 	}
 
-	def create FACTORY.createDomainObjectOperation createDerivedTraitSetter(Trait trait, Attribute att) {
+	def dispatch create FACTORY.createDomainObjectOperation createDerivedTraitSetter(Trait trait, Attribute att) {
 		it.setName("set" + att.name.toFirstUpper())
 		it.setAbstract(true)
 		it.setDoc(att.doc)
@@ -555,7 +552,7 @@ class Transformation {
 		it.parameters.add(createDerivedTraitSetterParameter(trait, att))
 	}
 
-	def create FACTORY.createDomainObjectOperation createDerivedTraitSetter(Trait trait, Reference ref) {
+	def dispatch create FACTORY.createDomainObjectOperation createDerivedTraitSetter(Trait trait, Reference ref) {
 		it.setName("set" + ref.name.toFirstUpper())
 		it.setAbstract(true)
 		it.setDoc(ref.doc)
@@ -563,14 +560,14 @@ class Transformation {
 		it.parameters.add(createDerivedTraitSetterParameter(trait, ref))
 	}
 
-	def create FACTORY.createParameter createDerivedTraitSetterParameter(Trait trait, Attribute att) {
+	def dispatch create FACTORY.createParameter createDerivedTraitSetterParameter(Trait trait, Attribute att) {
 		it.setName(att.name)
 		it.setType(att.type)
 		it.setCollectionType(att.collectionType)
 		it.setMapKeyType(att.mapKeyType)
 	}
 
-	def create FACTORY.createParameter createDerivedTraitSetterParameter(Trait trait, Reference ref) {
+	def dispatch create FACTORY.createParameter createDerivedTraitSetterParameter(Trait trait, Reference ref) {
 		it.setName(ref.name)
 		it.setDomainObjectType(ref.to)
 		it.setCollectionType(ref.collectionType)

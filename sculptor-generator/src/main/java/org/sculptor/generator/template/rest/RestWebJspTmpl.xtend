@@ -16,7 +16,7 @@ class RestWebJspTmpl {
 	@Inject extension Helper helper
 	@Inject extension Properties properties
 
-def String jsp(Application it) {
+def dispatch String jsp(Application it) {
 	'''
 		«index(it)»
 		«header(it)»
@@ -131,7 +131,7 @@ def String uncaughtException(Application it) {
 	)
 }
 
-def String jsp(Resource it) {
+def dispatch String jsp(Resource it) {
 	val postOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
 	val putOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
 	val deleteOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::DELETE)

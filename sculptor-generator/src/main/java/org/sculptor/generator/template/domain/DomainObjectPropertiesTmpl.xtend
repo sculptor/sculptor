@@ -36,12 +36,11 @@ class DomainObjectPropertiesTmpl {
 	@Inject extension Helper helper
 	@Inject extension Properties properties
 
-def String domainObjectProperties(Trait it) {
-	'''
-	'''
+def dispatch String domainObjectProperties(Trait it) {
+	""
 }
 
-def String domainObjectProperties(DomainObject it) {
+def dispatch String domainObjectProperties(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -60,7 +59,7 @@ def String domainObjectProperties(DomainObject it) {
 		private «name»Properties() {
 		}
 
-		/* note that static methods are not generated in BasicType, since they can't be root of the criteria */
+		«/* note that static methods are not generated in BasicType, since they can't be root of the criteria */ »
 		«IF !(it instanceof BasicType)»
 			«sharedInstance(it)»
 			«it.getAllAttributes().map[a | staticLeafProperty(a, it)].join()»
@@ -78,9 +77,7 @@ def String domainObjectProperties(DomainObject it) {
 }
 
 def String sharedInstance(DomainObject it) {
-	'''
-		private static final «name»PropertiesImpl<«getDomainPackage()».«name»> sharedInstance = new «name»PropertiesImpl<«getDomainPackage()».«name»>(«getDomainPackage()».«name».class);
-	'''
+	'''private static final «name»PropertiesImpl<«getDomainPackage()».«name»> sharedInstance = new «name»PropertiesImpl<«getDomainPackage()».«name»>(«getDomainPackage()».«name».class);'''
 }
 
 def String staticLeafProperty(NamedElement it, DomainObject rootType) {
@@ -156,8 +153,6 @@ def String referenceProperty(Reference it) {
 }
 
 def String serialVersionUID(Object it) {
-	'''
-		private static final long serialVersionUID = 1L;
-	'''
+	'''private static final long serialVersionUID = 1L;'''
 }
 }

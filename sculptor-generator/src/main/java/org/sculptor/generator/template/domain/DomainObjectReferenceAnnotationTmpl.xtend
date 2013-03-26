@@ -59,7 +59,7 @@ def String oneReferenceAttributeAnnotations(Reference it) {
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
 			«oneReferenceValidationAnnotations(it)»
 		«ENDIF»
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -124,7 +124,7 @@ def String oneReferenceJpaAnnotations(Reference it) {
 
 def String oneReferenceOnDeleteJpaAnnotation(Reference it) {
 	'''
-		/* use orphanRemoval in JPA2 */
+		«/* use orphanRemoval in JPA2 */»
 		«IF isJpa1() && isJpaProviderHibernate() && it.hasOpposite() && isDbOnDeleteCascade(opposite)»
 			@org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
 		«ENDIF»
@@ -244,7 +244,7 @@ def String manyToOneJpaAnnotation(Reference it) {
 				it.isSimpleNaturalKey() && (isJpa2() || isJpaProviderHibernate()), "unique", "true"
 			))»)
 			«IF isJpaProviderHibernate()»
-				/* TODO: set databasename for embeddables (basictype) to avoid this case handling ? */
+				«/* TODO: set databasename for embeddables (basictype) to avoid this case handling ? */»
 				«IF isJpa2() && from.isEmbeddable()»
 					@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.name.toUpperCase(), it.getDatabaseName())»")
 				«ELSE»
@@ -254,8 +254,8 @@ def String manyToOneJpaAnnotation(Reference it) {
 					@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
 				«ENDIF»
 			«ELSEIF isJpaProviderOpenJpa()»
-				/* OpenJPA delete parent/child in an incorrect order */
-				/* TODO: watch issue OPENJPA-1936 */
+				«/* OpenJPA delete parent/child in an incorrect order */»
+				«/* TODO: watch issue OPENJPA-1936 */»
 				«IF isJpa2() && from.isEmbeddable()»
 					@org.apache.openjpa.persistence.jdbc.ForeignKey(
 						name = "FK_«truncateLongDatabaseName(from.name.toUpperCase(), it.getDatabaseName())»",
@@ -276,12 +276,12 @@ def String oneReferenceValidationAnnotations(Reference it) {
 	'''
 }
 
-def String attributeOverride(Object it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
+def dispatch String attributeOverride(Object it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
 	'''
 }
 
-def String attributeOverride(Attribute it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
+def dispatch String attributeOverride(Attribute it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
 		@javax.persistence.AttributeOverride(
 			name="«attributePrefix + name»",
@@ -293,7 +293,7 @@ def String attributeOverride(Attribute it, String columnPrefix, String attribute
 	'''
 }
 
-def String attributeOverride(Reference it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
+def dispatch String attributeOverride(Reference it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
 		«IF it.isBasicTypeReference()»
 			«it.to.attributes.map[a | attributeOverride(a, getDatabaseName(columnPrefix, it), name + ".", it.nullable)].join(",")»
@@ -312,7 +312,7 @@ def String attributeOverride(Reference it, String columnPrefix, String attribute
 
 def String associationOverride(Reference it, String prefix, boolean referenceIsNullable) {
 	'''
-		/*TODO: verify the table and column naming */
+		«/* TODO: verify the table and column naming */»
 		«IF many»
 			@javax.persistence.AssociationOverride(
 				name="«name»",
@@ -381,32 +381,32 @@ def String manyReferenceJpaAnnotations(Reference it) {
 	'''
 	«IF isJpaAnnotationToBeGenerated() && from.isPersistent()»
 		«IF !transient»
-		  «IF (hasOwnDatabaseRepresentation(from) && hasOwnDatabaseRepresentation(to)) || (isJpa2() && hasOwnDatabaseRepresentation(to) && from.isEmbeddable())»
-			«IF it.isOneToMany()»
-				«oneToManyJpaAnnotation(it)»
-			«ENDIF»
-			«IF it.isManyToMany()»
-				«manyToManyJpaAnnotation(it)»
-			«ENDIF»
+			«IF (hasOwnDatabaseRepresentation(from) && hasOwnDatabaseRepresentation(to)) || (isJpa2() && hasOwnDatabaseRepresentation(to) && from.isEmbeddable())»
+				«IF it.isOneToMany()»
+					«oneToManyJpaAnnotation(it)»
+				«ENDIF»
+				«IF it.isManyToMany()»
+					«manyToManyJpaAnnotation(it)»
+				«ENDIF»
 				«IF isJpa2() && it.isList() && it.hasHint("orderColumn")»
-				    @javax.persistence.OrderColumn(name="«it.getListIndexColumnName()»")
+					@javax.persistence.OrderColumn(name="«it.getListIndexColumnName()»")
 				«ENDIF»
-			«IF orderBy != null»
-				@javax.persistence.OrderBy("«orderBy»")
-			«ENDIF»
-			«IF isJpaProviderHibernate() && cache»
-				@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
-			«ENDIF»
-			«IF isJpaProviderHibernate() && it.getHibernateFetchType() != null»
-				@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
-			«ENDIF»
-			«IF isJpaProviderHibernate() && it.getHibernateCascadeType() != null»
-				@org.hibernate.annotations.Cascade(«it.getHibernateCascadeType()»)
-			«ENDIF»
-				«ELSEIF isJpa2() && ((hasOwnDatabaseRepresentation(from) && to.isEmbeddable()) ||
-				        (from.isEmbeddable() && to.isEmbeddable()))»
-				    «elementCollectionJpaAnnotation(it)»
+				«IF orderBy != null»
+					@javax.persistence.OrderBy("«orderBy»")
 				«ENDIF»
+				«IF isJpaProviderHibernate() && cache»
+					@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
+				«ENDIF»
+				«IF isJpaProviderHibernate() && it.getHibernateFetchType() != null»
+					@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
+				«ENDIF»
+				«IF isJpaProviderHibernate() && it.getHibernateCascadeType() != null»
+					@org.hibernate.annotations.Cascade(«it.getHibernateCascadeType()»)
+				«ENDIF»
+			«ELSEIF isJpa2() && ((hasOwnDatabaseRepresentation(from) && to.isEmbeddable()) ||
+				(from.isEmbeddable() && to.isEmbeddable()))»
+				«elementCollectionJpaAnnotation(it)»
+			«ENDIF»
 		«ELSE»
 			@javax.persistence.Transient
 		«ENDIF»
@@ -427,15 +427,15 @@ def String oneToManyJpaAnnotation(Reference it) {
 				name = "FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getOppositeForeignKeyName())»"
 				, inverseName = "FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getForeignKeyName())»")
 		«ENDIF»
-		/* TODO: add support for unidirectional onetomany relationships with and without jointable */
-		/*
+		«/* TODO: add support for unidirectional onetomany relationships with and without jointable */»
+		«/*
 		«IF !it.isUnidirectionalToManyWithoutJoinTable() && isJpa2()»
 			@javax.persistence.JoinTable(
 				name = "«it.getManyToManyJoinTableName()»",
 				joinColumns = @javax.persistence.JoinColumn(name = "«it.getOppositeForeignKeyName()»"),
 				inverseJoinColumns = @javax.persistence.JoinColumn(name = "«it.getForeignKeyName()»"))
 		«ENDIF»
-		 */
+		 */»
 		«IF isInverse() && (!it.hasOpposite() || it.isList())»
 			@javax.persistence.JoinColumn(name = "«it.getOppositeForeignKeyName()»")
 				«IF isJpaProviderHibernate()»

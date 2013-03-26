@@ -90,7 +90,7 @@ public class UmlGraphHelper {
 	}
 
 	// Get all the subject areas used throughout the application
-	def Set<String> getSubjectAreas(Application application) {
+	def dispatch Set<String> getSubjectAreas(Application application) {
 		val retVal = newArrayList("entity")
 
 		retVal.addAll(application.visibleModules().map[domainObjects].flatten.map[d | d.getSubjectAreas()].flatten)
@@ -99,7 +99,7 @@ public class UmlGraphHelper {
 		retVal.filterNull.toSet
 	}
 
-	def List<String> getSubjectAreas(NamedElement elem) {
+	def dispatch List<String> getSubjectAreas(NamedElement elem) {
 		if (elem.hasHint("umlgraph.subject"))
 			elem.getHint("umlgraph.subject").replaceAll(" ", "").split("\\|").toList
 		else
@@ -125,19 +125,19 @@ public class UmlGraphHelper {
 		!elem.hide()
 	}
 
-	def boolean hide(DomainObject elem) {
+	def dispatch boolean hide(DomainObject elem) {
 		elem.hasHideHint() || elem.module.hide()
 	}
 
-	def boolean hide(Service elem) {
+	def dispatch boolean hide(Service elem) {
 		elem.hasHideHint() || elem.module.hide()
 	}
 
-	def boolean hide(Consumer elem) {
+	def dispatch boolean hide(Consumer elem) {
 		elem.hasHideHint() || elem.module.hide();
 	}
 
-	def hide(NamedElement elem) {
+	def dispatch hide(NamedElement elem) {
 		elem.hasHideHint()
 	}
 
@@ -203,19 +203,19 @@ public class UmlGraphHelper {
 			|| app.modules.map[consumers as List<Consumer>].flatten.exists(e|e.isCoreDomain())
 	}
 
-	def boolean isCoreDomain(DomainObject elem) {
+	def dispatch boolean isCoreDomain(DomainObject elem) {
 		elem.hasCoreDomainHint() || elem.module.isCoreDomain()
 	}
 
-	def boolean isCoreDomain(Service elem) {
+	def dispatch boolean isCoreDomain(Service elem) {
 		elem.hasCoreDomainHint() || elem.module.isCoreDomain()
 	}
 
-	def boolean isCoreDomain(Consumer elem) {
+	def dispatch boolean isCoreDomain(Consumer elem) {
 		elem.hasCoreDomainHint() || elem.module.isCoreDomain()
 	}
 
-	def boolean isCoreDomain(NamedElement elem) {
+	def dispatch boolean isCoreDomain(NamedElement elem) {
 		elem.hasCoreDomainHint()
 	}
 
@@ -240,15 +240,15 @@ public class UmlGraphHelper {
 		elem.visible() && (detail != 0 || elem.isInSubjectArea(subjectArea))
 	}
 
-	def boolean isInSubjectArea(ValueObject v, String subjectArea) {
+	def dispatch boolean isInSubjectArea(ValueObject v, String subjectArea) {
 		if ("entity" == subjectArea) v.isPersistent() else v.getSubjectAreas().contains(subjectArea)
 	}
 
-	def boolean isInSubjectArea(Entity e, String subjectArea) {
+	def dispatch boolean isInSubjectArea(Entity e, String subjectArea) {
 		if ("entity" == subjectArea) e.isPersistent() else e.getSubjectAreas().contains(subjectArea)
 	}
 
-	def boolean isInSubjectArea(NamedElement elem, String subjectArea) {
+	def dispatch boolean isInSubjectArea(NamedElement elem, String subjectArea) {
 		elem.getSubjectAreas().contains(subjectArea)
 	}
 

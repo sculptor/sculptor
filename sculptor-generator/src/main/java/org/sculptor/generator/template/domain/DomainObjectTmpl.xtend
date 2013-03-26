@@ -47,7 +47,7 @@ class DomainObjectTmpl {
 	@Inject extension Helper helper
 	@Inject extension Properties properties
 
-def String domainObject(DomainObject it) {
+def dispatch String domainObject(DomainObject it) {
 	'''
 	«IF gapClass»
 		«domainObjectSubclass(it)»
@@ -62,7 +62,7 @@ def String domainObject(DomainObject it) {
 	'''
 }
 
-def String domainObjectSubclass(DataTransferObject it) {
+def dispatch String domainObjectSubclass(DataTransferObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -94,7 +94,7 @@ def String domainObjectSubclass(DataTransferObject it) {
 
 
 
-def String domainObjectSubclass(DomainObject it) {
+def dispatch String domainObjectSubclass(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -124,7 +124,7 @@ def String domainObjectSubclass(DomainObject it) {
 	)
 }
 
-def String domainObjectSubclass(Trait it) {
+def dispatch String domainObjectSubclass(Trait it) {
 	'''
 	«domainObjectTraitTmpl.domainObjectSubclass(it)»
 	'''
@@ -146,7 +146,7 @@ def String domainObjectSubclassJavaDoc(DomainObject it) {
 	'''
 }
 
-def String domainObjectBase(DomainObject it) {
+def dispatch String domainObjectBase(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 
 	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
@@ -221,7 +221,7 @@ def String domainObjectBase(DomainObject it) {
 	)
 }
 
-def String domainObjectBase(Trait it) {
+def dispatch String domainObjectBase(Trait it) {
 	'''
 	«domainObjectTraitTmpl.domainObjectBase(it)»
 	'''
@@ -236,7 +236,7 @@ def String domainObjectBaseJavaDoc(DomainObject it) {
 		«IF isJpaAnnotationToBeGenerated() »
 			 * <p>Make sure that subclass defines the following annotations:
 			 * <pre>
-			 «domainObjectAnnotationTmpl.domainObjectAnnotations(it) »
+			«domainObjectAnnotationTmpl.domainObjectAnnotations(it) »
 			 * </pre>
 		«ENDIF»
 		 */
@@ -253,7 +253,7 @@ def String domainObjectBaseJavaDoc(DomainObject it) {
 	'''
 }
 
-def String domainObjectBase(DataTransferObject it) {
+def dispatch String domainObjectBase(DataTransferObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -264,7 +264,7 @@ def String domainObjectBase(DataTransferObject it) {
 		 * associations for the data transfer object.
 		 */
 	«ELSEIF formatJavaDoc(it) == "" »
-		 /**
+		/**
 		 * Data transfer object for «name».
 		 */
 	«ELSE »
@@ -308,9 +308,7 @@ def String domainObjectBase(DataTransferObject it) {
 }
 
 def String serialVersionUID(DomainObject it) {
-	'''
-	private static final long serialVersionUID = 1L;
-	'''
+	'''private static final long serialVersionUID = 1L;'''
 }
 
 def String prePersist(DomainObject it) {
@@ -384,7 +382,7 @@ def String toStringStyleMethod(DomainObject it) {
 	'''
 }
 
-def String domainObject(Enum it) {
+def dispatch String domainObject(Enum it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
@@ -446,7 +444,7 @@ def String enumFromIdentifierMethod(Enum it) {
 			return result;
 		}
 
-		/* new enum handling */
+		«/* new enum handling */»
 		public static «name» toEnum(java.lang.Object key) {
 			if (!(key instanceof «identifierAttribute.getTypeName().getObjectTypeName()»)) {
 				throw new IllegalArgumentException("key is not of type «identifierAttribute.getTypeName().getObjectTypeName()»");
@@ -520,16 +518,14 @@ def String methodParameterTypeAndName(Parameter it) {
  * Use AROUND domainObjectTmplTmpl.domainObjectHook FOR DomainObject
  * in SpecialCases.xpt */
 def String domainObjectHook(DomainObject it) {
-	'''
-	'''
+	''''''
 }
 
 /* Extension point to generate more stuff in DataTransferObjects.
  * Use AROUND domainObjectTmplTmpl.dataTransferObjectHook FOR DataTransferObject
  * in SpecialCases.xpt */
 def String dataTransferObjectHook(DataTransferObject it) {
-	'''
-	'''
+	''''''
 }
 
 }

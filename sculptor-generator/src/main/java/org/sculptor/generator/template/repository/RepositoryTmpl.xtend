@@ -94,7 +94,8 @@ def String repositoryBase(Repository it) {
 	«IF gapClass»
 		/**
 		 * Generated base class for implementation of Repository for «baseName»
-		«IF isSpringToBeGenerated() »
+		«IF isSpringToBeGenerated()»
+			«»
 			 * <p>Make sure that subclass defines the following annotations:
 			 * <pre>
 			     @org.springframework.stereotype.Repository("«name.toFirstLower()»")
@@ -102,6 +103,7 @@ def String repositoryBase(Repository it) {
 			 *
 		 «ENDIF »
 		«IF pureEjb3()»
+			«»
 			 * <p>Make sure that subclass defines the following annotations:
 			 * <pre>
 			    @javax.ejb.Stateless(name="«name.toFirstLower()»")

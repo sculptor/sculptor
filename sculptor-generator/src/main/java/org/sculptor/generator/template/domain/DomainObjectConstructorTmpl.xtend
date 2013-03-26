@@ -146,13 +146,13 @@ def String propertyConstructorBaseIdReferencesSubclass(DomainObject it) {
 	'''
 }
 
-def String validateNotNull(DomainObject it, String field) {
+def dispatch String validateNotNull(DomainObject it, String field) {
 	'''
 		org.apache.commons.lang.Validate.notNull(«field», "«name».«field» must not be null");
 	'''
 }
 
-def String validateNotNull(DataTransferObject it, String field) {
+def dispatch String validateNotNull(DataTransferObject it, String field) {
 	'''
 		if («field» == null) {
 			throw new IllegalArgumentException("«name».«field» must not be null");
@@ -170,7 +170,7 @@ def String propertyConstructorSubclass(DomainObject it) {
 	'''
 }
 
-def String limitedConstructor(DomainObject it) {
+def dispatch String limitedConstructor(DomainObject it) {
 	'''
 		«val allParameters = it.getConstructorParameters()»
 		«val parameters = it.getLimitedConstructorParameters()»
@@ -182,7 +182,7 @@ def String limitedConstructor(DomainObject it) {
 	'''
 }
 
-def String limitedConstructor(Event it) {
+def dispatch String limitedConstructor(Event it) {
 	'''
 	«limitedEventConstructor(it)»
 	'''
@@ -224,15 +224,15 @@ def String minimumConstructor(DomainObject it) {
 	'''
 }
 
-def String factoryMethod(DomainObject it) {
+def dispatch String factoryMethod(DomainObject it) {
 	'''
 		«val allParameters = it.getConstructorParameters()»
 		«val parameters = it.getLimitedConstructorParameters()»
 		«IF !parameters.isEmpty »
 			/**
-				* Creates a new «name». Typically used with static import to
-				* achieve fluent interface.
-				*/
+			 * Creates a new «name». Typically used with static import to
+			 * achieve fluent interface.
+			 */
 			public static «name» «name.toFirstLower()»(«parameters.map[parameterTypeAndName(it)].join(",")») {
 				return new «name»(«FOR a : allParameters SEPARATOR ","»«IF parameters.contains(a)»«a.name»«ELSE»null«ENDIF»«ENDFOR»);
 			}
@@ -240,7 +240,7 @@ def String factoryMethod(DomainObject it) {
 	'''
 }
 
-def String factoryMethod(Event it) {
+def dispatch String factoryMethod(Event it) {
 	'''
 		«eventFactoryMethod(it)»
 	'''
@@ -252,10 +252,10 @@ def String eventFactoryMethod(DomainObject it) {
 		«val parameters = it.getLimitedConstructorParameters().filter(e|e.name!="recorded").toList»
 		«IF !parameters.isEmpty »
 			/**
-				* Creates a new «name». Typically used with static import to
-				* achieve fluent interface.
-				* Current time is used for recorded timestamp.
-				*/
+			 * Creates a new «name». Typically used with static import to
+			 * achieve fluent interface.
+			 * Current time is used for recorded timestamp.
+			 */
 			public static «name» «name.toFirstLower()»(«parameters.map[parameterTypeAndName(it)].join(",")») {
 				return new «name»(«FOR a : allParameters SEPARATOR ","»«IF a.name == "recorded"»new <TODO CONV: a.getTypeName()>()«ELSEIF parameters.contains(a)»«a.name»«ELSE»null«ENDIF»«ENDFOR»);
 			}
@@ -263,7 +263,7 @@ def String eventFactoryMethod(DomainObject it) {
 	'''
 }
 
-def String copyModifier(Attribute it, DomainObject target) {
+def dispatch String copyModifier(Attribute it, DomainObject target) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».
@@ -277,7 +277,7 @@ def String copyModifier(Attribute it, DomainObject target) {
 	'''
 }
 
-def String copyModifier(Reference it, DomainObject target) {
+def dispatch String copyModifier(Reference it, DomainObject target) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».
@@ -291,7 +291,7 @@ def String copyModifier(Reference it, DomainObject target) {
 	'''
 }
 
-def String abstractCopyModifier(Attribute it) {
+def dispatch String abstractCopyModifier(Attribute it) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».
@@ -300,7 +300,7 @@ def String abstractCopyModifier(Attribute it) {
 	'''
 }
 
-def String abstractCopyModifier(Reference it) {
+def dispatch String abstractCopyModifier(Reference it) {
 	'''
 		/**
 		 * Creates a copy of this instance, but with another «name».

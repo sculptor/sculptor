@@ -33,16 +33,16 @@ class DomainObjectNamesTmpl {
 	@Inject extension HelperBase helperBase
 	@Inject extension Properties properties
 
-def String propertyNamesInterface(DataTransferObject it) {
+def dispatch String propertyNamesInterface(DataTransferObject it) {
 	'''
 	'''
 }
-def String propertyNamesInterface(Trait it) {
+def dispatch String propertyNamesInterface(Trait it) {
 	'''
 	'''
 }
 
-def String propertyNamesInterface(DomainObject it) {
+def dispatch String propertyNamesInterface(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + "Names"), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;

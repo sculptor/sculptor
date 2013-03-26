@@ -406,7 +406,7 @@ class Properties {
 		getBooleanProperty("generate.gapClass");
 	}
 
-	def boolean isGapClassToBeGenerated(String module, String clazz) {
+	def dispatch boolean isGapClassToBeGenerated(String module, String clazz) {
 		if (hasProperty("generate.gapClass." + module + "." + clazz))
 			getBooleanProperty("generate.gapClass." + module + "." + clazz)
 		else if (hasProperty("generate.gapClass." + clazz))
@@ -415,7 +415,7 @@ class Properties {
 			isGapClassToBeGenerated();
 	}
 
-	def boolean isGapClassToBeGenerated(boolean dslGapClass, boolean dslNoGapClass) {
+	def dispatch boolean isGapClassToBeGenerated(boolean dslGapClass, boolean dslNoGapClass) {
 		if (dslGapClass)
 			true
 		else
@@ -438,11 +438,11 @@ class Properties {
 		getBooleanProperty("gui.stubService");
 	}
 
-	def String getResourceDir(Application application, String name) {
+	def dispatch String getResourceDir(Application application, String name) {
 		getResourceDirImpl(name);
 	}
 
-	def String getResourceDir(Module module, String name) {
+	def dispatch String getResourceDir(Module module, String name) {
 		getResourceDirImpl(name);
 	}
 
@@ -599,11 +599,11 @@ class Properties {
 			null;
 	}
 
-	def String getApplicationContextFile(Application application, String fileName) {
+	def dispatch String getApplicationContextFile(Application application, String fileName) {
 		fileName;
 	}
 
-	def String getApplicationContextFile(Module module, String fileName) {
+	def dispatch String getApplicationContextFile(Module module, String fileName) {
 		fileName;
 	}
 

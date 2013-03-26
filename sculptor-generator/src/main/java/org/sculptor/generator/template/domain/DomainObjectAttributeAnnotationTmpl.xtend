@@ -206,7 +206,7 @@ def String indexAnnotations(Attribute it) {
 
 def String elementCollectionAnnotations(Attribute it) {
 	'''
-		/*TODO: change support for fetchtype, add a keyword */
+		«/* TODO: change support for fetchtype, add a keyword */»
 		@javax.persistence.ElementCollection(
 			«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() != null, "fetch", it.getFetchType()))»)
 		«IF !useJpaDefaults()»
@@ -218,8 +218,8 @@ def String elementCollectionAnnotations(Attribute it) {
 def String elementCollectionTableJpaAnnotation(Attribute it) {
 	'''
 		/*
-			It's not possible to overwrite the collection table later,
-			therefore not set it for embeddabkes
+		 It's not possible to overwrite the collection table later,
+		 therefore not set it for embeddables
 		*/
 		«IF !it.getDomainObject().isEmbeddable()»
 			@javax.persistence.CollectionTable(
@@ -233,7 +233,7 @@ def String elementCollectionTableJpaAnnotation(Attribute it) {
 
 def String validationAnnotations(Attribute it) {
 	'''
-		/* exclude persistence controlled properties */
+		«/* exclude persistence controlled properties */»
 		«IF name != "id" && name != "version" && !it.isUuid()»
 			«it.getValidationAnnotations()»
 		«ENDIF»
@@ -241,8 +241,7 @@ def String validationAnnotations(Attribute it) {
 }
 
 def String propertySetterAnnotations(Attribute it) {
-	'''
-	'''
+	""
 }
 
 }

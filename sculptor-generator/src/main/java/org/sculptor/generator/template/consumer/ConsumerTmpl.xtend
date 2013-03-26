@@ -48,16 +48,16 @@ def String consumer(Consumer it) {
 		«eventConsumerImplBase(it)»
 			«eventConsumerImplSubclass(it)»
 	«ENDIF»
-		
-		«IF isTestToBeGenerated()»
-	    «IF pureEjb3()»
-	    	«consumerEjbTestTmpl.consumerJUnitOpenEjb(it)»
-	    «ELSEIF applicationServer() == "appengine"»
-	    	/*TODO */
-	    «ELSEIF mongoDb()»
-	    	/*TODO */
-	    «ELSE»
-		    «consumerTestTmpl.consumerJUnitWithAnnotations(it)»
+
+	«IF isTestToBeGenerated()»
+		«IF pureEjb3()»
+			«consumerEjbTestTmpl.consumerJUnitOpenEjb(it)»
+		«ELSEIF applicationServer() == "appengine"»
+			«/* TODO */»
+		«ELSEIF mongoDb()»
+			«/* TODO */»
+		«ELSE»
+			«consumerTestTmpl.consumerJUnitWithAnnotations(it)»
 		«ENDIF»
 		«IF isDbUnitTestDataToBeGenerated()»
 			«consumerTestTmpl.dbunitTestData(it)»
@@ -88,6 +88,7 @@ def String eventConsumerImplBase(Consumer it) {
 	/**
 	 * Generated base class for implementation of Consumer «name».
 	«IF isSpringToBeGenerated() »
+		
 		 * <p>Make sure that subclass defines the following annotations:
 		 * <pre>
 		    @org.springframework.stereotype.Component("«name.toFirstLower()»")
@@ -191,8 +192,8 @@ def String otherDependencies(Consumer it) {
 	'''
 	«FOR dependency  : otherDependencies»
 		/**
-			* Dependency injection
-			*/
+		 * Dependency injection
+		 */
 	«IF isSpringToBeGenerated()»
 		@org.springframework.beans.factory.annotation.Autowired
 	«ENDIF»
@@ -246,19 +247,16 @@ def String consumeMethodSubclass(Consumer it) {
 	'''
 }
 
-/*TODO move to common template */
+/* TODO move to common template */
 def String serialVersionUID(Consumer it) {
-	'''
-		private static final long serialVersionUID = 1L;
-	'''
+	'''private static final long serialVersionUID = 1L;'''
 }
 
-/*Extension point to generate more stuff in consumer implementation.
+/* Extension point to generate more stuff in consumer implementation.
 	User AROUND consumerTmpl.consumerHook FOR Consumer
 	in SpecialCases.xpt */
 def String consumerHook(Consumer it) {
-	'''
-	'''
+	''''''
 }
 
 
