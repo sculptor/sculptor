@@ -150,7 +150,7 @@ def String enumType(Application it) {
 	import org.hibernate.type.EnumType;
 
 	@SuppressWarnings("serial")
-	public class EnumUserType ^extends EnumType {
+	public class EnumUserType extends EnumType {
 		@Override
 		public Object nullSafeGet(ResultSet rs, String[] names«IF isJpaProviderHibernate4()»,SessionImplementor session«ENDIF», Object owner)
 			throws HibernateException, SQLException {

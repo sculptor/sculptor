@@ -72,13 +72,13 @@ def String repositoryInterface(Repository it) {
 	«ENDIF »
 	public interface «name» «IF subscribe != null»extends «fw("event.EventSubscriber")» «ENDIF» {
 
-	«IF isSpringToBeGenerated()»
-		public final static String BEAN_ID = "«name.toFirstLower()»";
-	«ENDIF»
+		«IF isSpringToBeGenerated()»
+			public final static String BEAN_ID = "«name.toFirstLower()»";
+		«ENDIF»
 
-		«it.operations.filter(op | op.isPublicVisibility()).map[interfaceRepositoryMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map[interfaceRepositoryMethod(it)].join()»
 
-	«repositoryInterfaceHook(it)»
+		«repositoryInterfaceHook(it)»
 	}
 	'''
 	)
@@ -162,8 +162,8 @@ def String repositoryBase(Repository it) {
 
 def String accessObjectFactory(Repository it) {
 	'''
-	«it.distinctOperations.filter(op | op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.genericFactoryMethod(op)]»
-	«it.distinctOperations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.factoryMethod(op)]»
+	«it.distinctOperations.filter(op | op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.genericFactoryMethod(op)].join()»
+	«it.distinctOperations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.factoryMethod(op)].join()»
 	«accessObjectFactoryTmpl.getPersistentClass(it)»
 	«IF mongoDb()»
 		«accessObjectFactoryTmpl.getAdditionalDataMappers(it)»
@@ -174,8 +174,8 @@ def String accessObjectFactory(Repository it) {
 
 def String entityManagerDependency(Repository it) {
 	'''
-	@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
-	private javax.persistence.EntityManager entityManager;
+		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
+		private javax.persistence.EntityManager entityManager;
 
 		/**
 		 * Dependency injection
@@ -535,32 +535,32 @@ def String calculateMaxPages(RepositoryOperation it) {
 					«val countOperation1 = it.repository.operations.findFirst(e | e != it && e.name == "findByQuery" && e.parameters.exists(p | p.name == "useSingleResult"))»
 					«val countOperation2 = it.repository.operations.findFirst(e | e != it && e.name == "findByQuery")»
 					«val countOperation = if (countOperation1 != null) countOperation1 else countOperation2»
-						«IF countOperation == null»
-							// TODO define findByQuery
-							Long countNumber = null;
-						«ELSE»
-							«IF !parameters.exists(e|e.name == "parameters") && countOperation.parameters.exists(e|e.name == "parameters")»
-							java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
-							«FOR param  : parameters.filter(e | !e.isPagingParameter())»
-								parameters.put("«param.name»", «param.name»);
-							«ENDFOR»
-							«ENDIF»
-							Long countNumber = «IF countOperation.getTypeName() == "Object"»(Long) «ENDIF»
-								«countOperation.name»(«FOR param : countOperation.parameters SEPARATOR ", "»«IF param.name == "query" || param.name == "namedQuery"»«IF countQueryHint == null»«param.name».replaceFirst("find", "count")«ELSE»"«countQueryHint»"«ENDIF»«
-								ELSEIF param.name == "useSingleResult"»true« ELSEIF param.name == "parameters"»parameters«
-								ELSEIF parameters.exists(e|e.name == param.name)»«param.name»« ELSE»null«ENDIF»«ENDFOR»)«IF countOperation1 == null».size()«ENDIF»;
+					«IF countOperation == null»
+						// TODO define findByQuery
+						Long countNumber = null;
+					«ELSE»
+						«IF !parameters.exists(e|e.name == "parameters") && countOperation.parameters.exists(e|e.name == "parameters")»
+						java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
+						«FOR param  : parameters.filter(e | !e.isPagingParameter())»
+							parameters.put("«param.name»", «param.name»);
+						«ENDFOR»
 						«ENDIF»
-				    «ELSEIF (it.useGenericAccessStrategy())»
-				        // If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
-				        ao.executeResultCount();
-				        Long countNumber = ao.getResultCount();
-				    «ELSEIF (isJpa1() && name == "findByCondition")»
-				        // If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
-				        ao.executeCount();
-				        Long countNumber = ao.getResultCount();
-				    «ELSE»
-					// If you need to calculate max pages you should define hint="countOperation=..." or hint="countQuery=..."
-					Long countNumber = null;
+						Long countNumber = «IF countOperation.getTypeName() == "Object"»(Long) «ENDIF»
+							«countOperation.name»(«FOR param : countOperation.parameters SEPARATOR ", "»«IF param.name == "query" || param.name == "namedQuery"»«IF countQueryHint == null»«param.name».replaceFirst("find", "count")«ELSE»"«countQueryHint»"«ENDIF»«
+							ELSEIF param.name == "useSingleResult"»true« ELSEIF param.name == "parameters"»parameters«
+							ELSEIF parameters.exists(e|e.name == param.name)»«param.name»« ELSE»null«ENDIF»«ENDFOR»)«IF countOperation1 == null».size()«ENDIF»;
+					«ENDIF»
+					«ELSEIF (it.useGenericAccessStrategy())»
+						// If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
+						ao.executeResultCount();
+						Long countNumber = ao.getResultCount();
+					«ELSEIF (isJpa1() && name == "findByCondition")»
+						// If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
+						ao.executeCount();
+						Long countNumber = ao.getResultCount();
+					«ELSE»
+						// If you need to calculate max pages you should define hint="countOperation=..." or hint="countQuery=..."
+						Long countNumber = null;
 				«ENDIF»
 					rowCount = countNumber == null ? «fw("domain.PagedResult")».UNKNOWN : countNumber.intValue();
 				}

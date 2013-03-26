@@ -108,7 +108,7 @@ def String enumMappingClass(Application it) {
 	import org.datanucleus.store.ExecutionContext;
 	import org.sculptor.framework.util.EnumHelper;
 
-	public class EnumMapping ^extends org.datanucleus.store.mapped.mapping.EnumMapping {
+	public class EnumMapping extends org.datanucleus.store.mapped.mapping.EnumMapping {
 
 		@Override
 		@SuppressWarnings("rawtypes")
@@ -206,7 +206,7 @@ def String enumLiteralClass(Application it) {
 	/**
 	 * Representation of an Enum literal.
 	 */
-	public class ParameterEnumLiteral ^extends EnumLiteral
+	public class ParameterEnumLiteral extends EnumLiteral
 	{
 		public ParameterEnumLiteral(SQLStatement stmt, JavaTypeMapping mapping, Object value, String parameterName) {
 			super(stmt, mapping, value, parameterName);

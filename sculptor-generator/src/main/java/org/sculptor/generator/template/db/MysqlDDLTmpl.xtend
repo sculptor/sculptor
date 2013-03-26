@@ -206,7 +206,7 @@ def String extendsForeignKey(DomainObject it, boolean initialComma) {
 
 def extendsForeignKeyAlter(DomainObject it) {
 	'''
-	-- Entity «name» ^extends «^extends.getRootExtends().name»
+	-- Entity «name» extends «^extends.getRootExtends().name»
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT FK_«getDatabaseName(it)»_«^extends.getExtendsForeignKeyName()»
 		FOREIGN KEY («^extends.getExtendsForeignKeyName()») REFERENCES «^extends.getRootExtends().getDatabaseName()»(«^extends.getRootExtends().getIdAttribute().getDatabaseName()»);
 	'''

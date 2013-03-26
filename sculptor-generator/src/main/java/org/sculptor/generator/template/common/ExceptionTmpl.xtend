@@ -50,7 +50,7 @@ class ExceptionTmpl {
 		«javaHeader()»
 		package «it.getExceptionPackage()»;
 
-		public class «exceptionName» ^extends «applicationExceptionClass()» {
+		public class «exceptionName» extends «applicationExceptionClass()» {
 		«serialVersionUID(it) »
 			private static final String CLASS_NAME = «exceptionName».class.getSimpleName();
 			private static final String CLASS_FULL_NAME = «exceptionName».class.getName();
@@ -75,7 +75,7 @@ class ExceptionTmpl {
 		«javaHeader()»
 		package «it.getExceptionPackage()»;
 
-		public class «exceptionName» ^extends Exception {
+		public class «exceptionName» extends Exception {
 		«serialVersionUID(it) »
 			public static final String ERROR_CODE = «exceptionName».class.getName();
 			private String errorCode;

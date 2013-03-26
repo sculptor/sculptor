@@ -219,7 +219,7 @@ def String serviceImplSubclass(Service it) {
 	«IF webService»
 		«serviceEjbTmpl.webServiceAnnotations(it)»
 	«ENDIF»
-	public class «name»Impl ^extends «name»ImplBase {
+	public class «name»Impl extends «name»ImplBase {
 
 		public «name»Impl() {
 		}

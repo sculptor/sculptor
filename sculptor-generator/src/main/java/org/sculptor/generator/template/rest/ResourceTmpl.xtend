@@ -86,7 +86,7 @@ def String resourceSubclass(Resource it) {
 	 * Implementation of «name».
 	 */
 	«springControllerAnnotation(it)»
-	public class «name» ^extends «name»Base {
+	public class «name» extends «name»Base {
 
 		public «name»() {
 		}
@@ -96,8 +96,6 @@ def String resourceSubclass(Resource it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def String initBinder(Resource it) {
@@ -111,15 +109,15 @@ def String initBinder(Resource it) {
 			«ENDIF»
 		}
 		
-	    «IF isJpaProviderAppEngine() && primaryDomainObject != null»
-	    	«gaeKeyIdPropertyEditor(primaryDomainObject)»
-	    «ENDIF»
+		«IF isJpaProviderAppEngine() && primaryDomainObject != null»
+			«gaeKeyIdPropertyEditor(primaryDomainObject)»
+		«ENDIF»
 	'''
 }
 
 def String gaeKeyIdPropertyEditor(DomainObject it) {
 	'''
-		private static class «name»IdKeyEditor ^extends java.beans.PropertyEditorSupport {
+		private static class «name»IdKeyEditor extends java.beans.PropertyEditorSupport {
 			@Override
 			public void setAsText(String text) {
 				if (text == null) {
@@ -234,7 +232,7 @@ def String resourceMethodHandWritten(ResourceOperation it) {
 
 def String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation postOperation) {
 	'''
-	«val firstParam = postOperation.parameters.head»
+		«val firstParam = postOperation.parameters.head»
 		«IF firstParam.domainObjectType != null »
 			«firstParam.domainObjectType.getDomainPackage()».«firstParam.domainObjectType.name» «firstParam.name» = new «firstParam.domainObjectType.getDomainPackage()».«firstParam.domainObjectType.name»(); 
 			«modelMapParam.name».addAttribute("«firstParam.name»", «firstParam.name»);
@@ -245,18 +243,18 @@ def String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter m
 
 def String resourceUpdateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation putOperation) {
 	'''
-	«val firstParam  = putOperation.parameters.head»
-	«val getOperation = resource.operations .findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.domainObjectType == firstParam.domainObjectType && e.type == null && e.collectionType == null)»
-	«val findByIdOperation  = getOperation.delegate»
-			«IF findByIdOperation == null »
-				// TODO: can't update due to no matching findById method in service
-			«ELSE »
-				«findByIdOperation.getTypeName()» «firstParam.name» =
-				get«findByIdOperation.service.name»().«findByIdOperation.name»(«FOR parameter : findByIdOperation.parameters SEPARATOR ", "»«IF parameter.getTypeName() == serviceContextClass()
-					»serviceContext()«ELSE»«parameter.name»«ENDIF»«ENDFOR»);
-				«modelMapParam.name».addAttribute("«firstParam.name»", «firstParam.name»);
-			«ENDIF »
-			return "«returnString»";
+		«val firstParam  = putOperation.parameters.head»
+		«val getOperation = resource.operations .findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.domainObjectType == firstParam.domainObjectType && e.type == null && e.collectionType == null)»
+		«val findByIdOperation  = getOperation.delegate»
+		«IF findByIdOperation == null »
+			// TODO: can't update due to no matching findById method in service
+		«ELSE »
+			«findByIdOperation.getTypeName()» «firstParam.name» =
+			get«findByIdOperation.service.name»().«findByIdOperation.name»(«FOR parameter : findByIdOperation.parameters SEPARATOR ", "»«IF parameter.getTypeName() == serviceContextClass()
+				»serviceContext()«ELSE»«parameter.name»«ENDIF»«ENDFOR»);
+			«modelMapParam.name».addAttribute("«firstParam.name»", «firstParam.name»);
+		«ENDIF »
+		return "«returnString»";
 	'''
 }
 
@@ -294,7 +292,7 @@ def String resourceMethodDeleteDelegation(ResourceOperation it) {
 
 def String resourceMethodReturn(ResourceOperation it) {
 	'''
-	«IF returnString != null && returnString.contains("{id}")»
+		«IF returnString != null && returnString.contains("{id}")»
 			return String.format("«returnString.replacePlaceholder("{id}", "%s") »", result.getId()«IF isJpaProviderAppEngine()».getId()«ENDIF»);
 		«ELSEIF returnString != null»
 			return "«returnString»";
@@ -306,7 +304,7 @@ def String resourceMethodReturn(ResourceOperation it) {
 
 def String resourceMethodModelMapResult(ResourceOperation it) {
 	'''
-	«val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")»
+		«val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")»
 		«IF modelMapParam != null && delegate.getTypeName() != "void"»
 			«modelMapParam.name».addAttribute("result", result);
 		«ENDIF»

@@ -100,7 +100,7 @@ def String serviceJUnitSubclassAppEngine(Service it) {
 	/**
 	 * Spring based test with Google App Engine support.
 	 */
-	public class «name»Test ^extends «fw("test.AbstractAppEngineJpaTests")» implements «name»TestBase {
+	public class «name»Test extends «fw("test.AbstractAppEngineJpaTests")» implements «name»TestBase {
 
 	«serviceJUnitDependencyInjection(it)»
 	
