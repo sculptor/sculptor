@@ -45,7 +45,7 @@ class CheckCrossLink {
 
 	@Inject extension HelperBase helperBase
 
-	def void checkCrossLink(DslModule module) {
+	def dispatch void checkCrossLink(DslModule module) {
 
 		module.domainObjects.forEach[checkSimpleDomainObjectCrossLink()]
 		
@@ -102,7 +102,7 @@ class CheckCrossLink {
       	}
     }
 
-	def checkCrossLink(DslDataTransferObject domainObject) {
+	def dispatch checkCrossLink(DslDataTransferObject domainObject) {
   		domainObject.references.forEach[checkDslDtoReferenceCrossLink()]
   		if (domainObject.getExtends() != null && domainObject.getExtends().eContainer == null) { 
     		error("Unresolved extends in " + domainObject.name);
@@ -116,21 +116,21 @@ class CheckCrossLink {
 
 	}
 	
-	def checkCrossLink(DslServiceOperation op) {
+	def dispatch checkCrossLink(DslServiceOperation op) {
 		op.parameters.forEach[param| param.checkCrossLink(op)]
     	if (op.returnType != null && op.returnType.domainObjectType != null && op.returnType.domainObjectType.eContainer == null) {
       		error("Unresolved return type in operation " + (op.eContainer as DslService).name + "#" + op.name)
       	}
       }
       
-    def checkCrossLink(DslParameter p, DslServiceOperation op) {
+    def dispatch checkCrossLink(DslParameter p, DslServiceOperation op) {
 	    if (p.parameterType != null && p.parameterType.domainObjectType != null && p.parameterType.domainObjectType.eContainer == null) {
       		error("Unresolved parameter type in operation " + ( op.eContainer as DslService).name + "#" + op.name + " " + p.name)
      
 	    }
      }
      
-	def checkCrossLink(DslRepositoryOperation op) {
+	def dispatch checkCrossLink(DslRepositoryOperation op) {
 	    op.parameters.forEach(param| param.checkCrossLink(op))
     	if (op.returnType != null && op.returnType.domainObjectType != null && op.returnType.domainObjectType.eContainer == null) {
       		error("Unresolved return type in operation " + (op.eContainer as DslRepository).name + "#" + op.name)
@@ -138,7 +138,7 @@ class CheckCrossLink {
      
      }
      
-	def checkCrossLink(DslParameter p, DslRepositoryOperation op) {
+	def dispatch checkCrossLink(DslParameter p, DslRepositoryOperation op) {
     	if (p.parameterType != null && p.parameterType.domainObjectType != null && p.parameterType.domainObjectType.eContainer == null) {
       error("Unresolved parameter type in operation " + (op.eContainer as DslRepository).name + "#" + op.name + " " + p.name);
      

@@ -108,7 +108,6 @@ def String consumerDependencyInjectionJUnit(Consumer it) {
 	)
 }
 
-/*This (String) is the name of the dependency */
 def String consumerDependencyInjectionTestMethod(String it, Consumer consumer) {
 	'''
 		public void test«it.toFirstUpper()»Setter() throws Exception {

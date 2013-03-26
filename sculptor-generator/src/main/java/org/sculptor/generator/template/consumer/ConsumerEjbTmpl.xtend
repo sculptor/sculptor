@@ -34,7 +34,7 @@ class ConsumerEjbTmpl {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
-	/*Used for pure-ejb3, i.e. without spring */
+	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanInterceptors(Consumer it) {
 		'''
 		@javax.interceptor.Interceptors({
@@ -44,7 +44,7 @@ class ConsumerEjbTmpl {
 		'''
 	}
 
-	/*Used for pure-ejb3, i.e. without spring */
+	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanImplBase(Consumer it) {
 		fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
@@ -159,7 +159,7 @@ class ConsumerEjbTmpl {
 		'''
 	}
 
-	/*Used for pure-ejb3, i.e. without spring */
+	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanImplSubclass(Consumer it) {
 		fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 		«javaHeader()»

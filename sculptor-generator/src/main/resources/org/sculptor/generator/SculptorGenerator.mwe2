@@ -17,12 +17,13 @@
 module org.sculptor.generator.SculptorGenerator
 
 import org.sculptor.generator.mwe2.SculptorUniversalGuiceWorkflowComponent
+import org.sculptor.generator.mwe2.ImportAwareUriBaseReader
 
 var modelFile
 
 Workflow {
 	// Read DSL model instance
-	component = org.eclipse.xtext.mwe.UriBasedReader {
+	component = ImportAwareUriBaseReader {
 		uri = modelFile
 		register = SculptordslStandaloneSetup {}
 

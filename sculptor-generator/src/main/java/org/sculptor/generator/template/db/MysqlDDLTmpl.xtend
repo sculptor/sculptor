@@ -182,14 +182,14 @@ def String foreignKey(Reference it, Boolean manyToManyRelationTable) {
 	'''
 }
 
-def String foreignKeyAlter(DomainObject it) {
+def dispatch String foreignKeyAlter(DomainObject it) {
 	'''
 		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyAlter(it)]»
 		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyAlter(it)]»
 	'''
 }
 
-def String foreignKeyAlter(Reference it) {
+def dispatch String foreignKeyAlter(Reference it) {
 	'''
 	-- Reference from «from.name».«getForeignKeyName(it)» to «to.name»
 	ALTER TABLE «from.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(from.getDatabaseName(), getDatabaseName(it))»

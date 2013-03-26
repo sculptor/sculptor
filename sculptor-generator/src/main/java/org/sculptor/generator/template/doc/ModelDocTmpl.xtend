@@ -150,7 +150,7 @@ def String moduleDocContent(Module it) {
 	'''
 }
 
-def String menu(Application it) {
+def dispatch String menu(Application it) {
 	'''
 	<div id="menu">
 	«FOR m : modules.sortBy(e|e.name)»
@@ -161,7 +161,7 @@ def String menu(Application it) {
 	'''
 }
 
-def String menu(Module it) {
+def dispatch String menu(Module it) {
 	'''
 	<div id="menu">
 			«menuItems(it)»
@@ -182,18 +182,18 @@ def String menuItems(Module it) {
 	'''
 }
 
-def String menuItem(Object it) {
+def dispatch String menuItem(Object it) {
 	'''
 	'''
 }
 
-def String menuItem(NamedElement it) {
+def dispatch String menuItem(NamedElement it) {
 	'''
 				<li><a href="DomainModelDoc-«it.getModule().name».html#«name»">«name»</a></li>
 	'''
 }
 
-def String graph(Application it) {
+def dispatch String graph(Application it) {
 	'''
 	<div id="graph">
 		<hr/>
@@ -237,7 +237,7 @@ def String graph(Application it) {
 	'''
 }
 
-def String graph(Module it) {
+def dispatch String graph(Module it) {
 	'''
 	<div id="module_graph">
 	    <hr/>
@@ -372,7 +372,7 @@ def String extendsCharacteristics (DomainObject it) {
 	'''
 }
 
-def String domainObjectCharacteristics(DomainObject it) {
+def dispatch String domainObjectCharacteristics(DomainObject it) {
 	'''
 	<p>«IF it.isImmutable()»<i>Immutable</i>«ENDIF»</p>
 	«extendsCharacteristics(it)»
@@ -380,7 +380,7 @@ def String domainObjectCharacteristics(DomainObject it) {
 	'''
 }
 
-def String domainObjectCharacteristics(Entity it) {
+def dispatch String domainObjectCharacteristics(Entity it) {
 	'''
 	<p><i>Entity</i>«IF !isAggregateRoot()», «notAggregateRootInfo(it)»«ENDIF»</p>
 	«IF it.isImmutable()»<p><i>Immutable</i></p>«ENDIF»
@@ -397,7 +397,7 @@ def String notAggregateRootInfo(DomainObject it) {
 	'''
 }
 
-def String domainObjectCharacteristics(ValueObject it) {
+def dispatch String domainObjectCharacteristics(ValueObject it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» ValueObject</i>«IF !persistent», not persistent«ELSEIF !isAggregateRoot()», «notAggregateRootInfo(it)»«ENDIF»</p>
 	«extendsCharacteristics(it)»
@@ -405,27 +405,27 @@ def String domainObjectCharacteristics(ValueObject it) {
 	'''
 }
 
-def String domainObjectCharacteristics(BasicType it) {
+def dispatch String domainObjectCharacteristics(BasicType it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» BasicType</i></p>
 	«traitsCharacteristics(it)»
 	'''
 }
 
-def String domainObjectCharacteristics(Enum it) {
+def dispatch String domainObjectCharacteristics(Enum it) {
 	'''
 	<p><i>Enum</i></p>
 	'''
 }
 
-def String domainObjectCharacteristics(DataTransferObject it) {
+def dispatch String domainObjectCharacteristics(DataTransferObject it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» DTO</i></p>
 	«extendsCharacteristics(it)»
 	'''
 }
 
-def String domainObjectCharacteristics(DomainEvent it) {
+def dispatch String domainObjectCharacteristics(DomainEvent it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» DomainEvent</i></p>
 	«extendsCharacteristics(it)»
@@ -433,7 +433,7 @@ def String domainObjectCharacteristics(DomainEvent it) {
 	'''
 }
 
-def String domainObjectCharacteristics(CommandEvent it) {
+def dispatch String domainObjectCharacteristics(CommandEvent it) {
 	'''
 	<p><i>«IF isImmutable()»Immutable «ENDIF» CommandEvent</i></p>
 	«extendsCharacteristics(it)»
@@ -441,7 +441,7 @@ def String domainObjectCharacteristics(CommandEvent it) {
 	'''
 }
 
-def String domainObjectCharacteristics(Trait it) {
+def dispatch String domainObjectCharacteristics(Trait it) {
 	'''
 	<p><i>Trait</i></p>
 	'''

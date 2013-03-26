@@ -100,33 +100,33 @@ def String hibenateCfgFile(Application it) {
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 	<hibernate-configuration>
-	    <session-factory>
-	    «hibenateCfgMappedResources(it)»
-		/*extension point for additional configuration of the Hibernate SessionFactory */
+		<session-factory>
+		«hibenateCfgMappedResources(it)»
+		«/* extension point for additional configuration of the Hibernate SessionFactory */»
 		<!-- add additional configuration properties in SpecialCases.xpt by "AROUND hibernateTmpl.hibenateCfgAdditions FOR Application" -->
-	    «hibenateCfgAdditions(it)»
-	    </session-factory>
+		«hibenateCfgAdditions(it)»
+		</session-factory>
 	</hibernate-configuration>
 	'''
 	)
 }
 
-def String hibenateCfgMappedResources(Application it) {
+def dispatch String hibenateCfgMappedResources(Application it) {
 	'''
-	«it.modules.sortBy(e|e.name).map[hibenateCfgMappedResources(it)].join()»
+		«it.modules.sortBy(e|e.name).map[hibenateCfgMappedResources(it)].join()»
 	'''
 }
 
-def String hibenateCfgMappedResources(Module it) {
+def dispatch String hibenateCfgMappedResources(Module it) {
 	'''
-	/* set mapping of Hibernate Types here, can't be set in persistence.xml */
+	«/* set mapping of Hibernate Types here, can't be set in persistence.xml */»
 	«IF !domainObjects.filter[d | d instanceof Enum].isEmpty»
 		<mapping resource="«it.getResourceDir("hibernate") + it.getEnumTypeDefFileName()»"/>
 	«ENDIF»
 	'''
 }
 
-/*extension point for additional configuration of the Hibernate SessionFactory */
+/* extension point for additional configuration of the Hibernate SessionFactory */
 def String hibenateCfgAdditions(Application it) {
 	'''
 	'''

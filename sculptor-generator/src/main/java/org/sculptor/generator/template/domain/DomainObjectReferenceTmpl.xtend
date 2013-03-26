@@ -226,12 +226,12 @@ def String notChangeableOneReferenceSetter(Reference it) {
 		@SuppressWarnings("unused")
 		«ELSE »
 		/**
-			* This reference can't be changed. Use constructor to assign value.
-			* However, some tools need setter methods and sometimes the
-			* referred object is not available at construction time. Therefore
-			* this method is visible, but the actual reference can't be changed
-			* once it is assigned.
-			*/
+		 * This reference can't be changed. Use constructor to assign value.
+		 * However, some tools need setter methods and sometimes the
+		 * referred object is not available at construction time. Therefore
+		 * this method is visible, but the actual reference can't be changed
+		 * once it is assigned.
+		 */
 		«ENDIF »
 		«domainObjectReferenceAnnotationTmpl.oneReferenceSetterAnnotations(it)»
 		«notChangeableReferenceSetterVisibility()» void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
@@ -273,16 +273,14 @@ def String manyReferenceAttribute(Reference it, boolean annotations) {
 def String manyReferenceIdsAttribute(Reference it) {
 	'''
 	«IF isJpaProviderAppEngine() && isJpaAnnotationOnFieldToBeGenerated()»
-	    «domainObjectReferenceAnnotationTmpl.manyReferenceAppEngineKeyAnnotation(it)»
+		«domainObjectReferenceAnnotationTmpl.manyReferenceAppEngineKeyAnnotation(it)»
 	«ENDIF»
 		private «it.getCollectionInterfaceType()»<«getJavaType("IDTYPE")»> «name»«it.unownedReferenceSuffix()» = new «it.getCollectionImplType()»<«getJavaType("IDTYPE")»>();
 	'''
 }
 
 def String manyReferenceLazyAttribute(Reference it) {
-	'''
-		private «it.getCollectionInterfaceType()»<«it.getTypeName()»> «name»;
-	'''
+	'''private «it.getCollectionInterfaceType()»<«it.getTypeName()»> «name»;'''
 }
 
 def String manyReferenceIdsGetter(Reference it) {
@@ -294,7 +292,7 @@ def String manyReferenceIdsGetter(Reference it) {
 		«it.getVisibilityLitteralGetter()»«it.getCollectionInterfaceType()»<«getJavaType("IDTYPE")»> get«name.toFirstUpper()»«it.unownedReferenceSuffix()»() {
 			// appengine sometimes stores the collection as null
 			if («name»«it.unownedReferenceSuffix()» == null) {
-			    «name»«it.unownedReferenceSuffix()» = new «it.getCollectionImplType()»<«getJavaType("IDTYPE")»>();
+				«name»«it.unownedReferenceSuffix()» = new «it.getCollectionImplType()»<«getJavaType("IDTYPE")»>();
 			}
 			«IF mongoDb()»
 				if («name» == null) {
@@ -328,10 +326,10 @@ def String manyReferenceAccessors(Reference it) {
 			«additionalManyReferenceAccessors(it)»
 		«ENDIF»
 	«ELSE»
-	    «manyReferenceGetter(it, true)»
-	    «manyReferenceSetter(it)»
-	    «additionalManyReferenceAccessors(it)»
-		«ENDIF»
+		«manyReferenceGetter(it, true)»
+		«manyReferenceSetter(it)»
+		«additionalManyReferenceAccessors(it)»
+	«ENDIF»
 	'''
 }
 
@@ -345,16 +343,14 @@ def String additionalManyReferenceAccessors(Reference it) {
 }
 
 def String manyReferenceGetter(Reference it) {
-	'''
-	«manyReferenceGetter(it, true)»
-	'''
+	'''«manyReferenceGetter(it, true)»'''
 }
 
 def String manyReferenceGetter(Reference it, boolean annotations) {
 	'''
 		«it.formatJavaDoc()»
 		«IF annotations»
-		«domainObjectReferenceAnnotationTmpl.manyReferenceGetterAnnotations(it)»
+			«domainObjectReferenceAnnotationTmpl.manyReferenceGetterAnnotations(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getCollectionInterfaceType()»<«it.getTypeName()»> get«name.toFirstUpper()»() {
 			return «name»;
@@ -369,7 +365,7 @@ def String manyReferenceSetter(Reference it) {
 		private void set«name.toFirstUpper()»(«it.getCollectionInterfaceType()»<«it.getTypeName()»> «name») {
 			this.«name» = «name»;
 		}
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -411,7 +407,7 @@ def String bidirectionalReferenceAccessors(Reference it) {
 	'''
 		«bidirectionalReferenceAdd(it)»
 		«bidirectionalReferenceRemove(it)»
-	«bidirectionalReferenceRemoveAll(it)»
+		«bidirectionalReferenceRemoveAll(it)»
 	'''
 }
 
@@ -419,18 +415,18 @@ def String bidirectionalReferenceAdd(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
-			* Adds an object to the bidirectional many-to-one
-			* association in both ends.
-			* It is added the collection {@link #get«name.toFirstUpper()»}
-			* at this side and the association
-			* {@link «it.getTypeName()»#set«opposite.name.toFirstUpper()»}
-			* at the opposite side is set.
-			*/
+		 * Adds an object to the bidirectional many-to-one
+		 * association in both ends.
+		 * It is added the collection {@link #get«name.toFirstUpper()»}
+		 * at this side and the association
+		 * {@link «it.getTypeName()»#set«opposite.name.toFirstUpper()»}
+		 * at the opposite side is set.
+		 */
 		«it.getVisibilityLitteralSetter()»void add«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 			«name.singular()»Element.set«opposite.name.toFirstUpper()»((«opposite.getTypeName()») this);
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -493,7 +489,7 @@ def String unidirectionalReferenceAccessors(Reference it) {
 	'''
 		«unidirectionalReferenceAdd(it)»
 		«unidirectionalReferenceRemove(it)»
-	«unidirectionalReferenceRemoveAll(it)»
+		«unidirectionalReferenceRemoveAll(it)»
 	'''
 }
 
@@ -501,14 +497,14 @@ def String unidirectionalReferenceAdd(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
-			* Adds an object to the unidirectional to-many
-			* association.
-			* It is added the collection {@link #get«name.toFirstUpper()»}.
-			*/
+		 * Adds an object to the unidirectional to-many
+		 * association.
+		 * It is added the collection {@link #get«name.toFirstUpper()»}.
+		 */
 		«it.getVisibilityLitteralSetter()»void add«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -523,7 +519,7 @@ def String unidirectionalReferenceRemove(Reference it) {
 		«it.getVisibilityLitteralSetter()»void remove«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().remove(«name.singular()»Element);
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -538,7 +534,7 @@ def String unidirectionalReferenceRemoveAll(Reference it) {
 		«it.getVisibilityLitteralSetter()»void removeAll«name.toFirstUpper()»() {
 			get«name.toFirstUpper()»().clear();
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -566,7 +562,7 @@ def String many2manyBidirectionalReferenceAdd(Reference it) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 			«name.singular()»Element.get«opposite.name.toFirstUpper()»().add((«opposite.getTypeName()») this);
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -574,18 +570,18 @@ def String many2manyBidirectionalReferenceRemove(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
-			* Removes an object from the bidirectional many-to-many
-			* association in both ends.
-			* It is removed from the collection {@link #get«name.toFirstUpper()»}
-			* at this side and from the collection
-			* {@link «it.getTypeName()»#get«opposite.name.toFirstUpper()»}
-			* at the opposite side.
-			*/
+		 * Removes an object from the bidirectional many-to-many
+		 * association in both ends.
+		 * It is removed from the collection {@link #get«name.toFirstUpper()»}
+		 * at this side and from the collection
+		 * {@link «it.getTypeName()»#get«opposite.name.toFirstUpper()»}
+		 * at the opposite side.
+		 */
 		«it.getVisibilityLitteralSetter()»void remove«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().remove(«name.singular()»Element);
 			«name.singular()»Element.get«opposite.name.toFirstUpper()»().remove((«opposite.getTypeName()») this);
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 
@@ -593,13 +589,13 @@ def String many2manyBidirectionalReferenceRemoveAll(Reference it) {
 	'''
 	«IF !it.isSetterPrivate()»
 		/**
-			* Removes all object from the bidirectional
-			* many-to-many association in both ends.
-			* All elements are removed from the collection {@link #get«name.toFirstUpper()»}
-			* at this side and from the collection
-			* {@link «it.getTypeName()»#get«opposite.name.toFirstUpper()»}
-			* at the opposite side.
-			*/
+		 * Removes all object from the bidirectional
+		 * many-to-many association in both ends.
+		 * All elements are removed from the collection {@link #get«name.toFirstUpper()»}
+		 * at this side and from the collection
+		 * {@link «it.getTypeName()»#get«opposite.name.toFirstUpper()»}
+		 * at the opposite side.
+		 */
 		«it.getVisibilityLitteralSetter()»void removeAll«name.toFirstUpper()»() {
 			for («it.getTypeName()» d : get«name.toFirstUpper()»()) {
 				d.get«opposite.name.toFirstUpper()»().remove((«opposite.getTypeName()») this);
@@ -607,7 +603,7 @@ def String many2manyBidirectionalReferenceRemoveAll(Reference it) {
 			get«name.toFirstUpper()»().clear();
 
 		};
-		«ENDIF»
+	«ENDIF»
 	'''
 }
 

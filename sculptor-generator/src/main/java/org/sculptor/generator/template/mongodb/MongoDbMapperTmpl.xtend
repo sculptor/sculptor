@@ -323,7 +323,7 @@ def String toDomain(DomainObject it) {
 	'''
 }
 
-def String getDBCollectionName(DomainObject it) {
+def dispatch String getDBCollectionName(DomainObject it) {
 	'''
 		@Override
 		public String getDBCollectionName() {
@@ -332,7 +332,7 @@ def String getDBCollectionName(DomainObject it) {
 	'''
 }
 
-def String getDBCollectionName(BasicType it) {
+def dispatch String getDBCollectionName(BasicType it) {
 	'''
 		@Override
 		public String getDBCollectionName() {

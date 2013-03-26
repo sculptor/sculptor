@@ -77,6 +77,8 @@ import sculptormetamodel.Service
 
 import static org.sculptor.generator.transform.DslTransformation.*
 import org.sculptor.generator.check.CheckCrossLink
+import org.eclipse.xtext.EcoreUtil2
+import java.util.List
 
 class DslTransformation {
 
@@ -90,7 +92,7 @@ class DslTransformation {
 	@Inject extension CheckCrossLink checkCrossLink
 	
 	def create FACTORY.createApplication transform(DslApplication app) {
-		val allDslModules = app.modules
+		val List<DslModule> allDslModules = EcoreUtil2::eAllOfType(app, typeof(DslModule))
 		initPropertiesHook()
 		setGlobalApp(it)
 		allDslModules.forEach[checkCrossLink()]

@@ -110,7 +110,7 @@ def String persistenceUnitContent(Application it, String unitName) {
 		«ENDIF»
 		<!-- properties  -->
 		«persistenceUnitProperties(it, unitName)»
-		/*extension point for additional configuration of the PersistenceUnit */
+		«/*extension point for additional configuration of the PersistenceUnit */»
 		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditions FOR Application" -->
 		«persistenceUnitAdditions(it, unitName)»
 	</persistence-unit>
@@ -142,7 +142,7 @@ def String persistenceUnitAnnotatedClasses(DomainObject it) {
 	«IF it.isEmbeddable()»
 		<class>«getDomainPackage()».«name»</class>
 	«ENDIF»
-	/* seems that openjpa needs also the mappedsuperclasses in persistence.xml */
+	«/* seems that openjpa needs also the mappedsuperclasses in persistence.xml */»
 	«IF isJpaProviderOpenJpa()»
 		«IF gapClass»
 			<class>«getDomainPackage()».«name»Base</class>
@@ -219,7 +219,7 @@ def String persistenceUnitProperties(Application it, String unitName) {
 	«ELSEIF isJpaProviderOpenJpa()»
 		«persistenceUnitPropertiesOpenJpa(it)»
 	«ENDIF»
-	/*extension point for additional configuration of the PersistenceUnit */
+	«/* extension point for additional configuration of the PersistenceUnit */»
 	<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditionalProperties FOR Application" -->
 		«persistenceUnitAdditionalProperties(it, unitName)»
 	</properties>
@@ -241,7 +241,7 @@ def String persistenceUnitPropertiesHibernate(Application it, String unitName) {
 	'''
 		<property name="hibernate.dialect" value="«hibernateDialect»" />
 		<property name="query.substitutions" value="true 1, false 0" />
-	/*for testing purposes only */
+	«/* for testing purposes only */»
 	«IF dbProduct == "hsqldb-inmemory"»
 		<property name="hibernate.show_sql" value="true" />
 		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
@@ -263,11 +263,11 @@ def String persistenceUnitPropertiesEclipseLink(Application it, String unitName)
 		«IF isEar() && applicationServer() == "jboss"»
 		<property name="eclipselink.target-server" value="JBoss"/>
 		«ENDIF»
-		/* need this to create sequence table «IF dbProduct == "hsqldb-inmemory"»  */
-		/* TODO: find better solution, maybe put seequnce table generation to ddl script  */
+		«/* need this to create sequence table «IF dbProduct == "hsqldb-inmemory"» */»
+		«/* TODO: find better solution, maybe put seequnce table generation to ddl script */»
 		<property name="eclipselink.ddl-generation" value="create-tables"/>
 		<property name="eclipselink.ddl-generation.output-mode" value="database"/>
-		/*«ENDIF» */
+		«/* «ENDIF» */»
 	'''
 }
 

@@ -37,7 +37,7 @@ class DomainObjectAnnotationTmpl {
 	@Inject extension Helper helper
 	@Inject extension Properties properties
 
-def String domainObjectSubclassAnnotations(DataTransferObject it) {
+def dispatch String domainObjectSubclassAnnotations(DataTransferObject it) {
 	'''
 	«IF it.isXmlRootToBeGenerated()»
 		«xmlRootAnnotation(it)»
@@ -48,12 +48,12 @@ def String domainObjectSubclassAnnotations(DataTransferObject it) {
 	'''
 }
 
-def String domainObjectSubclassAnnotations(Trait it) {
+def dispatch String domainObjectSubclassAnnotations(Trait it) {
 	'''
 	'''
 }
 
-def String domainObjectSubclassAnnotations(DomainObject it) {
+def dispatch String domainObjectSubclassAnnotations(DomainObject it) {
 	'''
 	«IF it.isXmlRootToBeGenerated()»
 		«xmlRootAnnotation(it)»
@@ -86,7 +86,7 @@ def String domainObjectAnnotations(DomainObject it) {
 	'''
 }
 
-def String domainObjectBaseAnnotations(DataTransferObject it) {
+def dispatch String domainObjectBaseAnnotations(DataTransferObject it) {
 	'''
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
 			«it.getValidationAnnotations()»
@@ -100,7 +100,7 @@ def String domainObjectBaseAnnotations(DataTransferObject it) {
 	'''
 }
 
-def String domainObjectBaseAnnotations(DomainObject it) {
+def dispatch String domainObjectBaseAnnotations(DomainObject it) {
 	'''
 		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && (it.getValidationEntityListener() != null || it.getAuditEntityListener() != null)»
 		«jpaEntityListenersAnnotation(it)»
@@ -125,8 +125,8 @@ def String xstreamAliasAnnotation(DomainObject it) {
 	'''@com.thoughtworks.xstream.annotations.XStreamAlias("«it.getXStreamAliasName()»")'''
 }
 
-/*set EntityListerners for Validation and Audit */
-/*TODO: optimize this quick solution */
+/* set EntityListerners for Validation and Audit */
+/* TODO: optimize this quick solution */
 def String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
 		@javax.persistence.EntityListeners({
@@ -135,7 +135,7 @@ def String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
 }
 
-/*We need to format this carefully beccause it is included in JavaDoc, which is not beautified. */
+/* We need to format this carefully beccause it is included in JavaDoc, which is not beautified. */
 def String domainObjectInheritanceAnnotations(DomainObject it) {
 	'''
 	«IF it.hasSubClass()»
@@ -152,7 +152,7 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 		«ELSEIF it.isInheritanceTypeJoined()»
 			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.JOINED)
 			«IF !isJpa2() && isJpaProviderEclipseLink()»
-				/* EclipseLink needs discriminator */
+				«/* EclipseLink needs discriminator */»
 				@javax.persistence.DiscriminatorColumn(name="DTYPE", discriminatorType=DiscriminatorType.STRING, length=21)
 				«IF !^abstract»
 				@javax.persistence.DiscriminatorValue("«name»")
@@ -171,7 +171,7 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 				@org.hibernate.annotations.ForeignKey(
 					name = "FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»")
 			«ELSEIF !isJpa2() && isJpaProviderEclipseLink()»
-				/* EclipseLink needs discriminator */
+				«/* EclipseLink needs discriminator */»
 				@javax.persistence.DiscriminatorValue("«name»")
 			«ENDIF»
 		«ENDIF»
@@ -183,11 +183,11 @@ def String uniqueConstraints(DomainObject it) {
 	''', uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})'''
 }
 
-def String uniqueColumns(NamedElement it, String columnPrefix) {
+def dispatch String uniqueColumns(NamedElement it, String columnPrefix) {
 	'''"«getDatabaseName(columnPrefix, it)»"'''
 }
 
-def String uniqueColumns(Reference it, String columnPrefix) {
+def dispatch String uniqueColumns(Reference it, String columnPrefix) {
 	'''«IF it.isBasicTypeReference()»
 		«to.getAllNaturalKeys().map[k | uniqueColumns(k, getDatabaseName(columnPrefix, it) + "_")].join(", ")»
 		«ELSE»"«getDatabaseName(columnPrefix, it)»"«ENDIF»'''

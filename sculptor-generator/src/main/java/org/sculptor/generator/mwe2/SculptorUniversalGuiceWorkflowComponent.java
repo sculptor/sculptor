@@ -18,7 +18,9 @@
 package org.sculptor.generator.mwe2;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
@@ -85,7 +87,7 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 				issues.addError("Module '"+guiceModule+"' is not instance of com.google.inject.Module");
 			}
 		} catch (Throwable th) {
-			issues.addError("Error creating module '"+guiceModule+"': " + th.getMessage());
+			issues.addError(this, "Error creating module '"+guiceModule+"'", null, th, null);
 		}
 
 		// Resolve action (method to run)
@@ -94,13 +96,17 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 		try {
 			int lastDot = action.lastIndexOf('.');
 			actionClass = Class.forName(action.substring(0, lastDot));
+			Class<?> inputDataClass = inputData.getClass();
+			if (Collection.class.isAssignableFrom(inputDataClass)) {
+				inputDataClass = ((Collection<?>) inputData).iterator().next().getClass();
+			}
 			try {
-				actionMethod = actionClass.getMethod(action.substring(lastDot + 1), inputData.getClass());
+				actionMethod = actionClass.getMethod(action.substring(lastDot + 1), inputDataClass);
 			} catch (Throwable th) {
-				actionMethod = actionClass.getMethod(action.substring(lastDot + 1), inputData.getClass().getInterfaces()[0]);
+				actionMethod = actionClass.getMethod(action.substring(lastDot + 1), inputDataClass.getInterfaces()[0]);
 			}
 		} catch (Throwable th) {
-			issues.addError("Error creating action '"+action+"': " + th.getMessage());
+			issues.addError(this, "Error creating action '"+action+"'", null, th, null);
 		}
 
 		// Run action
@@ -111,12 +117,20 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 			// execute the transformation
 			Object result;
 			try {
-				result = actionMethod.invoke(actionObj, inputData);
+				if (inputData instanceof Collection) {
+					List<Object> arrResult = new ArrayList<Object>();
+					for (Object obj : (Collection<?>) inputData) {
+						arrResult.add(actionMethod.invoke(actionObj, obj));
+					}
+					result = arrResult;
+				} else {
+					result = actionMethod.invoke(actionObj, inputData);
+				}
 				if (outputSlot != null) {
 					ctx.set(outputSlot, result);
 				}
 			} catch (Throwable th) {
-				issues.addError("Error invoking action '"+action+"': " + th.getMessage());
+				issues.addError(this, "Error invoking action '"+action+"'", null, th, null);
 			}
 		}
 		issues.addWarning(this, "Action done in "+(System.currentTimeMillis() - start)+" ms");

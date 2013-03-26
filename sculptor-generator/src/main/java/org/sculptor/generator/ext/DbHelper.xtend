@@ -33,10 +33,10 @@ import sculptormetamodel.Reference
 import sculptormetamodel.SculptormetamodelFactory
 
 public class DbHelper {
-	@Inject extension Properties properties
 	@Inject extension PropertiesBase propertiesBase
-	@Inject extension Helper helper
+	@Inject extension Properties properties
 	@Inject extension DbHelperBase dbHelperBase
+	@Inject extension Helper helper
 
 	def String getCascade(Reference ref) {
 		if (ref.cascade == null || ref.cascade == "")
@@ -77,23 +77,23 @@ public class DbHelper {
 		}
 	}
 
-	def String getDatabaseName(DomainObject domainObject) {
+	def dispatch String getDatabaseName(DomainObject domainObject) {
 		domainObject.databaseTable
 	}
 
-	def String getDatabaseName(BasicType basicType) {
+	def dispatch String getDatabaseName(BasicType basicType) {
 		basicType.name.toUpperCase()
 	}
 
-	def String getDatabaseName(Attribute attribute) {
+	def dispatch String getDatabaseName(Attribute attribute) {
 		attribute.databaseColumn
 	}
 
-	def String getDatabaseName(Reference reference) {
+	def dispatch String getDatabaseName(Reference reference) {
 		reference.databaseColumn
 	}
 
-	def String getDatabaseName(NamedElement element) {
+	def dispatch String getDatabaseName(NamedElement element) {
 		"UNKNOWN"
 	}
 
@@ -120,7 +120,7 @@ public class DbHelper {
 	}
 
 	def private String getDefaultDatabaseName2(NamedElement element) {
-		element.getDatabaseName()
+		dbHelperBase.getDatabaseName(element)
 	}
 
 	def String truncateLongDatabaseName(String part1, String part2) {
@@ -177,12 +177,12 @@ public class DbHelper {
 //	  JAVA org.fornax.cartridges.sculptor.generator.util.DatabaseGenerationHelper.getOneToManyJoinTableName(sculptormetamodel.Reference);
 
 	// get unique list of join tables
-	def Set<? extends String> getJoinTableNames(Collection<DomainObject> domainObjects) {
+	def dispatch Set<? extends String> getJoinTableNames(Collection<DomainObject> domainObjects) {
 		domainObjects.map[d | getJoinTableNames(d)].flatten().toSet()
 	}
 
 	// get join tables for this domain object
-	def Set<String> getJoinTableNames(DomainObject domainObject) {
+	def dispatch Set<String> getJoinTableNames(DomainObject domainObject) {
 		domainObject.references.filter[r | !r.transient && isManyToMany(r)
 				&& r.to.hasOwnDatabaseRepresentation()].map[r | getManyToManyJoinTableName(r)].toSet
 
@@ -266,7 +266,7 @@ public class DbHelper {
 		}
 	}
 
-	def String getFetchType(Reference ref) {
+	def dispatch String getFetchType(Reference ref) {
 		switch (getFetch(ref)) {
 			// case "select" : "javax.persistence.FetchType.LAZY"
 			case "join" : "javax.persistence.FetchType.EAGER"
@@ -276,11 +276,11 @@ public class DbHelper {
 		}
 	}
 
-	def String getFetchType(Attribute att) {
+	def dispatch String getFetchType(Attribute att) {
 		if (att.hasHint("fetch")) getFetchType(att.getHint("fetch")) else null
 	}
 
-	def String getFetchType(String fetch) {
+	def dispatch String getFetchType(String fetch) {
 	switch (fetch) {
 		// case "select" : "javax.persistence.FetchType.LAZY"
 		case "join" : "javax.persistence.FetchType.EAGER"

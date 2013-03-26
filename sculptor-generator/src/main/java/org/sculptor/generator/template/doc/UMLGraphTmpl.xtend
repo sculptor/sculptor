@@ -172,7 +172,7 @@ def String ServiceToUML(Service it, Set<Module> focus, int detail) {
 	'''
 }
 
-def String OperationToUML(Operation it) {
+def dispatch String OperationToUML(Operation it) {
 	'''
 				<tr><td align="left">«it.name»</td></tr>			
 	'''
@@ -307,7 +307,7 @@ def String EnumValueToUML(EnumValue it) {
 	'''
 }
 
-def String OperationToUML(DomainObjectOperation it) {
+def dispatch String OperationToUML(DomainObjectOperation it) {
 	'''
 			<tr><td align="left">«name»()</td></tr>
 	'''
