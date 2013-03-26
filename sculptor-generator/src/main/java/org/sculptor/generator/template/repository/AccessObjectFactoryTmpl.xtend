@@ -44,29 +44,29 @@ def String genericFactoryMethod(RepositoryOperation it) {
 	'''
 	«IF useGenericAccessStrategy(it)»
 		«IF name != "findByExample"»
-		// convenience method
-		protected «genericAccessObjectInterface(name)»2«it.getGenericType()» create«getAccessObjectName()»() {
-			return create«getAccessObjectName()»(getPersistentClass(), getPersistentClass());
-		}
+			// convenience method
+			protected «genericAccessObjectInterface(name)»2«it.getGenericType()» create«getAccessObjectName()»() {
+				return create«getAccessObjectName()»(getPersistentClass(), getPersistentClass());
+			}
 
-		// convenience method
-		protected <R> «genericAccessObjectInterface(name)»2<R> create«getAccessObjectName()»(Class<R> resultType) {
-			return create«getAccessObjectName()»(getPersistentClass(), resultType);
-		}
+			// convenience method
+			protected <R> «genericAccessObjectInterface(name)»2<R> create«getAccessObjectName()»(Class<R> resultType) {
+				return create«getAccessObjectName()»(getPersistentClass(), resultType);
+			}
 
-		protected <T,R> «genericAccessObjectInterface(name)»2<R> create«getAccessObjectName()»(Class<T> type, Class<R> resultType) {
-			«genericAccessObjectImplementation(name)»Generic<T,R> ao = new «genericAccessObjectImplementation(name)»Generic<T,R>(type, resultType);
-			«factoryMethodInit(it)»
-			return ao;
-		}
+			protected <T,R> «genericAccessObjectInterface(name)»2<R> create«getAccessObjectName()»(Class<T> type, Class<R> resultType) {
+				«genericAccessObjectImplementation(name)»Generic<T,R> ao = new «genericAccessObjectImplementation(name)»Generic<T,R>(type, resultType);
+				«factoryMethodInit(it)»
+				return ao;
+			}
 		«ELSE»
-		protected <T,R> «genericAccessObjectInterface(name)»2<T,R> create«getAccessObjectName()»(Class<T> type, Class<R> resultType) {
-			«genericAccessObjectImplementation(name)»Generic<T,R> ao = new «genericAccessObjectImplementation(name)»Generic<T,R>(type, resultType);
-			«factoryMethodInit(it)»
-			return ao;
-		}
+			protected <T,R> «genericAccessObjectInterface(name)»2<T,R> create«getAccessObjectName()»(Class<T> type, Class<R> resultType) {
+				«genericAccessObjectImplementation(name)»Generic<T,R> ao = new «genericAccessObjectImplementation(name)»Generic<T,R>(type, resultType);
+				«factoryMethodInit(it)»
+				return ao;
+			}
 		«ENDIF»
-		«ELSE»
+	«ELSE»
 		protected «genericAccessObjectInterface(name)»«it.getGenericType()» create«getAccessObjectName()»() {
 			«genericAccessObjectImplementation(name)»«it.getGenericType()» ao = new «genericAccessObjectImplementation(name)»«it.getGenericType()»(« IF it.hasAccessObjectPersistentClassConstructor()»getPersistentClass()«ENDIF»);
 			«factoryMethodInit(it)»

@@ -65,7 +65,7 @@ def String jodaStrategy(Application it) {
 	import org.joda.time.LocalDate;
 
 	@SuppressWarnings("serial")
-	public class JodaHandler ^extends AbstractValueHandler {
+	public class JodaHandler extends AbstractValueHandler {
 
 		@Override
 		public Object toObjectValue(ValueMapping vm, Object value) {
@@ -135,7 +135,7 @@ def String enumStrategy(Application it) {
 	import org.sculptor.framework.util.EnumHelper;
 
 	@SuppressWarnings("serial")
-	public class EnumHandler ^extends EnumValueHandler {
+	public class EnumHandler extends EnumValueHandler {
 
 		@Override
 		public Object toObjectValue(ValueMapping vm, Object value) {

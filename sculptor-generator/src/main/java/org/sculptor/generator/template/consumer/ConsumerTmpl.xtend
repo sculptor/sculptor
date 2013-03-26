@@ -71,7 +71,7 @@ def String consumerInterface(Consumer it) {
 	«javaHeader()»
 	package «getConsumerPackage()»;
 
-	public interface «name» ^extends «consumerInterface()» {
+	public interface «name» extends «consumerInterface()» {
 
 	}
 	'''
@@ -129,7 +129,7 @@ def String eventConsumerImplSubclass(Consumer it) {
 	«IF isSpringToBeGenerated()»
 		@org.springframework.stereotype.Component("«name.toFirstLower()»")
 	«ENDIF»
-	public class «name»Impl ^extends «name»ImplBase {
+	public class «name»Impl extends «name»ImplBase {
 
 		public «name»Impl() {
 		}

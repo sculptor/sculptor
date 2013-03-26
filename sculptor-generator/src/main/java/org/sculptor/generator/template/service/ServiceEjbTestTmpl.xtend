@@ -46,7 +46,7 @@ def String serviceJUnitSubclassOpenEjb(Service it) {
 	/**
 	 *  JUnit test with OpenEJB support.
 	 */
-	public class «name»Test ^extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» implements «name»TestBase {
+	public class «name»Test extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» implements «name»TestBase {
 
 	@javax.ejb.EJB
 		private «it.getServiceapiPackage()».«name» «name.toFirstLower()»;

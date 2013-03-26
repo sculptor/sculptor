@@ -47,7 +47,7 @@ def String consumerJUnitWithAnnotations(Consumer it) {
 	/**
 	 * JUnit test.
 	 */
-	public class «name»Test ^extends «databaseJpaTestCaseClass()» {
+	public class «name»Test extends «databaseJpaTestCaseClass()» {
 
 		@org.springframework.beans.factory.annotation.Autowired
 		private «consumerInterface()» «name.toFirstLower()»;
@@ -74,7 +74,7 @@ def String consumerJUnitGetDataSetFile(Consumer it) {
 
 def String receiveTestMethod(Consumer it) {
 	'''
-	@org.junit.Test
+		@org.junit.Test
 		public void testReceive() throws Exception {
 			// TODO Auto-generated method stub
 			//«name.toFirstLower()».receive(event);
@@ -99,7 +99,7 @@ def String consumerDependencyInjectionJUnit(Consumer it) {
 	 * JUnit test to verify that dependency injection setter methods
 	 * of other Spring beans have been implemented.
 	 */
-	public class «name»DependencyInjectionTest ^extends junit.framework.TestCase {
+	public class «name»DependencyInjectionTest extends junit.framework.TestCase {
 
 		«it.otherDependencies.map[d | consumerDependencyInjectionTestMethod(d, it)].join()»
 
@@ -125,17 +125,17 @@ def String consumerDependencyInjectionTestMethod(String it, Consumer consumer) {
 			}
 
 			assertNotNull("Setter method for dependency injection of " +
-				        "«it» must be defined in «consumer.name».",
-				        setter);
+					"«it» must be defined in «consumer.name»."
+					, setter);
 
 			«consumer.getConsumerPackage()».«consumer.name» «consumer.name.toFirstLower()» = new «consumer.getConsumerPackage()».«consumer.name»();
 			try {
 				setter.invoke(«consumer.name.toFirstLower()», new Object[] {null});
 			} catch (java.lang.reflect.InvocationTargetException e) {
 				if (e.getCause().getClass().equals(UnsupportedOperationException.class)) {
-				    assertTrue(e.getCause().getMessage(), false);
+					assertTrue(e.getCause().getMessage(), false);
 				} else {
-				    // exception due to something else, but the method was not forgotten
+					// exception due to something else, but the method was not forgotten
 				}
 			}
 

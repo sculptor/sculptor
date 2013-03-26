@@ -116,7 +116,7 @@ def String ejbBeanImplSubclass(Service it) {
 	«ENDIF»
 	«ejbInterceptors(it)»
 	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
-	public class «name + getSuffix("Impl")» «IF gapClass»^extends «name + getSuffix("Impl")»Base«ENDIF» {
+	public class «name + getSuffix("Impl")» «IF gapClass»extends «name + getSuffix("Impl")»Base«ENDIF» {
 		«serviceTmpl.serialVersionUID(it)»
 		public «name + getSuffix("Impl")»() {
 		}
@@ -129,8 +129,6 @@ def String ejbBeanImplSubclass(Service it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def String ejbInterceptors(Service it) {
@@ -167,7 +165,7 @@ def String ejbRemoteInterface(Service it) {
 	 * Generated EJB remote interface for the Service «name».
 	 */
 	@javax.ejb.Remote
-	public interface «name»Remote ^extends «name» {
+	public interface «name»Remote extends «name» {
 	}
 	'''
 	)
@@ -182,7 +180,7 @@ def String ejbLocalInterface(Service it) {
 	 * Generated EJB local interface for the Service «name».
 	 */
 	@javax.ejb.Local
-	public interface «name»Local ^extends «name» {
+	public interface «name»Local extends «name» {
 	}
 	'''
 	)
@@ -207,25 +205,25 @@ def String serviceProxy(Service it) {
 		}
 
 		/**
-			* Dependency injection of the EJB to invoke. If service is not injected
-			* lookup based on jndiName will be used.
-			*/
+		 * Dependency injection of the EJB to invoke. If service is not injected
+		 * lookup based on jndiName will be used.
+		 */
 		public void setService(«it.getServiceapiPackage()».«name» service) {
 			this.service = service;
 		}
 
 		/**
-			* Dependency injection of JNDI name of EJB to invoke.
-			* Only necessary if default naming isn't enough.
-			*/
+		 * Dependency injection of JNDI name of EJB to invoke.
+		 * Only necessary if default naming isn't enough.
+		 */
 		public void setJndiName(String jndiName) {
 			this.jndiName = jndiName;
 		}
 		
 		/**
-			* Dependency injection of earName that is used for default
-			* jndiName. Only necessary if default naming isn't enough.
-			*/
+		 * Dependency injection of earName that is used for default
+		 * jndiName. Only necessary if default naming isn't enough.
+		 */
 		public void setEarName(String earName) {
 			this.earName = earName;
 		}
@@ -316,20 +314,20 @@ def String serviceRemoteProxy(Service it) {
 			return remote;
 		}
 
-	«IF localInterface»
-		/**
-			* When setting this to true remote ejb interface is used. By default local
-			* ejb interface is used.
-			*/
-		public void setRemote(boolean remote) {
-			this.remote = remote;
-		}
+		«IF localInterface»
+			/**
+			 * When setting this to true remote ejb interface is used. By default local
+			 * ejb interface is used.
+			 */
+			public void setRemote(boolean remote) {
+				this.remote = remote;
+			}
 		«ENDIF»
 		
 		«IF remoteInterface && localInterface»
-		private String localOrRemote() {
-			return (remote ? "remote" : "local"); 
-		}
+			private String localOrRemote() {
+				return (remote ? "remote" : "local"); 
+			}
 		«ENDIF»
 
 		private String providerUrl;
@@ -339,9 +337,9 @@ def String serviceRemoteProxy(Service it) {
 		}
 
 		/**
-			* InitialContext javax.naming.Context.PROVIDER_URL, for example
-			* jnp://host1:1099,host2:1099
-			*/
+		 * InitialContext javax.naming.Context.PROVIDER_URL, for example
+		 * jnp://host1:1099,host2:1099
+		 */
 		public void setProviderUrl(String providerUrl) {
 			this.providerUrl = providerUrl;
 		}
@@ -364,9 +362,9 @@ def String serviceRemoteProxy(Service it) {
 		}
 
 		/**
-			* InitialContext JBoss cluster partition parameter, jnp.partitionName. Used
-			* for remote lookup.
-			*/
+		 * InitialContext JBoss cluster partition parameter, jnp.partitionName. Used
+		 * for remote lookup.
+		 */
 		public void setPartitionName(String partitionName) {
 			this.partitionName = partitionName;
 		}
@@ -378,87 +376,86 @@ def String serviceRemoteProxy(Service it) {
 			}
 			java.util.Properties p = new java.util.Properties();
 
-		«IF applicationServer() == "jboss"»
-		// doc of properties: http://community.jboss.org/wiki/NamingContextFactory
-			p.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-			p.put(javax.naming.Context.URL_PKG_PREFIXES, "jboss.naming:org.jnp.interfaces");
-			if (providerUrl != null) {
-				p.put(javax.naming.Context.PROVIDER_URL, sortProviderUrl());
-			}
-			if (partitionName != null) {
-				// JBoss cluster partition parameter
-				p.put("jnp.partitionName", partitionName);
-			}
+			«IF applicationServer() == "jboss"»
+				// doc of properties: http://community.jboss.org/wiki/NamingContextFactory
+				p.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+				p.put(javax.naming.Context.URL_PKG_PREFIXES, "jboss.naming:org.jnp.interfaces");
+				if (providerUrl != null) {
+					p.put(javax.naming.Context.PROVIDER_URL, sortProviderUrl());
+				}
+				if (partitionName != null) {
+					// JBoss cluster partition parameter
+					p.put("jnp.partitionName", partitionName);
+				}
 			«ELSE»
-			if (providerUrl != null) {
-				p.put(javax.naming.Context.PROVIDER_URL, providerUrl);
-			}
+				if (providerUrl != null) {
+					p.put(javax.naming.Context.PROVIDER_URL, providerUrl);
+				}
 			«ENDIF»
 
 			return new InitialContext(p);
 		}
 
-	«IF applicationServer() == "jboss"»
-		private static final String JNP = "jnp://";
-		private java.util.Random random = new java.util.Random(0);
-		
+		«IF applicationServer() == "jboss"»
+			private static final String JNP = "jnp://";
+			private java.util.Random random = new java.util.Random(0);
 
-		/**
-			* Sort with preference of current "localhost", i.e. prefer local calls over
-			* remote. "localhost" is determined from System property
-			* "jboss.bind.address".
-			*/
-		private String sortProviderUrl() {
-			if (providerUrl == null) {
-				throw new IllegalArgumentException("providerUrl must be defined");
-			}
-			String str;
-			if (providerUrl.startsWith(JNP)) {
-				str = providerUrl.substring(JNP.length());
-			} else {
-				str = providerUrl;
-			}
-			String[] split = str.split(",");
-			if (split.length <= 1) {
-				return providerUrl;
-			}
-			String bindAddress = System.getProperty("jboss.bind.address", "localhost");
-			String primary = null;
-			java.util.List<String> rest = new java.util.ArrayList<String>();
-			for (String each : split) {
-				if (primary == null && each.startsWith(bindAddress + ":")) {
-				    primary = each;
+			/**
+			 * Sort with preference of current "localhost", i.e. prefer local calls over
+			 * remote. "localhost" is determined from System property
+			 * "jboss.bind.address".
+			 */
+			private String sortProviderUrl() {
+				if (providerUrl == null) {
+					throw new IllegalArgumentException("providerUrl must be defined");
+				}
+				String str;
+				if (providerUrl.startsWith(JNP)) {
+					str = providerUrl.substring(JNP.length());
 				} else {
-				    rest.add(each);
+					str = providerUrl;
 				}
-			}
-			StringBuilder result = new StringBuilder();
-			if (providerUrl.startsWith(JNP)) {
-				result.append(JNP);
-			}
-			if (primary != null) {
-				result.append(primary);
-				if (!rest.isEmpty()) {
-				    result.append(",");
+				String[] split = str.split(",");
+				if (split.length <= 1) {
+					return providerUrl;
 				}
-			}
-			if (rest.size() > 1) {
-				java.util.Collections.shuffle(rest, random);
-			}
-			if (rest.size() == 1) {
-				result.append(rest.get(0));
-			} else {
-				for (java.util.Iterator<String> iter = rest.iterator(); iter.hasNext();) {
-				    String each = iter.next();
-				    result.append(each);
-				    if (iter.hasNext()) {
-				        result.append(",");
-				    }
+				String bindAddress = System.getProperty("jboss.bind.address", "localhost");
+				String primary = null;
+				java.util.List<String> rest = new java.util.ArrayList<String>();
+				for (String each : split) {
+					if (primary == null && each.startsWith(bindAddress + ":")) {
+					    primary = each;
+					} else {
+					    rest.add(each);
+					}
 				}
-			}
+				StringBuilder result = new StringBuilder();
+				if (providerUrl.startsWith(JNP)) {
+					result.append(JNP);
+				}
+				if (primary != null) {
+					result.append(primary);
+					if (!rest.isEmpty()) {
+					    result.append(",");
+					}
+				}
+				if (rest.size() > 1) {
+					java.util.Collections.shuffle(rest, random);
+				}
+				if (rest.size() == 1) {
+					result.append(rest.get(0));
+				} else {
+					for (java.util.Iterator<String> iter = rest.iterator(); iter.hasNext();) {
+					    String each = iter.next();
+					    result.append(each);
+					    if (iter.hasNext()) {
+					        result.append(",");
+					    }
+					}
+				}
 
-			return result.toString();
-		}
+				return result.toString();
+			}
 		«ENDIF»
 	'''
 }
@@ -495,7 +492,7 @@ def String webServiceInterface(Service it) {
 		«it.formatJavaDoc()»
 	«ENDIF »
 	@javax.jws.WebService
-	public interface «name»Endpoint ^extends «name» {
+	public interface «name»Endpoint extends «name» {
 
 		«it.operations.filter(op | op.isPublicVisibility()).map[webServiceInterfaceMethod(it)].join()»
 
@@ -529,7 +526,5 @@ def String webServicePackageInfo(Service it) {
 
 	'''
 	)
-	'''
-	'''
 }
 }

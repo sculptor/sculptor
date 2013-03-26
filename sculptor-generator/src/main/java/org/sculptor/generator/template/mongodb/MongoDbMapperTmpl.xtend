@@ -52,7 +52,7 @@ def String mongoDbMapperSubclass(DomainObject it) {
 	«javaHeader()»
 	package «getMapperPackage(module)»;
 
-	public class «name»Mapper ^extends «name»MapperBase {
+	public class «name»Mapper extends «name»MapperBase {
 	«getInstance(it)»
 	«constructor(it)»
 	«gapToDomain(it)»
@@ -162,7 +162,7 @@ def String delegateToDomainToSubclassMapper(DomainObject it) {
 			dtype = "unknown";
 		}
 		
-		«fw("accessimpl.mongodb.DataMapper")»<? ^extends «getDomainPackage()».«name», DBObject> subclassMapper = subclassMapperByDtype.get(dtype);
+		«fw("accessimpl.mongodb.DataMapper")»<? extends «getDomainPackage()».«name», DBObject> subclassMapper = subclassMapperByDtype.get(dtype);
 		if (subclassMapper == null) {
 			throw new IllegalArgumentException("Unsupported domain object («it.getRootExtends().inheritance.discriminatorColumnName()»): " + dtype);
 		}
@@ -191,7 +191,7 @@ def String fromNullCheck(DomainObject it) {
 
 def String abstractToDomain(DomainObject it) {
 	'''
-		@Override
+	@Override
 	public «it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» toDomain(com.mongodb.DBObject from) {
 		«fromNullCheck(it)»
 		«delegateToDomainToSubclassMapper(it)»
@@ -201,9 +201,9 @@ def String abstractToDomain(DomainObject it) {
 
 def String gapToDomain(DomainObject it) {
 	'''
-		@Override
+	@Override
 	public «it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» toDomain(com.mongodb.DBObject from) {
-	    return super.toDomain(from);
+		return super.toDomain(from);
 	}
 	'''
 }
@@ -325,25 +325,25 @@ def String toDomain(DomainObject it) {
 
 def dispatch String getDBCollectionName(DomainObject it) {
 	'''
-		@Override
-		public String getDBCollectionName() {
-			return "«it.getRootExtends().getDatabaseName()»";
-		}
+	@Override
+	public String getDBCollectionName() {
+		return "«it.getRootExtends().getDatabaseName()»";
+	}
 	'''
 }
 
 def dispatch String getDBCollectionName(BasicType it) {
 	'''
-		@Override
-		public String getDBCollectionName() {
-			throw new IllegalStateException("BasicType «name» is not stored in own DBCollection");
-		}
+	@Override
+	public String getDBCollectionName() {
+		throw new IllegalStateException("BasicType «name» is not stored in own DBCollection");
+	}
 	'''
 }
 
 def String canMapToData(DomainObject it) {
 	'''
-		@Override
+	@Override
 	public boolean canMapToData(Class<?> domainObjectClass) {
 	    if (domainObjectClass == null) {
 	    	return true;
@@ -356,7 +356,7 @@ def String canMapToData(DomainObject it) {
 
 def String abstractToData(DomainObject it) {
 	'''
-		@Override
+	@Override
 	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» from) {
 		«fromNullCheck(it)»
 		«delegateToDataToSubclassMapper(it)»
@@ -366,7 +366,7 @@ def String abstractToData(DomainObject it) {
 
 def String gapToData(DomainObject it) {
 	'''
-		@Override
+	@Override
 	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» from) {
 		return super.toData(from);
 	}

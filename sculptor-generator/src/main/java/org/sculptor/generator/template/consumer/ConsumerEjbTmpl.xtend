@@ -75,7 +75,7 @@ class ConsumerEjbTmpl {
 		«messageBeanInterceptors(it)»
 		 * </pre>
 		 */
-		public abstract class «name + getSuffix("Impl")»Base ^extends «^abstractMessageBeanClass()» {
+		public abstract class «name + getSuffix("Impl")»Base extends «^abstractMessageBeanClass()» {
 		«consumerTmpl.serialVersionUID(it)»
 			public «name + getSuffix("Impl")»Base() {
 			}
@@ -186,7 +186,7 @@ class ConsumerEjbTmpl {
 		 */
 		«messageBeanAnnotation(it)»
 		«messageBeanInterceptors(it)»
-		public class «name + getSuffix("Impl")» ^extends «name + getSuffix("Impl")»Base implements javax.jms.MessageListener {
+		public class «name + getSuffix("Impl")» extends «name + getSuffix("Impl")»Base implements javax.jms.MessageListener {
 		«consumerTmpl.serialVersionUID(it)»
 			public «name + getSuffix("Impl")»() {
 			}

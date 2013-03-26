@@ -48,12 +48,12 @@ class ConsumerEjbTestTmpl {
 		/**
 		 * JUnit test with OpenEJB and DbUnit support.
 		 */
-		public class «name»Test ^extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» {
+		public class «name»Test extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» {
 
 			@javax.annotation.Resource(mappedName="«name.toFirstLower()»")
 			private javax.jms.Queue queue;
 
-		«consumerTestTmpl.consumerJUnitGetDataSetFile(it)»
+			«consumerTestTmpl.consumerJUnitGetDataSetFile(it)»
 
 			«openEjbTestMethod(it)»
 
@@ -66,7 +66,7 @@ class ConsumerEjbTestTmpl {
 	
 	def String openEjbTestMethod(Consumer it) {
 		'''
-		@org.junit.Test
+			@org.junit.Test
 			public void testConsume() throws Exception {
 				// TODO Auto-generated method stub
 				String message = createMessage();

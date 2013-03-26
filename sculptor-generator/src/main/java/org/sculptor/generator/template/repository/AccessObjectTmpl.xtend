@@ -69,10 +69,10 @@ def String commandInterface(RepositoryOperation it) {
 		void execute() «exceptionTmpl.throwsDecl(it)»;
 
 		«IF it.getTypeName() != "void"»
-		/**
-			* The result of the command.
-			*/
-		«it.getAccessObjectResultTypeName()» getResult();
+			/**
+			 * The result of the command.
+			 */
+			«it.getAccessObjectResultTypeName()» getResult();
 		«ENDIF»
 
 	}
@@ -149,8 +149,8 @@ def String commandImplBase(RepositoryOperation it) {
 
 		«IF it.getTypeName() != "void"»
 		/**
-			* The result of the command.
-			*/
+		 * The result of the command.
+		 */
 		public «it.getAccessObjectResultTypeName()» getResult() {
 			return this.result;
 		}
@@ -193,10 +193,10 @@ def String jpaTemplate(RepositoryOperation it) {
 		private org.springframework.orm.jpa.JpaTemplate jpaTemplate;
 		
 		/**
-			* creates the JpaTemplate to be used in AccessObject for convenience
-			*
-			* @return Spring JpaTemplate
-			*/
+		 * creates the JpaTemplate to be used in AccessObject for convenience
+		 *
+		 * @return Spring JpaTemplate
+		 */
 		protected org.springframework.orm.jpa.JpaTemplate getJpaTemplate() {
 			if (jpaTemplate == null) {
 				jpaTemplate = new org.springframework.orm.jpa.JpaTemplate(getEntityManager());
@@ -211,10 +211,10 @@ def String jpaHibernateTemplate(RepositoryOperation it) {
 		private org.springframework.orm.hibernate3.HibernateTemplate hibernateTemplate;
 		
 		/**
-			* creates the HibernateTemplate to be used in AccessObject for convenience
-			*
-			* @return Spring HibernateTemplate
-			*/
+		 * creates the HibernateTemplate to be used in AccessObject for convenience
+		 *
+		 * @return Spring HibernateTemplate
+		 */
 		protected org.springframework.orm.hibernate3.HibernateTemplate getHibernateTemplate() {
 			if (hibernateTemplate == null) {
 				hibernateTemplate = new org.springframework.orm.hibernate3.HibernateTemplate(
@@ -234,9 +234,9 @@ def String commandImplSubclass(RepositoryOperation it) {
 	 * Implementation of Access object for «repository.name».«name».
 	 *
 	 */
-	public class «getAccessObjectName()»Impl ^extends «getAccessObjectName()»ImplBase {
+	public class «getAccessObjectName()»Impl extends «getAccessObjectName()»ImplBase {
 
-			«performExecute(it)»
+		«performExecute(it)»
 
 	}
 	'''
@@ -245,7 +245,7 @@ def String commandImplSubclass(RepositoryOperation it) {
 
 def String performExecute(RepositoryOperation it) {
 	'''
-	public void performExecute() «exceptionTmpl.throwsDecl(it)» {
+		public void performExecute() «exceptionTmpl.throwsDecl(it)» {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("«getAccessObjectName()»Impl not implemented");
 		}

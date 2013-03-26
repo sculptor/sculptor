@@ -44,7 +44,7 @@ def String serviceJUnitSubclassMongoDb(Service it) {
 	 */
 	@org.junit.runner.RunWith(org.springframework.test.context.junit4.SpringJUnit4ClassRunner.class)
 	@org.springframework.test.context.ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-	public class «name»Test ^extends org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests implements «name»TestBase {
+	public class «name»Test extends org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests implements «name»TestBase {
 
 
 	«dependencyInjection(it)»

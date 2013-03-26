@@ -328,11 +328,11 @@ def String generateFullAudit(DomainObject it) {
 	@javax.persistence.Transient
 	«fw("domain.AuditHandlerImpl")»<«name»> auditHandler = new «fw("domain.AuditHandlerImpl")»<«name»>();
 
-	public «fw("domain.AuditHandler")»<? ^extends «name»> receiveAuditHandler() {
+	public «fw("domain.AuditHandler")»<? extends «name»> receiveAuditHandler() {
 		return auditHandler;
 	}
 
-	protected «fw("domain.AuditHandlerImpl")»<? ^extends «name»> receiveInternalAuditHandler() {
+	protected «fw("domain.AuditHandlerImpl")»<? extends «name»> receiveInternalAuditHandler() {
 		return auditHandler;
 	}
 
