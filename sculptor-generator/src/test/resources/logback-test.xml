@@ -8,7 +8,7 @@
   </appender>  
   <logger name="sk.f4s" level="DEBUG"/>  
   <logger name="de.hunsicker.jalopy.io" level="WARN"/>  
-  <root level="DEBUG"> 
+  <root level="INFO"> 
     <appender-ref ref="STDOUT"/> 
   </root> 
 </configuration>
