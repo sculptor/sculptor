@@ -345,9 +345,10 @@ class DslTransformation {
 			(domainObject as DslEnum).transform
 		else if (domainObject instanceof DslBasicType)
 			(domainObject as DslBasicType).transform
-		else
+		else {
 			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
 			null
+		}
 	}
 
 	def create FACTORY.createEntity transform(DslEntity domainObject) {
