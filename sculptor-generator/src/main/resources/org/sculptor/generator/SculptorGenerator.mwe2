@@ -16,8 +16,9 @@
  */
 module org.sculptor.generator.SculptorGenerator
 
-import org.sculptor.generator.mwe2.SculptorUniversalGuiceWorkflowComponent
 import org.sculptor.generator.mwe2.ImportAwareUriBaseReader
+import org.sculptor.generator.mwe2.SculptordslValidationWorkflowComponent
+import org.sculptor.generator.mwe2.SculptorUniversalGuiceWorkflowComponent
 
 var modelFile
 
@@ -34,7 +35,7 @@ Workflow {
 	}
 
 	// Validate DSL model
-	component = org.sculptor.generator.mwe2.SculptordslValidationWorkflowComponent {
+	component = SculptordslValidationWorkflowComponent {
 		modelSlot = "model"
 	}
 
