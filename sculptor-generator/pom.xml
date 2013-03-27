@@ -59,6 +59,8 @@
 						needs access to the thread context classloader -->
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<useManifestOnlyJar>false</useManifestOnlyJar>
+					<!-- Run every test class in a newly forked JVM -->
+					<reuseForks>false</reuseForks>
 				</configuration>
 			</plugin>
 		</plugins>
