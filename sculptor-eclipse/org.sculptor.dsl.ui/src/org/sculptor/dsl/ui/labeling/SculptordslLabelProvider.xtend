@@ -24,6 +24,7 @@ import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslAttribute
 import org.sculptor.dsl.sculptordsl.DslBasicType
+import org.sculptor.dsl.sculptordsl.DslCollectionType
 import org.sculptor.dsl.sculptordsl.DslConsumer
 import org.sculptor.dsl.sculptordsl.DslEntity
 import org.sculptor.dsl.sculptordsl.DslEnum
@@ -38,7 +39,6 @@ import org.sculptor.dsl.sculptordsl.DslService
 import org.sculptor.dsl.sculptordsl.DslServiceOperation
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
-import org.sculptor.dsl.sculptordsl.DslCollectionType
 
 /**
  * Provides labels for a EObjects.
@@ -56,11 +56,11 @@ class SculptordslLabelProvider extends DefaultEObjectLabelProvider {
 		val feature = modelElement.eClass.getEStructuralFeature("name")
 		if (feature != null) {
 			val property = modelElement.eGet(feature)
-			if (property != null && typeof(String).class.isAssignableFrom(property.class)) {
+			if (property != null && typeof(String).^class.isAssignableFrom(property.^class)) {
 				return property
 			}
 		}
-		return null
+		null
 	}
 
 	def text(DslModel model) {
@@ -101,7 +101,7 @@ class SculptordslLabelProvider extends DefaultEObjectLabelProvider {
 				+ (if (ref.collectionType == DslCollectionType::NONE || ref.collectionType == null)  "" else " []")
 	}
 
-	def override image(Object obj) {
+	override image(Object obj) {
 		"default.gif"
 	}
 

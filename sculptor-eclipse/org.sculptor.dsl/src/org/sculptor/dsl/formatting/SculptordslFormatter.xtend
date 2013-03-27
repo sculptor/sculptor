@@ -3,9 +3,9 @@
  */
 package org.sculptor.dsl.formatting
 
+import com.google.inject.Inject
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
 import org.eclipse.xtext.formatting.impl.FormattingConfig
-import com.google.inject.Inject;
 import org.sculptor.dsl.services.SculptordslGrammarAccess
 
 /**
@@ -13,8 +13,6 @@ import org.sculptor.dsl.services.SculptordslGrammarAccess
  * 
  * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#formatting
  * on how and when to use it 
- * 
- * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
 class SculptordslFormatter extends AbstractDeclarativeFormatter {
 

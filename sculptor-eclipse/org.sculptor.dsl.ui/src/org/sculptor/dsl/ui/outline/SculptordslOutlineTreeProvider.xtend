@@ -40,7 +40,7 @@ import org.sculptor.dsl.sculptordsl.DslServiceOperation
  */
 class SculptordslOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	def override protected _createChildren(DocumentRootNode parentNode, EObject modelElement) {
+	override protected _createChildren(DocumentRootNode parentNode, EObject modelElement) {
 		modelElement.eContents.forEach[
 			createNode(parentNode, it)
 		]
