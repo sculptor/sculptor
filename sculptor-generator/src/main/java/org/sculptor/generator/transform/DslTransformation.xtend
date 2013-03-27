@@ -17,7 +17,9 @@
 
 package org.sculptor.generator.transform
 
+import java.util.List
 import javax.inject.Inject
+import org.eclipse.xtext.EcoreUtil2
 import org.sculptor.dsl.sculptordsl.DslAnyProperty
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslAttribute
@@ -58,6 +60,7 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
+import org.sculptor.generator.check.CheckCrossLink
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -74,11 +77,6 @@ import sculptormetamodel.Repository
 import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
-
-import static org.sculptor.generator.transform.DslTransformation.*
-import org.sculptor.generator.check.CheckCrossLink
-import org.eclipse.xtext.EcoreUtil2
-import java.util.List
 
 class DslTransformation {
 
@@ -349,6 +347,7 @@ class DslTransformation {
 			(domainObject as DslBasicType).transform
 		else
 			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
+			null
 	}
 
 	def create FACTORY.createEntity transform(DslEntity domainObject) {
@@ -488,11 +487,11 @@ class DslTransformation {
 	def private DiscriminatorType mapDiscriminatorType(DslDiscriminatorType dslDiscriminatorType) {
 		switch (dslDiscriminatorType) {
 			case DslDiscriminatorType::CHAR :
-				sculptormetamodel::DiscriminatorType::CHAR
+				DiscriminatorType::CHAR
 			case DslDiscriminatorType::INTEGER :
-				sculptormetamodel::DiscriminatorType::INTEGER
+				DiscriminatorType::INTEGER
 			default :
-				sculptormetamodel::DiscriminatorType::STRING
+				DiscriminatorType::STRING
 		}
 	}
 

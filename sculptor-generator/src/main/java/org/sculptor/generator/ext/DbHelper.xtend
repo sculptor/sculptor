@@ -193,7 +193,7 @@ public class DbHelper {
 		getHintOrDefault(ref, "databaseLength", length)
 	}
 
-	def boolean isOfTypeString(sculptormetamodel.Enum enum) {
+	def boolean isOfTypeString(sculptormetamodel.Enum ^enum) {
 		"String" == enum.getEnumType()
 	}
 

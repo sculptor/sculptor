@@ -53,7 +53,6 @@ import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
 import org.sculptor.generator.util.GenericAccessObjectManager
-import org.sculptor.generator.util.GenericAccessObjectStrategy
 
 class Helper {
 	@Inject var SingularPluralConverter singularPluralConverter
@@ -282,7 +281,7 @@ class Helper {
 			" implements " + domainObject.getImplementsInterfaceNames();
 	}
 
-	def String toCommaSeparatedString(List values) {
+	def String toCommaSeparatedString(List<String> values) {
 		values.join(",")
 	}
 
@@ -848,7 +847,7 @@ class Helper {
 			domainObject.getExtends.getAllEnumReferences()
 	}
 
-	def Attribute getIdentifierAttribute(sculptormetamodel.Enum enum) {
+	def Attribute getIdentifierAttribute(sculptormetamodel.Enum ^enum) {
 		if (enum.hasNaturalKey())
 			enum.attributes.findFirst[a | a.naturalKey]
 		else
@@ -1306,7 +1305,7 @@ class Helper {
 		op.repository.getAggregateRootTypeName() + "Properties";
 	}
 
-	def boolean isOrdinaryEnum(sculptormetamodel.Enum enum) {
+	def boolean isOrdinaryEnum(sculptormetamodel.Enum ^enum) {
 		( enum.getIdentifierAttribute() == null )
 	}
 
@@ -1497,6 +1496,7 @@ class Helper {
 			error(
 				"Could not set select from return type for domain object '" + op.getAggregateRoot().name + "'. " +
 				"Add gap or select to repository operation '" + op.name + "' in repository '" + op.repository.name + "'")
+			""
 	}
 
 	def private String buildSelectForReference(RepositoryOperation op) {
@@ -1545,7 +1545,8 @@ class Helper {
 		else
 			error(
 				"Could not find an attribute '" + parameter.name + "' in domain object '" + aggregateRoot.name + "'. " +
-				"Add gap to repository operation '" + operation.name + "' in repository '" + operation.repository.name + "'");
+				"Add gap to repository operation '" + operation.name + "' in repository '" + operation.repository.name + "'")
+			""
 	}
 
 	def private String buildWhereFromOperationName(RepositoryOperation op) {
@@ -1626,13 +1627,12 @@ class Helper {
 		genericAccessObjectManager.isPersistentClassConstructor(op)
 	}
 
-	def dispatch Repository addDefaultValues(Repository repository) {
+	def dispatch void addDefaultValues(Repository repository) {
 		repository.getOperations().forEach[op | addDefaultValues(op)]
-		repository
 	}
 
 	def dispatch void addDefaultValues(RepositoryOperation operation) {
-		val GenericAccessObjectStrategy strategy = genericAccessObjectManager.getStrategy(operation.getName());
+		val strategy = genericAccessObjectManager.getStrategy(operation.getName())
 		if (strategy != null) {
 			strategy.addDefaultValues(operation);
 		}

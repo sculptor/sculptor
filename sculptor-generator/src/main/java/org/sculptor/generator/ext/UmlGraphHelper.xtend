@@ -77,7 +77,7 @@ public class UmlGraphHelper {
 		if (focus.size == app.visibleModules.size)
 			"umlgraph" + detailPart + ".dot"
 		else 
-			"umlgraph-" + focus.map[m|m.name].sortBy[(it as String)].join("-") + detailPart + ".dot"
+			"umlgraph-" + focus.map[m|m.name].sortBy[it].join("-") + detailPart + ".dot"
 	}
 
 	def Set<DomainObject> serviceOperationDependencies(Service from) {
@@ -111,7 +111,7 @@ public class UmlGraphHelper {
 		retVal.addAll(from.domainObjects.map[references].flatten.map[e|e.to.module])
 		retVal.addAll(from.domainObjects.filter[e|e.getExtends != null].map[e|e.getExtends.module])
 		retVal.addAll(from.services.map[s | s.serviceDependencies as List<Service>].flatten.map[module])
-		retVal.addAll(from.services.map[s | (s.serviceOperationDependencies as Set<DomainObject>)].flatten.map[module])
+		retVal.addAll(from.services.map[s | s.serviceOperationDependencies].flatten.map[module])
 		retVal.addAll(from.consumers.map[serviceDependencies as List<Service>].flatten.map[module])
 
 		retVal.filter[e | e != from].toSet
@@ -122,23 +122,23 @@ public class UmlGraphHelper {
 	}
 
 	def boolean visible(NamedElement elem) {
-		!elem.hide()
+		!elem.hide
 	}
 
 	def dispatch boolean hide(DomainObject elem) {
-		elem.hasHideHint() || elem.module.hide()
+		elem.hasHideHint || elem.module.hide
 	}
 
 	def dispatch boolean hide(Service elem) {
-		elem.hasHideHint() || elem.module.hide()
+		elem.hasHideHint || elem.module.hide
 	}
 
 	def dispatch boolean hide(Consumer elem) {
-		elem.hasHideHint() || elem.module.hide();
+		elem.hasHideHint || elem.module.hide
 	}
 
-	def dispatch hide(NamedElement elem) {
-		elem.hasHideHint()
+	def dispatch boolean hide(NamedElement elem) {
+		elem.hasHideHint
 	}
 
 	def private hasHideHint(NamedElement elem) {

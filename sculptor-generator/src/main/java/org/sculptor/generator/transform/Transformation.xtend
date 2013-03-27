@@ -45,9 +45,6 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
 
-import static org.sculptor.generator.transform.Transformation.*
-
-
 class Transformation {
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
 
@@ -56,7 +53,7 @@ class Transformation {
 	@Inject extension Helper helper
 	@Inject extension Properties properties
 
-	def modify(Application app) {
+	def Application modify(Application app) {
 		initPropertiesHook()
 		app.modules.map[domainObjects].flatten.filter[it instanceof Trait].forEach[modifyChangeable((it as Trait))]
 		app.modules.map[domainObjects].flatten.forEach[mixin()]
@@ -80,7 +77,7 @@ class Transformation {
 		app
 	}
 
-	def mixin(DomainObject domainObject) {
+	def void mixin(DomainObject domainObject) {
 		domainObject.traits.reverse.forEach[mixin(domainObject)]
 	}
 
@@ -325,7 +322,7 @@ class Transformation {
 		null
 	}
 
-	def modifyDomainEvent(DomainEvent event) {
+	def void modifyDomainEvent(DomainEvent event) {
 		if (event.^extends != null)
 			(event.^extends as DomainEvent).modifyDomainEvent()
 		if (!event.getAllAttributes().exists(e|e.name == "recorded"))
@@ -334,7 +331,7 @@ class Transformation {
 			event.attributes.add(0, createEventTimestamp(event, "occurred"))
 	}
 
-	def modifyCommandEvent(CommandEvent event) {
+	def void modifyCommandEvent(CommandEvent event) {
 		val newOccurred = createEventTimestamp(event, "occurred")
 		newOccurred.setIndex(true)
 		if (event.^extends != null)
@@ -573,7 +570,7 @@ class Transformation {
 		it.setCollectionType(ref.collectionType)
 	}
 
-	def modifyUuid(DomainObject domainObject) {
+	def void modifyUuid(DomainObject domainObject) {
 		if (domainObject.^extends != null)
 			domainObject.^extends.modifyUuid()
 		if (domainObject.hasOwnDatabaseRepresentation() &&

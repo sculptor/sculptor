@@ -38,11 +38,10 @@ import org.sculptor.generator.template.repository.RepositoryTmpl
 import org.sculptor.generator.template.rest.ResourceTmpl
 import org.sculptor.generator.template.rest.RestWebTmpl
 import org.sculptor.generator.template.service.ServiceEjbTestTmpl
+import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
-import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
-import org.sculptor.generator.template.service.ServiceTmpl
 
 class RootTmpl {
 
@@ -69,7 +68,6 @@ class RootTmpl {
 
 	@Inject extension Properties properties
 	@Inject extension Helper helper
-	@Inject extension HelperBase helperBase
 
 	def String Root(Application it) {
 		'''

@@ -23,9 +23,9 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.HelperBase
-import sculptormetamodel.Attribute
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
+import sculptormetamodel.Attribute
 
 class DomainObjectReferenceAnnotationTmpl {
 
@@ -155,7 +155,7 @@ def String basicTypeJpaAnnotation(Reference it) {
 }
 
 def String enumJpaAnnotation(Reference it) {
-	val enum = it.getEnum()
+	val ^enum = it.getEnum()
 	'''
 		@javax.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
@@ -189,7 +189,7 @@ def String nonOrdinaryEnumTypeAnnotation(Reference it) {
 
 def String hibernateEnumTypeAnnotation(Reference it) {
 	'''
-		«val enum = it.getEnum()»
+		«val ^enum = it.getEnum()»
 		«IF isJpa1()»
 			@org.hibernate.annotations.Type(type="«enum.name»")
 		«ELSE»
@@ -298,7 +298,7 @@ def dispatch String attributeOverride(Reference it, String columnPrefix, String 
 		«IF it.isBasicTypeReference()»
 			«it.to.attributes.map[a | attributeOverride(a, getDatabaseName(columnPrefix, it), name + ".", it.nullable)].join(",")»
 		«ELSEIF it.isEnumReference()»
-			«val enum = it.getEnum()»
+			«val ^enum = it.getEnum()»
 			@javax.persistence.AttributeOverride(
 				name="«name»",
 				column = @javax.persistence.Column(
