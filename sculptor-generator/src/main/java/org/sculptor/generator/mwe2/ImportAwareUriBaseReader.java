@@ -31,7 +31,6 @@ import org.eclipse.xtext.mwe.UriBasedReader;
 import org.sculptor.dsl.sculptordsl.DslApplication;
 import org.sculptor.dsl.sculptordsl.DslImport;
 import org.sculptor.dsl.sculptordsl.DslModel;
-import org.sculptor.generator.SculptorRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ import com.google.common.collect.Lists;
 
 public class ImportAwareUriBaseReader extends UriBasedReader {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SculptorRunner.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportAwareUriBaseReader.class);
 
 	private final List<String> uris = Lists.newArrayList();
 

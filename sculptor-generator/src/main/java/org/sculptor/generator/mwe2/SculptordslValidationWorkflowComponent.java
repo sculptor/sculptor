@@ -28,11 +28,15 @@ import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.WorkflowComponentWithModelSlot;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.sculptor.dsl.sculptordsl.DslApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class SculptordslValidationWorkflowComponent extends WorkflowComponentWithModelSlot {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SculptordslValidationWorkflowComponent.class);
 
 	@Override
 	protected void invokeInternal(WorkflowContext ctx, ProgressMonitor m, Issues issues) {
@@ -40,7 +44,6 @@ public class SculptordslValidationWorkflowComponent extends WorkflowComponentWit
 		if (slotContent == null) {
 			issues.addError(String.format("Slot %s is empty", getModelSlot()));
 		} else {
-
 		
 			// retrieve models from model slot
 			List<DslApplication> applications = Lists.newArrayList();
@@ -53,6 +56,7 @@ public class SculptordslValidationWorkflowComponent extends WorkflowComponentWit
 
 				// validate models
 				for (DslApplication application : applications) {
+					LOGGER.debug("Validating application '{}'", application.getName());
 					Diagnostic diagnostic = Diagnostician.INSTANCE.validate(application);
 					switch (diagnostic.getSeverity()) {
 					case Diagnostic.ERROR:
