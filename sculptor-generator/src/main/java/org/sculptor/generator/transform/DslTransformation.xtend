@@ -119,7 +119,7 @@ class DslTransformation {
 		setHint(module.hint)
 		setExternal(!isModuleToBeGenerated(module.name))
 		setBasePackage(module.basePackage)
-		domainObjects.addAll(module.domainObjects.map[e | transform(e)])
+		domainObjects.addAll(module.domainObjects.map[e | transformSimpleDomainObject(e)])
 		services.addAll(module.services.map[e | transform(e)])
 		resources.addAll(module.resources.map[e | transform(e)])
 		consumers.addAll(module.consumers.map[e | transform(e)])
@@ -156,7 +156,7 @@ class DslTransformation {
 		setName(consumer.name)
 		setHint(consumer.hint)
 		if (consumer.messageRoot != null)
-			setMessageRoot(consumer.messageRoot.transform)
+			setMessageRoot(consumer.messageRoot.transformSimpleDomainObject)
 		if (consumer.subscribe != null)
 			setSubscribe(consumer.subscribe.transform)
 		setChannel(if (consumer.channel == null && subscribe != null) subscribe.topic else consumer.channel)
@@ -192,12 +192,12 @@ class DslTransformation {
 		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
 			null
 		else
-			operation.returnType.mapKeyDomainObjectType.transform)
+			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
 		setType(if (operation.returnType == null) null else operation.returnType.type)
 		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
 			null
 		else
-			operation.returnType.domainObjectType.transform)
+			operation.returnType.domainObjectType.transformSimpleDomainObject)
 		setThrows(operation.^throws)
 		setHint(operation.hint)
 		if (operation.publish != null)
@@ -221,12 +221,12 @@ class DslTransformation {
 		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
 			null
 		else
-			operation.returnType.mapKeyDomainObjectType.transform)
+			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
 		setType(if (operation.returnType == null) null else operation.returnType.type)
 		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
 			null
 		else
-			operation.returnType.domainObjectType.transform)
+			operation.returnType.domainObjectType.transformSimpleDomainObject)
 		setThrows(operation.^throws)
 		setHint(operation.hint)
 		setPath(operation.path)
@@ -239,7 +239,7 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createDomainObjectOperation transform(DslDomainObjectOperation operation) {
-		setDomainObject((operation.eContainer as DslDomainObject).transform)
+		setDomainObject((operation.eContainer as DslDomainObject).transformSimpleDomainObject)
 		setDoc(operation.doc)
 		setName(operation.name)
 		setAbstract(operation.^abstract)
@@ -250,12 +250,12 @@ class DslTransformation {
 		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
 			null
 		else
-			operation.returnType.mapKeyDomainObjectType.transform)
+			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
 		setType(if (operation.returnType == null) null else operation.returnType.type)
 		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
 			null
 		else
-			operation.returnType.domainObjectType.transform)
+			operation.returnType.domainObjectType.transformSimpleDomainObject)
 		setThrows(operation.^throws)
 		setHint(operation.hint)
 	}
@@ -294,12 +294,12 @@ class DslTransformation {
 		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
 			null
 		else
-			operation.returnType.mapKeyDomainObjectType.transform)
+			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
 		setType(if (operation.returnType == null) null else operation.returnType.type)
 		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
 			null
 		else
-			operation.returnType.domainObjectType.transform)
+			operation.returnType.domainObjectType.transformSimpleDomainObject)
 		setThrows(operation.^throws)
 		setHint(operation.hint)
 		setDelegateToAccessObject(operation.delegateToAccessObject)
@@ -327,31 +327,21 @@ class DslTransformation {
 		setMapKeyDomainObjectType(if (parameter.parameterType == null || parameter.parameterType.mapKeyDomainObjectType == null)
 			null
 		else
-			parameter.parameterType.mapKeyDomainObjectType.transform)
+			parameter.parameterType.mapKeyDomainObjectType.transformSimpleDomainObject)
 		setType(if(parameter.parameterType == null) null else parameter.parameterType.type)
 		setDomainObjectType(if (parameter.parameterType == null || parameter.parameterType.domainObjectType == null)
 			null
 		else
-			parameter.parameterType.domainObjectType.transform)
+			parameter.parameterType.domainObjectType.transformSimpleDomainObject)
 	}
 
 	// this "method" is not used, it is kind of "abstract"
-	def DomainObject transform(DslSimpleDomainObject domainObject) {
-		if (domainObject instanceof DslEntity)
-			(domainObject as DslEntity).transform
-		else if (domainObject instanceof DslValueObject)
-			(domainObject as DslValueObject).transform
-		else if (domainObject instanceof DslEnum)
-			(domainObject as DslEnum).transform
-		else if (domainObject instanceof DslBasicType)
-			(domainObject as DslBasicType).transform
-		else {
-			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
-			(null as DomainObject)
-		}
+	def dispatch DomainObject transformSimpleDomainObject(DslSimpleDomainObject domainObject) {
+		error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] passed into transformSimpleDomainObject")
+		(null as DomainObject)
 	}
 
-	def create FACTORY.createEntity transform(DslEntity domainObject) {
+	def dispatch create FACTORY.createEntity transformSimpleDomainObject(DslEntity domainObject) {
 		setModule((domainObject.eContainer as DslModule).transform)
 		setDoc(domainObject.doc)
 		setName(domainObject.name)
@@ -361,7 +351,7 @@ class DslTransformation {
 		setAuditable(!domainObject.notAuditable)
 		setCache(domainObject.cache)
 		setDatabaseTable(domainObject.databaseTable)
-		setBelongsToAggregate(if (domainObject.belongsTo == null) null else domainObject.belongsTo.transform)
+		setBelongsToAggregate(if (domainObject.belongsTo == null) null else domainObject.belongsTo.transformSimpleDomainObject)
 		setAggregateRoot(!domainObject.notAggregateRoot && (domainObject.belongsTo == null || domainObject.belongsTo == domainObject))
 		setValidate(domainObject.validate)
 		setGapClass(isGapClassToBeGenerated(domainObject.gapClass, domainObject.noGapClass))
@@ -377,7 +367,7 @@ class DslTransformation {
 			setRepository(domainObject.repository.transform)
 	}
 
-	def create FACTORY.createValueObject transform(DslValueObject domainObject) {
+	def dispatch create FACTORY.createValueObject transformSimpleDomainObject(DslValueObject domainObject) {
 		setModule((domainObject.eContainer as DslModule).transform)
 		setDoc(domainObject.doc)
 		setName(domainObject.name)
@@ -387,7 +377,7 @@ class DslTransformation {
 		setImmutable(!domainObject.notImmutable)
 		setCache(domainObject.cache)
 		setDatabaseTable(domainObject.databaseTable)
-		setBelongsToAggregate(if (domainObject.belongsTo == null) null else domainObject.belongsTo.transform)
+		setBelongsToAggregate(if (domainObject.belongsTo == null) null else domainObject.belongsTo.transformSimpleDomainObject)
 		setAggregateRoot(!domainObject.notAggregateRoot && !domainObject.notPersistent && (domainObject.belongsTo == null || domainObject.belongsTo == domainObject))
 		setPersistent(!domainObject.notPersistent)
 		setValidate(domainObject.validate)
@@ -427,7 +417,7 @@ class DslTransformation {
 		event.setOptimisticLocking(false)
 		event.setCache(dslEvent.cache)
 		event.setDatabaseTable(dslEvent.databaseTable)
-		event.setBelongsToAggregate(if (dslEvent.belongsTo == null) null else dslEvent.belongsTo.transform)
+		event.setBelongsToAggregate(if (dslEvent.belongsTo == null) null else dslEvent.belongsTo.transformSimpleDomainObject)
 		event.setAggregateRoot(!dslEvent.notAggregateRoot && dslEvent.persistent && (dslEvent.belongsTo == null || dslEvent.belongsTo == dslEvent))
 		event.setPersistent(dslEvent.persistent)
 		event.setValidate(dslEvent.validate)
@@ -527,7 +517,7 @@ class DslTransformation {
 
 	def private transformExtendsImpl(DslDomainObject dslDomainObject, DslDomainObject dslExtendsDomainObject, DomainObject domainObject) {
 		if (dslExtendsDomainObject != null)
-			domainObject.setExtends(dslExtendsDomainObject.transform)
+			domainObject.setExtends(dslExtendsDomainObject.transformSimpleDomainObject)
 
 		if (dslDomainObject.extendsName != null)
 			domainObject.setExtendsName(dslDomainObject.extendsName)
@@ -541,7 +531,7 @@ class DslTransformation {
 			dto.setExtendsName(dslDto.extendsName)
 	}
 
-	def create FACTORY.createBasicType transform(DslBasicType domainObject) {
+	def dispatch create FACTORY.createBasicType transformSimpleDomainObject(DslBasicType domainObject) {
 		setModule((domainObject.eContainer as DslModule).transform)
 		setDoc(domainObject.doc)
 		setName(domainObject.name)
@@ -556,7 +546,7 @@ class DslTransformation {
 		traits.addAll(domainObject.traits.map[e | transform(e)])
 	}
 
-	def create FACTORY.createEnum transform(DslEnum domainObject) {
+	def dispatch create FACTORY.createEnum transformSimpleDomainObject(DslEnum domainObject) {
 		setModule((domainObject.eContainer as DslModule).transform)
 		setDoc(domainObject.doc)
 		setName(domainObject.name)
@@ -614,7 +604,7 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createReference transform(DslReference reference) {
-		setFrom((reference.eContainer as DslSimpleDomainObject).transform)
+		setFrom((reference.eContainer as DslSimpleDomainObject).transformSimpleDomainObject)
 		setDoc(reference.doc)
 		setName(reference.name)
 		setCollectionType(convertCollectionTypeEnum(reference.collectionType))
@@ -628,7 +618,7 @@ class DslTransformation {
 		setCascade(reference.cascade)
 		setFetch(reference.fetch)
 		setOrderBy(reference.orderBy)
-		setTo(reference.domainObjectType.transform)
+		setTo(reference.domainObjectType.transformSimpleDomainObject)
 		setDatabaseColumn(reference.databaseColumn)
 		setDatabaseJoinTable(reference.databaseJoinTable)
 		setDatabaseJoinColumn(reference.databaseJoinColumn)
@@ -666,7 +656,7 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createReference transform(DslDtoReference reference) {
-		setFrom((reference.eContainer as DslSimpleDomainObject).transform)
+		setFrom((reference.eContainer as DslSimpleDomainObject).transformSimpleDomainObject)
 		setDoc(reference.doc)
 		setName(reference.name)
 		setCollectionType(convertCollectionTypeEnum(reference.collectionType))
@@ -675,7 +665,7 @@ class DslTransformation {
 		setChangeable(!reference.notChangeable)
 		setRequired(reference.required)
 		setNullable(reference.nullable)
-		setTo(reference.domainObjectType.transform)
+		setTo(reference.domainObjectType.transformSimpleDomainObject)
 		setValidate(reference.handleValidation())
 		setHint(reference.hint)
 		setTransient(reference.transient)
@@ -683,7 +673,7 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createRepository transform(DslRepository repository) {
-		setAggregateRoot((repository.eContainer as DslDomainObject).transform)
+		setAggregateRoot((repository.eContainer as DslDomainObject).transformSimpleDomainObject)
 		setDoc(repository.doc)
 		setName(repository.name)
 		setGapClass(repository.isGapClassToBeGenerated())
@@ -760,7 +750,7 @@ class DslTransformation {
 	}
 
 	def scaffold(DslDomainObject domainObject) {
-		domainObject.transform.scaffold()
+		domainObject.transformSimpleDomainObject.scaffold()
 	}
 
 	def void scaffold(DomainObject domainObject) {
