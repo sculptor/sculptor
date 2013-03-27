@@ -70,8 +70,8 @@ class Transformation {
 		app.modules.map[domainObjects].flatten.filter[it instanceof ValueObject].forEach[modifyAbstractPersistent((it as ValueObject))]
 		app.modules.map[domainObjects].flatten.filter[it instanceof Trait].forEach[modifyTrait((it as Trait))]
 		app.modules.forEach[modify()]
-		app.modules.forEach[modifyDatabaseNames()]
-		app.modules.forEach[modifyReferencesDatabaseNames()]
+		app.modules.forEach[modifyModuleDatabaseNames()]
+		app.modules.forEach[modifyModuleReferencesDatabaseNames()]
 		// TODO restDefaults
 		// app.modules.map[resources].flatten.map[operations].flatten.forEach[addRestDefaults()]
 		app
@@ -219,11 +219,11 @@ class Transformation {
 		module.domainObjects.forEach[modifyInheritance()]
 	}
 
-	def dispatch modifyDatabaseNames(Module module) {
+	def modifyModuleDatabaseNames(Module module) {
 		module.getNonEnumDomainObjects().forEach[it.modifyDatabaseNames()]
 	}
 
-	def dispatch modifyReferencesDatabaseNames(Module module) {
+	def modifyModuleReferencesDatabaseNames(Module module) {
 		module.getNonEnumDomainObjects().forEach[it.modifyReferencesDatabaseNames()]
 	}
 
@@ -413,7 +413,7 @@ class Transformation {
 		basicType.attributes.forEach[modifyDatabaseColumn()]
 	}
 
-	def dispatch modifyReferencesDatabaseNames(DomainObject domainObject) {
+	def modifyReferencesDatabaseNames(DomainObject domainObject) {
 		if (domainObject.isPersistent())
 			domainObject.references.forEach[modifyDatabaseColumn()]
 	}

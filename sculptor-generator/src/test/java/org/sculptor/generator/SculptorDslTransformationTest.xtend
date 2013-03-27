@@ -32,12 +32,9 @@ import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.DslTransformationModule
 import sculptormetamodel.Entity
 import sculptormetamodel.InheritanceType
-import sculptormetamodel.Module
-import sculptormetamodel.Service
 import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
-import static org.sculptor.generator.SculptorDslTransformationTest.*
 
 @RunWith(typeof(JUnit4))
 class SculptorDslTransformationTest {
@@ -69,14 +66,14 @@ class SculptorDslTransformationTest {
 
 		assertEquals(2, app.modules.size)
 		for (i : 1..2) {
-			val module = app.modules.get(i - 1) as Module
+			val module = app.modules.get(i - 1)
 			assertEquals("module" + i + "Name", module.name)
 			assertEquals("com.acme.module" + i, module.basePackage)
 			assertEquals("module" + i + "Doc", module.doc)
 			assertEquals("module" + i + "Value2", getHint(module, "key2"))
 
 			assertEquals(1, module.services.size)
-			val service = module.services.get(0) as Service
+			val service = module.services.get(0)
 			assertEquals("service" + i + "Name", service.name)
 			assertEquals("service" + i + "Doc", service.doc)
 			assertEquals("service" + i + "Value2", getHint(service, "key2"))

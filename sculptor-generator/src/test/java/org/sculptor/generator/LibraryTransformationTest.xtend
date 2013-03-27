@@ -1,36 +1,30 @@
 package org.sculptor.generator
 
+import com.google.inject.Guice
+import com.google.inject.Injector
+import com.google.inject.Provider
+import org.eclipse.emf.common.util.EList
 import org.eclipse.xtext.junit4.InjectWith
-import org.sculptor.dsl.SculptordslInjectorProvider
-import org.junit.runner.RunWith
-import org.sculptor.dsl.sculptordsl.DslModel
-import org.junit.Test
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
-import com.google.inject.Provider
-import org.sculptor.generator.transform.DslTransformation
-import com.google.inject.Injector
-import com.google.inject.Guice
-import org.sculptor.generator.transform.DslTransformationModule
-import org.sculptor.generator.ext.Helper
-import org.eclipse.emf.common.util.URI
-import sculptormetamodel.Module
-import sculptormetamodel.Application
-import org.eclipse.emf.common.util.EList
-import sculptormetamodel.NamedElement
-import java.util.ArrayList
-import org.junit.Ignore
-import sculptormetamodel.Entity
-import sculptormetamodel.Reference
-import sculptormetamodel.Attribute
+import org.sculptor.dsl.sculptordsl.DslModel
 import org.sculptor.generator.ext.DbHelper
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.transform.DslTransformation
+import org.sculptor.generator.transform.DslTransformationModule
+import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
+import sculptormetamodel.Application
+import sculptormetamodel.Module
+import sculptormetamodel.NamedElement
 
 import static org.junit.Assert.*
-import org.sculptor.generator.transform.Transformation
-import org.sculptor.generator.ext.Properties
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))

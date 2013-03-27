@@ -235,7 +235,7 @@ class DslTransformation {
 			setHttpMethod(operation.httpMethod.toString().mapHttpMethod())
 
 		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null))
-			setDelegate(((operation.delegateHolder.delegateOperation as DslServiceOperation)).transform)
+			setDelegate((operation.delegateHolder.delegateOperation).transform)
 	}
 
 	def create FACTORY.createDomainObjectOperation transform(DslDomainObjectOperation operation) {
@@ -347,7 +347,7 @@ class DslTransformation {
 			(domainObject as DslBasicType).transform
 		else {
 			error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] only DslEntity & DslValueObject are supported")
-			null
+			(null as DomainObject)
 		}
 	}
 
@@ -726,7 +726,7 @@ class DslTransformation {
 
 	def Service transformServiceDependency(DslServiceDependency dependency) {
 		if (dependency.dependency != null)
-			(dependency.dependency as DslService).transform
+			dependency.dependency.transform
 		else
 			null
 	}

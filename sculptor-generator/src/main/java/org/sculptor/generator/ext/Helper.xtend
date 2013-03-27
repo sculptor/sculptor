@@ -1542,11 +1542,12 @@ class Helper {
 		val propertyPath = getPropertyPath(parameter.name, aggregateRoot)
 		if (propertyPath != null)
 			propertyPath + " = :" + parameter.name
-		else
+		else {
 			error(
 				"Could not find an attribute '" + parameter.name + "' in domain object '" + aggregateRoot.name + "'. " +
 				"Add gap to repository operation '" + operation.name + "' in repository '" + operation.repository.name + "'")
 			""
+		}
 	}
 
 	def private String buildWhereFromOperationName(RepositoryOperation op) {
