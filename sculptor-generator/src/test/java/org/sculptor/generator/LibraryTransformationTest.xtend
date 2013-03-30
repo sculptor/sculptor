@@ -25,6 +25,8 @@ import sculptormetamodel.Module
 import sculptormetamodel.NamedElement
 
 import static org.junit.Assert.*
+import sculptormetamodel.Entity
+import sculptormetamodel.Reference
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -169,6 +171,29 @@ class LibraryTransformationTest extends XtextTest{
         assertEquals("LIB_REF", libraryRef.databaseColumn);
         assertEquals("LIB_REF", libraryRef.foreignKeyName);
         assertEquals("MEDIA", libraryRef.oppositeForeignKeyName);
+    }
+    /**
+     * Bidirectional many-to-many
+     */
+    @Test
+    def void assertReferenceToMediaFromPhysicalMedia() {
+        val physicalMedia = mediaModule.domainObjects.namedElement("PhysicalMedia") as Entity
+        
+        val mediaRef = physicalMedia.references.namedElement("media") as Reference
+        assertFalse(dbHelperBase.isInverse(mediaRef));
+
+        assertEquals("PHMED_MED", mediaRef.manyToManyJoinTableName);
+        assertEquals("MEDIA_REF", mediaRef.databaseColumn);
+        assertEquals("MEDIA_REF", mediaRef.foreignKeyName);
+        assertEquals("PHYSICALMEDIA", mediaRef.oppositeForeignKeyName);
+
+        val manyToManyObject = mediaRef.createFictiveManyToManyObject();
+        assertEquals("PHMED_MED", manyToManyObject.databaseTable);
+        assertOneAndOnlyOne(manyToManyObject.references, "media", "physicalMedia");
+        val manyToManyObjectMediaRef = manyToManyObject.references.namedElement("media") as Reference;
+        assertEquals("MEDIA_REF", manyToManyObjectMediaRef.databaseColumn);
+        val manyToManyObjectPhysicalMediaRef = manyToManyObject.references.namedElement("physicalMedia") as Reference;
+        assertEquals("PHYSICALMEDIA", manyToManyObjectPhysicalMediaRef.databaseColumn);
     }
 
 

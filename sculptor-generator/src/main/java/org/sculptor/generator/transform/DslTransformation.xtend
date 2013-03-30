@@ -77,6 +77,7 @@ import sculptormetamodel.Repository
 import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
+import sculptormetamodel.Trait
 
 class DslTransformation {
 
@@ -102,8 +103,6 @@ class DslTransformation {
 		allDslModules.map[services].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[resources].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[consumers].flatten.forEach[transformDependencies(it)]
-		// TODO
-		// No transformations for all DslSimpleDomainObject subtypes (DslBasicType, DslEnum, DslDomainObject, DslDataTransferObject, DslTrait)
 		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
 			.forEach[d | transformDependencies(d)]
 		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
@@ -335,6 +334,10 @@ class DslTransformation {
 			parameter.parameterType.domainObjectType.transformSimpleDomainObject)
 	}
 
+//	def DomainObject createDomainObject() {
+//		null
+//	}
+	
 	// this "method" is not used, it is kind of "abstract"
 	def dispatch DomainObject transformSimpleDomainObject(DslSimpleDomainObject domainObject) {
 		error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] passed into transformSimpleDomainObject")
@@ -362,7 +365,7 @@ class DslTransformation {
 		references.addAll(domainObject.references.map[e | transform(e)])
 		operations.addAll(domainObject.operations.map[e | transform(e)])
 		domainObject.transformExtends(it)
-		traits.addAll(domainObject.traits.map[e | transform(e)])
+		traits.addAll(domainObject.traits.map[e | transformSimpleDomainObject(e) as Trait])
 		if (domainObject.repository != null)
 			setRepository(domainObject.repository.transform)
 	}
@@ -389,12 +392,11 @@ class DslTransformation {
 		references.addAll(domainObject.references.map[e | transform(e)])
 		operations.addAll(domainObject.operations.map[e | transform(e)])
 		domainObject.transformExtends(it)
-		traits.addAll(domainObject.traits.map[e | transform(e)])
+		traits.addAll(domainObject.traits.map[e | transformSimpleDomainObject(e) as Trait])
 		if (domainObject.repository != null)
 			setRepository(domainObject.repository.transform)
 	}
 
-	// TODO: createDomainEvent or createCommandEvent?
 	def create FACTORY.createDomainEvent transform(DslEvent event) {
 		// Never used, only purpose is to be an 'abstract' placeholder
 		error("Unexpected call to transform(DslEvent): " + event)
@@ -429,12 +431,12 @@ class DslTransformation {
 		event.references.addAll(dslEvent.references.map[e | transform(e)])
 		event.operations.addAll(dslEvent.operations.map[e | transform(e)])
 		dslEvent.transformExtendsEvent(event)
-		event.traits.addAll(dslEvent.traits.map[e | transform(e)])
+		event.traits.addAll(dslEvent.traits.map[e | transformSimpleDomainObject(e) as Trait])
 		if (dslEvent.repository != null)
 			event.setRepository(dslEvent.repository.transform)
 	}
 
-	def create FACTORY.createDataTransferObject transform(DslDataTransferObject dslDto) {
+	def dispatch create FACTORY.createDataTransferObject transformSimpleDomainObject(DslDataTransferObject dslDto) {
 		setModule((dslDto.eContainer as DslModule).transform)
 		setDoc(dslDto.doc)
 		setName(dslDto.name)
@@ -451,7 +453,7 @@ class DslTransformation {
 		dslDto.transformExtends(it)
 	}
 
-	def create FACTORY.createTrait transform(DslTrait dslTrait) {
+	def dispatch create FACTORY.createTrait transformSimpleDomainObject(DslTrait dslTrait) {
 		setModule((dslTrait.eContainer as DslModule).transform)
 		setDoc(dslTrait.doc)
 		setName(dslTrait.name)
@@ -525,7 +527,7 @@ class DslTransformation {
 
 	def private transformExtends(DslDataTransferObject dslDto, DataTransferObject dto) {
 		if (dslDto.^extends != null)
-			dto.setExtends(dslDto.^extends.transform)
+			dto.setExtends(dslDto.^extends.transformSimpleDomainObject)
 
 		if (dslDto.extendsName != null)
 			dto.setExtendsName(dslDto.extendsName)
@@ -543,7 +545,7 @@ class DslTransformation {
 		attributes.addAll(domainObject.attributes.map[e | transform(e)])
 		references.addAll(domainObject.references.map[e | transform(e)])
 		operations.addAll(domainObject.operations.map[e | transform(e)])
-		traits.addAll(domainObject.traits.map[e | transform(e)])
+		traits.addAll(domainObject.traits.map[e | transformSimpleDomainObject(e) as Trait])
 	}
 
 	def dispatch create FACTORY.createEnum transformSimpleDomainObject(DslEnum domainObject) {
