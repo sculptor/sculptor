@@ -27,6 +27,12 @@ import sculptormetamodel.NamedElement
 import static org.junit.Assert.*
 import sculptormetamodel.Entity
 import sculptormetamodel.Reference
+import sculptormetamodel.ValueObject
+import sculptormetamodel.Service
+import sculptormetamodel.Attribute
+import sculptormetamodel.Operation
+import sculptormetamodel.ServiceOperation
+import org.sculptor.generator.util.HelperBase
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -35,6 +41,8 @@ class LibraryTransformationTest extends XtextTest{
 	extension Properties properties
 
 	extension Helper helper
+
+	extension HelperBase helperBase
 
 	extension DbHelper dbHelper
 	
@@ -54,6 +62,7 @@ class LibraryTransformationTest extends XtextTest{
 		val Injector injector = Guice::createInjector(new DslTransformationModule)
 		properties = injector.getInstance(typeof(Properties))
 		helper = injector.getInstance(typeof(Helper))
+		helperBase = injector.getInstance(typeof(HelperBase))
 		dbHelper = injector.getInstance(typeof(DbHelper))
 		dbHelperBase = injector.getInstance(typeof(DbHelperBase))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
@@ -128,23 +137,23 @@ class LibraryTransformationTest extends XtextTest{
     
     @Test
     def void assertPersonModule() {
-        val module = personModule();
+        val module = personModule;
         assertOneAndOnlyOne(module.domainObjects, "Person", "Ssn", "Country", "Gender", "PersonName");
     }
 
     @Test
     def void assertPerson() {
         val person = personModule.domainObjects.namedElement("Person")
-        assertOneAndOnlyOne(person.getAttributes(), "birthDate")
-        assertOneAndOnlyOne(person.getReferences(), "ssn", "name", "sex")
+        assertOneAndOnlyOne(person.attributes, "birthDate")
+        assertOneAndOnlyOne(person.references, "ssn", "name", "sex")
         val ssn =  person.references.namedElement("ssn")
         assertTrue(ssn.isNaturalKey())
         val ssnNumber = ssn.to.attributes.namedElement("number")
         assertTrue(ssnNumber.isNaturalKey())
         val ssnCountry = ssn.to.references.namedElement("country")
         assertTrue(ssnCountry.isNaturalKey())
-        assertTrue(person.isGapClass())
-        assertFalse(ssn.getTo().isGapClass())
+        assertTrue(person.isGapClass)
+        assertFalse(ssn.getTo().isGapClass)
     }
     
     /**
@@ -196,6 +205,138 @@ class LibraryTransformationTest extends XtextTest{
         assertEquals("PHYSICALMEDIA", manyToManyObjectPhysicalMediaRef.databaseColumn);
     }
 
+    /**
+     * Bidirectional many-to-many
+     */
+    @Test
+    def void assertReferenceToPhysicalMediaFromMedia() {
+        val media = mediaModule.domainObjects.namedElement("Media") as Entity
+        val physicalMediaRef = media.references.namedElement("physicalMedia") as Reference
+        assertTrue(dbHelperBase.isInverse(physicalMediaRef))
+        assertEquals("PHMED_MED", physicalMediaRef.getManyToManyJoinTableName())
+        assertEquals("PHYSICALMEDIA", physicalMediaRef.databaseColumn)
+        assertEquals("PHYSICALMEDIA", physicalMediaRef.foreignKeyName);
+        assertEquals("MEDIA_REF", physicalMediaRef.oppositeForeignKeyName)
+
+        val manyToManyObject = physicalMediaRef.createFictiveManyToManyObject()
+        assertEquals("PHMED_MED", manyToManyObject.databaseTable)
+        assertOneAndOnlyOne(manyToManyObject.references, "media", "physicalMedia")
+        val manyToManyObjectMediaRef = manyToManyObject.references.namedElement("media") as Reference
+        assertEquals("MEDIA_REF", manyToManyObjectMediaRef.databaseColumn)
+        val manyToManyObjectPhysicalMediaRef = manyToManyObject.references.namedElement("physicalMedia") as Reference
+        assertEquals("PHYSICALMEDIA", manyToManyObjectPhysicalMediaRef.databaseColumn);
+    }
+
+
+    /**
+     * Unidirectional to-many with join table
+     */
+    @Test
+    def void assertReferenceToPersonFromMediaCharacter() {
+        val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
+        val personRef = mediaCharacter.references.namedElement("playedBy") as Reference
+        assertFalse(dbHelperBase.isInverse(personRef))
+        assertEquals("MEDIA_CHR_PLAYEDBY", personRef.manyToManyJoinTableName)
+        assertEquals("PLAYEDBY", personRef.databaseColumn)
+        assertEquals("PLAYEDBY", personRef.foreignKeyName)
+        assertEquals("MEDIA_CHR", personRef.oppositeForeignKeyName)
+
+        val manyToManyObject = personRef.createFictiveManyToManyObject()
+        assertEquals("MEDIA_CHR_PLAYEDBY", manyToManyObject.databaseTable)
+        assertOneAndOnlyOne(manyToManyObject.references, "playedBy", "mediaCharacter")
+        val manyToManyObjectPlayedByRef = manyToManyObject.references.namedElement("playedBy") as Reference
+        assertEquals("PLAYEDBY", manyToManyObjectPlayedByRef.getDatabaseColumn());
+        val manyToManyObjectMediaCharacterRef = manyToManyObject.references.namedElement("mediaCharacter") as Reference
+        assertEquals("MEDIA_CHR", manyToManyObjectMediaCharacterRef.databaseColumn)
+    }
+
+
+    /**
+     * Unidirectional to-many without join table
+     */
+    @Test
+    def void assertReferenceToReviewFromMediaCharacter() {
+        val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
+        val reviewsRef = mediaCharacter.references.namedElement("reviews") as Reference;
+        assertTrue(dbHelperBase.isInverse(reviewsRef))
+        assertEquals("MEDIA_CHR", reviewsRef.databaseColumn)
+        assertEquals("MEDIA_CHR", reviewsRef.oppositeForeignKeyName)
+    }
+
+    /**
+     * Unidirectional to-many without join table, custom databaseColumn name.
+     * List collection.
+     */
+    @Test
+    def void assertReferenceToCommentFromMediaCharacter() {
+        val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
+        val commentsRef = mediaCharacter.references.namedElement("comments") as Reference
+        assertTrue(dbHelperBase.isInverse(commentsRef))
+        assertEquals("COMMENT_OF_CHARACTER", commentsRef.databaseColumn)
+        assertEquals("COMMENT_OF_CHARACTER", commentsRef.oppositeForeignKeyName)
+        assertEquals("COMMENT_OF_CHARACTER", commentsRef.databaseName)
+        assertEquals("COMMENTS_INDEX", commentsRef.listIndexColumnName)
+    }
+    
+    @Test
+    def void assertLibraryService() {
+        val service = mediaModule.services.namedElement("LibraryService") as Service
+        assertTrue(service.isGapClass) // due to saveLibrary, someOtherMethod
+                                       // and populate
+        assertEquals("serviceHint", service.hint)
+    }
+
+    @Test
+    def void assertLibraryRepository() {
+        val library = mediaModule.domainObjects.namedElement("Library") as Entity
+        assertEquals("entityHint", library.hint);
+        val attrName = library.attributes.namedElement("name") as Attribute;
+        assertEquals("attrHint", attrName.hint);
+        val refMedia = library.references.namedElement("media") as Reference;
+        assertEquals("referenceHint", refMedia.hint);
+
+        val repository = library.repository;
+        assertTrue(repository.isGapClass);
+        assertEquals("repositoryHint", repository.hint);
+        val operFindByQuery = repository.operations.namedElement("findByQuery") as Operation
+        assertEquals("repoMethodHint", operFindByQuery.hint);
+    }
+
+    @Test
+    def void assertMediaCharacterValueObject() {
+        val mediaCharacterVO = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
+        assertEquals("valueObjectHint", mediaCharacterVO.hint);
+        val attrName = mediaCharacterVO.attributes.namedElement("name") as Attribute
+        assertEquals("valueObjectAttrHint", attrName.hint);
+        val refMedia = mediaCharacterVO.references.namedElement("existsInMedia") as Reference
+        assertEquals("valueObjectRefHint", refMedia.hint)
+    }
+
+    @Test
+    def void assertPhysicalMediaRepository() {
+        val physicalMedia = mediaModule.domainObjects.namedElement("PhysicalMedia") as Entity;
+        val repository = physicalMedia.repository;
+        assertFalse(repository.isGapClass);
+    }
+
+    @Test
+    def void assertPersonRepository() {
+        val person = personModule.domainObjects.namedElement("Person") as Entity;
+        val repository = person.repository;
+        assertFalse(repository.isGapClass);
+    }
+
+    @Test
+    def void assertPersonService() {
+        val personService = personModule.services.namedElement("PersonService") as Service;
+        val op = personService.operations.namedElement("findPaged") as ServiceOperation;
+        assertNull(op.collectionType)
+        assertEquals("PagedResult", op.type);
+        assertEquals("Person", op.domainObjectType.name);
+        assertEquals(
+                "org.fornax.cartridges.sculptor.framework.domain.PagedResult<org.fornax.cartridges.sculptor.examples.library.person.domain.Person>",
+                op.typeName);
+    }
 
 
 }
