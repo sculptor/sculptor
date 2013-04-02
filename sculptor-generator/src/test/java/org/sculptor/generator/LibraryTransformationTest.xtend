@@ -334,7 +334,7 @@ class LibraryTransformationTest extends XtextTest{
         assertEquals("PagedResult", op.type);
         assertEquals("Person", op.domainObjectType.name);
         assertEquals(
-                "org.fornax.cartridges.sculptor.framework.domain.PagedResult<org.fornax.cartridges.sculptor.examples.library.person.domain.Person>",
+                "org.sculptor.framework.domain.PagedResult<org.fornax.cartridges.sculptor.examples.library.person.domain.Person>",
                 op.typeName);
     }
 
