@@ -151,6 +151,7 @@ def String enumType(Application it) {
 
 	@SuppressWarnings("serial")
 	public class EnumUserType extends EnumType {
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object nullSafeGet(ResultSet rs, String[] names«IF isJpaProviderHibernate4()»,SessionImplementor session«ENDIF», Object owner)
 			throws HibernateException, SQLException {
