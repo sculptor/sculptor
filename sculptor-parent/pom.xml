@@ -18,6 +18,8 @@
 			<modules>
 				<module>../sculptor-eclipse</module>
 				<module>../sculptor-generator</module>
+				<module>../sculptor-framework</module>
+				<module>../sculptor-example/sculptor-example-library</module>
 			</modules>
 		</profile>
 		<profile>
