@@ -43,7 +43,7 @@ def String command(RepositoryOperation it) {
 
 
 def String commandInterface(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessObjectName()), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName()), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessapiPackage(repository.aggregateRoot.module)»;
 
@@ -62,7 +62,7 @@ def String commandInterface(RepositoryOperation it) {
 	«ELSE»
 		«it.formatJavaDoc()»
 	«ENDIF »
-	public interface «getAccessObjectName()» «IF it.getAccessObjectInterfaceExtends() != ''» extends «it.getAccessObjectInterfaceExtends()» «ENDIF»{
+	public interface «getAccessNormalizedName()» «IF it.getAccessObjectInterfaceExtends() != ''» extends «it.getAccessObjectInterfaceExtends()» «ENDIF»{
 
 		«it.parameters.filter(e|!e.isPagingParameter()).map[interfaceParameterSetter(it)]»
 
@@ -95,7 +95,7 @@ def String commandImpl(RepositoryOperation it) {
 }
 
 def String commandImplBase(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName() + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 
@@ -108,8 +108,8 @@ def String commandImplBase(RepositoryOperation it) {
 	 * </p>
 	 *
 	 */
-	public abstract class «getAccessObjectName()»ImplBase extends «it.getAccessBase()»
-	implements «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()» {
+	public abstract class «getAccessNormalizedName()»ImplBase extends «it.getAccessBase()»
+	implements «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()» {
 
 	«IF jpa()»
 		«IF isSpringToBeGenerated() »
@@ -226,7 +226,7 @@ def String jpaHibernateTemplate(RepositoryOperation it) {
 }
 
 def String commandImplSubclass(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessObjectName() + "Impl"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName() + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 
@@ -234,7 +234,7 @@ def String commandImplSubclass(RepositoryOperation it) {
 	 * Implementation of Access object for «repository.name».«name».
 	 *
 	 */
-	public class «getAccessObjectName()»Impl extends «getAccessObjectName()»ImplBase {
+	public class «getAccessNormalizedName()»Impl extends «getAccessNormalizedName()»ImplBase {
 
 		«performExecute(it)»
 
@@ -247,7 +247,7 @@ def String performExecute(RepositoryOperation it) {
 	'''
 		public void performExecute() «exceptionTmpl.throwsDecl(it)» {
 			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("«getAccessObjectName()»Impl not implemented");
+			throw new UnsupportedOperationException("«getAccessNormalizedName()»Impl not implemented");
 		}
 	'''
 }

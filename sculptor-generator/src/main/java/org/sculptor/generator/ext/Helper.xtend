@@ -68,9 +68,10 @@ class Helper {
 				fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
 			else
 				fileName
-		val ioDir = System::getProperty("java.io.tmpdir")
-		val fl = new File(ioDir + "/sculptor/" + getProperty("outputSlot.path."+slot.name) + "/" + fName)
-		val overwrite = getProperty("outputSlot.path."+slot.name, "false")
+		val flTr = processPath(getProperty("outputSlot.path."+slot.name) + "/" + fName)
+
+		val fl = new File(flTr)
+		val overwrite = getProperty("outputSlot.overwrite."+slot.name, "false")
 		if (!fl.exists || (fl.exists && "true" == overwrite)) {
 			fl.parentFile.mkdirs()
 			var out = new FileWriter(fl)
@@ -550,19 +551,19 @@ class Helper {
 	def Collection<Repository> getDelegateRepositories(Service service) {
 		val reps = service.operations.filter[op | op.delegate != null].map[op | op.delegate.repository].toList
 		reps.addAll(service.repositoryDependencies)
-		reps
+		reps.toSet
 	}
 
 	def dispatch Collection<Service> getDelegateServices(Service service) {
 		val srvc = service.operations.filter[op | op.serviceDelegate != null].map[op | op.serviceDelegate.service].toList
 		srvc.addAll(service.serviceDependencies)
-		srvc
+		srvc.toSet
 	}
 
 	def dispatch Collection<Service> getDelegateServices(Resource resource) {
 		val res = resource.operations.filter[op | op.delegate?.serviceDelegate != null].map[op | op.delegate.serviceDelegate.service].toList
 		res.addAll(resource.serviceDependencies)
-		res
+		res.toSet
 	}
 
 	def String getSetAccessor(NamedElement element) {
@@ -577,7 +578,7 @@ class Helper {
 		e.getGetAccessor("");
 	}
 
-	def String getAccessObjectName(RepositoryOperation op) {
+	def String getAccessNormalizedName(RepositoryOperation op) {
 		if (op.accessObjectName == null || op.accessObjectName == "")
 			op.name.toFirstUpper() + "Access" 
 		else
@@ -630,13 +631,13 @@ class Helper {
 	}
 
 	def Collection<DomainObject> getSubclasses(DomainObject domainObject) {
-		domainObject.module.application.getAllDomainObjects().filter[d | d.getExtends == domainObject].toList
+		domainObject.module.application.getAllDomainObjects().filter[d | d.getExtends == domainObject].toSet
 	}
 
 	def Collection<DomainObject> getAllSubclasses(DomainObject domainObject) {
 		val subs = domainObject.getSubclasses().toList
 		subs.addAll(domainObject.getSubclasses().map[d | d.getAllSubclasses()].flatten)
-		subs
+		subs.toSet
 	}
 
 	def boolean hasOwnDatabaseRepresentation(DomainObject domainObject) {
@@ -734,12 +735,12 @@ class Helper {
 	def Collection<String> getAllGeneratedExceptions(Module module) {
 		val exc = module.services.map[operations].flatten.map[op | getGeneratedExceptions(op)].flatten.toList
 		exc.addAll(module.getAllRepositories().map[operations].flatten.map[op | getGeneratedExceptions(op)].flatten)
-		exc
+		exc.toSet
 	}
 
 	def Collection<String> getAllGeneratedWebServiceExceptions(Module module) {
 		module.services.filter[e | e.webService].map[operations].flatten
-			.map[op | op.getGeneratedExceptions()].flatten.toList
+			.map[op | op.getGeneratedExceptions()].flatten.toSet
 	}
 
 	def dispatch boolean hasNotFoundException(RepositoryOperation op) {
@@ -1389,6 +1390,7 @@ class Helper {
 	}
 
 	def String getNotFoundExceptionName(RepositoryOperation op) {
+		getExceptionPackage(op.module) + "." +
 		(if (op.domainObjectType != null)
 			op.domainObjectType.name
 		else

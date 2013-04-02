@@ -106,8 +106,6 @@ def String serviceInterface(Service it) {
 	}
 	'''
 	)
-	'''
-	'''
 }
 
 def String interfaceMethod(ServiceOperation it) {
@@ -125,18 +123,18 @@ def String serviceImplBase(Service it) {
 	package «it.getServiceimplPackage()»;
 
 	«IF gapClass»
-	/**
-	 * Generated base class for implementation of «name».
-	«IF isSpringToBeGenerated()»
-		 * <p>Make sure that subclass defines the following annotations:
-		 * <pre>
-		«springServiceAnnotation(it)»
-		 * </pre>
-		 *
-	«ENDIF»
-	 */
+		/**
+		 * Generated base class for implementation of «name».
+		«IF isSpringToBeGenerated()»
+			 * <p>Make sure that subclass defines the following annotations:
+			 * <pre>
+			«springServiceAnnotation(it)»
+			 * </pre>
+			 *
+		«ENDIF»
+		 */
 	«ELSE»
-		 /**
+		/**
 		 * Implementation of «name».
 		 */
 		«IF isSpringToBeGenerated()»
@@ -156,7 +154,7 @@ def String serviceImplBase(Service it) {
 		«delegateServices(it) »
 
 		«it.operations.filter(op | !op.isImplementedInGapClass()).map[implMethod(it)].join»
-		
+
 		«serviceHook(it)»
 	}
 	'''
@@ -178,12 +176,12 @@ def String delegateRepositories(Service it) {
 		«IF pureEjb3()»
 			@javax.ejb.EJB
 		«ENDIF»
-			private «getRepositoryapiPackage(delegateRepository.aggregateRoot.module)».«delegateRepository.name» «delegateRepository.name.toFirstLower()»;
+		private «getRepositoryapiPackage(delegateRepository.aggregateRoot.module)».«delegateRepository.name» «delegateRepository.name.toFirstLower()»;
 
-			protected «getRepositoryapiPackage(delegateRepository.aggregateRoot.module)».«delegateRepository.name» get«delegateRepository.name»() {
-				return «delegateRepository.name.toFirstLower()»;
-			}
-		«ENDFOR»
+		protected «getRepositoryapiPackage(delegateRepository.aggregateRoot.module)».«delegateRepository.name» get«delegateRepository.name»() {
+			return «delegateRepository.name.toFirstLower()»;
+		}
+	«ENDFOR»
 	'''
 }
 

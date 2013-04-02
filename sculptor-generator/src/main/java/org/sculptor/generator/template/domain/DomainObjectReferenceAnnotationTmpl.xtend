@@ -140,16 +140,18 @@ def String basicTypeJpaAnnotation(Reference it) {
 		«IF !useJpaDefaults()»
 			@javax.persistence.AttributeOverrides({
 				«val elem = <NamedElement>newArrayList()»
-				«elem.addAll(to.attributes)»
-				«elem.addAll(to.references.filter(e | e.isBasicTypeReference() || e.isEnumReference()))»
-				«elem.map[e | attributeOverride(e, e.getDatabaseName(), "", nullable)].join(",")»
+				«{
+					elem.addAll(to.attributes)
+					elem.addAll(to.references.filter(e | e.isBasicTypeReference() || e.isEnumReference()))
+					elem.map[e | attributeOverride(e, e.getDatabaseName(), "", nullable)].join(",")
+				}»
 			})
 				«IF isJpa2() && it.isAssociationOverrideNeeded()»
-				/* TODO: not sufficient if embeddable is used in more than one entity */
-				@javax.persistence.AssociationOverrides({
-					    «it.to.references.filter(e | !e.isBasicTypeReference() && !e.isEnumReference()).map[e | associationOverride(e, from.getDatabaseName(), nullable)].join(",")»
-				})
-			   «ENDIF»
+					/* TODO: not sufficient if embeddable is used in more than one entity */
+					@javax.persistence.AssociationOverrides({
+						    «it.to.references.filter(e | !e.isBasicTypeReference() && !e.isEnumReference()).map[e | associationOverride(e, from.getDatabaseName(), nullable)].join(",")»
+					})
+				«ENDIF»
 			«ENDIF»
 	'''
 }

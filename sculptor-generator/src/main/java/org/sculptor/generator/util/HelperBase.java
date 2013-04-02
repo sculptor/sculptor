@@ -29,7 +29,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -94,6 +97,44 @@ public class HelperBase {
 	}
 
 	private static Application app;
+
+	public static void printEnvironment() {
+		LOG.warn("######################################################");
+		LOG.warn("# Runtime environment");
+		LOG.warn("######################################################");
+
+		// Print properties
+		LOG.warn("Properties:");
+		Properties props = System.getProperties();
+		for (Map.Entry<Object,Object> key : props.entrySet()) {
+			LOG.warn("    " + key.getKey() + " = " + key.getValue());
+		}
+
+		LOG.warn("Environment:");
+		Map<String, String> env = System.getenv();
+		for (Map.Entry<String,String> key : env.entrySet()) {
+			LOG.warn("    " + key.getKey() + " = " + key.getValue());
+		}
+		LOG.warn("######################################################");
+	}
+
+	private static final Pattern envPattern = Pattern.compile("\\$\\{[^}]*\\}");
+
+	public String processPath(String input) {
+		Matcher matcher = envPattern.matcher(input);
+		StringBuffer out = new StringBuffer();
+		while(matcher.find()) {
+			String match = matcher.group();
+			String envVar = match.substring(2, match.length() - 1);
+			String replacement = System.getProperty(envVar);
+			if (replacement == null) {
+				replacement = System.getenv(envVar);
+			}
+			matcher.appendReplacement(out, replacement == null ? envVar : replacement);
+		}
+		matcher.appendTail(out);
+		return out.toString();
+	}
 
 	public String getDomainPackage(DomainObject domainObject) {
 		if (domainObject instanceof DataTransferObject) {

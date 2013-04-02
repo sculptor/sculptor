@@ -295,7 +295,7 @@ def String baseRepositoryMethod(RepositoryOperation it) {
 
 	'''
 	/**
-	 * Delegates to {@link «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»}
+	 * Delegates to {@link «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()»}
 	 */
 	«repositoryMethodAnnotation(it)»
 	«IF it.useGenericAccessStrategy()»
@@ -308,12 +308,12 @@ def String baseRepositoryMethod(RepositoryOperation it) {
 	«ENDIF»
 		«IF it.useGenericAccessStrategy()»
 			«IF name != "findByExample"»
-				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»2«it.getGenericType()» ao = create«getAccessObjectName()»(resultType);
+				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()»2«it.getGenericType()» ao = create«getAccessNormalizedName()»(resultType);
 			«ELSE»
-				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»2<«it.getAggregateRootTypeName()», R> ao = create«getAccessObjectName()»(getPersistentClass(), resultType);
+				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()»2<«it.getAggregateRootTypeName()», R> ao = create«getAccessNormalizedName()»(getPersistentClass(), resultType);
 			«ENDIF»
 		«ELSE»
-			«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()» ao = create«getAccessObjectName()»();
+			«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 		«ENDIF»
 		«setCache(it)»
 		«setOrdered(it)»
@@ -414,12 +414,12 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 			«/* TODO:implement a better solution */»
 			«IF it.useGenericAccessStrategy()»
 				«IF name != "findByExample"»
-					«genericAccessObjectInterface(name)»2<R> ao = create«getAccessObjectName()»(resultType);
+					«genericAccessObjectInterface(name)»2<R> ao = create«getAccessNormalizedName()»(resultType);
 				«ELSE»
-					«genericAccessObjectInterface(name)»2<«it.getAggregateRootTypeName()»,R> ao = create«getAccessObjectName()»(«it.getAggregateRootTypeName()».class, resultType);
+					«genericAccessObjectInterface(name)»2<«it.getAggregateRootTypeName()»,R> ao = create«getAccessNormalizedName()»(«it.getAggregateRootTypeName()».class, resultType);
 				«ENDIF»
 			«ELSE»
-				«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessObjectName()»();
+				«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 			«ENDIF»
 			«setCache(it)»
 			«setOrdered(it)»
@@ -463,9 +463,9 @@ def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 	«repositoryMethodAnnotation(it)»
 	«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		«IF it.useGenericAccessStrategy()»
-			«genericAccessObjectInterface(name)»2«it.getGenericType()» ao = create«getAccessObjectName()»();
+			«genericAccessObjectInterface(name)»2«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 		«ELSE»
-			«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessObjectName()»();
+			«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 		«ENDIF»
 		«setCache(it)»
 		«setOrdered(it)»
@@ -480,26 +480,27 @@ def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 		}
 
 		ao.execute();
-	«IF it.isPagedResult()»
-		«IF isJpa1() && isJpaProviderDataNucleus()»
-			// workaround for datanucleus serialization issue
-			java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
-			result.addAll(ao.getResult());
-		«ELSE»
-			«it.getAccessObjectResultTypeName()» result = ao.getResult();
-		«ENDIF»
-		«calculateMaxPages(it)»
+		«IF it.isPagedResult()»
+			«IF isJpa1() && isJpaProviderDataNucleus()»
 
-		«it.getTypeName()» pagedResult = new «it.getTypeName()»(result
-				, pagingParameter.getStartRow()
-				, pagingParameter.getRowCount()
-				, pagingParameter.getPageSize()
-				, rowCount
-				, additionalRows);
-		return pagedResult;
-	«ELSEIF it.getTypeName() != "void" »
-		return ao.getResult();
-	«ENDIF»
+				// workaround for datanucleus serialization issue
+				java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
+				result.addAll(ao.getResult());
+			«ELSE»
+				«it.getAccessObjectResultTypeName()» result = ao.getResult();
+			«ENDIF»
+			«calculateMaxPages(it)»
+	
+			«it.getTypeName()» pagedResult = new «it.getTypeName()»(result
+					, pagingParameter.getStartRow()
+					, pagingParameter.getRowCount()
+					, pagingParameter.getPageSize()
+					, rowCount
+					, additionalRows);
+			return pagedResult;
+		«ELSEIF it.getTypeName() != "void" »
+			return ao.getResult();
+		«ENDIF»
 	}
 	«findByNaturalKeys(it) »
 	'''
@@ -778,16 +779,16 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 				«ELSE»
 				new java.util.ArrayList<«it.getResultTypeName()»>();
 				for («it.getResultTypeNameForMapping()» tuple : findByCondition(condition, «it.getResultTypeNameForMapping()».class)) {
-				    result.add(«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(tuple, «it.getResultTypeName()».class));
+					result.add(«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(tuple, «it.getResultTypeName()».class));
 				}
 				«ENDIF»
 			«ELSE»
 				«it.getResultTypeName()» result =
 				«IF !it.useTupleToObjectMapping()»
-				    findByCondition(condition, true«IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);
+				findByCondition(condition, true«IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);
 				«ELSE»
-				    «fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(
-				        findByCondition(condition, true, «it.getResultTypeNameForMapping()».class), «it.getResultTypeName()».class);
+					«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(
+						findByCondition(condition, true, «it.getResultTypeNameForMapping()».class), «it.getResultTypeName()».class);
 				«ENDIF»
 			«ENDIF»
 			«throwNotFoundException(it)»
@@ -820,7 +821,7 @@ def String subclassRepositoryMethod(RepositoryOperation it) {
 				// TODO Auto-generated method stub
 				throw new UnsupportedOperationException("«name» not implemented");
 			«ELSE»
-				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessObjectName()»«it.getGenericType()» ao = create«getAccessObjectName()»();
+				«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()»«getGenericType()» ao = create«getAccessNormalizedName»();
 				«FOR parameter : parameters»
 					ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
 				«ENDFOR»
@@ -864,25 +865,25 @@ def String repositoryDependencyInjectionTestMethod(String it, Repository reposit
 			java.lang.reflect.Method setter = null;
 			for (int i = 0; i < methods.length; i++) {
 				if (methods[i].getName().equals(setterMethodName) &&
-				        void.class.equals(methods[i].getReturnType()) &&
-				        methods[i].getParameterTypes().length == 1) {
-				    setter = methods[i];
-				    break;
+						void.class.equals(methods[i].getReturnType()) &&
+						methods[i].getParameterTypes().length == 1) {
+					setter = methods[i];
+					break;
 				}
 			}
 
 			assertNotNull("Setter method for dependency injection of " +
-				        "«it» must be defined in «repository.name».",
-				        setter);
+					"«it» must be defined in «repository.name».",
+					setter);
 
 			«repository.aggregateRoot.module.getRepositoryimplPackage()».«repository.name + getSuffix("Impl")» «repository.name.toFirstLower()» = new «repository.aggregateRoot.module.getRepositoryimplPackage()».«repository.name + getSuffix("Impl")»();
 			try {
 				setter.invoke(«repository.name.toFirstLower()», new Object[] {null});
 			} catch (java.lang.reflect.InvocationTargetException e) {
 				if (e.getCause().getClass().equals(UnsupportedOperationException.class)) {
-				    assertTrue(e.getCause().getMessage(), false);
+					assertTrue(e.getCause().getMessage(), false);
 				} else {
-				    // exception due to something else, but the method was not forgotten
+					// exception due to something else, but the method was not forgotten
 				}
 			}
 

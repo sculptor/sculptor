@@ -84,7 +84,7 @@ def String propertyConstructorBase(DomainObject it) {
 					super(«getSuperConstructorParameters(it).map[name].join(",")»);
 				«ENDIF»
 				«val par = it.getConstructorParameters()»
-				«par.removeAll(it.getSuperConstructorParameters())»
+				«{par.removeAll(it.getSuperConstructorParameters()); ""}»
 				«FOR a : par»
 					«IF a.validateNotNullInConstructor() »
 						«validateNotNull(it, a.name) »

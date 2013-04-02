@@ -54,6 +54,7 @@ public class ImportAwareUriBaseReader extends UriBasedReader {
 
 		// Read all the models from given URIs and check for imports 
 		List<String> newUris = this.uris;
+		String mainBasePackage = null;
 		int numberResources;
 		do {
 
@@ -77,6 +78,11 @@ public class ImportAwareUriBaseReader extends UriBasedReader {
 				for (EObject obj : resource.getContents()) {
 					if (obj instanceof DslModel) {
 						DslModel dslModel = (DslModel) obj;
+						if (mainBasePackage == null) {
+							mainBasePackage = dslModel.getApp().getBasePackage();
+						} else {
+							dslModel.getApp().setBasePackage(mainBasePackage);
+						}
 						for (DslImport imp : dslModel.getImports()) {
 							DslApplication app = dslModel.getApp();
 							LOGGER.debug("Application"

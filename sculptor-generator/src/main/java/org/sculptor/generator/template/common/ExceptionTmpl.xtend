@@ -119,7 +119,7 @@ class ExceptionTmpl {
 	
 	def String throwsDecl(Operation it) {
 		'''
-			«IF !(it.getThrows() != null && it.getThrows().isEmpty)»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
+			«IF (it.getThrows() != null && !it.getThrows().isEmpty)»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
 		'''
 	}
 	

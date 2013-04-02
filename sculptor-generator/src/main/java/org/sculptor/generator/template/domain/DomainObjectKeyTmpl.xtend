@@ -49,9 +49,9 @@ def String keyGetter(DomainObject it) {
 			/* No keys in this class, key implemented by extended class */
 		«ELSEIF it.getNaturalKeyReferences().size == 1 && it.getAllNaturalKeyReferences().size == 1 && it.getAllNaturalKeyAttributes().isEmpty »
 			/**
-				* This method is used by equals and hashCode.
-				* @return {@link #get«it.getNaturalKeyReferences().head.name.toFirstUpper()»}
-				*/
+			 * This method is used by equals and hashCode.
+			 * @return {@link #get«it.getNaturalKeyReferences().head.name.toFirstUpper()»}
+			 */
 			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
 				@javax.persistence.Transient
 			«ENDIF»
@@ -60,9 +60,9 @@ def String keyGetter(DomainObject it) {
 			}
 		«ELSEIF it.getNaturalKeyAttributes().size == 1 && it.getAllNaturalKeyAttributes().size == 1 && it.getAllNaturalKeyReferences().isEmpty »
 			/**
-				* This method is used by equals and hashCode.
-				* @return {@link #«getGetAccessor(attributes.filter(a | a.naturalKey).head)»}
-				*/
+			 * This method is used by equals and hashCode.
+			 * @return {@link #«getGetAccessor(attributes.filter(a | a.naturalKey).head)»}
+			 */
 			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
 				@javax.persistence.Transient
 			«ENDIF»
@@ -138,8 +138,8 @@ def String compositeKey(DomainObject it) {
 			}
 
 			/* no annotations for composite key classes */
-			«it.getAllNaturalKeyAttributes().map[k | domainObjectAttributeTmpl.propertyGetter(k, false)]»
-			«it.getAllNaturalKeyReferences().map[k | domainObjectReferenceTmpl.oneReferenceGetter(k, false)]»
+			«it.getAllNaturalKeyAttributes().map[k | domainObjectAttributeTmpl.propertyGetter(k, false)].join()»
+			«it.getAllNaturalKeyReferences().map[k | domainObjectReferenceTmpl.oneReferenceGetter(k, false)].join()»
 
 			«compositeKeyEquals(it)»
 			«compositeKeyHashCode(it)»

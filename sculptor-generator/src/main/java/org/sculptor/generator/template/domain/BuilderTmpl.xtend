@@ -94,14 +94,17 @@ def String builderBody(DomainObject it) {
 		public «getDomainPackage() + "." + name» build() {
 			«getDomainPackage() + "." + name» obj = new «name»(«FOR attr : it.getBuilderConstructorParameters() SEPARATOR ", "»«attr.getGetAccessor()»()«ENDFOR»);
 			«val List<NamedElement> attrs = newArrayList()»
-			«attrs.addAll(it.getBuilderAttributes())»
-			«attrs.addAll(it.getBuilderReferences().filter(r | !r.many).toList)»
-			«attrs.removeAll(it.getBuilderConstructorParameters())»
+			«{
+				attrs.addAll(it.getBuilderAttributes())
+				attrs.addAll(it.getBuilderReferences().filter(r | !r.many).toList)
+				attrs.removeAll(it.getBuilderConstructorParameters())
+				""
+			}»
 			«FOR prop : attrs»
 				obj.set«prop.name.toFirstUpper()»(«prop.name»);
 			«ENDFOR»
 			«val refs = it.getBuilderReferences().filter(r | r.many).toList»
-			«refs.removeAll(it.getBuilderConstructorParameters())»
+			«{refs.removeAll(it.getBuilderConstructorParameters()); ""}»
 			«FOR prop : refs»
 				obj.get«prop.name.toFirstUpper()»().addAll(«prop.name»);
 			«ENDFOR»

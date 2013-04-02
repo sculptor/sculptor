@@ -59,7 +59,10 @@ class Transformation {
 		app.modules.map[domainObjects].flatten.forEach[mixin()]
 		app.modules.map[domainObjects].flatten.forEach[modifyExtends()]
 		app.modules.map[it.getNonEnumDomainObjects].flatten.forEach[modifyUuid()]
-		app.getAllRepositories().map[operations].flatten.filter(e | !e.delegateToAccessObject && !e.isGenericAccessObject() && e.isGeneratedFinder()).forEach[modifyDynamicFinderOperations()]
+		// Avoid concurrent modification exception because
+		// modifyDynamicFinderOperations is inserting new operations to repository
+		val opList=app.getAllRepositories().map[operations].flatten.filter(e | !e.delegateToAccessObject && !e.isGenericAccessObject() && e.isGeneratedFinder()).toList
+		opList.forEach[modifyDynamicFinderOperations()]
 		app.getAllRepositories().forEach[modifyPagingOperations()]
 		app.getAllRepositories().forEach[addDefaultValues()]
 		app.getAllRepositories().forEach[modifySubscriber()]
