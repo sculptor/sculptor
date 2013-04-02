@@ -7,7 +7,6 @@
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-framework-main</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
 	<name>Sculptor :: Runtime Framework :: Main</name>
 	<description></description>
 	<packaging>jar</packaging>
@@ -17,7 +16,7 @@
 		<hibernate.version>3.5.5-Final</hibernate.version>
 		<validation.version>1.0.0.GA</validation.version>
 		<appengine.version>1.4.0</appengine.version>
-		<drools.version>5.1.1</drools.version>
+		<drools.version>5.5.0.Final</drools.version>
 		<camel.version>2.5.0</camel.version>
 		<spring-integration.version>2.0.0.RELEASE</spring-integration.version>
 	</properties>
@@ -116,12 +115,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.drools</groupId>
-			<artifactId>drools-api</artifactId>
-			<version>${drools.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
