@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<dataset>
+    <LIBRARY/>
+    <PHYSICALMEDIA/>
+    <MEDIA/>
+    <BOOK/>
+    <MOVIE/>
+    <PERSON/>
+    <ENGAGEMENT/>
+    <MEDIACHARACTER/>
+</dataset>

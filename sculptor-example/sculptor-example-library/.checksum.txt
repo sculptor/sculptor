@@ -1,0 +1,3 @@
+# Check sum file
+# Entries are in the following format: checksum:file
+

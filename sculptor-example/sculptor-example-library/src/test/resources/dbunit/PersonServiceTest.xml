@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<dataset> 
+  <CONTACT id="101" uuid="101" personName_first="Peter" personName_last="Vrtkavy" adress="Chrumkava 12" city="Kdebolo"  zip="123 45" state="SK" LASTUPDATED="2007-03-23" LASTUPDATEDBY="dbunit" VERSION="1" />
+  <CONTACT id="102" uuid="102" personName_first="John" personName_last="Mahoney" adress="Nechutna 43" city="Nebolovo" zip="678 90" state="SK" LASTUPDATED="2007-03-23" LASTUPDATEDBY="dbunit" VERSION="1" />
+  <CONTACT id="103" uuid="103" personName_first="Karl" personName_last="Von Banhof" adress="Skazena 556" city="Vsadebolo" zip="QQQ WW" state="SK" LASTUPDATED="2007-03-23" LASTUPDATEDBY="dbunit" VERSION="1" />
+
+  <PERSON ID="1" SSN_NUMBER="123456" SSN_COUNTRY="SE" NAME_FIRST="Stellan" NAME_LAST="Skarsgård" BIRTHDATE="1951-06-13" SEX="M" LASTUPDATED="2007-03-23" LASTUPDATEDBY="dbunit" VERSION="1" CONTACT="101"/>
+  <PERSON ID="2" SSN_NUMBER="123457" SSN_COUNTRY="SE" NAME_FIRST="Alexander" NAME_LAST="Skarsgård" BIRTHDATE="1976-08-25" SEX="M" LASTUPDATED="2007-03-23" LASTUPDATEDBY="dbunit" VERSION="1" CONTACT="102"/>
+  <PERSON ID="3" SSN_NUMBER="123458" SSN_COUNTRY="SE" NAME_FIRST="Peter" NAME_LAST="Haber" BIRTHDATE="1952-12-12" SEX="M" LASTUPDATED="2007-03-23" LASTUPDATEDBY="dbunit" VERSION="1" CONTACT="103"/>
+</dataset>
