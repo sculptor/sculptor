@@ -54,65 +54,93 @@ import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
 import org.sculptor.generator.template.springint.SpringIntegrationTmpl
 import org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class TemplateModule extends ExtensionModule {
+	private static final val Logger LOG = LoggerFactory::getLogger(typeof(TemplateModule))
+
 	override protected configure() {
 		super.configure
 
-		bind(typeof(ServiceTmpl))
-		bind(typeof(ServiceEjbTestTmpl))
-		bind(typeof(ServiceTestTmpl))
-		bind(typeof(ServiceEjbTmpl))
-		bind(typeof(JSFCrudGuiConfigContextTmpl))
-		bind(typeof(TemplateModule))
-		bind(typeof(DroolsTmpl))
-		bind(typeof(ModelDocTmpl))
-		bind(typeof(UMLGraphTmpl))
-		bind(typeof(ModelDocCssTmpl))
-		bind(typeof(SpringTmpl))
-		bind(typeof(SpringIntegrationTmpl))
-		bind(typeof(DDLTmpl))
-		bind(typeof(MysqlDDLTmpl))
-		bind(typeof(OracleDDLTmpl))
-		bind(typeof(CustomDDLTmpl))
-		bind(typeof(DatasourceTmpl))
-		bind(typeof(DbUnitTmpl))
-		bind(typeof(DomainObjectAnnotationTmpl))
-		bind(typeof(DomainObjectReferenceAnnotationTmpl))
-		bind(typeof(DomainObjectNamesTmpl))
-		bind(typeof(DomainObjectConstructorTmpl))
-		bind(typeof(DomainObjectTraitTmpl))
-		bind(typeof(DomainObjectReferenceTmpl))
-		bind(typeof(DomainObjectKeyTmpl))
-		bind(typeof(DomainObjectPropertiesTmpl))
-		bind(typeof(DomainObjectAttributeAnnotationTmpl))
-		bind(typeof(DomainObjectAttributeTmpl))
-		bind(typeof(BuilderTmpl))
-		bind(typeof(DomainObjectTmpl))
-		bind(typeof(MongoDbConversationDomainObjectRepositoryTmpl))
-		bind(typeof(MongoDbServiceTestTmpl))
-		bind(typeof(MongoDbMapperTmpl))
-		bind(typeof(EclipseLinkTmpl))
-		bind(typeof(DataNucleusTmpl))
-		bind(typeof(JPATmpl))
-		bind(typeof(OpenJpaTmpl))
-		bind(typeof(HibernateTmpl))
-		bind(typeof(CamelTmpl))
-		bind(typeof(LogConfigTmpl))
-		bind(typeof(PubSubTmpl))
-		bind(typeof(ExceptionTmpl))
-		bind(typeof(ConsumerTmpl))
-		bind(typeof(ConsumerTestTmpl))
-		bind(typeof(ConsumerEjbTmpl))
-		bind(typeof(ConsumerEjbTestTmpl))
-		bind(typeof(AccessObjectTmpl))
-		bind(typeof(AccessObjectFactoryTmpl))
-		bind(typeof(RepositoryTmpl))
-		bind(typeof(RootTmpl))
-		bind(typeof(RestWebCssTmpl))
-		bind(typeof(RestWebJspTmpl))
-		bind(typeof(ResourceTmpl))
-		bind(typeof(RestWebConfigTmpl))
-		bind(typeof(RestWebTmpl))
+		findOverrideClass(typeof(ServiceTmpl))
+		findOverrideClass(typeof(ServiceEjbTestTmpl))
+		findOverrideClass(typeof(ServiceTestTmpl))
+		findOverrideClass(typeof(ServiceEjbTmpl))
+		findOverrideClass(typeof(JSFCrudGuiConfigContextTmpl))
+		findOverrideClass(typeof(TemplateModule))
+		findOverrideClass(typeof(DroolsTmpl))
+		findOverrideClass(typeof(ModelDocTmpl))
+		findOverrideClass(typeof(UMLGraphTmpl))
+		findOverrideClass(typeof(ModelDocCssTmpl))
+		findOverrideClass(typeof(SpringTmpl))
+		findOverrideClass(typeof(SpringIntegrationTmpl))
+		findOverrideClass(typeof(DDLTmpl))
+		findOverrideClass(typeof(MysqlDDLTmpl))
+		findOverrideClass(typeof(OracleDDLTmpl))
+		findOverrideClass(typeof(CustomDDLTmpl))
+		findOverrideClass(typeof(DatasourceTmpl))
+		findOverrideClass(typeof(DbUnitTmpl))
+		findOverrideClass(typeof(DomainObjectAnnotationTmpl))
+		findOverrideClass(typeof(DomainObjectReferenceAnnotationTmpl))
+		findOverrideClass(typeof(DomainObjectNamesTmpl))
+		findOverrideClass(typeof(DomainObjectConstructorTmpl))
+		findOverrideClass(typeof(DomainObjectTraitTmpl))
+		findOverrideClass(typeof(DomainObjectReferenceTmpl))
+		findOverrideClass(typeof(DomainObjectKeyTmpl))
+		findOverrideClass(typeof(DomainObjectPropertiesTmpl))
+		findOverrideClass(typeof(DomainObjectAttributeAnnotationTmpl))
+		findOverrideClass(typeof(DomainObjectAttributeTmpl))
+		findOverrideClass(typeof(BuilderTmpl))
+		findOverrideClass(typeof(DomainObjectTmpl))
+		findOverrideClass(typeof(MongoDbConversationDomainObjectRepositoryTmpl))
+		findOverrideClass(typeof(MongoDbServiceTestTmpl))
+		findOverrideClass(typeof(MongoDbMapperTmpl))
+		findOverrideClass(typeof(EclipseLinkTmpl))
+		findOverrideClass(typeof(DataNucleusTmpl))
+		findOverrideClass(typeof(JPATmpl))
+		findOverrideClass(typeof(OpenJpaTmpl))
+		findOverrideClass(typeof(HibernateTmpl))
+		findOverrideClass(typeof(CamelTmpl))
+		findOverrideClass(typeof(LogConfigTmpl))
+		findOverrideClass(typeof(PubSubTmpl))
+		findOverrideClass(typeof(ExceptionTmpl))
+		findOverrideClass(typeof(ConsumerTmpl))
+		findOverrideClass(typeof(ConsumerTestTmpl))
+		findOverrideClass(typeof(ConsumerEjbTmpl))
+		findOverrideClass(typeof(ConsumerEjbTestTmpl))
+		findOverrideClass(typeof(AccessObjectTmpl))
+		findOverrideClass(typeof(AccessObjectFactoryTmpl))
+		findOverrideClass(typeof(RepositoryTmpl))
+		findOverrideClass(typeof(RootTmpl))
+		findOverrideClass(typeof(RestWebCssTmpl))
+		findOverrideClass(typeof(RestWebJspTmpl))
+		findOverrideClass(typeof(ResourceTmpl))
+		findOverrideClass(typeof(RestWebConfigTmpl))
+		findOverrideClass(typeof(RestWebTmpl))
+	}
+
+	def <T> void findOverrideClass(Class<T> clazz) {
+		var newClazz = clazz
+		val clsName = clazz.name
+		val overrideName = clsName.substring("org.sculptor.".length) + "Override"
+		try {
+			val overrideClass = Class::forName(overrideName)
+			if (clazz.isAssignableFrom(overrideClass)) {
+				LOG.error("Installing override {} insted of {}", overrideName, clsName)
+				newClazz = (overrideClass as Class<T>)
+			} else {
+				LOG.error("Override {} have to be inherited from {} -> skipping override", overrideName, clsName)
+			}
+		} catch (Throwable th) {
+			// Ignore error - use default class
+		}
+
+		// Bind override if available
+		if (clazz == newClazz) {
+			bind(clazz)
+		} else {
+			bind(clazz).to(newClazz)
+		}
 	}
 }

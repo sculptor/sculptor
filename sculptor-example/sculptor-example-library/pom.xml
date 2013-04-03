@@ -55,6 +55,14 @@
 	</pluginRepositories>
 	<build>
 		<finalName>${project.artifactId}</finalName>
+		<resources>
+			<resource><directory>src/main/resources</directory></resource>
+			<resource><directory>src/generated/resources</directory></resource>
+		</resources>
+		<testResources>
+			<testResource><directory>src/test/resources</directory></testResource>
+			<testResource><directory>src/test/generated/resources</directory></testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -90,6 +98,38 @@
 						</fileset>
 					</filesets>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/generated/java</source>
+								<source>src/generated/java</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test/generated/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -212,35 +252,35 @@
 				</configuration>
 			</plugin>
 			<!-- Uncomment to generate database creation script (ddl) with hibernate3-maven-plugin
-      		<plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		        <artifactId>hibernate3-maven-plugin</artifactId>
-		        <version>2.2</version>
- 		      	<executions>
-        			<execution>
-	          			<phase>process-classes</phase>
-	          			<goals>
-	            			<goal>hbm2ddl</goal>
-	          			</goals>
-        			</execution>
-		      	</executions>
-      			<configuration>
-        			<components>
-          				<component>
-            				<name>hbm2ddl</name>
-            				<implementation>jpaconfiguration</implementation>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>hibernate3-maven-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>hbm2ddl</goal>
+							</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<components>
+							<component>
+								<name>hbm2ddl</name>
+								<implementation>jpaconfiguration</implementation>
 							<outputDirectory>/</outputDirectory>
-          				</component>
-        			</components>
-        			<componentProperties>
-          				<outputfilename>/src/generated/resources/dbschema/ddl.sql</outputfilename>
-         					<drop>true</drop>
-         					<create>true</create>
-         					<update>false</update>
-         					<export>false</export>
-         					<format>true</format>
-        			</componentProperties>
-      			</configuration>
+							</component>
+					</components>
+					<componentProperties>
+							<outputfilename>/src/generated/resources/dbschema/ddl.sql</outputfilename>
+								<drop>true</drop>
+								<create>true</create>
+								<update>false</update>
+								<export>false</export>
+								<format>true</format>
+					</componentProperties>
+				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.hibernate</groupId>
@@ -258,8 +298,8 @@
 						<version>${hibernate.validator.version}</version>
 					</dependency>
 				</dependencies>
-    		</plugin>
-    		-->
+			</plugin>
+		-->
 		</plugins>
 
 		<pluginManagement>
@@ -274,18 +314,10 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.fornax.toolsupport
-										</groupId>
-										<artifactId>
-											fornax-checksum-m2-plugin
-										</artifactId>
-										<versionRange>
-											[1.0.0,)
-										</versionRange>
-										<goals>
-											<goal>run</goal>
-										</goals>
+										<groupId> org.fornax.toolsupport</groupId>
+										<artifactId>fornax-checksum-m2-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals><goal>run</goal></goals>
 									</pluginExecutionFilter>
 									<action>
 										<ignore></ignore>
@@ -293,18 +325,10 @@
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.fornax.toolsupport
-										</groupId>
-										<artifactId>
-											fornax-graphviz-m2-plugin
-										</artifactId>
-										<versionRange>
-											[1.0.0,)
-										</versionRange>
-										<goals>
-											<goal>run</goal>
-										</goals>
+										<groupId>org.fornax.toolsupport</groupId>
+										<artifactId>fornax-graphviz-m2-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals><goal>run</goal></goals>
 									</pluginExecutionFilter>
 									<action>
 										<ignore></ignore>
