@@ -1,5 +1,6 @@
 package org.sculptor.generator.template
 
+import java.util.List
 import org.sculptor.generator.ext.ExtensionModule
 import org.sculptor.generator.template.camel.CamelTmpl
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -18,7 +19,6 @@ import org.sculptor.generator.template.db.OracleDDLTmpl
 import org.sculptor.generator.template.doc.ModelDocCssTmpl
 import org.sculptor.generator.template.doc.ModelDocTmpl
 import org.sculptor.generator.template.doc.UMLGraphTmpl
-import org.sculptor.generator.template.domain.BuilderTmpl
 import org.sculptor.generator.template.domain.DomainObjectAnnotationTmpl
 import org.sculptor.generator.template.domain.DomainObjectAttributeAnnotationTmpl
 import org.sculptor.generator.template.domain.DomainObjectAttributeTmpl
@@ -30,6 +30,7 @@ import org.sculptor.generator.template.domain.DomainObjectReferenceAnnotationTmp
 import org.sculptor.generator.template.domain.DomainObjectReferenceTmpl
 import org.sculptor.generator.template.domain.DomainObjectTmpl
 import org.sculptor.generator.template.domain.DomainObjectTraitTmpl
+import org.sculptor.generator.template.domain.builder.BuilderTmpl
 import org.sculptor.generator.template.drools.DroolsTmpl
 import org.sculptor.generator.template.jpa.DataNucleusTmpl
 import org.sculptor.generator.template.jpa.EclipseLinkTmpl
@@ -60,64 +61,73 @@ import org.slf4j.LoggerFactory
 class TemplateModule extends ExtensionModule {
 	private static final val Logger LOG = LoggerFactory::getLogger(typeof(TemplateModule))
 
+	val templateClasses = #[
+		typeof(ServiceTmpl),
+		typeof(ServiceEjbTestTmpl),
+		typeof(ServiceTestTmpl),
+		typeof(ServiceEjbTmpl),
+		typeof(JSFCrudGuiConfigContextTmpl),
+		typeof(TemplateModule),
+		typeof(DroolsTmpl),
+		typeof(ModelDocTmpl),
+		typeof(UMLGraphTmpl),
+		typeof(ModelDocCssTmpl),
+		typeof(SpringTmpl),
+		typeof(SpringIntegrationTmpl),
+		typeof(DDLTmpl),
+		typeof(MysqlDDLTmpl),
+		typeof(OracleDDLTmpl),
+		typeof(CustomDDLTmpl),
+		typeof(DatasourceTmpl),
+		typeof(DbUnitTmpl),
+		typeof(DomainObjectAnnotationTmpl),
+		typeof(DomainObjectReferenceAnnotationTmpl),
+		typeof(DomainObjectNamesTmpl),
+		typeof(DomainObjectConstructorTmpl),
+		typeof(DomainObjectTraitTmpl),
+		typeof(DomainObjectReferenceTmpl),
+		typeof(DomainObjectKeyTmpl),
+		typeof(DomainObjectPropertiesTmpl),
+		typeof(DomainObjectAttributeAnnotationTmpl),
+		typeof(DomainObjectAttributeTmpl),
+		typeof(BuilderTmpl),
+		typeof(DomainObjectTmpl),
+		typeof(MongoDbConversationDomainObjectRepositoryTmpl),
+		typeof(MongoDbServiceTestTmpl),
+		typeof(MongoDbMapperTmpl),
+		typeof(EclipseLinkTmpl),
+		typeof(DataNucleusTmpl),
+		typeof(JPATmpl),
+		typeof(OpenJpaTmpl),
+		typeof(HibernateTmpl),
+		typeof(CamelTmpl),
+		typeof(LogConfigTmpl),
+		typeof(PubSubTmpl),
+		typeof(ExceptionTmpl),
+		typeof(ConsumerTmpl),
+		typeof(ConsumerTestTmpl),
+		typeof(ConsumerEjbTmpl),
+		typeof(ConsumerEjbTestTmpl),
+		typeof(AccessObjectTmpl),
+		typeof(AccessObjectFactoryTmpl),
+		typeof(RepositoryTmpl),
+		typeof(RootTmpl),
+		typeof(RestWebCssTmpl),
+		typeof(RestWebJspTmpl),
+		typeof(ResourceTmpl),
+		typeof(RestWebConfigTmpl),
+		typeof(RestWebTmpl)
+	]
+	
+	override List<Class<?>> getGeneratorClasses() {
+		templateClasses as List<Class<?>>
+	}
+	
 	override protected configure() {
 		super.configure
 
-		findOverrideClass(typeof(ServiceTmpl))
-		findOverrideClass(typeof(ServiceEjbTestTmpl))
-		findOverrideClass(typeof(ServiceTestTmpl))
-		findOverrideClass(typeof(ServiceEjbTmpl))
-		findOverrideClass(typeof(JSFCrudGuiConfigContextTmpl))
-		findOverrideClass(typeof(TemplateModule))
-		findOverrideClass(typeof(DroolsTmpl))
-		findOverrideClass(typeof(ModelDocTmpl))
-		findOverrideClass(typeof(UMLGraphTmpl))
-		findOverrideClass(typeof(ModelDocCssTmpl))
-		findOverrideClass(typeof(SpringTmpl))
-		findOverrideClass(typeof(SpringIntegrationTmpl))
-		findOverrideClass(typeof(DDLTmpl))
-		findOverrideClass(typeof(MysqlDDLTmpl))
-		findOverrideClass(typeof(OracleDDLTmpl))
-		findOverrideClass(typeof(CustomDDLTmpl))
-		findOverrideClass(typeof(DatasourceTmpl))
-		findOverrideClass(typeof(DbUnitTmpl))
-		findOverrideClass(typeof(DomainObjectAnnotationTmpl))
-		findOverrideClass(typeof(DomainObjectReferenceAnnotationTmpl))
-		findOverrideClass(typeof(DomainObjectNamesTmpl))
-		findOverrideClass(typeof(DomainObjectConstructorTmpl))
-		findOverrideClass(typeof(DomainObjectTraitTmpl))
-		findOverrideClass(typeof(DomainObjectReferenceTmpl))
-		findOverrideClass(typeof(DomainObjectKeyTmpl))
-		findOverrideClass(typeof(DomainObjectPropertiesTmpl))
-		findOverrideClass(typeof(DomainObjectAttributeAnnotationTmpl))
-		findOverrideClass(typeof(DomainObjectAttributeTmpl))
-		findOverrideClass(typeof(BuilderTmpl))
-		findOverrideClass(typeof(DomainObjectTmpl))
-		findOverrideClass(typeof(MongoDbConversationDomainObjectRepositoryTmpl))
-		findOverrideClass(typeof(MongoDbServiceTestTmpl))
-		findOverrideClass(typeof(MongoDbMapperTmpl))
-		findOverrideClass(typeof(EclipseLinkTmpl))
-		findOverrideClass(typeof(DataNucleusTmpl))
-		findOverrideClass(typeof(JPATmpl))
-		findOverrideClass(typeof(OpenJpaTmpl))
-		findOverrideClass(typeof(HibernateTmpl))
-		findOverrideClass(typeof(CamelTmpl))
-		findOverrideClass(typeof(LogConfigTmpl))
-		findOverrideClass(typeof(PubSubTmpl))
-		findOverrideClass(typeof(ExceptionTmpl))
-		findOverrideClass(typeof(ConsumerTmpl))
-		findOverrideClass(typeof(ConsumerTestTmpl))
-		findOverrideClass(typeof(ConsumerEjbTmpl))
-		findOverrideClass(typeof(ConsumerEjbTestTmpl))
-		findOverrideClass(typeof(AccessObjectTmpl))
-		findOverrideClass(typeof(AccessObjectFactoryTmpl))
-		findOverrideClass(typeof(RepositoryTmpl))
-		findOverrideClass(typeof(RootTmpl))
-		findOverrideClass(typeof(RestWebCssTmpl))
-		findOverrideClass(typeof(RestWebJspTmpl))
-		findOverrideClass(typeof(ResourceTmpl))
-		findOverrideClass(typeof(RestWebConfigTmpl))
-		findOverrideClass(typeof(RestWebTmpl))
+		templateClasses.forEach[findOverrideClass]
+		
 	}
 
 	def <T> void findOverrideClass(Class<T> clazz) {
@@ -143,4 +153,6 @@ class TemplateModule extends ExtensionModule {
 			bind(clazz).to(newClazz)
 		}
 	}
+	
+
 }

@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.template.domain
+package org.sculptor.generator.template.domain.builder
 
 import java.util.List
 import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.template.domain.DomainObjectAttributeTmpl
+import org.sculptor.generator.template.domain.DomainObjectConstructorTmpl
+import org.sculptor.generator.template.domain.DomainObjectReferenceTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Attribute
