@@ -28,8 +28,8 @@ import org.sculptor.generator.template.db.DatasourceTmpl
 import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.template.doc.ModelDocTmpl
 import org.sculptor.generator.template.doc.UMLGraphTmpl
-import org.sculptor.generator.template.domain.BuilderTmpl
 import org.sculptor.generator.template.domain.DomainObjectTmpl
+import org.sculptor.generator.template.domain.builder.BuilderTmpl
 import org.sculptor.generator.template.jpa.HibernateTmpl
 import org.sculptor.generator.template.jpa.JPATmpl
 import org.sculptor.generator.template.mongodb.MongoDbMapperTmpl
