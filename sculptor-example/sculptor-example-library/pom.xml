@@ -9,8 +9,9 @@
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-example-library</artifactId>
-	<name>Sculptor :: Library Example</name>
+	<name>Sculptor :: Example :: Library</name>
 	<description>Business tier for Sculptor Library example</description>
+
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
  		<hibernate.version>3.5.5-Final</hibernate.version>
@@ -19,6 +20,7 @@
 		<spring.version>3.0.4.RELEASE</spring.version>
 		<sculptor.version>3.0.0-SNAPSHOT</sculptor.version>
 	</properties>
+
 	<repositories>
 		<repository>
 			<id>fornax-platform.org</id>
@@ -38,6 +40,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>fornax-platform.org</id>
@@ -158,10 +161,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>initialize</id>
@@ -658,8 +657,8 @@
 			<!-- <scope>test</scope>  -->
 		</dependency>
 		<dependency>
-			<groupId>org.sculptor</groupId>
-			<artifactId>sculptor-generator</artifactId>
+			<groupId>org.sculptor.generator</groupId>
+			<artifactId>sculptor-generator-library</artifactId>
 			<version>${sculptor.version}</version>
 			<scope>provided</scope>
 		</dependency>

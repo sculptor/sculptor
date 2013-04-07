@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sculptor</groupId>
+		<artifactId>sculptor-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../sculptor-parent/</relativePath>
+	</parent>
+	<groupId>org.sculptor</groupId>
+	<artifactId>sculptor-repository</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>eclipse-repository</packaging>
+	<name>Sculptor :: Eclipse p2 Repository</name>
+
+	<properties>
+		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
+		<github.global.server>github</github.global.server>
+	</properties>
+
+	<build>
+		<plugins>
+			<!-- Activate Tycho -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<build>
+				<plugins>
+					<!-- Deploying the p2 repository to GitHub download area as described in
+						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
+					<plugin>
+						<groupId>com.github.github</groupId>
+						<artifactId>site-maven-plugin</artifactId>
+						<configuration>
+							<noJekyll>true</noJekyll>
+							<outputDirectory>${project.build.directory}/repository</outputDirectory>
+							<branch>refs/heads/p2-repository</branch>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<repositoryName>sculptor</repositoryName>
+							<repositoryOwner>sculptor</repositoryOwner>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>site</goal>
+								</goals>
+								<phase>deploy</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

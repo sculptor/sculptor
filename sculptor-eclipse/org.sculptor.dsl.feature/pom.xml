@@ -9,5 +9,5 @@
 	<groupId>org.sculptor.eclipse</groupId>
 	<artifactId>org.sculptor.dsl.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
-	<name>Sculptor :: Eclipse Textual DSL Feature</name>
+	<name>Sculptor :: Eclipse :: Textual DSL Feature</name>
 </project>

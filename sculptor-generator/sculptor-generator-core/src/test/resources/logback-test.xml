@@ -7,7 +7,7 @@
     </encoder> 
   </appender>  
   <logger name="sk.f4s" level="DEBUG"/>  
-  <logger name="de.hunsicker.jalopy.io" level="WARN"/>  
+  <logger name="org.sculptor" level="DEBUG"/>  
   <root level="INFO"> 
     <appender-ref ref="STDOUT"/> 
   </root> 

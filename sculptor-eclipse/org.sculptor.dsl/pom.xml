@@ -9,7 +9,7 @@
 	<groupId>org.sculptor.eclipse</groupId>
 	<artifactId>org.sculptor.dsl</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>Sculptor :: Eclipse Textual DSL</name>
+	<name>Sculptor :: Eclipse :: Textual DSL</name>
 
 	<properties>
 		<xtext-resources>${project.build.directory}/xtext</xtext-resources>

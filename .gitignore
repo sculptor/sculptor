@@ -1,8 +1,10 @@
-.settings/
+.DS_Store
+bin/
 target/
+.settings/
 .classpath
 .project
 src-gen/
 xtend-gen/
 plugin.xml_gen
-sculptor-eclipse/eclipse-mirror/.p2-mirror
+.p2-mirror/

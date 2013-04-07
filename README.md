@@ -17,9 +17,9 @@ The project outlines some technical details e.g.
 Maven Modules
 ---------------
 
-* `sculptor-parent`
+* `releng`
 
-  The aggregator project with the parent POM used by the other modules.
+  Folder with projects used by release engineering, e.g. `sculptor-parent` with the parent POM used by the other modules or `sculptor-distribution` with profiles used for building the Sculptor distribution.
 
 * `sculptor-eclipse`
 
@@ -27,7 +27,7 @@ Maven Modules
 
 * `sculptor-generator`
 
-  The implementation of the code generator.
+  The aggregator project holding the implementation of the code generator.
 
 * `sculptor-maven`
 
@@ -39,10 +39,10 @@ Usage
 
 Building the project needs the following steps:
 
-* Create the local Eclipse p2 repository mirror (located in "sculptor-eclipse/eclipse-mirror/.p2-mirror/") by activating the Maven profile "mirror" -> **The *initial* mirroring process takes hours!!!**
+* Create the local Eclipse p2 repository mirror (located in "devtools/eclipse-mirror/.p2-mirror/") by activating the Maven profile "mirror" -> **The *initial* mirroring process takes hours!!!**
 
   <pre>
-cd sculptor-parent
+cd releng/sculptor-distribution
 mvn initialize -Pmirror
   </pre>
 
@@ -54,38 +54,39 @@ mvn initialize -Pmirror
         <!--This sends request to p2 repositories to local mirror -->
         <id>mirror</id>
         <mirrorOf>p2.eclipse,p2.eclipse.xtext,p2.xtext-utils</mirrorOf>
-        <url>file://<location of project>/sculptor-eclipse/eclipse-mirror/.p2-mirror/</url>
+        <url>file://<location of project>/devtools/eclipse-mirror/.p2-mirror/</url>
         <layout>p2</layout>
         <mirrorOfLayouts>p2</mirrorOfLayouts>
     </mirror>
 </mirrors>
   ```
 
-* Create a local Eclipse installation (located in the folder "sculptor-eclipse/eclipse-ide/target/products/org.sculptor.ide/<platform>") by activating the Maven profile "ide"
+* Create a local Eclipse installation (located in the folder "devtools/eclipse-ide/target/products/org.sculptor.ide/<platform>") by activating the Maven profile "ide"
 
   <pre>
-cd sculptor-parent
+cd releng/sculptor-distribution
 mvn verify -Pide
   </pre>
 
 * Build the whole project
 
   <pre>
-cd sculptor-parent
+cd releng/sculptor-distribution
 mvn install
   </pre>
 
 * Deploy the Eclipse p2 repository with the Sculptor plugins to GitHub as decribed [here](http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/)
 
   <pre>
-cd sculptor-parent
+cd releng/sculptor-distribution
 mvn deploy -Pdeploy
   </pre>
 
-* (Optionally) Build and test the stand-alone Generator JAR (the generator isn't useful right now - it reads the model, validates it and prints "org.eclipse.emf.mwe2.runtime.workflow.Workflow - Done.")
+* (Optionally) Build and test the stand-alone Generator JAR by activating the Maven profile "shade" (the generator isn't useful right now - it reads the model, validates it and prints "org.eclipse.emf.mwe2.runtime.workflow.Workflow - Done.")
 
   <pre>
-cd sculptor-parent
+cd releng/sculptor-distribution
 mvn install -Pshade
-java -jar ../sculptor-generator/target/sculptor-generator-3.0.0-SNAPSHOT.jar -model ../sculptor-generator/src/test/resources/model-test.btdesign
+cd ../../sculptor-generator/sculptor-core
+java -jar target/sculptor-core-3.0.0-SNAPSHOT.jar -model src/test/resources/model-test.btdesign
   </pre>

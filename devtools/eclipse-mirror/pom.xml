@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sculptor</groupId>
+		<artifactId>sculptor-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../sculptor-parent/</relativePath>
+	</parent>
+	<groupId>org.sculptor</groupId>
+	<artifactId>eclipse-mirror</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>Sculptor :: Eclipse p2 Repository Mirror</name>
+	<description>By activating the profile 'mirror' a local p2 repository is created
+				 in the directory '.p2-mirror' by mirroring all the Eclipse p2 repositories
+				 used by Sculptor.
+				 
+				 This local p2 mirror can be used in Mavens settings.xml as decribed in the
+				 blog post 'Using a mirror for p2 repositories (with tycho)'
+				 http://www.iulidragos.org/?p=207 </description>
+
+	<build>
+		<plugins>
+			<!-- Activate Tycho -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+			</plugin>
+			<!-- Create local Eclipse mirror -->
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-p2-extras-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>mirror</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<source>
+						<repository>
+							<url>${p2-repository-eclipse}</url>
+							<layout>p2</layout>
+						</repository>
+						<repository>
+							<url>${p2-repository-eclipse-xtext}</url>
+							<layout>p2</layout>
+						</repository>
+						<repository>
+							<url>${p2-repository-xtext-utils}</url>
+							<layout>p2</layout>
+						</repository>
+					</source>
+					<destination>${basedir}/.p2-mirror</destination>
+					<!--
+					<includeOptional>false</includeOptional>
+					<latestVersionOnly>true</latestVersionOnly>
+					<includePacked>false</includePacked>
+					-->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

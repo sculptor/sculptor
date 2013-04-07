@@ -10,7 +10,7 @@
 	<groupId>org.sculptor.eclipse</groupId>
 	<artifactId>org.sculptor.dsl.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>Sculptor :: Eclipse Textual DSL Editor</name>
+	<name>Sculptor :: Eclipse :: Textual DSL Editor</name>
 
 	<build>
 		<plugins>

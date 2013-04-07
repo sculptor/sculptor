@@ -271,6 +271,7 @@
             project="true">
       </wizard>
    </extension>
+
     <!-- quickfix marker resolution generator for org.sculptor.dsl.Sculptordsl -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">

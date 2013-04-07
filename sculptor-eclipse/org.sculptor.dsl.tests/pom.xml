@@ -9,7 +9,7 @@
 	<groupId>org.sculptor.eclipse</groupId>
 	<artifactId>org.sculptor.dsl.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	<name>Sculptor :: Eclipse Textual DSL Tests</name>
+	<name>Sculptor :: Eclipse :: Textual DSL Tests</name>
 
 	<build>
 		<plugins>

@@ -4,40 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.sculptor</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Parent POM</name>
-	<description>Sculptor parent project</description>
 
-	<profiles>
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>../sculptor-eclipse</module>
-				<module>../sculptor-generator</module>
-				<module>../sculptor-framework</module>
-				<module>../sculptor-example/sculptor-example-library</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>mirror</id>
-			<modules>
-				<module>../sculptor-eclipse/eclipse-mirror</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>ide</id>
-			<modules>
-				<module>../sculptor-eclipse/eclipse-ide</module>
-			</modules>
-		</profile>
-	</profiles>
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
 
 	<properties>
-		<maven-version>3.0</maven-version>
 		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 
@@ -45,10 +20,35 @@
 		<tycho-version>0.17.0</tycho-version>
 		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
 		<xtext-version>2.4.0</xtext-version>
-		<slf4j-version>1.7.2</slf4j-version>
-		<logback-version>1.0.9</logback-version>
-		<junit-version>4.8.1</junit-version>
+		<slf4j-version>1.7.5</slf4j-version>
+		<logback-version>1.0.11</logback-version>
+		<junit-version>4.11</junit-version>
+
+		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse>
+		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</p2-repository-eclipse-xtext>
+		<p2-repository-xtext-utils>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</p2-repository-xtext-utils>
 	</properties>
+
+	<repositories>
+		<!-- Repository to resolve the Eclipse release train dependencies -->
+		<repository>
+			<id>p2.eclipse</id>
+			<url>${p2-repository-eclipse}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the XText dependencies -->
+		<repository>
+			<id>p2.eclipse.xtext</id>
+			<url>${p2-repository-eclipse-xtext}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the xtext-utils dependencies -->
+		<repository>
+			<id>p2.xtext-utils</id>
+			<url>${p2-repository-xtext-utils}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
 
 	<pluginRepositories>
 		<!-- Maven Central -->
@@ -84,7 +84,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.0</version>
+					<version>3.1</version>
 					<configuration>
 						<source>${java-version}</source>
 						<target>${java-version}</target>
@@ -97,7 +97,7 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install</artifactId>
+					<artifactId>maven-install-plugin</artifactId>
 					<version>2.4</version>
 				</plugin>
 				<plugin>
@@ -129,12 +129,27 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.7</version>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.2</version>
 				</plugin>
 				<plugin>
-					<!-- make sure our code only has 1.5 dependencies -->
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>3.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>1.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.8</version>
+				</plugin>
+				<plugin>
+					<!-- make sure our code only has 1.6 dependencies -->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
 					<version>1.9</version>
@@ -145,11 +160,6 @@
 							<version>1.0</version>
 						</signature>
 					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-invoker-plugin</artifactId>
-					<version>1.8</version>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
@@ -275,7 +285,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>13.0.1</version>
+				<version>14.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
@@ -306,6 +316,11 @@
 				<version>1.1</version>
 			</dependency>
 			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>1.6</version>
@@ -326,6 +341,11 @@
 				<version>${slf4j-version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jul-to-slf4j</artifactId>
+				<version>${slf4j-version}</version>
+			</dependency>
+			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${logback-version}</version>
@@ -337,9 +357,21 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.powermock</groupId>
+				<artifactId>powermock-module-junit4</artifactId>
+				<version>1.5</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>1.9.5</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<version>1.3</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

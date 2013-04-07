@@ -18,13 +18,22 @@
 				<include>org/eclipse/emf/ecore/**</include>
 				<include>org/eclipse/emf/mwe/**</include>
 				<include>org/eclipse/emf/mwe2/**</include>
-				<include>org/eclipse/xpand2/**</include>
 				<include>org/eclipse/xtend/**</include>
 				<include>org/eclipse/xtend2/**</include>
 				<include>org/eclipse/xtext/**</include>
+				<!-- Eclipse JDT Code Formatter -->
+				<include>org/eclipse/core/internal/**</include>
+				<include>org/eclipse/core/resources/**</include>
+				<include>org/eclipse/core/runtime/**</include>
+				<include>org/eclipse/text/**</include>
+				<include>org/eclipse/jface/text/**</include>
+				<include>org/eclipse/jdt/core/**</include>
+				<include>org/eclipse/jdt/internal/**</include>
 			</includes>
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
+				<exclude>**/*.ecore</exclude>
+				<exclude>**/*.html</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
