@@ -17,6 +17,10 @@ The project outlines some technical details e.g.
 Maven Modules
 ---------------
 
+* `devtools`
+
+  Folder with projects used for local development, e.g. `eclipse-mirror` with the local Eclipse p2 repository mirror.
+
 * `releng`
 
   Folder with projects used by release engineering, e.g. `sculptor-parent` with the parent POM used by the other modules or `sculptor-distribution` with profiles used for building the Sculptor distribution.
