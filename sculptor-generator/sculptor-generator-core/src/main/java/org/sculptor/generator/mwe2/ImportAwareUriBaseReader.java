@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.mwe2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
+import org.eclipse.xtext.mwe.SlotEntry;
 import org.eclipse.xtext.mwe.UriBasedReader;
 import org.sculptor.dsl.sculptordsl.DslApplication;
 import org.sculptor.dsl.sculptordsl.DslImport;
@@ -41,6 +43,13 @@ public class ImportAwareUriBaseReader extends UriBasedReader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImportAwareUriBaseReader.class);
 
 	private final List<String> uris = Lists.newArrayList();
+	private SlotEntry mainSlot = null;
+
+	@Override
+	public void addLoad(SlotEntry outputSlot) {
+		super.addLoad(outputSlot);
+		mainSlot = outputSlot;
+	}
 
 	@Override
 	public void addUri(String uri) {
@@ -54,7 +63,6 @@ public class ImportAwareUriBaseReader extends UriBasedReader {
 
 		// Read all the models from given URIs and check for imports 
 		List<String> newUris = this.uris;
-		String mainBasePackage = null;
 		int numberResources;
 		do {
 
@@ -78,11 +86,6 @@ public class ImportAwareUriBaseReader extends UriBasedReader {
 				for (EObject obj : resource.getContents()) {
 					if (obj instanceof DslModel) {
 						DslModel dslModel = (DslModel) obj;
-						if (mainBasePackage == null) {
-							mainBasePackage = dslModel.getApp().getBasePackage();
-						} else {
-							dslModel.getApp().setBasePackage(mainBasePackage);
-						}
 						for (DslImport imp : dslModel.getImports()) {
 							DslApplication app = dslModel.getApp();
 							LOGGER.debug("Application"
@@ -105,7 +108,25 @@ public class ImportAwareUriBaseReader extends UriBasedReader {
 
 		// Validate all resources in the resource set
 		getValidator().validate(resourceSet, getRegistry(), issues);
-		addModelElementsToContext(ctx, resourceSet);
+
+		DslApplication mainApp = null;
+		for (Resource resource : resourceSet.getResources()) {
+			for (EObject obj : resource.getContents()) {
+				if (obj instanceof DslModel) {
+					DslModel dslModel = (DslModel) obj;
+					if (mainApp == null) {
+						mainApp = dslModel.getApp();
+					} else {
+						mainApp.getModules().addAll(dslModel.getApp().getModules());
+					}
+				}
+			}
+		}
+
+		List<Object> res = new ArrayList<Object>();
+		res.add(mainApp);
+		ctx.set(mainSlot.getSlot(), res);
+		// addModelElementsToContext(ctx, resourceSet);
 	}
 
 }
