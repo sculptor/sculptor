@@ -8,6 +8,10 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Distribution</name>
 
+	<modules>
+		<module>../sculptor-parent</module>
+	</modules>
+
 	<profiles>
 		<profile>
 			<id>default</id>
@@ -15,7 +19,6 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>../sculptor-parent</module>
 				<module>../../sculptor-eclipse</module>
 				<module>../../sculptor-generator</module>
 				<module>../../sculptor-framework</module>
