@@ -26,8 +26,8 @@ import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -35,7 +35,7 @@ import com.google.inject.Module;
 
 public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowComponent2 {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SculptorUniversalGuiceWorkflowComponent.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(SculptorUniversalGuiceWorkflowComponent.class);
 
 	private String inputSlot;
 	private String outputSlot;
