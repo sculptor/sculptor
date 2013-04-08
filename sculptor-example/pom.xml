@@ -10,11 +10,10 @@
 	<artifactId>sculptor-example</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Sculptor :: Example</name>
+	<name>Sculptor :: Examples</name>
 	<description>Aggregator project for all Sculptor examples</description>
 
 	<modules>
 		<module>sculptor-example-library</module>
 	</modules>
-
 </project>

@@ -6,7 +6,7 @@
 		<groupId>org.sculptor</groupId>
 		<artifactId>sculptor-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../sculptor-parent/</relativePath>
+		<relativePath>../../releng/sculptor-parent/</relativePath>
 	</parent>
 	<groupId>org.sculptor</groupId>
 	<artifactId>eclipse-mirror</artifactId>
