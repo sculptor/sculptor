@@ -15,6 +15,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>../sculptor-parent</module>
 				<module>../../sculptor-eclipse</module>
 				<module>../../sculptor-generator</module>
 				<module>../../sculptor-framework</module>
