@@ -25,6 +25,7 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.DomainObject
+import org.sculptor.generator.util.HelperBase
 
 class JPATmpl {
 
@@ -32,11 +33,13 @@ class JPATmpl {
 	@Inject private var EclipseLinkTmpl eclipseLinkTmpl
 	@Inject private var DataNucleusTmpl dataNucleusTmpl
 	@Inject private var OpenJpaTmpl openJpaTmpl
+	@Inject private var PropertiesBase propBase
 
 	@Inject extension DbHelper dbHelper
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
+
 	@Inject extension Properties properties
+	@Inject extension HelperBase helperBase
 
 def String jpa(Application it) {
 	'''
@@ -60,18 +63,16 @@ def String jpa(Application it) {
 }
 
 
-/*###################################################################### */
-/*JPA PersistenceUnit configuration                                      */
-/*###################################################################### */
+/* ###################################################################### */
+/* JPA PersistenceUnit configuration                                      */
+/* ###################################################################### */
 
 def String persistenceUnitXmlFile(Application it) {
 	fileOutput(persistenceXml(), OutputSlot::TO_GEN_RESOURCES, '''
 	«persistenceUnitHeader(it)»
-
-	«FOR unitName : modules.filter(e|!e.external).map(e|e.persistenceUnit).toSet()»
-		«persistenceUnitContent(it, unitName)»
-	«ENDFOR»
-
+		«FOR unitName : modules.filter(e|!e.external).map(e|e.persistenceUnit).toSet()»
+			«persistenceUnitContent(it, unitName)»
+		«ENDFOR»
 	</persistence>
 	'''
 	)
@@ -110,7 +111,6 @@ def String persistenceUnitContent(Application it, String unitName) {
 		«ENDIF»
 		<!-- properties  -->
 		«persistenceUnitProperties(it, unitName)»
-		«/*extension point for additional configuration of the PersistenceUnit */»
 		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditions FOR Application" -->
 		«persistenceUnitAdditions(it, unitName)»
 	</persistence-unit>
@@ -118,11 +118,10 @@ def String persistenceUnitContent(Application it, String unitName) {
 }
 
 def String persistenceUnit(Application it, String unitName) {
-	'''
-		/*
+	/*
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		 */
-	'''
+	*/
+	""
 }
 
 def String persistenceUnitAnnotatedClasses(Application it, String unitName) {
@@ -130,7 +129,7 @@ def String persistenceUnitAnnotatedClasses(Application it, String unitName) {
 	«IF isJpaProviderEclipseLink()»
 	<mapping-file>«it.getResourceDir("META-INF") + "orm.xml"»</mapping-file>
 	«ENDIF»
-		«it.getAllDomainObjects().filter(d | d.module.persistenceUnit == unitName).map[persistenceUnitAnnotatedClasses(it)].join()»
+	«it.getAllDomainObjects().filter(d | d.module.persistenceUnit == unitName).map[persistenceUnitAnnotatedClasses(it)].join()»
 	'''
 }
 
@@ -142,13 +141,12 @@ def String persistenceUnitAnnotatedClasses(DomainObject it) {
 	«IF it.isEmbeddable()»
 		<class>«getDomainPackage()».«name»</class>
 	«ENDIF»
-	«/* seems that openjpa needs also the mappedsuperclasses in persistence.xml */»
-	«IF isJpaProviderOpenJpa()»
+	«/* seems that openjpa needs also the mappedsuperclasses in persistence.xml */
+	»«IF isJpaProviderOpenJpa()»
 		«IF gapClass»
 			<class>«getDomainPackage()».«name»Base</class>
 		«ENDIF»
-	«ENDIF»
-	'''
+	«ENDIF»'''
 }
 
 def String persistenceUnitDataSource(Application it, String unitName) {
@@ -208,19 +206,18 @@ def String persistenceUnitValidationMode(Application it) {
 def String persistenceUnitProperties(Application it, String unitName) {
 	'''
 	<properties>
-	«IF isJpaProviderHibernate()»
-		«persistenceUnitPropertiesHibernate(it, unitName)»
-	«ELSEIF isJpaProviderEclipseLink()»
-		«persistenceUnitPropertiesEclipseLink(it, unitName)»
-	«ELSEIF isJpaProviderDataNucleus()»
-		«persistenceUnitPropertiesDataNucleus(it, unitName)»
-	«ELSEIF isJpaProviderAppEngine()»
-		«persistenceUnitPropertiesAppEngine(it)»
-	«ELSEIF isJpaProviderOpenJpa()»
-		«persistenceUnitPropertiesOpenJpa(it)»
-	«ENDIF»
-	«/* extension point for additional configuration of the PersistenceUnit */»
-	<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditionalProperties FOR Application" -->
+		«IF isJpaProviderHibernate()»
+			«persistenceUnitPropertiesHibernate(it, unitName)»
+		«ELSEIF isJpaProviderEclipseLink()»
+			«persistenceUnitPropertiesEclipseLink(it, unitName)»
+		«ELSEIF isJpaProviderDataNucleus()»
+			«persistenceUnitPropertiesDataNucleus(it, unitName)»
+		«ELSEIF isJpaProviderAppEngine()»
+			«persistenceUnitPropertiesAppEngine(it)»
+		«ELSEIF isJpaProviderOpenJpa()»
+			«persistenceUnitPropertiesOpenJpa(it)»
+		«ENDIF»
+		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditionalProperties FOR Application" -->
 		«persistenceUnitAdditionalProperties(it, unitName)»
 	</properties>
 	'''
@@ -239,10 +236,10 @@ def String persistenceUnitAdditionalProperties(Application it) {
 
 def String persistenceUnitPropertiesHibernate(Application it, String unitName) {
 	'''
-		<property name="hibernate.dialect" value="«hibernateDialect»" />
-		<property name="query.substitutions" value="true 1, false 0" />
-	«/* for testing purposes only */»
-	«IF dbProduct == "hsqldb-inmemory"»
+	<property name="hibernate.dialect" value="«propBase.hibernateDialect»" />
+	<property name="query.substitutions" value="true 1, false 0" />
+	«/* for testing purposes only */
+	»«IF propBase.dbProduct == "hsqldb-inmemory"»
 		<property name="hibernate.show_sql" value="true" />
 		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 	«ENDIF»
@@ -263,9 +260,10 @@ def String persistenceUnitPropertiesEclipseLink(Application it, String unitName)
 		«IF isEar() && applicationServer() == "jboss"»
 		<property name="eclipselink.target-server" value="JBoss"/>
 		«ENDIF»
-		«/* need this to create sequence table «IF dbProduct == "hsqldb-inmemory"» */»
-		«/* TODO: find better solution, maybe put seequnce table generation to ddl script */»
-		<property name="eclipselink.ddl-generation" value="create-tables"/>
+		«
+		/* need this to create sequence table «IF dbProduct == "hsqldb-inmemory"» */
+		/* TODO: find better solution, maybe put seequnce table generation to ddl script */
+		»<property name="eclipselink.ddl-generation" value="create-tables"/>
 		<property name="eclipselink.ddl-generation.output-mode" value="database"/>
 		«/* «ENDIF» */»
 	'''
@@ -275,7 +273,7 @@ def String persistenceUnitPropertiesDataNucleus(Application it, String unitName)
 	'''
 		<property name="datanucleus.storeManagerType" value="rdbms"/>
 		<property name="datanucleus.ConnectionFactoryName" value="java:comp/env/jdbc/«it.dataSourceName(unitName)»"/>
-		«IF dbProduct == "hsqldb-inmemory"»
+		«IF propBase.dbProduct == "hsqldb-inmemory"»
 				<property name="datanucleus.autoCreateSchema" value="true"/>
 		«ENDIF»
 	'''
@@ -345,13 +343,13 @@ def String persistenceUnitCachePropertiesEclipseLink(Application it, String unit
 
 def String persistenceUnitCachePropertiesDataNucleus(Application it, String unitName) {
 	'''
-	/* TODO: add more cache providers, oscache, swarmcache, ... */
-	«IF cacheProvider() == "EhCache"»
+	«/* TODO: add more cache providers, oscache, swarmcache, ... */
+	»«IF cacheProvider() == "EhCache"»
 		<property name="datanucleus.cache.level2.type" value="ehcache"/>
-		/* TODO: check if needed
+		«/* TODO: check if needed
 		<property name="datanucleus.cache.level2.cacheName" value="ehcache"/>
 		<property name="datanucleus.cache.level2.configurationFile" value="ehcache.xml"/>
-		*/
+		*/»
 	«ELSEIF cacheProvider() == "DataNucleusWeak"»
 		<property name="datanucleus.cache.level2.type" value="weak"/>
 	«ELSEIF cacheProvider() == "DataNucleusSoft"»
@@ -381,12 +379,6 @@ def String persistenceUnitTransactionProperties(Application it, String unitName)
 
 def String persistenceUnitTransactionPropertiesHibernate(Application it, String unitName) {
 	'''
-		/*TODO remove
-		<property name="hibernate.transaction.factory_class" value="org.hibernate.ejb.transaction.JoinableCMTTransactionFactory"/>
-		<property name="javax.persistence.transactionType" value="jta"/>
-		<property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.CMTTransactionFactory"/>
-		an alternative is: <property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.JTATransactionFactory"/>
-		 */
 		<!-- «!isSpringDataSourceSupportToBeGenerated()» -->
 		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss") »
 		<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
@@ -403,14 +395,14 @@ def String persistenceUnitTransactionPropertiesDataNucleus(Application it, Strin
 	'''
 		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated()) »
 		<property name="datanucleus.jtaLocator" value="«applicationServer()»"/>
-		/*
+		<!--
 		<property name="datanucleus.jtaJndiLocation " value="java:/TransactionManager"/>
-		 */
+		-->
  		«ENDIF»
 	'''
 }
 
-/*extension point for additional configuration of the PersistenceUnit */
+/* extension point for additional configuration of the PersistenceUnit */
 def String persistenceUnitAdditions(Application it, String unitName) {
 	'''
 	'''
@@ -419,9 +411,9 @@ def String persistenceUnitAdditions(Application it, String unitName) {
 def String persistenceUnitXmlFileTest(Application it) {
 	fileOutput("META-INF/persistence-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«persistenceUnitHeader(it)»
-	«FOR unitName : modules.filter(e| !e.external).map(e|e.persistenceUnit).toSet()»
-		«persistenceUnitContentTest(it, unitName)»
-	«ENDFOR»
+		«FOR unitName : modules.filter(e| !e.external).map(e|e.persistenceUnit).toSet()»
+			«persistenceUnitContentTest(it, unitName)»
+		«ENDFOR»
 	</persistence>
 	'''
 	)
@@ -431,20 +423,19 @@ def String persistenceUnitContentTest(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»">
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-	    «persistenceUnit(it, unitName)»
-	    «persistenceUnitProvider(it)»
+		«persistenceUnit(it, unitName)»
+		«persistenceUnitProvider(it)»
 		<!-- annotated classes -->
-	    «persistenceUnitAnnotatedClasses(it, unitName)»
+		«persistenceUnitAnnotatedClasses(it, unitName)»
 		«IF isJpa2()»
-		    «persistenceUnitSharedCacheMode(it)»
-		    «persistenceUnitValidationMode(it)»
+			«persistenceUnitSharedCacheMode(it)»
+			«persistenceUnitValidationMode(it)»
 		«ENDIF»
 		<!-- propeties  -->
-	    «persistenceUnitPropertiesTest(it, unitName)»
-		/*extension point for additional configuration of the PersistenceUnit */
+		«persistenceUnitPropertiesTest(it, unitName)»
 		<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditions FOR Application" -->
-	    «persistenceUnitAdditions(it, unitName)»
-		</persistence-unit>
+		«persistenceUnitAdditions(it, unitName)»
+	</persistence-unit>
 	'''
 }
 
@@ -460,7 +451,6 @@ def String persistenceUnitPropertiesTest(Application it, String unitName) {
 			«ELSEIF isJpaProviderOpenJpa()»
 				«persistenceUnitPropertiesTestOpenJpa(it, unitName)»
 			«ENDIF»
-			/* extension point for additional configuration of the PersistenceUnit */
 			<!-- add additional configuration properties by using SpecialCases.xpt "AROUND jPATmpl.persistenceUnitAdditionalPropertiesTest FOR Application" -->
 			«persistenceUnitAdditionalPropertiesTest(it, unitName)»
 		</properties>
