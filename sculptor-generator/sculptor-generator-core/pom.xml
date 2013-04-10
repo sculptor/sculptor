@@ -109,6 +109,11 @@
 			JAR!!! -->
 		<dependency>
 			<groupId>org.sculptor.generator</groupId>
+			<artifactId>sculptor-active-annotation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptor.generator</groupId>
 			<artifactId>eclipse-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
