@@ -30,7 +30,6 @@ import org.sculptor.generator.template.domain.DomainObjectReferenceAnnotationTmp
 import org.sculptor.generator.template.domain.DomainObjectReferenceTmpl
 import org.sculptor.generator.template.domain.DomainObjectTmpl
 import org.sculptor.generator.template.domain.DomainObjectTraitTmpl
-import org.sculptor.generator.template.domain.builder.BuilderTmpl
 import org.sculptor.generator.template.drools.DroolsTmpl
 import org.sculptor.generator.template.jpa.DataNucleusTmpl
 import org.sculptor.generator.template.jpa.EclipseLinkTmpl
@@ -90,7 +89,6 @@ class TemplateModule extends ExtensionModule {
 		typeof(DomainObjectPropertiesTmpl),
 		typeof(DomainObjectAttributeAnnotationTmpl),
 		typeof(DomainObjectAttributeTmpl),
-		typeof(BuilderTmpl),
 		typeof(DomainObjectTmpl),
 		typeof(MongoDbConversationDomainObjectRepositoryTmpl),
 		typeof(MongoDbServiceTestTmpl),

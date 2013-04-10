@@ -29,7 +29,6 @@ import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.template.doc.ModelDocTmpl
 import org.sculptor.generator.template.doc.UMLGraphTmpl
 import org.sculptor.generator.template.domain.DomainObjectTmpl
-import org.sculptor.generator.template.domain.builder.BuilderTmpl
 import org.sculptor.generator.template.jpa.HibernateTmpl
 import org.sculptor.generator.template.jpa.JPATmpl
 import org.sculptor.generator.template.mongodb.MongoDbMapperTmpl
@@ -42,11 +41,12 @@ import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
+import org.sculptor.generator.chain.SupportChainOverriding
 
+@SupportChainOverriding
 class RootTmpl {
 
 	@Inject private var AccessObjectTmpl accessObjectTmpl
-	@Inject private var BuilderTmpl builderTmpl
 	@Inject private var ConsumerTmpl consumerTmpl
 	@Inject private var DatasourceTmpl datasourceTmpl
 	@Inject private var DbUnitTmpl dbUnitTmpl
@@ -69,15 +69,12 @@ class RootTmpl {
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
+	override
 	def String Root(Application it) {
 		'''
 		«IF !modules.isEmpty»
 			«IF isDomainObjectToBeGenerated()»
 				«it.getAllDomainObjects(false).forEach[domainObjectTmpl.domainObject(it)]»
-				
-				«IF isBuilderToBeGenerated()»
-					«it.getAllDomainObjects(false).filter[e | e.needsBuilder()].map[builderTmpl.builder(it)]»    
-				«ENDIF»
 			«ENDIF»
 			«IF isExceptionToBeGenerated()»
 				«it.modules.filter[e|!e.external].forEach[exceptionTmpl.applicationExceptions(it)]»

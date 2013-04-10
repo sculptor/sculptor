@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.template.domain.builder
+package org.sculptor.generator.cartridge.builder
 
 import java.util.List
 import javax.inject.Inject
