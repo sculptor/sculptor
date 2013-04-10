@@ -52,6 +52,11 @@ class SupportChainOverridingProcessor extends AbstractClassProcessor {
 			body = ['''super(next);''']
 		]
 
+		// add default constructor
+		classDecl.addConstructor[
+			body = ['''super();''']
+		]
+
 		// add the public methods to the interface
 		for (method : annotatedClass.declaredMethods) {
 			if (method.visibility == Visibility::PUBLIC) {
