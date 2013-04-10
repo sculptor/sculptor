@@ -43,7 +43,6 @@ import sculptormetamodel.Application
 import sculptormetamodel.BasicType
 import org.sculptor.generator.chain.SupportChainOverriding
 
-@SupportChainOverriding
 class RootTmpl {
 
 	@Inject private var AccessObjectTmpl accessObjectTmpl
@@ -69,8 +68,7 @@ class RootTmpl {
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
-	override
-	def String Root(Application it) {
+	override String Root(Application it) {
 		'''
 		«IF !modules.isEmpty»
 			«IF isDomainObjectToBeGenerated()»

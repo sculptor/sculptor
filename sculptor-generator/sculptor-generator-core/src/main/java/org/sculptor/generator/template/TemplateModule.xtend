@@ -1,5 +1,6 @@
 package org.sculptor.generator.template
 
+import com.google.inject.Scopes
 import java.util.List
 import org.sculptor.generator.ext.ExtensionModule
 import org.sculptor.generator.template.camel.CamelTmpl
@@ -146,11 +147,22 @@ class TemplateModule extends ExtensionModule {
 
 		// Bind override if available
 		if (clazz == newClazz) {
-			bind(clazz)
+			bind(clazz).in(Scopes::SINGLETON)
 		} else {
-			bind(clazz).to(newClazz)
+			bind(clazz).to(newClazz).in(Scopes::SINGLETON)
 		}
 	}
 	
+	/**
+	 * Get the configured cartridge names, including both internal Sculptor cartridges, and cartridges configured by
+	 * application.
+	 * TODO: Implement by getting list of cartridge classes from properties
+	 * 
+	 * @return List of cartridge fully qualified class names
+	 */
+	override List<String> getCartridgeNames() {
+		#["org.sculptor.generator.template.domain.builder.BuilderCartridge"];
+	}
+
 
 }

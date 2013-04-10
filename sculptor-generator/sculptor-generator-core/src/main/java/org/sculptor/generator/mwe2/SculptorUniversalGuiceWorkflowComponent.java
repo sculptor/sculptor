@@ -26,6 +26,7 @@ import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
+import org.sculptor.generator.ext.ExtensionModule;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
@@ -113,9 +114,16 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 			issues.addError(this, "Error creating action '"+action+"'", null, th, null);
 		}
 
+		
+		Injector injector = Guice.createInjector(module);
+		
+		// Chain generator extensions together
+		if(module instanceof ExtensionModule) {
+			((ExtensionModule)module).chainGeneratorExtensions(injector);
+		}
+		
 		// Run action
 		if (!issues.hasErrors()){
-			Injector injector = Guice.createInjector(module);
 			Object actionObj = injector.getInstance(actionClass);
 
 			// execute the transformation

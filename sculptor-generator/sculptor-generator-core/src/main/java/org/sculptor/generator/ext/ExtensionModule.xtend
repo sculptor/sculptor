@@ -1,8 +1,12 @@
 package org.sculptor.generator.ext
 
+import com.google.common.collect.ImmutableList
 import com.google.inject.AbstractModule
+import com.google.inject.Injector
+import com.google.inject.Scopes
 import java.util.List
 import org.sculptor.generator.Cartridge
+import org.sculptor.generator.ExtensionPoint
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.GenericAccessObjectManager
 import org.sculptor.generator.util.HelperBase
@@ -20,53 +24,56 @@ class ExtensionModule extends AbstractModule {
 
 	override protected configure() {
 		// Util
-		bind(typeof(PropertiesBase))
-		bind(typeof(SingularPluralConverter))
-		bind(typeof(HelperBase))
-		bind(typeof(DbHelperBase))
+		bind(typeof(PropertiesBase)).in(Scopes::SINGLETON)
+		bind(typeof(SingularPluralConverter)).in(Scopes::SINGLETON)
+		bind(typeof(HelperBase)).in(Scopes::SINGLETON)
+		bind(typeof(DbHelperBase)).in(Scopes::SINGLETON)
 
 		// Extensioins
-		bind(typeof(Properties))
-		bind(typeof(Helper))
-		bind(typeof(DbHelper))
-		bind(typeof(UmlGraphHelper))
-		bind(typeof(GenericAccessObjectManager))
+		bind(typeof(Properties)).in(Scopes::SINGLETON)
+		bind(typeof(Helper)).in(Scopes::SINGLETON)
+		bind(typeof(DbHelper)).in(Scopes::SINGLETON)
+		bind(typeof(UmlGraphHelper)).in(Scopes::SINGLETON)
+		bind(typeof(GenericAccessObjectManager)).in(Scopes::SINGLETON)
 		
-		//initializeCartridges()
+		initializeCartridges()
 	}
 	
 	/**
 	 * @return list of Sculptor generator classes (e.g. templates or other classes that get bound) that may be overridden or extended
 	 */
 	def List<Class<?>> getGeneratorClasses() {
-		
+		ImmutableList::of()
 	}
 	
+	/**
+	 * Initialize cartridges that have been enabled, binding their extension classes and other classes that are part of the cartridge
+	 */
 	def initializeCartridges() {
-		cartridges = getCartridges()
+		val cartridgeNames = getCartridgeNames()
+		cartridges = cartridgeNames.map[getCartridge].filter[it != null].toList
 		
 		// Bind cartridge additional classes
 		cartridges.forEach[bindCartridgeClasses]
 		
-		// Bind cartridge extensions to Sculptor generator classes
+		// Look for and bind cartridge generator extension classes
 		generatorClasses.forEach[ generatorClass | 
 			cartridges.forEach[ cartridge |
 				val extensionClass = findExtensionClass(cartridge, generatorClass)
 				if(extensionClass != null) {
-					bind(extensionClass as Class<?>)
+					LOG.info("Binding extension class "+ extensionClass + " for " + generatorClass)
+					bind(extensionClass as Class<?>).in(Scopes::SINGLETON)
 				}
 			]
 		]
 	}
 	
 	
-	/**
-	 * @return Cartridge instances for every cartridge that has been configured and could be instantiated
-	 */
-	def Iterable<Cartridge> getCartridges() {
-		val cartridgeNames = getCartridgeNames()
-		cartridgeNames.map[getCartridge].filter[it != null]
-	}
+//	/**
+//	 * @return Cartridge instances for every cartridge that has been configured and could be instantiated
+//	 */
+//	def Iterable<Cartridge> getCartridges() {
+//	}
 
 	
 	/**
@@ -102,7 +109,7 @@ class ExtensionModule extends AbstractModule {
 	 * @return List of cartridge fully qualified class names
 	 */
 	def List<String> getCartridgeNames() {
-		#["org.sculptor.generator.template.domain.BuilderCartridge"];
+		ImmutableList::of();
 	}
 
 	/**
@@ -110,7 +117,7 @@ class ExtensionModule extends AbstractModule {
 	 */
 	def bindCartridgeClasses(Cartridge cartridge) {
 		cartridge.classesToBind.forEach[
-			bind
+			bind(it as Class<?>).in(Scopes::SINGLETON)
 		]
 	}
 	
@@ -118,11 +125,19 @@ class ExtensionModule extends AbstractModule {
 	 * Find a cartridge extension class for the given Sculptor template class.
 	 * The extension class is expected to be in the cartridge's extensions package, and named <template class name>Extension
 	 */
-	def <T> Class<?> findExtensionClass(Cartridge cartridge, Class<T> clazz) {
+	def <T> Class<? extends ExtensionPoint<?>> findExtensionClass(Cartridge cartridge, Class<T> clazz) {
 		val clsName = clazz.name
 		
 		// Generator base class must exist, and extension class must extend it
 		val baseClassName = clazz.name + "Base"
+		
+		// TODO: Remove this check once all base classes are generated via active annotation
+		try {
+			Class::forName(baseClassName)
+		} catch (ClassNotFoundException e) {
+			return null
+		}
+		
 		val baseClass = Class::forName(baseClassName)
 		
 		val extensionName = cartridge.extensionsPackage + "." + clazz.simpleName + "Extension"
@@ -130,8 +145,8 @@ class ExtensionModule extends AbstractModule {
 		try {
 			val extensionClass = Class::forName(extensionName)
 			if (baseClass.isAssignableFrom(extensionClass)) {
-				LOG.info("Binding extension class {} for {}", extensionName, clsName)
-				return (extensionClass as Class<?>)				
+				LOG.info("Found extension class {} for {}", extensionName, clsName)
+				return (extensionClass as Class<? extends ExtensionPoint<?>>)				
 			} else {
 				LOG.error("Extension {} has to be inherited from {}", extensionName, clsName)
 				throw new IllegalArgumentException("Extension " + extensionName + " has to be inherited from " + clsName)
@@ -141,5 +156,43 @@ class ExtensionModule extends AbstractModule {
 		}
 
 		null
+	}
+	
+	def List<Class<? extends ExtensionPoint<?>>> getExtensionsFor(Class<? extends ExtensionPoint<?>> generatorClass) {
+		val extensionClasses = cartridges.map[cartridge | findExtensionClass(cartridge, generatorClass)].filter[it != null].toList
+		
+		// Add generator class itself to the end
+		extensionClasses.add(generatorClass)
+		
+		extensionClasses
+	}
+	
+	/**
+	 * Chain the extension classes that extend ExtensionPoint together, including the Sculptor generator class, which gets added to the end of the chain.
+	 */
+	def void chainGeneratorExtensions(Injector injector) {
+		generatorClasses.forEach[ generatorClass | 
+			if(typeof(ExtensionPoint).isAssignableFrom(generatorClass)) {				
+				val extensionClasses = getExtensionsFor(generatorClass as Class<? extends ExtensionPoint<?>>)
+				if(extensionClasses.size > 1) {
+					val extensionInstances = extensionClasses.map[getExtensionInstance(injector, it)]
+				
+					// The last instance, the Sculptor generator class, doesn't have a 'next'
+					extensionInstances.subList(0, extensionInstances.size-1).forEach[extensionInstance, i|
+						val nextExtensionInstance = extensionInstances.get(i+1)
+						LOG.debug("Chaining extension " + extensionInstance + " to " + nextExtensionInstance)
+						extensionInstance.setNext(nextExtensionInstance)
+					]
+				}
+			}
+			
+		]
+
+	}
+	
+	def protected ExtensionPoint<?> getExtensionInstance(Injector injector, Class<? extends ExtensionPoint<?>> extensionClass) {
+		val Class<?> clz = extensionClass as Class<?>
+		
+		injector.getInstance(clz as Class<?>) as ExtensionPoint<?>
 	}
 }
