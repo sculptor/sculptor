@@ -18,6 +18,7 @@
 package org.sculptor.generator.template
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.SupportChainOverriding
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -41,8 +42,8 @@ import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
 import sculptormetamodel.Application
 import sculptormetamodel.BasicType
-import org.sculptor.generator.chain.SupportChainOverriding
 
+@SupportChainOverriding
 class RootTmpl {
 
 	@Inject private var AccessObjectTmpl accessObjectTmpl
@@ -71,6 +72,7 @@ class RootTmpl {
 	override String Root(Application it) {
 		'''
 		«IF !modules.isEmpty»
+		
 			«IF isDomainObjectToBeGenerated()»
 				«it.getAllDomainObjects(false).forEach[domainObjectTmpl.domainObject(it)]»
 			«ENDIF»

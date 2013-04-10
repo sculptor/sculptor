@@ -6,7 +6,7 @@ import com.google.inject.Injector
 import com.google.inject.Scopes
 import java.util.List
 import org.sculptor.generator.Cartridge
-import org.sculptor.generator.ExtensionPoint
+import org.sculptor.generator.util.ChainLink
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.GenericAccessObjectManager
 import org.sculptor.generator.util.HelperBase
@@ -125,7 +125,7 @@ class ExtensionModule extends AbstractModule {
 	 * Find a cartridge extension class for the given Sculptor template class.
 	 * The extension class is expected to be in the cartridge's extensions package, and named <template class name>Extension
 	 */
-	def <T> Class<? extends ExtensionPoint<?>> findExtensionClass(Cartridge cartridge, Class<T> clazz) {
+	def <T> Class<? extends ChainLink<?>> findExtensionClass(Cartridge cartridge, Class<T> clazz) {
 		val clsName = clazz.name
 		
 		// Generator base class must exist, and extension class must extend it
@@ -146,7 +146,7 @@ class ExtensionModule extends AbstractModule {
 			val extensionClass = Class::forName(extensionName)
 			if (baseClass.isAssignableFrom(extensionClass)) {
 				LOG.info("Found extension class {} for {}", extensionName, clsName)
-				return (extensionClass as Class<? extends ExtensionPoint<?>>)				
+				return (extensionClass as Class<? extends ChainLink<?>>)				
 			} else {
 				LOG.error("Extension {} has to be inherited from {}", extensionName, clsName)
 				throw new IllegalArgumentException("Extension " + extensionName + " has to be inherited from " + clsName)
@@ -158,7 +158,7 @@ class ExtensionModule extends AbstractModule {
 		null
 	}
 	
-	def List<Class<? extends ExtensionPoint<?>>> getExtensionsFor(Class<? extends ExtensionPoint<?>> generatorClass) {
+	def List<Class<? extends ChainLink<?>>> getExtensionsFor(Class<? extends ChainLink<?>> generatorClass) {
 		val extensionClasses = cartridges.map[cartridge | findExtensionClass(cartridge, generatorClass)].filter[it != null].toList
 		
 		// Add generator class itself to the end
@@ -168,12 +168,12 @@ class ExtensionModule extends AbstractModule {
 	}
 	
 	/**
-	 * Chain the extension classes that extend ExtensionPoint together, including the Sculptor generator class, which gets added to the end of the chain.
+	 * Chain the extension classes that extend ChainLink together, including the Sculptor generator class, which gets added to the end of the chain.
 	 */
 	def void chainGeneratorExtensions(Injector injector) {
 		generatorClasses.forEach[ generatorClass | 
-			if(typeof(ExtensionPoint).isAssignableFrom(generatorClass)) {				
-				val extensionClasses = getExtensionsFor(generatorClass as Class<? extends ExtensionPoint<?>>)
+			if(typeof(ChainLink).isAssignableFrom(generatorClass)) {				
+				val extensionClasses = getExtensionsFor(generatorClass as Class<? extends ChainLink<?>>)
 				if(extensionClasses.size > 1) {
 					val extensionInstances = extensionClasses.map[getExtensionInstance(injector, it)]
 				
@@ -190,9 +190,9 @@ class ExtensionModule extends AbstractModule {
 
 	}
 	
-	def protected ExtensionPoint<?> getExtensionInstance(Injector injector, Class<? extends ExtensionPoint<?>> extensionClass) {
+	def protected ChainLink<?> getExtensionInstance(Injector injector, Class<? extends ChainLink<?>> extensionClass) {
 		val Class<?> clz = extensionClass as Class<?>
 		
-		injector.getInstance(clz as Class<?>) as ExtensionPoint<?>
+		injector.getInstance(clz as Class<?>) as ChainLink<?>
 	}
 }
