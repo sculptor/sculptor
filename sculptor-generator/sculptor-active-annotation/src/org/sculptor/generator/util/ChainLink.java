@@ -8,6 +8,14 @@ public abstract class ChainLink<T extends ChainLink<?>> {
 		// can be null only when created from templates and extension in generator-core
 		nextLink = next;
 	}
+	
+	public ChainLink() {
+		
+	}
+	
+	public void setNext(ChainLink<?> next) {
+		nextLink = (T) next;
+	}
 
 	public T getNext() {
 		return nextLink;
