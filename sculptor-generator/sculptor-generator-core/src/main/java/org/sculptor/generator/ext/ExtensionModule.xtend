@@ -22,36 +22,52 @@ class ExtensionModule extends AbstractModule {
 	// Cartridges configured for this module
 	protected var Iterable<Cartridge> cartridges
 
-	override protected configure() {
+	val private helperClasses = #[
 		// Util
-		bind(typeof(PropertiesBase)).in(Scopes::SINGLETON)
-		bind(typeof(SingularPluralConverter)).in(Scopes::SINGLETON)
-		bind(typeof(HelperBase)).in(Scopes::SINGLETON)
-		bind(typeof(DbHelperBase)).in(Scopes::SINGLETON)
+		typeof(PropertiesBase),
+		typeof(SingularPluralConverter),
+		typeof(HelperBase),
+		typeof(DbHelperBase),
 
 		// Extensioins
-		bind(typeof(Properties)).in(Scopes::SINGLETON)
-		bind(typeof(Helper)).in(Scopes::SINGLETON)
-		bind(typeof(DbHelper)).in(Scopes::SINGLETON)
-		bind(typeof(UmlGraphHelper)).in(Scopes::SINGLETON)
-		bind(typeof(GenericAccessObjectManager)).in(Scopes::SINGLETON)
+		typeof(Properties),
+		typeof(Helper),
+		typeof(DbHelper),
+		typeof(UmlGraphHelper),
+		typeof(GenericAccessObjectManager)
+	]
+	
+	override protected configure() {
+		
+		bindGeneratorClasses()
 		
 		initializeCartridges()
+	}
+	
+	def bindGeneratorClasses() {
+		generatorClasses.forEach[generatorClass | 
+			bind(generatorClass as Class<?>).in(Scopes::SINGLETON)
+		]
 	}
 	
 	/**
 	 * @return list of Sculptor generator classes (e.g. templates or other classes that get bound) that may be overridden or extended
 	 */
 	def List<Class<?>> getGeneratorClasses() {
-		ImmutableList::of()
+		helperClasses as List<Class<?>>
+	}
+	
+	def Iterable<Cartridge> getCartridgeInstances() {
+		val cartridgeNames = getCartridgeNames()
+		cartridgeNames.map[getCartridge].filter[it != null].toList		
 	}
 	
 	/**
 	 * Initialize cartridges that have been enabled, binding their extension classes and other classes that are part of the cartridge
 	 */
 	def initializeCartridges() {
-		val cartridgeNames = getCartridgeNames()
-		cartridges = cartridgeNames.map[getCartridge].filter[it != null].toList
+		LOG.info("initializeCartridges()")
+		cartridges = getCartridgeInstances()
 		
 		// Bind cartridge additional classes
 		cartridges.forEach[bindCartridgeClasses]
@@ -59,7 +75,7 @@ class ExtensionModule extends AbstractModule {
 		// Look for and bind cartridge generator extension classes
 		generatorClasses.forEach[ generatorClass | 
 			cartridges.forEach[ cartridge |
-				val extensionClass = findExtensionClass(cartridge, generatorClass)
+				val extensionClass = cartridge.findExtensionClass(generatorClass)
 				if(extensionClass != null) {
 					LOG.info("Binding extension class "+ extensionClass + " for " + generatorClass)
 					bind(extensionClass as Class<?>).in(Scopes::SINGLETON)
@@ -67,14 +83,6 @@ class ExtensionModule extends AbstractModule {
 			]
 		]
 	}
-	
-	
-//	/**
-//	 * @return Cartridge instances for every cartridge that has been configured and could be instantiated
-//	 */
-//	def Iterable<Cartridge> getCartridges() {
-//	}
-
 	
 	/**
 	 * @return Cartridge instance corresponding to class name.  Null if not able to instantiate for any reason.
@@ -121,45 +129,8 @@ class ExtensionModule extends AbstractModule {
 		]
 	}
 	
-	/**
-	 * Find a cartridge extension class for the given Sculptor template class.
-	 * The extension class is expected to be in the cartridge's extensions package, and named <template class name>Extension
-	 */
-	def <T> Class<? extends ChainLink<?>> findExtensionClass(Cartridge cartridge, Class<T> clazz) {
-		val clsName = clazz.name
-		
-		// Generator base class must exist, and extension class must extend it
-		val baseClassName = clazz.name + "Base"
-		
-		// TODO: Remove this check once all base classes are generated via active annotation
-		try {
-			Class::forName(baseClassName)
-		} catch (ClassNotFoundException e) {
-			return null
-		}
-		
-		val baseClass = Class::forName(baseClassName)
-		
-		val extensionName = cartridge.extensionsPackage + "." + clazz.simpleName + "Extension"
-		
-		try {
-			val extensionClass = Class::forName(extensionName)
-			if (baseClass.isAssignableFrom(extensionClass)) {
-				LOG.info("Found extension class {} for {}", extensionName, clsName)
-				return (extensionClass as Class<? extends ChainLink<?>>)				
-			} else {
-				LOG.error("Extension {} has to be inherited from {}", extensionName, clsName)
-				throw new IllegalArgumentException("Extension " + extensionName + " has to be inherited from " + clsName)
-			}
-		} catch (ClassNotFoundException e) {
-			// Ignore error
-		}
-
-		null
-	}
-	
 	def List<Class<? extends ChainLink<?>>> getExtensionsFor(Class<? extends ChainLink<?>> generatorClass) {
-		val extensionClasses = cartridges.map[cartridge | findExtensionClass(cartridge, generatorClass)].filter[it != null].toList
+		val extensionClasses = cartridges.map[cartridge | cartridge.findExtensionClass(generatorClass)].filter[it != null].toList
 		
 		// Add generator class itself to the end
 		extensionClasses.add(generatorClass)

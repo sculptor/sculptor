@@ -1,7 +1,7 @@
 package org.sculptor.generator.template
 
-import com.google.inject.Scopes
 import java.util.List
+import org.sculptor.generator.Cartridge
 import org.sculptor.generator.ext.ExtensionModule
 import org.sculptor.generator.template.camel.CamelTmpl
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory
 class TemplateModule extends ExtensionModule {
 	private static final val Logger LOG = LoggerFactory::getLogger(typeof(TemplateModule))
 
-	val templateClasses = #[
+	val private templateClasses = #[
 		typeof(ServiceTmpl),
 		typeof(ServiceEjbTestTmpl),
 		typeof(ServiceTestTmpl),
@@ -119,40 +119,10 @@ class TemplateModule extends ExtensionModule {
 	]
 	
 	override List<Class<?>> getGeneratorClasses() {
-		templateClasses as List<Class<?>>
+		val allClasses = super.generatorClasses + templateClasses
+		allClasses.toList
 	}
-	
-	override protected configure() {
-		super.configure
-
-		templateClasses.forEach[findOverrideClass]
 		
-	}
-
-	def <T> void findOverrideClass(Class<T> clazz) {
-		var newClazz = clazz
-		val clsName = clazz.name
-		val overrideName = clsName.substring("org.sculptor.".length) + "Override"
-		try {
-			val overrideClass = Class::forName(overrideName)
-			if (clazz.isAssignableFrom(overrideClass)) {
-				LOG.error("Installing override {} insted of {}", overrideName, clsName)
-				newClazz = (overrideClass as Class<T>)
-			} else {
-				LOG.error("Override {} have to be inherited from {} -> skipping override", overrideName, clsName)
-			}
-		} catch (Throwable th) {
-			// Ignore error - use default class
-		}
-
-		// Bind override if available
-		if (clazz == newClazz) {
-			bind(clazz).in(Scopes::SINGLETON)
-		} else {
-			bind(clazz).to(newClazz).in(Scopes::SINGLETON)
-		}
-	}
-	
 	/**
 	 * Get the configured cartridge names, including both internal Sculptor cartridges, and cartridges configured by
 	 * application.
@@ -164,5 +134,14 @@ class TemplateModule extends ExtensionModule {
 		#["org.sculptor.generator.cartridge.builder.BuilderCartridge"];
 	}
 
-
+	/**
+	 * Get cartridge instances.  Create pseudo-cartridge for application overrides that goes on the front of any
+	 * configured cartridges
+	 */
+	override Iterable<Cartridge> getCartridgeInstances() {
+		val cartridges = super.cartridgeInstances
+		
+		val overridesCartridge = #[new Cartridge("Override", "generator")]
+		overridesCartridge + cartridges
+	}
 }

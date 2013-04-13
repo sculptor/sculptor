@@ -1,11 +1,12 @@
-package org.sculptor.generator.cartridge.builder
+package org.sculptor.generator.cartridge.builder.template
 
 import com.google.inject.Inject
+import org.sculptor.generator.cartridge.builder.BuilderTmpl
+import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
-import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.template.RootTmplBase
+import sculptormetamodel.Application
 
 @ChainOverride(
 //	baseClass=typeof(RootTmpl)

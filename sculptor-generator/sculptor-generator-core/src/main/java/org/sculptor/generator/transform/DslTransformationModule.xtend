@@ -17,12 +17,18 @@
 
 package org.sculptor.generator.transform
 
+import java.util.List
 import org.sculptor.generator.ext.ExtensionModule
 
 class DslTransformationModule extends ExtensionModule {
-	override protected configure() {
-		super.configure()
-		bind(typeof(DslTransformation))
-		bind(typeof(Transformation))
+	val private transformClasses = #[
+		typeof(DslTransformation),
+		typeof(Transformation)
+	]
+	
+	override List<Class<?>> getGeneratorClasses() {
+		val allClasses = super.generatorClasses + transformClasses
+		allClasses.toList
 	}
+
 }
