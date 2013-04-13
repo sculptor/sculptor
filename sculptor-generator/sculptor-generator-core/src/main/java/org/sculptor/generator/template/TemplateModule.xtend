@@ -161,7 +161,7 @@ class TemplateModule extends ExtensionModule {
 	 * @return List of cartridge fully qualified class names
 	 */
 	override List<String> getCartridgeNames() {
-		#["org.sculptor.generator.template.domain.builder.BuilderCartridge"];
+		#["org.sculptor.generator.cartridge.builder.BuilderCartridge"];
 	}
 
 

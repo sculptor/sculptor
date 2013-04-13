@@ -2,7 +2,7 @@ package org.sculptor.generator.template
 
 import com.google.inject.Guice
 import org.junit.Test
-import org.sculptor.generator.template.domain.builder.RootTmplExtension
+import org.sculptor.generator.cartridge.builder.RootTmplExtension
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

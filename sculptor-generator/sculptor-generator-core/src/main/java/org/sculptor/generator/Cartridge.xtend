@@ -12,7 +12,7 @@ import java.util.List
  * 
  * Additionally, any additional classes that the cartridge needs may be listed in getClassesToBind(), and they will be bound as well.
  */
-abstract class Cartridge extends AbstractModule {
+abstract class Cartridge {
 	
 	/**
 	 * @return package where all cartridge extensions can be found.  By default same package as concrete cartridge class.
