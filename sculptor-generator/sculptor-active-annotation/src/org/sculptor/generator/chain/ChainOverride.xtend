@@ -44,11 +44,5 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 			addParameter("name", annotatedClass.extendedClass)
 			body = ['''super(name);''']
 		]
-		
-		// add default constructor
-		annotatedClass.addConstructor[
-			body = ['''super();''']
-		]
-
 	}
 }
