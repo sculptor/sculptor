@@ -1,6 +1,6 @@
 package org.sculptor.generator.util;
 
-public abstract class ChainLink<T extends ChainLink<?>> {
+public abstract class ChainLink<T extends ChainLink<T>> {
 	private T nextLink;
 
 	public ChainLink(T next) {
@@ -13,7 +13,7 @@ public abstract class ChainLink<T extends ChainLink<?>> {
 		
 	}
 	
-	public void setNext(ChainLink<?> next) {
+	public void setNext(Object next) {
 		nextLink = (T) next;
 	}
 

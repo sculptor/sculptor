@@ -35,7 +35,7 @@ public class SingularPluralConverter {
 	private static Map<String, String> plural2singularDefinitions;
 
 	@Inject
-	protected SingularPluralConverter(PropertiesBase propertiesBase) {
+	private void init(PropertiesBase propertiesBase) {
 		singular2pluralDefinitions = propertiesBase.singular2pluralDefinitions();
 		plural2singularDefinitions = new HashMap<String, String>();
 		for (Entry<String, String> entry : singular2pluralDefinitions.entrySet()) {

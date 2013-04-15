@@ -81,7 +81,7 @@ public class HelperBase {
 	private Map<String, String> collectionImplTypeMapper = new HashMap<String, String>();
 
 	@Inject
-	protected HelperBase (PropertiesBase propBase) {
+	protected void init(PropertiesBase propBase) {
 		this.propBase = propBase;
 		collectionInterfaceTypeMapper.put("list", propBase.getJavaType("List"));
 		collectionInterfaceTypeMapper.put("bag", propBase.getJavaType("Bag"));

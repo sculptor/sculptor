@@ -26,9 +26,6 @@ import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
-import org.sculptor.generator.ext.ExtensionModule;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -62,7 +59,7 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 	@Override
 	protected void checkConfigurationInternal(Issues issues) {
 		checkRequiredConfigProperty("inputSlot", inputSlot, issues);
-		checkRequiredConfigProperty("moduleClass", guiceModule, issues);
+		// checkRequiredConfigProperty("moduleClass", guiceModule, issues);
 		checkRequiredConfigProperty("action", action, issues);
 	}
 
@@ -79,20 +76,6 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 			if (inputDataCollection.size() == 1) {
 				inputData = inputDataCollection.iterator().next();
 			}
-		}
-
-		// Resolve module
-		Module module=null;
-		try {
-			Class<?> forName = Class.forName(guiceModule);
-			Object moduleInst = forName.newInstance();
-			if (moduleInst instanceof Module) {
-				module = (Module) moduleInst;
-			} else {
-				issues.addError("Module '"+guiceModule+"' is not instance of com.google.inject.Module");
-			}
-		} catch (Throwable th) {
-			issues.addError(this, "Error creating module '"+guiceModule+"'", null, th, null);
 		}
 
 		// Resolve action (method to run)
@@ -114,14 +97,26 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 			issues.addError(this, "Error creating action '"+action+"'", null, th, null);
 		}
 
-		
-		Injector injector = Guice.createInjector(module);
-		
-		// Chain generator extensions together
-		if(module instanceof ExtensionModule) {
-			((ExtensionModule)module).chainGeneratorExtensions(injector);
+		// Resolve module
+		Module module=null;
+		try {
+			if (guiceModule == null) {
+				module = new UniversalLoadModule(actionClass);
+			} else {
+				Class<?> forName = Class.forName(guiceModule);
+				Object moduleInst = forName.newInstance();
+				if (moduleInst instanceof Module) {
+					module = (Module) moduleInst;
+				} else {
+					issues.addError("Module '"+guiceModule+"' is not instance of com.google.inject.Module");
+				}
+			}
+		} catch (Throwable th) {
+			issues.addError(this, "Error creating module '"+guiceModule+"'", null, th, null);
 		}
-		
+
+		Injector injector = Guice.createInjector(module);
+
 		// Run action
 		if (!issues.hasErrors()){
 			Object actionObj = injector.getInstance(actionClass);

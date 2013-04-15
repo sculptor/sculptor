@@ -30,6 +30,7 @@ class SupportChainOverridingProcessor extends AbstractClassProcessor {
 	}
 	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+		val originName = annotatedClass.simpleName
 		val classDecl = findClass(annotatedClass.baseClassName)
 		val classDeclRef = classDecl.newTypeReference
 		val tRef = chainLinkBase.newTypeReference(classDeclRef)
@@ -38,6 +39,7 @@ class SupportChainOverridingProcessor extends AbstractClassProcessor {
 		// Process ...Tmpl class
 
 		// set superclass on annotatedClass
+		annotatedClass.simpleName = annotatedClass.simpleName+"Extension"
 		annotatedClass.extendedClass = classDecl.newTypeReference
 		// add constructor
 		annotatedClass.addConstructor[
@@ -46,6 +48,7 @@ class SupportChainOverridingProcessor extends AbstractClassProcessor {
 
 		// Process new ...TmplBase class
 
+		classDecl.simpleName = originName
 		// add constructor
 		classDecl.addConstructor[
 			addParameter("next", classDeclRef)

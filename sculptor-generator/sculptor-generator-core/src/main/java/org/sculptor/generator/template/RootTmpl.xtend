@@ -72,7 +72,6 @@ class RootTmpl {
 	override String Root(Application it) {
 		'''
 		«IF !modules.isEmpty»
-		
 			«IF isDomainObjectToBeGenerated()»
 				«it.getAllDomainObjects(false).forEach[domainObjectTmpl.domainObject(it)]»
 			«ENDIF»

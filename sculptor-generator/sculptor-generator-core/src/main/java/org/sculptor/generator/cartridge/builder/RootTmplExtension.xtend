@@ -5,21 +5,21 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import sculptormetamodel.Application
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.RootTmplBase
+import org.sculptor.generator.template.RootTmpl
 
 @ChainOverride(
 //	baseClass=typeof(RootTmpl)
 )
-class RootTmplExtension extends RootTmplBase {
+class RootTmplExtension extends RootTmpl {
 
-	@Inject private var BuilderTmpl builderTmpl
+	@Inject public var BuilderTmpl builderTmpl
 
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
 	override def Root(Application it) {
-		if (isDomainObjectToBeGenerated() && isBuilderToBeGenerated()) {
-			getAllDomainObjects(false).filter[e | e.needsBuilder()].map[builderTmpl.builder(it)]
+		if (isDomainObjectToBeGenerated()) {
+			getAllDomainObjects(false).filter[e | e.needsBuilder()].forEach[e | builderTmpl.builder(e)]
 		}
 		super.Root(it) // or next.Root(it)
 	}

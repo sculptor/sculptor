@@ -43,7 +43,7 @@ public class GenericAccessObjectManager {
 	private Helper helper;
 
 	@Inject
-	protected GenericAccessObjectManager(PropertiesBase propBase, HelperBase helperBase) {
+	protected void init(PropertiesBase propBase, HelperBase helperBase) {
 		this.propBase = propBase;
 		this.helperBase = helperBase;
 		initGenericAccessObjectStrategies();

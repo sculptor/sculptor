@@ -17,7 +17,6 @@ import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.transform.DslTransformation
-import org.sculptor.generator.transform.DslTransformationModule
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
 import sculptormetamodel.Application
@@ -33,6 +32,7 @@ import sculptormetamodel.Attribute
 import sculptormetamodel.Operation
 import sculptormetamodel.ServiceOperation
 import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.mwe2.UniversalLoadModule
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -59,7 +59,8 @@ class LibraryTransformationTest extends XtextTest{
 	
 	@Before
 	def void setupDslModel() {
-		val Injector injector = Guice::createInjector(new DslTransformationModule)
+		val uniLoadModule = new UniversalLoadModule(#[typeof(DslTransformation), typeof(Transformation)])
+		val Injector injector = Guice::createInjector(uniLoadModule)
 		properties = injector.getInstance(typeof(Properties))
 		helper = injector.getInstance(typeof(Helper))
 		helperBase = injector.getInstance(typeof(HelperBase))

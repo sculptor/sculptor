@@ -37,8 +37,8 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 		} else {
 		}
 
-		if (!annotatedClass.extendedClass.simpleName.endsWith("Base")) {
-			annotatedClass.addError("Class anottated with ChainOverride have to extends XxxBase class")
+		if (!annotatedClass.extendedClass.simpleName.endsWith("Tmpl")) {
+			annotatedClass.addError("Class anottated with ChainOverride have to extends Xxx not XxxExtension class")
 		}
 		annotatedClass.addConstructor[
 			addParameter("name", annotatedClass.extendedClass)
