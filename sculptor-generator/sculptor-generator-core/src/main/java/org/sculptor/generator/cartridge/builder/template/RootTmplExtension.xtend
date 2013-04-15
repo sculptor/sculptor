@@ -5,9 +5,8 @@ import org.sculptor.generator.cartridge.builder.BuilderTmpl
 import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
-import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.template.RootTmpl
+import sculptormetamodel.Application
 
 @ChainOverride(
 //	baseClass=typeof(RootTmpl)
