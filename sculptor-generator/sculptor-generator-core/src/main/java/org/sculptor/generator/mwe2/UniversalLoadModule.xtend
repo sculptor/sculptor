@@ -30,26 +30,13 @@ class UniversalLoadModule extends AbstractModule {
 		buildChainForClasses(<Class<?>> newHashSet(), startClasses)
 	}
 
-	def void discoverInjectedFields(HashSet<Class<?>> discovered, Class<?> newClass) {
-		val dClasses = newClass.declaredFields
-			.filter[f | f.getAnnotation(typeof(Inject)) != null || f.getAnnotation(typeof(com.google.inject.Inject)) != null]
-			.map[f | f.type]
-			.toList
-		buildChainForClasses(discovered, dClasses)
-	}
-
-	def void buildChainForClasses(HashSet<Class<?>> discovered, List<? extends Class<?>> newClasses) {
-		val onlyNew = newClasses.filter[c | !discovered.contains(c)].toList
-		discovered.addAll(onlyNew)
+	def void buildChainForClasses(HashSet<Class<?>> mapped, List<? extends Class<?>> newClasses) {
+		val onlyNew = newClasses.filter[c | !mapped.contains(c)].toList
+		mapped.addAll(onlyNew)
+		val HashSet<Class<?>> discovered = newHashSet()
 		onlyNew.forEach[c | buildChainForClass(discovered, c)]
-//			.map[c | try Class::forName(c.name + "Extension") catch (Throwable t) c ]
-//			.forEach[c |
-//				val dClasses = c.declaredFields
-//					.filter[f | f.getAnnotation(typeof(Inject)) != null]
-//					.map[f | f.type]
-//					.toList
-//				discoverInjected(discovered, dClasses)
-//			]
+		if (discovered.size > 0)
+			buildChainForClasses(mapped, discovered.toList)
 	}
 
 	private def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
@@ -93,6 +80,13 @@ class UniversalLoadModule extends AbstractModule {
 		}
 		// Recursive
 		loadChain(result, discovered, stack);
+	}
+
+	def void discoverInjectedFields(HashSet<Class<?>> discovered, Class<?> newClass) {
+		discovered.addAll(newClass.declaredFields
+			.filter[f | f.getAnnotation(typeof(Inject)) != null || f.getAnnotation(typeof(com.google.inject.Inject)) != null]
+			.map[f | f.type]
+			.toList)
 	}
 
 	//
