@@ -1,4 +1,4 @@
-package org.sculptor.generator.cartridge.builder.template
+package org.sculptor.generator.cartridge.builder
 
 import com.google.inject.Inject
 import org.sculptor.generator.cartridge.builder.BuilderTmpl
