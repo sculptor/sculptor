@@ -32,11 +32,12 @@ class UniversalLoadModule extends AbstractModule {
 
 	def void buildChainForClasses(HashSet<Class<?>> mapped, List<? extends Class<?>> newClasses) {
 		val onlyNew = newClasses.filter[c | !mapped.contains(c)].toList
-		mapped.addAll(onlyNew)
-		val HashSet<Class<?>> discovered = newHashSet()
-		onlyNew.forEach[c | buildChainForClass(discovered, c)]
-		if (discovered.size > 0)
+		if (onlyNew.size > 0) {
+			mapped.addAll(onlyNew)
+			val HashSet<Class<?>> discovered = newHashSet()
+			onlyNew.forEach[c | buildChainForClass(discovered, c)]
 			buildChainForClasses(mapped, discovered.toList)
+		}
 	}
 
 	private def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
