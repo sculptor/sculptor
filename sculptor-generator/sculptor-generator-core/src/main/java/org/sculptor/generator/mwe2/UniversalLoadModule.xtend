@@ -82,7 +82,7 @@ class UniversalLoadModule extends AbstractModule {
 			if (typeof(ChainLink).isAssignableFrom(overrideClass)) {
 				result = (const.newInstance(object) as T)
 				requestInjection(object)
-				LOG.info("    chaning with {}", overrideClass)
+				LOG.info("    chaining with {}", overrideClass)
 			}
 		} catch (Exception ex) {
 			// No such class - continue with poping from stack using same base object
@@ -92,8 +92,9 @@ class UniversalLoadModule extends AbstractModule {
 	}
 
 	def <T> String makeOverrideClassName(Class<T> clazz) {
-		val clsName = clazz.name
-		clsName.substring("org.sculptor.".length) + "Override"
+		// val clsName = clazz.name
+		// clsName.substring("org.sculptor.".length) + "Override"
+		"generator." + clazz.simpleName + "Override"
 	}
 
 	def <T> String makeTemplateClassName(Class<T> clazz, String cartridge) {

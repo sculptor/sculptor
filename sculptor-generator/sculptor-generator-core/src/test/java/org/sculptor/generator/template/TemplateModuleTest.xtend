@@ -1,13 +1,13 @@
 package org.sculptor.generator.template
 
 import com.google.inject.Guice
-import generator.template.RootTmplOverride
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import static org.junit.Assert.*
 import org.sculptor.generator.mwe2.UniversalLoadModule
+import generator.RootTmplOverride
 
 class TemplateModuleTest {
 	
@@ -20,18 +20,18 @@ class TemplateModuleTest {
 	def void testRootTmplExtensions(){
 		val injector = Guice::createInjector(univLoadModule);
 
-		val rootTmplOverride = injector.getInstance(typeof(RootTmplOverride));
-		assertNotNull(rootTmplOverride);
-		LOG.info("Found RootTmplOverride: "+ rootTmplOverride);
+		val rootTmplOverrideInst = injector.getInstance(typeof(RootTmpl));
+		assertNotNull(rootTmplOverrideInst);
+		assertEquals(typeof(RootTmplOverride), rootTmplOverrideInst.^class)
+		LOG.info("Found RootTmplOverride: "+ rootTmplOverrideInst);
 
-		val rootTmpl = injector.getInstance(typeof(RootTmpl));
-		assertNotNull(rootTmpl);
-		LOG.info("Found RootTmpl: "+ rootTmpl);
+		var nextTmpl = rootTmplOverrideInst.next
+		LOG.info("Found builder extension: "+ nextTmpl);
+		assertSame(typeof(org.sculptor.generator.cartridge.builder.RootTmplExtension), nextTmpl.^class)
 
-		val rootTmplExtension = injector.getInstance(typeof(RootTmplExtension));
-		LOG.info("Found extension: "+ rootTmplExtension);
-		assertSame(rootTmplExtension, rootTmplOverride.next)
-		assertSame(rootTmpl, rootTmplExtension.next)
-		assertNull(rootTmpl.next)		
+		nextTmpl = nextTmpl.next
+		LOG.info("Found originl extension: "+ nextTmpl);
+		assertSame(typeof(org.sculptor.generator.template.RootTmplExtension), nextTmpl.^class)
+		assertNull(nextTmpl.next)
 	}
 }

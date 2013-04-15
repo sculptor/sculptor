@@ -1,4 +1,4 @@
-package generator.template
+package generator
 
 import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.template.RootTmpl
