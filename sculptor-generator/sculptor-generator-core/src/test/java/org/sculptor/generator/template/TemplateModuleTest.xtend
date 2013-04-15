@@ -1,6 +1,7 @@
 package org.sculptor.generator.template
 
 import com.google.inject.Guice
+import generator.template.RootTmplOverride
 import org.junit.Test
 import org.sculptor.generator.cartridge.builder.RootTmplExtension
 import org.slf4j.Logger
@@ -20,13 +21,19 @@ class TemplateModuleTest {
 	def void testRootTmplExtensions(){
 		val injector = Guice::createInjector(univLoadModule);
 		val rootTmpl = injector.getInstance(rootTemplate);
+
+		val rootTmplOverride = injector.getInstance(typeof(RootTmplOverride));
+		assertNotNull(rootTmplOverride);
+		LOG.info("Found RootTmplOverride: "+ rootTmplOverride);
+		
+		val rootTmpl = injector.getInstance(typeof(RootTmpl));
 		assertNotNull(rootTmpl);
 		LOG.info("Found RootTmpl: "+ rootTmpl);
 
 		val rootTmplExtension = injector.getInstance(typeof(RootTmplExtension));
 		LOG.info("Found extension: "+ rootTmplExtension);
-
+		assertSame(rootTmplExtension, rootTmplOverride.next)
 		assertSame(rootTmpl, rootTmplExtension.next)
-		assertNull(rootTmpl.next)
+		assertNull(rootTmpl.next)		
 	}
 }
