@@ -16,51 +16,54 @@ import java.util.Stack
 class UniversalLoadModule extends AbstractModule {
 	
 	private static final val Logger LOG = LoggerFactory::getLogger(typeof(UniversalLoadModule))
-	private val List<? extends Class<?>> startClass
+	private val List<? extends Class<?>> startClasses
 
 	public new(Class<?> startClassOn) {
-		startClass = #[startClassOn]
+		startClasses = #[startClassOn]
 	}
 
 	public new(List<? extends Class<?>> startClassesOn) {
-		startClass = startClassesOn
+		startClasses = startClassesOn
 	}
 
 	override protected configure() {
-		buildModule(startClass)
+		buildChainForClasses(<Class<?>> newHashSet(), startClasses)
 	}
 
-	def List<Class<?>> buildModule(List<? extends Class<?>> initClasses) {
-		val classes = <Class<?>> newHashSet()
-		buildModule(classes, initClasses)
-		classes.toList
+	def void discoverInjectedFields(HashSet<Class<?>> discovered, Class<?> newClass) {
+		val dClasses = newClass.declaredFields
+			.filter[f | f.getAnnotation(typeof(Inject)) != null || f.getAnnotation(typeof(com.google.inject.Inject)) != null]
+			.map[f | f.type]
+			.toList
+		buildChainForClasses(discovered, dClasses)
 	}
 
-	def void buildModule(HashSet<Class<?>> discovered, List<? extends Class<?>> newClasses) {
-		newClasses
-			.filter[c | !discovered.contains(c)]
-			.map[c | discovered.add(c); buildChainForClass(c); c]
-			.map[c | try Class::forName(c.name + "Extension") catch (Throwable t) c ]
-			.forEach[c |
-				val dClasses = c.declaredFields
-					.filter[f | f.getAnnotation(typeof(Inject)) != null]
-					.map[f | f.type]
-					.toList
-				buildModule(discovered, dClasses)
-			]
+	def void buildChainForClasses(HashSet<Class<?>> discovered, List<? extends Class<?>> newClasses) {
+		val onlyNew = newClasses.filter[c | !discovered.contains(c)].toList
+		discovered.addAll(onlyNew)
+		onlyNew.forEach[c | buildChainForClass(discovered, c)]
+//			.map[c | try Class::forName(c.name + "Extension") catch (Throwable t) c ]
+//			.forEach[c |
+//				val dClasses = c.declaredFields
+//					.filter[f | f.getAnnotation(typeof(Inject)) != null]
+//					.map[f | f.type]
+//					.toList
+//				discoverInjected(discovered, dClasses)
+//			]
 	}
 
-	private def <T> buildChainForClass(Class<T> clazz) {
+	private def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
 		// Original template
 		val T base = try
 				Class::forName(clazz.name + "Extension").newInstance as T
 			catch (Throwable t)
 				clazz.newInstance
+		discoverInjectedFields(discovered, base.^class)
 
 		// Prepare stack of of chained cartridges
+		LOG.info("Building chain for {}", clazz)
 		val stack = new Stack()
 		stack.push(makeOverrideClassName(clazz))
-		LOG.info("Building chain for {}", clazz)
 
 		// If is overridable/chainable try to prepare whole chain
 		if (base instanceof ChainLink<?>) {
@@ -68,10 +71,10 @@ class UniversalLoadModule extends AbstractModule {
 		}
 
 		// Load available classes
-		bind(clazz).toInstance(loadChain(base, stack))
+		bind(clazz).toInstance(loadChain(base, discovered, stack))
 	}
 
-	def <T> T loadChain(T object, Stack<String> stack) {
+	def <T> T loadChain(T object, HashSet<Class<?>> discovered, Stack<String> stack) {
 		if (stack.isEmpty)
 			return object
 
@@ -83,14 +86,18 @@ class UniversalLoadModule extends AbstractModule {
 				result = (const.newInstance(object) as T)
 				requestInjection(object)
 				LOG.info("    chaining with {}", overrideClass)
+				discoverInjectedFields(discovered, overrideClass)
 			}
 		} catch (Exception ex) {
 			// No such class - continue with poping from stack using same base object
 		}
 		// Recursive
-		loadChain(result, stack);
+		loadChain(result, discovered, stack);
 	}
 
+	//
+	// Naming convention generators
+	//
 	def <T> String makeOverrideClassName(Class<T> clazz) {
 		// val clsName = clazz.name
 		// clsName.substring("org.sculptor.".length) + "Override"
