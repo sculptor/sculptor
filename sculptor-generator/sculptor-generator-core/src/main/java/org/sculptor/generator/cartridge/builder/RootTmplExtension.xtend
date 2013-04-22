@@ -8,9 +8,7 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.RootTmpl
 import sculptormetamodel.Application
 
-@ChainOverride(
-//	baseClass=typeof(RootTmpl)
-)
+@ChainOverride
 class RootTmplExtension extends RootTmpl {
 
 	@Inject public var BuilderTmpl builderTmpl
@@ -18,10 +16,11 @@ class RootTmplExtension extends RootTmpl {
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
-	override def Root(Application it) {
+	override def root(Application it) {
 		if (isDomainObjectToBeGenerated()) {
 			getAllDomainObjects(false).filter[e | e.needsBuilder()].forEach[e | builderTmpl.builder(e)]
 		}
-		super.Root(it) // or next.Root(it)
+		super.root(it) // or next.Root(it)
 	}
+
 }
