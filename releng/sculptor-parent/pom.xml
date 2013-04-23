@@ -19,7 +19,7 @@
 		<eclipse-release>juno</eclipse-release>
 		<tycho-version>0.17.0</tycho-version>
 		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
-		<xtext-version>2.4.0</xtext-version>
+		<xtext-version>2.4.1</xtext-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.11</logback-version>
 		<junit-version>4.11</junit-version>

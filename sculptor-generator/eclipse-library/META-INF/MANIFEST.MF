@@ -3,11 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse library JAR
 Bundle-SymbolicName: eclipse-library
 Bundle-Version: 3.0.0.qualifier
-Require-Bundle: org.eclipse.emf.mwe2.launch;bundle-version="2.3.0",
- org.eclipse.xtext;bundle-version="2.0",
- org.eclipse.xtend;bundle-version="1.2.0",
- org.eclipse.xtext.junit4;bundle-version="2.3.0",
- org.eclipselabs.xtext.utils.unittesting;bundle-version="0.9.3",
- org.eclipse.equinox.common;bundle-version="3.6.100"
+Require-Bundle: org.eclipse.equinox.common;bundle-version="3.6.100",
+ org.eclipse.xtext;bundle-version="2.4.0",
+ org.eclipse.xtend.core;bundle-version="2.4.0",
+ org.eclipse.emf.mwe2.launch;bundle-version="2.4.0",
+ org.eclipse.xtext.junit4;bundle-version="2.4.0",
+ org.eclipse.xtext.xbase.junit;bundle-version="2.4.0",
+ org.eclipse.emf.codegen;bundle-version="2.8.0",
+ org.eclipselabs.xtext.utils.unittesting;bundle-version="0.9.3"
 Bundle-Vendor: Eclipse Foundation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -12,7 +12,6 @@
 	<name>Sculptor :: Generator :: Xtend2 active annotation</name>
 
 	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -20,7 +19,13 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>${basedir}/xtend-gen</directory>
+							<directory>${basedir}/src/main/xtend-gen</directory>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/src/test/xtend-gen</directory>
 							<excludes>
 								<exclude>.gitignore</exclude>
 							</excludes>
@@ -35,9 +40,11 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
+							<goal>testCompile</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/xtend-gen</outputDirectory>
+							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -56,6 +63,14 @@
 			<artifactId>sculptor-generator-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.sculptor.generator</groupId>
+			<artifactId>eclipse-library</artifactId>
+			<classifier>test</classifier>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

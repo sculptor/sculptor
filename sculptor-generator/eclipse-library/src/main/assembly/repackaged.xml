@@ -32,6 +32,7 @@
 			</includes>
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
+				<exclude>org/eclipse/xtext/xbase/junit/**</exclude>
 				<exclude>**/*.ecore</exclude>
 				<exclude>**/*.html</exclude>
 			</excludes>
