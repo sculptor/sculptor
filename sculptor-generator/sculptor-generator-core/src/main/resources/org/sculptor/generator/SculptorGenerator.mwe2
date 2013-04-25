@@ -54,6 +54,6 @@ Workflow {
 
 	component = SculptorUniversalGuiceWorkflowComponent {
 		inputSlot = "pass2transformation"
-		action = "org.sculptor.generator.template.RootTmpl.Root"
+		action = "org.sculptor.generator.template.RootTmpl.root"
 	}
 }

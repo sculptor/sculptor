@@ -53,8 +53,18 @@ import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
 import org.sculptor.generator.util.GenericAccessObjectManager
+import org.eclipse.jdt.core.formatter.CodeFormatter
+import org.eclipse.text.edits.TextEdit
+import org.eclipse.jface.text.IDocument
+import org.eclipse.jface.text.Document
+import org.eclipse.jdt.core.ToolFactory
+import java.util.regex.Pattern
+import java.util.HashMap
+import org.slf4j.LoggerFactory
 
 class Helper {
+	static val LOG = LoggerFactory::getLogger(typeof(Helper))
+
 	@Inject var SingularPluralConverter singularPluralConverter
 	@Inject var GenericAccessObjectManager genericAccessObjectManager
 
@@ -62,8 +72,9 @@ class Helper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension HelperBase helperBase
 
+	static val JAVA_EXT = ".java"
+
 	def public String fileOutput(String fileName, OutputSlot slot, String text) {
-		val JAVA_EXT = ".java"
 		val fName = if (fileName.endsWith(JAVA_EXT))
 				fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
 			else
@@ -75,10 +86,93 @@ class Helper {
 		if (!fl.exists || (fl.exists && "true" == overwrite)) {
 			fl.parentFile.mkdirs()
 			var out = new FileWriter(fl)
-			out.write(text)
+			out.write(if (fileName.endsWith(JAVA_EXT)) formatJavaCode(flTr, text) else text)
 			out.close()
 		}
 		""
+	}
+
+	def private formatJavaCode(String path, String code) {
+		val newCode = extractJavaTypes(code)
+
+		var String retVal = null
+		val TextEdit textEdit = getCodeFormatter().format(CodeFormatter::K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), newCode, 0, newCode.length(), 0, "\n")
+		val IDocument doc = new Document(newCode)
+		try {
+			textEdit.apply(doc)
+			retVal = doc.get()
+		} catch (Exception e) {
+			LOG.error("Error formating code for {}. Using original code from generator.", path)
+			retVal = code
+		}
+		retVal
+	}
+
+	var CodeFormatter codeFormatter
+
+	def private getCodeFormatter() {
+		if (codeFormatter == null) {
+			val props = new java.util.Properties()
+			props.load(this.^class.classLoader.getResourceAsStream("default-java-code-formatter.properties"))
+			getProperty("java.code.formatter.props", "").split("[,; ]").forEach[
+				try {
+					props.load(this.^class.classLoader.getResourceAsStream(it))
+				} catch (Exception ex) {
+					LOG.error("Error loading properties for Java code formatter from file {}.", it)
+				}
+			]
+			codeFormatter = ToolFactory::createCodeFormatter(props)
+		}
+		codeFormatter
+	}
+
+	var typePattern = Pattern::compile("(\\w+(\\.\\w+)++)(\\s*[^(])")
+	var anotPattern = Pattern::compile("@(\\w+(\\.\\w+)++)\\s*\\(")
+	var packagePattern = Pattern::compile("package.*;")
+
+	def private extractJavaTypes(String code) {
+		val hm = new HashMap<String, String>()
+
+		var matcher = typePattern.matcher(code)
+		var sb = new StringBuffer()
+		while(matcher.find) {
+			val shortClass = matcher.group(2).substring(1)
+			var String repl
+			if (hm.containsKey(shortClass) && !matcher.group(1).equals(hm.get(shortClass))
+					|| matcher.group(1).startsWith("this.")
+					|| shortClass.substring(0, 1).toUpperCase != shortClass.substring(0, 1)
+			) {
+				repl = matcher.group(0)
+			} else {
+				hm.put(shortClass, matcher.group(1))
+				repl = shortClass + matcher.group(3)
+			}
+			matcher.appendReplacement(sb, repl);
+		}
+		matcher.appendTail(sb)
+
+		matcher = anotPattern.matcher(sb.toString)
+		sb = new StringBuffer()
+		while(matcher.find) {
+			val shortClass = matcher.group(2).substring(1)
+			var String repl
+			if (hm.containsKey(shortClass) && !matcher.group(1).equals(hm.get(shortClass))
+					|| shortClass.substring(0, 1).toUpperCase != shortClass.substring(0, 1)
+			) {
+				repl = matcher.group(0)
+			} else {
+				hm.put(shortClass, matcher.group(1))
+				repl = "@" + shortClass + "("
+			}
+			matcher.appendReplacement(sb, repl);
+		}
+		matcher.appendTail(sb)
+
+		val matcher2 = packagePattern.matcher(sb.toString)
+		matcher2.find
+		sb.insert(matcher2.end, hm.values.sortBy[it].map["\nimport " + it + ";"].join)
+
+		return sb.toString
 	}
 
 	def String javaFileName(String ne) {
