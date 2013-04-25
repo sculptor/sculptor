@@ -287,8 +287,8 @@ def String implMethod(ServiceOperation it) {
 
 def String serviceMethodAnnotation(ServiceOperation it) {
 	'''
-	/*spring transaction support */
-	«IF isSpringAnnotationTxToBeGenerated()»
+	«/*spring transaction support */
+	»«IF isSpringAnnotationTxToBeGenerated()»
 		«IF name.startsWith("get") || name.startsWith("find")»
 			@org.springframework.transaction.annotation.Transactional(readOnly=true)
 		«ELSE»

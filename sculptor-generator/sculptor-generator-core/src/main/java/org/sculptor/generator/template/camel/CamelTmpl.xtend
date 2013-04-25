@@ -27,7 +27,7 @@ class CamelTmpl {
 
 	@Inject extension Properties properties
 	@Inject extension Helper helper
-	
+
 	def String camelConfig(Application it) {
 		fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot::TO_RESOURCES, '''
 		«header(it)»
