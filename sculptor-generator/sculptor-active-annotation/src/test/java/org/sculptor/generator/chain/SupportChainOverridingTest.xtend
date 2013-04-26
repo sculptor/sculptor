@@ -31,7 +31,7 @@ class SupportChainOverridingTest {
 		'''
 			@org.sculptor.generator.chain.SupportChainOverriding
 			class SupportChainOverridingTestTemplate {
-				override def overridableMethod() {}
+				def overridableMethod() {}
 				final def finalMethod() {}
 			}
 
@@ -39,9 +39,9 @@ class SupportChainOverridingTest {
 			val extension ctx = transformationContext
 
 			 // Check the AST if the annotated class (now the base class) has the generated constructor
-			val annotatedClass = findClass('SupportChainOverridingTestTemplateExtension')
+			val annotatedClass = findClass('SupportChainOverridingTestTemplate')
 			assertNotNull('No base class generated', annotatedClass)
-			assertTrue('No default constructor',
+			assertFalse('No default constructor',
 				annotatedClass.declaredConstructors.exists[parameters.empty]
 			)
 
@@ -60,7 +60,7 @@ class SupportChainOverridingTest {
 			)
 
 			// Check the AST if the generated base class has no public final methods of the annotated class
-			assertFalse('Final method overriden',
+			assertTrue('Final method overriden',
 				baseClass.declaredMethods.exists[simpleName == 'finalMethod']
 			)]
 	}

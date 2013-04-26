@@ -136,35 +136,22 @@ def String enumType(Application it) {
 	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
-	import java.sql.PreparedStatement;
-	import java.sql.ResultSet;
-	import java.sql.SQLException;
-	import java.sql.Types;
-	import java.util.Properties;
-
-	import org.sculptor.framework.util.EnumHelper;
-	import org.hibernate.HibernateException;
-	«IF isJpaProviderHibernate4()»
-	import org.hibernate.engine.spi.SessionImplementor;
-	«ENDIF»
-	import org.hibernate.type.EnumType;
-
 	@SuppressWarnings("serial")
-	public class EnumUserType extends EnumType {
+	public class EnumUserType extends org.hibernate.type.EnumType {
 		@SuppressWarnings("unchecked")
 		@Override
-		public Object nullSafeGet(ResultSet rs, String[] names«IF isJpaProviderHibernate4()»,SessionImplementor session«ENDIF», Object owner)
-			throws HibernateException, SQLException {
+		public Object nullSafeGet(java.sql.ResultSet rs, String[] names«IF isJpaProviderHibernate4()»,org.hibernate.engine.spi.SessionImplementor session«ENDIF», Object owner)
+			throws org.hibernate.HibernateException, java.sql.SQLException {
 			Object object = rs.getObject(names[0]);
 			if (rs.wasNull()) {
 				return null;
 			}
-			return EnumHelper.toEnum(returnedClass(), object);
+			return org.sculptor.framework.util.EnumHelper.toEnum(returnedClass(), object);
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public void nullSafeSet(PreparedStatement st, Object value, int index«IF isJpaProviderHibernate4()»,SessionImplementor session«ENDIF»)
+		public void nullSafeSet(java.sql.PreparedStatement st, Object value, int index«IF isJpaProviderHibernate4()»,SessionImplementor session«ENDIF»)
 			throws HibernateException, SQLException {
 			if (value == null) {
 				st.setNull(index, sqlTypes()[0]);
@@ -174,14 +161,14 @@ def String enumType(Application it) {
 		}
 
 		@Override
-		public void setParameterValues(Properties properties) {
+		public void setParameterValues(java.util.Properties properties) {
 			// set default type to varchar
 			super.setParameterValues(properties);
 			try {
 				returnedClass().getMethod("fromValue",String.class);
-				properties.setProperty(TYPE,properties.getProperty(TYPE, "" + Types.VARCHAR));
+				properties.setProperty(TYPE,properties.getProperty(TYPE, "" + java.sql.Types.VARCHAR));
 			} catch (Exception e) {
-				properties.setProperty(TYPE,properties.getProperty(TYPE, "" + Types.INTEGER));
+				properties.setProperty(TYPE,properties.getProperty(TYPE, "" + java.sql.Types.INTEGER));
 			}
 			super.setParameterValues(properties);
 		}
