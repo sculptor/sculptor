@@ -31,7 +31,7 @@ class TemplateModuleTest {
 
 		nextTmpl = nextTmpl.next
 		LOG.info("Found originl extension: "+ nextTmpl);
-		assertSame(typeof(org.sculptor.generator.template.RootTmplExtension), nextTmpl.^class)
+		assertSame(typeof(org.sculptor.generator.template.RootTmpl), nextTmpl.^class)
 		assertNull(nextTmpl.next)
 	}
 }

@@ -69,7 +69,7 @@ class RootTmpl {
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
-	override def root(Application it) {
+	def root(Application it) {
 		'''
 		«IF !modules.isEmpty»
 			«IF isDomainObjectToBeGenerated()»

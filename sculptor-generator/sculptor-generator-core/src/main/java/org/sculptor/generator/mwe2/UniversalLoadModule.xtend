@@ -42,9 +42,12 @@ class UniversalLoadModule extends AbstractModule {
 
 	private def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
 		// Original template
-		val T base = try
-				Class::forName(clazz.name + "Extension").newInstance as T
-			catch (Throwable t)
+		val T base = try {
+				// Class::forName(clazz.name + "Extension").newInstance as T
+				clazz
+					.getConstructor(clazz)
+					.newInstance(null as T)
+			} catch (Throwable t)
 				clazz.newInstance
 		discoverInjectedFields(discovered, base.^class)
 
@@ -59,17 +62,17 @@ class UniversalLoadModule extends AbstractModule {
 		}
 
 		// Load available classes
-		bind(clazz).toInstance(loadChain(base, discovered, stack))
+		bind(clazz).toInstance(loadChain(base, discovered, stack, base.^class))
 	}
 
-	def <T> T loadChain(T object, HashSet<Class<?>> discovered, Stack<String> stack) {
+	def <T> T loadChain(T object, HashSet<Class<?>> discovered, Stack<String> stack, Class<?> constructorParam) {
 		if (stack.isEmpty)
 			return object
 
 		var result = object;
 		try {
 			val overrideClass = Class::forName(stack.pop)
-			val const = overrideClass.getConstructor(object.getClass.superclass)
+			val const = overrideClass.getConstructor(constructorParam)
 			if (typeof(ChainLink).isAssignableFrom(overrideClass)) {
 				result = (const.newInstance(object) as T)
 				requestInjection(object)
@@ -80,14 +83,18 @@ class UniversalLoadModule extends AbstractModule {
 			// No such class - continue with poping from stack using same base object
 		}
 		// Recursive
-		loadChain(result, discovered, stack);
+		loadChain(result, discovered, stack, constructorParam);
 	}
 
 	def void discoverInjectedFields(HashSet<Class<?>> discovered, Class<?> newClass) {
-		discovered.addAll(newClass.declaredFields
-			.filter[f | f.getAnnotation(typeof(Inject)) != null || f.getAnnotation(typeof(com.google.inject.Inject)) != null]
-			.map[f | f.type]
-			.toList)
+		var cls = newClass;
+		do {
+			discovered.addAll(cls.declaredFields
+				.filter[f | f.getAnnotation(typeof(Inject)) != null || f.getAnnotation(typeof(com.google.inject.Inject)) != null]
+				.map[f | f.type]
+				.toList)
+			cls = cls.superclass
+		} while (cls != typeof(Object))
 	}
 
 	//

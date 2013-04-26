@@ -17,14 +17,12 @@
 
 package org.sculptor.generator.chain
 
-import java.lang.annotation.Target
 import java.lang.annotation.ElementType
-import org.eclipse.xtend.lib.macro.Active
+import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
-import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
-import org.eclipse.xtend.lib.macro.RegisterGlobalsContext
-import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
+import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
+import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.sculptor.generator.util.ChainLink
 
@@ -36,25 +34,14 @@ import org.sculptor.generator.util.ChainLink
 public annotation SupportChainOverriding {}
 
 class SupportChainOverridingProcessor extends AbstractClassProcessor {
-	val String baseClassNameSuffix = 'Extension'
-
-	override doRegisterGlobals(ClassDeclaration annotatedClass, RegisterGlobalsContext context) {
-		context.registerClass(annotatedClass.baseClassName)
-	}
-	
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		if (validate(annotatedClass, context)) {
-			val baseClass = createBaseClass(annotatedClass, context)
-			transformAnnotatedClass(annotatedClass, baseClass, context)
+			createBaseClass(annotatedClass, context)
+
 		}
 	}
 
-	private def getBaseClassName(ClassDeclaration annotatedClass) {
-		annotatedClass.qualifiedName + baseClassNameSuffix
-	}
-
 	private def boolean validate(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-
 		// Check if annotated class does extend another class
 		if (annotatedClass.extendedClass?.name != 'java.lang.Object') {
 			annotatedClass.addError('Annotated class must not extend a class')
@@ -64,21 +51,21 @@ class SupportChainOverridingProcessor extends AbstractClassProcessor {
 	}
 
 	private def createBaseClass(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		val baseClass = findClass(annotatedClass.baseClassName)
-		val baseClassRef = baseClass.newTypeReference
-		baseClass.extendedClass = typeof(ChainLink).newTypeReference(baseClassRef)
-		baseClass.simpleName = annotatedClass.simpleName
+		annotatedClass.extendedClass = typeof(ChainLink).newTypeReference(annotatedClass.newTypeReference)
 
 		// add constructor
-		baseClass.addConstructor[
-			addParameter("next", baseClassRef)
+		annotatedClass.addConstructor[
+			addParameter("next", annotatedClass.newTypeReference)
 			body = ['''super(next);''']
 		]
 
 		// add the public methods of the annotated class
 		for (method : annotatedClass.declaredMethods) {
 			if (method.visibility == Visibility::PUBLIC && !method.final) {
-				baseClass.addMethod(method.simpleName) [
+				val mName = method.simpleName
+				method.simpleName = "xXx" + mName
+				method.visibility = Visibility::PRIVATE
+				annotatedClass.addMethod(mName) [
 					docComment = method.docComment
 					returnType = method.returnType
 					for (p : method.parameters) {
@@ -86,24 +73,16 @@ class SupportChainOverridingProcessor extends AbstractClassProcessor {
 					}
 					exceptions = method.exceptions
 					body = ['''
-						return getNext().«method.simpleName»(«FOR p : method.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);'''
+						if (getNext() != null) {
+							return getNext().«mName»(«FOR p : method.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+						} else {
+							return «method.simpleName»(«FOR p : method.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+						}
+						'''
 					]
 				]
 			}
 		}
-		baseClass
+		annotatedClass
 	}
-
-	private def transformAnnotatedClass(MutableClassDeclaration annotatedClass, MutableClassDeclaration baseClass, extension TransformationContext context) {
-
-		// change class name and use base class as new superclass
-		annotatedClass.simpleName = annotatedClass.simpleName + baseClassNameSuffix
-		annotatedClass.extendedClass = baseClass.newTypeReference
-
-		// add protected default constructor
-		annotatedClass.addConstructor[
-			body = ['''super(null);''']
-		]
-	}
-	
 }
