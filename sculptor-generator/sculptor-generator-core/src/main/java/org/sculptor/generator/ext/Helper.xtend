@@ -126,8 +126,8 @@ class Helper {
 		codeFormatter
 	}
 
-	var typePattern = Pattern::compile("(\\w+(\\.\\w+)++)(\\s*[^(])")
-	var anotPattern = Pattern::compile("@(\\w+(\\.\\w+)++)\\s*\\(")
+	var typePattern = Pattern::compile("(([a-z]\\w+\\.)+([A-Z]\\w++))(\\s*[^(])")
+	var anotPattern = Pattern::compile("@([a-z]\\w+(\\.\\w+)++)\\s*\\(")
 	var packagePattern = Pattern::compile("package.*;")
 
 	def private extractJavaTypes(String code) {
@@ -136,7 +136,7 @@ class Helper {
 		var matcher = typePattern.matcher(code)
 		var sb = new StringBuffer()
 		while(matcher.find) {
-			val shortClass = matcher.group(2).substring(1)
+			val shortClass = matcher.group(3)
 			var String repl
 			if (hm.containsKey(shortClass) && !matcher.group(1).equals(hm.get(shortClass))
 					|| matcher.group(1).startsWith("this.")
@@ -145,7 +145,7 @@ class Helper {
 				repl = matcher.group(0)
 			} else {
 				hm.put(shortClass, matcher.group(1))
-				repl = shortClass + matcher.group(3)
+				repl = shortClass + matcher.group(4)
 			}
 			matcher.appendReplacement(sb, repl);
 		}
