@@ -21,6 +21,7 @@
 		<module>eclipse-library</module>
 		<module>sculptor-metamodel</module>
 		<module>sculptor-active-annotation</module>
+		<module>sculptor-active-annotation-test</module>
 		<module>sculptor-generator-dependencies</module>
 		<module>sculptor-generator-core</module>
 		<module>sculptor-generator-library</module>

@@ -34,7 +34,7 @@ class ChainOverrideTest {
 			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
 			}
 			
-			@org.sculptor.generator.chain.SupportChainOverriding
+			@org.sculptor.generator.chain.ChainOverridable
 			class ChainOverrideTestTemplate {
 			}
 		'''.compile[
@@ -45,7 +45,7 @@ class ChainOverrideTest {
 			assertNotNull(clazz)
 			assertTrue(
 				clazz.declaredConstructors.exists[
-					parameters.size == 1 && parameters.get(0).simpleName == 'name']
+					parameters.size == 1 && parameters.get(0).simpleName == 'next']
 			)]
 	}
 

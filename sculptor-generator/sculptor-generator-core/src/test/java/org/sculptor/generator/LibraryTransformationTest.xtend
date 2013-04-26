@@ -1,3 +1,20 @@
+/*
+ * Copyright 2013 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.sculptor.generator
 
 import com.google.inject.Guice
@@ -13,26 +30,26 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
+import org.sculptor.generator.chain.ChainOverrideAwareModule
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
+import sculptormetamodel.Attribute
+import sculptormetamodel.Entity
 import sculptormetamodel.Module
 import sculptormetamodel.NamedElement
+import sculptormetamodel.Operation
+import sculptormetamodel.Reference
+import sculptormetamodel.Service
+import sculptormetamodel.ServiceOperation
+import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
-import sculptormetamodel.Entity
-import sculptormetamodel.Reference
-import sculptormetamodel.ValueObject
-import sculptormetamodel.Service
-import sculptormetamodel.Attribute
-import sculptormetamodel.Operation
-import sculptormetamodel.ServiceOperation
-import org.sculptor.generator.util.HelperBase
-import org.sculptor.generator.mwe2.UniversalLoadModule
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -59,7 +76,7 @@ class LibraryTransformationTest extends XtextTest{
 	
 	@Before
 	def void setupDslModel() {
-		val uniLoadModule = new UniversalLoadModule(#[typeof(DslTransformation), typeof(Transformation)])
+		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
 		val Injector injector = Guice::createInjector(uniLoadModule)
 		properties = injector.getInstance(typeof(Properties))
 		helper = injector.getInstance(typeof(Helper))

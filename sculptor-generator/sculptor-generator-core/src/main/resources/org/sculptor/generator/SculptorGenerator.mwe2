@@ -18,7 +18,7 @@ module org.sculptor.generator.SculptorGenerator
 
 import org.sculptor.generator.mwe2.ImportAwareUriBaseReader
 import org.sculptor.generator.mwe2.SculptordslValidationWorkflowComponent
-import org.sculptor.generator.mwe2.SculptorUniversalGuiceWorkflowComponent
+import org.sculptor.generator.mwe2.ChainOverrideAwareGuiceWorkflowComponent
 
 var modelFile
 
@@ -40,19 +40,19 @@ Workflow {
 	}
 
 	// Model transformation from DSL meta model to meta model
-	component = SculptorUniversalGuiceWorkflowComponent {
+	component = ChainOverrideAwareGuiceWorkflowComponent {
 		inputSlot = "model"
 		outputSlot = "transformed"
 		action = "org.sculptor.generator.transform.DslTransformation.transform"
 	}
 
-	component = SculptorUniversalGuiceWorkflowComponent {
+	component = ChainOverrideAwareGuiceWorkflowComponent {
 		inputSlot = "transformed"
 		outputSlot = "pass2transformation"
 		action = "org.sculptor.generator.transform.Transformation.modify"
 	}
 
-	component = SculptorUniversalGuiceWorkflowComponent {
+	component = ChainOverrideAwareGuiceWorkflowComponent {
 		inputSlot = "pass2transformation"
 		action = "org.sculptor.generator.template.RootTmpl.root"
 	}

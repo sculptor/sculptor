@@ -15,29 +15,15 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.cartridge.builder
+package org.sculptor.generator.cartridge.test
 
-import com.google.inject.Inject
-import org.sculptor.generator.cartridge.builder.BuilderTmpl
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.ext.Properties
-import org.sculptor.generator.template.RootTmpl
-import sculptormetamodel.Application
+import org.sculptor.generator.template.TestTemplate
 
 @ChainOverride
-class RootTmplExtension extends RootTmpl {
+class TestTemplateExtension extends TestTemplate {
 
-	@Inject public var BuilderTmpl builderTmpl
-
-	@Inject extension Properties properties
-	@Inject extension Helper helper
-
-	override root(Application it) {
-		if (isDomainObjectToBeGenerated()) {
-			getAllDomainObjects(false).filter[e | e.needsBuilder()].forEach[e | builderTmpl.builder(e)]
-		}
-		super.root(it) // or next.root(it)
-	}
-
+	override test() {
+		"new code"
+	}	
 }

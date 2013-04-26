@@ -27,6 +27,7 @@ import org.junit.runners.JUnit4
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslInheritanceType
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
+import org.sculptor.generator.chain.ChainOverrideAwareModule
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.transform.DslTransformation
 import sculptormetamodel.Entity
@@ -34,7 +35,6 @@ import sculptormetamodel.InheritanceType
 import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
-import org.sculptor.generator.mwe2.UniversalLoadModule
 
 @RunWith(typeof(JUnit4))
 class SculptorDslTransformationTest {
@@ -48,7 +48,7 @@ class SculptorDslTransformationTest {
 
 	@Before
 	def void setupDslModel() {
-		val Injector injector = Guice::createInjector(new UniversalLoadModule(typeof(DslTransformation)))
+		val Injector injector = Guice::createInjector(new ChainOverrideAwareModule(typeof(DslTransformation)))
 		helper = injector.getInstance(typeof(Helper))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 

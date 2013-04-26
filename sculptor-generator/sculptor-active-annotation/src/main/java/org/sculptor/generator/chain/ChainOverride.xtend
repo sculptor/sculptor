@@ -23,7 +23,8 @@ import org.eclipse.xtend.lib.macro.AbstractClassProcessor
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
-import org.sculptor.generator.util.ChainLink
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Adds additional constructor used for chainining.
@@ -36,13 +37,16 @@ annotation ChainOverride {
 
 class ChainOverrideProcessor extends AbstractClassProcessor {
 
+	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverrideProcessor))
+
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
 		if (validate(annotatedClass, context)) {
 
 			// Add constructor needed for chaining
 			annotatedClass.addConstructor [
-				addParameter('name', annotatedClass.extendedClass)
-				body = ['''super(name);''']
+				addParameter('next', annotatedClass.extendedClass)
+				body = ['''super(next);''']
 			]
 		}
 	}
@@ -69,10 +73,10 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 //				annotatedClass.addWarning("Extended class '" + extendedClass.name + "' must be an Xtend class")
 //			} else {
 //				val annotation = extendedClassDeclaration.findAnnotation(
-//					typeof(SupportChainOverriding).newTypeReference()?.type)
+//					typeof(ChainOverridable).newTypeReference()?.type)
 //				if (annotation == null) {
 //					annotatedClass.addWarning(
-//						"Extended class '" + extendedClass.name + "' is not annotated with SupportChainOverriding")
+//						"Extended class '" + extendedClass.name + "' is not annotated with ChainOverridable")
 //				}
 //			}
 //		}

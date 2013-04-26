@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.util;
+package generator
 
-public abstract class ChainLink<T extends ChainLink<T>> {
-	private T nextLink;
+import org.sculptor.generator.chain.ChainOverride
+import org.sculptor.generator.template.TestTemplate
 
-	public ChainLink(T next) {
-		// TODO check for NULL
-		// can be null only when created from templates and extension in generator-core
-		nextLink = next;
-	}
+@ChainOverride
+class TestTemplateOverride extends TestTemplate {
 
-	public T getNext() {
-		return nextLink;
-	}
+	override test() {
+		"new code"
+	}	
 }

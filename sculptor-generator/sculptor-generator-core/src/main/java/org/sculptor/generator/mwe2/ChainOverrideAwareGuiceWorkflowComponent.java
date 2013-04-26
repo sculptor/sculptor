@@ -26,12 +26,13 @@ import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
+import org.sculptor.generator.chain.ChainOverrideAwareModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowComponent2 {
+public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowComponent2 {
 
 //	private static final Logger LOG = LoggerFactory.getLogger(SculptorUniversalGuiceWorkflowComponent.class);
 
@@ -101,7 +102,7 @@ public class SculptorUniversalGuiceWorkflowComponent extends AbstractWorkflowCom
 		Module module=null;
 		try {
 			if (guiceModule == null) {
-				module = new UniversalLoadModule(actionClass);
+				module = new ChainOverrideAwareModule(actionClass);
 			} else {
 				Class<?> forName = Class.forName(guiceModule);
 				Object moduleInst = forName.newInstance();
