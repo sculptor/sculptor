@@ -29,6 +29,8 @@
 				<include>org/eclipse/jface/text/**</include>
 				<include>org/eclipse/jdt/core/**</include>
 				<include>org/eclipse/jdt/internal/**</include>
+				<include>org/osgi/**</include>
+				<include>org/eclipse/osgi/**</include>
 			</includes>
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
