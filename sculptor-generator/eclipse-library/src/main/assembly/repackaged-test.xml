@@ -13,12 +13,14 @@
 			<outputDirectory>/</outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
-				<include>org/eclipse/emf/codegen/**</include>
 				<include>org/eclipse/xtext/junit4/**</include>
 				<include>org/eclipse/xtext/xbase/junit/**</include>
 				<include>org/eclipselabs/xtext/utils/unittesting/**</include>
-				<include>org/eclipse/core/runtime/**</include>
 			</includes>
+			<excludes>
+				<exclude>**/*.java</exclude>
+				<exclude>**/*.xtend</exclude>
+			</excludes>
 		</fileSet>
 	</fileSets>
 </assembly>
