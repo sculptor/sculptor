@@ -394,47 +394,47 @@ def String beanRefContext(Application it) {
 def String interceptor(Application it) {
 	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), OutputSlot::TO_GEN_RESOURCES, '''
 	«IF isWar() »
-	«headerWithMoreNamespaces(it)»
+		«headerWithMoreNamespaces(it)»
 	«ELSE »
-	«headerWithMoreNamespaces(it)»
+		«headerWithMoreNamespaces(it)»
 	«ENDIF »
 
-	«aspectjAutoproxy(it)»
-
-	«IF jpa()»
-	    «jpaInterceptor(it) »
-	«ENDIF»
-
-	«IF nosql()»
-	<bean id="errorHandlingAdvice" class="«fw("errorhandling.BasicErrorHandlingAdvice")»" />
-	«ELSE»
-		<bean id="errorHandlingAdvice" class="«fw("errorhandling.ErrorHandlingAdvice")»" />
+		«aspectjAutoproxy(it)»
+	
+		«IF jpa()»
+			«jpaInterceptor(it) »
+		«ENDIF»
+	
+		«IF nosql()»
+			<bean id="errorHandlingAdvice" class="«fw("errorhandling.BasicErrorHandlingAdvice")»" />
+		«ELSE»
+			<bean id="errorHandlingAdvice" class="«fw("errorhandling.ErrorHandlingAdvice")»" />
 		«ENDIF»
 		«IF isJpaProviderHibernate()»
-		<bean id="hibernateErrorHandlingAdvice" class="«fw("errorhandling.HibernateErrorHandlingAdvice")»" />
+			<bean id="hibernateErrorHandlingAdvice" class="«fw("errorhandling.HibernateErrorHandlingAdvice")»" />
 		«ELSEIF isValidationAnnotationToBeGenerated()»
-		<bean id="hibernateValidatorErrorHandlingAdvice" class="«fw("errorhandling.HibernateValidatorErrorHandlingAdvice")»" />
+			<bean id="hibernateValidatorErrorHandlingAdvice" class="«fw("errorhandling.HibernateValidatorErrorHandlingAdvice")»" />
 		«ENDIF»
 		«IF isServiceContextToBeGenerated()»
-		<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
+			<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
 		«ENDIF »
 		«IF mongoDb()»
-		<bean id="mongodbManagerAdvice" class="«fw("accessimpl.mongodb.DbManagerAdvice")»" >
-			<property name="dbManager" ref="mongodbManager" />
-		</bean>
+			<bean id="mongodbManagerAdvice" class="«fw("accessimpl.mongodb.DbManagerAdvice")»" >
+				<property name="dbManager" ref="mongodbManager" />
+			</bean>
 		«ENDIF »
 		«IF isInjectDrools()»
-		<bean id="droolsAdvice" class="«fw('drools.DroolsAdvice')»">
-			<property name="droolsRuleSet" value="${drools.rule-source}"/>
-			<property name="updateInterval" value="${drools.rule-refresh}"/>
-			<property name="catchAllExceptions" value="${drools.catch-all-exceptions}"/>
-		</bean>
+			<bean id="droolsAdvice" class="«fw('drools.DroolsAdvice')»">
+				<property name="droolsRuleSet" value="${drools.rule-source}"/>
+				<property name="updateInterval" value="${drools.rule-refresh}"/>
+				<property name="catchAllExceptions" value="${drools.catch-all-exceptions}"/>
+			</bean>
 		«ENDIF »
-
+	
 		«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
 			«txAdvice(it)»
 		«ENDIF»
-
+	
 		«aopConfig(it) »
 
 	</beans>
@@ -546,23 +546,23 @@ def String interceptorTest(Application it) {
 
 def String aopConfigTest(Application it) {
 	'''
-	<!-- When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing -->
-	<!-- TODO remove
 	«IF !isWar() »
+		<!-- When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing -->
+		<!-- TODO remove
 		«txAdvice(it) »
+		-->
 	«ENDIF»
-	-->
 
 	<aop:config>
 
 		<aop:pointcut id="repository"
 			expression="execution(public * «basePackage»..*Repository*.*(..))"/>
 
-		<!-- TODO remove
 		«IF !isWar()»
+			<!-- TODO remove
 			<aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
+			-->
 		«ENDIF»
-		-->
 
 		<!-- Need this when JUnit directly to Repository -->
 		<aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
