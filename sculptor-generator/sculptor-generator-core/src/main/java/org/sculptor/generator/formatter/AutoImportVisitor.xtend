@@ -134,8 +134,8 @@ class AutoImportVisitor extends ASTVisitor {
 	private def qualifiedName(QualifiedTypeReference typeReference) {
 		val buf = new StringBuffer
 		for (i : 0 ..< typeReference.tokens.length) {
-			if(i > 0) buf.append('.');
-			buf.append(typeReference.tokens.get(i));
+			if (i > 0) buf.append('.')
+			buf.append(typeReference.tokens.get(i))
 		}
 		buf.toString
 	}
@@ -145,7 +145,9 @@ class AutoImportVisitor extends ASTVisitor {
 	}
 
 	private def shortName(QualifiedTypeReference typeReference) {
-		typeReference.tokens.last.toString
+		val buf = new StringBuffer
+		buf.append(typeReference.tokens.last)
+		buf.toString
 	}
 
 }
