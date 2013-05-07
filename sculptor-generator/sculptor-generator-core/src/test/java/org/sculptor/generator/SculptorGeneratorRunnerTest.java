@@ -17,20 +17,21 @@
 
 package org.sculptor.generator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class SculptorRunnerTest {
+public class SculptorGeneratorRunnerTest {
 
 	@Test
 	public void testRun() {
-		assertTrue(SculptorRunner.run("src/test/resources/model-test.btdesign"));
+		assertTrue(SculptorGeneratorRunner.run("src/test/resources/model-test.btdesign"));
 	}
 
 	@Test
 	public void testRunInvalid() {
-		assertFalse(SculptorRunner.run("src/test/resources/model-test-invalid.btdesign"));
+		assertFalse(SculptorGeneratorRunner.run("src/test/resources/model-test-invalid.btdesign"));
 	}
 
 }

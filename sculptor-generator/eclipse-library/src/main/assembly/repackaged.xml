@@ -36,6 +36,7 @@
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
 				<exclude>org/eclipse/xtext/xbase/junit/**</exclude>
+				<exclude>**/*.mwe2</exclude>
 				<exclude>**/*.ecore</exclude>
 				<exclude>**/*.html</exclude>
 				<exclude>**/*.java</exclude>

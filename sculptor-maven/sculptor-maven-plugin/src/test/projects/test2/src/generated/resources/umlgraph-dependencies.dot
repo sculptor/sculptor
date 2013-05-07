@@ -1,0 +1,34 @@
+
+	
+digraph G {             
+	fontsize = 10        
+	node [                          
+		fontsize = 10                
+		fontname="arial"
+		shape=plaintext
+	     ]        
+	     
+	edge [                            
+		fontsize = 10        
+	     ]        
+	
+	
+	
+		test [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="20" port="p" bgcolor="#CCCCFF">
+		<tr><td>
+			<table border="0" cellspacing="1" cellpadding="1">
+				<tr><td> &laquo;Module&raquo; </td></tr>
+				<tr><td><font face="arialbd"  point-size="12.0"> test </font></td></tr>
+			</table>
+		</td></tr>	
+		</table>>, fontname="arial", fontcolor="black", fontsize=9.0];
+	
+
+	
+		
+	
+
+	
+	
+	}
+	

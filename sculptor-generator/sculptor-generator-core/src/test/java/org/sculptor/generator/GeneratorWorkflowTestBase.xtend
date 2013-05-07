@@ -34,6 +34,6 @@ class GeneratorWorkflowTestBase {
 	protected static def void runSculptorWorkflow(String propertiesFileLocation, String modelFile) {
 		System::setProperty("sculptor.generatorPropertiesLocation", propertiesFileLocation);
 
-		SculptorRunner::run(modelFile)
+		SculptorGeneratorRunner::run(modelFile)
 	}
 }

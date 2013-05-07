@@ -21,6 +21,7 @@
 			<modules>
 				<module>../../sculptor-eclipse</module>
 				<module>../../sculptor-generator</module>
+				<module>../../sculptor-maven</module>
 				<module>../../sculptor-framework</module>
 				<module>../../sculptor-example</module>
 			</modules>

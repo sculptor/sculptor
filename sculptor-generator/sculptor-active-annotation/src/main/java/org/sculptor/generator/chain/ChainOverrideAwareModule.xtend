@@ -60,7 +60,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	}
 
 	def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
-		LOG.info("Building chain for {}", clazz)
+		LOG.debug("Building chain for class '{}'", clazz)
 		var T chain
 
 		// Instantiate template - try extension first
@@ -101,7 +101,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 			val overrideClass = Class::forName(needsToBeChained.pop)
 			val const = overrideClass.getConstructor(constructorParam)
 			if (typeof(ChainLink).isAssignableFrom(overrideClass)) {
-				LOG.info("    chaining with {}", overrideClass)
+				LOG.debug("    chaining with class '{}'", overrideClass)
 				result = (const.newInstance(object) as T)
 				requestInjection(object)
 				discoverInjectedFields(discovered, overrideClass)
@@ -175,4 +175,5 @@ class ChainOverrideAwareModule extends AbstractModule {
 			}
 		}
 	}
+
 }

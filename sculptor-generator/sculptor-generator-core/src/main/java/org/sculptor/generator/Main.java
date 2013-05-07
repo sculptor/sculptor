@@ -39,7 +39,7 @@ public class Main {
 			System.exit(-1);
 		}
 
-		if (!SculptorRunner.run(line.getOptionValue("model"))) {
+		if (!SculptorGeneratorRunner.run(line.getOptionValue("model"))) {
 			System.exit(1);
 		}
 	}

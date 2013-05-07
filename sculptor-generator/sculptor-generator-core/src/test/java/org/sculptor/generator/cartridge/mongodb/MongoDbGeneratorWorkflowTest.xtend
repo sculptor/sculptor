@@ -3,7 +3,6 @@ package org.sculptor.generator.cartridge.mongodb
 import org.junit.BeforeClass
 import org.junit.Test
 import org.sculptor.generator.GeneratorWorkflowTestBase
-import org.sculptor.generator.SculptorRunner
 
 import static org.sculptor.generator.GeneratorTestExtensions.*
 

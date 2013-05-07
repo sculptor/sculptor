@@ -33,9 +33,9 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class SculptorRunner {
+public class SculptorGeneratorRunner {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SculptorRunner.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SculptorGeneratorRunner.class);
 
 	public static final String WORKFLOW_MODULE = "org.sculptor.generator.SculptorGenerator";
 
@@ -54,7 +54,7 @@ public class SculptorRunner {
 				});
 			}
 		}.createInjectorAndDoEMFRegistration();
-		SculptorRunner runner = injector.getInstance(SculptorRunner.class);
+		SculptorGeneratorRunner runner = injector.getInstance(SculptorGeneratorRunner.class);
 		return runner.doRun(modelFile);
 	}
 

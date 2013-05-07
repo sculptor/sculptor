@@ -76,6 +76,7 @@ class Helper {
 
 	def public String fileOutput(String fileName, OutputSlot slot, String text) {
 		val fName = if (fileName.endsWith(JAVA_EXT))
+				// convert package name to directory hierarchy
 				fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
 			else
 				fileName
@@ -88,6 +89,9 @@ class Helper {
 			var out = new FileWriter(fl)
 			out.write(if (fileName.endsWith(JAVA_EXT)) formatJavaCode(flTr, text) else text)
 			out.close()
+			LOG.debug("Created file : " + fl)
+		} else {
+			LOG.debug("Skipped file : " + fl)
 		}
 		""
 	}
@@ -102,7 +106,7 @@ class Helper {
 			textEdit.apply(doc)
 			retVal = doc.get()
 		} catch (Exception e) {
-			LOG.error("Error formating code for {}. Using original code from generator.", path)
+			LOG.error("Error formating code for '{}'. Using original code from generator", path)
 			retVal = code
 		}
 		retVal
@@ -112,13 +116,16 @@ class Helper {
 
 	def private getCodeFormatter() {
 		if (codeFormatter == null) {
+			val classLoader = Thread::currentThread().getContextClassLoader() ?: this.^class.getClassLoader()
 			val props = new java.util.Properties()
-			props.load(this.^class.classLoader.getResourceAsStream("default-java-code-formatter.properties"))
-			getProperty("java.code.formatter.props", "").split("[,; ]").forEach[
-				try {
-					props.load(this.^class.classLoader.getResourceAsStream(it))
-				} catch (Exception ex) {
-					LOG.error("Error loading properties for Java code formatter from file {}.", it)
+			props.load(classLoader.getResourceAsStream("default-java-code-formatter.properties"))
+			getProperty("java.code.formatter.props", "").split("[,; ]").forEach [
+				val stream = classLoader.getResourceAsStream(it)
+				if (stream != null) {
+					LOG.debug("Loading properties for Java code formatter from file '{}'", it)
+					props.load(classLoader.getResourceAsStream(it))
+				} else {
+					LOG.warn("File '{}' with properties for Java code formatter not found", it)
 				}
 			]
 			codeFormatter = ToolFactory::createCodeFormatter(props)
@@ -126,9 +133,9 @@ class Helper {
 		codeFormatter
 	}
 
-	var typePattern = Pattern::compile("(([a-z]\\w+\\.)+([A-Z]\\w++))(\\s*[^(])")
-	var anotPattern = Pattern::compile("@([a-z]\\w+(\\.\\w+)++)\\s*\\(")
-	var packagePattern = Pattern::compile("package.*;")
+	val typePattern = Pattern::compile("(([a-z]\\w+\\.)+([A-Z]\\w++))(\\s*[^(])")
+	val anotPattern = Pattern::compile("@([a-z]\\w+(\\.\\w+)++)\\s*\\(")
+	val packagePattern = Pattern::compile("package.*;")
 
 	def private extractJavaTypes(String code) {
 		val hm = new HashMap<String, String>()

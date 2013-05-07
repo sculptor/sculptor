@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="false">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%level] %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="FILE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[FILE] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.sculptor.generator.ext.Helper" level="DEBUG" additivity="false" >
+		<appender-ref ref="FILE" />
+	</logger>
+	<logger name="org.eclipse.emf" level="WARN" />
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

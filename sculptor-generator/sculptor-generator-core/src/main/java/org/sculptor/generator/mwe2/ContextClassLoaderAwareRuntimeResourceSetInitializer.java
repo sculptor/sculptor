@@ -19,12 +19,13 @@ package org.sculptor.generator.mwe2;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.xtext.mwe.RuntimeResourceSetInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * This variation of {@link RuntimeResourceSetInitializer} overrides
@@ -44,12 +45,9 @@ public class ContextClassLoaderAwareRuntimeResourceSetInitializer extends Runtim
 		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 		if (contextClassLoader instanceof URLClassLoader) {
 
-			// Create a list of class path entries from the current threads
-			// context class loader
-			classPathEntries = new ArrayList<String>();
-			for (URL url : ((URLClassLoader) contextClassLoader).getURLs()) {
-				classPathEntries.add(url.getFile());
-			}
+			// adds class path entries from current threads context classloader.
+			classPathEntries = Lists.newArrayList();
+			addClassPathEntries(contextClassLoader, classPathEntries);
 			LOGGER.debug("Classpath entries from thread context loader: {}", classPathEntries);
 		} else {
 
@@ -59,6 +57,23 @@ public class ContextClassLoaderAwareRuntimeResourceSetInitializer extends Runtim
 			LOGGER.debug("Classpath entries from system property 'java.class.path': {}", classPathEntries);
 		}
 		return classPathEntries;
+	}
+
+	/**
+	 * Adds class path entries from given classloader hierarchy (recursive).
+	 */
+	private void addClassPathEntries(ClassLoader contextClassLoader, List<String> classPathEntries) {
+		for (URL url : ((URLClassLoader) contextClassLoader).getURLs()) {
+			String path = url.getPath().trim().toLowerCase(); 
+			if (path.endsWith("/") || path.endsWith(".jar")) {
+				classPathEntries.add(url.getFile());
+			}
+		}
+
+		// Add class path entries from parent classloader
+		if (contextClassLoader.getParent() instanceof URLClassLoader) {
+			addClassPathEntries(contextClassLoader.getParent(), classPathEntries);
+		}
 	}
 
 }

@@ -1,0 +1,13 @@
+ApplicationPart TestPart {
+
+	Module test {
+		BasicType Foo {
+			String name key
+			Timestamp timestamp key
+		}
+		
+		enum Bar {
+			ONE, TWO, THREE
+		}
+	}
+}
