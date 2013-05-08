@@ -16,6 +16,6 @@
 	<modules>
 		<module>sculptor-framework-main</module>
 		<module>sculptor-framework-test</module>
-	<!--	<module>sculptor-framework-mongodb</module> -->
+		<module>sculptor-framework-mongodb</module>
 	</modules>
 </project>

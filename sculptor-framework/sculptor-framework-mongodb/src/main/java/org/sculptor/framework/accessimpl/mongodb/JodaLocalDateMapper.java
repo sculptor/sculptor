@@ -50,10 +50,13 @@ public class JodaLocalDateMapper implements DataMapper<LocalDate, Date> {
         return from.toDateTimeAtStartOfDay().toDate();
     }
 
-    public LocalDate toDomain(Object from) {
-        return toDomain((Date) from);
-    }
-
+// Comment out due to compile error:
+// name clash: toDomain(java.lang.Object) in org.sculptor.framework.accessimpl.mongodb.JodaLocalDateMapper and toDomain(D) in org.sculptor.framework.accessimpl.mongodb.DataMapper have the same erasure, yet neither overrides the other
+//    public LocalDate toDomain(Object from) {
+//        return toDomain((Date) from);
+//    }
+// TODO: Remove permanently after more testing if not needed
+    
     public LocalDate toDomain(Date from) {
         if (from == null) {
             return null;

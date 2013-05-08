@@ -50,9 +50,12 @@ public class JodaDateTimeMapper implements DataMapper<DateTime, Date> {
         return from.toDate();
     }
 
-    public DateTime toDomain(Object from) {
-        return toDomain((Date) from);
-    }
+// Comment out due to compile error:
+// name clash: toDomain(java.lang.Object) in org.sculptor.framework.accessimpl.mongodb.JodaDateTimeMapper and toDomain(D) in org.sculptor.framework.accessimpl.mongodb.DataMapper have the same erasure, yet neither overrides the other
+//  public DateTime toDomain(Object from) {
+//  return toDomain((Date) from);
+//}
+// TODO: Remove permanently after more testing if not needed
 
     public DateTime toDomain(Date from) {
         if (from == null) {
