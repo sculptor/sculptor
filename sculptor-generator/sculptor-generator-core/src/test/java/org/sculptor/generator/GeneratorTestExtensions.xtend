@@ -5,14 +5,17 @@ import java.io.File
 import java.io.FileReader
 import java.io.IOException
 import java.util.regex.Pattern
-import junit.framework.Assert
 import org.eclipse.emf.common.util.EList
 import sculptormetamodel.NamedElement
 
+import static org.junit.Assert.*
 /**
  * Extensions used in generator tests
  */
 class GeneratorTestExtensions {
+
+	protected static val SYSTEM_ATTRIBUTES = newImmutableSet("id", "uuid", "version",
+		"createdBy", "createdDate", "updatedBy", "updatedDate", "lastUpdated", "lastUpdatedBy");
 
 	// TODO: Move into helpers?
 	def static <T extends NamedElement> namedElement(EList<T> list, String toFindName) {
@@ -20,7 +23,7 @@ class GeneratorTestExtensions {
 	}
 
 	def static void assertContains(String text, String subString) {
-		Assert::assertTrue("text does not contain expected substring: " + subString, text.contains(subString));
+		assertTrue("text does not contain expected substring: " + subString, text.contains(subString));
 	}
 
 	/**
@@ -28,7 +31,7 @@ class GeneratorTestExtensions {
       */
 	def static void assertMatchesRegexp(String text, String regexp) {
 		val p = Pattern::compile(regexp, Pattern::MULTILINE);
-		Assert::assertTrue("Text did not contain pattern \"" + regexp + "\"", p.matcher(text).find());
+		assertTrue("Text did not contain pattern \"" + regexp + "\"", p.matcher(text).find());
 	}
 
 	/**
@@ -44,7 +47,7 @@ class GeneratorTestExtensions {
 	}
 
 	def static void assertNotContains(String text, String subStr) {
-		Assert::assertFalse("Text contained substring \"" + subStr + "\"", text.contains(subStr));
+		assertFalse("Text contained substring \"" + subStr + "\"", text.contains(subStr));
 	}
 
 	/**
@@ -60,5 +63,17 @@ class GeneratorTestExtensions {
 		in.close();
 		return sb.toString();
 	}
+	
+	
+	def static <NE extends NamedElement> void assertOneAndOnlyOne(EList<NE> listOfNamedElements, String... expectedNames) {
+		val expectedNamesList = expectedNames.toList
+
+		val actualNames = listOfNamedElements.map[ne|ne.name].filter[name | !SYSTEM_ATTRIBUTES.contains(name)].toList
+				
+		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, actualNames.containsAll(expectedNamesList))
+		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, expectedNamesList.containsAll(actualNames))
+		
+	}
+
 
 }

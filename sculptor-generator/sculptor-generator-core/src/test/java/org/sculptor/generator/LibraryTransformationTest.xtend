@@ -51,6 +51,8 @@ import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
 
+import static extension org.sculptor.generator.GeneratorTestExtensions.*
+
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class LibraryTransformationTest extends XtextTest{
@@ -69,10 +71,6 @@ class LibraryTransformationTest extends XtextTest{
 	var Provider<DslTransformation> dslTransformProvider
 	var Provider<Transformation> transformationProvider
 	var Application app
-	
-	protected static val SYSTEM_ATTRIBUTES = newImmutableSet("id", "uuid", "version",
-		"createdBy", "createdDate", "updatedBy", "updatedDate", "lastUpdated", "lastUpdatedBy");
-	
 	
 	@Before
 	def void setupDslModel() {
@@ -126,18 +124,6 @@ class LibraryTransformationTest extends XtextTest{
     def void assertApplication() {
         assertEquals("Library", app.getName());
     }
-
-
-
-	def <NE extends NamedElement> void assertOneAndOnlyOne(EList<NE> listOfNamedElements, String... expectedNames) {
-		val expectedNamesList = expectedNames.toList
-
-		val actualNames = listOfNamedElements.map[ne|ne.name].filter[name | !SYSTEM_ATTRIBUTES.contains(name)].toList
-				
-		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, actualNames.containsAll(expectedNamesList))
-		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, expectedNamesList.containsAll(actualNames))
-		
-	}
 
 	@Test
     def void assertModules() {

@@ -26,9 +26,6 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 	
 	var MongoDbMapperTmpl mongoDbMapperTmpl
 	
-//	protected static val SYSTEM_ATTRIBUTES = newImmutableSet("id", "uuid", "version",
-//		"createdBy", "createdDate", "updatedBy", "updatedDate", "lastUpdated", "lastUpdatedBy");
-	
 	@Before
 	def void setupExtensions() {
 		generatorModelTestFixtures.setupModel("library-mongodb.btdesign", "library-person.btdesign")

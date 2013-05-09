@@ -175,7 +175,7 @@ class DslTransformation {
 	def create FACTORY.createPublish transform(DslPublish publish) {
 		setEventBus(publish.eventBus)
 		setTopic(publish.topic)
-		setEventType(if (publish.eventType == null) null else publish.eventType.transform)
+		setEventType(if (publish.eventType == null) null else publish.eventType.transformSimpleDomainObject as Event)
 		if (eventBus == null && eventType != null && eventType instanceof CommandEvent)
 			setEventBus("commandBus")
 	}
@@ -397,16 +397,16 @@ class DslTransformation {
 			setRepository(domainObject.repository.transform)
 	}
 
-	def create FACTORY.createDomainEvent transform(DslEvent event) {
+	def dispatch create FACTORY.createDomainEvent transformSimpleDomainObject(DslEvent event) {
 		// Never used, only purpose is to be an 'abstract' placeholder
 		error("Unexpected call to transform(DslEvent): " + event)
 	}
 
-	def create FACTORY.createDomainEvent transform(DslDomainEvent dslEvent) {
+	def dispatch create FACTORY.createDomainEvent transformSimpleDomainObject(DslDomainEvent dslEvent) {
 		transformCommonEventFeatures(it, dslEvent)
 	}
 
-	def create FACTORY.createCommandEvent transform(DslCommandEvent dslEvent) {
+	def dispatch create FACTORY.createCommandEvent transformSimpleDomainObject(DslCommandEvent dslEvent) {
 		transformCommonEventFeatures(it, dslEvent)
 	}
 
@@ -511,7 +511,7 @@ class DslTransformation {
 
 	def private dispatch transformExtendsEvent(DslDomainEvent dslEvent, DomainEvent event) {
 		if (dslEvent.^extends != null)
-			event.setExtends(dslEvent.^extends.transform)
+			event.setExtends(dslEvent.^extends.transformSimpleDomainObject)
 
 		if (dslEvent.extendsName != null)
 			event.setExtendsName(dslEvent.extendsName)

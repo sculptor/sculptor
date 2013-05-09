@@ -1,0 +1,104 @@
+Application Shipping {
+	basePackage=org.sculptor.shipping
+
+    Module core {
+        Service TrackingService {
+            inject @ShipRepository
+            recordArrival(DateTime occurred, @Ship ship, @Port port);
+            recordArrival2(DateTime occurred, @ShipId ship, @UnLocode port) publish RecordArrival to shippingProcessor;
+            recordDeparture(DateTime occurred, @Ship ship, @Port port);
+        }
+        
+        Service ReferenceDataService {
+            inject @ShipRepository
+            inject @PortRepository
+            getShip delegates to @ShipRepository.findByKey;
+            saveShip(@Ship ship) publish SavedDomainObjectEvent to shippingChannel;
+            getPort delegates to @PortRepository.findByKey;
+            savePort(@Port port) publish SavedDomainObjectEvent to shippingChannel;
+        }
+        
+        Entity Ship {
+            gap
+            - ShipId shipId key
+            String name
+            - Port port nullable
+            
+            Repository ShipRepository {
+                gap
+                save;
+                findByKey;
+            }
+        }
+        
+        BasicType ShipId {
+            String identifier key
+        }
+
+        Entity Port {
+            - UnLocode unlocode key;
+            String city
+            - Country country
+            
+            Repository PortRepository { 
+                save;
+                findByKey;
+            }
+        }
+        
+        "United nations location code."
+        BasicType UnLocode {
+            String identifier key
+        }
+
+        enum Country {
+            US,
+            CANADA
+        }
+        
+        CommandEvent RecordArrival {
+            - ShipId ship
+            - UnLocode port
+        }
+		
+        DomainEvent ShipHasArrived {
+            - ShipId ship
+            - UnLocode port
+        }
+
+        CommandEvent RecordDeparture {
+            - ShipId ship
+            - UnLocode port
+        }
+		
+        DomainEvent ShipHasDepartured {
+            - ShipId ship
+            - UnLocode port
+        }
+        
+        DomainEvent SavedDomainObjectEvent {
+        	gap
+        	Object domainObject
+        }
+        
+    }
+    
+    Module curious {
+    	Consumer Inspector {
+    		subscribe to shippingChannel eventBus=extraBus
+    	}
+    }
+    
+    Module statistics {
+    	Service Statistics {
+    		subscribe to statisticsChannel
+    		consume(@ShipHasArrived event);
+    		consume(@ShipHasDepartured event);
+    		consume(Object any);
+    		int getShipsInPort(@UnLocode port);
+    		reset;
+    	}
+    }
+    
+
+}
