@@ -128,14 +128,14 @@ def String getInstance(DomainObject it) {
 
 def String discriminator(DomainObject it) {
 	'''
-		public static final String «it.getRootExtends().inheritance.discriminatorColumnName()» = «IF discriminatorColumnValue == null»«getDomainPackage()».«name».class.getSimpleName()«ELSE»"«discriminatorColumnValue»"«ENDIF»;
+		public static final String «it.getRootExtends().inheritance.discriminatorColumnName()» = «IF discriminatorColumnValue == null»«it.getDomainPackage()».«name».class.getSimpleName()«ELSE»"«discriminatorColumnValue»"«ENDIF»;
 	'''
 }
 
 def String registerSubclassMappers(DomainObject it) {
 	'''
-		private final java.util.Map<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>> subclassMapperByClass = new java.util.concurrent.ConcurrentHashMap<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>>();
-		private final java.util.Map<String, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>> subclassMapperByDtype = new java.util.concurrent.ConcurrentHashMap<String, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject>>();
+		private final java.util.Map<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<«it.getDomainPackage()».«name», com.mongodb.DBObject>> subclassMapperByClass = new java.util.concurrent.ConcurrentHashMap<Class<?>, «fw("accessimpl.mongodb.DataMapper")»<«it.getDomainPackage()».«name», com.mongodb.DBObject>>();
+		private final java.util.Map<String, «fw("accessimpl.mongodb.DataMapper")»<«it.getDomainPackage()».«name», com.mongodb.DBObject>> subclassMapperByDtype = new java.util.concurrent.ConcurrentHashMap<String, «fw("accessimpl.mongodb.DataMapper")»<«it.getDomainPackage()».«name», com.mongodb.DBObject>>();
 		
 		protected void registerSubclassMappers() {
 			«FOR sub : it.getAllSubclasses()»
@@ -146,7 +146,7 @@ def String registerSubclassMappers(DomainObject it) {
 			«ENDFOR»
 		}
 		
-		protected void registerSubclassMapper(Class<?> domainType, String dtype, «fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject> mapper) {
+		protected void registerSubclassMapper(Class<?> domainType, String dtype, «fw("accessimpl.mongodb.DataMapper")»<«it.getDomainPackage()».«name», com.mongodb.DBObject> mapper) {
 			subclassMapperByClass.put(domainType, mapper);
 			subclassMapperByDtype.put(dtype, mapper);
 		}
@@ -162,7 +162,7 @@ def String delegateToDomainToSubclassMapper(DomainObject it) {
 			dtype = "unknown";
 		}
 		
-		«fw("accessimpl.mongodb.DataMapper")»<? extends «getDomainPackage()».«name», DBObject> subclassMapper = subclassMapperByDtype.get(dtype);
+		«fw("accessimpl.mongodb.DataMapper")»<? extends «it.getDomainPackage()».«name», DBObject> subclassMapper = subclassMapperByDtype.get(dtype);
 		if (subclassMapper == null) {
 			throw new IllegalArgumentException("Unsupported domain object («it.getRootExtends().inheritance.discriminatorColumnName()»): " + dtype);
 		}
@@ -172,7 +172,7 @@ def String delegateToDomainToSubclassMapper(DomainObject it) {
 
 def String delegateToDataToSubclassMapper(DomainObject it) {
 	'''
-			«fw("accessimpl.mongodb.DataMapper")»<«getDomainPackage()».«name», com.mongodb.DBObject> subclassMapper = subclassMapperByClass.get(from.getClass());
+			«fw("accessimpl.mongodb.DataMapper")»<«it.getDomainPackage()».«name», com.mongodb.DBObject> subclassMapper = subclassMapperByClass.get(from.getClass());
 			if (subclassMapper == null) {
 				throw new IllegalArgumentException("Unsupported domain object: " + from.getClass().getName());
 			}
@@ -219,7 +219,7 @@ def String toDomain(DomainObject it) {
 	
 		«FOR p : it.constructorParameters.filter[e | e instanceof Attribute].map[e | (e as Attribute)]»
 			«IF p.isJodaTemporal() »
-				«p.getTypeName()» «p.name» = «fw("accessimpl.mongodb." + (if (p.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain(from.get("«p.getDatabaseName()»"));
+				«p.getTypeName()» «p.name» = «fw("accessimpl.mongodb." + (if (p.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain((java.util.Date)from.get("«p.getDatabaseName()»"));
 			«ELSE »
 				«p.getTypeName()» «p.name» = («p.getTypeName().getObjectTypeName()») from.get("«p.getDatabaseName()»");
 			«ENDIF»
@@ -247,7 +247,7 @@ def String toDomain(DomainObject it) {
 		«ENDFOR»
 		// TODO many references in constructor
 		
-		«getDomainPackage()».«name» result = new «getDomainPackage()».«name»(
+		«it.getDomainPackage()».«name» result = new «it.getDomainPackage()».«name»(
 			«FOR p : constructorParameters SEPARATOR ", "»«p.name»«ENDFOR»);
 		«IF !(it instanceof BasicType)»
 			if (from.containsField("_id")) {
@@ -267,7 +267,7 @@ def String toDomain(DomainObject it) {
 				«IF att.collectionType != null »
 					result.set«att.name.toFirstUpper()»(new «att.getImplTypeName()»((java.util.Collection) from.get("«att.getDatabaseName()»")));
 				«ELSEIF att.isJodaTemporal() »
-					result.set«att.name.toFirstUpper()»(«fw("accessimpl.mongodb." + (if (att.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain(from.get("«att.getDatabaseName()»")));
+					result.set«att.name.toFirstUpper()»(«fw("accessimpl.mongodb." + (if (att.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain((java.util.Date)from.get("«att.getDatabaseName()»")));
 				«ELSE »
 					result.set«att.name.toFirstUpper()»((«att.getTypeName().getObjectTypeName()») from.get("«att.getDatabaseName()»"));
 				«ENDIF»
@@ -348,7 +348,7 @@ def String canMapToData(DomainObject it) {
 	    if (domainObjectClass == null) {
 	    	return true;
 	    }
-		return «getDomainPackage()».«name».class.isAssignableFrom(domainObjectClass);
+		return «it.getDomainPackage()».«name».class.isAssignableFrom(domainObjectClass);
 	}
 	'''
 }
@@ -380,7 +380,7 @@ def String toData(DomainObject it) {
 	@Override
 	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» «IF it.^extends == null»from«ELSE»inFrom«ENDIF») {
 		«IF ^extends != null»
-			«getDomainPackage()».«name» from = («getDomainPackage()».«name») inFrom;
+			«it.getDomainPackage()».«name» from = («it.getDomainPackage()».«name») inFrom;
 		«ENDIF»
 		«fromNullCheck(it)»
 

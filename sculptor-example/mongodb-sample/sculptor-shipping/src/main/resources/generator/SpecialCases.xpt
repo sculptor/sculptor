@@ -1,0 +1,15 @@
+«REM»
+You can change code generation templates by using
+Aspect-Oriented Programming features of oAW. You
+can add AROUND advice in this file. Read 
+Sculptor Developer's Guide for more information.
+«ENDREM»     
+
+«IMPORT sculptormetamodel»
+«EXTENSION extensions::helper»
+«EXTENSION extensions::properties»
+
+«AROUND templates::domain::DomainObject::domainObjectHook FOR DomainObject»
+    // This comment was generated from SpecialCases.xpt 
+«ENDAROUND»
+

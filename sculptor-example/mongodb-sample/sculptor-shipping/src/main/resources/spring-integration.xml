@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans" xmlns="http://www.springframework.org/schema/integration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stream="http://www.springframework.org/schema/integration/stream" xmlns:si-xml="http://www.springframework.org/schema/integration/xml" xmlns:file="http://www.springframework.org/schema/integration/file" xsi:schemaLocation="http://www.springframework.org/schema/beans             http://www.springframework.org/schema/beans/spring-beans-2.5.xsd             http://www.springframework.org/schema/integration             http://www.springframework.org/schema/integration/spring-integration-1.0.xsd             http://www.springframework.org/schema/integration/stream             http://www.springframework.org/schema/integration/stream/spring-integration-stream-1.0.xsd             http://www.springframework.org/schema/integration/xml             http://www.springframework.org/schema/integration/xml/spring-integration-xml-1.0.xsd             http://www.springframework.org/schema/integration/file             http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">  
+  <beans:bean id="springIntegrationEventBusImpl" class="org.fornax.cartridges.sculptor.framework.event.SpringIntegrationEventBusImpl"/>  
+  <beans:alias name="springIntegrationEventBusImpl" alias="eventBus"/>  
+  <!--
+	<beans:alias name="springIntegrationEventBusImpl" alias="commandBus" />
+	-->  
+	<!-- publish-subscribe-channel corresponds to topic in event bus -->
+  	<publish-subscribe-channel id="shippingChannel" />
+	<publish-subscribe-channel id="shippingStatistics" />
+	<publish-subscribe-channel id="shippingStatistics2" />
+	<publish-subscribe-channel id="testChannel" />
+	<publish-subscribe-channel id="referenceDataChannel" />
+
+	<!-- Invoke a method auditEvent on auditService when 
+		events are published to shippingChannel  -->
+	<service-activator input-channel="shippingChannel"
+		ref="auditService" method="auditEvent" />
+	<service-activator input-channel="shippingChannel"
+		ref="auditService" method="securityAuditEvent" />
+	
+	<!-- Route events from one topic to two other topics -->
+	<recipient-list-router id="statisticsRouter" input-channel="shippingChannel">
+		<recipient channel="shippingStatistics"/>
+		<recipient channel="shippingStatistics2"/>
+	</recipient-list-router> 
+</beans:beans>

@@ -1,0 +1,21 @@
+import "classpath:/model_core.btdesign"
+
+ApplicationPart ShippingStatistics {
+
+    Module statistics {
+    	Service Statistics {
+    		subscribe to shippingStatistics
+    		consume(@ShipHasArrived event);
+    		consume(@ShipHasDepartured event);
+    		consume(Object any);
+    		int getShipsInPort(@UnLocode port);
+    		reset;
+    	}
+    	
+    	Consumer EventCounter {
+//    		subscribe to shippingStatistics2
+			topicName=shippingStatistics2
+    	}
+    }
+        
+}

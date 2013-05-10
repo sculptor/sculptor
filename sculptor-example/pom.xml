@@ -14,6 +14,7 @@
 	<description>Aggregator project for all Sculptor examples</description>
 
 	<modules>
+		<module>mongodb-sample/sculptor-shipping</module>
 		<module>sculptor-example-library</module>
 	</modules>
 </project>

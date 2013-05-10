@@ -1,0 +1,7 @@
+import "classpath:/model_core.btdesign"
+import "classpath:/model_statistics.btdesign"
+
+Application Shipping {
+    basePackage = org.sculptor.shipping
+
+}

@@ -1,0 +1,115 @@
+ApplicationPart ShippingCore {
+
+    Module core {
+        Service TrackingService {
+            inject @ReferenceDataService
+            inject @ShipRepository
+            recordArrival(DateTime occurred, @ShipId shipId, @UnLocode portId);
+            recordDeparture(DateTime occurred, @ShipId shipId, @UnLocode portId);
+            recordLoad(DateTime occurred, @ShipId shipId, String cargoId);
+            recordUnload(DateTime occurred, @ShipId shipId, String cargoId);
+        }
+        
+        Service ReferenceDataService {
+            inject @ShipRepository
+            inject @PortRepository
+            getShip delegates to @ShipRepository.findByKey;
+            createShip(@ShipId shipId, String name);
+            getPort delegates to @PortRepository.findByKey;
+            savePort(@Port port);
+            getCargo delegates to @CargoRepository.findByKey;
+            saveCargo(@Cargo cargo); 
+        }
+    
+        Entity Ship {
+            gap
+            - ShipId shipId key
+            String name
+            - Port port nullable
+            - Set<@Cargo> cargos
+            
+            Repository ShipRepository {
+                gap
+                inject @ShipEventRepository
+                save;
+                findByKey;
+            }
+        }
+        
+        BasicType ShipId {
+            String identifier key
+        }
+
+        Entity Port {
+            - UnLocode unlocode key;
+            String city
+            - Country country
+            
+            Repository PortRepository { 
+                save publish SavedDomainObjectEvent to referenceDataChannel;
+                findByKey;
+            }
+        }
+        
+        "United nations location code."
+        BasicType UnLocode {
+            String identifier key
+        }
+
+        enum Country {
+            US,
+            CANADA
+        }
+        
+        Entity Cargo {
+            gap
+            String cargoId key
+            
+            Repository CargoRepository { 
+                save publish SavedDomainObjectEvent to referenceDataChannel;
+                findByKey;
+            }
+        }
+        
+        abstract DomainEvent ShipEvent {
+        	persistent
+        	- ShipId ship
+        	Long aggregateVersion nullable
+        	Long changeSequence nullable
+        	
+        	Repository ShipEventRepository { 
+        		List<@ShipEvent> findAllForShip(@ShipId shipId);
+        		save publish to shippingChannel;
+        		protected findByCondition;
+        	}
+        }
+        
+        DomainEvent ShipCreated extends @ShipEvent {
+        	String name
+        }
+        
+        DomainEvent ShipHasArrived extends @ShipEvent {
+            - Port port
+        }
+
+        DomainEvent ShipHasDepartured extends @ShipEvent {
+            - Port port
+        }
+
+        DomainEvent CargoLoaded extends @ShipEvent {
+            - Cargo cargo
+        }
+        
+        DomainEvent CargoUnloaded extends @ShipEvent {
+            - Cargo cargo
+        }
+                
+        DomainEvent SavedDomainObjectEvent {
+        	Object domainObject
+        }
+        
+
+    }
+    
+
+}
