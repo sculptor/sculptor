@@ -9,3 +9,4 @@ xtend-gen/
 plugin.xml_gen
 dependency-reduced-pom.xml
 .p2-mirror/
+generated
