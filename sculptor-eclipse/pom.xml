@@ -20,6 +20,15 @@
 		<module>org.sculptor.dsl.feature</module>
 	</modules>
 
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<modules>
+				<module>eclipse-repository</module>
+			</modules>
+		</profile>
+	</profiles>
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -43,6 +52,19 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
+				<!-- Sculptors p2 repository must contain only Sculptors Eclipse plugins -->
+				<configuration>
+					<filters>
+						<filter>
+							<type>java-package</type>
+							<id></id>
+							<restrictTo>
+								<type>p2-installable-unit</type>
+								<id>org.sculptor.dsl.feature.feature.group</id>
+							</restrictTo>
+						</filter>
+					</filters>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

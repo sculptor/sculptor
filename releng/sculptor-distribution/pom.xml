@@ -14,7 +14,7 @@
 
 	<profiles>
 		<profile>
-			<id>default</id>
+			<id>all</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -24,6 +24,19 @@
 				<module>../../sculptor-maven</module>
 				<module>../../sculptor-framework</module>
 				<module>../../sculptor-example</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>eclipse</id>
+			<modules>
+				<module>../../sculptor-eclipse</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>maven</id>
+			<modules>
+				<module>../../sculptor-generator</module>
+				<module>../../sculptor-maven</module>
 			</modules>
 		</profile>
 		<profile>
