@@ -6,15 +6,23 @@
 	<artifactId>sculptor-parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Sculptor :: Parent POM</name>
+	<name>Sculptor</name>
+	<url>https://github.io/sculptor/</url>
 
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
+	<inceptionYear>2013</inceptionYear>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<properties>
-		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+
+        <maven-version>3.0</maven-version>
+		<java-version>1.6</java-version>
 
 		<eclipse-release>juno</eclipse-release>
 		<tycho-version>0.17.0</tycho-version>
@@ -27,7 +35,27 @@
 		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse>
 		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</p2-repository-eclipse-xtext>
 		<p2-repository-xtext-utils>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</p2-repository-xtext-utils>
+
+		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
+		<github.global.server>github</github.global.server>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>github-maven-repo</id>
+			<name>GitHub Sculptor Maven Repository</name>
+			<url>https://raw.github.com/sculptor/repository/maven</url>
+		</repository>
+		<snapshotRepository>
+			<id>github-maven-snapshot-repo</id>
+			<name>GitHub Sculptor Maven Snapshot Repository</name>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
 
 	<pluginRepositories>
 		<!-- Maven Central -->

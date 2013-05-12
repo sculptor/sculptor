@@ -13,6 +13,13 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Maven</name>
 
+	<properties>
+        <maven-api-version>3.0.3</maven-api-version>
+		<mojo.java.target>${java-version}</mojo.java.target>
+
+		<sculptor-generator-version>3.0.0-SNAPSHOT</sculptor-generator-version>
+	</properties>
+
 	<modules>
 		<module>sculptor-maven-plugin</module>
 	</modules>

@@ -78,7 +78,7 @@
 					<filters>
 						<filter>
 							<type>java-package</type>
-							<id></id>
+							<id>org</id>
 							<restrictTo>
 								<type>p2-installable-unit</type>
 								<id>org.sculptor.dsl.feature.feature.group</id>

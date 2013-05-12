@@ -11,11 +11,6 @@
 	<packaging>eclipse-repository</packaging>
 	<name>Sculptor :: Eclipse :: p2 Repository</name>
 
-	<properties>
-		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
-		<github.global.server>github</github.global.server>
-	</properties>
-
 	<profiles>
 		<profile>
 			<id>deploy</id>
@@ -27,10 +22,11 @@
 						<groupId>com.github.github</groupId>
 						<artifactId>site-maven-plugin</artifactId>
 						<configuration>
-							<message>Eclipse bundles for ${project.version}</message>
+							<message>Sculptor Eclipse bundles ${project.version}</message>
 							<outputDirectory>${project.build.directory}/repository</outputDirectory>
 							<branch>refs/heads/eclipse</branch>
-							<repositoryName>repository</repositoryName>
+							<repositoryName>snapshot-repository</repositoryName>
+							<dryRun>false</dryRun>
 						</configuration>
 					</plugin>
 				</plugins>
