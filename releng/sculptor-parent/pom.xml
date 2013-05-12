@@ -109,6 +109,8 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.7</version>
 					<configuration>
+						<!-- Deployment is disabled because it's implemented
+							 by the GitHub site-maven-plugin -->
 						<skip>true</skip>
 					</configuration>
 				</plugin>
@@ -212,6 +214,23 @@
 					<groupId>com.github.github</groupId>
 					<artifactId>site-maven-plugin</artifactId>
 					<version>0.8</version>
+					<!-- Deploying the p2 repository to a GitHub repository branch as described in
+						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
+					<configuration>
+						<noJekyll>true</noJekyll>
+						<includes>
+							<include>**/*</include>
+						</includes>
+						<repositoryOwner>sculptor</repositoryOwner>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>deploy</phase>
+							<goals>
+								<goal>site</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.fornax.toolsupport</groupId>

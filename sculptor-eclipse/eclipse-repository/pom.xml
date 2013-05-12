@@ -28,23 +28,10 @@
 						<artifactId>site-maven-plugin</artifactId>
 						<configuration>
 							<message>Eclipse bundles for ${project.version}</message>
-							<noJekyll>true</noJekyll>
 							<outputDirectory>${project.build.directory}/repository</outputDirectory>
 							<branch>refs/heads/eclipse</branch>
-							<includes>
-								<include>**/*</include>
-							</includes>
 							<repositoryName>repository</repositoryName>
-							<repositoryOwner>sculptor</repositoryOwner>
 						</configuration>
-						<executions>
-							<execution>
-								<phase>deploy</phase>
-								<goals>
-									<goal>site</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
