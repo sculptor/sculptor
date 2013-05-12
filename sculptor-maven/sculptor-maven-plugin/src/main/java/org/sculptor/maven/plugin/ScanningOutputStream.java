@@ -19,9 +19,8 @@ package org.sculptor.maven.plugin;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 /**
  * {@link AbstractLogOutputStream} which scans the lines before writing to the
@@ -45,8 +44,8 @@ public class ScanningOutputStream extends AbstractLogOutputStream {
 	protected final PrintStream out;
 	private boolean isVerbose;
 
-	private List<File> createdFiles = Lists.newArrayList();
-	private List<File> skippedFiles = Lists.newArrayList();
+	private List<File> createdFiles = new ArrayList<File>();
+	private List<File> skippedFiles = new ArrayList<File>();
 
 	/**
 	 * Creates a new output stream for stdout.

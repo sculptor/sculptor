@@ -34,8 +34,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-public class GeneratorMojoTest extends
-		AbstractGeneratorMojoTestCase<GeneratorMojo> {
+public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMojo> {
 
 	private static final String ONE_SHOT_GENERATED_FILE = "src/main/java/com/acme/test/domain/Foo.java";
 	private static final String GENERATED_FILE = "src/generated/java/com/acme/test/domain/Bar.java";
@@ -111,7 +110,7 @@ public class GeneratorMojoTest extends
 
 	@SuppressWarnings("unchecked")
 	public void testExecuteSkip() throws Exception {
-		GeneratorMojo mojo = spy(createMojo(createProject("test1")));
+		GeneratorMojo mojo = createMojo(createProject("test1"));
 		doThrow(AssertionFailedError.class).when(mojo).executeGenerator(
 				anySet());
 		setVariableValueToObject(mojo, "skip", true);
@@ -119,10 +118,8 @@ public class GeneratorMojoTest extends
 		mojo.execute();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testExecuteForce() throws Exception {
-		GeneratorMojo mojo = spy(createMojo(createProject("test2")));
-		doReturn(null).when(mojo).executeGenerator(anySet());
+		GeneratorMojo mojo = createMojo(createProject("test2"));
 
 		setVariableValueToObject(mojo, "force", true);
 		try {
@@ -133,10 +130,8 @@ public class GeneratorMojoTest extends
 		fail();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testExecuteWithClean() throws Exception {
-		GeneratorMojo mojo = spy(createMojo(createProject("test2")));
-		doReturn(null).when(mojo).executeGenerator(anySet());
+		GeneratorMojo mojo = createMojo(createProject("test2"));
 		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
 		mojo.getModelFile().setLastModified(System.currentTimeMillis() + 2000);
 
@@ -153,10 +148,8 @@ public class GeneratorMojoTest extends
 		fail();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testExecuteWithoutClean() throws Exception {
-		GeneratorMojo mojo = spy(createMojo(createProject("test2")));
-		doReturn(null).when(mojo).executeGenerator(anySet());
+		GeneratorMojo mojo = createMojo(createProject("test2"));
 		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
 		mojo.getModelFile().setLastModified(System.currentTimeMillis() + 2000);
 
@@ -173,25 +166,18 @@ public class GeneratorMojoTest extends
 		fail();
 	}
 
-	public void testExecute() throws Exception {
-		GeneratorMojo mojo = createMojo(createProject("test1"));
-		mojo.execute();
-		assertEquals(23, mojo.getGeneratedFiles().size());
-
-		Properties statusFileProps = new Properties();
-		statusFileProps.load(new FileReader(mojo.getStatusFile()));
-		assertEquals(mojo.getGeneratedFiles().size(), statusFileProps.size());
-	}
-
 	/**
 	 * Returns Mojo instance initialized with a {@link MavenProject} created
 	 * from the test projects in <code>"src/test/projects/"</code> by given
 	 * project name.
 	 */
+	@SuppressWarnings("unchecked")
 	protected GeneratorMojo createMojo(MavenProject project) throws Exception {
 
-		// Create spied mojo
-		GeneratorMojo mojo = super.createMojo(project, "generate");
+		// Create mojo
+		GeneratorMojo mojo = spy(super.createMojo(project, "generate"));
+		doReturn(null).when(mojo).executeGenerator(anySet());
+
 
 		// Set default values on mojo
 		setVariableValueToObject(mojo, "model", "src/main/resources/model.btdesign");

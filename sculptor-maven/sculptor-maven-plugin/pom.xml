@@ -29,6 +29,7 @@
         <maven-version>3.0</maven-version>
         <maven-api-version>3.0.3</maven-api-version>
 	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -56,10 +57,23 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
-					<!-- Needed for ContextClassLoaderAwareRuntimeResourceSetInitializer -->
+					<!-- ContextClassLoaderAwareRuntimeResourceSetInitializer 
+						needs access to the thread context classloader -->
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
