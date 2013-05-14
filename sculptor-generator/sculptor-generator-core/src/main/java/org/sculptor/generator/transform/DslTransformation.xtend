@@ -238,7 +238,7 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createDomainObjectOperation transform(DslDomainObjectOperation operation) {
-		setDomainObject((operation.eContainer as DslDomainObject).transformSimpleDomainObject)
+		setDomainObject((operation.eContainer as DslSimpleDomainObject).transformSimpleDomainObject)
 		setDoc(operation.doc)
 		setName(operation.name)
 		setAbstract(operation.^abstract)

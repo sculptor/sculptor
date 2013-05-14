@@ -6,7 +6,7 @@ ApplicationPart PersonPart {
           findByCondition => PersonRepository.findByCondition;
         }
 
-        Entity Person {
+        Entity Person with Shop {
           gap
           scaffold
           Date birthDate past
@@ -38,6 +38,11 @@ ApplicationPart PersonPart {
 			String city nullable;
 			String zip nullable;
 			String state nullable;
+		}
+
+		Trait Shop {
+			String itemNo;
+			String webUrl;
 		}
 
         BasicType Ssn {

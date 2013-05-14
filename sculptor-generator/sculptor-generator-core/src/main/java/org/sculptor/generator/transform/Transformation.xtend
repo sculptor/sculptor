@@ -81,13 +81,13 @@ class Transformation {
 	}
 
 	def void mixin(DomainObject domainObject) {
-		domainObject.traits.reverse.forEach[mixin(domainObject)]
+		domainObject.traits.reverse.forEach[mixin(it, domainObject)]
 	}
 
 	def dispatch void mixin(Trait trait, DomainObject domainObject) {
-		trait.attributes.forEach[mixin(domainObject)]
-		trait.references.forEach[mixin(domainObject)]
-		trait.operations.forEach[mixin(domainObject)]
+		trait.attributes.forEach[mixin(it, domainObject)]
+		trait.references.forEach[mixin(it, domainObject)]
+		trait.operations.forEach[mixin(it, domainObject)]
 	}
 
 	def dispatch void mixin(Attribute att, DomainObject domainObject) {
