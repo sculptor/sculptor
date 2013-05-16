@@ -17,7 +17,7 @@
 	-->
 
 	<artifactId>sculptor-shipping</artifactId>
-	<name>Business tier project for sculptor-shipping</name>
+	<name>MongoDB example: Business tier project for sculptor-shipping</name>
 
 	<!--
 		Remove properties element when using multi module, they are defined in
@@ -274,8 +274,6 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<!-- TODO: Re-enable once tests fixed -->
-          			<skipTests>true</skipTests>
 					<forkMode>once</forkMode>
 					<argLine>-Xms32m -Xmx1024m</argLine>
 				</configuration>
@@ -568,17 +566,18 @@
 			<artifactId>spring-integration-core</artifactId>
 			<version>${spring-integration.version}</version>
 		</dependency>
-
+	
 		<dependency>
-			<groupId>aspectj</groupId>
+			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.5.3</version>
+			<version>1.7.2</version>
 		</dependency>
 		<dependency>
-			<groupId>aspectj</groupId>
+			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.5.3</version>
+			<version>1.7.2</version>
 		</dependency>
+	
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
