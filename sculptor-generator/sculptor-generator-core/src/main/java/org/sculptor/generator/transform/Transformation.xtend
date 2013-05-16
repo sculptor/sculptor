@@ -674,7 +674,7 @@ class Transformation {
 		it.setName("findByCondition")
 		it.setVisibility("protected")
 		it.setRepository(repository)
-		it.parameters.add(createParameter(it, "condition", "java.util.List<org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria>"))
+		it.parameters.add(createParameter(it, "condition", "java.util.List<org.sculptor.framework.accessapi.ConditionalCriteria>"))
 		if (useSingleResult) {
 			it.setDomainObjectType(repository.aggregateRoot)
 			it.setCollectionType(null)
