@@ -36,6 +36,16 @@ class ChainOverrideAwareModule extends AbstractModule {
 
 	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverrideAwareModule))
 
+	//
+	// Properties support for reading 'cartridges' property
+	// TODO: Move this and loadProperties into separate class shared with PropertiesBase?
+	//
+	private static final String PROPERTIES_RESOURCE = System::getProperty("sculptor.generatorPropertiesLocation",
+		"generator/sculptor-generator.properties");
+
+	private static final String DEFAULT_PROPERTIES_RESOURCE = System::getProperty(
+			"sculptor.defaultGeneratorPropertiesLocation", "default-sculptor-generator.properties");
+
 	private val List<? extends Class<?>> startClasses
 
 	public new(Class<?> startClassOn) {
@@ -136,13 +146,10 @@ class ChainOverrideAwareModule extends AbstractModule {
 		"org.sculptor.generator.cartridge." + cartridgeName + "." + clazz.simpleName + "Extension"
 	}
 
-	//
-	// Properties support for reading 'cartridges' property
-	//
-	private static final String PROPERTIES_RESOURCE = System::getProperty("sculptor.generatorPropertiesLocation",
-		"generator/sculptor-generator.properties");
-
-	def loadProperties(String resource) {
+	/**
+	 * Load properties from resource into properties
+	 */
+	def protected void loadProperties(Properties properties, String resource) {
 		var ClassLoader classLoader = Thread::currentThread().getContextClassLoader();
 		if (classLoader == null) {
 			classLoader = this.getClass.getClassLoader();
@@ -152,21 +159,30 @@ class ChainOverrideAwareModule extends AbstractModule {
 			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
 				"");
 		}
-		val properties = new Properties
 		try {
 			properties.load(resourceInputStream);
 		} catch (IOException e) {
 			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "");
 		}
 
-		properties
 	}
 
 	private var Properties props
 
 	def getCartridgeNames() {
 		if (props == null) {
-			props = loadProperties(PROPERTIES_RESOURCE)
+			
+			val defaultProperties = new Properties();
+			loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE);
+	
+			props = new Properties(defaultProperties);
+			try {
+				loadProperties(props, PROPERTIES_RESOURCE);
+			} catch (MissingResourceException e) {
+				// ignore, it is not mandatory
+			}
+	
+
 			val cartString = props.getProperty("cartridges")
 			if (cartString != null && cartString.length > 0) {
 				cartString.split("[,; ]")
