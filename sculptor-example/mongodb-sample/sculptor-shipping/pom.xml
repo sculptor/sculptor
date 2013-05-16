@@ -17,8 +17,8 @@
 	-->
 
 	<artifactId>sculptor-shipping</artifactId>
-	<name>MongoDB example: Business tier project for sculptor-shipping</name>
-
+	<name>Sculptor :: Example :: MongoDB :: Shipping</name>
+	<description>MongoDB example: Business tier project for sculptor-shipping</description>
 	<!--
 		Remove properties element when using multi module, they are defined in
 		parent pom.xml
