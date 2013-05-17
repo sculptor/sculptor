@@ -22,17 +22,17 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.PubSubTmpl
-import org.sculptor.generator.template.mongodb.MongoDbServiceTestTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
+import org.sculptor.generator.chain.ChainOverridable
 
+// Re-enable once problem with ServiceTmpl constructor and injection is fixed: @ChainOverridable
 class ServiceTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl
-	@Inject private var MongoDbServiceTestTmpl mongoDbServiceTestTmpl
 	@Inject private var PubSubTmpl pubSubTmpl
 	@Inject private var ServiceEjbTestTmpl serviceEjbTestTmpl
 	@Inject private var ServiceTestTmpl serviceTestTmpl
@@ -66,8 +66,7 @@ def String service(Service it) {
 			«serviceEjbTestTmpl.serviceJUnitSubclassOpenEjb(it)»
 		«ELSEIF applicationServer() == "appengine"»
 			«serviceTestTmpl.serviceJUnitSubclassAppEngine(it)»
-		«ELSEIF mongoDb()»
-			«mongoDbServiceTestTmpl.serviceJUnitSubclassMongoDb(it)»
+		«ELSEIF mongoDb() /** TODO: Leave for now to prevent else clause from getting triggered */»
 		«ELSE»
 			«serviceTestTmpl.serviceJUnitSubclassWithAnnotations(it)»
 		«ENDIF»

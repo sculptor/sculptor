@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.template.mongodb
+package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
 import org.sculptor.generator.ext.DbHelper

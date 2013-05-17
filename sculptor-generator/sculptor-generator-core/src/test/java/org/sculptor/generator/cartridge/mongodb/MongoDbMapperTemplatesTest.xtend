@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.generator.GeneratorModelTestFixtures
-import org.sculptor.generator.template.mongodb.MongoDbMapperTmpl
+import org.sculptor.generator.cartridge.mongodb.MongoDbMapperTmpl
 import sculptormetamodel.Application
 import sculptormetamodel.Module
 
