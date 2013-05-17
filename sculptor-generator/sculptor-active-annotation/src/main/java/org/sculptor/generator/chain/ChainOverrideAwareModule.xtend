@@ -181,14 +181,13 @@ class ChainOverrideAwareModule extends AbstractModule {
 			} catch (MissingResourceException e) {
 				// ignore, it is not mandatory
 			}
-	
+		}
 
-			val cartString = props.getProperty("cartridges")
-			if (cartString != null && cartString.length > 0) {
-				cartString.split("[,; ]")
-			} else {
-				<String>newArrayOfSize(0)
-			}
+		val cartString = props.getProperty("cartridges")
+		if (cartString != null && cartString.length > 0) {
+			cartString.split("[,; ]")
+		} else {
+			<String>newArrayOfSize(0)
 		}
 	}
 
