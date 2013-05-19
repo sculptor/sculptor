@@ -53,7 +53,7 @@ def String domainObjectSubclass(Trait it) {
 		«domainObjectAnnotationTmpl.domainObjectSubclassAnnotations(it)»
 		public «it.getAbstractLitteral()»class «name»Trait<S extends  «getDomainPackage()».«name»> extends «name»TraitBase<S> {
 		«domainObjectTmpl.serialVersionUID(it)»
-			«it.operations.filter(e | !e.^abstract).map[traitImplMethod(it)]»
+			«it.operations.filter(e | !e.^abstract).map[traitImplMethod(it)].join»
 		}
 	''')
 }
@@ -71,8 +71,8 @@ def String domainObjectBase(Trait it) {
 			«domainObjectTmpl.serialVersionUID(it)»
 		
 			«traitBaseSelfMethod(it)»
-			«operations.filter(op | !op.isPublicVisibility()).map[o | traitBaseMethod(o)]»
-			«operations.filter(e | e.^abstract && e.isPublicVisibility()).map[o | traitBaseDelegateToSelfMethod(o)]»
+			«operations.filter(op | !op.isPublicVisibility()).map[o | traitBaseMethod(o)].join»
+			«operations.filter(e | e.^abstract && e.isPublicVisibility()).map[o | traitBaseDelegateToSelfMethod(o)].join»
 			«traitBaseHook(it)»
 		}
 	''')
@@ -84,7 +84,7 @@ def String traitInterface(Trait it) {
 		package «getDomainPackage()»;
 
 		public interface «name» {
-			«operations.filter(op | op.isPublicVisibility()).map[o | traitInterfaceMethod(o)]»
+			«operations.filter(op | op.isPublicVisibility()).map[o | traitInterfaceMethod(o)].join»
 			«traitInterfaceHook(it)»
 		}
 	''')

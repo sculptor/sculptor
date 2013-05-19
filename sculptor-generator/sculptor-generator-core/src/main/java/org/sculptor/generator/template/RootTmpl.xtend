@@ -31,7 +31,6 @@ import org.sculptor.generator.template.doc.UMLGraphTmpl
 import org.sculptor.generator.template.domain.DomainObjectTmpl
 import org.sculptor.generator.template.jpa.HibernateTmpl
 import org.sculptor.generator.template.jpa.JPATmpl
-import org.sculptor.generator.template.mongodb.MongoDbMapperTmpl
 import org.sculptor.generator.template.repository.AccessObjectTmpl
 import org.sculptor.generator.template.repository.RepositoryTmpl
 import org.sculptor.generator.template.rest.ResourceTmpl
@@ -40,7 +39,6 @@ import org.sculptor.generator.template.service.ServiceEjbTestTmpl
 import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
 import sculptormetamodel.Application
-import sculptormetamodel.BasicType
 import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
@@ -57,7 +55,6 @@ class RootTmpl {
 	@Inject private var JPATmpl jPATmpl
 	@Inject private var LogConfigTmpl logConfigTmpl
 	@Inject private var ModelDocTmpl modelDocTmpl
-	@Inject private var MongoDbMapperTmpl mongoDbMapperTmpl
 	@Inject private var RepositoryTmpl repositoryTmpl
 	@Inject private var ResourceTmpl resourceTmpl
 	@Inject private var RestWebTmpl restWebTmpl
@@ -81,9 +78,6 @@ class RootTmpl {
 			«IF isRepositoryToBeGenerated()»
 				«it.getAllRepositories(false).map[operations].flatten.filter[op | op.delegateToAccessObject && !op.isGenericAccessObject()].map[accessObjectTmpl.command(it)]»
 				«it.getAllRepositories(false).forEach[repositoryTmpl.repository(it)]»
-				«IF mongoDb()»
-					«it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[mongoDbMapperTmpl.mongoDbMapper(it)]»
-				«ENDIF»
 			«ENDIF»
 			«IF isServiceToBeGenerated()»
 				«it.getAllServices(false).forEach[serviceTmpl.service(it)]»

@@ -5,7 +5,7 @@
     <import resource="classpath:/moreBeans.xml"/>
     --> 
     
-    <bean id="simpleEventBusImpl" class="org.fornax.cartridges.sculptor.framework.event.SimpleEventBusImpl">
+    <bean id="simpleEventBusImpl" class="org.sculptor.framework.event.SimpleEventBusImpl">
 		<property name="routes">
 			<map>
 				<entry key="shippingChannel" value="shippingStatistics" />

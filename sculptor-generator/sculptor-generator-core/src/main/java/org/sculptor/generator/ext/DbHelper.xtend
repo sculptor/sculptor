@@ -239,7 +239,7 @@ public class DbHelper {
 		val values = if (ref.getCascade() == null)
 			null
 		else
-			ref.getCascade().split(',').map[e | mapHibernateCascadeType(e)]
+			ref.getCascade().split(',').map[e | mapHibernateCascadeType(e)].filterNull.toList
 		toAnnotationFormat(values)
 	}
 

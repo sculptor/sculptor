@@ -17,8 +17,8 @@
 	-->
 
 	<artifactId>sculptor-shipping</artifactId>
-	<name>Business tier project for sculptor-shipping</name>
-
+	<name>Sculptor :: Example :: MongoDB :: Shipping</name>
+	<description>MongoDB example: Business tier project for sculptor-shipping</description>
 	<!--
 		Remove properties element when using multi module, they are defined in
 		parent pom.xml
@@ -39,18 +39,6 @@
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		
-<!-- 		<sourceDirectory>src/main/resources</sourceDirectory>
-		<resources>
-			<resource><directory>src/main/resources</directory></resource>
-			<resource><directory>src/generated/resources</directory></resource>
-			<resource><directory>target/classes</directory></resource>
-		</resources>
-		<testResources>
-			<testResource><directory>src/test/resources</directory></testResource>
-			<testResource><directory>src/test/generated/resources</directory></testResource>
-		</testResources>
- -->
- 
  		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -145,24 +133,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				
-<!-- 				<executions>
-					<execution>
-						<id>initialize</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>compile</id>
-						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
- -->
- 
  			</plugin>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -274,8 +244,6 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<!-- TODO: Re-enable once tests fixed -->
-          			<skipTests>true</skipTests>
 					<forkMode>once</forkMode>
 					<argLine>-Xms32m -Xmx1024m</argLine>
 				</configuration>
@@ -321,195 +289,8 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-<!-- 
 
-	<build>
-		<finalName>sculptor-shipping</finalName>
-		<plugins>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>src/generated</directory>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-								<include>**/*.dot</include>
-							</includes>
-							<excludes>
-								<exclude>**/.svn/*</exclude>
-							</excludes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-						<fileset>
-							<directory>src/test/generated</directory>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-							</includes>
-							<excludes>
-								<exclude>**/.svn/*</exclude>
-							</excludes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.8</version>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<useProjectReferences>false</useProjectReferences>
-					<classpathContainers>
-	   					<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-	   				</classpathContainers>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-oaw-m2-plugin</artifactId>
-				<version>${fornax-oaw-m2.version}</version>
-				<configuration>
-					<workflowEngine>mwe2</workflowEngine>
-					<workflowDescriptor>file://${basedir}/src/main/resources/generator/Workflow.mwe2</workflowDescriptor>
-					<checkFilesets>
-						<checkFileset>
-							<directory>${basedir}</directory>
-							<includes><include>src/main/resources/*.btdesign</include></includes>
-						</checkFileset>
-					</checkFilesets>
-					<properties>
-						<modelFile>src/main/resources/model.btdesign</modelFile>
-						<appProject>${project.artifactId}</appProject>
-					</properties>
-					<jvmSettings>
-						<copySysProperties>true</copySysProperties>
-						<jvmArgs>
-							<jvmArg>-client</jvmArg>
-							<jvmArg>-Xms256m</jvmArg>
-							<jvmArg>-Xmx512m</jvmArg>
-						</jvmArgs>
-					</jvmSettings>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run-workflow</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-checksum-m2-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<id>clean</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>before generate</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<action>before-generate</action>
-						</configuration>
-					</execution>
-					<execution>
-						<id>after generate</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<action>after-generate</action>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-graphviz-m2-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<forkMode>once</forkMode>
-					<argLine>-Xms32m -Xmx1024m</argLine>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<executions>
-					<execution>
-						<id>only-event</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<classifier>event</classifier>
-							<includes>
-								<include>**/Event.class</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-
-	</build>
- -->
 	<dependencies>
-
-<!-- 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
- -->		<!--
-			Remove dependency to javax.transaction when running in a transaction
-			supporting container (jboss etc)
-		-->
-<!-- 		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>jta</artifactId>
-			<version>1.0.1B</version>
-		</dependency>
- -->
 
  		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -568,17 +349,18 @@
 			<artifactId>spring-integration-core</artifactId>
 			<version>${spring-integration.version}</version>
 		</dependency>
-
+	
 		<dependency>
-			<groupId>aspectj</groupId>
+			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.5.3</version>
+			<version>1.7.2</version>
 		</dependency>
 		<dependency>
-			<groupId>aspectj</groupId>
+			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.5.3</version>
+			<version>1.7.2</version>
 		</dependency>
+	
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
@@ -614,7 +396,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.6</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -724,64 +505,6 @@
 		<!-- Camel END -->
 
 	</dependencies>
-<!-- 	<repositories>
-		<repository>
-			<id>fornax-platform.org</id>
-			<name>Fornax Repository</name>
-			<url>http://fornax-platform.org/nexus/content/repositories/public</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
-		</repository>
-		<repository>
-			<id>jboss.org</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.release</id>
-			<name>SpringSource Enterprise Bundle Repository - SpringSource Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>fornax-platform.org</id>
-			<name>Fornax Repository</name>
-			<url>
-				http://fornax-platform.org/nexus/content/repositories/public
-			</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
- -->
 
 	<repositories>
 		<repository>
@@ -818,10 +541,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
-
-
-
-
 
 </project>
