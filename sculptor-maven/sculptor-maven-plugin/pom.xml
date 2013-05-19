@@ -108,9 +108,9 @@
 									<excludeDefaultDirectories>true</excludeDefaultDirectories>
 									<filesets>
 										<fileset>
-											<directory>${project.build.directory}</directory>
+											<directory>${maven-repository}/org/sculptor/maven/${project.artifactId}</directory>
 											<includes>
-												<include>repository</include>
+												<include>**/*</include>
 											</includes>
 										</fileset>
 									</filesets>
@@ -122,20 +122,7 @@
 						<artifactId>maven-deploy-plugin</artifactId>
 						<configuration>
 							<skip>false</skip>
-							<altDeploymentRepository>internal-repo::default::file://${project.build.directory}/repository</altDeploymentRepository>
-						</configuration>
-					</plugin>
-					<!-- Deploying the p2 repository to a GitHub repository branch as described in
-						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
-					<plugin>
-						<groupId>com.github.github</groupId>
-						<artifactId>site-maven-plugin</artifactId>
-						<configuration>
-							<message>Sculptor Maven plugin ${project.version}</message>
-							<outputDirectory>${project.build.directory}/repository</outputDirectory>
-							<branch>refs/heads/maven</branch>
-							<repositoryName>snapshot-repository</repositoryName>
-							<dryRun>false</dryRun>
+							<altDeploymentRepository>internal-repo::default::file://${maven-repository}</altDeploymentRepository>
 						</configuration>
 					</plugin>
 				</plugins>

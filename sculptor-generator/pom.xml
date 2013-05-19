@@ -45,7 +45,6 @@
 		<module>sculptor-active-annotation-test</module>
 		<module>sculptor-generator-dependencies</module>
 		<module>sculptor-generator-core</module>
-		<module>sculptor-generator-library</module>
 	</modules>
 
 	<build>

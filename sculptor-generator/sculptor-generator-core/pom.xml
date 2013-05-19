@@ -109,12 +109,12 @@
 			JAR!!! -->
 		<dependency>
 			<groupId>org.sculptor.generator</groupId>
-			<artifactId>sculptor-active-annotation</artifactId>
+			<artifactId>eclipse-library</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>org.sculptor.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
+			<artifactId>sculptor-active-annotation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -126,12 +126,6 @@
 			<groupId>org.sculptor.eclipse</groupId>
 			<artifactId>org.sculptor.dsl</artifactId>
 			<version>${sculptor-dsl-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptor.generator</groupId>
-			<artifactId>sculptor-generator-dependencies</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
 		</dependency>
 		
 		<dependency>

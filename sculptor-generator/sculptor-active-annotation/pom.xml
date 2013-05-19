@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.sculptor.generator</groupId>
 	<artifactId>sculptor-active-annotation</artifactId>
-	<name>Sculptor :: Generator :: Xtend2 active annotation</name>
+	<name>Sculptor :: Generator :: Active annotation</name>
 
 	<build>
 		<plugins>

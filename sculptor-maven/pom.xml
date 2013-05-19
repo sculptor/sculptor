@@ -18,10 +18,22 @@
 		<mojo.java.target>${java-version}</mojo.java.target>
 
 		<sculptor-generator-version>3.0.0-SNAPSHOT</sculptor-generator-version>
+
+		<maven-repository>${basedir}/../maven-repository/target/repository</maven-repository>
 	</properties>
 
 	<modules>
+		<module>sculptor-generator-library</module>
 		<module>sculptor-maven-plugin</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<modules>
+				<module>maven-repository</module>
+			</modules>
+		</profile>
+	</profiles>
 
 </project>

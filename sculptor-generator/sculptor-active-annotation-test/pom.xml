@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.sculptor.generator</groupId>
 	<artifactId>sculptor-active-annotation-test</artifactId>
-	<name>Sculptor :: Generator :: Xtend2 active annotation test</name>
+	<name>Sculptor :: Generator :: Active annotation test</name>
 
 	<build>
 		<plugins>
