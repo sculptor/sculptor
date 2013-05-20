@@ -11,6 +11,10 @@
 	<artifactId>sculptor-generator-library</artifactId>
 	<name>Sculptor :: Maven :: Generator Library</name>
 
+	<properties>
+		<sculptor-generator-version>3.0.0-SNAPSHOT</sculptor-generator-version>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>

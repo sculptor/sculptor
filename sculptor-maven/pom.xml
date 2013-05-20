@@ -14,11 +14,6 @@
 	<name>Sculptor :: Maven</name>
 
 	<properties>
-        <maven-api-version>3.0.3</maven-api-version>
-		<mojo.java.target>${java-version}</mojo.java.target>
-
-		<sculptor-generator-version>3.0.0-SNAPSHOT</sculptor-generator-version>
-
 		<maven-repository>${basedir}/../maven-repository/target/repository</maven-repository>
 	</properties>
 

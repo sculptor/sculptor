@@ -13,6 +13,11 @@
 	<name>Sculptor :: Maven :: Plugin</name>
 	<description>Maven plugin for the Sculptor code generator</description>
 
+	<properties>
+        <maven-api-version>3.0.3</maven-api-version>
+		<mojo.java.target>${java-version}</mojo.java.target>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -209,9 +214,9 @@
 
 		<!-- Sculptor -->
 		<dependency>
-			<groupId>org.sculptor.generator</groupId>
+			<groupId>org.sculptor.maven</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
-			<version>${sculptor-generator-version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Testing -->
