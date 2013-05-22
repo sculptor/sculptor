@@ -7,7 +7,6 @@
 		<artifactId>sculptor-maven</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
-	<groupId>org.sculptor.maven</groupId>
 	<artifactId>sculptor-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<name>Sculptor :: Maven :: Plugin</name>
@@ -16,6 +15,9 @@
 	<properties>
         <maven-api-version>3.0.3</maven-api-version>
 		<mojo.java.target>${java-version}</mojo.java.target>
+
+		<!-- Directory the local Maven plugin repository is created -->
+		<maven-repository>${basedir}/../maven-repository/target/repository</maven-repository>
 	</properties>
 
 	<build>
@@ -90,50 +92,50 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
-	</build>
 
-	<profiles>
-		<profile>
-			<id>deploy</id>
-			<build>
-				<plugins>
-					<!-- We have to clean the repository directory before deploying a new snapshot version -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-clean-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>clean-repository</id>
-								<phase>install</phase>
-								<goals>
-									<goal>clean</goal>
-								</goals>
-								<configuration>
-									<excludeDefaultDirectories>true</excludeDefaultDirectories>
-									<filesets>
-										<fileset>
-											<directory>${maven-repository}/org/sculptor/maven/${project.artifactId}</directory>
-											<includes>
-												<include>**/*</include>
-											</includes>
-										</fileset>
-									</filesets>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<artifactId>maven-deploy-plugin</artifactId>
+			<!-- We have to clean the repository directory before deploying a new snapshot version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>clean-repository</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<excludeDefaultDirectories>true</excludeDefaultDirectories>
+							<filesets>
+								<fileset>
+									<directory>${maven-repository}/org/sculptor/${project.artifactId}</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deploy-to-repository</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
 						<configuration>
 							<skip>false</skip>
 							<altDeploymentRepository>internal-repo::default::file://${maven-repository}</altDeploymentRepository>
 						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 	<reporting>
 		<plugins>
@@ -214,7 +216,7 @@
 
 		<!-- Sculptor -->
 		<dependency>
-			<groupId>org.sculptor.maven</groupId>
+			<groupId>org.sculptor</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>

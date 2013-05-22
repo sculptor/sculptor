@@ -36,6 +36,7 @@
 			<id>maven</id>
 			<modules>
 				<module>../../sculptor-generator</module>
+				<module>../../sculptor-framework</module>
 				<module>../../sculptor-maven</module>
 			</modules>
 		</profile>

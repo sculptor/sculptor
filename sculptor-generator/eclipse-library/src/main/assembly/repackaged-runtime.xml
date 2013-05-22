@@ -125,6 +125,7 @@
 				<include>org/eclipse/jdt/internal/compiler/*</include>
 				<include>org/eclipse/jdt/internal/compiler/ast/*</include>
 				<include>org/eclipse/jdt/internal/compiler/batch/*</include>
+				<include>org/eclipse/jdt/internal/compiler/codegen/*</include>
 				<include>org/eclipse/jdt/internal/compiler/env/*</include>
 				<include>org/eclipse/jdt/internal/compiler/flow/*</include>
 				<include>org/eclipse/jdt/internal/compiler/impl/*</include>

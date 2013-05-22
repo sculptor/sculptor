@@ -14,7 +14,7 @@
 
 	<build>
 		<plugins>
-			<!-- The repository directory has to be cleaned by the library and plugin projects -->
+			<!-- The repository directory has to be cleaned by the other projects -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -22,30 +22,20 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<!-- Deploying the p2 repository to a GitHub repository branch as described in
+				http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<configuration>
+					<message>Sculptor Maven support ${project.version}</message>
+					<outputDirectory>${project.build.directory}/repository</outputDirectory>
+					<branch>refs/heads/maven</branch>
+					<repositoryName>snapshot-repository</repositoryName>
+					<dryRun>false</dryRun>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>deploy</id>
-			<build>
-				<plugins>
-					<!-- Deploying the p2 repository to a GitHub repository branch as described in
-						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
-					<plugin>
-						<groupId>com.github.github</groupId>
-						<artifactId>site-maven-plugin</artifactId>
-						<configuration>
-							<message>Sculptor Maven support ${project.version}</message>
-							<outputDirectory>${project.build.directory}/repository</outputDirectory>
-							<branch>refs/heads/maven</branch>
-							<repositoryName>snapshot-repository</repositoryName>
-							<dryRun>false</dryRun>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
