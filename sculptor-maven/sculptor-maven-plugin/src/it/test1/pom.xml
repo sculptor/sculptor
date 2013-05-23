@@ -8,7 +8,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sculptor.maven</groupId>
+				<groupId>org.sculptor</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
 				<version>@project.version@</version>
 				<configuration>
