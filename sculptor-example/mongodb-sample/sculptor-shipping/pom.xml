@@ -405,7 +405,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptor.generator</groupId>
+			<groupId>org.sculptor</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${sculptor.version}</version>
 			<scope>provided</scope>
