@@ -23,7 +23,6 @@
 				<module>../../sculptor-generator</module>
 				<module>../../sculptor-maven</module>
 				<module>../../sculptor-framework</module>
-				<module>../../sculptor-example</module>
 			</modules>
 		</profile>
 		<profile>
@@ -38,6 +37,12 @@
 				<module>../../sculptor-generator</module>
 				<module>../../sculptor-framework</module>
 				<module>../../sculptor-maven</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>example</id>
+			<modules>
+				<module>../../sculptor-example</module>
 			</modules>
 		</profile>
 		<profile>

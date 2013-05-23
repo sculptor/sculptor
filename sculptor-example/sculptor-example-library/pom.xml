@@ -23,11 +23,26 @@
 
 	<repositories>
 		<repository>
-			<id>fornax-platform.org</id>
-			<name>Fornax Repository</name>
-			<url>http://fornax-platform.org/nexus/content/repositories/public</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
+			<id>sculptor.org</id>
+			<name>Sculptor Repository</name>
+			<url>https://raw.github.com/sculptor/repository/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>sculptor.org-snapshots</id>
+			<name>Sculptor Repository Snapshots</name>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>jboss.org</id>
@@ -43,64 +58,39 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>fornax-platform.org</id>
-			<name>Fornax Repository</name>
-			<url>
-				http://fornax-platform.org/nexus/content/repositories/public
-			</url>
+			<id>xtend</id>
+			<url>http://build.eclipse.org/common/xtend/maven/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sculptor.org</id>
+			<name>Sculptor Repository</name>
+			<url>https://raw.github.com/sculptor/repository/maven</url>
 			<releases>
 				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sculptor.org-snapshots</id>
+			<name>Sculptor Repository Snapshots</name>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
+			<releases>
+				<enabled>false</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
 	<build>
-		<finalName>${project.artifactId}</finalName>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<resources>
-			<resource><directory>src/main/resources</directory></resource>
-			<resource><directory>src/generated/resources</directory></resource>
-			<!-- <resource><directory>target/classes</directory></resource> -->
-		</resources>
-		<testResources>
-			<testResource><directory>src/test/resources</directory></testResource>
-			<testResource><directory>src/test/generated/resources</directory></testResource>
-		</testResources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
-						<fileset>
-							<directory>src/generated</directory>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-								<include>**/*.dot</include>
-								<include>**/*.html</include>
-								<include>**/*.png</include>
-								<include>**/*.css</include>
-							</includes>
-							<excludes>
-								<exclude>**/.svn/*</exclude>
-							</excludes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-						<fileset>
-							<directory>src/test/generated</directory>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-							</includes>
-							<excludes>
-								<exclude>**/.svn/*</exclude>
-							</excludes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
 						<fileset>
 							<directory>src/main/xtend-gen</directory>
 							<excludes>
@@ -111,44 +101,11 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/main/java</source>
-								<source>src/main/resources</source>
-								<source>src/generated/java</source>
-								<source>src/main/xtend-gen</source>
-							</sources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>add-test-source</id>
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/test/generated/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>initialize</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
@@ -159,33 +116,32 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.sculptor</groupId>
+				<artifactId>sculptor-maven-plugin</artifactId>
+				<version>${sculptor.version}</version>
+				<configuration>
+					<verbose>true</verbose>
+				</configuration>
 				<executions>
 					<execution>
-						<id>initialize</id>
-						<phase>initialize</phase>
+						<id>cleanup</id>
 						<goals>
-							<goal>compile</goal>
+							<goal>clean</goal>
 						</goals>
 					</execution>
 					<execution>
-						<id>compile</id>
+						<id>code-generation</id>
 						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
+							<goal>generate</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<downloadSources>false</downloadSources>
-					<classpathContainers>
-						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-					</classpathContainers>
-				</configuration>
+					<execution>
+						<id>image-generation</id>
+						<goals>
+							<goal>generate-images</goal>
+						</goals>
+					</execution>
+ 				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -210,85 +166,13 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-oaw-m2-plugin</artifactId>
-					<configuration>
-						<workflowEngine>mwe2</workflowEngine>
-						<workflowDescriptor>file://${basedir}/src/main/resources/generator/Workflow.mwe2</workflowDescriptor>
-						<checkFilesets>
-							<checkFileset>
-								<directory>${basedir}</directory>
-								<includes><include>src/main/resources/*.btdesign</include></includes>
-							</checkFileset>
-						</checkFilesets>
-						<properties>
-							<appProject>${project.artifactId}</appProject>
-						</properties>
-						<jvmSettings>
-							<copySysProperties>true</copySysProperties>
-							<jvmArgs>
-								<jvmArg>-client</jvmArg>
-								<jvmArg>-Xms256m</jvmArg>
-								<jvmArg>-Xmx512m</jvmArg>
-								<jvmArg>-Dlogback.configurationFile=generator/logback-sculptor.xml</jvmArg>
-							</jvmArgs>
-						</jvmSettings>
-					</configuration>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run-workflow</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-checksum-m2-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<id>clean</id>
-						<phase>clean</phase>
-						<goals><goal>run</goal></goals>
-					</execution>
-					<execution>
-						<id>initialize</id>
-						<phase>initialize</phase>
-						<goals><goal>run</goal></goals>
-						<configuration>
-							<action>before-generate</action>
-						</configuration>
-					</execution>
-					<execution>
-						<id>after generate</id>
-						<phase>generate-sources</phase>
-						<goals><goal>run</goal></goals>
-						<configuration>
-							<action>after-generate</action>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-graphviz-m2-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals><goal>run</goal></goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>once</forkMode>
 					<argLine>-Xms32m -Xmx1024m</argLine>
 				</configuration>
 			</plugin>
+
 			<!-- Uncomment to generate database creation script (ddl) with hibernate3-maven-plugin
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -339,45 +223,6 @@
 			</plugin>
 		-->
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId> org.fornax.toolsupport</groupId>
-										<artifactId>fornax-checksum-m2-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals><goal>run</goal></goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.fornax.toolsupport</groupId>
-										<artifactId>fornax-graphviz-m2-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals><goal>run</goal></goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -397,68 +242,6 @@
 			<scope>provided</scope>
 		</dependency>
 		-->
-		<!-- 
-		<dependency>
-			<groupId>org.sculptor.eclipse</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.sculptor.eclipse</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<classifier>test</classifier>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptor.eclipse</groupId>
-			<artifactId>org.sculptor.dsl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptor.eclipse</groupId>
-			<artifactId>sculptor-metamodel</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr-runtime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
- -->
-
-
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -657,16 +440,17 @@
 			<!-- <scope>test</scope>  -->
 		</dependency>
 		<dependency>
-			<groupId>org.sculptor.generator</groupId>
+			<groupId>org.sculptor</groupId>
+			<artifactId>sculptor-framework-main</artifactId>
+			<classifier>without-ejb</classifier>
+			<version>${sculptor.version}</version>
+		</dependency>
+		<dependency>
+			<!-- Needed for Sculptor generator template overriding -->
+			<groupId>org.sculptor</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${sculptor.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptor</groupId>
-			<artifactId>sculptor-framework-main</artifactId>
-			<version>${sculptor.version}</version>
-			<classifier>without-ejb</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptor</groupId>
