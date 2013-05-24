@@ -223,6 +223,9 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 	protected CommandLine getDotCommandLine(Set<String> generatedFiles)
 			throws MojoExecutionException {
 		CommandLine cl = new CommandLine(command);
+		if (isVerbose() || getLog().isDebugEnabled()) {
+			cl.addArgument("-v");
+		}
 		cl.addArgument("-Tpng");
 		cl.addArgument("-O");
 		for (String generatedFile : generatedFiles) {
