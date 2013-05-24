@@ -62,6 +62,26 @@ public class GraphvizMojoTest extends
 
 	public void testDotCommandLine() throws Exception {
 		GraphvizMojo mojo = createMojo(createProject("test1"));
+		setVariableValueToObject(mojo, "verbose", false);
+
+		Set<String> changedDotFiles = new HashSet<String>();
+		changedDotFiles.add("file1.dot");
+		changedDotFiles.add("file2.dot");
+		changedDotFiles.add("file3.dot");
+
+		CommandLine commandline = mojo.getDotCommandLine(changedDotFiles);
+		assertNotNull(commandline);
+		String[] arguments = commandline.getArguments();
+		assertEquals(5, arguments.length);
+		assertEquals("-Tpng", arguments[0]);
+		assertEquals("-O", arguments[1]);
+		assertEquals("file1.dot", arguments[2]);
+		assertEquals("file2.dot", arguments[3]);
+		assertEquals("file3.dot", arguments[4]);
+	}
+
+	public void testVerboseDotCommandLine() throws Exception {
+		GraphvizMojo mojo = createMojo(createProject("test1"));
 		setVariableValueToObject(mojo, "verbose", true);
 
 		Set<String> changedDotFiles = new HashSet<String>();
@@ -73,7 +93,7 @@ public class GraphvizMojoTest extends
 		assertNotNull(commandline);
 		String[] arguments = commandline.getArguments();
 		assertEquals(6, arguments.length);
-		assertEquals("-q", arguments[0]);
+		assertEquals("-v", arguments[0]);
 		assertEquals("-Tpng", arguments[1]);
 		assertEquals("-O", arguments[2]);
 		assertEquals("file1.dot", arguments[3]);
