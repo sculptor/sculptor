@@ -77,6 +77,13 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	protected File outletResDir;
 
 	/**
+	 * Directory for Webapp artifacts. If an artifact with the same
+	 * name already exists, the generation of the artifact will be skipped.
+	 */
+	@Parameter(defaultValue="src/main/webapp", required=true)
+	protected File outletWebrootDir;
+
+	/**
 	 * Directory for source-code artifacts. If an artifact with the same name
 	 * already exists, the generation of the artifact will be skipped.
 	 */

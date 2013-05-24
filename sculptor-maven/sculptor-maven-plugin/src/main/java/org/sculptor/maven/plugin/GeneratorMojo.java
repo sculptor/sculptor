@@ -63,6 +63,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	protected static final String LOGBACK_NORMAL_CONFIGURATION_FILE_NAME = "logback-normal-sculptor-maven-plugin.xml";
 	protected static final String LOGBACK_VERBOSE_CONFIGURATION_FILE_NAME = "logback-verbose-sculptor-maven-plugin.xml";
 
+	protected static final String OUTPUT_SLOT_PATH_PREFIX = "outputSlot.path.";
+
 	/**
 	 * The current build session instance. This is used for toolchain manager
 	 * API calls.
@@ -429,7 +431,18 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		String logbackConfig = (isVerbose() ? LOGBACK_VERBOSE_CONFIGURATION_FILE_NAME
 				: LOGBACK_NORMAL_CONFIGURATION_FILE_NAME);
 		System.setProperty(LOGBACK_CONFIGURATION_FILE_PROPERTY, logbackConfig);
-		
+
+		// Set system properties with output slot paths
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC", outletSrcOnceDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES", outletResOnceDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC", outletSrcDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES", outletResDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_WEBROOT", outletWebrootDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC_TEST", outletSrcTestOnceDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES_TEST", outletResTestOnceDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
+
 		// Execute commandline and check return code
 		Exception exception = null;
 		try {
@@ -472,6 +485,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<File> toFileList(FileSet fileSet) {
 		File directory = new File(fileSet.getDirectory());
 		String includes = toCommaSeparatedString(fileSet.getIncludes());
