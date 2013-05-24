@@ -1,0 +1,52 @@
+ApplicationPart Person {
+ 
+    Module person {
+        Service PersonService {
+          findPersonByName => PersonRepository.findPersonByName;
+          PagedResult<@Person> findPaged(String name, PagingParameter pagingParameter);
+        }
+     
+        Entity Person {
+          gap
+          scaffold
+          Date birthDate
+          - @Gender sex !changeable
+          - @Ssn ssn key
+          - @PersonName name
+        
+          Repository PersonRepository {
+              List<@Person> findPersonByName(String name) => AccessObject;
+              save;
+              save(Collection<@Person> entities);
+              findByQuery;
+              findByExample;
+              findByKeys;
+          }
+        }
+        
+        BasicType Ssn {
+          String number key length="20"
+          - @Country country key
+        }
+    
+        BasicType PersonName {
+          String first
+          String last
+        }
+        
+        enum Gender {
+            FEMALE("F"), 
+            MALE("M")
+        }
+        
+        enum Country {
+        	SWEDEN,
+        	NORWAY,
+        	DENMARK
+        }
+    }
+  
+   
+}
+
+

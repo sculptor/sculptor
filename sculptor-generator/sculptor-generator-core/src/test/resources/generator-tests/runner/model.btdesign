@@ -1,4 +1,4 @@
-import "classpath:/model-person.btdesign"
+import "classpath:/generator-tests/runner/model-person.btdesign"
 
 Application Library {
     basePackage = org.sculptor.examples.library

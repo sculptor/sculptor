@@ -26,12 +26,12 @@ public class SculptorGeneratorRunnerTest {
 
 	@Test
 	public void testRun() {
-		assertTrue(SculptorGeneratorRunner.run("src/test/resources/model-test.btdesign"));
+		assertTrue(SculptorGeneratorRunner.run("src/test/resources/generator-tests/runner/model.btdesign"));
 	}
 
 	@Test
 	public void testRunInvalid() {
-		assertFalse(SculptorGeneratorRunner.run("src/test/resources/model-test-invalid.btdesign"));
+		assertFalse(SculptorGeneratorRunner.run("src/test/resources/generator-tests/runner/invalid-model.btdesign"));
 	}
 
 }

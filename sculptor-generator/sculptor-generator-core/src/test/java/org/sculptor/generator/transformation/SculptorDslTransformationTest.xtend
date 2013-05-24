@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator
+package org.sculptor.generator.transformation
 
 import com.google.inject.Guice
 import com.google.inject.Injector

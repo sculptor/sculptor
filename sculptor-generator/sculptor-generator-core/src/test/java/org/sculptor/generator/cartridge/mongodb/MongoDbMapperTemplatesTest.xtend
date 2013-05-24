@@ -1,3 +1,20 @@
+/*
+ * Copyright 2013 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.sculptor.generator.cartridge.mongodb
 
 import com.google.inject.Inject
@@ -28,7 +45,7 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 	
 	@Before
 	def void setupExtensions() {
-		generatorModelTestFixtures.setupModel("library-mongodb.btdesign", "library-person.btdesign")
+		generatorModelTestFixtures.setupModel("generator-tests/mongodb/model.btdesign", "generator-tests/mongodb/model-person.btdesign")
 		
 		mongoDbMapperTmpl = generatorModelTestFixtures.getProvidedObject(typeof(MongoDbMapperTmpl))
 	}
@@ -59,8 +76,8 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 		
         code.assertContainsConsecutiveFragments(#{
             "java.util.List<com.mongodb.DBObject> engagementsData = new java.util.ArrayList<com.mongodb.DBObject>();",
-            "for (org.fornax.cartridges.sculptor.examples.library.media.domain.Engagement each : from.getEngagements()) {",
-            "engagementsData.add(org.fornax.cartridges.sculptor.examples.library.media.mapper.EngagementMapper.getInstance().toData(each));"
+            "for (org.sculptor.example.library.media.domain.Engagement each : from.getEngagements()) {",
+            "engagementsData.add(org.sculptor.example.library.media.mapper.EngagementMapper.getInstance().toData(each));"
         });
 
 	}

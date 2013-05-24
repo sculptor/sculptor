@@ -23,7 +23,6 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
@@ -35,7 +34,6 @@ class MongoDbMapperTmpl {
 	@Inject extension DbHelper dbHelper
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 def String mongoDbMapper(DomainObject it) {

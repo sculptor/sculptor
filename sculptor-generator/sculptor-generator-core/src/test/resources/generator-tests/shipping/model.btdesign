@@ -1,5 +1,5 @@
 Application Shipping {
-	basePackage=org.sculptor.shipping
+	basePackage=org.sculptor.example.shipping
 
     Module core {
         Service TrackingService {

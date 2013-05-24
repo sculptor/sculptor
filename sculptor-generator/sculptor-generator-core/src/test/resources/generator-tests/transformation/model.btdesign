@@ -1,4 +1,4 @@
-import "classpath:/library-person.btdesign"
+import "classpath:/generator-tests/transformation/model-person.btdesign"
  
 Application Library {
     basePackage = org.fornax.cartridges.sculptor.examples.library
