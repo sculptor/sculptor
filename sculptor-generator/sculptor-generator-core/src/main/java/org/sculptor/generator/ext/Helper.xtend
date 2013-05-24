@@ -107,6 +107,9 @@ class Helper {
 			retVal = doc.get()
 		} catch (Exception e) {
 			LOG.error("Error formating code for '{}'. Using original code from generator", path)
+			if (getBooleanProperty("java.codeformatter.error.abort")) {
+				throw new RuntimeException("Invalid generated Java code in '" + path + "'")
+			}
 			retVal = code
 		}
 		retVal

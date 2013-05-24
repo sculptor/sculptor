@@ -59,7 +59,12 @@ abstract class GeneratorTestBase {
 		System::setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST",
 			OUTPUT_DIR + testName + "/src/test/generated/resources");
 
-		SculptorGeneratorRunner::run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")
+		// Abort on invalid generated Java code
+		System::setProperty("java.codeformatter.error.abort", "true");
+
+		if (!SculptorGeneratorRunner::run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
+			throw new RuntimeException("Code generation failed")
+		}
 	}
 
 }
