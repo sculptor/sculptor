@@ -27,6 +27,8 @@ import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.sculptor.generator.chain.ChainOverrideAwareModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -34,7 +36,7 @@ import com.google.inject.Module;
 
 public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowComponent2 {
 
-//	private static final Logger LOG = LoggerFactory.getLogger(SculptorUniversalGuiceWorkflowComponent.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ChainOverrideAwareGuiceWorkflowComponent.class);
 
 	private String inputSlot;
 	private String outputSlot;
@@ -59,15 +61,15 @@ public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowCo
 
 	@Override
 	protected void checkConfigurationInternal(Issues issues) {
+		LOG.debug("Configuration: inputSlot=" + inputSlot + ", outputSlot=" + outputSlot + ", guiceModule="
+				+ guiceModule + ", action=" + action);
 		checkRequiredConfigProperty("inputSlot", inputSlot, issues);
-		// checkRequiredConfigProperty("moduleClass", guiceModule, issues);
 		checkRequiredConfigProperty("action", action, issues);
 	}
 
 	@Override
 	protected void invokeInternal(WorkflowContext ctx, ProgressMonitor m, Issues issues) {
-		long start = System.currentTimeMillis();
-		issues.addWarning(this, "Starting action " + action);
+
 		// Resolve slots
 		Object inputData = ctx.get(inputSlot);
 		if (inputData == null) {
@@ -98,31 +100,32 @@ public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowCo
 			issues.addError(this, "Error creating action '"+action+"'", null, th, null);
 		}
 
-		// Resolve module
-		Module module=null;
-		try {
-			if (guiceModule == null) {
-				module = new ChainOverrideAwareModule(actionClass);
-			} else {
-				Class<?> forName = Class.forName(guiceModule);
-				Object moduleInst = forName.newInstance();
-				if (moduleInst instanceof Module) {
-					module = (Module) moduleInst;
+		// Create Guice injector for specified Guice module (if not specified
+		// then use ChainOverrideAwareModule with given actionClass instead)
+		Injector injector = null;
+		if (!issues.hasErrors()) {
+			try {
+				if (guiceModule == null) {
+					Module module = new ChainOverrideAwareModule(actionClass);
+					injector = Guice.createInjector(module);
 				} else {
-					issues.addError("Module '"+guiceModule+"' is not instance of com.google.inject.Module");
+					Class<?> forName = Class.forName(guiceModule);
+					Object moduleInst = forName.newInstance();
+					if (moduleInst instanceof Module) {
+						injector = Guice.createInjector((Module) moduleInst);
+					} else {
+						issues.addError("Module '" + guiceModule + "' is not instance of com.google.inject.Module");
+					}
 				}
+			} catch (Throwable th) {
+				issues.addError(this, "Error creating module '" + guiceModule + "'", null, th, null);
 			}
-		} catch (Throwable th) {
-			issues.addError(this, "Error creating module '"+guiceModule+"'", null, th, null);
 		}
-
-		Injector injector = Guice.createInjector(module);
 
 		// Run action
 		if (!issues.hasErrors()){
+			LOG.debug("Running action '" + action + "'");
 			Object actionObj = injector.getInstance(actionClass);
-
-			// execute the transformation
 			Object result;
 			try {
 				if (inputData instanceof Collection) {
@@ -141,7 +144,6 @@ public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowCo
 				issues.addError(this, "Error invoking action '"+action+"'", null, th, null);
 			}
 		}
-		issues.addWarning(this, "Action done in "+(System.currentTimeMillis() - start)+" ms");
 	}
 
 }

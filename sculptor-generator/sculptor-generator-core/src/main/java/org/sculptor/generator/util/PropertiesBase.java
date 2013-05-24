@@ -1,19 +1,20 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sculptor.generator.util;
 
 import java.io.File;
@@ -31,27 +32,35 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Technical properties to customize the code generation is defined in
- * default-sculptor-generator.properties and may be overridden in
- * sculptor-generator.properties, or in System.properties. These properties are
- * available via this class.
+ * <code>default-sculptor-generator.properties</code> and may be overridden in
+ * <code>sculptor-generator.properties</code> or in Java system properties.
+ * These properties are available via this class.
  * <p>
- * The locations of the property files can be defined with the following system
- * properties.
+ * The locations of these property files can be defined with the following
+ * system properties.
  * <ul>
- * <li>sculptor.generatorPropertiesLocation - default
- * generator/sculptor-generator.properties</li>
- * <li>sculptor.guiGeneratorPropertiesLocation - default
- * generator/sculptor-gui-generator.properties</li>
- * <li>sculptor.defaultGeneratorPropertiesLocation - default
- * default-sculptor-generator.properties</li>
+ * <li><code>sculptor.generatorPropertiesLocation</code> - default
+ * <code>generator/sculptor-generator.properties</code></li>
+ * <li><code>sculptor.guiGeneratorPropertiesLocation</code> - default
+ * <code>generator/sculptor-gui-generator.properties</code></li>
+ * <li><code>sculptor.defaultGeneratorPropertiesLocation</code> - default
+ * <code>default-sculptor-generator.properties</code></li>
  * </ul>
- *
+ * 
+ * <strong>These property files are retrieved as classpath resources from the
+ * current threads context classloader.</strong>.
  */
 public class PropertiesBase {
+
+	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
+
 	private static final String CHANGED_MODULE = "changed.module";
-	private static final String M2_PLUGIN_CHANGED_FILES = "fornax-oaw-m2-plugin.changedFiles";
+	private static final String MAVEN_PLUGIN_CHANGED_FILES = "sculptor-maven-plugin.changedFiles";
 	private static final String PROPERTIES_RESOURCE = System.getProperty("sculptor.generatorPropertiesLocation",
 			"generator/sculptor-generator.properties");
 	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty("sculptor.guiGeneratorPropertiesLocation",
@@ -119,6 +128,7 @@ public class PropertiesBase {
 	}
 
 	private void loadProperties(Properties properties, String resource) {
+		LOG.debug("Loading properties from '" + resource + "'");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		if (classLoader == null) {
 			classLoader = PropertiesBase.class.getClassLoader();
@@ -208,7 +218,7 @@ public class PropertiesBase {
 
 		initDerivedDefaultsForRest(defaultProperties);
 
-		if (hasProperty(M2_PLUGIN_CHANGED_FILES) || hasProperty(CHANGED_MODULE)) {
+		if (hasProperty(MAVEN_PLUGIN_CHANGED_FILES) || hasProperty(CHANGED_MODULE)) {
 			defaultProperties.setProperty("generate.quick", "true");
 		}
 
@@ -758,8 +768,8 @@ public class PropertiesBase {
 			String s = getProperty(CHANGED_MODULE);
 			String[] split = s.split(",");
 			return Arrays.asList(split);
-		} else if (hasProperty(M2_PLUGIN_CHANGED_FILES)) {
-			String s = getProperty(M2_PLUGIN_CHANGED_FILES);
+		} else if (hasProperty(MAVEN_PLUGIN_CHANGED_FILES)) {
+			String s = getProperty(MAVEN_PLUGIN_CHANGED_FILES);
 			String[] split = s.split(",");
 			List<String> result = new ArrayList<String>();
 			for (String each : split) {
