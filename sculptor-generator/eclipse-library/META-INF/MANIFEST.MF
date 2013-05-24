@@ -38,6 +38,10 @@ Require-Bundle: org.eclipse.equinox.common;bundle-version="3.6.100",
  org.eclipse.xtext.xbase.lib.source;bundle-version="2.4.0",
  org.eclipse.xtext.xbase.source;bundle-version="2.4.0",
  org.eclipse.xtext.source;bundle-version="2.4.1",
- org.eclipselabs.xtext.utils.unittesting.source;bundle-version="0.9.3"
+ org.eclipselabs.xtext.utils.unittesting.source;bundle-version="0.9.3",
+ org.eclipse.emf.mwe.core.source;bundle-version="1.2.0",
+ org.eclipse.emf.mwe.utils.source;bundle-version="1.2.0",
+ org.eclipse.emf.mwe2.lib.source;bundle-version="2.4.0",
+ org.eclipse.emf.mwe2.runtime.source;bundle-version="2.4.0"
 Bundle-Vendor: Eclipse Foundation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

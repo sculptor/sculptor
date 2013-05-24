@@ -94,7 +94,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>src/main/assembly/repackaged-source.xml</descriptor>
+								<descriptor>src/main/assembly/repackaged-sources.xml</descriptor>
 							</descriptors>
 							<appendAssemblyId>true</appendAssemblyId>
 							<archive>
