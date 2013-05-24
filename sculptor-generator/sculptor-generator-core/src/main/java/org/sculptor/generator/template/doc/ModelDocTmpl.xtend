@@ -177,7 +177,7 @@ def String menuItems(Module it) {
 
 	'''
 		<ul>
-			«el.sortBy[name].map[e | menuItem(e)]»
+			«el.sortBy[name].map[e | menuItem(e)].join»
 		</ul>
 	'''
 }
@@ -332,12 +332,12 @@ def String domainObjectDoc(DomainObject it) {
 			<th>Description</th>
 		</thead>
 
-	«el.sortBy[e | e.name].map[m | fieldDoc(m)]»
+	«el.sortBy[e | e.name].map[m | fieldDoc(m)].join»
 
 	</table>
 	«IF !operations.isEmpty»
 		<p><i>Operations:</i></p>
-		«it.operations.sortBy(e | e.name).map[operationDoc(it)]»
+		«it.operations.sortBy(e | e.name).map[operationDoc(it)].join»
 	«ENDIF»
 	<hr/>
 	'''

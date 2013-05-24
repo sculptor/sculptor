@@ -64,7 +64,7 @@ def String commandInterface(RepositoryOperation it) {
 	«ENDIF »
 	public interface «getAccessNormalizedName()» «IF it.getAccessObjectInterfaceExtends() != ''» extends «it.getAccessObjectInterfaceExtends()» «ENDIF»{
 
-		«it.parameters.filter(e|!e.isPagingParameter()).map[interfaceParameterSetter(it)]»
+		«it.parameters.filter(e|!e.isPagingParameter()).map[interfaceParameterSetter(it)].join»
 
 		void execute() «exceptionTmpl.throwsDecl(it)»;
 
@@ -120,13 +120,13 @@ def String commandImplBase(RepositoryOperation it) {
 		«ENDIF»
 	«ENDIF»
 	
-		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAttribute(it)]»
+		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAttribute(it)].join»
 
 		«IF it.getTypeName() != "void"»
 		private «it.getAccessObjectResultTypeName()» result;
 		«ENDIF»
 
-		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAccessors(it)]»
+		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAccessors(it)].join»
 
 		«IF it.hasPagingParameter()»
 			«pageableProperties(it)»

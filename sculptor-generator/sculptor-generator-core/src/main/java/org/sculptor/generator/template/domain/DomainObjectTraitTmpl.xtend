@@ -124,7 +124,7 @@ def String traitInstance(Trait it, DomainObject inDomainObject) {
 		private «getDomainPackage()».«name»Trait<«inDomainObject.getDomainPackage()».«inDomainObject.name»> «name.toFirstLower()»Trait = new «getDomainPackage()».«name»Trait<«inDomainObject.getDomainPackage()».«inDomainObject.name»>() {
 			«domainObjectTmpl.serialVersionUID(it)»
 			«traitInstanceSelfMethod(it, inDomainObject)»
-			«it.operations.filter(e | e.^abstract && !e.isPublicVisibility()).map[e | traitInstanceMethod(e, inDomainObject)]»
+			«it.operations.filter(e | e.^abstract && !e.isPublicVisibility()).map[e | traitInstanceMethod(e, inDomainObject)].join»
 		}; 
 	'''
 }

@@ -83,10 +83,10 @@ def String start(Application it, Set<Module> focus, int detail, String subjectAr
 			.filter(e | e.to.includeInDiagram(detail, subjectArea))
 			.filter(e | e.from.includeInDiagram(detail, subjectArea))
 			.sortBy(e | e.from.name + "->" + e.to.name + ": " + e.name)
-			.map[r | RelationToUML(r, focus, detail, subjectArea)]»
+			.map[r | RelationToUML(r, focus, detail, subjectArea)].join»
 		«it.modules.map[services].flatten.map[ServiceDependenciesToUML(it, focus, detail, subjectArea)].join()»
 	«ELSE»
-		«focus.map[ModuleDependenciesToUML(it)]»
+		«focus.map[ModuleDependenciesToUML(it)].join»
 	«ENDIF»
 	«graphPropertiesEnd(it)»	
 	'''
@@ -233,9 +233,9 @@ def String ObjectToUML(DomainObject it, Set<Module> focus, int detail, String su
 	«IF existsAttributesCompartment && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
-		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].map[AttributeToUML(it)]»
-		«it.references.filter(e | e.to instanceof BasicType && e.visible()).map[BasicTypeAttributeToUML(it)]»
-		«it.references.filter(e | e.to instanceof sculptormetamodel.Enum && e.visible()).map[EnumAttributeToUML(it)]»
+		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].map[AttributeToUML(it)].join»
+		«it.references.filter(e | e.to instanceof BasicType && e.visible()).map[BasicTypeAttributeToUML(it)].join»
+		«it.references.filter(e | e.to instanceof sculptormetamodel.Enum && e.visible()).map[EnumAttributeToUML(it)].join»
 		«it.references.filter( e | !(e.to instanceof sculptormetamodel.Enum) && !(e.to instanceof BasicType) && !focus.contains(e.to.module) && e.visible()).map[NonFocusReferenceToUML(it)].join()»
 			</table>		
 		</td></tr>
