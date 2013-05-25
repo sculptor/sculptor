@@ -97,22 +97,35 @@ class Helper {
 	}
 
 	def private formatJavaCode(String path, String code) {
-		val newCode = extractJavaTypes(code)
 
-		var String retVal = null
-		val TextEdit textEdit = getCodeFormatter().format(CodeFormatter::K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), newCode, 0, newCode.length(), 0, "\n")
-		val IDocument doc = new Document(newCode)
-		try {
-			textEdit.apply(doc)
-			retVal = doc.get()
-		} catch (Exception e) {
-			LOG.error("Error formating code for '{}'. Using original code from generator", path)
-			if (getBooleanProperty("java.codeformatter.error.abort")) {
-				throw new RuntimeException("Invalid generated Java code in '" + path + "'")
+		// As fall-back return the original code
+		var String formattedCode = code
+
+		// Skip code formatting if disabled
+		if (getBooleanProperty("java.codeformatter.enabled")) {
+			var unformattedCode = code
+
+			// Auto-importing full qualified Java types if enabled
+			if (getBooleanProperty("java.codeformatter.autoimport.enabled")) {
+				unformattedCode = extractJavaTypes(code)
 			}
-			retVal = code
+
+			// Use Eclipse JDTs code formatter
+			val TextEdit textEdit = getCodeFormatter().format(
+				CodeFormatter::K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), unformattedCode, 0,
+				unformattedCode.length(), 0, "\n")
+			val IDocument doc = new Document(unformattedCode)
+			try {
+				textEdit.apply(doc)
+				formattedCode = doc.get()
+			} catch (Exception e) {
+				LOG.error("Error formating code for '{}'. Using original code from generator", path)
+				if (getBooleanProperty("java.codeformatter.error.abort")) {
+					throw new RuntimeException("Invalid generated Java code in '" + path + "'")
+				}
+			}
 		}
-		retVal
+		formattedCode
 	}
 
 	var CodeFormatter codeFormatter
