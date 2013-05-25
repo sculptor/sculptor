@@ -152,11 +152,11 @@ def String enumType(Application it) {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void nullSafeSet(java.sql.PreparedStatement st, Object value, int index«IF isJpaProviderHibernate4()»,SessionImplementor session«ENDIF»)
-			throws HibernateException, SQLException {
+			throws org.hibernate.HibernateException, java.sql.SQLException {
 			if (value == null) {
 				st.setNull(index, sqlTypes()[0]);
 			} else {
-				st.setObject(index, EnumHelper.toData((Enum) value), sqlTypes()[0]);
+				st.setObject(index, org.sculptor.framework.util.EnumHelper.toData((Enum) value), sqlTypes()[0]);
 			}
 		}
 
