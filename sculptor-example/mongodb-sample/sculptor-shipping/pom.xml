@@ -40,6 +40,37 @@
 		<finalName>${project.artifactId}</finalName>
 		
  		<plugins>
+ 		
+ 			<plugin>
+				<groupId>org.sculptor</groupId>
+				<artifactId>sculptor-maven-plugin</artifactId>
+				<version>${sculptor.version}</version>
+				<configuration>
+					<verbose>true</verbose>
+				</configuration>
+				<executions>
+					<execution>
+						<id>cleanup</id>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>code-generation</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>image-generation</id>
+						<goals>
+							<goal>generate-images</goal>
+						</goals>
+					</execution>
+ 				</executions>
+			</plugin>
+ 
+ 
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
@@ -80,39 +111,6 @@
 						</fileset>
 					</filesets>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/main/java</source>
-								<source>src/main/resources</source>
-								<source>src/generated/java</source>
-								<source>src/main/xtend-gen</source>
-							</sources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>add-test-source</id>
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/test/generated/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
@@ -168,79 +166,7 @@
 			</plugin>
  -->
  
- 			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-oaw-m2-plugin</artifactId>
-					<configuration>
-						<workflowEngine>mwe2</workflowEngine>
-						<workflowDescriptor>file://${basedir}/src/main/resources/generator/Workflow.mwe2</workflowDescriptor>
-						<checkFilesets>
-							<checkFileset>
-								<directory>${basedir}</directory>
-								<includes><include>src/main/resources/*.btdesign</include></includes>
-							</checkFileset>
-						</checkFilesets>
-						<properties>
-							<appProject>${project.artifactId}</appProject>
-						</properties>
-						<jvmSettings>
-							<copySysProperties>true</copySysProperties>
-							<jvmArgs>
-								<jvmArg>-client</jvmArg>
-								<jvmArg>-Xms256m</jvmArg>
-								<jvmArg>-Xmx512m</jvmArg>
-								<jvmArg>-Dlogback.configurationFile=generator/logback-sculptor.xml</jvmArg>
-							</jvmArgs>
-						</jvmSettings>
-					</configuration>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run-workflow</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-checksum-m2-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<id>clean</id>
-						<phase>clean</phase>
-						<goals><goal>run</goal></goals>
-					</execution>
-					<execution>
-						<id>initialize</id>
-						<phase>initialize</phase>
-						<goals><goal>run</goal></goals>
-						<configuration>
-							<action>before-generate</action>
-						</configuration>
-					</execution>
-					<execution>
-						<id>after generate</id>
-						<phase>generate-sources</phase>
-						<goals><goal>run</goal></goals>
-						<configuration>
-							<action>after-generate</action>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-graphviz-m2-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals><goal>run</goal></goals>
-					</execution>
-				</executions>
-			</plugin>
+
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -506,13 +432,30 @@
 
 	</dependencies>
 
+	
+
 	<repositories>
 		<repository>
-			<id>fornax-platform.org</id>
-			<name>Fornax Repository</name>
-			<url>http://fornax-platform.org/nexus/content/repositories/public</url>
-			<releases><enabled>true</enabled></releases>
-			<snapshots><enabled>true</enabled></snapshots>
+			<id>sculptor.org</id>
+			<name>Sculptor Repository</name>
+			<url>https://raw.github.com/sculptor/repository/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>sculptor.org-snapshots</id>
+			<name>Sculptor Repository Snapshots</name>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>jboss.org</id>
@@ -528,13 +471,26 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>fornax-platform.org</id>
-			<name>Fornax Repository</name>
-			<url>
-				http://fornax-platform.org/nexus/content/repositories/public
-			</url>
+			<id>xtend</id>
+			<url>http://build.eclipse.org/common/xtend/maven/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sculptor.org</id>
+			<name>Sculptor Repository</name>
+			<url>https://raw.github.com/sculptor/repository/maven</url>
 			<releases>
 				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sculptor.org-snapshots</id>
+			<name>Sculptor Repository Snapshots</name>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
+			<releases>
+				<enabled>false</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
