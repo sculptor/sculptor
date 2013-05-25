@@ -54,7 +54,7 @@ def String dbunitTestDataContent(Application it) {
 		«FOR domainObject  : domainObjects» 
 		<«domainObject.getDatabaseName()» /> 
 		«ENDFOR» 
-		«FOR joinTableName  : domainObjects.map[d | d.getJoinTableNames()]» 
+		«FOR joinTableName  : domainObjects.map[d | d.getJoinTableNames()].flatten.toSet» 
 		<«joinTableName» /> 
 		«ENDFOR» 
 	</dataset>

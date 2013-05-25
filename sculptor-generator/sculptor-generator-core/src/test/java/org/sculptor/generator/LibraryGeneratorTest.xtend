@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator
 
 import org.junit.BeforeClass
@@ -25,7 +24,7 @@ import org.sculptor.generator.GeneratorTestBase
 
 class LibraryGeneratorTest extends GeneratorTestBase {
 
-	static val TEST_NAME = "library" 
+	static val TEST_NAME = "library"
 
 	new() {
 		super(TEST_NAME)
@@ -36,12 +35,16 @@ class LibraryGeneratorTest extends GeneratorTestBase {
 		runGenerator(TEST_NAME)
 	}
 
-    @Test
-    def void assertPerson() {
-    	
-    	val personCode = getFileText("src/generated/java/org/sculptor/example/library/person/domain/PersonBase.java");
-    	
-    	assertContains(personCode, "package org.sculptor.example.library.person.domain;");
-    }
+	@Test
+	def void assertPerson() {
+		val personCode = getFileText("src/generated/java/org/sculptor/example/library/person/domain/PersonBase.java");
+		assertContains(personCode, "package org.sculptor.example.library.person.domain;");
+	}
+
+	@Test
+	def void assertDbUnit() {
+		val dbunit = getFileText("src/test/generated/resources/dbunit/EmptyDatabase.xml");
+		assertNotContains(dbunit, "[]");
+	}
 
 }
