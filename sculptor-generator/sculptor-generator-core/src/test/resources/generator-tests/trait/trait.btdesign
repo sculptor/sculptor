@@ -1,0 +1,87 @@
+Application DtoApp {
+    basePackage=org.dto
+
+
+    Module catalog {
+    	
+    	Trait Product {
+    		String title
+    		def int price();
+    		def abstract double priceFactor();
+    	}
+        
+        Entity Book with Product {
+          String isbn key length="20"
+        }
+        
+        Entity Movie with Product {
+          String urlIMDB key
+          Integer playLength
+        }
+        
+        Entity Qwerty with Asdfgh {
+        	String qqq
+        	String www
+        	String eee
+        }
+        
+        Trait Asdfgh {
+        	String eee
+        	String ddd
+        	def abstract String getQqq;
+        	def abstract void setWww(String w);
+        	def abstract String getAaa;
+        	def bolean spellCheck(String text);
+        	def abstract void somethingElse(String a, int b);
+        }
+        
+        Entity Abc with Bcd with Cde {
+        	String aaa
+        	String bbb
+        	String ccc
+        	def aha;
+        	def boom;
+        }
+
+        Trait Bcd {
+        	String bbb
+        	String ccc
+        	String ddd
+        	def boom;
+        	def caboom;
+        	def ding;
+        }
+
+        Trait Cde {
+        	String ccc
+        	String ddd
+        	String eee
+        	def ding;
+        	def eeh;
+        }
+        
+        Entity Ent1 {
+        	def m1;
+        }
+        
+        abstract Entity Ent2 {
+        	def abstract m2;
+        }
+        
+        Entity Ent3 with Tr3 {
+        }
+        
+        Trait Tr3 {
+        	def m3;
+        }
+        
+        Entity Ent4 with Tr4 {
+        }
+        
+        Trait Tr4 {
+        	def abstract m4;
+        }
+        
+        
+    }
+}

@@ -33,6 +33,7 @@ import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.Entity
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
+import sculptormetamodel.NamedElement
 import sculptormetamodel.Operation
 import sculptormetamodel.Parameter
 import sculptormetamodel.Reference
@@ -81,7 +82,7 @@ class Transformation {
 	}
 
 	def void mixin(DomainObject domainObject) {
-		domainObject.traits.reverse.forEach[mixin(it, domainObject)]
+		domainObject.traits.reverseView.forEach[mixin(it as NamedElement, domainObject)]
 	}
 
 	def dispatch void mixin(Trait trait, DomainObject domainObject) {

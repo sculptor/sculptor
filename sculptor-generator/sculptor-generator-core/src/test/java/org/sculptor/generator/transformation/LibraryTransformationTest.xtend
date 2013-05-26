@@ -45,7 +45,7 @@ import sculptormetamodel.NamedElement
 import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
-import static org.sculptor.generator.GeneratorTestExtensions.*
+import static extension org.sculptor.generator.GeneratorTestExtensions.*
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -104,11 +104,6 @@ class LibraryTransformationTest extends XtextTest{
 		app.modules.namedElement('person')
     }
 
-	// TODO: Move into helpers?
-	def <T extends NamedElement> namedElement(EList<T> list, String toFindName) {
-		list.findFirst[name == toFindName]
-	}
-	
 	def Module mediaModule() {		
 		app.modules.namedElement('media')
     }
