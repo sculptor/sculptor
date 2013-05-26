@@ -36,13 +36,13 @@ class LibraryGeneratorTest extends GeneratorTestBase {
 	}
 
 	@Test
-	def void assertPerson() {
+	def void assertEmbeddedColumnNamesInPersonBase() {
 		val personCode = getFileText("src/generated/java/org/sculptor/example/library/person/domain/PersonBase.java");
-		assertContains(personCode, "package org.sculptor.example.library.person.domain;");
+		assertContains(personCode, "name = \"SSN_NUMBER\"");
 	}
 
 	@Test
-	def void assertDbUnit() {
+	def void assertDbUnitEmptyDatabaseXml() {
 		val dbunit = getFileText("src/test/generated/resources/dbunit/EmptyDatabase.xml");
 		assertNotContains(dbunit, "[]");
 	}

@@ -281,7 +281,7 @@ public class DbHelperBase {
 		return propBase.getDbLength(javaType);
 	}
 
-	public String getDatabaseName(NamedElement element) {
+	public String getDatabaseNameBase(NamedElement element) {
 		String name = element.getName();
 		name = convertDatabaseName(name);
 		return name;
@@ -472,7 +472,7 @@ public class DbHelperBase {
 		}
 		String name = getManyToManyJoinTableName(ref);
 		relObj.setName(name.toUpperCase());
-		relObj.setDatabaseTable(getDatabaseName(relObj));
+		relObj.setDatabaseTable(getDatabaseNameBase(relObj));
 		relObj.setAbstract(true);
 
 		Reference ref1 = SculptormetamodelFactory.eINSTANCE.createReference();

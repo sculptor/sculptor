@@ -143,7 +143,7 @@ def String basicTypeJpaAnnotation(Reference it) {
 				«{
 					elem.addAll(to.attributes)
 					elem.addAll(to.references.filter(e | e.isBasicTypeReference() || e.isEnumReference()))
-					elem.map[e | attributeOverride(e, e.getDatabaseName(), "", nullable)].join(",")
+					elem.map[e | attributeOverride(e, it.getDatabaseName(), "", nullable)].join(",")
 				}»
 			})
 				«IF isJpa2() && it.isAssociationOverrideNeeded()»

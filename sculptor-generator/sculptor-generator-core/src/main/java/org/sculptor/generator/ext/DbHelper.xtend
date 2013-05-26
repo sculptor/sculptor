@@ -120,7 +120,7 @@ public class DbHelper {
 	}
 
 	def private String getDefaultDatabaseName2(NamedElement element) {
-		dbHelperBase.getDatabaseName(element)
+		dbHelperBase.getDatabaseNameBase(element)
 	}
 
 	def String truncateLongDatabaseName(String part1, String part2) {
