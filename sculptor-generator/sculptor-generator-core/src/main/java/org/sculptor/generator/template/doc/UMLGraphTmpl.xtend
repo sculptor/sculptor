@@ -70,13 +70,19 @@ def String start(Application it, Set<Module> focus, int detail) {
 
 def String start(Application it, Set<Module> focus, int detail, String subjectArea) {
 	debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)
-	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_GEN_RESOURCES,
+		startContent(it, focus, detail, subjectArea))
+}
+
+def String startContent(Application it, Set<Module> focus, int detail, String subjectArea) {
+'''
 	«graphPropertiesStart(it)»	
 	«focus.sortBy(e|e.name).map[m | subGraphForModule(m, focus, detail, subjectArea)].join()»
 	«IF detail < 4»
 		«InheritanceGraphProperties(it)»
 		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).map[InheritanceToUML(it, focus, detail, subjectArea)].join()»
 		«RelationGraphProperties(it)»
+		
 		«it.getAllReferences()
 			.filter(e | !(e.to instanceof BasicType))
 			.filter(e | !(e.to instanceof Enum))
@@ -89,10 +95,8 @@ def String start(Application it, Set<Module> focus, int detail, String subjectAr
 		«focus.map[ModuleDependenciesToUML(it)].join»
 	«ENDIF»
 	«graphPropertiesEnd(it)»	
-	'''
-	)
+	'''	
 }
-
 
 def String graphPropertiesStart(Application it) {
 	'''

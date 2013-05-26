@@ -1,0 +1,6 @@
+import "classpath:/generator-tests/doc/model_core.btdesign"
+
+ApplicationPart ShippingStatistics {
+
+        
+}
