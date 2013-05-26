@@ -28,6 +28,8 @@ import static org.junit.Assert.*
 import static extension org.sculptor.generator.GeneratorTestExtensions.*
 import sculptormetamodel.Trait
 import sculptormetamodel.DomainObjectOperation
+import sculptormetamodel.Entity
+import sculptormetamodel.Attribute
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -106,4 +108,79 @@ class TraitTransformationTest extends XtextTest {
         assertSame(product, getTitle.getDomainObject());
         assertEquals("String", getTitle.getType());
     }
+    
+    @Test
+    def void assertProductMixin() {
+        val movie = module.domainObjects.namedElement("Movie") as Entity
+
+        assertOneAndOnlyOne(movie.getAttributes(), "title", "urlIMDB", "playLength")
+        assertOneAndOnlyOne(movie.getOperations(), "price", "priceFactor")
+
+        val title = movie.attributes.namedElement("title") as Attribute
+        assertEquals("trait=Product", title.getHint())
+
+        val price = movie.operations.namedElement("price") as DomainObjectOperation
+        assertEquals("trait=Product", price.getHint());
+        assertFalse(price.isAbstract());
+        assertSame(movie, price.getDomainObject());
+
+        val priceFactor = movie.operations.namedElement("priceFactor") as DomainObjectOperation
+        assertEquals("trait=Product", price.getHint());
+        assertTrue(priceFactor.isAbstract());
+
+        assertTrue(movie.isGapClass());
+    }
+    
+    
+    @Test
+    def void shouldRecognizeExistingPropertiesAndOperations() {
+        val qwerty = module.domainObjects.namedElement("Qwerty") as Entity
+        assertOneAndOnlyOne(qwerty.getAttributes(), "qqq", "www", "eee", "ddd");
+        assertOneAndOnlyOne(qwerty.getOperations(), "getAaa", "spellCheck", "somethingElse");
+    }
+    
+    
+    @Test
+    def void shouldMixinSeveralTraitsInOrder() {
+        val abc = module.domainObjects.namedElement("Abc") as Entity
+        assertOneAndOnlyOne(abc.getAttributes(), "aaa", "bbb", "ccc", "ddd", "eee");
+        assertOneAndOnlyOne(abc.getOperations(), "aha", "boom", "caboom", "ding", "eeh");
+
+        assertEquals("Bcd", abc.traits.get(0).name);
+        assertEquals("Cde", abc.traits.get(1).name);
+
+        val aha = abc.operations.namedElement("aha");
+        assertNull(aha.getHint());
+
+        val boom = abc.operations.namedElement("boom");
+        assertNull(boom.getHint());
+
+        val caboom = abc.operations.namedElement("caboom");
+        assertEquals("trait=Bcd", caboom.getHint());
+
+        val ding = abc.operations.namedElement("ding");
+        assertEquals("trait=Cde", ding.getHint());
+
+        val eeh = abc.operations.namedElement("eeh");
+        assertEquals("trait=Cde", eeh.getHint());
+    }
+
+    @Test
+    def void shouldAssignGapFromOperations() {
+        val e1 = module.domainObjects.namedElement("Ent1");
+        assertTrue(e1.isGapClass());
+
+        val e2 = module.domainObjects.namedElement("Ent2");
+        assertFalse(e2.isGapClass());
+    }
+
+    @Test
+    def void shouldAssignGapFromTraitOperations() {
+        val e3 = module.domainObjects.namedElement("Ent3")
+        assertFalse(e3.isGapClass());
+
+        val e4 = module.domainObjects.namedElement("Ent4");
+        assertTrue(e4.isGapClass());
+    }
+
 }
