@@ -511,7 +511,7 @@ class Transformation {
 		val setter = createDerivedTraitSetter(trait, att)
 		if (!trait.operations.exists(e|e.name == getter.name && e.type == getter.type && e.parameters.isEmpty))
 			trait.operations.add(getter)
-		if (!att.changeable && trait.operations.exists(e|e.name == setter.name && e.type == setter.type && e.parameters.size == 1 && e.parameters.get(0).type == att.type))
+		if (att.changeable && !trait.operations.exists(e|e.name == setter.name && e.type == setter.type && e.parameters.size == 1 && e.parameters.get(0).type == att.type))
 			trait.operations.add(setter)
 	}
 
