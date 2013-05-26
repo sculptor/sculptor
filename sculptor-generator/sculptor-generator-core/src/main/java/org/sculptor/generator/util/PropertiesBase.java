@@ -413,12 +413,7 @@ public class PropertiesBase {
 	}
 
 	public boolean hasProperty(String propertyName) {
-		try {
-			getProperty(propertyName);
-			return true;
-		} catch (MissingResourceException e) {
-			return false;
-		}
+		return getProperties().getProperty(propertyName) != null;
 	}
 
 	public boolean getBooleanProperty(String propertyName) {
