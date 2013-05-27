@@ -69,9 +69,13 @@ class ChainOverrideAwareModule extends AbstractModule {
 			buildChainForClasses(mapped, discovered.toList)
 	}
 
+	/**
+	 * Instantiate and build chain for clazz if it supports overriding/chaining.
+	 * In either case, bind the newly created instance.
+	 * Add any injected classes found in clazz to discovered.
+	 */
 	def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
 		LOG.debug("Building chain for class '{}'", clazz)
-		var T chain
 
 		// Instantiate template - try extension first
 		val T template = try {
@@ -81,13 +85,15 @@ class ChainOverrideAwareModule extends AbstractModule {
 			clazz.newInstance
 		}
 
-		// Add all classes injected into template  
+		// Add all classes injected into template to discovered  
 		discoverInjectedFields(discovered, template.^class)
 
-		// If template is overridable/chainable then try to prepare whole chain
+		// If template is overridable/chainable then try to prepare whole chain.
+		// chain ends up being the head of the chain or the template itself if not overridable/chainable
+		var T chain
 		if (template instanceof ChainLink<?>) {
 
-			// Prepare list of class name to add to chain
+			// Prepare list of class names to add to chain if they exist
 			val needsToBeChained = new Stack()
 			needsToBeChained.push(makeOverrideClassName(clazz))
 
@@ -116,14 +122,17 @@ class ChainOverrideAwareModule extends AbstractModule {
 				requestInjection(object)
 				discoverInjectedFields(discovered, overrideClass)
 			}
-		} catch (Exception ex) {
-			// No such class - continue with poping from stack using same base object
+		} catch (ClassNotFoundException ex) {
+			// No such class - continue with popping from stack using same base object
 		}
 
 		// Recursive
 		buildChainForInstance(result, constructorParam, discovered, needsToBeChained);
 	}
 
+	/**
+	 * Discover any Inject annotated declared fields in newClass and add the classes to discovered.  Will process newClass base classes too.
+	 */
 	def void discoverInjectedFields(HashSet<Class<?>> discovered, Class<?> newClass) {
 		var cls = newClass;
 		do {
