@@ -18,6 +18,7 @@
 package org.sculptor.generator.template.service
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -27,9 +28,8 @@ import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
-import org.sculptor.generator.chain.ChainOverridable
 
-// Re-enable once problem with ServiceTmpl constructor and injection is fixed: @ChainOverridable
+@ChainOverridable
 class ServiceTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl
