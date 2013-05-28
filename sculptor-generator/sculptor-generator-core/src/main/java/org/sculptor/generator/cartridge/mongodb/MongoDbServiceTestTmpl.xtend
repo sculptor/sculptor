@@ -53,7 +53,7 @@ def String serviceJUnitSubclassMongoDb(Service it) {
 	«dropDatabase(it)»
 	«countRows(it)»
 	
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet.map[serviceTestTmpl.testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet.map[serviceTestTmpl.testMethod(it)].join()»
 	}
 	'''
 	)
