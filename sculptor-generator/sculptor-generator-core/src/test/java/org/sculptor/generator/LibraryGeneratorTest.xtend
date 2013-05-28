@@ -32,6 +32,7 @@ class LibraryGeneratorTest extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
+		System::setProperty("sculptor.defaultOverridesPackage", "org.sculptor.generator.library")
 		runGenerator(TEST_NAME)
 	}
 

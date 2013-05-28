@@ -46,16 +46,28 @@ class ChainOverrideAwareModule extends AbstractModule {
 	private static final String DEFAULT_PROPERTIES_RESOURCE = System::getProperty(
 			"sculptor.defaultGeneratorPropertiesLocation", "default-sculptor-generator.properties");
 
+	// Package where override packages will be looked for
+	var String defaultOverridesPackage = "generator";
+	
 	private val List<? extends Class<?>> startClasses
 
 	public new(Class<?> startClassOn) {
 		startClasses = #[startClassOn]
+		setProperties()
 	}
 
 	public new(List<? extends Class<?>> startClassesOn) {
 		startClasses = startClassesOn
+		setProperties()
 	}
 
+	def protected setProperties() {
+		val defaultOverridesPkgProp = System::getProperty("sculptor.defaultOverridesPackage")
+		if(defaultOverridesPkgProp != null) {
+			defaultOverridesPackage = defaultOverridesPkgProp 
+		}
+	}
+	
 	override protected configure() {
 		buildChainForClasses(<Class<?>>newHashSet(), startClasses)
 	}
@@ -94,11 +106,14 @@ class ChainOverrideAwareModule extends AbstractModule {
 		if (template instanceof ChainLink<?>) {
 
 			// Prepare list of class names to add to chain if they exist
-			val needsToBeChained = new Stack()
+			val needsToBeChained = new Stack<String>()
 			needsToBeChained.push(makeOverrideClassName(clazz))
 
 			cartridgeNames.forEach[cartridgeName|needsToBeChained.push(makeTemplateClassName(clazz, cartridgeName))]
 
+			if(LOG.debugEnabled) {
+				LOG.debug("Classes to check to add to chain: " + needsToBeChained.join(","))
+			}
 			chain = buildChainForInstance(template, template.^class, discovered, needsToBeChained)
 		} else {
 			chain = template
@@ -123,6 +138,10 @@ class ChainOverrideAwareModule extends AbstractModule {
 				discoverInjectedFields(discovered, overrideClass)
 			}
 		} catch (ClassNotFoundException ex) {
+			if(LOG.traceEnabled) {
+				LOG.trace("Could not find class extension or override class", ex)
+			}
+
 			// No such class - continue with popping from stack using same base object
 		}
 
@@ -148,7 +167,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	// Naming convention generators
 	//
 	def <T> String makeOverrideClassName(Class<T> clazz) {
-		"generator." + clazz.simpleName + "Override"
+		defaultOverridesPackage + "." + clazz.simpleName + "Override"
 	}
 
 	def <T> String makeTemplateClassName(Class<T> clazz, String cartridgeName) {
