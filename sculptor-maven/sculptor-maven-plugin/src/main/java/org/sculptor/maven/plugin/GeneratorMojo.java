@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
@@ -78,7 +79,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	@Component
 	private BuildContext buildContext;
 
-	  /**
+	/**
 	 * Relative path of model file.
 	 */
 	@Parameter(defaultValue = "src/main/resources/model.btdesign", required = true)
@@ -121,6 +122,23 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	 */
 	@Parameter(property = "sculptor.generator.clean", defaultValue = "true")
 	private boolean clean;
+
+	/**
+	 * Properties used to define system properties (like
+	 * <code>"sculptor.generatorPropertiesLocation"</code>) or to overrride the
+	 * settings rettrieved from
+	 * <code>"default-sculptor-generator.properties"</code>.
+	 * <p>
+	 * <b>Sample:</b>
+	 * 
+	 * <pre>
+	 * &lt;properties&gt;
+	 *   &lt;sculptor.generatorPropertiesLocation&gt;${basedir}/src/sculptor/generator.properties&lt;sculptor.generatorPropertiesLocation&gt;
+	 * &lt;/properties&gt;
+	 * </pre>
+	 */
+	@Parameter
+	private Map<String, String> properties;
 
 	/**
 	 * Returns <code>model</code> file.
@@ -415,8 +433,11 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	protected List<File> executeGenerator(Set<String> changedFiles) throws MojoExecutionException {
 		List<File> createdFiles = null;
 
-		// Add resource folders to plugins classpath
-		extendPluginClasspath(project.getResources());
+		// Add resources and output directory to plugins classpath
+		List<Object> classpathEntries = new ArrayList<Object>();
+		classpathEntries.addAll(project.getResources());
+		classpathEntries.add(project.getBuild().getOutputDirectory());
+		extendPluginClasspath(classpathEntries);
 
 		// Redirect system.out and system.err
 		PrintStream oldSystemOut = System.out;
@@ -432,6 +453,13 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				: LOGBACK_NORMAL_CONFIGURATION_FILE_NAME);
 		System.setProperty(LOGBACK_CONFIGURATION_FILE_PROPERTY, logbackConfig);
 
+		// Set system properties defined properties in the plugins
+		if (properties != null) {
+			for (String key : properties.keySet()) {
+				System.setProperty(key, properties.get(key));
+			}
+		}
+
 		// Set system properties with output slot paths
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC", outletSrcOnceDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES", outletResOnceDir.toString());
@@ -446,7 +474,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		// Execute commandline and check return code
 		Exception exception = null;
 		try {
-			SculptorGeneratorRunner.run(getModelFile().toString());
+			doRunGenerator();
 		} catch (Exception e) {
 			exception = e;
 		} finally {
@@ -467,17 +495,35 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		return createdFiles;
 	}
 
-	public void extendPluginClasspath(List<Resource> resources) throws MojoExecutionException {
+	protected void doRunGenerator() {
+		SculptorGeneratorRunner.run(getModelFile().toString());
+	}
+
+	public void extendPluginClasspath(List<Object> classpathEntries) throws MojoExecutionException {
 		Set<URL> urls = new HashSet<URL>();
-		for (Resource resource : resources) {
-			File resourceFile = new File(resource.getDirectory());
-			if (resourceFile.exists()) {
-				getLog().debug("Adding resource to plugin classpath: " + resourceFile.getPath());
-				try {
-					urls.add(resourceFile.toURI().toURL());
-				} catch (MalformedURLException e) {
-					throw new MojoExecutionException(e.getMessage(), e);
+		for (Object classpathEntry : classpathEntries) {
+			if (classpathEntry instanceof Resource) {
+				File resourceFile = new File(((Resource) classpathEntry).getDirectory());
+				if (resourceFile.exists()) {
+					getLog().debug("Adding resource to plugin classpath: " + resourceFile.getPath());
+					try {
+						urls.add(resourceFile.toURI().toURL());
+					} catch (MalformedURLException e) {
+						throw new MojoExecutionException(e.getMessage(), e);
+					}
 				}
+			} else if (classpathEntry instanceof String) {
+				File path = new File((String) classpathEntry);
+				if (path.exists()) {
+					getLog().debug("Adding path to plugin classpath: " + path.getPath());
+					try {
+						urls.add(path.toURI().toURL());
+					} catch (MalformedURLException e) {
+						throw new MojoExecutionException(e.getMessage(), e);
+					}
+				}
+			} else {
+				throw new IllegalArgumentException("Unsupported classpathentry: " + classpathEntry);
 			}
 		}
 		ClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[0]), Thread.currentThread()
