@@ -17,20 +17,14 @@
 
 package org.sculptor.maven.plugin;
 
-import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
 
 public class GeneratorMojoIT extends AbstractGeneratorMojoTestCase<GeneratorMojo> {
 
-	private static final File OUTPUT_DIR = new File("/" + System.getProperty("java.io.tmpdir") + "/sculptor/");
-
 	public void testExecute() throws Exception {
-		FileUtils.deleteQuietly(OUTPUT_DIR);
-
 		GeneratorMojo mojo = createMojo(createProject("test1"));
 		mojo.execute();
 		assertEquals(31, mojo.getGeneratedFiles().size());
