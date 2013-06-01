@@ -15,6 +15,7 @@
 
 	<modules>
 		<module>sculptor-example-library</module>
+		<module>mongodb-sample/sculptor-shipping-generator</module>
 		<module>mongodb-sample/sculptor-shipping</module>
 	</modules>
 </project>

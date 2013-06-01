@@ -34,14 +34,12 @@
 
 	</properties>
 
-
-
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		
  		<plugins>
  		
- 			<plugin>
+ 				<plugin>
 				<groupId>org.sculptor</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
 				<version>${sculptor.version}</version>
@@ -68,6 +66,16 @@
 						</goals>
 					</execution>
  				</executions>
+
+ 				<dependencies>
+					<dependency>
+						<groupId>org.sculptor</groupId>
+						<artifactId>sculptor-shipping-generator</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+
+
+ 				</dependencies>
 			</plugin>
  
  
@@ -217,7 +225,6 @@
 	</build>
 
 	<dependencies>
-
  		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

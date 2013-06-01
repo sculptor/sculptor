@@ -127,24 +127,26 @@ class ChainOverrideAwareModule extends AbstractModule {
 		if (needsToBeChained.isEmpty)
 			return object
 
-		var result = object;
+		var result = object
+		val className = needsToBeChained.pop
 		try {
-			val overrideClass = Class::forName(needsToBeChained.pop)
+			val overrideClass = Class::forName(className)
 			val const = overrideClass.getConstructor(constructorParam)
 			if (typeof(ChainLink).isAssignableFrom(overrideClass)) {
 				LOG.debug("    chaining with class '{}'", overrideClass)
 				result = (const.newInstance(object) as T)
 				requestInjection(object)
 				discoverInjectedFields(discovered, overrideClass)
+			} else {
+				LOG.debug("    found class {} but not assignable to ChainLink.  skipping.", className)
 			}
 		} catch (ClassNotFoundException ex) {
 			if(LOG.traceEnabled) {
-				LOG.trace("Could not find class extension or override class", ex)
+				LOG.trace("Could not find class extension or override class {}", className)
 			}
 
 			// No such class - continue with popping from stack using same base object
 		}
-
 		// Recursive
 		buildChainForInstance(result, constructorParam, discovered, needsToBeChained);
 	}
