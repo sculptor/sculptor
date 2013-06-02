@@ -33,6 +33,8 @@ ApplicationPart ShippingCore {
                 inject @ShipEventRepository
                 save;
                 findByKey;
+                
+                findBy(String name);
             }
         }
         
@@ -78,7 +80,7 @@ ApplicationPart ShippingCore {
         	Long changeSequence nullable
         	
         	Repository ShipEventRepository { 
-        		List<@ShipEvent> findAllForShip(@ShipId shipId);
+        		List<@ShipEvent> findAllForShip(@ShipId ship);
         		save publish to shippingChannel;
         		protected findByCondition;
         	}

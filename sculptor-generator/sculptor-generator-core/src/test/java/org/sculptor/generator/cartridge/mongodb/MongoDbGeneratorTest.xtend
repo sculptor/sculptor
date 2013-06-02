@@ -48,5 +48,20 @@ class MongoDbGeneratorTest extends GeneratorTestBase {
     	
     	assertContains(libraryBuilderCode, "List<DBObject> engagementsData = new ArrayList<DBObject>();");
     }
+    
+    @Test
+    def void assertSimpleGeneratedFinder() {
+    	
+    	val mediaRepositoryCode = getFileText("src/generated/java/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryBase.java");
+    	
+    	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
+    	"public List<Media> findByTitle(String title) {",
+    	"List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Media.class)",
+    	".withProperty(MediaProperties.title()).eq(title).build();",
+    	"List<Media> result = findByCondition(condition);",
+    	"return result;",
+    	"}"])
+    	
+    }
 
 }

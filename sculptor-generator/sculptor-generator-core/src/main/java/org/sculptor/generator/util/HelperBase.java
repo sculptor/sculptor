@@ -1500,9 +1500,7 @@ public class HelperBase {
 		return null;
 	}
 
-	// TODO FIND QUERYCONVERTER
 	public String toConditionalCriteria(String condition, String root) {
-		// return new QueryConverter.ConditionalCriteriaStrategy(condition,root).toQueryDsl();
-		return "";
+		return new QueryConverter.ConditionalCriteriaStrategy(condition,root).toQueryDsl();
 	}
 }

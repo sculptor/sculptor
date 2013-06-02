@@ -53,14 +53,17 @@ Application Library {
           Repository MediaRepository {
             > @MediaCharacterRepository
             int getNumberOfMovies(Long libraryId) => AccessObject;
-            List<@Media> findMediaByCharacter(Long libraryId, String characterName);
+            List<@Media> findMediaByCharacter(Long libraryId, String characterName) gap;
+            
+            findByTitle(String title);
+            
             findById;
             save;
             findAll;
             findByQuery;
             protected findByKeys(Set<String> keys, String keyPropertyName, Class<@Media> persistentClass);
-            List<@Media> findMediaByName(Long libraryId, String name); 
-            Map<String, @Movie> findMovieByUrlIMDB(Set<String> keys); 
+            List<@Media> findMediaByName(Long libraryId, String name) gap; 
+            Map<String, @Movie> findMovieByUrlIMDB(Set<String> keys) gap; 
           }
         }
 
