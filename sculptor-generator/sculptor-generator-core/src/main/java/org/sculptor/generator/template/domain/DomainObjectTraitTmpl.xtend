@@ -27,6 +27,9 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.Trait
 
+import org.sculptor.generator.chain.ChainOverridable
+
+@ChainOverridable
 class DomainObjectTraitTmpl {
 
 	@Inject private var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
