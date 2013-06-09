@@ -18,7 +18,11 @@
 package org.sculptor.dsl.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.sculptor.dsl.ui.hover.SculptordslEObjectDocumentationProvider;
+import org.sculptor.dsl.ui.hover.SculptordslEObjectHoverProvider;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -31,5 +35,13 @@ public class SculptordslUiModule extends org.sculptor.dsl.ui.AbstractSculptordsl
 	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
 		return SculptordslSemanticHighlightingCalculator.class;
 	}
+
+    public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+        return SculptordslEObjectHoverProvider.class;
+    }
+ 
+    public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
+        return SculptordslEObjectDocumentationProvider.class;
+    }
 
 }
