@@ -809,7 +809,7 @@ def String invalidMessageDestination(Application it) {
 def String ehcacheProperties(Application it) {
 	fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES, '''
 	<?xml version="1.0" encoding="UTF-8"?>
-	<ehcache>
+	<ehcache updateCheck="false">
 		<diskStore path="java.io.tmpdir"/>
 		<defaultCache
 			maxElementsInMemory="100000"
@@ -827,7 +827,7 @@ def String ehcacheProperties(Application it) {
 def String testEhcacheProperties(Application it) {
 	fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	<?xml version="1.0" encoding="UTF-8"?>
-	<ehcache>
+	<ehcache updateCheck="false">
 		<diskStore path="java.io.tmpdir"/>
 		<defaultCache
 			maxElementsInMemory="10000"
