@@ -20,7 +20,6 @@ package org.sculptor.generator.transformation
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Provider
-import org.eclipse.emf.common.util.EList
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
@@ -41,10 +40,10 @@ import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.Entity
 import sculptormetamodel.Module
-import sculptormetamodel.NamedElement
 import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
+
 import static extension org.sculptor.generator.GeneratorTestExtensions.*
 
 @RunWith(typeof(XtextRunner2))
