@@ -61,7 +61,7 @@ public class DbHelper {
 	def private String getDerivedFetch(Reference ref) {
 		if (isManyToMany(ref))
 			null // no default fetch for manyToMany
-		else  if (ref.to.isEntityOrPersistentValueObject() && !ref.to.aggregateRoot)
+		else if (ref.to.isEntityOrPersistentValueObject() && !ref.to.aggregateRoot)
 			"join"  // join fetch within same aggregate boundary
 		else
 			null
@@ -280,24 +280,22 @@ public class DbHelper {
 	}
 
 	def dispatch String getFetchType(String fetch) {
-	switch (fetch) {
-		// case "select" : "javax.persistence.FetchType.LAZY"
-		case "join" : "javax.persistence.FetchType.EAGER"
-		case "eager" : "javax.persistence.FetchType.EAGER"
-		case "lazy" : "javax.persistence.FetchType.LAZY"
-		default : null // use default in jpa
-	}
-
+		switch (fetch) {
+			// case "select" : "javax.persistence.FetchType.LAZY"
+			case "join" : "javax.persistence.FetchType.EAGER"
+			case "eager" : "javax.persistence.FetchType.EAGER"
+			case "lazy" : "javax.persistence.FetchType.LAZY"
+			default : null // use default in jpa
+		}
 	}
 
 	def String getHibernateFetchType(Reference ref) {
-	switch (getFetch(ref)) {
-		// case "join" : "org.hibernate.annotations.FetchMode.JOIN"
-		// case "select" : "org.hibernate.annotations.FetchMode.SELECT"
-		case "subselect" : "org.hibernate.annotations.FetchMode.SUBSELECT"
-		default : null
-	}
-
+		switch (getFetch(ref)) {
+			// case "join" : "org.hibernate.annotations.FetchMode.JOIN"
+			// case "select" : "org.hibernate.annotations.FetchMode.SELECT"
+			case "subselect" : "org.hibernate.annotations.FetchMode.SUBSELECT"
+			default : null
+		}
 	}
 
 	def boolean isInheritanceTypeSingleTable(DomainObject domainObject) {
