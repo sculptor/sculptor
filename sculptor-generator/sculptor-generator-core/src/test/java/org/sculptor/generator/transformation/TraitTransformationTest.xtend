@@ -1,3 +1,20 @@
+/*
+ * Copyright 2013 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.sculptor.generator.transformation
 
 import com.google.inject.Guice
@@ -21,15 +38,12 @@ import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
-import sculptormetamodel.Module
+import sculptormetamodel.Entity
+import sculptormetamodel.Trait
 
 import static org.junit.Assert.*
 
 import static extension org.sculptor.generator.GeneratorTestExtensions.*
-import sculptormetamodel.Trait
-import sculptormetamodel.DomainObjectOperation
-import sculptormetamodel.Entity
-import sculptormetamodel.Attribute
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
@@ -49,7 +63,7 @@ class TraitTransformationTest extends XtextTest {
 	var Provider<DslTransformation> dslTransformProvider
 	var Provider<Transformation> transformationProvider
 	var Application app
-	
+
 	@Before
 	def void setupDslModel() {
 		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
@@ -87,7 +101,7 @@ class TraitTransformationTest extends XtextTest {
     }
 
     private def module() {
-        return app.modules.namedElement("catalog") as Module
+        return app.modules.namedElement("catalog")
     }
 
     @Test
@@ -97,18 +111,18 @@ class TraitTransformationTest extends XtextTest {
         assertOneAndOnlyOne(product.getAttributes(), "title");
         assertOneAndOnlyOne(product.getOperations(), "price", "priceFactor", "getTitle", "setTitle");
 
-        val price = product.operations.namedElement("price") as DomainObjectOperation
+        val price = product.operations.namedElement("price")
         assertSame(product, price.getDomainObject());
 
-        val priceFactor = product.operations.namedElement("priceFactor") as DomainObjectOperation;
+        val priceFactor = product.operations.namedElement("priceFactor")
         assertTrue(priceFactor.isAbstract());
 
-        val getTitle = product.operations.namedElement("getTitle") as DomainObjectOperation;
+        val getTitle = product.operations.namedElement("getTitle")
         assertEquals("public", getTitle.getVisibility());
         assertSame(product, getTitle.getDomainObject());
         assertEquals("String", getTitle.getType());
     }
-    
+
     @Test
     def void assertProductMixin() {
         val movie = module.domainObjects.namedElement("Movie") as Entity
@@ -116,30 +130,28 @@ class TraitTransformationTest extends XtextTest {
         assertOneAndOnlyOne(movie.getAttributes(), "title", "urlIMDB", "playLength")
         assertOneAndOnlyOne(movie.getOperations(), "price", "priceFactor")
 
-        val title = movie.attributes.namedElement("title") as Attribute
+        val title = movie.attributes.namedElement("title")
         assertEquals("trait=Product", title.getHint())
 
-        val price = movie.operations.namedElement("price") as DomainObjectOperation
+        val price = movie.operations.namedElement("price")
         assertEquals("trait=Product", price.getHint());
         assertFalse(price.isAbstract());
         assertSame(movie, price.getDomainObject());
 
-        val priceFactor = movie.operations.namedElement("priceFactor") as DomainObjectOperation
+        val priceFactor = movie.operations.namedElement("priceFactor")
         assertEquals("trait=Product", price.getHint());
         assertTrue(priceFactor.isAbstract());
 
         assertTrue(movie.isGapClass());
     }
-    
-    
+
     @Test
     def void shouldRecognizeExistingPropertiesAndOperations() {
         val qwerty = module.domainObjects.namedElement("Qwerty") as Entity
         assertOneAndOnlyOne(qwerty.getAttributes(), "qqq", "www", "eee", "ddd");
         assertOneAndOnlyOne(qwerty.getOperations(), "getAaa", "spellCheck", "somethingElse");
     }
-    
-    
+
     @Test
     def void shouldMixinSeveralTraitsInOrder() {
         val abc = module.domainObjects.namedElement("Abc") as Entity
