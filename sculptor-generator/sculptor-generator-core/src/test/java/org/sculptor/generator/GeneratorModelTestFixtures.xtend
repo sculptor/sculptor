@@ -23,7 +23,6 @@ import com.google.inject.Injector
 import com.google.inject.Provider
 import java.io.IOException
 import java.util.ArrayList
-import junit.framework.Assert
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -40,6 +39,8 @@ import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.slf4j.LoggerFactory
 import sculptormetamodel.Application
+
+import static org.junit.Assert.*
 
 /**
  * Test fixtures for tests that work on a loaded and transformed Sculptor model
@@ -153,7 +154,7 @@ class GeneratorModelTestFixtures {
 
 		// assure that the root element is of the expected type
 		if (clazz != null) {
-			Assert::assertTrue(clazz.isInstance(o));
+			assertTrue(clazz.isInstance(o));
 		}
 		EcoreUtil::resolveAll(resource);
 		return o as T;
