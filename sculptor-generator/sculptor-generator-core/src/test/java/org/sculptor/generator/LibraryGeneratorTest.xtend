@@ -20,7 +20,6 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.sculptor.generator.GeneratorTestExtensions.*
-import org.sculptor.generator.GeneratorTestBase
 
 class LibraryGeneratorTest extends GeneratorTestBase {
 
@@ -32,6 +31,7 @@ class LibraryGeneratorTest extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
+		// Define property with package where override classes will be looked for -> here the class "DomainObjectReferenceTmplOverride"
 		System::setProperty("sculptor.defaultOverridesPackage", "org.sculptor.generator.library")
 		runGenerator(TEST_NAME)
 	}

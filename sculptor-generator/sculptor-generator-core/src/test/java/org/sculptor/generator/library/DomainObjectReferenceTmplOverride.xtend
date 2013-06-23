@@ -28,7 +28,7 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 				«getVisibilityLitteralSetter()»void addTo«name.toFirstUpper().plural()»(«getTypeName()» «name.singular()»Element) {
 					add«name.toFirstUpper().singular()»(«name.singular()»Element);
 				};
-			   «ENDIF»
+			«ENDIF»
 			
 			«super.bidirectionalReferenceAdd(it)»
 		'''
