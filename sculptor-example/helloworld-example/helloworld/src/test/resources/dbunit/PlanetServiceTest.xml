@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+  <PLANET id="11" name="Earth" message="Hello from Earth" LASTUPDATED="2006-12-08" LASTUPDATEDBY="dbunit" version="1" />
+  <PLANET id="12" name="Mars" message="Hello from Mars" LASTUPDATED="2006-12-08" LASTUPDATEDBY="dbunit" version="1" />
+  <MOON id="11" name="Moon" planet="11" version="1" />
+</dataset>

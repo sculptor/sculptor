@@ -8,7 +8,7 @@
 		<relativePath>../helloworld-parent/</relativePath>
 	</parent>
 	<artifactId>helloworld</artifactId>
-	<name>Sculptor - Example: Hello World</name>
+	<name>Sculptor :: Example :: Hello World Business Tier</name>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
