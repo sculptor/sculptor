@@ -81,10 +81,9 @@ class GeneratorTestExtensions {
 		in.close();
 		return sb.toString();
 	}
-	
-	
+
 	def static <NE extends NamedElement> void assertOneAndOnlyOne(EList<NE> listOfNamedElements, String... expectedNames) {
-		val expectedNamesList = expectedNames.toList
+		val expectedNamesList = newArrayList(expectedNames)
 
 		val actualNames = listOfNamedElements.map[ne|ne.name].filter[name | !SYSTEM_ATTRIBUTES.contains(name)].toList
 				
@@ -92,6 +91,5 @@ class GeneratorTestExtensions {
 		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, expectedNamesList.containsAll(actualNames))
 		
 	}
-
 
 }
