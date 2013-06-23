@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><umlet_diagram><help_text>// Uncomment the following line to change the fontsize:
+// fontsize=14
+
+// Welcome to UMLet!
+//
+// Double-click on UML elements to add them to the diagram.
+// Edit element properties by modifying the text in this panel.
+// Edit the files in the 'palettes' directory to create your own element palettes.
+// Hold down ⌘ to select multiple elements.
+// Press Del to delete elements.
+// Press ⌘-c to copy an element, and to store the whole UML diagram to the system clipboard.
+// Select "Custom elements &gt; New..." to create new element types.
+//
+// This text will be stored with each diagram;  use it for notes.</help_text><element><type>com.umlet.element.base.SequenceDiagram</type><coordinates><x>30</x><y>20</y><w>1270</w><h>500</h></coordinates><panel_attributes>title:Hello World Normal Flow
+_client:_|_:PlanetServiceImpl_|_:PlanetRepositoryImpl_|_:PlanetAccessFactoryImpl_|_:FindByExampleAccessImpl_
+1-&gt;2:1,2:sayHello
+2-&gt;2:1,2:findByExample
+2-&gt;3:1,2,3:findByExample
+3-&gt;3:1,2,3:findByExample
+3-&gt;4:1,2,3,4:createFindByExampleAccess
+4-&gt;&gt;5:1,2,3,4,5:new
+4.&gt;3:1,2,3,4
+3-&gt;5:1,2,3,5:setExample
+3-&gt;5:1,2,3,5:execute
+3-&gt;5:1,2,3,5:getResult
+5.&gt;3:1,2,3,5:return List&lt;Planet&gt;
+3.&gt;2:1,2,3
+2.&gt;1:1,2:return message
+
+</panel_attributes><additional_attributes/></element></umlet_diagram>
