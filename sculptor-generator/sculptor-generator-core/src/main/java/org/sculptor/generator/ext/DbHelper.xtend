@@ -46,7 +46,7 @@ public class DbHelper {
 	}
 
 	def boolean isDbOnDeleteCascade(Reference ref) {
-		isDbResponsibleForOnDeleteCascade() && (ref.getCascade() != null) && (ref.getCascade().contains("delete") || ref.getCascade().contains("all"))
+		isDbResponsibleForOnDeleteCascade() && (getCascade(ref) != null) && (getCascade(ref).contains("delete") || getCascade(ref).contains("all"))
 	}
 
 	def String getFetch(Reference ref) {
@@ -198,10 +198,10 @@ public class DbHelper {
 	}
 
 	def String getCascadeType(Reference ref) {
-		val values = if (ref.getCascade() == null)
+		val values = if (getCascade(ref) == null)
 			null
 		else
-			ref.getCascade().split(',').map(e | mapCascadeType(e))
+			getCascade(ref).split(',').map[e | mapCascadeType(e)].filterNull.toList
 		toAnnotationFormat(values)
 	}
 
@@ -227,8 +227,7 @@ public class DbHelper {
 	}
 
 	def boolean isOrphanRemoval(String cascade) {
-	isJpa2() && cascade != null && cascade.contains("all-delete-orphan")
-
+		isJpa2() && cascade != null && cascade.contains("all-delete-orphan")
 	}
 
 	def boolean isOrphanRemoval(String cascade, Reference ref) {
@@ -236,10 +235,10 @@ public class DbHelper {
 	}
 
 	def String getHibernateCascadeType(Reference ref) {
-		val values = if (ref.getCascade() == null)
+		val values = if (getCascade(ref) == null)
 			null
 		else
-			ref.getCascade().split(',').map[e | mapHibernateCascadeType(e)].filterNull.toList
+			getCascade(ref).split(',').map[e | mapHibernateCascadeType(e)].filterNull.toList
 		toAnnotationFormat(values)
 	}
 
