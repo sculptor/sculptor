@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sculptor.generator
+package org.sculptor.generator.library
 
 import org.junit.BeforeClass
 import org.junit.Test
+import org.sculptor.generator.GeneratorTestBase
 
 import static org.sculptor.generator.GeneratorTestExtensions.*
 
@@ -31,6 +32,7 @@ class LibraryGeneratorTest extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
+
 		// Define property with package where override classes will be looked for -> here the class "DomainObjectReferenceTmplOverride"
 		System::setProperty("sculptor.defaultOverridesPackage", "org.sculptor.generator.library")
 		runGenerator(TEST_NAME)
@@ -38,13 +40,13 @@ class LibraryGeneratorTest extends GeneratorTestBase {
 
 	@Test
 	def void assertEmbeddedColumnNamesInPersonBase() {
-		val personCode = getFileText("src/generated/java/org/sculptor/example/library/person/domain/PersonBase.java");
-		assertContains(personCode, "name = \"SSN_NUMBER\"");
+		val personCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/person/domain/PersonBase.java");
+		assertContains(personCode, 'name = "SSN_NUMBER"');
 	}
 
 	@Test
 	def void assertDbUnitEmptyDatabaseXml() {
-		val dbunit = getFileText("src/test/generated/resources/dbunit/EmptyDatabase.xml");
+		val dbunit = getFileText(TO_GEN_RESOURCES_TEST + "/dbunit/EmptyDatabase.xml");
 		assertNotContains(dbunit, "[]");
 	}
 
