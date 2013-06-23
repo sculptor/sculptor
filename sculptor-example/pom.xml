@@ -14,8 +14,11 @@
 	<description>Aggregator project for all Sculptor examples</description>
 
 	<modules>
+		<module>helloworld-example/helloworld-parent</module>
+<!-- 
 		<module>sculptor-example-library</module>
 		<module>mongodb-sample/sculptor-shipping-generator</module>
 		<module>mongodb-sample/sculptor-shipping</module>
+ -->
 	</modules>
 </project>
