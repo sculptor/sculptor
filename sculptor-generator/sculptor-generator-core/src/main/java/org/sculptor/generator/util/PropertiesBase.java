@@ -118,6 +118,8 @@ public class PropertiesBase {
 		properties = p3;
 
 		initDerivedDefaults(defaultProperties);
+
+		LOG.debug("Initialized properties: {}", properties);
 	}
 
 	private void copySystemProperties(Properties p) {
@@ -128,7 +130,7 @@ public class PropertiesBase {
 	}
 
 	private void loadProperties(Properties properties, String resource) {
-		LOG.debug("Loading properties from '" + resource + "'");
+		LOG.debug("Loading properties from '{}'", resource);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		if (classLoader == null) {
 			classLoader = PropertiesBase.class.getClassLoader();
