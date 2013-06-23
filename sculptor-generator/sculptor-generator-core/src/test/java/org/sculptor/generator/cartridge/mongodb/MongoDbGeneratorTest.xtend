@@ -19,9 +19,9 @@ package org.sculptor.generator.cartridge.mongodb
 
 import org.junit.BeforeClass
 import org.junit.Test
+import org.sculptor.generator.GeneratorTestBase
 
 import static org.sculptor.generator.GeneratorTestExtensions.*
-import org.sculptor.generator.GeneratorTestBase
 
 /**
  * Tests that verify overall generator workflow for projects that have MongoDB cartridge enabled
@@ -42,17 +42,17 @@ class MongoDbGeneratorTest extends GeneratorTestBase {
     @Test
     def void assertBookMapper() {
     	
-    	val libraryBuilderCode = getFileText("src/generated/java/org/sculptor/example/library/media/mapper/BookMapper.java");
+    	val libraryBuilderCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/mapper/BookMapper.java");
     	
     	assertContains(libraryBuilderCode, "package org.sculptor.example.library.media.mapper;");
     	
     	assertContains(libraryBuilderCode, "List<DBObject> engagementsData = new ArrayList<DBObject>();");
     }
-    
+   
     @Test
     def void assertSimpleGeneratedFinder() {
     	
-    	val mediaRepositoryCode = getFileText("src/generated/java/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryBase.java");
+    	val mediaRepositoryCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryBase.java");
     	
     	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
     	"public List<Media> findByTitle(String title) {",
