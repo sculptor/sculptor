@@ -55,6 +55,8 @@ abstract class GeneratorTestBase {
 	}
 
 	protected static def void runGenerator(String testName) {
+		deleteDirectory(new File(OUTPUT_DIR, testName))
+
 		System::setProperty("sculptor.generatorPropertiesLocation",
 			CONFIG_DIR + testName + "/sculptor-generator.properties")
 
@@ -75,6 +77,13 @@ abstract class GeneratorTestBase {
 
 		if (!SculptorGeneratorRunner::run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
 			throw new RuntimeException("Code generation failed")
+		}
+	}
+
+	private static def void deleteDirectory(File directory) {
+		if (directory.exists) {
+			directory.listFiles?.forEach[f | if (f.directory) deleteDirectory(f) else f.delete ]
+			directory.delete
 		}
 	}
 
