@@ -170,7 +170,7 @@ class Helper {
 				hm.put(shortClass, matcher.group(1))
 				repl = shortClass + matcher.group(4)
 			}
-			matcher.appendReplacement(sb, repl);
+			matcher.appendReplacement(sb, repl)
 		}
 		matcher.appendTail(sb)
 
@@ -187,7 +187,7 @@ class Helper {
 				hm.put(shortClass, matcher.group(1))
 				repl = "@" + shortClass + "("
 			}
-			matcher.appendReplacement(sb, repl);
+			matcher.appendReplacement(sb, repl)
 		}
 		matcher.appendTail(sb)
 
@@ -203,26 +203,26 @@ class Helper {
 	}
 
 	def String simpleMetaTypeName(NamedElement element) {
-		element.^class.simpleName //name.split("::").last();
+		element.^class.simpleName //name.split("::").last()
 	}
 
 	def String docMetaTypeName(NamedElement element) {
-		simpleMetaTypeName(element);
+		simpleMetaTypeName(element)
 	}
 
 	// Use this witha includeExternal=false to retrieve all DomainObjects except those belonging
 	// to external modules
 	def dispatch Collection<Repository> getAllRepositories(Application app) {
-		app.getAllRepositories(true);
+		app.getAllRepositories(true)
 	}
 
 	def dispatch Collection<Repository> getAllRepositories(Module module) {
-		module.domainObjects.filter[repository?.name != null].map[repository].sortBy[name];
+		module.domainObjects.filter[repository?.name != null].map[repository].sortBy[name]
 	}
 
 	def Collection<Repository> getAllRepositories(Application app, boolean includeExternal) {
 		app.modules.map[it.getAllRepositories].flatten
-			.filter[includeExternal || !aggregateRoot.module.external].sortBy[name];
+			.filter[includeExternal || !aggregateRoot.module.external].sortBy[name]
 	}
 
 	// TODO VYHODIT
@@ -234,7 +234,7 @@ class Helper {
 		if (!isGenerateQuick())
 			app.modules
 		else {
-			val changed = changedModulesWithDependingModules(app);
+			val changed = changedModulesWithDependingModules(app)
 			if (changed.isEmpty)
 				app.modules as List<Module>
 			else {
@@ -257,12 +257,12 @@ class Helper {
 	}
 
 	def List<Module> changedModulesWithDependingModules(Application app) {
-		app.changedModules().map[m | m.modulesDependingOn].flatten.toList;
+		app.changedModules().map[m | m.modulesDependingOn].flatten.toList
 	}
 
 	def List<Module> changedModules(Application app) {
-		val result = getChangedModules().map(e | e.moduleFor(app));
-		if (result.contains(null)) newArrayList else result;
+		val result = getChangedModules().map(e | e.moduleFor(app))
+		if (result.contains(null)) newArrayList else result
 	}
 
 	def Module moduleFor(String name, Application app) {
@@ -270,15 +270,15 @@ class Helper {
 	}
 
 	def List<Module> getModulesDependingOn(Module module) {
-		DependencyConstraints::getModulesDependingOn(module);
+		DependencyConstraints::getModulesDependingOn(module)
 	}
 
 	def Collection<DomainObject> getNonEnumDomainObjects(Module module) {
-		module.domainObjects.filter[d | !(d instanceof sculptormetamodel.Enum)].sortBy[e|e.name];
+		module.domainObjects.filter[d | !(d instanceof Enum)].sortBy[e|e.name]
 	}
 
 	def Collection<Service> getAllServices(Application app) {
-		app.getAllServices(true);
+		app.getAllServices(true)
 	}
 
 	// Use this witha includeExternal=false to retrieve all DomainObjects except those belonging
@@ -288,7 +288,7 @@ class Helper {
 	}
 
 	def Collection<Resource> getAllResources(Application app) {
-		app.getAllResources(true);
+		app.getAllResources(true)
 	}
 
 	// Use this witha includeExternal=false to retrieve all DomainObjects except those belonging
@@ -298,7 +298,7 @@ class Helper {
 	}
 
 	def Collection<Consumer> getAllConsumers(Application app) {
-		app.getAllConsumers(true);
+		app.getAllConsumers(true)
 	}
 
 	// Use this witha includeExternal=false to retrieve all DomainObjects except those belonging
@@ -316,34 +316,34 @@ class Helper {
 	}
 
 	def String getServiceapiPackage(Service service) {
-		getServiceapiPackage(service.module);
+		getServiceapiPackage(service.module)
 	}
 
 	def String getServiceimplPackage(Service service) {
-		getServiceimplPackage(service.module);
+		getServiceimplPackage(service.module)
 	}
 
 	def String getRestPackage(Resource resource) {
-		getRestPackage(resource.module);
+		getRestPackage(resource.module)
 	}
 
 	def String getServiceproxyPackage(Service service) {
-		getServiceproxyPackage(service.module);
+		getServiceproxyPackage(service.module)
 	}
 
 	def String getServicestubPackage(Service service) {
-		getServicestubPackage(service.module);
+		getServicestubPackage(service.module)
 	}
 
 	def boolean isPagedResult(TypedElement e) {
-		e.type == "PagedResult";
+		e.type == "PagedResult"
 	}
 
 	def String getAccessObjectResultTypeName(RepositoryOperation op) {
 		if (op.isPagedResult()) 
 			"java.util.List<" + op.domainObjectType.getDomainPackage() + "." + op.domainObjectType.name + ">"
 		else
-			op.getTypeName();
+			op.getTypeName()
 	}
 
 	def String getExtendsAndImplementsLitteral(DomainObject domainObject) {
@@ -354,34 +354,34 @@ class Helper {
 		if (domainObject.getExtendsClassName() == "")
 			""
 		else
-			"extends " + domainObject.getExtendsClassName();
+			"extends " + domainObject.getExtendsClassName()
 	}
 
 	def String getExtendsClassNameIfExists(DomainObject domainObject) {
 		if (domainObject.getExtends == null)
 			domainObject.getDomainPackage() + "." + domainObject.name
 		else
-			domainObject.getExtends().getDomainPackage() + "." + domainObject.getExtends().name;
+			domainObject.getExtends().getDomainPackage() + "." + domainObject.getExtends().name
 	}
 
 	def String getExtendsClassName(DomainObject domainObject) {
 		if ( (domainObject.getExtends() as Object) == null)
 			if (domainObject.extendsName == null) domainObject.defaultExtendsClassName() else domainObject.extendsName
 		else 
-			domainObject.getExtends().getDomainPackage() + "." + domainObject.getExtends().name;
+			domainObject.getExtends().getDomainPackage() + "." + domainObject.getExtends().name
 	}
 
 	def dispatch String defaultExtendsClassName(DomainObject domainObject) {
 		val result = defaultExtendsClass(domainObject.simpleMetaTypeName())
-		if (result == "") abstractDomainObjectClass() else result;
+		if (result == "") abstractDomainObjectClass() else result
 	}
 
 	def dispatch String defaultExtendsClassName(DataTransferObject domainObject) {
-	defaultExtendsClass(domainObject.simpleMetaTypeName());
+		defaultExtendsClass(domainObject.simpleMetaTypeName())
 	}
 
 	def dispatch String defaultExtendsClassName(Trait domainObject) {
-		defaultExtendsClass(domainObject.simpleMetaTypeName());
+		defaultExtendsClass(domainObject.simpleMetaTypeName())
 	}
 
 	def List<String> traitInterfaceNames(DomainObject domainObject) {
@@ -396,7 +396,7 @@ class Helper {
 		else if (domainObject.getExtends != null)
 			""
 		else
-			" implements " + domainObject.getImplementsInterfaceNames();
+			" implements " + domainObject.getImplementsInterfaceNames()
 	}
 
 	def String toCommaSeparatedString(List<String> values) {
@@ -404,7 +404,7 @@ class Helper {
 	}
 
 	def boolean isIdentifiable(DomainObject domainObject) {
-		domainObject.attributes.exists[e | e.name == "id" && e.getTypeName() == "Long"];
+		domainObject.attributes.exists[e | e.name == "id" && e.getTypeName() == "Long"]
 	}
 
 	def dispatch String getImplementsInterfaceNames(DomainObject domainObject) {
@@ -427,7 +427,7 @@ class Helper {
 	}
 
 	def dispatch String getImplementsInterfaceNames(Trait domainObject) {
-		domainObject.getDomainPackage() + "." + domainObject.name + ", java.io.Serializable";
+		domainObject.getDomainPackage() + "." + domainObject.name + ", java.io.Serializable"
 	}
 
 	def dispatch String getImplementsInterfaceNames(DomainEvent domainObject) {
@@ -448,7 +448,7 @@ class Helper {
 		if (isFullyAuditable())
 			list.add(fw("domain.FullAuditLog") + "<" + entity.getDomainPackage() + "." + entity.name + ">")
 
-		toCommaSeparatedString(list);
+		toCommaSeparatedString(list)
 	}
 
 	def String getEjbInterfaces(Service service) {
@@ -463,7 +463,7 @@ class Helper {
 		if (service.webService)
 			list.add(pkg + "." + service.name + "Endpoint")
 
-		toCommaSeparatedString(list);
+		toCommaSeparatedString(list)
 	}
 
 	def private String visibilityImpl(String visibility) {
@@ -472,7 +472,7 @@ class Helper {
 				case "" : "public "
 				case "package" : ""
 				default : visibility + " "
-		};
+		}
 	}
 
 	def String getAccessObjectInterfaceExtends(RepositoryOperation op) {
@@ -482,11 +482,11 @@ class Helper {
 		if (op.hasHint("cache"))
 			list.add(fw("accessapi.Cacheable"))
 
-		toCommaSeparatedString(list);
+		toCommaSeparatedString(list)
 	}
 
 	def dispatch String getVisibilityLitteralGetter(Attribute attribute) {
-		visibilityImpl(attribute.visibility);
+		visibilityImpl(attribute.visibility)
 	}
 
 	def dispatch boolean isSetterNeeded(Reference ref) {
@@ -496,7 +496,7 @@ class Helper {
 			else
 				notChangeableReferenceSetterVisibility() != "private"
 		else
-			true;
+			true
 	}
 
 	def dispatch boolean isSetterNeeded(Attribute attribute) {
@@ -506,11 +506,11 @@ class Helper {
 			else
 				notChangeablePropertySetterVisibility() != "private"
 		else
-			true;
+			true
 	}
 
 	def dispatch boolean isSetterPrivate(Attribute attribute) {
-		attribute.getVisibilityLitteralSetter() == "private ";
+		attribute.getVisibilityLitteralSetter() == "private "
 	}
 
 	def dispatch boolean isSetterPrivate(Reference ref) {
@@ -524,27 +524,27 @@ class Helper {
 			else
 				visibilityImpl(attribute.visibility)
 		else
-			"private ";
+			"private "
 	}
 
 	def String getVisibilityLitteral(Operation op) {
-		visibilityImpl(op.visibility);
+		visibilityImpl(op.visibility)
 	}
 
 	def dispatch boolean isPublicVisibility(Attribute att) {
-		att.getVisibilityLitteralGetter().startsWith("public");
+		att.getVisibilityLitteralGetter().startsWith("public")
 	}
 
 	def dispatch boolean isPublicVisibility(Reference ref) {
-		ref.getVisibilityLitteralGetter().startsWith("public");
+		ref.getVisibilityLitteralGetter().startsWith("public")
 	}
 
 	def dispatch boolean isPublicVisibility(Operation op) {
-		op.getVisibilityLitteral().startsWith("public");
+		op.getVisibilityLitteral().startsWith("public")
 	}
 
 	def dispatch String getVisibilityLitteralGetter(Reference ref) {
-		visibilityImpl(ref.visibility);
+		visibilityImpl(ref.visibility)
 	}
 
 	def dispatch String getVisibilityLitteralSetter(Reference ref) {
@@ -561,14 +561,14 @@ class Helper {
 		if (domainObject.^abstract)
 			"abstract "
 		else
-			"";
+			""
 	}
 
 	def private Collection<Attribute> getSuperAllAttributes(DomainObject domainObject) {
 		if (domainObject.getExtends == null)
 			newArrayList
 		else
-			domainObject.getExtends.getAllAttributes();
+			domainObject.getExtends.getAllAttributes()
 	}
 
 	def Collection<Attribute> getAllAttributes(DomainObject domainObject) {
@@ -581,7 +581,7 @@ class Helper {
 		if (domainObject.getExtends == null)
 			newArrayList
 		else
-			domainObject.getExtends.getAllReferences();
+			domainObject.getExtends.getAllReferences()
 	}
 
 	def Collection<Reference> getAllReferences(DomainObject domainObject) {
@@ -594,14 +594,14 @@ class Helper {
 		if (domainObject.getExtends == null)
 			newArrayList()
 		else
-			domainObject.getExtends.getConstructorParameters();
+			domainObject.getExtends.getConstructorParameters()
 	}
 
 	def List<NamedElement> getConstructorParameters(DomainObject domainObject) {
 		var allParams = domainObject.getSuperConstructorParameters()
 		allParams.addAll(domainObject.attributes.filter[a | (!a.changeable || a.required)])
 		allParams = allParams.filter[a | a != domainObject.getIdAttribute()].toList()
-		allParams.addAll(domainObject.references.filter[r | (!r.changeable || r.required)]);
+		allParams.addAll(domainObject.references.filter[r | (!r.changeable || r.required)])
 		allParams
 	}
 
@@ -614,55 +614,55 @@ class Helper {
 	}
 
 	def String getDefaultConstructorVisibility(DomainObject domainObject) {
-		"protected";
+		"protected"
 	}
 
 	def dispatch boolean isNullable(NamedElement element) {
-		false;
+		false
 	}
 
 	def dispatch boolean isNullable(Attribute att) {
-		att.nullable;
+		att.nullable
 	}
 
 	def dispatch boolean isNullable(Reference ref) {
-		ref.nullable;
+		ref.nullable
 	}
 
 	def dispatch boolean isRequired(NamedElement element) {
-		false;
+		false
 	}
 
 	def dispatch boolean isRequired(Attribute att) {
-		att.required;
+		att.required
 	}
 
 	def dispatch boolean isRequired(Reference ref) {
-		ref.required;
+		ref.required
 	}
 
 	def dispatch boolean isChangeable(NamedElement element) {
-		false;
+		false
 	}
 
 	def dispatch boolean isChangeable(Attribute att) {
-		att.changeable;
+		att.changeable
 	}
 
 	def dispatch boolean isChangeable(Reference ref) {
-		ref.changeable;
+		ref.changeable
 	}
 
 	def dispatch boolean isImmutable(DomainObject domainObject) {
-		false;
+		false
 	}
 
 	def dispatch boolean isImmutable(Enum domainObject) {
-		true;
+		true
 	}
 
 	def dispatch boolean isImmutable(ValueObject domainObject) {
-		domainObject.immutable;
+		domainObject.immutable
 	}
 
 	def Collection<Repository> getDelegateRepositories(Service service) {
@@ -684,15 +684,15 @@ class Helper {
 	}
 
 	def String getSetAccessor(NamedElement element) {
-		"set" + element.name.toFirstUpper();
+		"set" + element.name.toFirstUpper()
 	}
 
 	def dispatch String getGetAccessor(NamedElement element) {
-		"get" + element.name.toFirstUpper();
+		"get" + element.name.toFirstUpper()
 	}
 
 	def dispatch String getGetAccessor(TypedElement e) {
-		e.getGetAccessor("");
+		e.getGetAccessor("")
 	}
 
 	def String getAccessNormalizedName(RepositoryOperation op) {
@@ -731,7 +731,7 @@ class Helper {
 	}
 
 	def boolean isPagingParameter(Parameter param) {
-		param.type == "PagingParameter";
+		param.type == "PagingParameter"
 	}
 
 	def boolean isPaged(Operation op) {
@@ -739,7 +739,7 @@ class Helper {
 	}
 
 	def Attribute getIdAttribute(DomainObject domainObject) {
-		domainObject.getAllAttributes().findFirst(a | a.name == "id");
+		domainObject.getAllAttributes().findFirst(a | a.name == "id")
 	}
 
 	def String getIdAttributeType(DomainObject domainObject) {
@@ -758,7 +758,7 @@ class Helper {
 	}
 
 	def boolean hasOwnDatabaseRepresentation(DomainObject domainObject) {
-		domainObject.isEntityOrPersistentValueObject();
+		domainObject.isEntityOrPersistentValueObject()
 	}
 
 	// Include Entity and persistent ValueObject,
@@ -780,30 +780,30 @@ class Helper {
 	}
 
 	def dispatch boolean isPersistent(DataTransferObject domainObject) {
-		false;
+		false
 	}
 
 	def dispatch boolean isPersistent(BasicType domainObject) {
-		true;
+		true
 	}
 
 	def boolean isOneToOne(Reference ref) {
-		!ref.many && ref.opposite != null && !ref.opposite.many;
+		!ref.many && ref.opposite != null && !ref.opposite.many
 	}
 
 	def boolean isOneToMany(Reference ref) {
-		ref.many && ((ref.opposite != null && !ref.opposite.many) || (ref.opposite == null && ref.isInverse()));
+		ref.many && ((ref.opposite != null && !ref.opposite.many) || (ref.opposite == null && ref.isInverse()))
 	}
 
 	def boolean isManyToMany(Reference ref) {
-		ref.many && ((ref.opposite != null && ref.opposite.many) || (ref.opposite == null && !ref.isInverse()));
+		ref.many && ((ref.opposite != null && ref.opposite.many) || (ref.opposite == null && !ref.isInverse()))
 	}
 
 	//
 	// Hint support
 	//
 	def boolean hasHint(NamedElement element, String parameterName) {
-		hasHintImpl(element.hint, parameterName);
+		hasHintImpl(element.hint, parameterName)
 	}
 
 	def boolean hasHint(NamedElement element, String parameterName, String separator) {
@@ -815,11 +815,11 @@ class Helper {
 	}
 
 	def String getHintOrDefault(NamedElement element, String parameterName, String defaultValue) {
-		ifNull(element.getHint(parameterName), defaultValue);
+		ifNull(element.getHint(parameterName), defaultValue)
 	}
 
 	def String getHintOrDefault(NamedElement element, String parameterName, String separator, String defaultValue) {
-		ifNull(element.getHint(parameterName, separator), defaultValue);
+		ifNull(element.getHint(parameterName, separator), defaultValue)
 	}
 
 	def String ifNull(String value, String defaultValue) {
@@ -845,7 +845,7 @@ class Helper {
 	}
 
 	def boolean checkAggregateReferences(Application app) {
-		// AggregateConstraints.checkAggregateReferences(app);
+		// AggregateConstraints.checkAggregateReferences(app)
 		true
 	}
 
@@ -882,7 +882,7 @@ class Helper {
 		if (domainObject?.getExtends == null)
 			domainObject
 		else
-			domainObject.getExtends.getRootExtends();
+			domainObject.getExtends.getRootExtends()
 	}
 
 	def List<Reference> getNaturalKeyReferences(DomainObject domainObject) {
@@ -900,7 +900,7 @@ class Helper {
 	}
 
 	def boolean hasNaturalKey(DomainObject domainObject) {
-		!domainObject.getAllNaturalKeyAttributes().isEmpty || !domainObject.getAllNaturalKeyReferences().isEmpty;
+		!domainObject.getAllNaturalKeyAttributes().isEmpty || !domainObject.getAllNaturalKeyReferences().isEmpty
 	}
 
 	def List<Attribute> getNaturalKeyAttributes(DomainObject domainObject) {
@@ -925,7 +925,7 @@ class Helper {
 	}
 
 	def dispatch boolean isBasicTypeReference(NamedElement ref) {
-	false;
+		false
 	}
 
 	def dispatch boolean isBasicTypeReference(Reference ref) {
@@ -941,11 +941,11 @@ class Helper {
 	}
 
 	def dispatch boolean isEnumReference(NamedElement ref) {
-		false;
+		false
 	}
 
 	def dispatch boolean isEnumReference(Reference ref) {
-		!ref.many && (ref.to instanceof sculptormetamodel.Enum)
+		!ref.many && (ref.to instanceof Enum)
 	}
 
 	def Collection<Reference> getEnumReferences(DomainObject domainObject) {
@@ -965,11 +965,11 @@ class Helper {
 			domainObject.getExtends.getAllEnumReferences()
 	}
 
-	def Attribute getIdentifierAttribute(sculptormetamodel.Enum ^enum) {
+	def Attribute getIdentifierAttribute(Enum ^enum) {
 		if (enum.hasNaturalKey())
 			enum.attributes.findFirst[a | a.naturalKey]
 		else
-			null;
+			null
 	}
 
 	def boolean isEmbeddable(DomainObject domainObject) {
@@ -991,7 +991,7 @@ class Helper {
 
 	def dispatch DomainObject getDomainObject(NamedElement elem) {
 		error("NamedElement doesn't belong to a DomainObject: " + elem)
-		null;
+		null
 	}
 
 	def dispatch DomainObject getDomainObject(Attribute attribute) {
@@ -1006,14 +1006,14 @@ class Helper {
 		if (parameter.getOperation() instanceof RepositoryOperation)
 			(parameter.getOperation() as RepositoryOperation)
 		else
-			null;
+			null
 	}
 
 	def ServiceOperation getServiceOperation(Parameter parameter) {
 		if (parameter.getOperation() instanceof ServiceOperation)
 			(parameter.getOperation() as ServiceOperation)
 		else
-			null;
+			null
 	}
 
 	def dispatch DomainObject getDomainObject(Reference ref) {
@@ -1021,19 +1021,19 @@ class Helper {
 	}
 
 	def boolean hasSimpleNaturalKey(DomainObject domainObject) {
-		!domainObject.hasCompositeNaturalKey();
+		!domainObject.hasCompositeNaturalKey()
 	}
 
 	def boolean hasCompositeNaturalKey(DomainObject domainObject) {
-		domainObject.getAllNaturalKeys().size > 1;
+		domainObject.getAllNaturalKeys().size > 1
 	}
 
 	def dispatch boolean isSimpleNaturalKey(Attribute attribute) {
-		(attribute.naturalKey && hasSimpleNaturalKey(attribute.getDomainObject()));
+		(attribute.naturalKey && hasSimpleNaturalKey(attribute.getDomainObject()))
 	}
 
 	def dispatch boolean isSimpleNaturalKey(Reference ref) {
-		(ref.naturalKey && hasSimpleNaturalKey(ref.from));
+		(ref.naturalKey && hasSimpleNaturalKey(ref.from))
 	}
 
 	def Attribute getUuid(DomainObject domainObject) {
@@ -1041,12 +1041,12 @@ class Helper {
 	}
 
 	def boolean isUuid(Attribute attribute) {
-		attribute.name == "uuid";
+		attribute.name == "uuid"
 	}
 
-	def Collection<sculptormetamodel.Enum> getAllEnums(Application app) {
+	def Collection<Enum> getAllEnums(Application app) {
 		app.modules.map[domainObjects].flatten
-			.filter[d | d instanceof sculptormetamodel.Enum].map[(it as sculptormetamodel.Enum)].toSet
+			.filter[d | d instanceof Enum].map[it as Enum].toSet
 	}
 
 	def boolean isValueObjectReference(Reference ref) {
@@ -1071,14 +1071,14 @@ class Helper {
 	}
 
 	def dispatch String getAuditEntityListener(DomainObject domainObject) {
-		null;
+		null
 	}
 
 	def dispatch String getAuditEntityListener(Entity entity) {
 		if (entity.auditable)
 			auditEntityListener()
 		else
-			null;
+			null
 	}
 
 	def String dataSourceName(Application app, String persistenceUnitName) {
@@ -1087,31 +1087,31 @@ class Helper {
 		else if (app.isDefaultPersistenceUnitName(persistenceUnitName))
 			app.name + "DS"
 		else
-			persistenceUnitName + "DS";
+			persistenceUnitName + "DS"
 	}
 
 	def String dataSourceName(Application app) {
-		app.dataSourceName(app.persistenceUnitName());
+		app.dataSourceName(app.persistenceUnitName())
 	}
 
 	def dispatch boolean isXmlElementToBeGenerated(Attribute attr) {
 	isXmlBindAnnotationToBeGenerated() &&
-		isXmlBindAnnotationToBeGenerated(attr.getDomainObject().simpleMetaTypeName());
+		isXmlBindAnnotationToBeGenerated(attr.getDomainObject().simpleMetaTypeName())
 	}
 
 	def dispatch boolean isXmlElementToBeGenerated(Reference ref) {
 		isXmlBindAnnotationToBeGenerated() &&
-			isXmlBindAnnotationToBeGenerated(ref.from.simpleMetaTypeName());
+			isXmlBindAnnotationToBeGenerated(ref.from.simpleMetaTypeName())
 	}
 
 	def boolean isXmlRootToBeGenerated(DomainObject domainObject) {
 		isXmlBindAnnotationToBeGenerated() &&
 			isXmlBindAnnotationToBeGenerated(domainObject.simpleMetaTypeName()) &&
-			("true" == domainObject.getHint("xmlRoot"));
+			("true" == domainObject.getHint("xmlRoot"))
 	}
 
 	def List<String> reversePackageName(String packageName) {
-		packageName.split('\\.').reverse();
+		packageName.split('\\.').reverse()
 	}
 
 	def List<String> supportedCollectionTypes() {
@@ -1134,7 +1134,7 @@ class Helper {
 	}
 
 	def boolean isDefaultPersistenceUnitName(Application app, String unitName) {
-		unitName == app.persistenceUnitName();
+		unitName == app.persistenceUnitName()
 	}
 
 	def String persistenceContextUnitName(Repository repository) {
@@ -1145,48 +1145,48 @@ class Helper {
 	}
 
 	def boolean isString(Attribute attribute) {
-		(attribute.type == "String") && !attribute.isCollection();
+		(attribute.type == "String") && !attribute.isCollection()
 	}
 
 	def boolean isBoolean(Attribute attribute) {
-		newArrayList("Boolean", "boolean").contains(attribute.type) && !attribute.isCollection();
+		newArrayList("Boolean", "boolean").contains(attribute.type) && !attribute.isCollection()
 	}
 
 	def boolean isNumeric(Attribute attribute) {
-	supportedNumericTypes().contains(attribute.type) && !attribute.isCollection();
+	supportedNumericTypes().contains(attribute.type) && !attribute.isCollection()
 	}
 
 	def boolean isTemporal(Attribute attribute) {
-	supportedTemporalTypes().contains(attribute.type) && !attribute.isCollection();
+	supportedTemporalTypes().contains(attribute.type) && !attribute.isCollection()
 	}
 
 	def boolean isDate(Attribute attribute) {
-	attribute.type == "Date";
+	attribute.type == "Date"
 	}
 
 	def boolean isDateTime(Attribute attribute) {
-	attribute.type == "DateTime" || attribute.type == "Timestamp";
+	attribute.type == "DateTime" || attribute.type == "Timestamp"
 	}
 
 	def boolean isPrimitive(Attribute attribute) {
-		isPrimitiveType(attribute.getTypeName()) && !attribute.isCollection();
+		isPrimitiveType(attribute.getTypeName()) && !attribute.isCollection()
 	}
 
 	def dispatch boolean isUnownedReference(NamedElement elem) {
-		false;
+		false
 	}
 
 	def dispatch boolean isUnownedReference(Reference ref) {
 		(isJpaProviderAppEngine() || nosql()) && ref.from.isPersistent() && !ref.transient && ref.to.hasOwnDatabaseRepresentation()
-			&& !ref.hasOwnedHint() && (! ref.from.getAggregate().contains(ref.to) || ref.hasUnownedHint());
+			&& !ref.hasOwnedHint() && (! ref.from.getAggregate().contains(ref.to) || ref.hasUnownedHint())
 	}
 
 	def boolean hasOwnedHint(Reference ref) {
-		ref.hasHint("owned") || (ref.opposite != null && ref.opposite.hasHint("owned"));
+		ref.hasHint("owned") || (ref.opposite != null && ref.opposite.hasHint("owned"))
 	}
 
 	def boolean hasUnownedHint(Reference ref) {
-		ref.hasHint("unowned") || (ref.opposite != null && ref.opposite.hasHint("unowned"));
+		ref.hasHint("unowned") || (ref.opposite != null && ref.opposite.hasHint("unowned"))
 	}
 
 	def dispatch String unownedReferenceSuffix(NamedElement elem) {
@@ -1197,15 +1197,15 @@ class Helper {
 		if (ref.isUnownedReference())
 			(if (ref.many) "Ids" else "Id")
 		else
-			"";
+			""
 	}
 
 	def dispatch boolean isCollection(Attribute attribute) {
-		attribute.collectionType != null && supportedCollectionTypes().contains(attribute.collectionType);
+		attribute.collectionType != null && supportedCollectionTypes().contains(attribute.collectionType)
 	}
 
 	def dispatch boolean isCollection(Reference reference) {
-		reference.collectionType != null && supportedCollectionTypes().contains(reference.collectionType);
+		reference.collectionType != null && supportedCollectionTypes().contains(reference.collectionType)
 	}
 
 	def boolean isList(Reference ref) {
@@ -1214,7 +1214,7 @@ class Helper {
 
 
 	def boolean useJpaBasicAnnotation(Attribute attr) {
-		isJpaProviderAppEngine() && (attr.getTypeName() == "com.google.appengine.api.datastore.Key");
+		isJpaProviderAppEngine() && (attr.getTypeName() == "com.google.appengine.api.datastore.Key")
 	}
 
 	def boolean useJpaLobAnnotation(Attribute attr) {
@@ -1222,7 +1222,7 @@ class Helper {
 	}
 
 	def dispatch String extendsLitteral(Repository repository) {
-		val prop = defaultExtendsClass(repository.simpleMetaTypeName());
+		val prop = defaultExtendsClass(repository.simpleMetaTypeName())
 		if (prop != '')
 			("extends " + prop)
 		else
@@ -1239,7 +1239,7 @@ class Helper {
 		if (prop != '')
 			"extends " + prop
 		else
-			"";
+			""
 	}
 
 	def dispatch String extendsLitteral(Resource resource) {
@@ -1247,7 +1247,7 @@ class Helper {
 		if (prop != '')
 			"extends " + prop
 		else
-			"";
+			""
 	}
 
 	// The root of the aggregate that the domainObject belongs to
@@ -1264,7 +1264,7 @@ class Helper {
 	}
 
 	def boolean bothEndsInSameAggregateRoot(Reference ref) {
-		ref.to.getAggregateRootObject() == ref.from.getAggregateRootObject();
+		ref.to.getAggregateRootObject() == ref.from.getAggregateRootObject()
 	}
 
 	// All DomainObjects in same aggregate group as the domainObject
@@ -1287,7 +1287,7 @@ class Helper {
 	def private Collection<DomainObject> collectAggregateObjects(DomainObject domainObject) {
 		val List<DomainObject> aggrSet = newArrayList()
 
-		aggrSet.add(domainObject);
+		aggrSet.add(domainObject)
 		aggrSet.addAll(domainObject.references.filter[e | !e.to.isAggregateRoot && e.to.isEntityOrPersistentValueObject()]
 				.map[r | r.to.collectAggregateObjects()].flatten)
 		aggrSet
@@ -1302,22 +1302,22 @@ class Helper {
 	}
 
 	def dispatch boolean validateNotNullInConstructor(NamedElement any) {
-		false;
+		false
 	}
 
 	def dispatch boolean validateNotNullInConstructor(Reference ref) {
-		(!ref.isNullable() && !ref.changeable && (notChangeableReferenceSetterVisibility() == "private"));
+		(!ref.isNullable() && !ref.changeable && (notChangeableReferenceSetterVisibility() == "private"))
 	}
 
 	def dispatch boolean validateNotNullInConstructor(Attribute att) {
-	!att.isNullable() && !att.isPrimitive();
+	!att.isNullable() && !att.isPrimitive()
 	}
 
 	def Module getModule(NamedElement elem) {
 		if (elem == null || elem instanceof Module)
 			(elem as Module)
 		else
-			(elem.eContainer as NamedElement).getModule();
+			(elem.eContainer as NamedElement).getModule()
 	}
 
 	def String toStringStyle(DomainObject domainObject) {
@@ -1350,11 +1350,11 @@ class Helper {
 	}
 
 	def dispatch boolean isImplementedInGapClass(ServiceOperation op) {
-		(op.delegate == null && op.serviceDelegate == null);
+		(op.delegate == null && op.serviceDelegate == null)
 	}
 
 	def dispatch boolean isImplementedInGapClass(ResourceOperation op) {
-		(op.delegate == null && !(op.parameters.isEmpty && op.returnString != null && op.httpMethod == HttpMethod::GET));
+		(op.delegate == null && !(op.parameters.isEmpty && op.returnString != null && op.httpMethod == HttpMethod::GET))
 	}
 
 	def HttpMethod mapHttpMethod(String methodName) {
@@ -1380,56 +1380,56 @@ class Helper {
 	}
 
 	def String getDomainResourceName(Resource resource) {
-		resource.name.removeSuffix("Resource");
+		resource.name.removeSuffix("Resource")
 	}
 
 	def String getXStreamAliasName(DomainObject domainObject) {
-		domainObject.name.removeSuffix("DTO").removeSuffix("Dto");
+		domainObject.name.removeSuffix("DTO").removeSuffix("Dto")
 	}
 
 	def String getXmlRootElementName(DomainObject domainObject) {
-		domainObject.name.removeSuffix("DTO").removeSuffix("Dto");
+		domainObject.name.removeSuffix("DTO").removeSuffix("Dto")
 	}
 
 	def boolean isRestRequestParameter(Parameter param) {
-		!getNotRestRequestParameter().contains(param.type);
+		!getNotRestRequestParameter().contains(param.type)
 	}
 
 	def dispatch String getApplicationBasePackage(DomainObject domainObject) {
-		domainObject.module.application.basePackage;
+		domainObject.module.application.basePackage
 	}
 
 	def dispatch String getApplicationBasePackage(Reference reference) {
-		getApplicationBasePackage(reference.getDomainObject());
+		getApplicationBasePackage(reference.getDomainObject())
 	}
 
 	def dispatch String getApplicationBasePackage(Attribute attribute) {
-		getApplicationBasePackage(attribute.getDomainObject());
+		getApplicationBasePackage(attribute.getDomainObject())
 	}
 
 	def DomainObject getAggregateRoot(RepositoryOperation op) {
-		op.repository.aggregateRoot;
+		op.repository.aggregateRoot
 	}
 
 	def dispatch String getAggregateRootTypeName(Repository repository) {
-		repository.aggregateRoot.getDomainObjectTypeName();
+		repository.aggregateRoot.getDomainObjectTypeName()
 	}
 
 	def dispatch String getAggregateRootTypeName(RepositoryOperation op) {
-		op.repository.getAggregateRootTypeName();
+		op.repository.getAggregateRootTypeName()
 	}
 
 	def String getAggregateRootPropertiesTypeName(RepositoryOperation op) {
-		op.repository.getAggregateRootTypeName() + "Properties";
+		op.repository.getAggregateRootTypeName() + "Properties"
 	}
 
-	def boolean isOrdinaryEnum(sculptormetamodel.Enum ^enum) {
-		( enum.getIdentifierAttribute() == null )
+	def boolean isOrdinaryEnum(Enum ^enum) {
+		enum.getIdentifierAttribute() == null
 	}
 
-	def sculptormetamodel.Enum getEnum(Reference ref) {
+	def Enum getEnum(Reference ref) {
 		if (ref.isEnumReference())
-			(ref.to as sculptormetamodel.Enum)
+			(ref.to as Enum)
 		else {
 			error("Reference is not of type enum")
 			null
@@ -1437,23 +1437,23 @@ class Helper {
 	}
 
 	def boolean containsNonOrdinaryEnums(Application application) {
-		application.getAllEnums().exists(e|!e.isOrdinaryEnum());
+		application.getAllEnums().exists(e | !e.isOrdinaryEnum())
 	}
 
 	def boolean hasParameters(RepositoryOperation op) {
-		op.parameters != null && !op.parameters.isEmpty;
+		op.parameters != null && !op.parameters.isEmpty
 	}
 
 	def boolean hasAttribute(DomainObject domainObject, String name) {
-		domainObject.getAllAttributes().exists(a | a.name == name);
+		domainObject.getAllAttributes().exists(a | a.name == name)
 	}
 
 	def boolean hasReference(DomainObject domainObject, String name) {
-		domainObject.getAllReferences().exists(a | a.name == name);
+		domainObject.getAllReferences().exists(a | a.name == name)
 	}
 
 	def boolean hasAttributeOrReference(DomainObject domainObject, String name) {
-		domainObject.hasAttribute(name) || domainObject.hasReference(name);
+		domainObject.hasAttribute(name) || domainObject.hasReference(name)
 	}
 
 	def private String getPropertyPath(String propertyName, DomainObject aggregateRoot) {
@@ -1464,7 +1464,7 @@ class Helper {
 		else if (aggregateRoot.getAllReferences().exists(e | e.to.hasAttributeOrReference(propertyName)))
 			aggregateRoot.getAllReferences().findFirst(e | e.to.hasAttributeOrReference(propertyName)).name + "." + propertyName
 		else
-			null;
+			null
 	}
 
 	def String getDomainObjectTypeName(DomainObject domainObject) {
@@ -1515,32 +1515,32 @@ class Helper {
 	}
 
 	def boolean throwsNotFoundException(RepositoryOperation op) {
-		op.getThrows != null && op.getThrows.contains(op.getNotFoundExceptionName());
+		op.getThrows != null && op.getThrows.contains(op.getNotFoundExceptionName())
 	}
 
 	def String removeSurrounding(String s, String char) {
 		if (s.startsWith(char) && s.endsWith(char))
 			s.substring(1, s.length -1)
 		else
-			s;
+			s
 	}
 
 	def boolean hasHintEquals(NamedElement element, String parameterName, String parameterValue) {
-		element.hasHint(parameterName) && element.getHint(parameterName) == parameterValue;
+		element.hasHint(parameterName) && element.getHint(parameterName) == parameterValue
 	}
 
 	def boolean isGeneratedFinder(RepositoryOperation op) {
 		generateFinders() &&
 				!op.hasHint("gap") &&
-						(op.isQueryBased() || op.isConditionBased());
+						(op.isQueryBased() || op.isConditionBased())
 	}
 
 	def boolean isQueryBased(RepositoryOperation op) {
-		isJpa2() && op.hasHint("query");
+		isJpa2() && op.hasHint("query")
 	}
 
 	def boolean isConditionBased(RepositoryOperation op) {
-		(op.hasHint("construct") || op.hasHint("build") || op.hasHint("condition") || op.hasHint("select") || op.name.startsWith("find"));
+		(op.hasHint("construct") || op.hasHint("build") || op.hasHint("condition") || op.hasHint("select") || op.name.startsWith("find"))
 	}
 
 	// TODO: quick solution, it would be better to implement a new access strategy
@@ -1552,7 +1552,7 @@ class Helper {
 				 op.name == "findByKeys" ||
 				 op.name == "findByNaturalKeys" ||
 				 op.name == "findByCondition" ||
-				 op.name == "findByCriteria");
+				 op.name == "findByCriteria")
 	}
 
 	def boolean useTupleToObjectMapping(RepositoryOperation op) {
@@ -1560,7 +1560,7 @@ class Helper {
 	}
 
 	def private boolean isReturningDataTranferObject(RepositoryOperation op) {
-		(op.domainObjectType != null && op.domainObjectType.isDataTranferObject());
+		(op.domainObjectType != null && op.domainObjectType.isDataTranferObject())
 	}
 
 	def String buildConditionalCriteria(RepositoryOperation op) {
@@ -1706,7 +1706,7 @@ class Helper {
 	}
 
 	def List<NamedElement> getBuilderConstructorParameters(DomainObject domainObject) {
-		domainObject.getConstructorParameters();
+		domainObject.getConstructorParameters()
 	}
 
 	def List<NamedElement> getBuilderProperties(DomainObject domainObject) {
@@ -1725,11 +1725,11 @@ class Helper {
 	}
 
 	def dispatch boolean needsBuilder(DomainObject domainObject) {
-		domainObject.^abstract == false;
+		domainObject.^abstract == false
 	}
 
 	def dispatch boolean needsBuilder(Enum domainObject) {
-		false;
+		false
 	}
 
 	/**
@@ -1754,7 +1754,7 @@ class Helper {
 	def dispatch void addDefaultValues(RepositoryOperation operation) {
 		val strategy = genericAccessObjectManager.getStrategy(operation.getName())
 		if (strategy != null) {
-			strategy.addDefaultValues(operation);
+			strategy.addDefaultValues(operation)
 		}
 	}
 }
