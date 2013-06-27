@@ -40,13 +40,13 @@ class HibernateTmpl {
 def String hibernate(Application it) {
 	'''
 	«IF isJpa1()»
-		«it.modules.map[enumTypedefFile(it)].join()»e
+		«it.modules.map[enumTypedefFile(it)].join()»
 		«IF isJpaAnnotationToBeGenerated()»
 			«hibenateCfgFile(it)»
 		«ENDIF»
 	«ENDIF»
 	«IF isJpa2() && it.containsNonOrdinaryEnums()»
-			«enumType(it)»
+		«enumType(it)»
 	«ENDIF»
 	'''
 }
