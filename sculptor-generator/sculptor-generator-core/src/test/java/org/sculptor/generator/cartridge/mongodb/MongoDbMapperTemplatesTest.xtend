@@ -49,19 +49,18 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 		
 		mongoDbMapperTmpl = generatorModelTestFixtures.getProvidedObject(typeof(MongoDbMapperTmpl))
 	}
-	
 
     def Module mediaModule(Application app) {
-        return app.modules.namedElement("media");
+        return app.modules.namedElement("media")
     }
-	
+
 	@Test
 	def void testAppTransformation() {
 		val app = generatorModelTestFixtures.app
 		assertNotNull(app)
 		assertEquals(2, app.modules.size)
 	}
-	
+
 	@Test
 	def void testToDataInheritedOneManyAssoc() {
 		val app = generatorModelTestFixtures.app
@@ -74,12 +73,11 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 		val code = mongoDbMapperTmpl.toData(book)
 		assertNotNull(code)
 		
-        code.assertContainsConsecutiveFragments(#{
+        code.assertContainsConsecutiveFragments(#[
             "java.util.List<com.mongodb.DBObject> engagementsData = new java.util.ArrayList<com.mongodb.DBObject>();",
             "for (org.sculptor.example.library.media.domain.Engagement each : from.getEngagements()) {",
             "engagementsData.add(org.sculptor.example.library.media.mapper.EngagementMapper.getInstance().toData(each));"
-        });
-
+        ])
 	}
 
 }
