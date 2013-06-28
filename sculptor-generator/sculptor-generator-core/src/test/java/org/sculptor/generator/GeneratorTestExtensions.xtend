@@ -59,7 +59,7 @@ class GeneratorTestExtensions {
 		val sb = new StringBuilder();
 
 		for (String fragment : fragments) {
-			sb.append("\\Q" + fragment + "\\E\\s*");
+			sb.append(Pattern.quote(fragment) + "\\s*");
 		}
 		assertMatchesRegexp(text, sb.toString());
 	}
@@ -89,7 +89,6 @@ class GeneratorTestExtensions {
 				
 		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, actualNames.containsAll(expectedNamesList))
 		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, expectedNamesList.containsAll(actualNames))
-		
 	}
 
 }
