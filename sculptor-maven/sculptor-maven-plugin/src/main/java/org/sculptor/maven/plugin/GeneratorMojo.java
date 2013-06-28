@@ -256,8 +256,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	 */
 	protected void initMojoMultiValueParameters() {
 
-		// Set default values for 'checkFileSets' to
-		// "src/main/resources/*.btdesign"
+		// Set default values for 'checkFileSets' to "src/main/resources/*.btdesign"
 		if (checkFileSets == null) {
 			FileSet defaultFileSet = new FileSet();
 			defaultFileSet.setDirectory(project.getBasedir() + "/src/main/resources");
