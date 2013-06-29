@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -138,9 +138,10 @@ def String enumType(Application it) {
 
 	@SuppressWarnings("serial")
 	public class EnumUserType extends org.hibernate.type.EnumType {
+
 		@SuppressWarnings("unchecked")
 		@Override
-		public Object nullSafeGet(java.sql.ResultSet rs, String[] names«IF isJpaProviderHibernate4()»,org.hibernate.engine.spi.SessionImplementor session«ENDIF», Object owner)
+		public Object nullSafeGet(java.sql.ResultSet rs, String[] names«IF isJpaProviderHibernate4()», org.hibernate.engine.spi.SessionImplementor session«ENDIF», Object owner)
 			throws org.hibernate.HibernateException, java.sql.SQLException {
 			Object object = rs.getObject(names[0]);
 			if (rs.wasNull()) {
@@ -151,7 +152,7 @@ def String enumType(Application it) {
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public void nullSafeSet(java.sql.PreparedStatement st, Object value, int index«IF isJpaProviderHibernate4()»,org.hibernate.engine.spi.SessionImplementor session«ENDIF»)
+		public void nullSafeSet(java.sql.PreparedStatement st, Object value, int index«IF isJpaProviderHibernate4()», org.hibernate.engine.spi.SessionImplementor session«ENDIF»)
 			throws org.hibernate.HibernateException, java.sql.SQLException {
 			if (value == null) {
 				st.setNull(index, sqlTypes()[0]);
@@ -160,15 +161,14 @@ def String enumType(Application it) {
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void setParameterValues(java.util.Properties properties) {
-			// set default type to varchar
 			super.setParameterValues(properties);
-			try {
-				returnedClass().getMethod("fromValue",String.class);
-				properties.setProperty(TYPE,properties.getProperty(TYPE, "" + java.sql.Types.VARCHAR));
-			} catch (Exception e) {
-				properties.setProperty(TYPE,properties.getProperty(TYPE, "" + java.sql.Types.INTEGER));
+			if (org.sculptor.framework.util.EnumHelper.isIdentifierAttributeOfTypeString((Class<? extends Enum<?>>) returnedClass())) {
+				properties.setProperty(TYPE, properties.getProperty(TYPE, "" + java.sql.Types.VARCHAR));
+			} else {
+				properties.setProperty(TYPE, properties.getProperty(TYPE, "" + java.sql.Types.INTEGER));
 			}
 			super.setParameterValues(properties);
 		}
@@ -176,4 +176,5 @@ def String enumType(Application it) {
 	'''
 	)
 }
+
 }
