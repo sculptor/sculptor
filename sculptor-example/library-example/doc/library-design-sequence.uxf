@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><umlet_diagram><element><type>com.umlet.element.base.SequenceDiagram</type><coordinates><x>20</x><y>20</y><w>1180</w><h>500</h></coordinates><panel_attributes>title:Library Normal Flow
+_client:_|_:LibraryServiceImpl_|_:LibraryRepository_|_:LibraryAccessFactoryImpl_|_:FindByQueryAccessImpl_
+1-&gt;2:1,2:findLibraryByName
+2-&gt;3:1,2,3:findLibraryByName
+3-&gt;3:1,2,3:findByQuery
+3-&gt;4:1,2,3,4:createFindByQueryAccess
+4-&gt;&gt;5:1,2,3,4,5:new
+4.&gt;3:1,2,3,4
+3-&gt;5:1,2,3,5:setQuery
+3-&gt;5:1,2,3,5:setParameters
+3-&gt;5:1,2,3,5:execute
+3-&gt;5:1,2,3,5:getResult
+5.&gt;3:1,2,3,5:return List&lt;Library&gt;
+3.&gt;2:1,2,3
+2.&gt;1:1,2:return Library
+
+</panel_attributes><additional_attributes>transparentSelection=false</additional_attributes></element></umlet_diagram>
