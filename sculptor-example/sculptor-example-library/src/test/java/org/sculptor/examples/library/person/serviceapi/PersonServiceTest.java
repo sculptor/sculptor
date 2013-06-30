@@ -1,22 +1,38 @@
+/*
+ * Copyright 2013 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.sculptor.examples.library.person.serviceapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.Calendar;
 import java.util.List;
 
+import org.junit.Test;
 import org.sculptor.examples.library.person.domain.Country;
 import org.sculptor.examples.library.person.domain.Gender;
+import org.sculptor.examples.library.person.domain.Person;
 import org.sculptor.examples.library.person.domain.PersonName;
 import org.sculptor.examples.library.person.domain.PersonProperties;
 import org.sculptor.examples.library.person.domain.Ssn;
 import org.sculptor.examples.library.person.exception.PersonNotFoundException;
-import org.sculptor.examples.library.person.serviceapi.PersonService;
-import org.sculptor.examples.library.person.serviceapi.PersonServiceTestBase;
-import org.junit.Assume;
-import org.junit.Test;
-import org.sculptor.examples.library.person.domain.Person;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
@@ -25,7 +41,6 @@ import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.errorhandling.ValidationException;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.ExpectedException;
 
 /**
  * Spring based transactional test with DbUnit support.
@@ -56,8 +71,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		assertNotNull(person);
 	}
 
-	@Test
-	@ExpectedException(PersonNotFoundException.class)
+	@Test(expected = PersonNotFoundException.class)
 	public void testFindByIdWithNotFoundException() throws Exception {
 		personService.findById(getServiceContext(), -1L);
 	}
@@ -76,8 +90,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		assertEquals(before + 1, countRowsInTable(Person.class));
 	}
 
-	@Test
-	@ExpectedException(ValidationException.class)
+	@Test(expected = ValidationException.class)
 	public void testCreateThrowingValidationExceptionForBirthDate() throws Exception {
 		Person person = new Person(Gender.FEMALE, new Ssn("12345", Country.DENMARK));
 		PersonName name = new PersonName("New", "Person");
@@ -89,9 +102,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		personService.save(getServiceContext(), person);
 	}
 
-	@Test
-	@ExpectedException(ValidationException.class)
-	public void testCreateThrowingValidationException() throws Exception {
+	@Test(expected = ValidationException.class)
+	public void testCreateThrowingValidationExceptionForMissinBirthDate() throws Exception {
 		Person person = new Person(Gender.FEMALE, new Ssn("0815", Country.DENMARK));
 		PersonName name = new PersonName("New", "Person");
 		person.setName(name);
@@ -125,7 +137,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 	@Test
 	public void testFindPersonByName() throws Exception {
 		// NamedQuery needs '()', see comments in Person class
-		Assume.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
+		assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
 		List<Person> persons = personService.findPersonByName(getServiceContext(), "Skarsgård");
 		assertEquals(2, persons.size());
 	}
