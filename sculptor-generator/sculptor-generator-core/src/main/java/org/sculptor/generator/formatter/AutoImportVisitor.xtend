@@ -20,15 +20,16 @@ import java.util.HashSet
 import java.util.Set
 import org.eclipse.jdt.internal.compiler.ASTVisitor
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration
-import org.eclipse.jdt.internal.compiler.ast.ImportReference
 import org.eclipse.jdt.internal.compiler.ast.ParameterizedQualifiedTypeReference
+import org.eclipse.jdt.internal.compiler.ast.QualifiedNameReference
 import org.eclipse.jdt.internal.compiler.ast.QualifiedTypeReference
 import org.eclipse.jdt.internal.compiler.lookup.BlockScope
 import org.eclipse.jdt.internal.compiler.lookup.ClassScope
-import org.eclipse.text.edits.DeleteEdit
+import org.eclipse.text.edits.InsertEdit
 import org.eclipse.text.edits.MultiTextEdit
 import org.eclipse.text.edits.TextEdit
-import org.eclipse.text.edits.InsertEdit
+
+import static extension org.sculptor.generator.formatter.ASTNodeHelper.*
 
 /**
  * This {@link ASTVisitor} provides {@link TextEdit} instances to replace all
@@ -62,7 +63,7 @@ class AutoImportVisitor extends ASTVisitor {
 
 	def TextEdit insertAdditionalImports(int pos) {
 		val textEdit = new MultiTextEdit
-		additionalImports.forEach[importName|textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';\n'))]
+		additionalImports.sort.forEach[importName|textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';\n'))]
 		textEdit
 	}
 
@@ -71,83 +72,79 @@ class AutoImportVisitor extends ASTVisitor {
 		return false
 	}
 
-	override visit(QualifiedTypeReference typeReference, ClassScope scope) {
-		autoImport(typeReference)
+	override visit(QualifiedTypeReference reference, ClassScope scope) {
+		autoImport(reference)
 		return false
 	}
 
-	override visit(ParameterizedQualifiedTypeReference typeReference, BlockScope scope) {
-		autoImport(typeReference)
+	override visit(ParameterizedQualifiedTypeReference reference, BlockScope scope) {
+		autoImport(reference)
 		return false
 	}
 
-	override visit(ParameterizedQualifiedTypeReference typeReference, ClassScope scope) {
-		autoImport(typeReference)
+	override visit(ParameterizedQualifiedTypeReference reference, ClassScope scope) {
+		autoImport(reference)
 		return false
 	}
 
-	private def autoImport(QualifiedTypeReference typeReference) {
+	override boolean visit(QualifiedNameReference reference, BlockScope scope) {
+		autoImport(reference)
+		return false
+	}
+
+	override boolean visit(QualifiedNameReference reference, ClassScope scope) {
+		autoImport(reference)
+		return false
+	}
+
+	private def autoImport(QualifiedTypeReference reference) {
 
 		// Check if import already defined 
-		if (imports.contains(typeReference.qualifiedName)) {
-			renameQualifiedType(typeReference)
+		if (imports.contains(reference.qualifiedName)) {
+			textEdit.addChild(reference.renameTextEdit)
 		} else // Check if this types short name collides with an already used short name
-		if (!importShortNames.contains(typeReference.shortName)) {
-			renameQualifiedType(typeReference)
-			addImport(typeReference)
+		if (!importShortNames.contains(reference.shortName)) {
+			textEdit.addChild(reference.renameTextEdit)
+			addImport(reference)
 		}
 	}
 
-	def autoImport(ParameterizedQualifiedTypeReference typeReference) {
-		autoImport(typeReference as QualifiedTypeReference)
-		typeReference.typeArguments.forEach [ typeArgumentTypeReferences |
-			if (typeArgumentTypeReferences != null) {
-				typeArgumentTypeReferences.forEach [ typeArgumentTypeReference |
-					if (typeArgumentTypeReference instanceof QualifiedTypeReference) {
-						autoImport(typeArgumentTypeReference as QualifiedTypeReference)
+	private def autoImport(ParameterizedQualifiedTypeReference reference) {
+		autoImport(reference as QualifiedTypeReference)
+		reference.typeArguments.forEach [ referenceTypeArguments |
+			if (referenceTypeArguments != null) {
+				referenceTypeArguments.forEach [ referenceTypeArgument |
+					if (referenceTypeArgument instanceof QualifiedTypeReference) {
+						autoImport(referenceTypeArgument as QualifiedTypeReference)
 					}
 				]
 			}
 		]
 	}
 
-	private def renameQualifiedType(QualifiedTypeReference reference) {
-		textEdit.addChild(
-			new DeleteEdit(reference.sourceStart, reference.qualificationLenth)
-		)
+	private def addImport(QualifiedTypeReference reference) {
+		additionalImports += reference.qualifiedName
+		imports += reference.qualifiedName
+		importShortNames += reference.shortName
 	}
 
-	private def addImport(QualifiedTypeReference typeReference) {
-		additionalImports += typeReference.qualifiedName
-		imports += typeReference.qualifiedName
-		importShortNames += typeReference.shortName
-	}
-
-	private def qualifiedName(ImportReference importReference) {
-		importReference.print(0, new StringBuffer(), false).toString
-	}
-
-	private def shortName(ImportReference importReference) {
-		importReference.tokens.last.toString
-	}
-
-	private def qualifiedName(QualifiedTypeReference typeReference) {
-		val buf = new StringBuffer
-		for (i : 0 ..< typeReference.tokens.length) {
-			if (i > 0) buf.append('.')
-			buf.append(typeReference.tokens.get(i))
+	private def autoImport(QualifiedNameReference reference) {
+		if (reference.isType || reference.variable) { 
+			// Check if import already defined 
+			if (imports.contains(reference.qualifiedName)) {
+				textEdit.addChild(reference.renameTextEdit)
+			} else // Check if this types short name collides with an already used short name
+			if (!importShortNames.contains(reference.shortName)) {
+				textEdit.addChild(reference.renameTextEdit)
+				addImport(reference)
+			}
 		}
-		buf.toString
 	}
 
-	private def qualificationLenth(QualifiedTypeReference typeReference) {
-		typeReference.qualifiedName.length - typeReference.shortName.length
-	}
-
-	private def shortName(QualifiedTypeReference typeReference) {
-		val buf = new StringBuffer
-		buf.append(typeReference.tokens.last)
-		buf.toString
+	private def addImport(QualifiedNameReference reference) {
+		additionalImports += reference.qualifiedName
+		imports += reference.qualifiedName
+		importShortNames += reference.shortName
 	}
 
 }

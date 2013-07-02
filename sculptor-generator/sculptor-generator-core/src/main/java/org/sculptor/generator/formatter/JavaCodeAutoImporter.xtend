@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sculptor.generator.formatter
 
 import java.util.HashMap
@@ -29,11 +30,14 @@ import org.eclipse.text.edits.MultiTextEdit
 /**
  * Uses the JDT compiler to replace all fully qualified class names (as long as there is
  * no conflict) by their short name and adds the corresponding import statement.
+ * <p>
+ * The imports are placed in the source code at a position specified via regexp pattern
+ * (parameter <code>importMarkerPattern</code>).
  * 
  * @see CodeSnippetParsingUtil
  * @see AutoImportVisitor
  */
-class CodeAutoImporter {
+class JavaCodeAutoImporter {
 
 	def String replaceQualifiedTypes(String source, String importMarkerPattern) {
 

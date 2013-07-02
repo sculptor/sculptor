@@ -23,10 +23,12 @@ import java.util.Collection
 import java.util.List
 import javax.inject.Inject
 import org.sculptor.generator.util.DependencyConstraints
+import org.sculptor.generator.util.GenericAccessObjectManager
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import org.sculptor.generator.util.SingularPluralConverter
+import org.slf4j.LoggerFactory
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -53,19 +55,13 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
-import org.sculptor.generator.util.GenericAccessObjectManager
-import org.eclipse.jdt.core.formatter.CodeFormatter
-import org.eclipse.text.edits.TextEdit
-import org.eclipse.jface.text.IDocument
-import org.eclipse.jface.text.Document
-import org.eclipse.jdt.core.ToolFactory
-import java.util.regex.Pattern
-import java.util.HashMap
-import org.slf4j.LoggerFactory
+import org.sculptor.generator.formatter.JavaCodeFormatter
 
 class Helper {
+
 	static val LOG = LoggerFactory::getLogger(typeof(Helper))
 
+	@Inject var JavaCodeFormatter javaCodeFormatter
 	@Inject var SingularPluralConverter singularPluralConverter
 	@Inject var GenericAccessObjectManager genericAccessObjectManager
 
@@ -88,7 +84,11 @@ class Helper {
 		if (!fl.exists || (fl.exists && "true" == overwrite)) {
 			fl.parentFile.mkdirs()
 			var out = new FileWriter(fl)
-			out.write(if (fileName.endsWith(JAVA_EXT)) formatJavaCode(flTr, text) else text)
+			out.write(
+				if ((fileName.endsWith(JAVA_EXT)) && getBooleanProperty("java.codeformatter.enabled"))
+					javaCodeFormatter.format(flTr, text, getBooleanProperty("java.codeformatter.error.abort"))
+				else
+					text)
 			out.close()
 			LOG.debug("Created file : " + fl)
 		} else {
@@ -97,110 +97,8 @@ class Helper {
 		""
 	}
 
-	def private formatJavaCode(String path, String code) {
-
-		// As fall-back return the original code
-		var String formattedCode = code
-
-		// Skip code formatting if disabled
-		if (getBooleanProperty("java.codeformatter.enabled")) {
-			var unformattedCode = code
-
-			// Auto-importing full qualified Java types if enabled
-			if (getBooleanProperty("java.codeformatter.autoimport.enabled")) {
-				unformattedCode = extractJavaTypes(code)
-			}
-
-			// Use Eclipse JDTs code formatter
-			val TextEdit textEdit = getCodeFormatter().format(
-				CodeFormatter::K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), unformattedCode, 0,
-				unformattedCode.length(), 0, "\n")
-			val IDocument doc = new Document(unformattedCode)
-			try {
-				textEdit.apply(doc)
-				formattedCode = doc.get()
-			} catch (Exception e) {
-				LOG.error("Error formating code for '{}'. Using original code from generator", path)
-				if (getBooleanProperty("java.codeformatter.error.abort")) {
-					throw new RuntimeException("Invalid generated Java code in '" + path + "'")
-				}
-			}
-		}
-		formattedCode
-	}
-
-	var CodeFormatter codeFormatter
-
-	def private getCodeFormatter() {
-		if (codeFormatter == null) {
-			val classLoader = Thread::currentThread().getContextClassLoader() ?: this.^class.getClassLoader()
-			val props = new java.util.Properties()
-			props.load(classLoader.getResourceAsStream("default-java-code-formatter.properties"))
-			getProperty("java.code.formatter.props", "").split("[,; ]").forEach [
-				val stream = classLoader.getResourceAsStream(it)
-				if (stream != null) {
-					LOG.debug("Loading properties for Java code formatter from file '{}'", it)
-					props.load(classLoader.getResourceAsStream(it))
-				} else {
-					LOG.warn("File '{}' with properties for Java code formatter not found", it)
-				}
-			]
-			codeFormatter = ToolFactory::createCodeFormatter(props)
-		}
-		codeFormatter
-	}
-
-	val typePattern = Pattern::compile("(([a-z]\\w+\\.)+([A-Z]\\w++))(\\s*[^(])")
-	val anotPattern = Pattern::compile("@([a-z]\\w+(\\.\\w+)++)\\s*\\(")
-	val packagePattern = Pattern::compile("package.*;")
-
-	def private extractJavaTypes(String code) {
-		val hm = new HashMap<String, String>()
-
-		var matcher = typePattern.matcher(code)
-		var sb = new StringBuffer()
-		while(matcher.find) {
-			val shortClass = matcher.group(3)
-			var String repl
-			if (hm.containsKey(shortClass) && !matcher.group(1).equals(hm.get(shortClass))
-					|| matcher.group(1).startsWith("this.")
-					|| shortClass.substring(0, 1).toUpperCase != shortClass.substring(0, 1)
-			) {
-				repl = matcher.group(0)
-			} else {
-				hm.put(shortClass, matcher.group(1))
-				repl = shortClass + matcher.group(4)
-			}
-			matcher.appendReplacement(sb, repl)
-		}
-		matcher.appendTail(sb)
-
-		matcher = anotPattern.matcher(sb.toString)
-		sb = new StringBuffer()
-		while(matcher.find) {
-			val shortClass = matcher.group(2).substring(1)
-			var String repl
-			if (hm.containsKey(shortClass) && !matcher.group(1).equals(hm.get(shortClass))
-					|| shortClass.substring(0, 1).toUpperCase != shortClass.substring(0, 1)
-			) {
-				repl = matcher.group(0)
-			} else {
-				hm.put(shortClass, matcher.group(1))
-				repl = "@" + shortClass + "("
-			}
-			matcher.appendReplacement(sb, repl)
-		}
-		matcher.appendTail(sb)
-
-		val matcher2 = packagePattern.matcher(sb.toString)
-		matcher2.find
-		sb.insert(matcher2.end, hm.values.sortBy[it].map["\nimport " + it + ";"].join)
-
-		return sb.toString
-	}
-
 	def String javaFileName(String ne) {
-		ne + ".java"
+		ne + JAVA_EXT
 	}
 
 	def String simpleMetaTypeName(NamedElement element) {
@@ -211,7 +109,7 @@ class Helper {
 		simpleMetaTypeName(element)
 	}
 
-	// Use this witha includeExternal=false to retrieve all DomainObjects except those belonging
+	// Use this with "includeExternal=false" to retrieve all DomainObjects except those belonging
 	// to external modules
 	def dispatch Collection<Repository> getAllRepositories(Application app) {
 		app.getAllRepositories(true)
