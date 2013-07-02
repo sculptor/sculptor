@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,6 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
-
 class LogConfigTmpl {
 
 	@Inject extension Helper helper
@@ -43,7 +42,6 @@ class LogConfigTmpl {
 				</encoder>
 			</appender>
 
-			<logger name="de.hunsicker.jalopy.io" level="WARN"/>
 			<root level="INFO">
 				<appender-ref ref="STDOUT" />
 			</root>
@@ -65,7 +63,6 @@ class LogConfigTmpl {
 			</appender>
 			
 			<logger name="«basePackage»" level="DEBUG" />
-			<logger name="de.hunsicker.jalopy.io" level="WARN"/>
 			<root level="INFO">
 				<appender-ref ref="STDOUT" />
 			</root>
