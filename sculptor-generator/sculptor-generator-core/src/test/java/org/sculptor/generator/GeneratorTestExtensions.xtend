@@ -77,6 +77,7 @@ class GeneratorTestExtensions {
 		var String str;
 		while ((str = in.readLine()) != null) {
 			sb.append(str);
+			sb.append("\n");
 		}
 		in.close();
 		return sb.toString();
