@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,6 +100,8 @@ def String manifest(Application it) {
 def String enumMappingClass(Application it) {
 	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
+
+/// Sculptor code formatter imports ///
 
 	import java.math.BigInteger;
 
@@ -197,6 +199,8 @@ def String enumMappingClass(Application it) {
 def String enumLiteralClass(Application it) {
 	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), OutputSlot::TO_GEN_SRC, '''
 	package org.datanucleus.store.rdbms.sql.expression;
+
+/// Sculptor code formatter imports ///
 
 	import org.datanucleus.ClassNameConstants;
 	import org.datanucleus.store.mapped.mapping.JavaTypeMapping;

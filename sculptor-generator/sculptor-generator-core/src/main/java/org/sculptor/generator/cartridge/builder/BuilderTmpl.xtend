@@ -44,6 +44,9 @@ def String builder(DomainObject it) {
 	fileOutput(javaFileName(it.getBuilderFqn()), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getBuilderPackage()»;
+
+/// Sculptor code formatter imports ///
+
 	«builderBody(it)»
 	'''
 	)

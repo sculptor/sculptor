@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,6 +50,8 @@ class ExceptionTmpl {
 		«javaHeader()»
 		package «it.getExceptionPackage()»;
 
+/// Sculptor code formatter imports ///
+
 		public class «exceptionName» extends «applicationExceptionClass()» {
 		«serialVersionUID(it) »
 			private static final String CLASS_NAME = «exceptionName».class.getSimpleName();
@@ -74,6 +76,8 @@ class ExceptionTmpl {
 		fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
 		package «it.getExceptionPackage()»;
+
+/// Sculptor code formatter imports ///
 
 		public class «exceptionName» extends Exception {
 		«serialVersionUID(it) »

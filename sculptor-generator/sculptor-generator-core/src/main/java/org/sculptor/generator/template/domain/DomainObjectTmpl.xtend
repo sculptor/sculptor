@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,6 +67,8 @@ def dispatch String domainObjectSubclass(DataTransferObject it) {
 	«javaHeader()»
 	package «getDomainPackage()»;
 
+/// Sculptor code formatter imports ///
+
 	«IF formatJavaDoc(it) == "" »
 		/**
 		 * Data transfer object for «name». Properties and associations are
@@ -98,6 +100,8 @@ def dispatch String domainObjectSubclass(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	«domainObjectSubclassJavaDoc(it)»
 
@@ -152,6 +156,8 @@ def dispatch String domainObjectBase(DomainObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	«domainObjectBaseJavaDoc(it)»
 
@@ -257,6 +263,8 @@ def dispatch String domainObjectBase(DataTransferObject it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	«IF gapClass»
 		/**
@@ -386,6 +394,8 @@ def dispatch String domainObject(Enum it) {
 	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	«IF it.formatJavaDoc() == "" »
 		/**

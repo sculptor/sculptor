@@ -136,6 +136,8 @@ def String enumType(Application it) {
 	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), OutputSlot::TO_GEN_SRC, '''
 	package «basePackage».util;
 
+/// Sculptor code formatter imports ///
+
 	@SuppressWarnings("serial")
 	public class EnumUserType extends org.hibernate.type.EnumType {
 

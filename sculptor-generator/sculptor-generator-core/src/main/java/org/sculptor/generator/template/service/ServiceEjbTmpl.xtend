@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,6 +64,8 @@ def String ejbBeanImplBase(Service it) {
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
+/// Sculptor code formatter imports ///
+
 	«IF gapClass»
 		/**
 		 * Generated base class for implementation of «name».
@@ -106,6 +108,8 @@ def String ejbBeanImplSubclass(Service it) {
 	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	/**
 	 * Implementation of «name».
@@ -161,6 +165,8 @@ def String ejbRemoteInterface(Service it) {
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
+/// Sculptor code formatter imports ///
+
 	/**
 	 * Generated EJB remote interface for the Service «name».
 	 */
@@ -175,6 +181,8 @@ def String ejbLocalInterface(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	/**
 	 * Generated EJB local interface for the Service «name».
@@ -191,6 +199,8 @@ def String serviceProxy(Service it) {
 	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceproxyPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	/**
 	 * Generated proxy class that can be used by clients to invoke «name».
@@ -483,6 +493,8 @@ def String webServiceInterface(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	«IF it.formatJavaDoc() == "" »
 		/**

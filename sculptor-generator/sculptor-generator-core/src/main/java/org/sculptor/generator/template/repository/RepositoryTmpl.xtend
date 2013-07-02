@@ -60,6 +60,8 @@ def String repositoryInterface(Repository it) {
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryapiPackage()»;
 
+/// Sculptor code formatter imports ///
+
 	«IF it.formatJavaDoc() == "" »
 		/**
 		 * Generated interface for Repository for «baseName»
@@ -90,6 +92,8 @@ def String repositoryBase(Repository it) {
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	«IF gapClass»
 		/**
@@ -246,6 +250,8 @@ def String repositorySubclass(Repository it) {
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	/**
 	 * Repository implementation for «baseName»
@@ -839,6 +845,8 @@ def String repositoryDependencyInjectionJUnit(Repository it) {
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	/**
 	 * JUnit test to verify that dependency injection setter methods
