@@ -46,7 +46,7 @@ class HibernateTest extends GeneratorTestBase {
 	@Test
 	def void assertFinderWithException() {
 		val enumUserType = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/repositoryimpl/LibraryRepositoryBase.java");
-		assertContains(enumUserType, "throw new org.sculptor.example.library.media.exception.LibraryNotFoundException(");
+		assertContains(enumUserType, "throw new LibraryNotFoundException(");
 	}
 
 }
