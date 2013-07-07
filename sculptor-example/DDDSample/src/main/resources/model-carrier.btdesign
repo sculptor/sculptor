@@ -1,0 +1,37 @@
+import "classpath:/model-location.btdesign"
+
+ApplicationPart CarrierPart {
+    
+    Module carrier {
+        "A carrier movement is a vessel voyage from one location to another."
+        Entity CarrierMovement {
+        	hint="umlgraph.subject=routingsvc"
+            nogap
+            not optimisticLocking
+            not auditable
+            - @CarrierMovementId carrierMovementId key
+            - @Location from not changeable databaseColumn="FRM" fetch="join"
+            - @Location ^to not changeable databaseColumn="T" fetch="join"
+            
+            Repository CarrierMovementRepository {
+                @CarrierMovement find(@CarrierMovementId carrierMovementId) throws CarrierMovementNotFoundException;
+                protected findByKeys;
+                save;
+            }
+        }
+        
+        BasicType CarrierMovementId {
+            nogap
+            String identifier key databaseColumn=""
+        }
+        
+        Service CarrierService {
+        	hint="umlgraph.subject=routingsvc"
+
+            find => CarrierMovementRepository.find;
+            save => CarrierMovementRepository.save;
+        }
+    }
+    
+
+}

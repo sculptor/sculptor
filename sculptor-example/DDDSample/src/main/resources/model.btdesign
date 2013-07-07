@@ -1,0 +1,9 @@
+import "classpath:/model-cargo.btdesign"
+import "classpath:/model-carrier.btdesign"
+import "classpath:/model-routing.btdesign"
+import "classpath:/model-location.btdesign"
+
+Application DDDSample {
+    basePackage=org.sculptor.dddsample
+
+}

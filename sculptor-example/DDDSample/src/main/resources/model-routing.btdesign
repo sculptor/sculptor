@@ -1,0 +1,51 @@
+ApplicationPart RoutingPart {
+    
+    Module routing {
+        ValueObject TransitEdge {
+            nogap
+            belongsTo TransitPath
+            String carrierMovementId
+            String fromUnLocode
+            String toUnLocode
+        }
+        
+        ValueObject TransitPath {
+        	hint="umlgraph.subject=routingsvc"
+
+            - List<TransitEdge> transitEdges inverse
+        }
+        
+        Service GraphTraversalService {
+        	hint="umlgraph.subject=routingsvc"
+        	
+            inject @RtCarrierMovementRepository
+            inject @RtLocationRepository
+            List<@TransitPath> findShortestPath(String originUnLocode, String destinationUnLocode);
+        }
+        
+        ValueObject RtCarrierMovement {
+            nogap
+            String carrierMovementId key
+            - @RtLocation from databaseColumn="FRM" fetch="join"
+            - @RtLocation ^to databaseColumn="T" fetch="join"
+            
+            Repository RtCarrierMovementRepository {
+                inject @RtLocationRepository
+                storeCarrierMovementId(String cmId, String from, String ^to);
+                protected save;
+            }
+        }
+        
+        ValueObject RtLocation {
+            nogap
+            String unlocode key
+            
+            Repository RtLocationRepository {
+                List<String> listLocations();
+                protected findAll;
+                findByKeys;
+            }
+        }
+    }
+
+}
