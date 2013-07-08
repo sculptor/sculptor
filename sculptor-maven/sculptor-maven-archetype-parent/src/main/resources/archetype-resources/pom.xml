@@ -1,0 +1,85 @@
+#set( $artifactIdBaseLength = $artifactId.length() - 7 )
+#set( $artifactIdBase = $artifactId.substring(0, $artifactIdBaseLength) )
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>${groupId}</groupId>
+	<artifactId>${artifactId}</artifactId>
+	<packaging>pom</packaging>
+	<version>${version}</version>
+	<name>New Sculptor Project :: Parent</name>
+
+	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<sculptor-version>3.0.0-SNAPSHOT</sculptor-version>
+        <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
+		<ehcache-version>2.4.7</ehcache-version>
+		<slf4j-version>1.7.5</slf4j-version>
+		<logback-version>1.0.13</logback-version>
+		<spring-version>3.2.3.RELEASE</spring-version>
+		<spring-webflow-version>2.3.2.RELEASE</spring-webflow-version>
+		<aspectj-version>1.7.2</aspectj-version>
+		<hsqldb-version>2.2.9</hsqldb-version>
+	</properties>
+
+	<modules>
+		<module>../${artifactIdBase}</module>
+		<!-- Add web module when needed -->
+		<!-- <module>../${artifactIdBase}-web</module> -->
+		<!-- Add ear module when deployed as ear -->
+		<!-- <module>../${artifactIdBase}-ear</module> -->
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>sculptorgenerator.org-snapshots</id>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sculptorgenerator.org-snapshots</id>
+			<url>https://raw.github.com/sculptor/snapshot-repository/maven/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

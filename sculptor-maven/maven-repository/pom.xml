@@ -16,11 +16,26 @@
 		<plugins>
 			<!-- The repository directory has to be cleaned by the other projects -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<!-- Create the archetype catalog file "archetype-catalog.xml" for this repository -->
+			<plugin>
+				<artifactId>maven-archetype-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-archetype-catalog</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>crawl</goal>
+						</goals>
+						<configuration>
+							<repository>${project.build.directory}/repository</repository>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- Deploying the p2 repository to a GitHub repository branch as described in
 				http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
