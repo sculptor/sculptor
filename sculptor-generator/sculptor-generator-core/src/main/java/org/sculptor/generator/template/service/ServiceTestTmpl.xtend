@@ -67,7 +67,7 @@ def String serviceJUnitSubclassWithAnnotations(Service it) {
 
 /// Sculptor code formatter imports ///
 
-	import static org.junit.Assert.fail;
+	import static org.junit.Assert.*;
 
 	/**
 	 * Spring based transactional test with DbUnit support.
@@ -98,9 +98,7 @@ def String serviceJUnitSubclassAppEngine(Service it) {
 
 /// Sculptor code formatter imports ///
 
-	import static org.junit.Assert.assertNotNull;
-	import static org.junit.Assert.assertTrue;
-	import static org.junit.Assert.fail;
+	import static org.junit.Assert.*;
 
 	/**
 	 * Spring based test with Google App Engine support.
