@@ -13,7 +13,7 @@
 	<groupId>${groupId}</groupId>
 #end
 	<artifactId>${artifactId}</artifactId>
-#if( $standalone == "false" || $standalone == "n" || $standalone == "no")
+#if( $standalone == "true" || $standalone == "y" || $standalone == "yes")
 	<version>${version}</version>
 #end
 	<name>New Sculptor Project :: Business Tier</name>
