@@ -70,11 +70,19 @@ class Helper {
 	@Inject extension HelperBase helperBase
 
 	static val JAVA_EXT = ".java"
+	static val XTEND_EXT = ".xtend"
 
 	def public String fileOutput(String fileName, OutputSlot slot, String text) {
-		val fName = if (fileName.endsWith(JAVA_EXT))
+		val supportedLangExt = switch(fileName) {
+			case fileName.endsWith(JAVA_EXT) : JAVA_EXT
+			case fileName.endsWith(XTEND_EXT) : XTEND_EXT
+			default : null
+		}
+
+
+		val fName = if (supportedLangExt != null)
 				// convert package name to directory hierarchy
-				fileName.substring(0, fileName.length - JAVA_EXT.length).replaceAll("\\.", "/") + JAVA_EXT
+				fileName.substring(0, fileName.length - supportedLangExt.length).replaceAll("\\.", "/") + supportedLangExt
 			else
 				fileName
 		val flTr = processPath(getProperty("outputSlot.path."+slot.name) + "/" + fName)
