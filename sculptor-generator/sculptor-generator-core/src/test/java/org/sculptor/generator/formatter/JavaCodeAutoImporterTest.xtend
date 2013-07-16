@@ -45,6 +45,8 @@ class JavaCodeAutoImporterTest {
 						bar = com.acme.Foo.bar();
 					}
 
+					@Cascade(cascade = javax.persistence.CascadeType.ALL)
+					@Cascade(cascade = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 					public List<Media> findByTitle(String title) {
 						List<ConditionalCriteria> condition = org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor(Media.class)
 								.withProperty(org.sculptor.example.library.media.domain.MediaProperties.title()).eq(title).build();
@@ -67,6 +69,7 @@ class JavaCodeAutoImporterTest {
 				import java.util.HashMap;
 				import java.util.Map;
 				import java.util.Properties;
+				import javax.persistence.CascadeType;
 				import javax.persistence.Temporal;
 				import javax.persistence.TemporalType;
 				import org.junit.Test;
@@ -89,6 +92,8 @@ class JavaCodeAutoImporterTest {
 						bar = Foo.bar();
 					}
 				
+					@Cascade(cascade = CascadeType.ALL)
+					@Cascade(cascade = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 					public List<Media> findByTitle(String title) {
 						List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Media.class)
 								.withProperty(MediaProperties.title()).eq(title).build();

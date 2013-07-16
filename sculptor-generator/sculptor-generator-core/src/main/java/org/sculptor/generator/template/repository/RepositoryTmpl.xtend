@@ -133,6 +133,7 @@ def String repositoryBase(Repository it) {
 		public «name»«if (gapClass) "Base" else getSuffix("Impl")»() {
 		}
 
+		«fetchEagerFields»
 		«repositoryDependencies(it)»
 
 		«it.operations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | baseRepositoryMethod(op)].join()»
@@ -223,6 +224,16 @@ def String daoSupportEntityManagerDependency(Repository it) {
 		protected javax.persistence.EntityManager getEntityManager() {
 			return entityManager;
 		}
+	'''
+}
+
+def String fetchEagerFields(Repository it) {
+	'''
+	«IF operations.exists(e | e.hasHint("useFetchEager"))»
+		«fw("domain.Property")»<?>[] eagerFields={
+			«FOR e : aggregateRoot.references.filter[r | !r.many && !r.isBasicTypeReference() && !r.isEnumReference()] SEPARATOR ", "»«getDomainPackage(aggregateRoot)».«aggregateRoot.name»Properties.«e.name»()«ENDFOR»
+		};
+	«ENDIF»
 	'''
 }
 
@@ -322,6 +333,7 @@ def String baseRepositoryMethod(RepositoryOperation it) {
 			«getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 		«ENDIF»
 		«setCache(it)»
+		«setEagerColumns(it)»
 		«setOrdered(it)»
 		«FOR parameter : parameters.filter(e | e != pagingParameter)»
 			ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
@@ -370,6 +382,14 @@ def String setCache(RepositoryOperation it) {
 	'''
 		«IF it.hasHint("cache")»
 			ao.setCache(true);
+		«ENDIF»
+	'''
+}
+
+def setEagerColumns (RepositoryOperation it) {
+	'''
+		«IF it.hasHint("useFetchEager")»
+			ao.setFetchEager(eagerFields);
 		«ENDIF»
 	'''
 }
@@ -428,6 +448,7 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 				«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 			«ENDIF»
 			«setCache(it)»
+			«setEagerColumns(it)»
 			«setOrdered(it)»
 			«IF it.hasHint("useSingleResult")»
 				ao.setUseSingleResult(true);
@@ -474,6 +495,7 @@ def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 			«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
 		«ENDIF»
 		«setCache(it)»
+		«setEagerColumns(it)»
 		«setOrdered(it)»
 		«FOR parameter : parameters.filter(e | e != pagingParameter)»
 		ao.set«parameter.name.toFirstUpper()»(«parameter.name»);

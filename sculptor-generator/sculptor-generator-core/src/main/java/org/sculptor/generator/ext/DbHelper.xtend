@@ -64,7 +64,7 @@ public class DbHelper {
 		else if (ref.to.isEntityOrPersistentValueObject() && !ref.to.aggregateRoot)
 			"join"  // join fetch within same aggregate boundary
 		else
-			null
+			getProperty("default.fetchStrategy", null)
 	}
 
 	def String getHibernateCacheUsage(Object obj) {

@@ -191,6 +191,11 @@ public class PropertiesBase {
 
 		initDerivedDefaultsSystemAttributes(defaultProperties);
 
+		// fetch eager single level
+		if (getProperty("generate.singleLevelFetchEager").equals("true")) {
+			defaultProperties.setProperty("default.fetchStrategy", "lazy");
+		}
+
 		// deployment.applicationServer = JBoss for ear
 		if (getProperty("deployment.type").equals("ear")) {
 			defaultProperties.setProperty("deployment.applicationServer", "JBoss");

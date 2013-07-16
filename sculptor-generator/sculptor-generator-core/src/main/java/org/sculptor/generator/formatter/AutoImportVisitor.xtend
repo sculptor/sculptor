@@ -129,22 +129,27 @@ class AutoImportVisitor extends ASTVisitor {
 	}
 
 	private def autoImport(QualifiedNameReference reference) {
-		if (reference.isType || reference.variable) { 
-			// Check if import already defined 
+		if (reference.isType || reference.variable) {
+			// Check if import already defined
+
+			// reference.shortName for constants is in form 'CascadeType.DELETE_ORPHAN' we have to cut only class name
+			val dotPos = reference.shortName.indexOf('.')
+			val shortName = if (dotPos == -1) reference.shortName else reference.shortName.substring(0, dotPos)
+
 			if (imports.contains(reference.qualifiedName)) {
 				textEdit.addChild(reference.renameTextEdit)
 			} else // Check if this types short name collides with an already used short name
-			if (!importShortNames.contains(reference.shortName)) {
+			if (!importShortNames.contains(shortName)) {
 				textEdit.addChild(reference.renameTextEdit)
-				addImport(reference)
+				addImport(reference, shortName)
 			}
 		}
 	}
 
-	private def addImport(QualifiedNameReference reference) {
+	private def addImport(QualifiedNameReference reference, String shortName) {
 		additionalImports += reference.qualifiedName
 		imports += reference.qualifiedName
-		importShortNames += reference.shortName
+		importShortNames += shortName
 	}
 
 }
