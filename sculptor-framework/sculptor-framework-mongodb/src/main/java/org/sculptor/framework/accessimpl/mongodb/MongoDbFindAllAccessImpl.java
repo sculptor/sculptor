@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sculptor.framework.accessapi.FindAllAccess;
+import org.sculptor.framework.domain.Property;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
@@ -42,6 +43,7 @@ public class MongoDbFindAllAccessImpl<T> extends MongoDbAccessBase<T> implements
     private int firstResult = -1;
     private int maxResult = 0;
     private List<T> result;
+	private Property<?>[] fetchEager;
 
     public MongoDbFindAllAccessImpl(Class<T> persistentClass) {
         setPersistentClass(persistentClass);
@@ -61,6 +63,14 @@ public class MongoDbFindAllAccessImpl<T> extends MongoDbAccessBase<T> implements
 
     protected int getFirstResult() {
         return firstResult;
+    }
+
+    public void setFetchEager(Property<?>[] fetchEager) {
+        this.fetchEager = fetchEager;
+    }
+
+    public Property<?>[] getFetchEager() {
+        return fetchEager;
     }
 
     public void setFirstResult(int firstResult) {

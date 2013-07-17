@@ -41,6 +41,8 @@ import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.sculptor.framework.domain.Property;
+
 /**
  * <p>
  * Implementation of Access command FindByQueryAccess.
@@ -60,6 +62,7 @@ public abstract class JpaCriteriaQueryAccessBase<T,R>
     private QueryExpressions<T> expressions = new QueryExpressions<T>();
 
     private TypedQuery<Long> resultCountQuery = null;
+	private Property<?>[] fetchEager;
 
 	public JpaCriteriaQueryAccessBase() {
 		super();
@@ -120,6 +123,14 @@ public abstract class JpaCriteriaQueryAccessBase<T,R>
     public void setOrderBy(String orderBy) {
         expressions.addOrders(orderBy);
     }
+
+	public void setFetchEager(Property<?>[] fetchEager) {
+		this.fetchEager = fetchEager;
+	}
+
+	public Property<?>[] getFetchEager() {
+		return fetchEager;
+	}
 
     @Deprecated
     public boolean isOrderByAsc() {

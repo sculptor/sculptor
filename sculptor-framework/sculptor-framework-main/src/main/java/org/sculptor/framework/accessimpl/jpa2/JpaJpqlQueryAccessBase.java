@@ -22,6 +22,8 @@ import java.util.Map;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.sculptor.framework.domain.Property;
+
 
 /**
  * <p>
@@ -37,6 +39,7 @@ public abstract class JpaJpqlQueryAccessBase<T,R>
     private String query;
     private Boolean namedQuery;
 
+    private Property<?>[] fetchEager;
     private TypedQuery<Long> resultCountQuery = null;
 
 	public JpaJpqlQueryAccessBase() {
@@ -58,6 +61,14 @@ public abstract class JpaJpqlQueryAccessBase<T,R>
 
     public void setQuery(String query) {
         this.query = query;
+    }
+
+    public void setFetchEager(Property<?>[] fetchEager) {
+        this.fetchEager = fetchEager;
+    }
+
+    public Property<?>[] getFetchEager() {
+        return fetchEager;
     }
 
     protected TypedQuery<Long> getResultCountQuery() {

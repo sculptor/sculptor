@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.sculptor.framework.accessapi.FindAllAccess2;
+import org.sculptor.framework.domain.Property;
 
 
 /**
@@ -68,6 +69,12 @@ public class JpaFindAllAccessImplGeneric<T,R>
     		query.append("distinct ");
     	}
     	query.append("object(e) from ").append(getType().getSimpleName()).append(" e");
+    	Property<?>[] fetchEager = getFetchEager();
+    	if (fetchEager != null && fetchEager.length > 0) {
+    		for (Property<?> attr : fetchEager) {
+    			query.append(" left join fetch e.").append(attr.getName());
+    		}
+    	}
     	setNamedQuery(false);
 		setQuery(query.toString());
     }

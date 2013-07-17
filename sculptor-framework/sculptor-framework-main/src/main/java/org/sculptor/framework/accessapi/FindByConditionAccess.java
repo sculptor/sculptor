@@ -25,7 +25,7 @@ import java.util.List;
  * simple equals conditions.</p>
  * <p>Command design pattern.</p>
  */
-public interface FindByConditionAccess<T> extends Cacheable, Pageable {
+public interface FindByConditionAccess<T> extends Cacheable, Pageable, FetchEager {
 
 	/**
 	 * These criteria are used to build complex restrictions which depends on

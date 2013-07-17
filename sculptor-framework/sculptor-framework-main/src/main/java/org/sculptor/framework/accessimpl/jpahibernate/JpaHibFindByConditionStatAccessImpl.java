@@ -17,16 +17,42 @@
 
 package org.sculptor.framework.accessimpl.jpahibernate;
 
+import static org.sculptor.framework.accessapi.ColumnStatType.AVERAGE;
+import static org.sculptor.framework.accessapi.ColumnStatType.COUNT;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_DAY;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_DOW;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_DOY;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_HOUR;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_MONTH;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_QUARTER;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_VAL;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_WEEK;
+import static org.sculptor.framework.accessapi.ColumnStatType.GROUP_BY_YEAR;
+import static org.sculptor.framework.accessapi.ColumnStatType.MAX;
+import static org.sculptor.framework.accessapi.ColumnStatType.MIN;
+import static org.sculptor.framework.accessapi.ColumnStatType.SUM;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
 
 import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.Oracle10gDialect;
+import org.hibernate.dialect.Oracle9iDialect;
+import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.Type;
 import org.sculptor.framework.accessapi.ColumnStatRequest;
 import org.sculptor.framework.accessapi.ColumnStatResult;
+import org.sculptor.framework.accessapi.ColumnStatType;
 import org.sculptor.framework.accessapi.FindByConditionStatAccess;
 
 /**
@@ -41,7 +67,6 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 		implements FindByConditionStatAccess<T> {
 	private List<ColumnStatRequest<T>> statRequest;
 	private List<List<ColumnStatResult>> statResult=new ArrayList<List<ColumnStatResult>>();
-
 	
 	public JpaHibFindByConditionStatAccessImpl(Class<T> persistentClass) {
 		super(persistentClass);
@@ -73,31 +98,130 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 		return this.statResult;
 	}
 
+	ColumnStatType[] timeGroups = {GROUP_BY_DAY, GROUP_BY_DOW, GROUP_BY_DOY, GROUP_BY_HOUR
+			, GROUP_BY_MONTH, GROUP_BY_QUARTER, GROUP_BY_WEEK, GROUP_BY_YEAR};
+
 	private void addStatProjection(Criteria criteria) throws PersistenceException {
 		ProjectionList projList = Projections.projectionList();
 		projList.add(Projections.rowCount());
 		for (ColumnStatRequest<T> column : statRequest) {
-			if ( column.isCountNotNullFlag()) {
+			if ( column.isFlag(COUNT)) {
 				projList.add(Projections.count(column.getColumn().getName()));
 			}
-			if ( column.isMinFlag() ) {
+			if ( column.isFlag(MIN) ) {
 				projList.add(Projections.min(column.getColumn().getName()));
 			}
-			if ( column.isMaxFlag() ) {
+			if ( column.isFlag(MAX) ) {
 				projList.add(Projections.max(column.getColumn().getName()));
 			}
-			if ( column.isAverageFlag() ) {
+			if ( column.isFlag(AVERAGE) ) {
 				projList.add(Projections.avg(column.getColumn().getName()));
 			}
-			if ( column.isSumFlag() ) {
+			if ( column.isFlag(SUM) ) {
 				projList.add(Projections.sum(column.getColumn().getName()));
 			}
-			if ( column.isGroupByFlag() ) {
+			if ( column.isFlag(GROUP_BY_VAL) ) {
 				projList.add(Projections.groupProperty(column.getColumn().getName()));
+			}
+
+			// Time groups
+			for (ColumnStatType flag : timeGroups) {
+				if (column.isFlag(flag)) {
+					projList.add(makeTimeGroupBy(column, flag, criteria));
+				}
 			}
 		}
 
 		criteria.setProjection(projList);
+	}
+
+	private Type[] timeResultType = new Type[] {new IntegerType()};
+
+	private Projection makeTimeGroupBy(ColumnStatRequest<T> column, ColumnStatType func, Criteria criteria) {
+		if (getDialect() instanceof PostgreSQLDialect) {
+			return makeTimeGroupByPostgreSql(column, func, criteria);
+		} else if (getDialect() instanceof Oracle9iDialect || getDialect() instanceof Oracle10gDialect) {
+			return makeTimeGroupByOracle(column, func, criteria);
+		} else {
+			// TODO Add more dialects
+			throw new RuntimeException("findByConditionStat "+func.name()+" is supported only on Oracle and PostgreSQL");
+		}
+	}
+
+	private Projection makeTimeGroupByPostgreSql(ColumnStatRequest<T> column, ColumnStatType statType, Criteria criteria) {
+		String func;
+		if (statType.equals(GROUP_BY_DAY)) {
+			func = "day";
+		} else if (statType.equals(GROUP_BY_DOW)) {
+			func = "dow";
+		} else if (statType.equals(GROUP_BY_DOY)) {
+			func = "doy";
+		} else if (statType.equals(GROUP_BY_HOUR)) {
+			func = "hour";
+		} else if (statType.equals(GROUP_BY_MONTH)) {
+			func = "month";
+		} else if (statType.equals(GROUP_BY_QUARTER)) {
+			func = "quarter";
+		} else if (statType.equals(GROUP_BY_WEEK)) {
+			func = "week";
+		} else if (statType.equals(GROUP_BY_YEAR)) {
+			func = "year";
+		} else {
+			func = "day";
+		}
+
+		String colName = column.getColumn().getName();
+		String fldName = colName + "_"+func;
+		String sqlFunc = "extract("+func+" from {alias}." + colName + ")";
+		criteria.addOrder(Order.asc(fldName));
+		return Projections.alias(Projections.sqlGroupProjection(sqlFunc + " as " + fldName
+				, fldName
+				, new String[] {fldName}
+				, timeResultType)
+			, fldName
+		);
+	}
+
+	private Projection makeTimeGroupByOracle(ColumnStatRequest<T> column, ColumnStatType statType, Criteria criteria) {
+		String func;
+		if (statType.equals(GROUP_BY_DAY)) {
+			func = "DD";
+		} else if (statType.equals(GROUP_BY_DOW)) {
+			func = "D";
+		} else if (statType.equals(GROUP_BY_DOY)) {
+			func = "DDD";
+		} else if (statType.equals(GROUP_BY_HOUR)) {
+			func = "HH24";
+		} else if (statType.equals(GROUP_BY_MONTH)) {
+			func = "MM";
+		} else if (statType.equals(GROUP_BY_QUARTER)) {
+			func = "Q";
+		} else if (statType.equals(GROUP_BY_WEEK)) {
+			func = "WW";
+		} else if (statType.equals(GROUP_BY_YEAR)) {
+			func = "YYYY";
+		} else {
+			func = "DD";
+		}
+		String colName = column.getColumn().getName();
+		String fldName = colName + "_"+func;
+		String sqlFunc = "to_char({alias}." + colName + ", '" + func + "')";
+		criteria.addOrder(Order.asc(fldName));
+		return Projections.alias(Projections.sqlGroupProjection(sqlFunc + " as " + fldName
+				, fldName
+				, new String[] {fldName}
+				, timeResultType)
+			, fldName
+		);
+	}
+
+	Dialect resolvedDialect = null;
+	private Dialect getDialect() {
+		if (resolvedDialect == null) {
+			resolvedDialect = ((SessionFactoryImplementor) ((Session) getEntityManager().getDelegate())
+					.getSessionFactory()).getDialect();
+		}
+		return resolvedDialect;
 	}
 
 	private void extractStatResult(List<Object[]> colResults) {
@@ -120,10 +244,10 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 			String maxString=null;
 			String groupBy=null;
 
-			if ( column.isCountNotNullFlag() ) {
+			if ( column.isFlag(COUNT) ) {
 				columnCount=((Number) colResults[i++]).longValue();
 			}
-			if ( column.isMinFlag() ) {
+			if ( column.isFlag(MIN) ) {
 				Object minResult = colResults[i++];
 				if (minResult == null) {
 					min=null;
@@ -136,7 +260,7 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 					minString=minResult.toString();
 				}
 			}
-			if ( column.isMaxFlag() ) {
+			if ( column.isFlag(MAX) ) {
 				Object maxResult = colResults[i++];
 				if (maxResult == null) {
 					max=null;
@@ -149,29 +273,56 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 					maxString=maxResult.toString();
 				}
 			}
-			if ( column.isAverageFlag() ) {
+			if ( column.isFlag(AVERAGE) ) {
 				avg=(Double) colResults[i++];
 			}
-			if ( column.isSumFlag() ) {
+			if ( column.isFlag(SUM) ) {
 				Object sumResult=colResults[i++];
 				sum= sumResult == null ? null : new Double(sumResult.toString());
 			}
-			if ( column.isGroupByFlag() ) {
+			if ( column.isFlag(GROUP_BY_VAL) ) {
 				Object groupByResult = colResults[i++];
 				groupBy=groupByResult != null ? groupByResult.toString() : "";
 			}
 
 			ColumnStatResult colStatResult;
-			if ( column.isGroupByFlag() ) {
-				colStatResult=new ColumnStatResult(column, groupBy);
-			} else if (min != null || max != null) {
-				colStatResult=new ColumnStatResult(column, totalCount, columnCount, min, max, avg, sum);
+			if (min != null || max != null) {
+				colStatResult=new ColumnStatResult(column, totalCount, columnCount, min, max, avg, sum, groupBy);
 			} else {
-				colStatResult=new ColumnStatResult(column, totalCount, columnCount, minString, maxString, avg, sum);
+				colStatResult=new ColumnStatResult(column, totalCount, columnCount, minString, maxString, avg, sum, groupBy);
+			}
+
+			if (column.isFlag(GROUP_BY_DAY)) {
+				colStatResult.setGroupByDay(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_DOW)) {
+				colStatResult.setGroupByDow(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_DOY)) {
+				colStatResult.setGroupByDoy(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_HOUR)) {
+				colStatResult.setGroupByHour(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_MONTH)) {
+				colStatResult.setGroupByMonth(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_QUARTER)) {
+				colStatResult.setGroupByQuarter(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_WEEK)) {
+				colStatResult.setGroupByWeek(extractInt(colResults[i++]));
+			}
+			if (column.isFlag(GROUP_BY_YEAR)) {
+				colStatResult.setGroupByYear(extractInt(colResults[i++]));
 			}
 			result.add(colStatResult);
 		}
 		return result;
+	}
+
+	private Integer extractInt(Object objVal) {
+		return objVal != null ? new Integer(objVal.toString()) : 0;
 	}
 
 	public void setUseSingleResult(boolean useSingleResult) {

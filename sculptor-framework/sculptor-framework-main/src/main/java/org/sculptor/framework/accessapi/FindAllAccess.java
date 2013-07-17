@@ -27,7 +27,7 @@ import java.util.List;
  * Command design pattern.
  * </p>
  */
-public interface FindAllAccess<T> extends Cacheable, Ordered, Pageable {
+public interface FindAllAccess<T> extends Cacheable, Ordered, Pageable, FetchEager {
 
 	void execute();
 

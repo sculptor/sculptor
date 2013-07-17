@@ -1,35 +1,61 @@
 package org.sculptor.framework.accessapi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import static org.sculptor.framework.accessapi.ColumnStatType.*;
+
 import org.sculptor.framework.domain.Property;
 
 public class ColumnStatRequest<T> {
-	public static final byte COUNT   = 1 << 0;
-	public static final byte MIN     = 1 << 1;
-	public static final byte MAX     = 1 << 2;
-	public static final byte AVERAGE = 1 << 3;
-	public static final byte SUM     = 1 << 4;
-	public static final byte GROUPBY = 1 << 5;
+	private static final List<ColumnStatType> ALL;
+	private static final List<ColumnStatType> ALL_EXCEPT_SUM;
+	private static final List<ColumnStatType> STRING_STAT;
 
-	public static final byte ALL=COUNT | MIN | MAX | AVERAGE | SUM;
-	public static final byte ALL_EXCEPT_SUM=COUNT | MIN | MAX | AVERAGE;
-	public static final byte STRING_STAT=COUNT | MIN | MAX;
+	static {
+		ALL=new ArrayList<ColumnStatType>();
+		ALL.addAll(Arrays.asList(new ColumnStatType[]
+				{COUNT, MIN, MAX, AVERAGE, SUM}));
+
+		ALL_EXCEPT_SUM=new ArrayList<ColumnStatType>();
+		ALL_EXCEPT_SUM.addAll(Arrays.asList(new ColumnStatType[]
+				{COUNT, MIN, MAX, AVERAGE}));
+
+		STRING_STAT=new ArrayList<ColumnStatType>();
+		STRING_STAT.addAll(Arrays.asList(new ColumnStatType[]
+				{COUNT, MIN, MAX}));
+	}
 
 	Property<T> column;
-	byte statFlags=0;
+	List<ColumnStatType> statFlags;
 
-	public ColumnStatRequest(Property<T> column, byte... flags) {
+	public ColumnStatRequest(Property<T> column, List<ColumnStatType> flags) {
+		this(column, flags.toArray(new ColumnStatType[flags.size()]));
+	}
+
+	public ColumnStatRequest(Property<T> column, ColumnStatType... flags) {
 		this.column=column;
 		if (flags.length == 0) {
 			statFlags=ALL;
 		} else {
-			for (byte flag : flags) {
-				statFlags |= flag;
+			// expand special values ALL, ALL_EXCEPT_SUM, STRING_STAT
+			statFlags=new ArrayList<ColumnStatType>();
+			for (ColumnStatType fl : flags) {
+				if (fl.equals(ALL)) {
+					statFlags.addAll(ALL);
+				} else if (fl.equals(ALL_EXCEPT_SUM)) {
+					statFlags.addAll(ALL_EXCEPT_SUM);
+				} else if (fl.equals(STRING_STAT)) {
+					statFlags.addAll(STRING_STAT);
+				} else {
+					statFlags.add(fl);
+				}
 			}
 		}
 	}
 
 	// getters
-	public byte getStatFlags() {
+	public List<ColumnStatType> getStatFlags() {
 		return statFlags;
 	}
 
@@ -37,59 +63,25 @@ public class ColumnStatRequest<T> {
 		return column;
 	}
 
-	public boolean isFlag(byte flag) {
-		return (statFlags & flag) > 0;
-	}
-
-	public boolean isGroupByFlag() {
-		return (statFlags & ColumnStatRequest.GROUPBY) > 0;
-	}
-
-	public boolean isSumFlag() {
-		return (statFlags & ColumnStatRequest.SUM) > 0;
-	}
-
-	public boolean isAverageFlag() {
-		return (statFlags & ColumnStatRequest.AVERAGE) > 0;
-	}
-
-	public boolean isMinFlag() {
-		return (statFlags & ColumnStatRequest.MIN) > 0;
-	}
-
-	public boolean isMaxFlag() {
-		return (statFlags & ColumnStatRequest.MAX) > 0;
-	}
-
-	public boolean isCountNotNullFlag() {
-		return (statFlags & ColumnStatRequest.COUNT) > 0;
-	}
-
-	public boolean isCountWithNullFlag() {
-		return (statFlags & ColumnStatRequest.COUNT) > 0;
+	public boolean isFlag(ColumnStatType isFlag) {
+		for (ColumnStatType setFlag : statFlags) {
+			if (setFlag.equals(isFlag)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String toString() {
 		StringBuilder sb=new StringBuilder("ColumnStat for ");
-		sb.append("'").append(column.getName()).append("'").append("[countFlags=");
-		StringBuilder sb2=new StringBuilder("");
+		sb.append("'").append(column.getName()).append("'").append("[flags=");
 
-		if (isCountNotNullFlag()) {
-			sb.append("| COUNT");
-		}
-		if (isMinFlag()) {
-			sb.append("| MIN");
-		}
-		if (isMaxFlag()) {
-			sb.append("| MAX");
-		}
-		if (isAverageFlag()) {
-			sb.append("| AVERAGE");
-		}
-		if (isSumFlag()) {
-			sb.append("| SUM");
+		String sep = "";
+		for (ColumnStatType flag : statFlags) {
+			sb.append(sep).append(flag.name());
+			sep=" | ";
 		}
 
-		return sb.append(sb2.length() > 0 ? sb2.substring(2) : "").append("]").toString();
+		return sb.append("]").toString();
 	}
 }

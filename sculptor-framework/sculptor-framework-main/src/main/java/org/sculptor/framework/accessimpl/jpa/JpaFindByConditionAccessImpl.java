@@ -26,6 +26,7 @@ import javax.persistence.PersistenceException;
 
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.FindByConditionAccess;
+import org.sculptor.framework.domain.Property;
 
 
 /**
@@ -43,6 +44,7 @@ public class JpaFindByConditionAccessImpl<T> extends JpaAccessBase<T> implements
     private int firstResult = -1;
     private int maxResult = 0;
     private List<T> result;
+	private Property<?>[] fetchEager;
 
     public JpaFindByConditionAccessImpl(Class<T> persistentClass) {
         setPersistentClass(persistentClass);
@@ -84,6 +86,13 @@ public class JpaFindByConditionAccessImpl<T> extends JpaAccessBase<T> implements
         this.maxResult = maxResult;
     }
 
+	public void setFetchEager(Property<?>[] fetchEager) {
+		this.fetchEager = fetchEager;
+	}
+
+	public Property<?>[] getFetchEager() {
+		return fetchEager;
+	}
 
     public List<T> getResult() {
         return this.result;

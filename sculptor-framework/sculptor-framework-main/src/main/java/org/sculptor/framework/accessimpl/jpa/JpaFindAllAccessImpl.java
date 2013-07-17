@@ -23,6 +23,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.sculptor.framework.accessapi.FindAllAccess;
+import org.sculptor.framework.domain.Property;
 
 
 /**
@@ -41,6 +42,7 @@ public class JpaFindAllAccessImpl<T> extends JpaAccessBase<T> implements FindAll
     private int firstResult = -1;
     private int maxResult = 0;
     private List<T> result;
+	private Property<?>[] fetchEager;
 
     public JpaFindAllAccessImpl(Class<T> persistentClass) {
         setPersistentClass(persistentClass);
@@ -58,7 +60,13 @@ public class JpaFindAllAccessImpl<T> extends JpaAccessBase<T> implements FindAll
         this.orderByAsc = orderByAsc;
     }
 
+    public void setFetchEager(Property<?>[] fetchEager) {
+        this.fetchEager = fetchEager;
+    }
 
+    public Property<?>[] getFetchEager() {
+        return fetchEager;
+    }
 
     protected int getFirstResult() {
         return firstResult;
@@ -83,11 +91,16 @@ public class JpaFindAllAccessImpl<T> extends JpaAccessBase<T> implements FindAll
 	@Override
 	public void performExecute() throws PersistenceException {
 		StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select e from ").append(getPersistentClass().getSimpleName()).append(" e");
+		queryStr.append("select e from ").append(getPersistentClass().getSimpleName()).append(" as e");
 		if (orderBy != null) {
 			queryStr.append(" order by e.").append(orderBy);
 			if (!isOrderByAsc()) {
 				queryStr.append(" desc");
+			}
+		}
+		if (fetchEager != null && fetchEager.length != 0) {
+			for (Property<?> eagerProp : fetchEager) {
+				queryStr.append(" left join fetch e.").append(eagerProp.getName());
 			}
 		}
 		result = executeQuery(queryStr.toString());

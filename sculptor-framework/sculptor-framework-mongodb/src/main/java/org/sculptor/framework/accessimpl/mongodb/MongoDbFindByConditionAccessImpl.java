@@ -24,8 +24,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.sculptor.framework.accessapi.ConditionalCriteria;
-import org.sculptor.framework.accessapi.FindByConditionAccess;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
+import org.sculptor.framework.accessapi.FindByConditionAccess;
+import org.sculptor.framework.domain.Property;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
@@ -48,6 +49,7 @@ public class MongoDbFindByConditionAccessImpl<T> extends MongoDbAccessBase<T> im
     private int maxResult = 0;
     private List<T> result;
     private Long rowCount = null;
+	private Property<?>[] fetchEager;
 
     public MongoDbFindByConditionAccessImpl(Class<T> persistentClass) {
         setPersistentClass(persistentClass);
@@ -71,6 +73,14 @@ public class MongoDbFindByConditionAccessImpl<T> extends MongoDbAccessBase<T> im
 
     protected Set<String> getFetchAssociations() {
         return fetchAssociations;
+    }
+
+    public void setFetchEager(Property<?>[] fetchEager) {
+        this.fetchEager = fetchEager;
+    }
+
+    public Property<?>[] getFetchEager() {
+        return fetchEager;
     }
 
     protected int getFirstResult() {

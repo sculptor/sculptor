@@ -1,10 +1,8 @@
 package org.sculptor.framework.accessapi;
 
-
-
 public class ColumnStatResult {
 
-	ColumnStatRequest<?> columnStat;
+	String fieldName;
 
 	Long countNotNull=null;
 	Long countWithNull=null;
@@ -14,40 +12,41 @@ public class ColumnStatResult {
 	Double sum=null;
 	String minString=null;
 	String maxString=null;
-	String groupBy=null;
+	String groupByVal=null;
+	Integer groupByHour=null;
+	Integer groupByDay=null;
+	Integer groupByWeek=null;
+	Integer groupByMonth=null;
+	Integer groupByQuarter=null;
+	Integer groupByYear=null;
+	Integer groupByDow=null;
+	Integer groupByDoy=null;
 
-	public ColumnStatResult(ColumnStatRequest<?> statRequest, Long countWithNull, Long countNotNull, String minString, String maxString, Double average, Double sum) {
-		this.columnStat=statRequest;
+	public ColumnStatResult(ColumnStatRequest<?> statRequest, Long countWithNull, Long countNotNull, String minString, String maxString, Double average, Double sum, String groupBy) {
+		this.fieldName=statRequest.getColumn().getName();
 		this.countWithNull=countWithNull;
 		this.countNotNull=countNotNull;
 		this.average=average;
 		this.sum=sum;
 		this.minString=minString;
 		this.maxString=maxString;
+		this.groupByVal=groupBy;
 	}
 
-	public ColumnStatResult(ColumnStatRequest<?> statRequest, Long countWithNull, Long countNotNull, Double min, Double max, Double average, Double sum) {
-		this.columnStat=statRequest;
+	public ColumnStatResult(ColumnStatRequest<?> statRequest, Long countWithNull, Long countNotNull, Double min, Double max, Double average, Double sum, String groupBy) {
+		this.fieldName=statRequest.getColumn().getName();
 		this.countWithNull=countWithNull;
 		this.countNotNull=countNotNull;
 		this.min=min;
 		this.max=max;
 		this.average=average;
 		this.sum=sum;
-	}
-
-	public ColumnStatResult(ColumnStatRequest<?> statRequest, String groupValue) {
-		this.columnStat=statRequest;
-		this.groupBy=groupValue;
+		this.groupByVal=groupBy;
 	}
 
 	// getters
-	public ColumnStatRequest<?> getColumnStatRequest() {
-		return columnStat;
-	}
-
 	public String getName() {
-		return columnStat.column.getName();
+		return fieldName;
 	}
 
 	public Double getSum() {
@@ -82,49 +81,132 @@ public class ColumnStatResult {
 		return countWithNull;
 	}
 
-	public String getGroupBy() {
-		return groupBy;
-	}
-
 	public String toString() {
 		StringBuilder sb=new StringBuilder("ColumnStat for ");
-		sb.append("'").append(columnStat.column.getName()).append("'").append(" [countFlags =");
-		StringBuilder sb2=new StringBuilder("");
+		sb.append("'").append(getName()).append("'").append(" [");
 
-		if (columnStat.isCountNotNullFlag()) {
-			sb.append(" COUNT");
-			sb2.append(", countWithNull=").append(getCountWithNull());
-			sb2.append(", countNotNull=").append(getCountNotNull());
+		if (getCountNotNull() != null || getCountWithNull() != null) {
+			sb.append(", countWithNull=").append(getCountWithNull());
+			sb.append(", countNotNull=").append(getCountNotNull());
 		}
-		if (columnStat.isMinFlag()) {
-			sb.append(" MIN");
-			if (min != null) {
-				sb2.append(", minD=").append(getMin());
-			} else {
-				sb2.append(", minS=").append(getMinString());
-			}
+		if (getMin() != null) {
+			sb.append(", minD=").append(getMin());
 		}
-		if (columnStat.isMaxFlag()) {
-			sb.append(" MAX");
-			if (max != null) {
-				sb2.append(", maxD=").append(getMax());
-			} else {
-				sb2.append(", maxS='").append(getMaxString()).append("'");
-			}
+		if (getMinString() != null) {
+			sb.append(", minS=").append(getMinString());
 		}
-		if (columnStat.isAverageFlag()) {
-			sb.append(" AVERAGE");
-			sb2.append(", avg=").append(getAverage());
+		if (getMax() != null) {
+			sb.append(", maxD=").append(getMax());
 		}
-		if (columnStat.isSumFlag()) {
-			sb.append(" SUM");
-			sb2.append(", sum=").append(getSum());
+		if (getMaxString() != null) {
+			sb.append(", maxS='").append(getMaxString()).append("'");
 		}
-		if (columnStat.isGroupByFlag()) {
-			sb.append(" GROUPBY");
-			sb2.append(", groupBy=").append(getGroupBy());
+		if (getAverage() != null) {
+			sb.append(", avg=").append(getAverage());
+		}
+		if (getSum() != null) {
+			sb.append(", sum=").append(getSum());
+		}
+		if (getGroupByValue() != null) {
+			sb.append(", groupByVal=").append(getGroupByValue());
+		}
+		if (getGroupByDay() != null) {
+			sb.append(", groupByDay=").append(getGroupByDay());
+		}
+		if (getGroupByDow() != null) {
+			sb.append(", groupByDow=").append(getGroupByDow());
+		}
+		if (getGroupByDoy() != null) {
+			sb.append(", groupByDoy=").append(getGroupByDoy());
+		}
+		if (getGroupByHour() != null) {
+			sb.append(", groupByHour=").append(getGroupByHour());
+		}
+		if (getGroupByMonth() != null) {
+			sb.append(", groupByMonth=").append(getGroupByMonth());
+		}
+		if (getGroupByQuarter() != null) {
+			sb.append(", groupByQuarter=").append(getGroupByQuarter());
+		}
+		if (getGroupByWeek() != null) {
+			sb.append(", groupByWeek=").append(getGroupByWeek());
+		}
+		if (getGroupByYear() != null) {
+			sb.append(", groupByYear=").append(getGroupByYear());
 		}
 
-		return sb.append(sb2).append("]").toString();
+		return sb.append("]").toString();
+	}
+
+	public String getGroupByValue() {
+		return groupByVal;
+	}
+
+	public Integer getGroupByHour() {
+		return groupByHour;
+	}
+
+	public Integer getGroupByDay() {
+		return groupByDay;
+	}
+
+	public Integer getGroupByWeek() {
+		return groupByWeek;
+	}
+
+	public Integer getGroupByMonth() {
+		return groupByMonth;
+	}
+
+	public Integer getGroupByQuarter() {
+		return groupByQuarter;
+	}
+
+	public Integer getGroupByYear() {
+		return groupByYear;
+	}
+
+	public Integer getGroupByDow() {
+		return groupByDow;
+	}
+
+	public Integer getGroupByDoy() {
+		return groupByDoy;
+	}
+
+	public void setGroupByValue(String groupByVal) {
+		this.groupByVal = groupByVal;
+	}
+
+	public void setGroupByHour(Integer groupByHour) {
+		this.groupByHour = groupByHour;
+	}
+
+	public void setGroupByDay(Integer groupByDay) {
+		this.groupByDay = groupByDay;
+	}
+
+	public void setGroupByWeek(Integer groupByWeek) {
+		this.groupByWeek = groupByWeek;
+	}
+
+	public void setGroupByMonth(Integer groupByMonth) {
+		this.groupByMonth = groupByMonth;
+	}
+
+	public void setGroupByQuarter(Integer groupByQuarter) {
+		this.groupByQuarter = groupByQuarter;
+	}
+
+	public void setGroupByYear(Integer groupByYear) {
+		this.groupByYear = groupByYear;
+	}
+
+	public void setGroupByDow(Integer groupByDow) {
+		this.groupByDow = groupByDow;
+	}
+
+	public void setGroupByDoy(Integer groupByDoy) {
+		this.groupByDoy = groupByDoy;
 	}
 }
