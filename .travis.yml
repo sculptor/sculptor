@@ -1,5 +1,7 @@
 language: java
 
+services: mongodb
+
 before_install:
  # We need GraphViz to generate images
  - "sudo apt-get install graphviz 2>&1 | tail -n 2"
