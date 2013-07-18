@@ -20,6 +20,7 @@ package org.sculptor.generator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.mwe.core.WorkflowInterruptedException;
 import org.eclipse.emf.mwe2.language.Mwe2RuntimeModule;
 import org.eclipse.emf.mwe2.language.Mwe2StandaloneSetup;
@@ -61,7 +62,7 @@ public class SculptorGeneratorRunner {
 	private boolean doRun(String modelFile) {
 		boolean success;
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("modelFile", modelFile);
+		map.put("modelFile", URI.createFileURI(modelFile).toString());
 		try {
 			runner.run(WORKFLOW_MODULE, map);
 			success = true;
