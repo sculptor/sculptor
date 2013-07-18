@@ -11,27 +11,22 @@
 	<packaging>eclipse-repository</packaging>
 	<name>Sculptor :: Eclipse :: p2 Repository</name>
 
-	<profiles>
-		<profile>
-			<id>deploy</id>
-			<build>
-				<plugins>
-					<!-- Deploying the p2 repository to a GitHub repository branch as described in
-						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
-					<plugin>
-						<groupId>com.github.github</groupId>
-						<artifactId>site-maven-plugin</artifactId>
-						<configuration>
-							<message>Sculptor Eclipse bundles ${project.version}</message>
-							<outputDirectory>${project.build.directory}/repository</outputDirectory>
-							<branch>refs/heads/eclipse</branch>
-							<repositoryName>snapshot-repository</repositoryName>
-							<dryRun>false</dryRun>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<build>
+		<plugins>
+			<!-- Deploying the p2 repository to a GitHub repository branch as described 
+				in http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<configuration>
+					<message>Sculptor Eclipse bundles ${project.version}</message>
+					<outputDirectory>${project.build.directory}/repository</outputDirectory>
+					<branch>refs/heads/eclipse</branch>
+					<repositoryName>snapshot-repository</repositoryName>
+					<dryRun>false</dryRun>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

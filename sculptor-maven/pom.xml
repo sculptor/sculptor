@@ -23,10 +23,18 @@
 		<module>sculptor-maven-plugin</module>
 		<module>sculptor-maven-archetype-parent</module>
 		<module>sculptor-maven-archetype</module>
-		<!-- This module has to be built last because it provides 
-			the Maven repository which is deployed -->
-		<module>maven-repository</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<modules>
+				<!-- This module has to be built last because it provides 
+					the Maven repository which is deployed -->
+				<module>maven-repository</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
