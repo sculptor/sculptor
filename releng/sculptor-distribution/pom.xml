@@ -21,8 +21,10 @@
 			<modules>
 				<module>../../sculptor-eclipse</module>
 				<module>../../sculptor-generator</module>
-				<module>../../sculptor-maven</module>
 				<module>../../sculptor-framework</module>
+				<!-- This module has to be built last because it provides 
+					the Maven repository which is deployed -->
+				<module>../../sculptor-maven</module>
 			</modules>
 		</profile>
 		<profile>
@@ -36,6 +38,8 @@
 			<modules>
 				<module>../../sculptor-generator</module>
 				<module>../../sculptor-framework</module>
+				<!-- This module has to be built last because it provides 
+					the Maven repository which is deployed -->
 				<module>../../sculptor-maven</module>
 			</modules>
 		</profile>
