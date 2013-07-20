@@ -1,0 +1,9 @@
+ApplicationPart ToImportPart {
+
+	Module toimport {
+		BasicType ToImport {
+			String name key
+			Timestamp timestamp key
+		}
+	}
+}

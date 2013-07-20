@@ -1,3 +1,4 @@
+import "classpath:/model-toimport.btdesign"
 import "classpath:/model-test.btdesign"
 
 Application Test {

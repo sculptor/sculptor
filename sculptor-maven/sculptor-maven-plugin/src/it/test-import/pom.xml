@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.acme</groupId>
-	<artifactId>foobar</artifactId>
+	<artifactId>test-import</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<build>
@@ -27,15 +27,23 @@
 							<goal>generate</goal>
 						</goals>
 					</execution>
-					<execution>
-						<id>image-generation</id>
-						<goals>
-							<goal>generate-images</goal>
-						</goals>
-					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.acme</groupId>
+						<artifactId>toimport</artifactId>
+						<version>1.0.0-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
  	</build>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.acme</groupId>
+			<artifactId>toimport</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>

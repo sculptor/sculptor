@@ -1,0 +1,5 @@
+import "classpath:/model-toimport.btdesign"
+
+Application ToImport {
+    basePackage=com.acme
+}

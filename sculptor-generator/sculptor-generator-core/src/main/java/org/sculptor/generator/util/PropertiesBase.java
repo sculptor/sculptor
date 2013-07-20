@@ -19,16 +19,13 @@ package org.sculptor.generator.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -149,17 +146,21 @@ public class PropertiesBase {
 
 	private void loadProperties(Properties properties, String resource) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		if (classLoader == null) {
+		if (classLoader != null) {
+			LOG.debug("Loading '{}' from threads current context classloader: {}", resource, classLoader);
+		} else {
 			classLoader = PropertiesBase.class.getClassLoader();
+			LOG.debug("Loading '{}' from PropertiesBase classloader: {}", resource, classLoader);
 		}
-		LOG.debug("Loading '{}' from '{}'", resource, classLoader.getResource(resource));
-		InputStream resourceInputStream = classLoader.getResourceAsStream(resource);
-		if (resourceInputStream == null) {
+
+		URL resourceURL = classLoader.getResource(resource);
+		if (resourceURL == null) {
 			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
 					"");
 		}
+		LOG.debug("Loading properties from '{}'", resourceURL);
 		try {
-			properties.load(resourceInputStream);
+			properties.load(resourceURL.openStream());
 		} catch (IOException e) {
 			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "");
 		}

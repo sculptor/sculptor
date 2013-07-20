@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -498,7 +498,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	}
 
 	public void extendPluginClasspath(List<Object> classpathEntries) throws MojoExecutionException {
-		Set<URL> urls = new HashSet<URL>();
+		// we need a LinkedHashSet here to preserve insertion order
+		Set<URL> urls = new LinkedHashSet<URL>();
 		for (Object classpathEntry : classpathEntries) {
 			if (classpathEntry instanceof Resource) {
 				File resourceFile = new File(((Resource) classpathEntry).getDirectory());
@@ -524,8 +525,9 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				throw new IllegalArgumentException("Unsupported classpathentry: " + classpathEntry);
 			}
 		}
-		ClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[0]), Thread.currentThread()
+		ClassLoader classLoader = new ResourceChildFirstURLClassLoader(urls, Thread.currentThread()
 				.getContextClassLoader());
+		getLog().debug("Setting new context classloader '" + classLoader + "': " + urls);
 		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 

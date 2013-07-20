@@ -70,16 +70,16 @@
 				<artifactId>maven-invoker-plugin</artifactId>
 				<configuration>
 					<debug>false</debug>
+					<setupIncludes>
+						<setupInclude>toimport/pom.xml</setupInclude>
+					</setupIncludes>
 					<pomIncludes>
-						<pomInclude>*/pom.xml</pomInclude>
+						<pomInclude>test*/pom.xml</pomInclude>
 					</pomIncludes>
 					<streamLogs>false</streamLogs>
 					<preBuildHookScript>setup</preBuildHookScript>
 					<postBuildHookScript>verify</postBuildHookScript>
 					<localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-					<goals>
-						<goal>generate-sources</goal>
-					</goals>
 					<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
 				</configuration>
 				<executions>
