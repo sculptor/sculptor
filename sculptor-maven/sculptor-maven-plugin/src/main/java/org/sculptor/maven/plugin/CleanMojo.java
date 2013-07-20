@@ -71,7 +71,7 @@ public class CleanMojo extends AbstractGeneratorMojo {
 					throw new MojoExecutionException(
 							"Deleting status file failed", e);
 				}
-				if (isVerbose() || getLog().isDebugEnabled()) {
+				if (isVerbose()) {
 					getLog().info("Deleted status file: " + statusFile);
 				}
 			}

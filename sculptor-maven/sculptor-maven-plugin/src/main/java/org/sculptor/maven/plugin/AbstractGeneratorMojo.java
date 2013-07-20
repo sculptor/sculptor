@@ -134,11 +134,14 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
 	/**
 	 * Check if the logging should be verbose.
+	 * <p>
+	 * If Maven debug logging is requested "mvn -X" the verbose logging is active
+	 * as well.
 	 * 
 	 * @return true to verbose logging
 	 */
 	protected boolean isVerbose() {
-		return verbose;
+		return verbose || getLog().isDebugEnabled();
 	}
 
 	/**

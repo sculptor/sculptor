@@ -297,21 +297,21 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	private void extendCompileSourceRoots() {
 
 		// Add source artifacts
-		if (isVerbose() || getLog().isDebugEnabled()) {
+		if (isVerbose()) {
 			getLog().info("Adding compile source directory '" + outletSrcDir + "'");
 		}
 		project.addCompileSourceRoot(outletSrcDir.getAbsolutePath());
-		if (isVerbose() || getLog().isDebugEnabled()) {
+		if (isVerbose()) {
 			getLog().info("Adding compile source directory '" + outletSrcOnceDir + "'");
 		}
 		project.addCompileSourceRoot(outletSrcOnceDir.getAbsolutePath());
 
 		// Add test source artifacts
-		if (isVerbose() || getLog().isDebugEnabled()) {
+		if (isVerbose()) {
 			getLog().info("Adding test compile source directory '" + outletSrcTestDir + "'");
 		}
 		project.addTestCompileSourceRoot(outletSrcTestDir.getAbsolutePath());
-		if (isVerbose() || getLog().isDebugEnabled()) {
+		if (isVerbose()) {
 			getLog().info("Adding test compile source directory '" + outletSrcTestOnceDir + "'");
 		}
 		project.addTestCompileSourceRoot(outletSrcTestOnceDir.getAbsolutePath());
@@ -341,7 +341,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		}
 
 		// Add new resource to list of resources
-		if (isVerbose() || getLog().isDebugEnabled()) {
+		if (isVerbose()) {
 			getLog().info("Adding resource directory '" + resourceDir + "'");
 		}
 		Resource resource = new Resource();
@@ -364,7 +364,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		}
 		final long statusFileLastModified = statusFile.lastModified();
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		if (isVerbose() || getLog().isDebugEnabled()) {
+		if (isVerbose()) {
 			getLog().info("Last code generator execution: " + df.format(new Date(statusFileLastModified)));
 		}
 
@@ -394,7 +394,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 			if (isModified) {
 				changedFiles.add(checkFile.getAbsolutePath());
 			}
-			if (isVerbose() || getLog().isDebugEnabled()) {
+			if (isVerbose()) {
 				getLog().info(
 						"File '" + checkFile.getAbsolutePath() + "': " + (isModified ? "outdated" : "up-to-date")
 								+ " (" + " " + df.format(new Date(checkFile.lastModified())) + ")");
@@ -440,11 +440,10 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 
 		// Redirect system.out and system.err
 		PrintStream oldSystemOut = System.out;
-		ScanningOutputStream stdout = new ScanningOutputStream(oldSystemOut, isVerbose() || getLog().isDebugEnabled());
+		ScanningOutputStream stdout = new ScanningOutputStream(oldSystemOut, isVerbose());
 		System.setOut(new PrintStream(stdout));
 		PrintStream oldSystemErr = System.err;
-		ScanningOutputStream stderr = new ScanningOutputStream(oldSystemErr, isVerbose() || getLog().isDebugEnabled(),
-				true);
+		ScanningOutputStream stderr = new ScanningOutputStream(oldSystemErr, isVerbose(), true);
 		System.setErr(new PrintStream(stderr));
 
 		// Prepare logback configuration
