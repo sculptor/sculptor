@@ -20,12 +20,15 @@ package org.sculptor.generator.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -119,7 +122,22 @@ public class PropertiesBase {
 
 		initDerivedDefaults(defaultProperties);
 
-		LOG.debug("Initialized properties: {}", properties);
+		List<String> propertyKeyValues = getAllPropertiesKeyValues(properties);
+		LOG.debug("Initialized properties: {}", propertyKeyValues);
+	}
+
+	/**
+	 * Returns a sorted list of all key-value pairs stored in given properties instance.
+	 * This includes the defaults as well. 
+	 */
+	private List<String> getAllPropertiesKeyValues(Properties p) {
+		List<String> propertyValues = new ArrayList<String>();
+		for (Enumeration<?> propertyNames = p.propertyNames(); propertyNames.hasMoreElements();) {
+			String propertyName = (String) propertyNames.nextElement();
+			propertyValues.add(propertyName + "=" + p.getProperty(propertyName));
+		}
+		Collections.sort(propertyValues);
+		return propertyValues;
 	}
 
 	private void copySystemProperties(Properties p) {
@@ -130,11 +148,11 @@ public class PropertiesBase {
 	}
 
 	private void loadProperties(Properties properties, String resource) {
-		LOG.debug("Loading properties from '{}'", resource);
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		if (classLoader == null) {
 			classLoader = PropertiesBase.class.getClassLoader();
 		}
+		LOG.debug("Loading '{}' from '{}'", resource, classLoader.getResource(resource));
 		InputStream resourceInputStream = classLoader.getResourceAsStream(resource);
 		if (resourceInputStream == null) {
 			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
