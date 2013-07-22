@@ -60,7 +60,7 @@ Here are some ways for you to contribute:
 * GitHub is for social coding: if you want to write code, we encourage contributions [through pull requests](https://help.github.com/articles/creating-a-pull-request)
   from [forks of this repository](https://help.github.com/articles/fork-a-repo).
   If you want to contribute code this way, please reference a GitHub ticket as well covering the specific issue you are addressing.
-  See [Sculptors documentation](http://sculptorgenerator.org/documentation/) for details on how to set up the development
+  See [Sculptors documentation](http://sculptorgenerator.org/documentation/development-environment) for details on how to set up the development
   environment and build the project.
 * If you want to help us with [documentation and tutorials](http://sculptorgenerator.org/documentation/), we encourage contributions
   [through pull requests](https://help.github.com/articles/creating-a-pull-request) from forks of the corresponding repository
