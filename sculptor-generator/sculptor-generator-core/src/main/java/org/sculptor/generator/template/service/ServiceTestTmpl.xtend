@@ -25,6 +25,10 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Service
 
+import org.sculptor.generator.chain.ChainOverridable
+
+
+@ChainOverridable
 class ServiceTestTmpl {
 
 	@Inject private var DbUnitTmpl dbUnitTmpl
