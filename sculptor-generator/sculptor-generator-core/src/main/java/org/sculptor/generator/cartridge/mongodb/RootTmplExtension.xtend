@@ -41,8 +41,7 @@ class RootTmplExtension extends RootTmpl {
 				it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[mongoDbMapperTmpl.mongoDbMapper(it)]
 			}
 		}
-
-		super.root(it)
+		next_root(it)
 	}
 
 }

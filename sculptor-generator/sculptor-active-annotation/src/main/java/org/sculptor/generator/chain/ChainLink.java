@@ -20,13 +20,32 @@ package org.sculptor.generator.chain;
 public abstract class ChainLink<T extends ChainLink<T>> {
 	private T nextLink;
 
-	public ChainLink(T next) {
+	T[] methodsDispatchNext;
+	
+	public T[] getMethodsDispatchNext() {
+		return methodsDispatchNext;
+	}
+
+	T[] methodsDispatchHead = null;
+	
+	public T[] getMethodsDispatchHead() {
+		return methodsDispatchHead;
+	}
+
+	public ChainLink(T next, T[] methodsDispatchNext) {
 		// TODO check for NULL
 		// can be null only when created from templates and extension in generator-core
 		nextLink = next;
+		this.methodsDispatchNext = methodsDispatchNext;
 	}
 
+	public void setMethodsDispatchHead(Object[] methodsDispatchHead) {
+		this.methodsDispatchHead = (T[])methodsDispatchHead;		
+	}
+	
 	public T getNext() {
 		return nextLink;
 	}
+	
+	public abstract T[] _getOverridesDispatchArray();
 }

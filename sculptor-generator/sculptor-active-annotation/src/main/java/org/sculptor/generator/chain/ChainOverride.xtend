@@ -26,6 +26,8 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static extension org.sculptor.generator.chain.ChainOverrideHelper.*
+
 /**
  * Adds additional constructor used for chainining.
  * @see ChainLink
@@ -46,9 +48,15 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 			// Add constructor needed for chaining
 			annotatedClass.addConstructor [
 				addParameter('next', annotatedClass.extendedClass)
-				body = ['''super(next);''']
+				addParameter('methodsDispatchNext', annotatedClass.extendedClass.newArrayTypeReference)
+				body = ['''super(next, methodsDispatchNext);''']
 			]
+			
+			
+			val overrideableMethodIndexNames = annotatedClass.overrideableMethodIndexNames
+			annotatedClass.addGetOverridesDispatchArrayMethod(annotatedClass.extendedClass.type, context, overrideableMethodIndexNames)
 		}
+		
 	}
 
 	private def validate(MutableClassDeclaration annotatedClass, extension TransformationContext context) {

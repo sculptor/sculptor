@@ -7,5 +7,15 @@ class TestTemplate {
 
 	def String test() {
 		"code"
-	}	
+	}
+
+	def String test(int i) {
+		'''code«i»'''
+	}
+	
+	def String test2() {
+		"code2"
+	}
+	
+	
 }

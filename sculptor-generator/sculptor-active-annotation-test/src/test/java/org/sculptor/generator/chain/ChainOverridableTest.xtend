@@ -42,15 +42,33 @@ class ChainOverridableTest {
 			assertNotNull(annotatedClass)
 			assertTrue('No chaining constructor',
 				annotatedClass.declaredConstructors.exists[
-					parameters.size == 1 && parameters.get(0).simpleName == 'next']
+					parameters.size == 2 && parameters.get(0).simpleName == 'next' && parameters.get(1).simpleName == 'methodsDispatchNext']
 			)
 
 			// Check the AST if the generated extension class has the public non-final methods of the annotated class
 			assertNotNull('No public method', annotatedClass.findMethod('overridableMethod'))
 			assertNotNull('No overriden method', annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
 
+			assertNotNull('No next dispatch method', annotatedClass.findMethod('next_overridableMethod'))
+
 			// Check the AST if the generated extension class has no public final methods of the annotated class
 			assertNull('Final method renamed', annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
+
+			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findMethod("_getOverridesDispatchArray"))
+						
+			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findMethod("_chained__getOverridesDispatchArray"))
+						
+			val indexInterface = findInterface('ChainOverridableTestTemplateMethodIndexes')
+			assertNotNull(indexInterface)
+			val fields = indexInterface.declaredFields.toList
+			assertEquals(3, fields.size)
+			assertEquals("OVERRIDABLEMETHOD", fields.get(0).simpleName)
+			assertEquals("int", fields.get(0).type.simpleName)
+			
+			assertEquals("NUM_METHODS", fields.get(2).simpleName)
+			assertEquals("int", fields.get(2).type.simpleName)
+			
+			//"_chained__getOverridesDispatchArray"
 		]
 	}
 

@@ -45,8 +45,16 @@ class ChainOverrideTest {
 			assertNotNull(clazz)
 			assertTrue(
 				clazz.declaredConstructors.exists[
-					parameters.size == 1 && parameters.get(0).simpleName == 'next']
-			)]
+					parameters.size == 2 && parameters.get(0).simpleName == 'next' && parameters.get(1).simpleName == 'methodsDispatchNext']
+			)
+
+			assertNotNull("_getOverridesDispatchArray should be generated", clazz.findMethod("_getOverridesDispatchArray"))
+						
+			assertNull("_getOverridesDispatchArray shouldn't get chained", clazz.findMethod("_chained__getOverridesDispatchArray"))			
+		]
+			
+			
+
 	}
 
 	@Test(expected=typeof(RuntimeException))

@@ -32,16 +32,38 @@ class ChainOverrideAwareModuleTest {
 	def void testTmplateExtensions() {
 		val injector = Guice::createInjector(new ChainOverrideAwareModule(templateClass));
 
-		var template = injector.getInstance(templateClass);
-		assertNotNull(template);
-		assertEquals("No override class", typeof(TestTemplateOverride), template.^class)
+		val templateOverride = injector.getInstance(templateClass);
+		val templateExtension = templateOverride.next
+		val template = templateExtension.next
 
-		template = template.next
+		// Head of chain - the override class
+		assertNotNull(templateOverride);
+		assertEquals("No override class", typeof(TestTemplateOverride), templateOverride.^class)
+		assertNotNull(templateOverride.getMethodsDispatchNext)
+		assertEquals(3, templateOverride.getMethodsDispatchNext.size)
+		assertSame(templateExtension, templateOverride.getMethodsDispatchNext.get(0))
+		assertSame(template, templateOverride.getMethodsDispatchNext.get(1))
+		assertSame(template, templateOverride.getMethodsDispatchNext.get(2))
+		
+		val methodDispatchHead = templateOverride.getMethodsDispatchHead()
+		assertNotNull(methodDispatchHead)
+		assertSame(templateExtension, methodDispatchHead.get(0))
+		assertSame(template, methodDispatchHead.get(1))
+		assertSame(templateOverride, methodDispatchHead.get(2))
+
 		assertSame("No cartridge extension class", typeof(TestTemplateExtension),
-			template.^class)
+			templateExtension.^class)
+		assertEquals(3, templateExtension.getMethodsDispatchNext.size)
+		assertSame(template, templateExtension.getMethodsDispatchNext.get(0))
+		assertSame(template, templateExtension.getMethodsDispatchNext.get(1))
+		assertSame(template, templateExtension.getMethodsDispatchNext.get(2))
+		assertSame(methodDispatchHead, templateExtension.getMethodsDispatchHead)
 
-		template = template.next
+		// End of chain - the original template class
 		assertSame("No original template class", templateClass, template.^class)
 		assertNull(template.next)
+		assertNull(template.getMethodsDispatchNext)
+		assertSame(methodDispatchHead, template.getMethodsDispatchHead)
+		
 	}
 }
