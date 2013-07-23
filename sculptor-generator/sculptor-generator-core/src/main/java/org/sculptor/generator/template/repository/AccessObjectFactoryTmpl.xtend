@@ -27,7 +27,6 @@ import sculptormetamodel.RepositoryOperation
 
 class AccessObjectFactoryTmpl {
 
-	@Inject extension DbHelper dbHelper
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension Properties properties
@@ -98,43 +97,5 @@ def String factoryMethodInit(RepositoryOperation it) {
 	'''
 }
 
-def String getAdditionalDataMappers(Repository it) {
-	val allUnownedReferences = it.aggregateRoot.getAggregate().map[ag | ag.getAllReferences()].flatten.filter[e | e.isUnownedReference()]
-	val allNonEnumNaturalKeyReferences = it.aggregateRoot.getNaturalKeyReferences().filter[e | !e.isEnumReference()]
 
-	'''
-		@SuppressWarnings("unchecked")
-		private «fw("accessimpl.mongodb.DataMapper")»[] additionalDataMappers =
-			new «fw("accessimpl.mongodb.DataMapper")»[] {
-				«IF isJodaDateTimeLibrary() »
-				«fw("accessimpl.mongodb.JodaLocalDateMapper")».getInstance(),
-				«fw("accessimpl.mongodb.JodaDateTimeMapper")».getInstance(),
-				«ENDIF »
-				«fw("accessimpl.mongodb.EnumMapper")».getInstance()«IF !allUnownedReferences.isEmpty»,«ENDIF»
-				«FOR ref : allUnownedReferences SEPARATOR ", "»
-				«fw("accessimpl.mongodb.IdMapper")».getInstance(«ref.to.getDomainPackage()».«ref.to.name».class)
-				«ENDFOR»«IF !allNonEnumNaturalKeyReferences.isEmpty»,«ENDIF»
-				«FOR ref : allNonEnumNaturalKeyReferences SEPARATOR ", "»
-					«getMapperPackage(ref.to.module)».«ref.to.name»Mapper.getInstance()
-				«ENDFOR»
-				};
-
-		@SuppressWarnings("unchecked")
-		protected «fw("accessimpl.mongodb.DataMapper")»<Object, com.mongodb.DBObject>[] getAdditionalDataMappers() {
-			return additionalDataMappers;
-		}
-	'''
-}
-
-def String ensureIndex(Repository it) {
-	'''
-		@javax.annotation.PostConstruct
-		protected void ensureIndex() {
-			com.mongodb.DBCollection dbCollection = dbManager.getDBCollection(«aggregateRoot.module.getMapperPackage()».«aggregateRoot.name»Mapper.getInstance().getDBCollectionName());
-			for («fw("accessimpl.mongodb.IndexSpecification")» each : «aggregateRoot.module.getMapperPackage()».«aggregateRoot.name»Mapper.getInstance().indexes()) {
-				dbCollection.ensureIndex(each.getKeys(), each.getName(), each.isUnique());
-			}
-		}
-	'''
-}
 }

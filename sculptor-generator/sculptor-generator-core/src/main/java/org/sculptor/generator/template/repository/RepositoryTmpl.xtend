@@ -18,18 +18,20 @@
 package org.sculptor.generator.template.repository
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.PubSubTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import sculptormetamodel.Attribute
 import sculptormetamodel.Parameter
+import sculptormetamodel.Reference
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
-import sculptormetamodel.Reference
-import sculptormetamodel.Attribute
 
+@ChainOverridable
 class RepositoryTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl
@@ -152,10 +154,10 @@ def String repositoryBase(Repository it) {
 			«entityManagerDependency(it) »
 		«ELSEIF isSpringToBeGenerated() && jpa()»
 			«daoSupportEntityManagerDependency(it) »
-		«ELSEIF mongoDb()»
-			«dbManagerDependency(it)»
 		«ENDIF»
 	
+		«extraRepositoryBaseDependencies»
+		
 		«accessObjectFactory(it)»
 	
 		«repositoryHook(it)»
@@ -165,15 +167,18 @@ def String repositoryBase(Repository it) {
 	)
 }
 
+/**
+ * Any extra dependencies needed for specific types of repositories.  To be provided by cartridges.
+ */
+def String extraRepositoryBaseDependencies(Repository it) {
+	""
+}
+
 def String accessObjectFactory(Repository it) {
 	'''
 	«it.distinctOperations.filter(op | op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.genericFactoryMethod(op)].join()»
 	«it.distinctOperations.filter(op | op.delegateToAccessObject && !op.isGenericAccessObject()).map[op | accessObjectFactoryTmpl.factoryMethod(op)].join()»
 	«accessObjectFactoryTmpl.getPersistentClass(it)»
-	«IF mongoDb()»
-		«accessObjectFactoryTmpl.getAdditionalDataMappers(it)»
-		«accessObjectFactoryTmpl.ensureIndex(it)»
-	«ENDIF»
 	'''
 }
 
@@ -196,16 +201,6 @@ def String entityManagerDependency(Repository it) {
 	'''
 }
 
-def String dbManagerDependency(Repository it) {
-	'''
-	@org.springframework.beans.factory.annotation.Autowired
-	private «fw("accessimpl.mongodb.DbManager")» dbManager;
-
-	protected «fw("accessimpl.mongodb.DbManager")» getDbManager() {
-		return dbManager;
-	}
-	'''
-}
 
 def String daoSupportEntityManagerDependency(Repository it) {
 	'''

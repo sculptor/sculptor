@@ -56,13 +56,10 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
 		if (validate(annotatedClass, context)) {
 
-			val averrideableMethodIndexNames = annotatedClass.getOverrideableMethodIndexNames()
-			buildMethodNamesInterface(annotatedClass, context, averrideableMethodIndexNames)
+			val overrideableMethodIndexNames = annotatedClass.getOverrideableMethodIndexNames()
+			buildMethodNamesInterface(annotatedClass, context, overrideableMethodIndexNames)
 
-//			val List<String> overrideMethodIndexNames = newArrayList()
-//			overrideMethodIndexNames.addAll(overrideMethods.map[m | m.indexName])
-			
-			transformAnnotatedClass(annotatedClass, context, averrideableMethodIndexNames)
+			transformAnnotatedClass(annotatedClass, context, overrideableMethodIndexNames)
 
 		}
 	}
@@ -106,23 +103,6 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		true
 	}
 
-//	private def addGetOverridesDispatchArrayMethod(MutableClassDeclaration annotatedClass, extension TransformationContext context,
-//		List<String> overrideMethodIndexNames
-//	) {
-//		annotatedClass.addMethod("_getOverridesDispatchArray") [
-//			visibility = Visibility::PUBLIC
-////			static = true
-//			final = true
-//			returnType = annotatedClass.newTypeReference.newArrayTypeReference
-//			body = ['''
-//				«annotatedClass.qualifiedName»[] result = new «annotatedClass.qualifiedName»[«annotatedClass.methodIndexesName».NUM_METHODS];
-//				«FOR m : overrideMethodIndexNames»
-//					result[«annotatedClass.methodIndexesName».«m»] = this; 
-//				«ENDFOR»
-//				return result;
-//			''']
-//		]
-//	}
 	
 	/**
 	 * Add new method that dispatches to the same method that is 'next' in the chain & implemented
@@ -214,8 +194,12 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 				delegateMethod.docComment = publicMethod.docComment
 				delegateMethod.body = [
 					'''
-						«annotatedClass.simpleName» nextObj = getMethodsDispatchHead()[«annotatedClass.methodIndexesName».«methodIndexName»];
-						return nextObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+						«annotatedClass.simpleName» headObj = getMethodsDispatchHead()[«annotatedClass.methodIndexesName».«methodIndexName»];
+						if(headObj.getClass().equals(«annotatedClass.simpleName».class)) {
+							return headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+						} else {
+							return headObj.«methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);							
+						}
 					'''
 				]
 			]

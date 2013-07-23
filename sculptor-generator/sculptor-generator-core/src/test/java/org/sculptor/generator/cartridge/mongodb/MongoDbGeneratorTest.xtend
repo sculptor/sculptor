@@ -50,18 +50,41 @@ class MongoDbGeneratorTest extends GeneratorTestBase {
     }
    
     @Test
-    def void assertSimpleGeneratedFinder() {
+    def void assertRepositoryBase() {
     	
     	val mediaRepositoryCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryBase.java");
     	
     	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
-    	"public List<Media> findByTitle(String title) {",
-    	"List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Media.class)",
-    	".withProperty(MediaProperties.title()).eq(title).build();",
-    	"List<Media> result = findByCondition(condition);",
-    	"return result;",
-    	"}"])
+    		"public List<Media> findByTitle(String title) {",
+    		"List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Media.class)",
+    		".withProperty(MediaProperties.title()).eq(title).build();",
+    		"List<Media> result = findByCondition(condition);",
+    		"return result;",
+    		"}"])
     	
+    	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
+    		"@Autowired",
+			"private DbManager dbManager;",
+			"protected DbManager getDbManager() {",
+			"return dbManager;"
+    	])
+    	
+    	
+    	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
+			'@SuppressWarnings("unchecked")',
+			'private org.sculptor.framework.accessimpl.mongodb.DataMapper[] additionalDataMappers = new DataMapper[] {',
+				'JodaLocalDateMapper.getInstance(), JodaDateTimeMapper.getInstance(), EnumMapper.getInstance(),',
+				'IdMapper.getInstance(PhysicalMedia.class), IdMapper.getInstance(MediaCharacter.class),',
+				'IdMapper.getInstance(Person.class) };'	
+		])
+		
+    	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
+			'@SuppressWarnings("unchecked")',
+			'protected DataMapper<Object, DBObject>[] getAdditionalDataMappers() {',
+				'return additionalDataMappers;',
+			'}'
+		])
     }
+    
 
 }
