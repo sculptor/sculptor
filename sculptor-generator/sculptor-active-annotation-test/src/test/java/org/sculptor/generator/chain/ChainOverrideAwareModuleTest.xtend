@@ -40,7 +40,7 @@ class ChainOverrideAwareModuleTest {
 		assertNotNull(templateOverride);
 		assertEquals("No override class", typeof(TestTemplateOverride), templateOverride.^class)
 		assertNotNull(templateOverride.getMethodsDispatchNext)
-		assertEquals(3, templateOverride.getMethodsDispatchNext.size)
+		assertEquals(5, templateOverride.getMethodsDispatchNext.size)
 		assertSame(templateExtension, templateOverride.getMethodsDispatchNext.get(0))
 		assertSame(template, templateOverride.getMethodsDispatchNext.get(1))
 		assertSame(template, templateOverride.getMethodsDispatchNext.get(2))
@@ -53,7 +53,7 @@ class ChainOverrideAwareModuleTest {
 
 		assertSame("No cartridge extension class", typeof(TestTemplateExtension),
 			templateExtension.^class)
-		assertEquals(3, templateExtension.getMethodsDispatchNext.size)
+		assertEquals(5, templateExtension.getMethodsDispatchNext.size)
 		assertSame(template, templateExtension.getMethodsDispatchNext.get(0))
 		assertSame(template, templateExtension.getMethodsDispatchNext.get(1))
 		assertSame(template, templateExtension.getMethodsDispatchNext.get(2))

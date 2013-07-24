@@ -46,6 +46,8 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 
 	public static final String RENAMED_METHOD_NAME_PREFIX = '_chained_'
 
+	public static final String NEXT_METHOD_NAME_PREFIX = 'next_'
+	
 	override doRegisterGlobals(ClassDeclaration annotatedClass, RegisterGlobalsContext context) {
 		context.registerInterface(annotatedClass.methodIndexesName)
 	}
@@ -114,7 +116,7 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		val methodIndexName = publicMethod.indexName
 		
 			// Add new next method
-			annotatedClass.addMethod("next_" + methodName) [ nextMethod |
+			annotatedClass.addMethod(NEXT_METHOD_NAME_PREFIX + methodName) [ nextMethod |
 				nextMethod.final = true
 				nextMethod.returnType = publicMethod.returnType
 				nextMethod.^default = publicMethod.^default
@@ -130,13 +132,14 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 							// If nextObj is the end of the chain, call the renamed method because it is the overrideable class,
 							// otherwise, call the regular method name
 							if(nextObj.getNext() == null) {
-								return nextObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+								«IF !publicMethod.returnType.isVoid»return«ENDIF» nextObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
 							} else {
-								return nextObj.«methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);								
+								«IF !publicMethod.returnType.isVoid»return«ENDIF» nextObj.«methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);								
 							}
 							
 						} else {
-							return null;
+							// This is the end of the chain, so it doesn't make sense that «NEXT_METHOD_NAME_PREFIX + methodName» was explicitly called
+							throw new IllegalArgumentException("«NEXT_METHOD_NAME_PREFIX + methodName» called from ChainOverrideable class, which is the end of the chain and has no other object to delegate to");
 						}
 					'''
 				]
@@ -195,10 +198,12 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 				delegateMethod.body = [
 					'''
 						«annotatedClass.simpleName» headObj = getMethodsDispatchHead()[«annotatedClass.methodIndexesName».«methodIndexName»];
-						if(headObj.getClass().equals(«annotatedClass.simpleName».class)) {
-							return headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+						// If headObj is the end of the chain, call the renamed method because it is the overrideable class,
+						// otherwise, call the regular method name
+						if(headObj.getNext() == null) {
+							«IF !publicMethod.returnType.isVoid»return«ENDIF» headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
 						} else {
-							return headObj.«methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);							
+							«IF !publicMethod.returnType.isVoid»return«ENDIF» headObj.«methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);							
 						}
 					'''
 				]

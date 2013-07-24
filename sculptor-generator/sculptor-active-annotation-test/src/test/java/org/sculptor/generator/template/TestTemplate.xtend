@@ -17,5 +17,12 @@ class TestTemplate {
 		"code2"
 	}
 	
+	def void voidMethod() {
+		
+	}
+	
+	def int intMethod() {
+		1
+	}
 	
 }
