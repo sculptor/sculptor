@@ -224,11 +224,6 @@ public class PropertiesBase {
 			defaultProperties.setProperty("generate.datasource", "true");
 		}
 
-		// ejb.version N/A when deployment as war
-		if (getProperty("deployment.type").equals("war")) {
-			defaultProperties.setProperty("ejb.version", "N/A");
-		}
-
 		// joda-time
 		if (getProperty("datetime.library").equals("joda")) {
 			initDerivedDefaultsForJoda(defaultProperties);
