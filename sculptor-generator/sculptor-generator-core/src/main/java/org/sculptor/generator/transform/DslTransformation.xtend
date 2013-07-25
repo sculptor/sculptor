@@ -79,6 +79,9 @@ import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
 
+/**
+ * Transforms DSL meta model to generator meta model.
+ */
 class DslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE

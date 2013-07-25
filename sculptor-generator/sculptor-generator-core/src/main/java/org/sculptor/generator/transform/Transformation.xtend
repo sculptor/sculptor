@@ -46,6 +46,9 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
 
+/**
+ * Enriches generator meta model.
+ */
 class Transformation {
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
 
