@@ -19,7 +19,6 @@ package org.sculptor.generator.cartridge.mongodb
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.ext.Properties
-import org.sculptor.generator.template.repository.AccessObjectFactoryTmpl
 import org.sculptor.generator.template.repository.RepositoryTmpl
 import sculptormetamodel.Repository
 
