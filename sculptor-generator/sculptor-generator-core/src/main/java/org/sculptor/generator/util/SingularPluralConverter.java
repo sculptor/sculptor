@@ -1,12 +1,12 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *		http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,10 +25,17 @@ import javax.inject.Inject;
 
 /**
  * Conversion of English words to plural and singular. By default words become
- * plural by appending -s. Some algorithmic rules are implemented, such as words
- * ending with -y become -ies plural. To be able to handle special cases it is
- * possible to define the mapping in properties file.
+ * plural by appending "s". Some algorithmic rules are implemented, such as
+ * words ending with "y" become "ies" plural.
+ * <p>
+ * To be able to handle special cases it is possible to define the mapping in
+ * "sculptor-generator.properties" via properties with the prefix
+ * "singular2plural.", e.g.
  * 
+ * <pre>
+ * singular2plural.criterion=criteria
+ * singular2plural.matrix=matrices
+ * </pre>
  */
 public class SingularPluralConverter {
 	private static Map<String, String> singular2pluralDefinitions;
