@@ -20,13 +20,13 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
     @Autowired
     private PlanetService planetService;
 
-    @Test(expected=PlanetNotFoundException.class)
+    @Test
     public void testSayHello() throws Exception {
         String greeting = planetService.sayHello(getServiceContext(), "Earth");
         assertEquals("Hello from Earth", greeting);
     }
 
-    @Test
+    @Test(expected=PlanetNotFoundException.class)
     public void testSayHelloError() throws Exception {
         planetService.sayHello(getServiceContext(), "Pluto");
     }
