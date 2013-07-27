@@ -55,7 +55,7 @@ def String serviceJUnitSubclassOpenEjb(Service it) {
 
 		«serviceTestTmpl.serviceJUnitGetDataSetFile(it)»
 
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[serviceTestTmpl.testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[serviceTestTmpl.testMethod(it)].join()»
 	}
 	'''
 	)

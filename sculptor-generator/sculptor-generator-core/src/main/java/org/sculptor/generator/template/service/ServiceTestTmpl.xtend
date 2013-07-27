@@ -113,7 +113,7 @@ def String serviceJUnitSubclassAppEngine(Service it) {
 	
 	«serviceJUnitSubclassAppEnginePopulateDataStore(it)»
 	
-		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[testMethod(it)]»
+		«it.operations.filter(op | op.isPublicVisibility()).map(op| op.name).toSet().map[testMethod(it)].join()»
 	}
 	'''
 	)
@@ -173,7 +173,7 @@ def String serviceDependencyInjectionJUnit(Service it) {
 	 */
 	public class «name»DependencyInjectionTest extends junit.framework.TestCase {
 
-		«it.otherDependencies.map[d | serviceDependencyInjectionTestMethod(d, it)]»
+		«it.otherDependencies.map[d | serviceDependencyInjectionTestMethod(d, it)].join()»
 
 	}
 	'''

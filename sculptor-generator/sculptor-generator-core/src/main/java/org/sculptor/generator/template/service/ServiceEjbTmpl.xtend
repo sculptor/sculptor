@@ -97,7 +97,7 @@ def String ejbBeanImplBase(Service it) {
 		«serviceTmpl.delegateRepositories(it) »
 		«serviceTmpl.delegateServices(it) »
 
-		«it.operations.filter[op | !op.isImplementedInGapClass()].map[serviceTmpl.implMethod(it)]»
+		«it.operations.filter[op | !op.isImplementedInGapClass()].map[serviceTmpl.implMethod(it)].join()»
 	}
 	'''
 	)
@@ -127,7 +127,7 @@ def String ejbBeanImplSubclass(Service it) {
 
 	«serviceTmpl.otherDependencies(it)»
 
-		«it.operations.filter(op | op.isImplementedInGapClass()) .map[serviceTmpl.implMethod(it)]»
+		«it.operations.filter(op | op.isImplementedInGapClass()) .map[serviceTmpl.implMethod(it)].join()»
 
 	«serviceTmpl.serviceHook(it)»
 	}
