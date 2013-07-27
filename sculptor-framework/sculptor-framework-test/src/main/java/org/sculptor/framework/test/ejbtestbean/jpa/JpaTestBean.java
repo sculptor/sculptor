@@ -1,19 +1,20 @@
 /*
- * Copyright 2009 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sculptor.framework.test.ejbtestbean.jpa;
 
 import javax.annotation.Resource;
@@ -24,15 +25,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
+import org.sculptor.framework.test.AbstractOpenEJBDbUnitTest;
+
 /**
- * Used by AbstractOpenEJBDbUnitTest, but can be used directly from application
- * project (test.ejb-jar file) also. The 'openejb.deployments.classpath.include'
+ * Used by {@link AbstractOpenEJBDbUnitTest}, but can be used directly from application
+ * project (<code>test.ejb-jar</code> file) also. The 'openejb.deployments.classpath.include'
  * will cause this EJB to be automatically discovered and deployed when OpenEJB
  * boots up. When using multiple persistence units you have to skip auto deploy
- * by adding the following property to openejb-test.properties:
+ * by adding the following property to <code>openejb-test.properties</code>:
+ * <pre>
  * openejb.deployments.classpath.include=
+ * </pre>
  * <p>
- * Instead you should deploy it via test.ejb-jar file and define the persistence
+ * Instead you should deploy it via <code>test.ejb-jar</code> file and define the persistence
  * unit to use.
  * 
  * <pre>
@@ -59,7 +64,6 @@ import javax.sql.DataSource;
  *             &lt;/persistence-context-ref>
  *         &lt;/session>
  * </pre>
- * 
  */
 @Stateless(name = "JpaTestBean")
 @TransactionManagement(TransactionManagementType.BEAN)
