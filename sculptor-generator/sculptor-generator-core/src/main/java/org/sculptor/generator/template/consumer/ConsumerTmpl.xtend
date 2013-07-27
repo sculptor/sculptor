@@ -67,9 +67,9 @@ def String consumer(Consumer it) {
 }
 
 def String consumerInterface(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getConsumerPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
-	package «getConsumerPackage()»;
+	package «it.getConsumerPackage()»;
 
 /// Sculptor code formatter imports ///
 
@@ -82,9 +82,9 @@ def String consumerInterface(Consumer it) {
 
 
 def String eventConsumerImplBase(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getConsumerPackage() + "." + name + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
-	package «getConsumerPackage()»;
+	package «it.getConsumerPackage()»;
 
 /// Sculptor code formatter imports ///
 
@@ -123,9 +123,9 @@ def String eventConsumerImplBase(Consumer it) {
 
 
 def String eventConsumerImplSubclass(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(it.getConsumerPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
 	«javaHeader()»
-	package «getConsumerPackage()»;
+	package «it.getConsumerPackage()»;
 
 /// Sculptor code formatter imports ///
 

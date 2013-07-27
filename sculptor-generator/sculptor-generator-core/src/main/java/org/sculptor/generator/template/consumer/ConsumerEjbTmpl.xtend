@@ -22,7 +22,6 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
 
 class ConsumerEjbTmpl {
@@ -31,7 +30,6 @@ class ConsumerEjbTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 	/* Used for pure-ejb3, i.e. without spring */
@@ -46,9 +44,9 @@ class ConsumerEjbTmpl {
 
 	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanImplBase(Consumer it) {
-		fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
+		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
 		«javaHeader()»
-		package «getConsumerPackage()»;
+		package «getConsumerPackage(it)»;
 
 /// Sculptor code formatter imports ///
 
@@ -163,9 +161,9 @@ class ConsumerEjbTmpl {
 
 	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanImplSubclass(Consumer it) {
-		fileOutput(javaFileName(getConsumerPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
+		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 		«javaHeader()»
-		package «getConsumerPackage()»;
+		package «getConsumerPackage(it)»;
 
 /// Sculptor code formatter imports ///
 

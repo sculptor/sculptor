@@ -22,7 +22,6 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import org.sculptor.generator.util.XmlHelperBase
 import sculptormetamodel.Consumer
 
@@ -32,20 +31,17 @@ class ConsumerEjbTestTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 	@Inject extension XmlHelperBase xmlHelperBase
 
 	def String consumerJUnitOpenEjb(Consumer it) {
-		fileOutput(javaFileName(getConsumerPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
 		«javaHeader()»
-		package «getConsumerPackage()»;
+		package «getConsumerPackage(it)»;
 
 /// Sculptor code formatter imports ///
 
-		import static org.junit.Assert.assertNotNull;
-		import static org.junit.Assert.assertTrue;
-		import static org.junit.Assert.fail;
+		import static org.junit.Assert.*;
 
 		/**
 		 * JUnit test with OpenEJB and DbUnit support.
