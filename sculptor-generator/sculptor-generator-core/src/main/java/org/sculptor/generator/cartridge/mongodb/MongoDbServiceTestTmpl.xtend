@@ -42,7 +42,7 @@ def String serviceJUnitSubclassMongoDb(Service it) {
 
 /// Sculptor code formatter imports ///
 
-	import static org.junit.Assert.fail;
+	import static org.junit.Assert.*;
 
 	/**
 	 * Spring based test with MongoDB.
