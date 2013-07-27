@@ -65,6 +65,11 @@ class ASTNodeHelper {
 		buf.toString
 	}
 
+	static def isFullyQualified(QualifiedNameReference reference) {
+		val typeTokens = reference.tokens.length - if (reference.isVariable) 1 else 0
+		typeTokens > 1
+	}
+
 	static def qualifiedName(QualifiedNameReference reference) {
 		val buf = new StringBuffer
 		val last = reference.tokens.length - if (reference.isVariable) 1 else 0
