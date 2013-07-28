@@ -69,9 +69,8 @@ class JavaCodeFormatterTest {
 				import java.lang.String;
 				import java.util.HashMap;
 				import java.util.Map;
-				import org.junit.Test;
 				
-				@Test(expected = IllegalArgumentException.class)
+				@org.junit.Test(expected = IllegalArgumentException.class)
 				class Test {
 				
 					private Map<String, String> map = new HashMap<String, String>();

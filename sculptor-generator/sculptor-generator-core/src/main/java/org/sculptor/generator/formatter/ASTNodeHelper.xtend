@@ -29,9 +29,7 @@ class ASTNodeHelper {
 	//// Qualified Type References
 
 	static def shortName(QualifiedTypeReference reference) {
-		val buf = new StringBuffer
-		buf.append(reference.tokens.last)
-		buf.toString
+		String.valueOf(reference.tokens.last)
 	}
 
 	static def qualifiedName(QualifiedTypeReference reference) {
@@ -107,12 +105,12 @@ class ASTNodeHelper {
 
 	//// Import References
 
-	static def shortName(ImportReference importReference) {
-		importReference.tokens.last.toString
+	static def shortName(ImportReference reference) {
+		String.valueOf(reference.tokens.last)
 	}
 
-	static def qualifiedName(ImportReference importReference) {
-		importReference.print(0, new StringBuffer(), false).toString
+	static def qualifiedName(ImportReference reference) {
+		reference.print(0, new StringBuffer(), false).toString
 	}
 
 }

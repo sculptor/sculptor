@@ -61,10 +61,9 @@ class JavaCodeAutoImporterTest {
 				import java.util.Properties;
 				import javax.persistence.Temporal;
 				import javax.persistence.TemporalType;
-				import org.junit.Test;
 
 
-				@Test(expected = IllegalArgumentException.class)
+				@org.junit.Test(expected = IllegalArgumentException.class)
 				class Test {
 					private Map<String, String> map = new HashMap<String, String>();
 					private Foo foo;
@@ -198,6 +197,30 @@ class JavaCodeAutoImporterTest {
 				import javax.xml.bind.annotation.XmlSchema;
 
 
+			'''.toString, source)
+	}
+
+	@Test
+	def testReplaceQualifiedTypesSameName() {
+		val source = new JavaCodeAutoImporter().replaceQualifiedTypes(
+			'''
+				package org.sculptor.examples.library.util;
+
+				/// Insert imports here ///
+
+				public class EnumMapping extends org.datanucleus.store.mapped.mapping.EnumMapping {
+				
+				}
+			''', '/// Insert imports here ///')
+		assertEquals(
+			'''
+				package org.sculptor.examples.library.util;
+
+				
+
+				public class EnumMapping extends org.datanucleus.store.mapped.mapping.EnumMapping {
+				
+				}
 			'''.toString, source)
 	}
 

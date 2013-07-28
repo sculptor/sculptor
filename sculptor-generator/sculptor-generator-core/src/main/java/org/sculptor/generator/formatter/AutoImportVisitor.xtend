@@ -32,6 +32,7 @@ import org.eclipse.text.edits.MultiTextEdit
 import org.eclipse.text.edits.TextEdit
 
 import static extension org.sculptor.generator.formatter.ASTNodeHelper.*
+import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 
 /**
  * This {@link ASTVisitor} provides {@link TextEdit} instances to replace all
@@ -67,6 +68,11 @@ class AutoImportVisitor extends ASTVisitor {
 		val textEdit = new MultiTextEdit
 		additionalImports.sort.forEach[importName|textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';\n'))]
 		textEdit
+	}
+
+	override visit(TypeDeclaration type, CompilationUnitScope scope) {
+		importShortNames += String.valueOf(type.name)
+		return true
 	}
 
 	override visit(QualifiedTypeReference typeReference, BlockScope scope) {
