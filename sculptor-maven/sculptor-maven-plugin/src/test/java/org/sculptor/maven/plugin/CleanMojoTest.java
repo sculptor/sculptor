@@ -29,6 +29,7 @@ public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 
 	private static final String ONE_SHOT_GENERATED_FILE = "src/main/java/com/acme/test/domain/Foo.java";
 	private static final String GENERATED_FILE = "src/generated/java/com/acme/test/domain/Bar.java";
+	private static final String UNKNOWN_FILE = "src/generated/resources/unknown.properties";
 
 	public void testDeleteGeneratedFilesWithoutStatusFile() throws Exception {
 		CleanMojo mojo = createMojo(createProject("test1"));
@@ -44,6 +45,7 @@ public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 				ONE_SHOT_GENERATED_FILE).exists());
 		assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE)
 				.exists());
+		assertFalse(new File(mojo.getProject().getBasedir(), UNKNOWN_FILE).exists());
 	}
 
 	public void testDeleteGeneratedFilesKeepOneShot() throws Exception {

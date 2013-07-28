@@ -205,12 +205,23 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Reads the list of generated files from the StatusFile (defined via
-	 * {@link #statusFile}) and deletes all but the modified one-shot generated
-	 * files (different file checksum).
+	 * Deletes the files in the directories marked as 'generated' and the
+	 * unmodified one-shot generated files.
+	 * <p>
+	 * The list of all previously generated files is retrieved from the StatusFile
+	 * (defined via {@link #statusFile}). Modified one-shot generated files are
+	 * detected by a changed file checksum.
 	 */
 	protected boolean deleteGeneratedFiles() {
 		boolean success;
+		
+		// First delete all files in the directories marked as 'generated'
+		cleanDirectory(outletSrcDir);
+		cleanDirectory(outletResDir);
+		cleanDirectory(outletSrcTestDir);
+		cleanDirectory(outletResTestDir);
+
+		// Finally delete the non-modified one-shot generated files in the other folders
 		File statusFile = getStatusFile();
 		if (statusFile == null) {
 
@@ -247,7 +258,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 												+ " file: " + file);
 							}
 						} else {
-							delete = true;
+							delete = false;
 						}
 						if (delete) {
 							if (isVerbose() || getLog().isDebugEnabled()) {
@@ -285,6 +296,22 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 			}
 		}
 		return success;
+	}
+
+	/**
+	 * Deletes all files within the given directory.
+	 */
+	private void cleanDirectory(File dir) {
+		if (isVerbose() || getLog().isDebugEnabled()) {
+			getLog().info("Deleting previously generated files in directory: " + dir.getPath());
+		}
+		if (dir.exists()) {
+			try {
+				FileUtils.cleanDirectory(dir);
+			} catch (IOException e) {
+				getLog().warn("Cleaning directory failed: " + e.getMessage());
+			}
+		}
 	}
 
 	/**
