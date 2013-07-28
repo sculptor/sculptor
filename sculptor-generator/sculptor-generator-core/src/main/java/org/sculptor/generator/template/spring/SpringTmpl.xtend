@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@ import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.camel.CamelTmpl
+import org.sculptor.generator.template.common.EhCacheTmpl
 import org.sculptor.generator.template.drools.DroolsTmpl
 import org.sculptor.generator.template.springint.SpringIntegrationTmpl
 import org.sculptor.generator.util.HelperBase
@@ -28,6 +29,7 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.CommandEvent
+import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.Service
 
@@ -36,6 +38,7 @@ class SpringTmpl {
 	@Inject private var CamelTmpl camelTmpl
 	@Inject private var DroolsTmpl droolsTmpl
 	@Inject private var SpringIntegrationTmpl springIntegrationTmpl
+	@Inject private var EhCacheTmpl ehcacheTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
@@ -74,7 +77,7 @@ def String spring(Application it) {
 	«ENDIF»
 
 	«IF cacheProvider() == "EhCache"»
-		«ehcacheProperties(it)»
+		«ehcacheTmpl.ehcacheXml(it)»
 	«ENDIF»
 	
 	«IF mongoDb()»
@@ -91,7 +94,7 @@ def String spring(Application it) {
 			«entityManagerFactoryTest(it)»
 		«ENDIF»
 		«IF !isJpaProviderAppEngine() || (cacheProvider() == "EhCache")»
-			«testEhcacheProperties(it)»
+			«ehcacheTmpl.ehcacheTestXml(it)»
 		«ENDIF»
 	«ENDIF»
 	«IF isPubSubToBeGenerated()»
@@ -705,7 +708,7 @@ def String dataSourceAdditions(Application it) {
 
 def String hibernateResource(Module it) {
 	'''
-	«IF !domainObjects.filter[e | e instanceof sculptormetamodel.Enum].isEmpty »
+	«IF !domainObjects.filter[e | e instanceof Enum].isEmpty »
 		«hibernateEnumTypedefResource(it)»
 	«ENDIF»
 	'''
@@ -803,43 +806,6 @@ def String invalidMessageDestination(Application it) {
 		</property>
 	</bean>
 	'''
-}
-
-
-def String ehcacheProperties(Application it) {
-	fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES, '''
-	<?xml version="1.0" encoding="UTF-8"?>
-	<ehcache updateCheck="false">
-		<diskStore path="java.io.tmpdir"/>
-		<defaultCache
-			maxElementsInMemory="100000"
-			eternal="false"
-			timeToIdleSeconds="120"
-			timeToLiveSeconds="120"
-			overflowToDisk="false"
-			diskPersistent="false"
-			/>
-	</ehcache>
-	'''
-	)
-}
-
-def String testEhcacheProperties(Application it) {
-	fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES_TEST, '''
-	<?xml version="1.0" encoding="UTF-8"?>
-	<ehcache updateCheck="false">
-		<diskStore path="java.io.tmpdir"/>
-		<defaultCache
-			maxElementsInMemory="10000"
-			eternal="false"
-			timeToIdleSeconds="120"
-			timeToLiveSeconds="120"
-			overflowToDisk="false"
-			diskPersistent="false"
-			/>
-	</ehcache>
-	'''
-	)
 }
 
 def String entityManagerFactory(Application it) {
