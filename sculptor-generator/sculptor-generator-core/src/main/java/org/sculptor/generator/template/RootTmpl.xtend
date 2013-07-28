@@ -18,8 +18,10 @@
 package org.sculptor.generator.template
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.template.common.EhCacheTmpl
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.LogConfigTmpl
 import org.sculptor.generator.template.consumer.ConsumerTmpl
@@ -39,7 +41,6 @@ import org.sculptor.generator.template.service.ServiceEjbTestTmpl
 import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class RootTmpl {
@@ -62,6 +63,7 @@ class RootTmpl {
 	@Inject private var SpringTmpl springTmpl
 	@Inject private var UMLGraphTmpl uMLGraphTmpl
 	@Inject private var ServiceTmpl serviceTmpl
+	@Inject private var EhCacheTmpl ehcacheTmpl
 
 	@Inject extension Properties properties
 	@Inject extension Helper helper
@@ -97,8 +99,13 @@ class RootTmpl {
 			«IF getDbUnitDataSetFile() != null»
 				«dbUnitTmpl.singleDbunitTestData(it)»
 			«ENDIF»
-			«IF pureEjb3() && isTestToBeGenerated() && !jpa()»
-				«serviceEjbTestTmpl.ejbJarXml(it)»
+			«IF pureEjb3() && isTestToBeGenerated()»
+				«IF jpa()»
+					«logConfigTmpl.logbackTestXml(it)»
+					«ehcacheTmpl.ehcacheTestXml(it)»
+				«ELSE»
+					«serviceEjbTestTmpl.ejbJarXml(it)»
+				«ENDIF»
 			«ENDIF»
 			«IF isSpringToBeGenerated()»
 				«springTmpl.spring(it)»
