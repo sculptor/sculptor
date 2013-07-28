@@ -180,4 +180,25 @@ class JavaCodeAutoImporterTest {
 			'''.toString, source)
 	}
 
+	@Test
+	def testReplaceQualifiedTypesPackageAnnotations() {
+		val source = new JavaCodeAutoImporter().replaceQualifiedTypes(
+			'''
+				@javax.xml.bind.annotation.XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+				package org.sculptor.example.helloworld.milkyway.serviceapi;
+				
+				/// Insert imports here ///
+
+			''', '/// Insert imports here ///')
+		assertEquals(
+			'''
+				@XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+				package org.sculptor.example.helloworld.milkyway.serviceapi;
+
+				import javax.xml.bind.annotation.XmlSchema;
+
+
+			'''.toString, source)
+	}
+
 }

@@ -25,7 +25,7 @@ import static org.sculptor.generator.GeneratorTestExtensions.*
 
 class PureEjb3Test extends GeneratorTestBase {
 
-	static val TEST_NAME = "helloworld"
+	static val TEST_NAME = "pure-ejb3"
 
 	new() {
 		super(TEST_NAME)
@@ -33,16 +33,25 @@ class PureEjb3Test extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
-		System::setProperty("project.nature", "business-tier, pure-ejb3")
-		System::setProperty("jpa.provider", "hibernate")
-		System::setProperty("generate.test", "true")
 		runGenerator(TEST_NAME)
 	}
 
 	@Test
-	def void assertTestServiceBean() {
-		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/serviceimpl/PlanetServiceBean.java");
-		assertContains(bean, '@Stateless(name = "planetService")');
+	def void assertConsumerBeanBean() {
+		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/consumer/PlanetConsumerBean.java");
+		assertContains(bean, '@MessageDriven(name = "planetConsumer", messageListenerInterface = MessageListener.class, activationConfig = {');
 	}
-	
+
+	@Test
+	def void assertWebServiceBean() {
+		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/serviceimpl/PlanetWebServiceBean.java");
+		assertContains(bean, '@Stateless(name = "planetWebService")');
+	}
+
+	@Test
+	def void assertPackageInfo() {
+		val info = getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/serviceapi/package-info.java");
+		assertContains(info, 'import javax.xml.bind.annotation.XmlSchema;');
+	}
+
 }

@@ -35,13 +35,21 @@ class JavaCodeFormatterTest {
 	def testFormat() {
 		val source = codeFormatter.format("Test.java",
 			'''
-				package com.acme;
-				
+				package      com.acme;
+				    
+				    
+				     
 				«JavaCodeFormatter.IMPORT_MARKER_PATTERN»
+				    
+				    
+				@org.junit.Test(expected
+				=
+				java.lang.IllegalArgumentException.class)
 				
-				@org.junit.Test(expected=java.lang.IllegalArgumentException.class)
 				class Test {
-				private 
+				
+				
+				     private 
 				java.util.Map<java.lang.String,      java.lang.String> map=new java.util.HashMap<java.lang.String, java.lang.String>();
 				
 				public Test(com.acme.Foo     foo)
@@ -55,7 +63,7 @@ class JavaCodeFormatterTest {
 		assertEquals(
 			'''
 				package com.acme;
-				
+
 				import com.acme.Foo;
 				import java.lang.IllegalArgumentException;
 				import java.lang.String;
@@ -65,6 +73,7 @@ class JavaCodeFormatterTest {
 				
 				@Test(expected = IllegalArgumentException.class)
 				class Test {
+				
 					private Map<String, String> map = new HashMap<String, String>();
 				
 					public Test(Foo foo) {
@@ -73,6 +82,32 @@ class JavaCodeFormatterTest {
 						com.acme.foo.Foo bar; // conflict
 					}
 				}
+			'''.toString, source)
+	}
+
+	@Test
+	def testFormatPackageInfoWithAnnotations() {
+		val source = codeFormatter.format("package-info.java",
+			'''
+				@javax.xml.bind.annotation.XmlSchema(    
+				   namespace     =     "http://serviceapi.milkyway.helloworld.example.sculptor.org/",
+				     elementFormDefault      =       javax.xml.bind.annotation.XmlNsForm.QUALIFIED          )
+				 
+				 
+				    package             org.sculptor.example.helloworld.milkyway.serviceapi       ;
+				
+				
+				
+				«JavaCodeFormatter.IMPORT_MARKER_PATTERN»
+				
+			''', true)
+		assertEquals(
+			'''
+				@XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+				package org.sculptor.example.helloworld.milkyway.serviceapi;
+
+				import javax.xml.bind.annotation.XmlSchema;
+				
 			'''.toString, source)
 	}
 

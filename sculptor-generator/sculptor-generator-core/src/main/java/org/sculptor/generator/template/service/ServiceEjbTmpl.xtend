@@ -528,13 +528,13 @@ def String webServiceParamTypeAndName(Parameter it) {
 }
 
 def String webServicePackageInfo(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot::TO_SRC, '''
-	// TODO: beautifier has problem with this file, therefore it is placed in TO_SRC
-	//	to get elementFormDefault='qualified' for schema generated from this package
+	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot::TO_GEN_SRC, '''
 	@javax.xml.bind.annotation.XmlSchema(
 		namespace = "http://«FOR e : reversePackageName(it.getServiceapiPackage()) SEPARATOR '.'»«e»«ENDFOR»/",
 		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 	package «it.getServiceapiPackage()»;
+
+/// Sculptor code formatter imports ///
 
 	'''
 	)

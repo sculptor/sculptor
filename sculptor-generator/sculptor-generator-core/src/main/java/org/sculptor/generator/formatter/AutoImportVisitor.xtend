@@ -20,11 +20,13 @@ import java.util.HashSet
 import java.util.Set
 import org.eclipse.jdt.internal.compiler.ASTVisitor
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration
+import org.eclipse.jdt.internal.compiler.ast.ImportReference
 import org.eclipse.jdt.internal.compiler.ast.ParameterizedQualifiedTypeReference
 import org.eclipse.jdt.internal.compiler.ast.QualifiedNameReference
 import org.eclipse.jdt.internal.compiler.ast.QualifiedTypeReference
 import org.eclipse.jdt.internal.compiler.lookup.BlockScope
 import org.eclipse.jdt.internal.compiler.lookup.ClassScope
+import org.eclipse.jdt.internal.compiler.lookup.CompilationUnitScope
 import org.eclipse.text.edits.InsertEdit
 import org.eclipse.text.edits.MultiTextEdit
 import org.eclipse.text.edits.TextEdit
@@ -97,6 +99,11 @@ class AutoImportVisitor extends ASTVisitor {
 		return false
 	}
 
+	override boolean visit(ImportReference reference, CompilationUnitScope scope) {
+		autoImport(reference)
+		return true;
+	}
+
 	private def autoImport(QualifiedTypeReference reference) {
 
 		// Check if import already defined 
@@ -151,6 +158,16 @@ class AutoImportVisitor extends ASTVisitor {
 		additionalImports += reference.qualifiedName
 		imports += reference.qualifiedName
 		importShortNames += shortName
+	}
+
+	private def autoImport(ImportReference reference) {
+		if (reference.annotations != null) {
+			reference.annotations.forEach [ referenceAnnotation |
+				if (referenceAnnotation.type instanceof QualifiedTypeReference) {
+					autoImport(referenceAnnotation.type as QualifiedTypeReference)
+				}
+			]
+		}
 	}
 
 }
