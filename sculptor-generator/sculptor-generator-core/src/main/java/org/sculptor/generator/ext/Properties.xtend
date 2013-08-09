@@ -61,7 +61,7 @@ class Properties {
 	}
 
 	def String abstractMessageBeanClass() {
-		fw("consumer.AbstractMessageBean2");
+		fw("consumer.AbstractMessageBean");
 	}
 
 	def String serviceContextClass() {

@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,14 +55,14 @@ import org.slf4j.LoggerFactory;
  * Subclass may define invalid message exceptions by overriding
  * {@link #isInvalidMessageException(Exception)}.
  */
-public abstract class AbstractMessageBean2 {
+public abstract class AbstractMessageBean {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Resource
     private MessageDrivenContext mdbContext;
 
-    public AbstractMessageBean2() {
+    public AbstractMessageBean() {
     }
 
     protected Logger getLog() {
@@ -241,7 +241,7 @@ public abstract class AbstractMessageBean2 {
         return new MessageSenderImpl(getJmsConnection());
     }
 
-    protected void sendToInvalidMessageQueue(javax.jms.Message msg) {
+    protected void sendToInvalidMessageQueue(Message msg) {
         if (getJmsConnection() == null || getInvalidMessageQueue() == null) {
             getLog().info(
                     "No JmsConnection or queue, message that was not sent to InvalidMessageQueue:\n"
@@ -268,7 +268,7 @@ public abstract class AbstractMessageBean2 {
         }
     }
 
-    protected void sendReply(javax.jms.Message msg, String reply)
+    protected void sendReply(Message msg, String reply)
             throws org.sculptor.framework.errorhandling.MessageException {
         try {
             if (reply == null) {
@@ -278,7 +278,7 @@ public abstract class AbstractMessageBean2 {
             if (replyTo != null && getJmsConnection() != null) {
                 getMessageSender().sendMessage(replyTo, reply, getJMSMessageID(msg));
             }
-        } catch (javax.jms.JMSException e) {
+        } catch (JMSException e) {
             throw new org.sculptor.framework.errorhandling.MessageException(
                     "Failure when sending repy: " + reply + "\n" + e.getMessage(), e);
         } finally {
