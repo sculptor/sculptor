@@ -57,6 +57,8 @@ class PureEjb3Test extends GeneratorTestBase {
 	@Test
 	def void assertPersistenceXml() {
 		val info = getFileText(TO_GEN_RESOURCES + "/META-INF/persistence.xml")
+		assertContains(info, '<jta-data-source>java:/jdbc/UniverseDS</jta-data-source>')
+		assertContains(info, '<property name="jboss.entity.manager.factory.jndi.name" value="java:/UniverseEntityManagerFactory"/>')
 
 		// JBoss AS 7 ships with Infinispan as default cach provider - so no cache provider configuration is necessary
 		assertNotContains(info, 'RegionFactory"/>')

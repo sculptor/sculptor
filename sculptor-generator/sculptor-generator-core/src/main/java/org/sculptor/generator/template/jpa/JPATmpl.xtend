@@ -156,7 +156,7 @@ def String persistenceUnitDataSource(Application it, String unitName) {
 	'''
 	«IF isEar()»
 		«IF applicationServer() == "jboss" »
-			<jta-data-source>java:jdbc/«dataSourceName»</jta-data-source>
+			<jta-data-source>java:/jdbc/«dataSourceName»</jta-data-source>
 		«ELSE»
 			«IF !isSpringDataSourceSupportToBeGenerated()»
 				<jta-data-source>java:comp/env/jdbc/«dataSourceName»</jta-data-source>
@@ -165,7 +165,7 @@ def String persistenceUnitDataSource(Application it, String unitName) {
 	«ELSEIF isWar()»
 		«IF applicationServer() == "appengine" »
 		«ELSEIF applicationServer() == "jboss" »
-			<non-jta-data-source>java:jdbc/«dataSourceName»</non-jta-data-source>
+			<non-jta-data-source>java:/jdbc/«dataSourceName»</non-jta-data-source>
 		«ELSE »
 			«IF !isSpringDataSourceSupportToBeGenerated()»
 				<non-jta-data-source>java:comp/env/jdbc/«dataSourceName»</non-jta-data-source>
