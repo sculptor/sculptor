@@ -67,8 +67,6 @@ class ChainOverridableTest {
 			
 			assertEquals("NUM_METHODS", fields.get(2).simpleName)
 			assertEquals("int", fields.get(2).type.simpleName)
-			
-			//"_chained__getOverridesDispatchArray"
 		]
 	}
 
@@ -79,6 +77,54 @@ class ChainOverridableTest {
 			class ChainOverridableTestTemplateOverride extends org.sculptor.generator.chain.ChainOverridableTest {
 			}
 		'''.compile[]
+	}
+	
+	
+	@Test
+	def void testWithDispatch() {
+		'''
+			@org.sculptor.generator.chain.ChainOverridable
+			class ChainOverridableDispatchTestTemplate {
+				def dispatch Integer dispatchTest(String aString) {}
+				def dispatch Integer dispatchTest(Boolean aBoolean) {}
+				
+				def String noDispatch() {}
+			}
+		'''.compile[
+			val extension ctx = transformationContext
+
+			// Check the AST if the annotated class has the generated constructor
+			val annotatedClass = findClass('ChainOverridableDispatchTestTemplate')
+			assertNotNull(annotatedClass)
+			
+			val strMethod = annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + "dispatchTest", typeof(String).newTypeReference())
+			//assertNotNull(strMethod)
+			
+			
+			
+//			// Check the AST if the generated extension class has the public non-final methods of the annotated class
+//			assertNotNull('No public method', annotatedClass.findMethod('overridableMethod'))
+//			assertNotNull('No overriden method', annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
+//
+//			assertNotNull('No next dispatch method', annotatedClass.findMethod('next_overridableMethod'))
+//
+//			// Check the AST if the generated extension class has no public final methods of the annotated class
+//			assertNull('Final method renamed', annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
+//
+//			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findMethod("_getOverridesDispatchArray"))
+//						
+//			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findMethod("_chained__getOverridesDispatchArray"))
+//						
+//			val indexInterface = findInterface('ChainOverridableTestTemplateMethodIndexes')
+//			assertNotNull(indexInterface)
+//			val fields = indexInterface.declaredFields.toList
+//			assertEquals(3, fields.size)
+//			assertEquals("OVERRIDABLEMETHOD", fields.get(0).simpleName)
+//			assertEquals("int", fields.get(0).type.simpleName)
+//			
+//			assertEquals("NUM_METHODS", fields.get(2).simpleName)
+//			assertEquals("int", fields.get(2).type.simpleName)
+		]
 	}
 
 }

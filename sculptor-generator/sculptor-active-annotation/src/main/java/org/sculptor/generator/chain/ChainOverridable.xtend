@@ -28,6 +28,7 @@ import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import org.eclipse.xtext.xtype.XComputedTypeReference
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -171,9 +172,10 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		
 		// add methods delegating to the given extension class' public non-final methods  
 		annotatedClass.declaredMethods.filter [
-			visibility == Visibility::PUBLIC && !final && !static
+			visibility == Visibility::PUBLIC && !final && !static // && !(returnType instanceof XComputedTypeReference)
 		].forEach [ publicMethod |
 			
+			val returnType = publicMethod.returnType
 			annotatedClass.addNextDispatchMethod(annotatedClass, publicMethod)
 
 			// Copy these values early, because body block below gets evaluated later, after publicMethod has been renamed
