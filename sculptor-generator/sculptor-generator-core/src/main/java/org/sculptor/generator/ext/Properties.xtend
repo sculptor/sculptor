@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,14 +25,15 @@ import sculptormetamodel.Attribute
 import sculptormetamodel.Module
 
 class Properties {
+
 	@Inject extension PropertiesBase propertiesBase
 
 	def boolean getBooleanProperty(String propertyName) {
-		getProperty(propertyName).toLowerCase() == "true";
+		getProperty(propertyName).toLowerCase() == "true"
 	}
 
 	def String getProperty(String propertyName, String defaultValue) {
-		if (hasProperty(propertyName)) getProperty(propertyName) else defaultValue;
+		if (hasProperty(propertyName)) getProperty(propertyName) else defaultValue
 	}
 
 	def String fw(String fwClassName) {
@@ -49,39 +50,39 @@ class Properties {
 		if (hasProperty(propName))
 			getProperty(propName)
 		else
-			"";
+			""
 	}
 
 	def String abstractDomainObjectClass() {
-		fw("domain.AbstractDomainObject");
+		fw("domain.AbstractDomainObject")
 	}
 
 	def String consumerInterface() {
-		fw("event.EventSubscriber");
+		fw("event.EventSubscriber")
 	}
 
 	def String abstractMessageBeanClass() {
-		fw("consumer.AbstractMessageBean");
+		fw("consumer.AbstractMessageBean")
 	}
 
 	def String serviceContextClass() {
-		fw("errorhandling.ServiceContext");
+		fw("errorhandling.ServiceContext")
 	}
 
 	def String serviceContextStoreAdviceClass() {
-		fw("errorhandling.ServiceContextStoreAdvice");
+		fw("errorhandling.ServiceContextStoreAdvice")
 	}
 
 	def String serviceContextStoreClass() {
-		fw("errorhandling.ServiceContextStore");
+		fw("errorhandling.ServiceContextStore")
 	}
 
 	def String serviceContextServletFilterClass() {
-		fw("errorhandling.ServiceContextServletFilter");
+		fw("errorhandling.ServiceContextServletFilter")
 	}
 
 	def String servletContainerServiceContextFactoryClass() {
-		fw("errorhandling.ServletContainerServiceContextFactory");
+		fw("errorhandling.ServletContainerServiceContextFactory")
 	}
 
 	def String auditInterceptorClass() {
@@ -95,27 +96,27 @@ class Properties {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditable")
 		else
-			fw("domain.Auditable");
+			fw("domain.Auditable")
 	}
 
 	def String identifiableInterface() {
-		fw("domain.Identifiable");
+		fw("domain.Identifiable")
 	}
 
 	def String applicationExceptionClass() {
-		fw("errorhandling.ApplicationException");
+		fw("errorhandling.ApplicationException")
 	}
 
 	def String systemExceptionClass() {
-		fw("errorhandling.SystemException");
+		fw("errorhandling.SystemException")
 	}
 
 	def String accessBaseWithExceptionClass() {
-		fw("accessimpl.AccessBaseWithException");
+		fw("accessimpl.AccessBaseWithException")
 	}
 
 	def String accessBaseClass() {
-		fw("accessimpl.AccessBase");
+		fw("accessimpl.AccessBase")
 	}
 
 	def String genericAccessObjectInterface(String name) {
@@ -127,7 +128,7 @@ class Properties {
 			getProperty("framework.accessapi.package") + "." + apiName
 		else
 			// default name
-			fw("accessapi." + apiName);
+			fw("accessapi." + apiName)
 	}
 
 	// Configuration of access object is pretty flexible.
@@ -163,247 +164,247 @@ class Properties {
 			val lastPart =
 				(if (jpa) ( if (isJpa2()) "jpa2" else "jpa") else "") +
 				(if (hibernate) "hibernate" else "") +
-				(if (spring) "spring" else "");
+				(if (spring) "spring" else "")
 			fw( if (lastPart == "" ) "accessimpl" else "accessimpl." + lastPart)
 		}
 	}
 
 	// Attributes defined by system that should appear last in attribute listings, such as in DDL
 	def Collection<String> getSystemAttributesToPutLast() {
-		getProperty("systemAttributesToPutLast").split(",");
+		getProperty("systemAttributesToPutLast").split(",")
 	}
 
 	def String databaseTestCaseClass() {
-		fw("util.db.IsolatedDatabaseTestCase");
+		fw("util.db.IsolatedDatabaseTestCase")
 	}
 
 	def String fakeObjectInstantiatorClass() {
-		fw("util.FakeObjectInstantiator");
+		fw("util.FakeObjectInstantiator")
 	}
 
 	def String enumUserTypeClass() {
-		fw("accessimpl.GenericEnumUserType");
+		fw("accessimpl.GenericEnumUserType")
 	}
 
 	def String jpaFlowExecutionListenerListenerClass() {
 	if (isJpaProviderEclipseLink() || isJpaProviderDataNucleus())
 			fw("web.jpa.JpaFlowExecutionListener")
 		else
-			"org.springframework.webflow.persistence.JpaFlowExecutionListener";
+			"org.springframework.webflow.persistence.JpaFlowExecutionListener"
 	}
 
 	def String openHibernateSessionInConversationListenerClass() {
-		fw("web.hibernate.OpenHibernateSessionInConversationListener");
+		fw("web.hibernate.OpenHibernateSessionInConversationListener")
 	}
 
 	def String disconnectHibernateInterceptor() {
-		fw("web.hibernate.DisconnectHibernateInterceptor");
+		fw("web.hibernate.DisconnectHibernateInterceptor")
 	}
 
 	def String webExceptionUtilClass() {
-		fw("web.errorhandling.ExceptionUtil");
+		fw("web.errorhandling.ExceptionUtil")
 	}
 
 	def String webExceptionAdviceClass() {
-		fw("web.errorhandling.ExceptionAdvice");
+		fw("web.errorhandling.ExceptionAdvice")
 	}
 
 	def String conversationDomainObjectRepositoryInterface() {
-		fw("web.hibernate.ConversationDomainObjectRepository");
+		fw("web.hibernate.ConversationDomainObjectRepository")
 	}
 
 	def String conversationDomainObjectJpaRepositoryImplClass() {
-		fw("web.jpa.ConversationDomainObjectJpaRepositoryImpl");
+		fw("web.jpa.ConversationDomainObjectJpaRepositoryImpl")
 	}
 
 	def String optionEditorClass() {
-		fw("propertyeditor.OptionEditor");
+		fw("propertyeditor.OptionEditor")
 	}
 
 	def String optionClass() {
-		fw("propertyeditor.Option");
+		fw("propertyeditor.Option")
 	}
 
 	def String enumEditorClass() {
-		fw("propertyeditor.EnumEditor");
+		fw("propertyeditor.EnumEditor")
 	}
 
 	def String cacheProvider() {
-		getProperty("cache.provider");
+		getProperty("cache.provider")
 	}
 
 	def Boolean pureEjb3() {
-		hasProjectNature("pure-ejb3");
+		hasProjectNature("pure-ejb3")
 	}
 
 	def Boolean isEar() {
-		getProperty("deployment.type") == "ear";
+		getProperty("deployment.type") == "ear"
 	}
 
 	def Boolean isWar() {
-		getProperty("deployment.type") == "war";
+		getProperty("deployment.type") == "war"
 	}
 
 	def Boolean isRunningInServletContainer() {
-		applicationServer() == "tomcat" || applicationServer() == "jetty";
+		applicationServer() == "tomcat" || applicationServer() == "jetty"
 	}
 
 	def String applicationServer() {
-		getProperty("deployment.applicationServer").toLowerCase();
+		getProperty("deployment.applicationServer").toLowerCase()
 	}
 
 	def String notChangeablePropertySetterVisibility() {
-		getProperty("notChangeablePropertySetter.visibility");
+		getProperty("notChangeablePropertySetter.visibility")
 	}
 
 	def String notChangeableReferenceSetterVisibility() {
-		getProperty("notChangeableReferenceSetter.visibility");
+		getProperty("notChangeableReferenceSetter.visibility")
 	}
 
 	def boolean isGuiDefaultsToBeCreated() {
-		getBooleanProperty("gui.createDefaults");
+		getBooleanProperty("gui.createDefaults")
 	}
 
 	def boolean isJSFCrudGuiToBeGenerated() {
-		getBooleanProperty("generate.jsfCrudGui");
+		getBooleanProperty("generate.jsfCrudGui")
 	}
 
 	def boolean isRcpCrudGuiToBeGenerated() {
-		getBooleanProperty("generate.rcpCrudGui");
+		getBooleanProperty("generate.rcpCrudGui")
 	}
 
 	def boolean isRapCrudGuiToBeGenerated() {
-		getBooleanProperty("generate.rapCrudGui");
+		getBooleanProperty("generate.rapCrudGui")
 	}
 
 	def boolean isBuilderToBeGenerated() {
-		getBooleanProperty("generate.domainObject.builder");
+		getBooleanProperty("generate.domainObject.builder")
 	}
 
 	def boolean isDomainObjectToBeGenerated() {
-		getBooleanProperty("generate.domainObject");
+		getBooleanProperty("generate.domainObject")
 	}
 
 	def boolean isDomainObjectCompositeKeyClassToBeGenerated() {
-		getBooleanProperty("generate.domainObject.compositeKeyClass");
+		getBooleanProperty("generate.domainObject.compositeKeyClass")
 	}
 
 	def boolean isExceptionToBeGenerated() {
-		getBooleanProperty("generate.exception");
+		getBooleanProperty("generate.exception")
 	}
 
 	def boolean isRepositoryToBeGenerated() {
-		getBooleanProperty("generate.repository");
+		getBooleanProperty("generate.repository")
 	}
 
 	def boolean isServiceToBeGenerated() {
-		getBooleanProperty("generate.service");
+		getBooleanProperty("generate.service")
 	}
 
 	def boolean isServiceProxyToBeGenerated() {
-		getBooleanProperty("generate.service.proxy");
+		getBooleanProperty("generate.service.proxy")
 	}
 
 	def boolean isResourceToBeGenerated() {
-		getBooleanProperty("generate.resource");
+		getBooleanProperty("generate.resource")
 	}
 
 	def boolean isRestWebToBeGenerated() {
-		getBooleanProperty("generate.restWeb");
+		getBooleanProperty("generate.restWeb")
 	}
 
 	def boolean isSpringRemotingToBeGenerated() {
-		getBooleanProperty("generate.springRemoting");
+		getBooleanProperty("generate.springRemoting")
 	}
 
 	def String getSpringRemotingType() {
 		if (isSpringRemotingToBeGenerated())
 			getProperty("spring.remoting.type").toLowerCase()
 		else
-			"N/A";
+			"N/A"
 	}
 
 	def boolean isConsumerToBeGenerated() {
-		getBooleanProperty("generate.consumer");
+		getBooleanProperty("generate.consumer")
 	}
 
 	def boolean isSpringToBeGenerated() {
-		getBooleanProperty("generate.spring");
+		getBooleanProperty("generate.spring")
 	}
 
 	def boolean isHibernateToBeGenerated() {
-		getBooleanProperty("generate.hibernate");
+		getBooleanProperty("generate.hibernate")
 	}
 
 	def boolean isDdlToBeGenerated() {
-		getBooleanProperty("generate.ddl");
+		getBooleanProperty("generate.ddl")
 	}
 
 	def boolean isDdlDropToBeGenerated() {
-		getBooleanProperty("generate.ddl.drop");
+		getBooleanProperty("generate.ddl.drop")
 	}
 
 	def boolean isDatasourceToBeGenerated() {
-		getBooleanProperty("generate.datasource");
+		getBooleanProperty("generate.datasource")
 	}
 
 	def boolean isLogbackConfigToBeGenerated() {
-		getBooleanProperty("generate.logbackConfig");
+		getBooleanProperty("generate.logbackConfig")
 	}
 
 	def boolean isTestToBeGenerated() {
-		getBooleanProperty("generate.test");
+		getBooleanProperty("generate.test")
 	}
 
 	def boolean isDbUnitTestDataToBeGenerated() {
-		getBooleanProperty("generate.test.dbunitTestData");
+		getBooleanProperty("generate.test.dbunitTestData")
 	}
 
 	def boolean isEmptyDbUnitTestDataToBeGenerated() {
-		getBooleanProperty("generate.test.emptyDbunitTestData");
+		getBooleanProperty("generate.test.emptyDbunitTestData")
 	}
 
 	def boolean isModuleToBeGenerated(String moduleName) {
-		val propertyName = "generate.module." + moduleName;
+		val propertyName = "generate.module." + moduleName
 		if (hasProperty(propertyName))
 			getBooleanProperty(propertyName)
 		else
-			true;
+			true
 	}
 
 	def String getDbUnitDataSetFile() {
 		if (hasProperty("test.dbunit.dataSetFile"))
 			getProperty("test.dbunit.dataSetFile")
 		else
-			null;
+			null
 	}
 
 	def boolean isServiceContextToBeGenerated() {
-		getBooleanProperty("generate.serviceContext");
+		getBooleanProperty("generate.serviceContext")
 	}
 
 	def boolean isAuditableToBeGenerated() {
-		getBooleanProperty("generate.auditable");
+		getBooleanProperty("generate.auditable")
 	}
 
 	def boolean isUMLToBeGenerated() {
-		getBooleanProperty("generate.umlgraph");
+		getBooleanProperty("generate.umlgraph")
 	}
 
 	def boolean isModelDocToBeGenerated() {
-		getBooleanProperty("generate.modeldoc");
+		getBooleanProperty("generate.modeldoc")
 	}
 
 	def boolean isOptimisticLockingToBeGenerated() {
-		getBooleanProperty("generate.optimisticLocking");
+		getBooleanProperty("generate.optimisticLocking")
 	}
 
 	def boolean isPubSubToBeGenerated() {
-		getBooleanProperty("generate.pubSub");
+		getBooleanProperty("generate.pubSub")
 	}
 
 	def boolean isGapClassToBeGenerated() {
-		getBooleanProperty("generate.gapClass");
+		getBooleanProperty("generate.gapClass")
 	}
 
 	def dispatch boolean isGapClassToBeGenerated(String module, String clazz) {
@@ -412,38 +413,38 @@ class Properties {
 		else if (hasProperty("generate.gapClass." + clazz))
 			getBooleanProperty("generate.gapClass." + clazz)
 		else
-			isGapClassToBeGenerated();
+			isGapClassToBeGenerated()
 	}
 
 	def dispatch boolean isGapClassToBeGenerated(boolean dslGapClass, boolean dslNoGapClass) {
 		if (dslGapClass)
 			true
 		else
-			( if (dslNoGapClass) false else isGapClassToBeGenerated() );
+			( if (dslNoGapClass) false else isGapClassToBeGenerated() )
 	}
 
 	def String subPackage(String packageKey) {
-		getProperty("package." + packageKey);
+		getProperty("package." + packageKey)
 	}
 
 	def String getDateTimeLibrary() {
-		getProperty("datetime.library");
+		getProperty("datetime.library")
 	}
 
 	def boolean isHighlightMissingMessageResources() {
-		getBooleanProperty("gui.highlightMissingMessageResources");
+		getBooleanProperty("gui.highlightMissingMessageResources")
 	}
 
 	def boolean isStubService() {
-		getBooleanProperty("gui.stubService");
+		getBooleanProperty("gui.stubService")
 	}
 
 	def dispatch String getResourceDir(Application application, String name) {
-		getResourceDirImpl(name);
+		getResourceDirImpl(name)
 	}
 
 	def dispatch String getResourceDir(Module module, String name) {
-		getResourceDirImpl(name);
+		getResourceDirImpl(name)
 	}
 
 	def private String getResourceDirImpl(String name) {
@@ -454,7 +455,7 @@ class Properties {
 	}
 
 	def String getEnumTypeDefFileName(Module module) {
-		"Enums-" + module.name + ".hbm.xml";
+		"Enums-" + module.name + ".hbm.xml"
 	}
 
 	def String javaHeader() {
@@ -469,197 +470,197 @@ class Properties {
 	}
 
 	def boolean nosql() {
-		getProperty("nosql.provider") != "none";
+		getProperty("nosql.provider") != "none"
 	}
 
 	def boolean mongoDb() {
-		getProperty("nosql.provider") == "mongoDb";
+		getProperty("nosql.provider") == "mongoDb"
 	}
 
 	def boolean isJpaAnnotationToBeGenerated() {
-		getBooleanProperty("generate.jpa.annotation");
+		getBooleanProperty("generate.jpa.annotation")
 	}
 
 	def boolean isJpaAnnotationColumnDefinitionToBeGenerated() {
-		getBooleanProperty("generate.jpa.annotation.columnDefinition");
+		getBooleanProperty("generate.jpa.annotation.columnDefinition")
 	}
 
 	def boolean isJpaAnnotationOnFieldToBeGenerated() {
-		getBooleanProperty("generate.jpa.annotation.onField");
+		getBooleanProperty("generate.jpa.annotation.onField")
 	}
 
 	def boolean isValidationAnnotationToBeGenerated() {
-		getBooleanProperty("generate.validation.annotation");
+		getBooleanProperty("generate.validation.annotation")
 	}
 
 	def boolean isDtoValidationAnnotationToBeGenerated() {
-		getBooleanProperty("generate.validation.annotation.dataTransferObject");
+		getBooleanProperty("generate.validation.annotation.dataTransferObject")
 	}
 
 	def boolean isSpringAnnotationTxToBeGenerated() {
-		getBooleanProperty("generate.spring.annotation.tx");
+		getBooleanProperty("generate.spring.annotation.tx")
 	}
 
 	def boolean isSpringDataSourceSupportToBeGenerated() {
-		getBooleanProperty("generate.spring.dataSourceSupport");
+		getBooleanProperty("generate.spring.dataSourceSupport")
 	}
 
 	def boolean isXstreamAnnotationToBeGenerated() {
-		getBooleanProperty("generate.xstream.annotation");
+		getBooleanProperty("generate.xstream.annotation")
 	}
 
 	def boolean isXmlBindAnnotationToBeGenerated() {
-		getBooleanProperty("generate.xml.bind.annotation");
+		getBooleanProperty("generate.xml.bind.annotation")
 	}
 
 	def boolean isXmlBindAnnotationToBeGenerated(String typeName) {
 		val propName = "generate.xml.bind.annotation." + typeName.toFirstLower()
-		if (hasProperty(propName)) getBooleanProperty(propName) else false;
+		if (hasProperty(propName)) getBooleanProperty(propName) else false
 	}
 
 	def boolean isFullyAuditable() {
-		getBooleanProperty("generate.fullAuditable");
+		getBooleanProperty("generate.fullAuditable")
 	}
 
 	def boolean isInjectDrools() {
-		getBooleanProperty("generate.injectDrools");
+		getBooleanProperty("generate.injectDrools")
 	}
 
 	def boolean isGenerateParameterName() {
-		getBooleanProperty("generate.parameterName");
+		getBooleanProperty("generate.parameterName")
 	}
 
 	def String jpaProvider() {
-		getProperty("jpa.provider").toLowerCase();
+		getProperty("jpa.provider").toLowerCase()
 	}
 
 	def boolean isJpaProviderHibernate() {
-		jpaProvider() == "hibernate" || jpaProvider() == "hibernate3";
+		jpaProvider() == "hibernate" || jpaProvider() == "hibernate3"
 	}
 
 	def boolean isJpaProviderHibernate3() {
-		jpaProvider() == "hibernate3";
+		jpaProvider() == "hibernate3"
 	}
 
 	def boolean isJpaProviderHibernate4() {
-		jpaProvider() == "hibernate";
+		jpaProvider() == "hibernate"
 	}
 
 	def boolean isJpaProviderEclipseLink() {
-		jpaProvider() == "eclipselink";
+		jpaProvider() == "eclipselink"
 	}
 
 	def boolean isJpaProviderDataNucleus() {
-		jpaProvider() == "datanucleus";
+		jpaProvider() == "datanucleus"
 	}
 
 	def boolean isJpaProviderAppEngine() {
-		jpaProvider() == "appengine";
+		jpaProvider() == "appengine"
 	}
 
 	def boolean isJpaProviderOpenJpa() {
-		jpaProvider() == "openjpa";
+		jpaProvider() == "openjpa"
 	}
 
 	def String jpaVersion() {
-		getProperty("jpa.version");
+		getProperty("jpa.version")
 	}
 
 	def boolean isJpa1() {
-		"1.0" == jpaVersion() && jpa();
+		"1.0" == jpaVersion() && jpa()
 	}
 
 	def boolean isJpa2() {
-		"2.0" == jpaVersion() && jpa();
+		"2.0" == jpaVersion() && jpa()
 	}
 
 	def String validationProvider() {
-		getProperty("validation.provider");
+		getProperty("validation.provider")
 	}
 
 	def String testProvider() {
-		getProperty("test.provider");
+		getProperty("test.provider")
 	}
 
 	def String databaseJpaTestCaseClass() {
-		fw("test.AbstractDbUnitJpaTests");
+		fw("test.AbstractDbUnitJpaTests")
 	}
 
 	def String auditEntityListener() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditListener")
 		else
-			fw("domain.AuditListener");
+			fw("domain.AuditListener")
 	}
 
 	def String validationEntityListener() {
 		if (isValidationAnnotationToBeGenerated())
 			"org.sculptor.framework.validation.ValidationEventListener"
 		else
-			null;
+			null
 	}
 
 	def dispatch String getApplicationContextFile(Application application, String fileName) {
-		fileName;
+		fileName
 	}
 
 	def dispatch String getApplicationContextFile(Module module, String fileName) {
-		fileName;
+		fileName
 	}
 
 	def Collection<String> getSystemAttributes() {
-		getProperty("systemAttributes").split(",");
+		getProperty("systemAttributes").split(",")
 	}
 
 	def boolean isSystemAttribute(Attribute att) {
-		getSystemAttributes().contains(att.name);
+		getSystemAttributes().contains(att.name)
 	}
 
 	def Collection<String> getAuditableAttributes() {
-		getProperty("auditableAttributes").split(",");
+		getProperty("auditableAttributes").split(",")
 	}
 
 	def boolean isAuditableAttribute(Attribute att) {
-		getAuditableAttributes().contains(att.name);
+		getAuditableAttributes().contains(att.name)
 	}
 
 	def Collection<String> getNotRestRequestParameter() {
-		getProperty("rest.notRequestParameter").split(",");
+		getProperty("rest.notRequestParameter").split(",")
 	}
 
 	def boolean isDynamicMenu() {
 		if (hasProperty("menu.type"))
 			getProperty("menu.type") != "linkbased"
 		else
-			true;
+			true
 	}
 
 	def String getSuffix(String key) {
-		getProperty("naming.suffix." + key);
+		getProperty("naming.suffix." + key)
 	}
 
 	def String persistenceXml() {
-		getProperty("jpa.persistenceXmlFile");
+		getProperty("jpa.persistenceXmlFile")
 	}
 
 	def boolean usePersistenceContextUnitName() {
-	!isJpaProviderAppEngine() && !(isEar() && isSpringToBeGenerated());
+		!isJpaProviderAppEngine() && !(isEar() && isSpringToBeGenerated())
 	}
 
 	def boolean useJpaDefaults() {
-		getBooleanProperty("jpa.useJpaDefaults");
+		getBooleanProperty("jpa.useJpaDefaults")
 	}
 
 	def boolean generateFinders() {
-		getBooleanProperty("generate.repository.finders");
+		getBooleanProperty("generate.repository.finders")
 	}
 
 	def boolean useIdSuffixInForeigKey() {
-		getBooleanProperty("db.useIdSuffixInForeigKey");
+		getBooleanProperty("db.useIdSuffixInForeigKey")
 	}
 
 	// hook to be overwritten to make additional programatic configuration of properties
 	def initPropertiesHook() {
-		null;
+		null
 	}
 }
