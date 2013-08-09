@@ -16,6 +16,9 @@
 #if( $standalone == "true" || $standalone == "y" || $standalone == "yes")
 	<version>${version}</version>
 #end
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+	<packaging>ejb</packaging>
+#end
 	<name>New Sculptor Project :: Business Tier</name>
 
 #if( $standalone == "true" || $standalone == "y" || $standalone == "yes")
@@ -74,6 +77,27 @@
 				</configuration>
 			</plugin>
 #end
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<plugin>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<ejbVersion>3.1</ejbVersion>
+					<generateClient>true</generateClient>
+					<clientIncludes>
+						<clientInclude>**/serviceapi/*.class</clientInclude>
+						<clientInclude>**/domain/*.class</clientInclude>
+						<clientInclude>**/exception/*.class</clientInclude>
+					</clientIncludes>
+					<excludes>
+						<exclude>*.dot</exclude>
+						<exclude>*.png</exclude>
+						<exclude>*.html</exclude>
+						<exclude>*.css</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+#else
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.4</version>
@@ -97,6 +121,7 @@
 					</execution>
 				</executions>
 			</plugin>
+#end
 		</plugins>
 	</build>
 
@@ -109,17 +134,11 @@
 #end
 			<version>${symbol_dollar}{sculptor-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.sculptor</groupId>
-			<artifactId>sculptor-framework-test</artifactId>
-			<version>${symbol_dollar}{sculptor-version}</version>
-			<scope>test</scope>
-		</dependency>
 #if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
 		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<version>1.1</version>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -129,9 +148,16 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>1.0</version>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.ws</groupId>
+			<artifactId>jbossws-api</artifactId>
+			<version>1.0.1.Final</version>
+			<!-- Add scope provided when deployed in jboss -->
 			<scope>provided</scope>
 		</dependency>
 #end
@@ -140,29 +166,46 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${symbol_dollar}{hibernate-validator-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<scope>provided</scope>
+#else
 			<!-- <scope>provided</scope> -->
+#end
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<scope>provided</scope>
+#else
 			<!-- <scope>provided</scope> -->
+#end
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<scope>provided</scope>
+#else
 			<!-- <scope>provided</scope> -->
+#end
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<scope>provided</scope>
+#else
 			<!-- <scope>provided</scope> -->
+#end
 		</dependency>
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -170,7 +213,6 @@
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
-#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<!-- Remove dependency to javax.transaction when running in a transaction 
 			supporting container (jboss etc) -->
 		<dependency>
@@ -224,6 +266,11 @@
 			<artifactId>spring-context-support</artifactId>
 			<version>${symbol_dollar}{spring-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
+		</dependency>
 #end
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -242,15 +289,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.2</version>
 		</dependency>
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -266,10 +309,11 @@
 			<artifactId>cglib-nodep</artifactId>
 			<version>2.2.2</version>
 		</dependency>
+#end
 		<dependency>
-			<groupId>org.dbunit</groupId>
-			<artifactId>dbunit</artifactId>
-			<version>2.4.9</version>
+			<groupId>org.sculptor</groupId>
+			<artifactId>sculptor-framework-test</artifactId>
+			<version>${symbol_dollar}{sculptor-version}</version>
 			<scope>test</scope>
 		</dependency>
 #if( $standalone == "true" || $standalone == "y" || $standalone == "yes")
@@ -280,6 +324,12 @@
 			<scope>test</scope>
 		</dependency>
 #end
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>2.4.9</version>
+			<scope>test</scope>
+		</dependency>
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -287,7 +337,6 @@
 			<version>${symbol_dollar}{spring-version}</version>
 			<scope>test</scope>
 		</dependency>
-#end
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -296,14 +345,43 @@
 			<!-- Add scope test when deployed in jboss -->
 			<!-- <scope>test</scope> -->
 		</dependency>
+#end
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${symbol_dollar}{hsqldb-version}</version>
-			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<scope>test</scope>
+#else
+			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- <scope>test</scope> -->
+#end
 		</dependency>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+		<dependency>
+			<groupId>org.apache.openejb</groupId>
+			<artifactId>openejb-core</artifactId>
+			<version>4.5.2</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${symbol_dollar}{logback-version}</version>
+			<scope>test</scope>
+		</dependency>
+#end
 	</dependencies>
 
 	<!-- Profiles -->
@@ -322,7 +400,7 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate.version>4.2.2.Final</hibernate.version>
+				<hibernate-version>4.2.2.Final</hibernate-version>
 			</properties>
 			<build>
 			</build>
@@ -330,15 +408,29 @@
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-entitymanager</artifactId>
-					<version>${symbol_dollar}{hibernate.version}</version>
+					<version>${symbol_dollar}{hibernate-version}</version>
 					<!-- Add scope provided when deployed in jboss -->
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+					<scope>provided</scope>
+#else
 					<!-- <scope>provided</scope> -->
+#end
 				</dependency>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-infinispan</artifactId>
+					<version>${symbol_dollar}{hibernate-version}</version>
+					<!-- Add scope provided when deployed in jboss -->
+					<scope>provided</scope>
+				</dependency>
+#else
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-ehcache</artifactId>
-					<version>${symbol_dollar}{hibernate.version}</version>
+					<version>${symbol_dollar}{hibernate-version}</version>
 				</dependency>
+#end
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>
 					<artifactId>usertype.core</artifactId>
@@ -347,6 +439,14 @@
 						<exclusion>
 							<groupId>org.joda</groupId>
 							<artifactId>joda-money</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-entitymanager</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>
@@ -364,19 +464,19 @@
 				</property>
 			</activation>
 			<properties>
-				<datanucleus.version>3.2.4</datanucleus.version>
-				<datanucleus.rdbms.version>3.2.3</datanucleus.rdbms.version>
-				<datanucleus.plugin.version>3.1.3</datanucleus.plugin.version>
-				<datanucleus.enhancer.version>3.1.1</datanucleus.enhancer.version>
-				<datanucleus.jpa.version>3.2.3</datanucleus.jpa.version>
-				<datanucleus.jodatime.version>3.2.1</datanucleus.jodatime.version>
+				<datanucleus-version>3.2.4</datanucleus-version>
+				<datanucleus-rdbms-version>3.2.3</datanucleus-rdbms-version>
+				<datanucleus-plugin-version>3.1.3</datanucleus-plugin-version>
+				<datanucleus-enhancer-version>3.1.1</datanucleus-enhancer-version>
+				<datanucleus-jpa-version>3.2.3</datanucleus-jpa-version>
+				<datanucleus-jodatime-version>3.2.1</datanucleus-jodatime-version>
 			</properties>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.datanucleus</groupId>
 						<artifactId>maven-datanucleus-plugin</artifactId>
-						<version>${symbol_dollar}{datanucleus.plugin.version}</version>
+						<version>${symbol_dollar}{datanucleus-plugin-version}</version>
 						<configuration>
 							<metadataIncludes>**/domain/*.class</metadataIncludes>
 							<metadataExcludes>**/domain/*Propert*.class,**/domain/*Repository.class</metadataExcludes>
@@ -389,22 +489,22 @@
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-core</artifactId>
-								<version>${symbol_dollar}{datanucleus.version}</version>
+								<version>${symbol_dollar}{datanucleus-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-enhancer</artifactId>
-								<version>${symbol_dollar}{datanucleus.enhancer.version}</version>
+								<version>${symbol_dollar}{datanucleus-enhancer-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-rdbms</artifactId>
-								<version>${symbol_dollar}{datanucleus.rdbms.version}</version>
+								<version>${symbol_dollar}{datanucleus-rdbms-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-api-jpa</artifactId>
-								<version>${symbol_dollar}{datanucleus.jpa.version}</version>
+								<version>${symbol_dollar}{datanucleus-jpa-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.hsqldb</groupId>
@@ -438,22 +538,22 @@
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-core</artifactId>
-					<version>${symbol_dollar}{datanucleus.version}</version>
+					<version>${symbol_dollar}{datanucleus-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-api-jpa</artifactId>
-					<version>${symbol_dollar}{datanucleus.jpa.version}</version>
+					<version>${symbol_dollar}{datanucleus-jpa-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-rdbms</artifactId>
-					<version>${symbol_dollar}{datanucleus.rdbms.version}</version>
+					<version>${symbol_dollar}{datanucleus-rdbms-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-jodatime</artifactId>
-					<version>${symbol_dollar}{datanucleus.jodatime.version}</version>
+					<version>${symbol_dollar}{datanucleus-jodatime-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>javax.jdo</groupId>
@@ -479,8 +579,8 @@
 				</property>
 			</activation>
 			<properties>
-				<eclipselink.version>2.5.0</eclipselink.version>
-				<eclipselink-api.version>2.1.0</eclipselink-api.version>
+				<eclipselink-version>2.5.0</eclipselink-version>
+				<eclipselink-api-version>2.1.0</eclipselink-api-version>
 			</properties>
 			<build>
 				<plugins>
@@ -504,7 +604,7 @@
 				            <dependency>
 				                <groupId>org.eclipse.persistence</groupId>
 				                <artifactId>eclipselink</artifactId>
-				                <version>${symbol_dollar}{eclipselink.version}</version>
+				                <version>${symbol_dollar}{eclipselink-version}</version>
 				            </dependency>
 				        </dependencies>
 					</plugin>
@@ -514,12 +614,12 @@
 				<dependency>
 					<groupId>org.eclipse.persistence</groupId>
 					<artifactId>javax.persistence</artifactId>
-					<version>${symbol_dollar}{eclipselink-api.version}</version>
+					<version>${symbol_dollar}{eclipselink-api-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.eclipse.persistence</groupId>
 					<artifactId>eclipselink</artifactId>
-					<version>${symbol_dollar}{eclipselink.version}</version>
+					<version>${symbol_dollar}{eclipselink-version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
