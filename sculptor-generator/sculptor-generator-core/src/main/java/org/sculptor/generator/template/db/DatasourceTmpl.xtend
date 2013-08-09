@@ -1,3 +1,20 @@
+/*
+ * Copyright 2013 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.sculptor.generator.template.db
 
 import javax.inject.Inject
@@ -31,14 +48,15 @@ def String datasource(Application it) {
 
 def String mysqlDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
-		<datasources> 
-		    <local-tx-datasource> 
-		        <jndi-name>jdbc/«name»DS</jndi-name> 
+		«dataSourceHeader(it)»
 		        <connection-url>«getProperty("db.connectionUrl", "jdbc:mysql://localhost/" + name.toLowerCase() + "?autoReconnect=true")»</connection-url> 
-		        <driver-class>com.mysql.jdbc.Driver</driver-class> 
-		        <user-name>«getProperty("db.username", "root")»</user-name> 
-		        <password>«getProperty("db.password", "")»</password> 
-		    </local-tx-datasource> 
+		        <!-- Add valid reference to an already deployed / defined MySQL driver --> 
+		        <driver>mysql.jar</driver> 
+				<security>
+			        <user-name>«getProperty("db.username", "root")»</user-name> 
+			        <password>«getProperty("db.password", "root")»</password> 
+				</security>
+		    </datasource> 
 		</datasources> 
 	'''
 	)
@@ -46,15 +64,10 @@ def String mysqlDS(Application it) {
 
 def String oracleDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
-		<?xml version="1.0" encoding="UTF-8"?>
-		<!-- See: http://www.jboss.org/community/wiki/ConfigDataSources -->
-		<datasources>
-			<local-tx-datasource>
-				<jndi-name>jdbc/«name»DS</jndi-name>
+		«dataSourceHeader(it)»
 				<connection-url>«getProperty("db.connectionUrl", "jdbc:oracle:thin:@localhost:1521:" + name.toLowerCase())»</connection-url>
-				<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
-				<user-name>«getProperty("db.username", "root")»</user-name> 
-		        <password>«getProperty("db.password", "root")»</password>
+		        <!-- Add valid reference to an already deployed / defined Oracle driver --> 
+				<driver>ojdbc.jar</driver>
 				<min-pool-size>5</min-pool-size>
 				<max-pool-size>50</max-pool-size>
 				<idle-timeout-minutes>15</idle-timeout-minutes>
@@ -66,24 +79,27 @@ def String oracleDS(Application it) {
 				<metadata>
 					<type-mapping>Oracle9i</type-mapping>
 				</metadata>
-			</local-tx-datasource>
+				<security>
+					<user-name>«getProperty("db.username", "root")»</user-name> 
+			        <password>«getProperty("db.password", "root")»</password>
+				</security>
+			</datasource>
 		</datasources>
 	'''
 	)
-	'''
-	'''
 }
 
 def String postgresqlDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
-		<datasources> 
-		    <local-tx-datasource> 
-		        <jndi-name>jdbc/«name»DS</jndi-name> 
+		«dataSourceHeader(it)»
 		        <connection-url>«getProperty("db.connectionUrl", "jdbc:postgresql://localhost/" + name.toLowerCase())»</connection-url> 
-		        <driver-class>org.postgresql.Driver</driver-class> 
-		        <user-name>«getProperty("db.username", "root")»</user-name> 
-		        <password>«getProperty("db.password", "root")»</password> 
-		    </local-tx-datasource> 
+		        <!-- Add valid reference to an already deployed / defined PostgresSQL driver --> 
+		        <driver>postgresql.jar</driver> 
+				<security>
+			        <user-name>«getProperty("db.username", "root")»</user-name> 
+			        <password>«getProperty("db.password", "root")»</password> 
+				</security>
+		    </datasource> 
 		</datasources> 
 	'''
 	)
@@ -91,16 +107,28 @@ def String postgresqlDS(Application it) {
 
 def String hsqldbInmemoryDS(Application it) {
 	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
-		<datasources> 
-		    <local-tx-datasource> 
-		        <jndi-name>jdbc/«name»DS</jndi-name> 
-		        <connection-url>«getProperty("db.connectionUrl", "jdbc.url=jdbc:hsqldb:mem:" + name.toFirstLower())»</connection-url> 
-		        <driver-class>org.hsqldb.jdbcDriver</driver-class> 
-		        <user-name>«getProperty("db.username", "sa")»</user-name> 
-		        <password>«getProperty("db.password", "")»</password> 
-		    </local-tx-datasource> 
+		«dataSourceHeader(it)»
+		        <connection-url>«getProperty("db.connectionUrl", "jdbc.url=jdbc:hsqldb:mem:" + name.toFirstLower())»</connection-url>
+		        <!-- Add valid reference to an already deployed / defined HSQLDB driver --> 
+		        <driver>hsqldb.jar</driver> 
+				<security>
+			        <user-name>«getProperty("db.username", "sa")»</user-name> 
+		    	    <password>«getProperty("db.password", "sa")»</password> 
+				</security>
+		    </datasource> 
 		</datasources> 
 	'''
 	)
 }
+
+def String dataSourceHeader(Application it) {
+	'''
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!-- See: https://docs.jboss.org/author/display/AS72/DataSource+configuration -->
+		<datasources xmlns="http://www.jboss.org/ironjacamar/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+		    <datasource jndi-name="java:/jdbc/«name»DS" pool-name="«name»DS" enabled="true" use-java-context="true">
+	'''
+}
+
 }
