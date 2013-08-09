@@ -1,25 +1,25 @@
 /*
- * Copyright 2009 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.sculptor.framework.test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -31,7 +31,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.sculptor.framework.errorhandling.ServiceContext;
@@ -42,42 +41,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class tests in a OpenEJB environment.
+ * Base class tests in a <a href="http://openejb.apache.org/">OpenEJB</a> environment.
  * <p>
- * Inject dependencies to EJBs with the ordinary @EJB annotation.
+ * Inject dependencies to EJBs with the ordinary <code>@EJB</code> annotation.
  * <p>
- * OpenEJB is initialized from properties loaded from classpath
- * 'openejb-test.properties'. In case you need to destroy the container after
- * each test (class) you should add property
- * openejb.embedded.initialcontext.close=destroy It is possible to override
- * persistent unit properties this way also.
+ * OpenEJB is initialized from properties loaded from classpath resource
+ * <code>/openejb-test.properties</code>.
+ * In case you need to destroy the container after each test (class) you should
+ * add property <code>openejb.embedded.initialcontext.close=destroy</code>.
+ * It is possible to override persistent unit properties this way also.
  * <p>
- * More information: http://openejb.apache.org/3.0/index.html
+ * More information:
+ * <ul>
+ * <li><a href="http://openejb.apache.org/embedded-configuration.html">http://openejb.apache.org/embedded-configuration.html</a>
+ * <li><a href="http://openejb.apache.org/properties-listing.html">http://openejb.apache.org/properties-listing.html</a>
+ * <li><a href="http://openejb.apache.org/configuring-logging-in-tests.html">http://openejb.apache.org/configuring-logging-in-tests.html</a>
+ * </ul>
  * 
  * @author Patrik Nordwall
  * 
  */
 public abstract class AbstractOpenEJBTest {
 
-    static {
-        try {
-            if (System.getProperty("openejb.logger.external") == null) {
-                System.setProperty("openejb.logger.external", "true");
-            }
-
-            String log4jSysProp = System.getProperty("log4j.configuration");
-            if (log4jSysProp == null
-                    || Thread.currentThread().getContextClassLoader().getResource(log4jSysProp) == null) {
-                URL logConfiguration = Thread.currentThread().getContextClassLoader()
-                        .getResource("log4j-test.properties");
-                if (logConfiguration != null) {
-                    PropertyConfigurator.configure(logConfiguration);
-                }
-            }
-        } catch (Throwable e) {
-            System.err.println("Couldn't initialize logging, using default (maybe nothing will be logged)");
-        }
-    }
+	/** Use SLF4J for OpenEJB logging */
+	static {
+		System.setProperty("openejb.log.factory", "org.apache.openejb.util.Slf4jLogStreamFactory");
+	}
 
     static {
         ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
@@ -218,6 +207,7 @@ public abstract class AbstractOpenEJBTest {
                     // throw first e
                 }
             }
+            // Retry with global lookup
             try {
                 return (T) initialContext.lookup("openejb:Resource/" + name);
             } catch (NamingException ignore) {

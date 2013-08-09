@@ -41,7 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for JPA and DBUnit tests in a OpenEJB environment.
+ * Base class for <a href=
+ * "http://www.oracle.com/technetwork/java/javaee/tech/persistence-jsp-140049.html"
+ * >JPA</a> and <a href="http://www.dbunit.org">DBUnit</a> tests in a <a
+ * href="http://openejb.apache.org/">OpenEJB</a> environment.
  * <p>
  * Inject dependencies to EJBs with the ordinary <code>@EJB</code> annotation.
  * <p>
@@ -72,8 +75,8 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
     protected Set<String> getPersistentUnitNames() {
         try {
             PersistenceXmlParser persistenceXmlParser = new PersistenceXmlParser();
-            String persisitenceXml = DataHelper.content("/META-INF/persistence.xml");
-            persistenceXmlParser.parse(persisitenceXml);
+            String persistenceXml = DataHelper.content("/META-INF/persistence.xml");
+            persistenceXmlParser.parse(persistenceXml);
             return persistenceXmlParser.getPersictenceUnitNames();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -102,15 +105,15 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
         }
     }
 
+    /**
+     * Overrides some properties defined for persistent units in "persistence.xml".
+     */
     protected void initPersistenceUnitProperties(String unitName, Properties properties) {
-        // override some properties in persistent unit, persistence.xml
-        // properties.put(unitName + ".hibernate.dialect",
-        // "org.hibernate.dialect.HSQLDialect");
-        properties.put(unitName + ".hibernate.dialect",
-                "org.sculptor.framework.persistence.CustomHSQLDialect");
+        properties.put(unitName + ".hibernate.dialect", "org.sculptor.framework.persistence.CustomHSQLDialect");
         properties.put(unitName + ".hibernate.show_sql", "true");
         properties.put(unitName + ".hibernate.hbm2ddl.auto", "create-drop");
-        properties.put(unitName + ".hibernate.ejb.cfgfile", "hibernate.cfg.xml");
+        properties.put(unitName + ".hibernate.cache.use_query_cache", "false");
+        properties.put(unitName + ".hibernate.cache.use_second_level_cache", "false");
     }
 
     protected EntityManager getEntityManager() {
