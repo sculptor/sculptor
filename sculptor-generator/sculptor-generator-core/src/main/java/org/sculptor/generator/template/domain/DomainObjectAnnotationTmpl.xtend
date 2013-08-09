@@ -73,7 +73,7 @@ def String domainObjectAnnotations(DomainObject it) {
 		«IF it.hasOwnDatabaseRepresentation()»
 			@javax.persistence.Entity
 			«IF !isInheritanceTypeSingleTable(it.getRootExtends()) || it == it.getRootExtends()»
-				@javax.persistence.Table(name = "«it.getDatabaseName()»"« IF it.hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
+				@javax.persistence.Table(name = "«it.getDatabaseName()»"«IF it.hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
 			«ENDIF»
 			«domainObjectInheritanceAnnotations(it)»
 			«IF isJpa2() && cache»

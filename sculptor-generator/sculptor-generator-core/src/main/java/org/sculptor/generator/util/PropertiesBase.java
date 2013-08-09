@@ -353,12 +353,11 @@ public class PropertiesBase {
 	}
 
 	private void initDerivedDefaultsForPureEjb3(Properties defaultProperties) {
+		defaultProperties.setProperty("deployment.type", "ear");
 		defaultProperties.setProperty("generate.spring", "false");
 		defaultProperties.setProperty("generate.resource", "false");
 		defaultProperties.setProperty("generate.restWeb", "false");
-		defaultProperties.setProperty("deployment.type", "ear");
 		defaultProperties.setProperty("naming.suffix.Impl", "Bean");
-		defaultProperties.setProperty("deployment.type", "ear");
 		defaultProperties.setProperty("generate.logbackConfig", "false");
 		// TODO we probably need to do something to still be able to use
 		// spring in presentation-tier

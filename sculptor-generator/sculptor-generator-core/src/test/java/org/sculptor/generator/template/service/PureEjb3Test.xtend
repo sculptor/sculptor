@@ -38,20 +38,20 @@ class PureEjb3Test extends GeneratorTestBase {
 
 	@Test
 	def void assertConsumerBeanBean() {
-		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/consumer/PlanetConsumerBean.java");
-		assertContains(bean, '@MessageDriven(name = "planetConsumer", messageListenerInterface = MessageListener.class, activationConfig = {');
+		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/consumer/PlanetConsumerBean.java")
+		assertContains(bean, '@MessageDriven(name = "planetConsumer", messageListenerInterface = MessageListener.class, activationConfig = {')
 	}
 
 	@Test
 	def void assertWebServiceBean() {
-		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/serviceimpl/PlanetWebServiceBean.java");
-		assertContains(bean, '@Stateless(name = "planetWebService")');
+		val bean = getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/serviceimpl/PlanetWebServiceBean.java")
+		assertContains(bean, '@Stateless(name = "planetWebService")')
 	}
 
 	@Test
 	def void assertPackageInfo() {
-		val info = getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/serviceapi/package-info.java");
-		assertContains(info, 'import javax.xml.bind.annotation.XmlSchema;');
+		val info = getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/serviceapi/package-info.java")
+		assertContains(info, 'import javax.xml.bind.annotation.XmlSchema;')
 	}
 
 	@Test
