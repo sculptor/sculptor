@@ -484,7 +484,7 @@ def String webServiceAnnotations(Service it) {
 		serviceName = "«name»")
 	«IF applicationServer() == "jboss" »
 		// http://localhost:8080/«module.application.name.toLowerCase()»/«name»/WebDelegateEndPoint?wsdl
-		@org.jboss.wsf.spi.annotation.WebContext(contextRoot = "/«module.application.name.toLowerCase()»", urlPattern="/«name»/WebDelegateEndPoint")
+		@org.jboss.ws.api.annotation.WebContext(contextRoot = "/«module.application.name.toLowerCase()»", urlPattern="/«name»/WebDelegateEndPoint")
 	«ENDIF»
 	'''
 }
