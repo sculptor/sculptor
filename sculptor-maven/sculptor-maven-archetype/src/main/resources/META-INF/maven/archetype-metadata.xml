@@ -9,6 +9,9 @@
 		<requiredProperty key="standalone">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
+		<requiredProperty key="ejb">
+			<defaultValue>false</defaultValue>
+		</requiredProperty>
 	</requiredProperties>
 
 	<fileSets>

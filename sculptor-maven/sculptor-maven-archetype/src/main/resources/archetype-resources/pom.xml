@@ -104,7 +104,9 @@
 		<dependency>
 			<groupId>org.sculptor</groupId>
 			<artifactId>sculptor-framework-main</artifactId>
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 			<classifier>without-ejb</classifier>
+#end
 			<version>${symbol_dollar}{sculptor-version}</version>
 		</dependency>
 		<dependency>
@@ -113,6 +115,26 @@
 			<version>${symbol_dollar}{sculptor-version}</version>
 			<scope>test</scope>
 		</dependency>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
+#end
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -148,6 +170,7 @@
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<!-- Remove dependency to javax.transaction when running in a transaction 
 			supporting container (jboss etc) -->
 		<dependency>
@@ -201,6 +224,7 @@
 			<artifactId>spring-context-support</artifactId>
 			<version>${symbol_dollar}{spring-version}</version>
 		</dependency>
+#end
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -256,12 +280,14 @@
 			<scope>test</scope>
 		</dependency>
 #end
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${symbol_dollar}{spring-version}</version>
 			<scope>test</scope>
 		</dependency>
+#end
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
