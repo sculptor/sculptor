@@ -102,7 +102,6 @@ class RootTmpl {
 			«IF pureEjb3() && isTestToBeGenerated()»
 				«IF jpa()»
 					«logConfigTmpl.logbackTestXml(it)»
-					«ehcacheTmpl.ehcacheTestXml(it)»
 				«ELSE»
 					«serviceEjbTestTmpl.ejbJarXml(it)»
 				«ENDIF»

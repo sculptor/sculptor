@@ -73,6 +73,7 @@ public class DbHelper {
 			case "TreeCache" : "nonstrict-read-write"
 			case "JbossTreeCache" : "transactional"
 			case "DeployedTreeCache" : "transactional"
+			case "Infinispan" : "transactional"
 			default : "read-only"
 		}
 	}
@@ -261,6 +262,7 @@ public class DbHelper {
 			case "TreeCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE"
 			case "JbossTreeCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.TRANSACTIONAL"
 			case "DeployedTreeCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.TRANSACTIONAL"
+			case "Infinispan" : "org.hibernate.annotations.CacheConcurrencyStrategy.TRANSACTIONAL"
 			default : "org.hibernate.annotations.CacheConcurrencyStrategy.READ_ONLY"
 		}
 	}

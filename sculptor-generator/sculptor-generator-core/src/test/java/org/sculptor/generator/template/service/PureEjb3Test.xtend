@@ -54,4 +54,12 @@ class PureEjb3Test extends GeneratorTestBase {
 		assertContains(info, 'import javax.xml.bind.annotation.XmlSchema;');
 	}
 
+	@Test
+	def void assertPersistenceXml() {
+		val info = getFileText(TO_GEN_RESOURCES + "/META-INF/persistence.xml")
+
+		// JBoss AS 7 ships with Infinispan as default cach provider - so no cache provider configuration is necessary
+		assertNotContains(info, 'RegionFactory"/>')
+	}
+
 }

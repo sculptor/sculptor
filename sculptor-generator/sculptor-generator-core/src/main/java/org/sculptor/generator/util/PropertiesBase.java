@@ -220,7 +220,9 @@ public class PropertiesBase {
 			defaultProperties.setProperty("deployment.applicationServer", "JBoss");
 		}
 
+		// for JBoss AS 7 use Infinispan cache instead of Ehcache
 		if (getProperty("deployment.applicationServer").toLowerCase().equals("jboss")) {
+			defaultProperties.setProperty("cache.provider", "Infinispan");
 			defaultProperties.setProperty("generate.datasource", "true");
 		}
 
