@@ -25,10 +25,18 @@
 
 	<modules>
 		<module>../${artifactIdBase}</module>
+#if( $war == "true" || $war == "y" || $war == "yes")
+		<module>../${artifactIdBase}-web</module>
+#else
 		<!-- Add web module when needed -->
 		<!-- <module>../${artifactIdBase}-web</module> -->
+#end
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
+		<module>../${artifactIdBase}-ear</module>
+#else
 		<!-- Add ear module when deployed as ear -->
 		<!-- <module>../${artifactIdBase}-ear</module> -->
+#end
 	</modules>
 
 	<build>
