@@ -111,7 +111,7 @@ class ConsumerEjbTmpl {
 
 	def String jmsConnection(Consumer it) {
 		'''
-		@javax.annotation.Resource(name = "jms/QueueFactory")
+		@javax.annotation.Resource(mappedName = "java:/jms/QueueFactory")
 		private javax.jms.ConnectionFactory connectionFactory;
 		private javax.jms.Connection connection;
 
@@ -150,7 +150,7 @@ class ConsumerEjbTmpl {
 
 	def String invalidMessageQueue(Consumer it) {
 		'''
-		@javax.annotation.Resource(name = "jms/invalidMessageQueue")
+		@javax.annotation.Resource(mappedName = "java:/jms/invalidMessageQueue")
 		private javax.jms.Queue invalidMessageQueue;
 
 		protected javax.jms.Destination getInvalidMessageQueue() {
