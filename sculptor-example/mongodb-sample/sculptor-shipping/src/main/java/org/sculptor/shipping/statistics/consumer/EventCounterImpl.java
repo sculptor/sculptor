@@ -7,8 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.sculptor.framework.event.Event;
 import org.springframework.stereotype.Component;
 
-import consumer.EventCounterImplBase;
-
 /**
  * Implementation of EventCounter.
  */
