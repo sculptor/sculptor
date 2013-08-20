@@ -16,12 +16,12 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 
 
 override String manyReferenceAccessors(Reference it) {
-		next_manyReferenceAccessors(it)
+		next.manyReferenceAccessors(it)
 }
 
 
 override String additionalManyReferenceAccessors(Reference it) {
-		next_additionalManyReferenceAccessors(it)
+		next.additionalManyReferenceAccessors(it)
 }
 
 
@@ -53,7 +53,7 @@ override String unidirectionalReferenceAccessors(Reference it) {
 				};
 			   «ENDIF»
 			
-			«next_bidirectionalReferenceAdd(it)»
+			«next.bidirectionalReferenceAdd(it)»
 		'''
 	}
 
@@ -69,7 +69,7 @@ override String unidirectionalReferenceAdd(Reference it) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 		};
 	«ENDIF»
-	«next_unidirectionalReferenceAdd(it)»
+	«next.unidirectionalReferenceAdd(it)»
 
 	'''
 }

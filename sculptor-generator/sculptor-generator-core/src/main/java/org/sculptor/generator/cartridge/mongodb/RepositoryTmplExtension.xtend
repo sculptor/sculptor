@@ -41,13 +41,13 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 	override String extraRepositoryBaseDependencies(Repository it) {
 		'''
 		«dbManagerDependency(it)»
-		«next_extraRepositoryBaseDependencies(it)»
+		«next.extraRepositoryBaseDependencies(it)»
 		'''
 	}
 	
 	override String accessObjectFactory(Repository it) {
 		'''
-		«next_accessObjectFactory(it)»
+		«next.accessObjectFactory(it)»
 		«mongoDbAccessObjectFactoryTmpl.getAdditionalDataMappers(it)»
 		«mongoDbAccessObjectFactoryTmpl.ensureIndex(it)»
 		'''

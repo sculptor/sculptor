@@ -20,7 +20,6 @@ import com.google.inject.Guice
 import generator.TestTemplateOverride
 import org.junit.Test
 import org.sculptor.generator.cartridge.test.TestTemplateExtension
-import org.sculptor.generator.template.TestTemplate
 
 import static org.junit.Assert.*
 
@@ -32,38 +31,35 @@ class ChainOverrideAwareModuleTest {
 	def void testTmplateExtensions() {
 		val injector = Guice::createInjector(new ChainOverrideAwareModule(templateClass));
 
-		val templateOverride = injector.getInstance(templateClass);
-		val templateExtension = templateOverride.next
-		val template = templateExtension.next
+		val templateOverride = injector.getInstance(templateClass) as TestTemplateOverride
+		
+		val templateExtension = templateOverride.next.next as TestTemplateExtension
+		
+		val template = templateExtension.next.next as TestTemplate
 
 		// Head of chain - the override class
-		assertNotNull(templateOverride);
-		assertEquals("No override class", typeof(TestTemplateOverride), templateOverride.^class)
-		assertNotNull(templateOverride.getMethodsDispatchNext)
-		assertEquals(5, templateOverride.getMethodsDispatchNext.size)
-		assertSame(templateExtension, templateOverride.getMethodsDispatchNext.get(0))
-		assertSame(template, templateOverride.getMethodsDispatchNext.get(1))
-		assertSame(template, templateOverride.getMethodsDispatchNext.get(2))
+		assertNotNull(templateOverride)
+		val templateOverrideNextObj = templateOverride.next as TestTemplateMethodDispatch
+		assertEquals(5, templateOverrideNextObj.methodsDispatchTable.size)	
 		
-		val methodDispatchHead = templateOverride.getMethodsDispatchHead()
+		
+		assertSame(templateExtension, templateOverrideNextObj.methodsDispatchTable.get(0))
+		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(1))
+		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(2))
+		
+		val methodDispatchHead = template.methodsDispatchHead
 		assertNotNull(methodDispatchHead)
+
 		assertSame(templateExtension, methodDispatchHead.get(0))
 		assertSame(template, methodDispatchHead.get(1))
 		assertSame(templateOverride, methodDispatchHead.get(2))
 
-		assertSame("No cartridge extension class", typeof(TestTemplateExtension),
-			templateExtension.^class)
-		assertEquals(5, templateExtension.getMethodsDispatchNext.size)
-		assertSame(template, templateExtension.getMethodsDispatchNext.get(0))
-		assertSame(template, templateExtension.getMethodsDispatchNext.get(1))
-		assertSame(template, templateExtension.getMethodsDispatchNext.get(2))
-		assertSame(methodDispatchHead, templateExtension.getMethodsDispatchHead)
-
-		// End of chain - the original template class
-		assertSame("No original template class", templateClass, template.^class)
-		assertNull(template.next)
-		assertNull(template.getMethodsDispatchNext)
-		assertSame(methodDispatchHead, template.getMethodsDispatchHead)
+		val templateExtensionNextObj = templateExtension.next as TestTemplateMethodDispatch
+		
+		assertEquals(5, templateExtensionNextObj.methodsDispatchTable.size)
+		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(0))
+		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(1))
+		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(2))
 		
 	}
 }

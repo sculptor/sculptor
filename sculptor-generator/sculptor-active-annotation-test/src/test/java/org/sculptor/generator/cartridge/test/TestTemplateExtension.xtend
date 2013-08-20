@@ -18,7 +18,7 @@
 package org.sculptor.generator.cartridge.test
 
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.TestTemplate
+import org.sculptor.generator.chain.TestTemplate
 
 @ChainOverride
 class TestTemplateExtension extends TestTemplate {

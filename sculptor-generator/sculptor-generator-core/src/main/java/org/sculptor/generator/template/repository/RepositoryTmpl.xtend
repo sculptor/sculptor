@@ -381,7 +381,7 @@ def String setCache(RepositoryOperation it) {
 	'''
 }
 
-def setEagerColumns (RepositoryOperation it) {
+def String setEagerColumns (RepositoryOperation it) {
 	'''
 		«IF it.hasHint("useFetchEager")»
 			ao.setFetchEager(eagerFields);

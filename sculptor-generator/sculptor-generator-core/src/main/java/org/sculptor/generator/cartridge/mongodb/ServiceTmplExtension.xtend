@@ -23,7 +23,7 @@ class ServiceTmplExtension extends ServiceTmpl {
 			mongoDbServiceTestTmpl.serviceJUnitSubclassMongoDb(it);
 		}
 		
-		next_service(it)
+		next.service(it)
 		""
 	}
 }

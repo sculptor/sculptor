@@ -1,4 +1,4 @@
-package org.sculptor.generator.template
+package org.sculptor.generator.chain
 
 import org.sculptor.generator.chain.ChainOverridable
 

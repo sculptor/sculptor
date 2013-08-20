@@ -37,7 +37,7 @@ class RootTmplExtension extends RootTmpl {
 		if (isDomainObjectToBeGenerated()) {
 			getAllDomainObjects(false).filter[e | e.needsBuilder()].forEach[e | builderTmpl.builder(e)]
 		}
-		next_root(it)
+		next.root(it)
 	}
 
 }

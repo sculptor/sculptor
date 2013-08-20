@@ -30,7 +30,7 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 				};
 			«ENDIF»
 			
-			«next_bidirectionalReferenceAdd(it)»
+			«next.bidirectionalReferenceAdd(it)»
 		'''
 	}
 
