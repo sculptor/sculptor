@@ -26,11 +26,12 @@ import sculptormetamodel.Consumer
 class ConsumerTmplExtension extends ConsumerTmpl {
 	@Inject extension Properties properties
 
-	override String consumerTest(Consumer it) {'''
-		«IF mongoDb»
-			«/* TODO */»
-		«ENDIF»
-		«next.consumerTest(it)»
-	'''}
+	override void consumerTest(Consumer it) {
+		if (mongoDb) {
+			/* TODO */
+		} else {
+			next.consumerTest(it)
+		}
+	}
 	
 }

@@ -53,22 +53,26 @@ def String consumer(Consumer it) {
 
 	«IF isTestToBeGenerated()»
 		«consumerTest(it)»
+		«IF isDbUnitTestDataToBeGenerated()»
+			«consumerTestDbUnitData(it)»
+		«ENDIF»
 	«ENDIF»
+	
 	'''
 }
 
-def String consumerTest(Consumer it) {'''
-	«IF pureEjb3()»
-		«consumerEjbTestTmpl.consumerJUnitOpenEjb(it)»
-	«ELSEIF applicationServer() == "appengine"»
-		«/* TODO */»
-	«ELSE»
-		«consumerTestTmpl.consumerJUnitWithAnnotations(it)»
-	«ENDIF»
-	«IF isDbUnitTestDataToBeGenerated()»
-		«consumerTestTmpl.dbunitTestData(it)»
-	«ENDIF»
-	'''
+def void consumerTest(Consumer it) {
+	if(pureEjb3) {
+		consumerEjbTestTmpl.consumerJUnitOpenEjb(it)
+	} else if(applicationServer() == "appengine") {
+		/* TODO */
+	} else {
+		consumerTestTmpl.consumerJUnitWithAnnotations(it)
+	}
+}
+
+def void consumerTestDbUnitData(Consumer it) {
+	consumerTestTmpl.dbunitTestData(it)
 }
 
 def String consumerInterface(Consumer it) {
