@@ -91,13 +91,10 @@ class ChainOverrideAwareModule extends AbstractModule {
 	def <T> buildChainForClass(HashSet<Class<?>> discovered, Class<T> clazz) {
 		LOG.debug("Building chain for class '{}'", clazz)
 
-		//val T[] methodsDispatchHead = newArrayOfSize()
-		
 		// Instantiate template - try overrideable version first
 		val T template = try {
 			
-			val T[] emptyArr = Array::newInstance(clazz, 0) as T[]
-			clazz.getConstructor(clazz, emptyArr.class).newInstance(null as T, null as T[])
+			clazz.getConstructor(clazz).newInstance(null as T)
 		} catch (Throwable t) {
 			// fall-back to non-overrideable class constructor
 			clazz.newInstance
@@ -117,8 +114,6 @@ class ChainOverrideAwareModule extends AbstractModule {
 			val getOverridesDispatchArrayMethod = template.class.getMethod("_getOverridesDispatchArray")
 			val methodsDispatchHead = getOverridesDispatchArrayMethod.invoke(template) as T[]
 			
-			
-			//val T[] methodsDispatchHead = 
 			// Prepare list of class names to add to chain if they exist
 			val needsToBeChained = new Stack<String>()
 			needsToBeChained.push(makeOverrideClassName(clazz))
@@ -131,13 +126,6 @@ class ChainOverrideAwareModule extends AbstractModule {
 			chain = buildChainForInstance(template, template.^class, discovered, needsToBeChained, methodsDispatchHead)
 			
 			// Now set methodsDispatchHead into each chain member
-			
-//			var chainLink = chain as ChainLink<T>
-//			while(chainLink != null) {
-//				chainLink.setMethodsDispatchHead(methodsDispatchHead)
-//				chainLink = chainLink.next as ChainLink<T>
-//			}
-
 			chain.updateChainWithMethodsDispatchHead(methodsDispatchHead)
 
 
@@ -161,35 +149,35 @@ class ChainOverrideAwareModule extends AbstractModule {
 	/**
 	 * Build out the override chain for needsToBeChained, removing elements off the stack as it goes.
 	 * @param object current head of chain.  New ChainLink instance will be made to point to object
+	 * @param templateClass Original template class
 	 * @param discovered Classes discovered so far that are to be injected into ChainLink classes
 	 * @param needsToBeChained Classes that still need to be chained
 	 */
-	def <T> T buildChainForInstance(T object, Class<?> constructorParam, HashSet<Class<?>> discovered, Stack<String> needsToBeChained,
+	def <T> T buildChainForInstance(T object, Class<?> templateClass, HashSet<Class<?>> discovered, Stack<String> needsToBeChained,
 		T[] methodsDispatchHead
 	) {
 		if (needsToBeChained.isEmpty)
 			return object
+		
+		
 
 		var result = object
 		val className = needsToBeChained.pop
 		try {
-			val overrideClass = Class::forName(className)
-			val const = overrideClass.getConstructor(constructorParam, methodsDispatchHead.class)
-			if (typeof(ChainLink).isAssignableFrom(overrideClass)) {
-				LOG.debug("    chaining with class '{}'", overrideClass)
-//				val methodsDispatchNext = newArrayOfSize(methodsDispatchHead.size) as T[]
+			val chainedClass = Class::forName(className)
+			if (typeof(ChainLink).isAssignableFrom(chainedClass)) {
+				LOG.debug("    chaining with class '{}'", chainedClass)
+				val const = chainedClass.getConstructor(templateClass, methodsDispatchHead.class)
 				
-//				val T[] methodsDispatchNext = Array::newInstance(constructorParam, methodsDispatchHead.size) as T[]				
-//				System.arraycopy(methodsDispatchHead, 0, methodsDispatchNext, 0, methodsDispatchHead.length)
+				val nextDispatchObj = createNextDispatchObjFromHead(methodsDispatchHead, templateClass, object)
 				
-				val methodsDispatchNext = methodsDispatchHead.copyMethodsDispatchHead(constructorParam)
-				
-				result = (const.newInstance(object, methodsDispatchNext) as T)
+				// Create chained instance
+				result = (const.newInstance(nextDispatchObj, null) as T)
 				
 				methodsDispatchHead.updateFromObjDispatchArray(result)
 				
 				requestInjection(object)
-				discoverInjectedFields(discovered, overrideClass)
+				discoverInjectedFields(discovered, chainedClass)
 			} else {
 				LOG.debug("    found class {} but not assignable to ChainLink.  skipping.", className)
 			}
@@ -201,7 +189,16 @@ class ChainOverrideAwareModule extends AbstractModule {
 			// No such class - continue with popping from stack using same base object
 		}
 		// Recursive
-		buildChainForInstance(result, constructorParam, discovered, needsToBeChained, methodsDispatchHead);
+		buildChainForInstance(result, templateClass, discovered, needsToBeChained, methodsDispatchHead);
+	}
+	
+	private def <T> createNextDispatchObjFromHead(T[] methodsDispatchHead, Class<?> templateClass, T object) {
+		val methodsDispatchNextArr = methodsDispatchHead.copyMethodsDispatchHead(templateClass)
+
+		val methodDispatchClass = Class::forName(templateClass.name + "MethodDispatch")
+		val methodDispatchConst = methodDispatchClass.getConstructor(templateClass, methodsDispatchNextArr.class)
+		val mdoRes = methodDispatchConst.newInstance(object, methodsDispatchNextArr as Object)
+		mdoRes as T
 	}
 	
 	private def <T> T[] copyMethodsDispatchHead(T[] methodsDispatchHead, Class<?> overrideableClass) {

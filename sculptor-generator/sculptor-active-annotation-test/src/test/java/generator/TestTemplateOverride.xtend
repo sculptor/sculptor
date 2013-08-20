@@ -18,7 +18,7 @@
 package generator
 
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.TestTemplate
+import org.sculptor.generator.chain.TestTemplate
 
 @ChainOverride
 class TestTemplateOverride extends TestTemplate {

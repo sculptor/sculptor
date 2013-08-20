@@ -45,16 +45,23 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
 		if (validate(annotatedClass, context)) {
 
+			val overrideableMethodsInfo = annotatedClass.overrideableMethodsInfo
+			
 			// Add constructor needed for chaining
 			annotatedClass.addConstructor [
 				addParameter('next', annotatedClass.extendedClass)
 				addParameter('methodsDispatchNext', annotatedClass.extendedClass.newArrayTypeReference)
-				body = ['''super(next, methodsDispatchNext);''']
+				body = ['''super(next);''']
 			]
 			
 			
-			val overrideableMethodIndexNames = annotatedClass.overrideableMethodIndexNames
-			annotatedClass.addGetOverridesDispatchArrayMethod(annotatedClass.extendedClass.type, context, overrideableMethodIndexNames)
+			val originalTmplClass = annotatedClass.extendedClass.type
+			
+			overrideableMethodsInfo.forEach [ methodInfo |
+				annotatedClass.modifyOverrideableMethod(originalTmplClass, methodInfo, context)
+			]
+
+			annotatedClass.addGetOverridesDispatchArrayMethod(annotatedClass.extendedClass.type, context, overrideableMethodsInfo)
 		}
 		
 	}

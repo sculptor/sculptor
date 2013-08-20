@@ -17,6 +17,7 @@
 
 package org.sculptor.generator.chain
 
+import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
@@ -26,30 +27,36 @@ import org.eclipse.xtend.lib.macro.declaration.Visibility
 
 class ChainOverrideHelper {
 	
+	public static final String RENAMED_METHOD_NAME_PREFIX = '_chained_'
+
+	/**
+	 * Add a method to get the dispatch array for each overrideable method for classToModify
+	 */
 	protected static def addGetOverridesDispatchArrayMethod(
-		MutableClassDeclaration annotatedClass,
+		MutableClassDeclaration classToModify,
 		Type overrideableClass,
 		extension TransformationContext context,
-		List<String> overrideMethodIndexNames
+		List<OverridableMethodInfo> overridableMethodsInfo
 	) {
-		annotatedClass.addMethod("_getOverridesDispatchArray") [
+		classToModify.addMethod("_getOverridesDispatchArray") [
 			visibility = Visibility::PUBLIC
-			//			static = true
 			final = false
 			returnType = overrideableClass.newTypeReference.newArrayTypeReference
 			val methodIndexesName = overrideableClass.methodIndexesName
-			body = [
-				'''
-					«overrideableClass.qualifiedName»[] result = new «overrideableClass.qualifiedName»[«overrideableClass.methodIndexesName».NUM_METHODS];
-					«FOR m : overrideMethodIndexNames»
-						result[«methodIndexesName».«m»] = this; 
-					«ENDFOR»
-					return result;
-				''']
+			body = ['''
+				«overrideableClass.qualifiedName»[] result = new «overrideableClass.qualifiedName»[«overrideableClass.methodIndexesName».NUM_METHODS];
+				«FOR m : overridableMethodsInfo»
+					result[«methodIndexesName».«m.methodIndexName»] = this; 
+				«ENDFOR»
+				return result;
+			''']
 		]
 	}
 
 	
+	/**
+	 * @return Name of index constant for the given method
+	 */
 	protected static def getIndexName(MutableMethodDeclaration methodDecl) {
 		val sb = new StringBuilder(methodDecl.simpleName.toUpperCase)
 		methodDecl.parameters.forEach [ param |
@@ -59,19 +66,59 @@ class ChainOverrideHelper {
 		sb.toString
 	}
 
+	/**
+	 * @return Fully qualified name of method indexes interface
+	 */
 	protected static def getMethodIndexesName(Type overrideableClass) {
 		overrideableClass.qualifiedName + "MethodIndexes"
 	}
 
-	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
-		annotatedClass.declaredMethods.filter[visibility == Visibility::PUBLIC && static == false].toList
+	/**
+	 * @return Fully qualified name of method indexes interface
+	 */
+	protected static def getDispatchClassName(Type overrideableClass) {
+		overrideableClass.qualifiedName + "MethodDispatch"
 	}
 
-	protected static def getOverrideableMethodIndexNames(MutableClassDeclaration annotatedClass) {
-		val overrideableMethods = annotatedClass.getOverrideableMethods()
+	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
+		annotatedClass.declaredMethods.filter[visibility == Visibility::PUBLIC && static == false && final == false].toList
+	}
 
-		val List<String> overrideMethodIndexNames = newArrayList()
-		overrideMethodIndexNames.addAll(overrideableMethods.map[m|m.indexName])
-		overrideMethodIndexNames
+	protected static def getOverrideableMethodsInfo(MutableClassDeclaration annotatedClass) {
+		val result = new ArrayList<OverridableMethodInfo>()
+		result.addAll(annotatedClass.overrideableMethods.map[method|
+			new OverridableMethodInfo(method.indexName, method, new String(method.simpleName))
+		])
+		result
+	}
+	
+	
+	/**
+	 * Modify the identified overrideable method, renaming the actual method, and replacing it with a public method that
+	 * delegates to the head of the chain.
+	 */
+	protected static def modifyOverrideableMethod(MutableClassDeclaration annotatedClass, Type originalTmplClass,
+			OverridableMethodInfo methodInfo, extension TransformationContext context) {
+		val publicMethod = methodInfo.publicMethod
+		val methodName = methodInfo.methodName
+
+		publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
+		publicMethod.visibility = Visibility::PUBLIC
+
+		// add new public delegate method
+		annotatedClass.addMethod(methodName) [ delegateMethod |
+			delegateMethod.returnType = publicMethod.returnType
+			delegateMethod.^default = publicMethod.^default
+			delegateMethod.varArgs = publicMethod.varArgs
+			delegateMethod.exceptions = publicMethod.exceptions
+			publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
+			delegateMethod.docComment = publicMethod.docComment
+			delegateMethod.body = ['''
+				«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
+					methodIndexName»];
+				«IF !publicMethod.returnType.isVoid»return«ENDIF» headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
+					parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+			''']
+		]
 	}
 }
