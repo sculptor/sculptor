@@ -23,7 +23,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Repository
 import sculptormetamodel.RepositoryOperation
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class AccessObjectFactoryTmpl {
 
 	@Inject extension HelperBase helperBase
@@ -88,10 +90,6 @@ def String factoryMethodInit(RepositoryOperation it) {
 	'''
 	«IF jpa()»
 		ao.setEntityManager(getEntityManager());
-	«ELSEIF mongoDb() »
-		ao.setDbManager(dbManager);
-		ao.setDataMapper(«repository.aggregateRoot.module.getMapperPackage()».«repository.aggregateRoot.name»Mapper.getInstance());
-		ao.setAdditionalDataMappers(getAdditionalDataMappers());
 	«ENDIF »
 	'''
 }

@@ -25,7 +25,9 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ConsumerTmpl {
 
 	@Inject private var PubSubTmpl pubSubTmpl
@@ -50,18 +52,21 @@ def String consumer(Consumer it) {
 	«ENDIF»
 
 	«IF isTestToBeGenerated()»
-		«IF pureEjb3()»
-			«consumerEjbTestTmpl.consumerJUnitOpenEjb(it)»
-		«ELSEIF applicationServer() == "appengine"»
-			«/* TODO */»
-		«ELSEIF mongoDb()»
-			«/* TODO */»
-		«ELSE»
-			«consumerTestTmpl.consumerJUnitWithAnnotations(it)»
-		«ENDIF»
-		«IF isDbUnitTestDataToBeGenerated()»
-			«consumerTestTmpl.dbunitTestData(it)»
-		«ENDIF»
+		«consumerTest(it)»
+	«ENDIF»
+	'''
+}
+
+def String consumerTest(Consumer it) {'''
+	«IF pureEjb3()»
+		«consumerEjbTestTmpl.consumerJUnitOpenEjb(it)»
+	«ELSEIF applicationServer() == "appengine"»
+		«/* TODO */»
+	«ELSE»
+		«consumerTestTmpl.consumerJUnitWithAnnotations(it)»
+	«ENDIF»
+	«IF isDbUnitTestDataToBeGenerated()»
+		«consumerTestTmpl.dbunitTestData(it)»
 	«ENDIF»
 	'''
 }
