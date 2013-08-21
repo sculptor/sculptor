@@ -81,7 +81,8 @@ class ChainOverrideHelper {
 	}
 
 	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
-		annotatedClass.declaredMethods.filter[visibility == Visibility::PUBLIC && static == false && final == false].toList
+		val dispatchMethods=annotatedClass.declaredMethods.filter[it.simpleName.startsWith("_")].map[it.simpleName.substring(1)].toSet
+		annotatedClass.declaredMethods.filter[!dispatchMethods.exists[dm | simpleName == dm] && visibility == Visibility::PUBLIC && static == false && final == false].toList
 	}
 
 	protected static def getOverrideableMethodsInfo(MutableClassDeclaration annotatedClass) {
