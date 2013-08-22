@@ -23,7 +23,9 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.Module
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class Properties {
 
 	@Inject extension PropertiesBase propertiesBase
@@ -439,11 +441,11 @@ class Properties {
 		getBooleanProperty("gui.stubService")
 	}
 
-	def dispatch String getResourceDir(Application application, String name) {
+	def String getResourceDir(Application application, String name) {
 		getResourceDirImpl(name)
 	}
 
-	def dispatch String getResourceDir(Module module, String name) {
+	def String getResourceDirModule(Module module, String name) {
 		getResourceDirImpl(name)
 	}
 

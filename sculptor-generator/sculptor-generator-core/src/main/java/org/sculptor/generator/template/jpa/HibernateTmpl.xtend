@@ -23,7 +23,6 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
@@ -34,7 +33,6 @@ class HibernateTmpl {
 	@Inject extension DbHelper dbHelper
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 def String hibernate(Application it) {
@@ -57,7 +55,7 @@ def String header(Object it) {
 	<!DOCTYPE hibernate-mapping PUBLIC
 		"-//Hibernate/Hibernate Mapping DTD//EN"
 		"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
-
+	
 	<hibernate-mapping>
 	'''
 }
@@ -65,11 +63,12 @@ def String header(Object it) {
 def String enumTypedefFile(Module it) {
 	val enums = it.domainObjects.filter(d | d instanceof sculptormetamodel.Enum)
 	if (!enums.isEmpty) {
-		fileOutput(it.getResourceDir("hibernate") + it.getEnumTypeDefFileName(), OutputSlot::TO_GEN_RESOURCES, '''
-					«header(it) »
-					«enums.map[e | enumTypedef(e as Enum)]»
+		fileOutput(it.getResourceDirModule("hibernate") + it.getEnumTypeDefFileName(), OutputSlot::TO_GEN_RESOURCES,
+			'''
+				«header(it) »
+					«enums.map[e | enumTypedef(e as Enum)].join»
 				</hibernate-mapping>
-		'''
+			'''
 		)
 	}
 }
@@ -79,11 +78,11 @@ def String enumTypedef(Enum it) {
 	'''
 		<typedef name="«name»"
 			class="«enumUserTypeClass()»">
-		<param name="enumClass">«getDomainPackage()».«name»</param>
-		«IF identifierAttribute != null »
-		<param name="identifierMethod">«identifierAttribute.getGetAccessor()»</param>
-		<param name="valueOfMethod">from«identifierAttribute.name.toFirstUpper()»</param>
-		«ENDIF»
+			<param name="enumClass">«getDomainPackage()».«name»</param>
+			«IF identifierAttribute != null »
+				<param name="identifierMethod">«identifierAttribute.getGetAccessor()»</param>
+				<param name="valueOfMethod">from«identifierAttribute.name.toFirstUpper()»</param>
+			«ENDIF»
 		</typedef>
 	'''
 }
@@ -121,7 +120,7 @@ def dispatch String hibenateCfgMappedResources(Module it) {
 	'''
 	«/* set mapping of Hibernate Types here, can't be set in persistence.xml */»
 	«IF !domainObjects.filter[d | d instanceof Enum].isEmpty»
-		<mapping resource="«it.getResourceDir("hibernate") + it.getEnumTypeDefFileName()»"/>
+		<mapping resource="«it.getResourceDirModule("hibernate") + it.getEnumTypeDefFileName()»"/>
 	«ENDIF»
 	'''
 }

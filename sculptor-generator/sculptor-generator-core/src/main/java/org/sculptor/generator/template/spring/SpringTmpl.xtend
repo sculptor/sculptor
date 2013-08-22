@@ -716,7 +716,7 @@ def String hibernateResource(Module it) {
 
 def String hibernateEnumTypedefResource(Module it) {
 	'''
-	<value>«it.getResourceDir("hibernate")»«it.getEnumTypeDefFileName()»</value>
+	<value>«it.getResourceDirModule("hibernate")»«it.getEnumTypeDefFileName()»</value>
 	'''
 }
 
