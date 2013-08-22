@@ -86,10 +86,12 @@ class GeneratorTestExtensions {
 	def static <NE extends NamedElement> void assertOneAndOnlyOne(EList<NE> listOfNamedElements, String... expectedNames) {
 		val expectedNamesList = newArrayList(expectedNames)
 
-		val actualNames = listOfNamedElements.map[ne|ne.name].filter[name | !SYSTEM_ATTRIBUTES.contains(name)].toList
-				
-		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, actualNames.containsAll(expectedNamesList))
-		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames, expectedNamesList.containsAll(actualNames))
+		// Remove the names of unexpected system attributes 
+		val actualNames = listOfNamedElements.map[ne|ne.name].filter[name|
+			expectedNamesList.contains(name) || !SYSTEM_ATTRIBUTES.contains(name)].toList
+
+		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames,
+			actualNames.sort.equals(expectedNamesList.sort))
 	}
 
 }
