@@ -56,6 +56,7 @@ class Transformation {
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension Properties properties
+	@Inject extension RestTransformation restTransformation
 
 	def Application modify(Application app) {
 		initPropertiesHook()
@@ -79,8 +80,7 @@ class Transformation {
 		app.modules.forEach[modify()]
 		app.modules.forEach[modifyModuleDatabaseNames()]
 		app.modules.forEach[modifyModuleReferencesDatabaseNames()]
-		// TODO restDefaults
-		// app.modules.map[resources].flatten.map[operations].flatten.forEach[addRestDefaults()]
+		app.modules.map[resources].flatten.map[operations].flatten.forEach[addRestDefaults()]
 		app
 	}
 

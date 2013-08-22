@@ -1,0 +1,53 @@
+Application ResourceTest {
+    basePackage=org.sculptor.example.rest
+
+    Module module1 {
+    	
+    	Resource PersonResource {
+    		findById => PersonService.findById;
+    		String createForm;
+    		create => PersonService.save;
+    		String updateForm;
+    		update => PersonService.save;
+    		delete => PersonService.delete;
+    		findAll => PersonService.findAll;
+    	}
+    	
+    	Service PersonService {
+    		findById => PersonRepository.findById;
+    		findAll => PersonRepository.findAll;
+    		save => PersonRepository.save;
+    		delete => PersonRepository.delete;
+    	}
+    	
+    	Entity Person {
+    		String name
+    		Repository PersonRepository {
+    			findById;
+    			save;
+    			delete;
+    			findAll;
+    		}
+    	}
+    	
+    	Resource FooBarResource {
+    		String foo;
+    		String bar POST path="/fooBar/baz";
+    		String something(@SomeDto some) path="/fooBar/some";
+    	}
+    	
+    	DataTransferObject SomeDto {
+    		String something
+    	}
+    	
+    	Resource CustomerResource {
+    		scaffold
+    	}
+    	
+    	Entity Customer {
+    		scaffold
+    		String name;
+    	}
+
+    }
+}
