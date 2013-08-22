@@ -318,7 +318,7 @@ def String persistenceUnitCachePropertiesHibernate(Application it, String unitNa
 		<property name="hibernate.cache.region_prefix" value=""/>
 		«IF cacheProvider() == "EhCache"»
 			«IF isJpaProviderHibernate3()»
-				<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.SingletonEhCacheRegionFactory"/>
+				<property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
 			«ELSE»
 				<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
 			«ENDIF»
