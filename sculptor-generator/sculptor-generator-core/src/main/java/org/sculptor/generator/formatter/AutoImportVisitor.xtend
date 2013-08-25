@@ -52,8 +52,8 @@ class AutoImportVisitor extends ASTVisitor {
 		this.compilationUnit = compilationUnit
 		if (compilationUnit.imports != null) {
 			compilationUnit.imports.forEach [ importRef |
-				imports += importRef.qualifiedName
-				importShortNames += importRef.shortName
+				imports += importRef.qualifiedTypeName
+				importShortNames += importRef.shortTypeName
 			]
 
 		}
@@ -113,10 +113,10 @@ class AutoImportVisitor extends ASTVisitor {
 	private def autoImport(QualifiedTypeReference reference) {
 
 		// Check if import already defined 
-		if (imports.contains(reference.qualifiedName)) {
+		if (imports.contains(reference.qualifiedTypeName)) {
 			textEdit.addChild(reference.renameTextEdit)
 		} else // Check if this types short name collides with an already used short name
-		if (!importShortNames.contains(reference.shortName)) {
+		if (!importShortNames.contains(reference.shortTypeName)) {
 			textEdit.addChild(reference.renameTextEdit)
 			addImport(reference)
 		}
@@ -136,34 +136,30 @@ class AutoImportVisitor extends ASTVisitor {
 	}
 
 	private def addImport(QualifiedTypeReference reference) {
-		additionalImports += reference.qualifiedName
-		imports += reference.qualifiedName
-		importShortNames += reference.shortName
+		additionalImports += reference.qualifiedTypeName
+		imports += reference.qualifiedTypeName
+		importShortNames += reference.shortTypeName
 	}
 
 	private def autoImport(QualifiedNameReference reference) {
-		if (reference.fullyQualified && (reference.isType || reference.variable)) {
-
-			// reference.shortName for constants is in form 'CascadeType.DELETE_ORPHAN' we have to cut only class name
-			val refShortName = reference.shortName
-			val dotPos = refShortName.indexOf('.')
-			val shortName = if(dotPos == -1) refShortName else refShortName.substring(0, dotPos) // skip unqualified type references
-
+		if (reference.isType || reference.fullyQualified) {
+			val shortTypeName = reference.shortTypeName
+	
 			// Check if import already defined
-			if (imports.contains(reference.qualifiedName)) {
+			if (imports.contains(reference.qualifiedTypeName)) {
 				textEdit.addChild(reference.renameTextEdit)
 			} else // Check if this types short name collides with an already used short name
-			if (!importShortNames.contains(shortName)) {
+			if (!importShortNames.contains(shortTypeName)) {
 				textEdit.addChild(reference.renameTextEdit)
-				addImport(reference, shortName)
+				addImport(reference, shortTypeName)
 			}
 		}
 	}
 
-	private def addImport(QualifiedNameReference reference, String shortName) {
-		additionalImports += reference.qualifiedName
-		imports += reference.qualifiedName
-		importShortNames += shortName
+	private def addImport(QualifiedNameReference reference, String shortTypeName) {
+		additionalImports += reference.qualifiedTypeName
+		imports += reference.qualifiedTypeName
+		importShortNames += shortTypeName
 	}
 
 	private def autoImport(ImportReference reference) {

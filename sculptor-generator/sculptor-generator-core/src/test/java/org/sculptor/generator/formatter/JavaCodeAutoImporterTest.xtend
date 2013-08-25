@@ -34,8 +34,6 @@ class JavaCodeAutoImporterTest {
 				class Test {
 					private java.util.Map<java.lang.String, java.lang.String> map = new java.util.HashMap<java.lang.String, java.lang.String>();
 					private com.acme.Foo foo;
-					@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-					private java.util.Date createdDate;
 
 					public Test(com.acme.Foo foo) {
 						com.acme.Bar bar = foo;
@@ -55,20 +53,15 @@ class JavaCodeAutoImporterTest {
 				import com.acme.Foo;
 				import java.lang.IllegalArgumentException;
 				import java.lang.String;
-				import java.util.Date;
 				import java.util.HashMap;
 				import java.util.Map;
 				import java.util.Properties;
-				import javax.persistence.Temporal;
-				import javax.persistence.TemporalType;
 
 
 				@org.junit.Test(expected = IllegalArgumentException.class)
 				class Test {
 					private Map<String, String> map = new HashMap<String, String>();
 					private Foo foo;
-					@Temporal(TemporalType.TIMESTAMP)
-					private Date createdDate;
 
 					public Test(Foo foo) {
 						Bar bar = foo;
@@ -83,7 +76,42 @@ class JavaCodeAutoImporterTest {
 	}
 
 	@Test
-	def testReplaceQualifiedTypesConstants() {
+	def testReplaceQualifiedTypesMethodAccess() {
+		val source = new JavaCodeAutoImporter().replaceQualifiedTypes(
+			'''
+				package com.acme;
+
+				/// Insert imports here ///
+
+				class Test {
+					public Test() {
+						com.acme.Bar bar = com.acme.Foo.bar();
+						return org.springframework.http.HttpStatus.NOT_FOUND.value();
+					}
+
+				}
+			''', '/// Insert imports here ///')
+		assertEquals(
+			'''
+				package com.acme;
+
+				import com.acme.Bar;
+				import com.acme.Foo;
+				import org.springframework.http.HttpStatus;
+
+
+				class Test {
+					public Test() {
+						Bar bar = Foo.bar();
+						return HttpStatus.NOT_FOUND.value();
+					}
+
+				}
+			'''.toString, source)
+	}
+
+	@Test
+	def testReplaceQualifiedNamesConstants() {
 		val source = new JavaCodeAutoImporter().replaceQualifiedTypes(
 			'''
 				package com.acme;
@@ -92,14 +120,13 @@ class JavaCodeAutoImporterTest {
 				
 				class Test {
 
-					@Cascade(cascade = javax.persistence.CascadeType.ALL)
-					@Cascade(cascade = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+					@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+					private java.util.Date createdDate;
+
+					@org.hibernate.annotations.Cascade(cascade = javax.persistence.CascadeType.ALL)
+					@org.hibernate.annotations.Cascade(cascade = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 					public List<Media> findByTitle(String title) {
-						List<ConditionalCriteria> condition = org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor(Media.class)
-								.withProperty(org.sculptor.example.library.media.domain.MediaProperties.title()).eq(title).build();
-				
-						List<Media> result = findByCondition(condition);
-						return result;
+						return org.springframework.http.HttpStatus.NOT_FOUND.value();
 					}
 				
 				}
@@ -108,21 +135,23 @@ class JavaCodeAutoImporterTest {
 			'''
 				package com.acme;
 				
+				import java.util.Date;
 				import javax.persistence.CascadeType;
-				import org.sculptor.example.library.media.domain.MediaProperties;
-				import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
-
-
+				import javax.persistence.Temporal;
+				import javax.persistence.TemporalType;
+				import org.hibernate.annotations.Cascade;
+				import org.springframework.http.HttpStatus;
+				
+				
 				class Test {
 				
+					@Temporal(TemporalType.TIMESTAMP)
+					private Date createdDate;
+
 					@Cascade(cascade = CascadeType.ALL)
 					@Cascade(cascade = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 					public List<Media> findByTitle(String title) {
-						List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Media.class)
-								.withProperty(MediaProperties.title()).eq(title).build();
-				
-						List<Media> result = findByCondition(condition);
-						return result;
+						return HttpStatus.NOT_FOUND.value();
 					}
 				
 				}
