@@ -585,9 +585,9 @@ class Helper {
 	}
 
 	def dispatch Collection<Service> getDelegateServices(Resource resource) {
-		val res = resource.operations.filter[op | op.delegate?.serviceDelegate != null].map[op | op.delegate.serviceDelegate.service].toList
-		res.addAll(resource.serviceDependencies)
-		res.toSet
+		val srvc = resource.operations.filter[op | op.delegate != null].map[op | op.delegate.service].toList
+		srvc.addAll(resource.serviceDependencies)
+		srvc.toSet
 	}
 
 	def String getSetAccessor(NamedElement element) {
