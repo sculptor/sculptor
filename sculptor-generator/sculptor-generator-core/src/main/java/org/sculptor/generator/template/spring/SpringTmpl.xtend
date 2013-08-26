@@ -79,7 +79,7 @@ def String spring(Application it) {
 	«IF cacheProvider() == "EhCache"»
 		«ehcacheTmpl.ehcacheXml(it)»
 	«ENDIF»
-	
+
 	«IF mongoDb()»
 		«mongodb(it)»
 	«ENDIF»
@@ -87,26 +87,26 @@ def String spring(Application it) {
 	«IF isTestToBeGenerated()»
 		«applicationContextTest(it)»
 		«springPropertiesTest(it)»
-	«moreTest(it)»
-	«interceptorTest(it)»
-	«IF jpa()»
-		«IF !isJpaProviderAppEngine()»
-			«entityManagerFactoryTest(it)»
+		«moreTest(it)»
+		«interceptorTest(it)»
+		«IF jpa()»
+			«IF !isJpaProviderAppEngine()»
+				«entityManagerFactoryTest(it)»
+			«ENDIF»
+			«IF !isJpaProviderAppEngine() || (cacheProvider() == "EhCache")»
+				«ehcacheTmpl.ehcacheTestXml(it)»
+			«ENDIF»
 		«ENDIF»
-		«IF !isJpaProviderAppEngine() || (cacheProvider() == "EhCache")»
-			«ehcacheTmpl.ehcacheTestXml(it)»
+		«IF isPubSubToBeGenerated()»
+			«IF getProperty("integration.product") == "camel"»
+				«camelTmpl.camelTestConfig(it)»
+			«ELSEIF getProperty("integration.product") == "spring-integration"»
+				«springIntegrationTmpl.springIntegrationTestConfig(it)»
+			«ENDIF»
 		«ENDIF»
-	«ENDIF»
-	«IF isPubSubToBeGenerated()»
-		«IF getProperty("integration.product") == "camel"»
-			«camelTmpl.camelTestConfig(it)»
-		«ELSEIF getProperty("integration.product") == "spring-integration"»
-			«springIntegrationTmpl.springIntegrationTestConfig(it)»
+		«IF mongoDb()»
+			«mongodbTest(it)»
 		«ENDIF»
-	«ENDIF»
-	«IF mongoDb()»
-		«mongodbTest(it)»
-	«ENDIF»
 	«ENDIF»
 	'''
 }
@@ -241,7 +241,7 @@ def String springPropertyConfigTest(Application it) {
 def String springProperties(Application it) {
 	fileOutput(it.getResourceDir("spring") + "spring.properties", OutputSlot::TO_RESOURCES, '''
 	«IF applicationServer() == "jboss"»
-	jndi.port=1099
+		jndi.port=4447
 	«ENDIF»
 	'''
 	)
@@ -258,63 +258,62 @@ def String generatedSpringProperties(Application it) {
 	fileOutput(it.getResourceDir("spring") + "generated-spring.properties", OutputSlot::TO_GEN_RESOURCES, '''
 	# Default configuration properties, possible to override in spring.properties
 	«IF applicationServer() == "jboss"»
-	jndi.port=1099
+		jndi.port=4447
 	«ENDIF»
 	«IF getSpringRemotingType() == "rmi" »
-	rmiRegistry.port=1199
+		rmiRegistry.port=1199
 	«ENDIF»
 	«IF mongoDb()»
-	mongodb.dbname=«name»
-	mongodb.url1=localhost:27017
-	mongodb.url2=
-	mongodbOptions.connectionsPerHost=10
-	mongodbOptions.threadsAllowedToBlockForConnectionMultiplier=5
-	mongodbOptions.connectTimeout=0
-	mongodbOptions.socketTimeout=0
-	mongodbOptions.autoConnectRetry=false
+		mongodb.dbname=«name»
+		mongodb.url1=localhost:27017
+		mongodb.url2=
+		mongodbOptions.connectionsPerHost=10
+		mongodbOptions.threadsAllowedToBlockForConnectionMultiplier=5
+		mongodbOptions.connectTimeout=0
+		mongodbOptions.socketTimeout=0
+		mongodbOptions.autoConnectRetry=false
 	«ENDIF»
 	«IF isSpringDataSourceSupportToBeGenerated()»
-	# datasource provider
-	jdbc.dataSourceClassName=org.apache.commons.dbcp.BasicDataSource
-	«IF dbProduct == "mysql"»
-	# datasource properties for MySQL
-	jdbc.driverClassName=com.mysql.jdbc.Driver
-	jdbc.url=jdbc:mysql://localhost/«name.toFirstLower()»
-	jdbc.username=«name.toFirstLower()»
-	«ELSEIF dbProduct == "oracle"»
-	# datasource properties for Oracle
-	jdbc.driverClassName=oracle.jdbc.OracleDriver
-	jdbc.url=jdbc:oracle:thin:@localhost:1521:XE
-	jdbc.username=«name.toFirstLower()»
-	«ELSEIF dbProduct == "hsqldb-inmemory"»
-	# datasource properties for HSQLDB
-	jdbc.driverClassName=org.hsqldb.jdbcDriver
-	jdbc.url=jdbc:hsqldb:mem:«name.toFirstLower()»
-	jdbc.username=sa
-	«ELSEIF dbProduct == "postgresql"»
-	# datasource properties for PostgreSQL
-	jdbc.driverClassName=org.postgresql.Driver
-	jdbc.url=jdbc:postgresql://localhost/«name.toFirstLower()»
-	jdbc.username=«name.toFirstLower()»
-	«ELSE»
-	jdbc.driverClassName=
-	jdbc.url=
-	jdbc.username=
-	«ENDIF»
-	jdbc.password=
+		# datasource provider
+		jdbc.dataSourceClassName=org.apache.commons.dbcp.BasicDataSource
+		«IF dbProduct == "mysql"»
+			# datasource properties for MySQL
+			jdbc.driverClassName=com.mysql.jdbc.Driver
+			jdbc.url=jdbc:mysql://localhost/«name.toFirstLower()»
+			jdbc.username=«name.toFirstLower()»
+		«ELSEIF dbProduct == "oracle"»
+			# datasource properties for Oracle
+			jdbc.driverClassName=oracle.jdbc.OracleDriver
+			jdbc.url=jdbc:oracle:thin:@localhost:1521:XE
+			jdbc.username=«name.toFirstLower()»
+		«ELSEIF dbProduct == "hsqldb-inmemory"»
+			# datasource properties for HSQLDB
+			jdbc.driverClassName=org.hsqldb.jdbcDriver
+			jdbc.url=jdbc:hsqldb:mem:«name.toFirstLower()»
+			jdbc.username=sa
+		«ELSEIF dbProduct == "postgresql"»
+			# datasource properties for PostgreSQL
+			jdbc.driverClassName=org.postgresql.Driver
+			jdbc.url=jdbc:postgresql://localhost/«name.toFirstLower()»
+			jdbc.username=«name.toFirstLower()»
+		«ELSE»
+			jdbc.driverClassName=
+			jdbc.url=
+			jdbc.username=
+		«ENDIF»
+		jdbc.password=
 	«ENDIF»
 	«IF isInjectDrools()»
-	# Drools properties
-	drools.rule-source=/CompanyPolicy.xml
-	drools.rule-refresh=300
-	drools.catch-all-exceptions=false
+		# Drools properties
+		drools.rule-source=/CompanyPolicy.xml
+		drools.rule-refresh=300
+		drools.catch-all-exceptions=false
 	«ENDIF»
 	«IF it.hasConsumers() && isEar() »
-	connectionFactory.jndiName=ConnectionFactory
-	invalidMessageDestination.jndiName=queue/«name.toLowerCase()».invalidMessageQueue
-	java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
-	java.naming.provider.url=localhost
-	java.naming.factory.url.pkgs=org.jnp.interfaces:org.jboss.naming
+		connectionFactory.jndiName=jms/ConnectionFactory
+		invalidMessageDestination.jndiName=queue/«name.toLowerCase()».invalidMessageQueue
+		java.naming.factory.initial=org.jboss.naming.remote.client.InitialContextFactory
+		java.naming.provider.url=remote://localhost:4447
 	«ENDIF»
 	'''
 	)
