@@ -32,3 +32,4 @@ src/test/generated/resources/dbunit/EmptyDatabase.xml=1c3834060bf5445ff82c9d635e
 src/main/resources/logback.xml=044f61b6086e634cfae9cfe894ab5473
 src/test/generated/resources/Interceptor-test.xml=e1e13829a006279292ed1c4b0d301c9f
 src/test/generated/resources/META-INF/persistence-test.xml=608f47961dc3c54874afa0dbf9331155
+src/main/webapp/index.jsp=0fa047fac6e92afcc3558998bc369c2d

@@ -235,6 +235,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 					buildContext.refresh(outletResOnceDir);
 					buildContext.refresh(outletSrcDir);
 					buildContext.refresh(outletResDir);
+					buildContext.refresh(outletWebrootDir);
 					buildContext.refresh(outletSrcTestOnceDir);
 					buildContext.refresh(outletResTestOnceDir);
 					buildContext.refresh(outletSrcTestDir);

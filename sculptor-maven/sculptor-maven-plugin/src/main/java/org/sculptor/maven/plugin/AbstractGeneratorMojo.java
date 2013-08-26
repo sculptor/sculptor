@@ -245,6 +245,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 								|| fileName
 										.startsWith(getProjectRelativePath(outletResOnceDir))
 								|| fileName
+										.startsWith(getProjectRelativePath(outletWebrootDir))
+								|| fileName
 										.startsWith(getProjectRelativePath(outletSrcTestOnceDir))
 								|| fileName
 										.startsWith(getProjectRelativePath(outletResTestOnceDir))) {

@@ -27,7 +27,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 
-	private static final String ONE_SHOT_GENERATED_FILE = "src/main/java/com/acme/test/domain/Foo.java";
+	private static final String ONE_SHOT_GENERATED_FILE = "src/main/webapp/index.jsp";
 	private static final String GENERATED_FILE = "src/generated/java/com/acme/test/domain/Bar.java";
 	private static final String UNKNOWN_FILE = "src/generated/resources/unknown.properties";
 
@@ -39,6 +39,8 @@ public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 
 	public void testDeleteGeneratedFilesAll() throws Exception {
 		CleanMojo mojo = createMojo(createProject("test2"));
+		assertTrue(new File(mojo.getProject().getBasedir(),
+				ONE_SHOT_GENERATED_FILE).exists());
 
 		assertTrue(mojo.deleteGeneratedFiles());
 		assertFalse(new File(mojo.getProject().getBasedir(),
@@ -71,6 +73,9 @@ public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 
 	public void testExecute() throws Exception {
 		CleanMojo mojo = spy(createMojo(createProject("test2")));
+		assertTrue(new File(mojo.getProject().getBasedir(),
+				ONE_SHOT_GENERATED_FILE).exists());
+
 		mojo.execute();
 		assertFalse(new File(mojo.getProject().getBasedir(),
 				ONE_SHOT_GENERATED_FILE).exists());
