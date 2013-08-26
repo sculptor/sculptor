@@ -21,7 +21,6 @@ import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
-import org.sculptor.generator.template.common.EhCacheTmpl
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.template.common.LogConfigTmpl
 import org.sculptor.generator.template.consumer.ConsumerTmpl
@@ -63,7 +62,6 @@ class RootTmpl {
 	@Inject private var SpringTmpl springTmpl
 	@Inject private var UMLGraphTmpl uMLGraphTmpl
 	@Inject private var ServiceTmpl serviceTmpl
-	@Inject private var EhCacheTmpl ehcacheTmpl
 
 	@Inject extension Properties properties
 	@Inject extension Helper helper
