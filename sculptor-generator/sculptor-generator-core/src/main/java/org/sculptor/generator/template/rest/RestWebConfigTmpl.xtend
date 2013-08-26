@@ -1,14 +1,30 @@
+/*
+ * Copyright 2013 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.sculptor.generator.template.rest
 
 import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.template.web.JSFCrudGuiConfigContextTmpl
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
 class RestWebConfigTmpl {
 
-	@Inject private var JSFCrudGuiConfigContextTmpl jSFCrudGuiConfigContextTmpl
+	@Inject private var RestWebContextTmpl contextTmpl
 
 	@Inject extension Helper helper
 
@@ -16,7 +32,7 @@ def String config(Application it) {
 	'''
 		«webXml(it)»
 		«restServletXml(it)»
-		«jSFCrudGuiConfigContextTmpl.contextXml(it)»
+		«contextTmpl.contextXml(it)»
 	'''
 }
 
@@ -91,6 +107,12 @@ def String webXml(Application it) {
 		<!-- Displays a stack trace -->
 		<location>/WEB-INF/jsp/uncaughtException.jsp</location>
 	</error-page>
+
+	<resource-ref>
+	    <res-ref-name>jdbc/applicationDS</res-ref-name>
+	    <res-type>javax.sql.DataSource</res-type>
+	    <res-auth>Container</res-auth>
+	</resource-ref>
 	
 	</web-app>	
 	'''
@@ -105,13 +127,13 @@ def String restServletXml(Application it) {
 	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
 		xmlns:oxm="http://www.springframework.org/schema/oxm"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 				http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
 
 	<context:component-scan base-package="«basePackage»" use-default-filters="false">
-				    <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
-			</context:component-scan> 
+	    <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+	</context:component-scan> 
 	
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">

@@ -1,13 +1,13 @@
 /*
- * Copyright 2008 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.template.web
+package org.sculptor.generator.template.rest
 
 import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
@@ -24,7 +24,7 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 
-class JSFCrudGuiConfigContextTmpl {
+class RestWebContextTmpl {
 
 	@Inject extension Helper helper
 	@Inject extension PropertiesBase propertiesBase
@@ -74,13 +74,14 @@ def String tomcatContextXml(Application it) {
 	'''
 	)
 }
+
 def String jettyContextXml(Application it) {
 	fileOutput("WEB-INF/jetty-env.xml", OutputSlot::TO_WEBROOT, '''
 	<?xml version="1.0"?>
-	<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
-	<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+	<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+	<Configure class="org.eclipse.jetty.webapp.WebAppContext">
 	«IF !nosql()»
-	<New id="«dataSourceName(it)»" class="org.mortbay.jetty.plus.naming.Resource">
+	<New id="«dataSourceName(it)»" class="org.eclipse.jetty.plus.jndi.Resource">
 		<Arg>jdbc/«dataSourceName(it)»</Arg>
 		<Arg>
 			<New class="org.springframework.jdbc.datasource.DriverManagerDataSource">

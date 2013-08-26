@@ -51,7 +51,7 @@ def String resource(Resource it) {
 def String resourceBase(Resource it) {
 	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
 	«javaHeader()»
-	package «getRestPackage()»;
+	package «it.getRestPackage()»;
 
 /// Sculptor code formatter imports ///
 
@@ -75,18 +75,18 @@ def String resourceBase(Resource it) {
 		}
 		
 		«IF isServiceContextToBeGenerated()»
-		«serviceContext(it)»
+			«serviceContext(it)»
 		«ENDIF»
 		
 		«initBinder(it)»
 		
-		«delegateServices(it) »
-			
-		«it.operations.filter(op | !op.isImplementedInGapClass()).map[resourceMethod(it)]»
+		«delegateServices(it)»
 		
-		«it.operations.filter(op | op.isImplementedInGapClass()) .map[resourceAbstractMethod(it)]»
+		«it.operations.filter(op | !op.isImplementedInGapClass()).map[resourceMethod(it)].join()»
 		
-		«it.operations.filter(e|e.httpMethod == HttpMethod::POST || e.httpMethod == HttpMethod::PUT).map[resourceMethodFromForm(it)]»
+		«it.operations.filter(op | op.isImplementedInGapClass()) .map[resourceAbstractMethod(it)].join()»
+		
+		«it.operations.filter(e|e.httpMethod == HttpMethod::POST || e.httpMethod == HttpMethod::PUT).map[resourceMethodFromForm(it)].join()»
 		
 		«handleExceptions(it)»
 		
@@ -97,9 +97,9 @@ def String resourceBase(Resource it) {
 }
 
 def String resourceSubclass(Resource it) {
-	fileOutput(javaFileName(getRestPackage() + "." + name), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(it.getRestPackage() + "." + name), OutputSlot::TO_SRC, '''
 	«javaHeader()»
-	package «getRestPackage()»;
+	package «it.getRestPackage()»;
 
 /// Sculptor code formatter imports ///
 
@@ -175,7 +175,7 @@ def String springControllerAnnotation(Resource it) {
 
 def String delegateServices(Resource it) {
 	'''
-	«FOR delegateService  : it.getDelegateServices()»
+	«FOR delegateService : it.getDelegateServices()»
 		@org.springframework.beans.factory.annotation.Autowired
 		private «getServiceapiPackage(delegateService)».«delegateService.name» «delegateService.name.toFirstLower()»;
 
@@ -265,9 +265,9 @@ def String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter m
 def String resourceUpdateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation putOperation) {
 	'''
 		«val firstParam  = putOperation.parameters.head»
-		«val getOperation = resource.operations .findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.domainObjectType == firstParam.domainObjectType && e.type == null && e.collectionType == null)»
+		«val getOperation = resource.operations.findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.domainObjectType == firstParam.domainObjectType && e.type == null && e.collectionType == null)»
 		«val findByIdOperation  = getOperation.delegate»
-		«IF findByIdOperation == null »
+		«IF findByIdOperation == null»
 			// TODO: can't update due to no matching findById method in service
 		«ELSE »
 			«findByIdOperation.getTypeName()» «firstParam.name» =
@@ -326,7 +326,7 @@ def String resourceMethodReturn(ResourceOperation it) {
 def String resourceMethodModelMapResult(ResourceOperation it) {
 	'''
 		«val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")»
-		«IF modelMapParam != null && delegate.getTypeName() != "void"»
+		«IF modelMapParam != null && it.delegate.getTypeName() != "void"»
 			«modelMapParam.name».addAttribute("result", result);
 		«ENDIF»
 	'''
@@ -360,23 +360,29 @@ def String paramTypeAndName(Parameter it) {
 	'''
 }
 
-/* Must format this carefully because it is included in comment */
 def String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean formData) {
-	'''« IF op.httpMethod == HttpMethod::DELETE && domainObjectType != null && domainObjectType.getIdAttribute() != null && op.path.contains("{id}")
-	»@org.springframework.web.bind.annotation.PathVariable("id") «domainObjectType.getIdAttributeType()» id« ELSE
-	»«IF op.path.contains("{" + name + "}") »@org.springframework.web.bind.annotation.PathVariable("«name»") «
-	ELSEIF formData && domainObjectType != null
-	»@org.springframework.web.bind.annotation.ModelAttribute("«name»") « ELSEIF domainObjectType != null
-	»@org.springframework.web.bind.annotation.RequestBody « ELSEIF it.isRestRequestParameter()
-	»@org.springframework.web.bind.annotation.RequestParam("«name»") « ENDIF
-	»«it.getTypeName()» «name»« ENDIF
-»'''
+	'''
+	«IF op.httpMethod == HttpMethod::DELETE && domainObjectType != null && domainObjectType.getIdAttribute() != null && op.path.contains("{id}")
+		»@org.springframework.web.bind.annotation.PathVariable("id") «domainObjectType.getIdAttributeType()» id
+	«ELSE»
+		«IF op.path.contains("{" + name + "}")»
+			@org.springframework.web.bind.annotation.PathVariable("«name»") 
+		«ELSEIF formData && domainObjectType != null»
+			@org.springframework.web.bind.annotation.ModelAttribute("«name»") 
+		«ELSEIF domainObjectType != null»
+			@org.springframework.web.bind.annotation.RequestBody 
+		«ELSEIF it.isRestRequestParameter()»
+			@org.springframework.web.bind.annotation.RequestParam("«name»") 
+		«ENDIF»
+		«it.getTypeName()» «name»
+	«ENDIF»
+	'''
 }
 
 def String handleExceptions(Resource it) {
 	'''
 	«val allExceptions = it.operations.filter(e | e.^throws != null).map(e | e.exceptions()).flatten.toSet()»
-	«allExceptions.filter(e|e.endsWith("NotFoundException")).map[handleNotFoundException(it)]»
+	«allExceptions.filter(e|e.endsWith("NotFoundException")).map[handleNotFoundException(it)].join()»
 	«handleIllegalArgumentException("java.lang.IllegalArgumentException")»
 	«handleIllegalArgumentException(fw("errorhandling.ValidationException"))»
 	«handleSystemException(fw("errorhandling.SystemException"))»
