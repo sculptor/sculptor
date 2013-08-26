@@ -234,11 +234,11 @@ def String resourceMethodFromForm(ResourceOperation it) {
 def String resourceMethodHandWritten(ResourceOperation it) {
 	val postOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
 	val putOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
-	val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")
+	val modelMapParam = it.parameters.findFirst(e | e.type == "ModelMap")
 	'''
 	«IF name == "createForm" && returnString != null && modelMapParam != null && postOperation != null»
 		«resourceCreateFormMethodHandWritten(it, modelMapParam, postOperation)»
-	«ELSEIF name == "updateForm" && returnString != null && modelMapParam != null»
+	«ELSEIF name == "updateForm" && returnString != null && modelMapParam != null && putOperation != null»
 		«resourceUpdateFormMethodHandWritten(it, modelMapParam, putOperation)»
 	«ELSE»
 		// TODO Auto-generated method stub
