@@ -18,6 +18,8 @@
 #end
 #if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
 	<packaging>ejb</packaging>
+#elseif( $rest == "true" || $rest == "y" || $rest == "yes")
+	<packaging>war</packaging>
 #end
 	<name>New Sculptor Project :: Business Tier</name>
 
@@ -97,6 +99,44 @@
 					</excludes>
 				</configuration>
 			</plugin>
+#elseif( $rest == "true" || $rest == "y" || $rest == "yes")
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<packagingExcludes>
+						WEB-INF/classes/*.dot,
+						WEB-INF/classes/*.png,
+						WEB-INF/classes/*.html,
+						WEB-INF/classes/*.css
+					</packagingExcludes>
+				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.eclipse.jetty</groupId>
+			    <artifactId>jetty-maven-plugin</artifactId>
+			    <version>9.0.5.v20130815</version>
+			    <configuration>
+			        <webAppConfig>
+			            <contextPath>/</contextPath>
+			        </webAppConfig>
+			        <port>8888</port>
+			        <stopKey>STOP</stopKey>
+			        <stopPort>8889</stopPort>
+			        <systemProperties>
+			            <!-- enable easy JMX connection to JConsole -->
+			            <systemProperty>
+			                <name>com.sun.management.jmxremote</name>
+			                <value />
+			            </systemProperty>
+			            <systemProperty>
+			                <name>jetty.port</name>
+			                <value>8888</value>
+			            </systemProperty>
+			        </systemProperties>
+			        <scanIntervalSeconds>30</scanIntervalSeconds>
+			    </configuration>
+			</plugin>
 #else
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -159,6 +199,33 @@
 			<version>1.0.1.Final</version>
 			<!-- Add scope provided when deployed in jboss -->
 			<scope>provided</scope>
+		</dependency>
+#elseif( $rest == "true" || $rest == "y" || $rest == "yes")
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>servlet-api</artifactId>
+		    <version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webmvc</artifactId>
+		    <version>${spring-version}</version>
+		</dependency>
+		<dependency>
+		   <groupId>org.springframework</groupId>
+		   <artifactId>org.springframework.oxm</artifactId>
+		   <version>${spring-version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.codehaus.jackson</groupId>
+		    <artifactId>jackson-mapper-lgpl</artifactId>
+		    <version>1.9.13</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.thoughtworks.xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.4.4</version>
 		</dependency>
 #end
 		<dependency>
