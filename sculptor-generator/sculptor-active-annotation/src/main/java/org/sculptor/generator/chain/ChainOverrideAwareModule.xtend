@@ -158,8 +158,6 @@ class ChainOverrideAwareModule extends AbstractModule {
 	) {
 		if (needsToBeChained.isEmpty)
 			return object
-		
-		
 
 		var result = object
 		val className = needsToBeChained.pop
