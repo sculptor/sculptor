@@ -98,6 +98,10 @@
 					<useManifestOnlyJar>false</useManifestOnlyJar>
 					<!-- Run every test class in a newly forked JVM -->
 					<reuseForks>false</reuseForks>
+					<excludes>
+						<exclude>**/UMLGraphTmplTest.java</exclude>
+						<exclude>**/DomainObjectReferenceAnnotationTmplTest.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
