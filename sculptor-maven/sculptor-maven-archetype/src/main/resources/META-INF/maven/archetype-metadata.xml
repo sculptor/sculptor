@@ -12,6 +12,9 @@
 		<requiredProperty key="ejb">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
+		<requiredProperty key="rest">
+			<defaultValue>false</defaultValue>
+		</requiredProperty>
 	</requiredProperties>
 
 	<fileSets>
