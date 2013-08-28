@@ -23,7 +23,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ConsumerEjbTmpl {
 
 	@Inject private var ConsumerTmpl consumerTmpl

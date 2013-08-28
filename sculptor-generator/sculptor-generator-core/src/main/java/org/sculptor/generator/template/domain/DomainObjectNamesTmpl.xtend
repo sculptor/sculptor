@@ -26,7 +26,9 @@ import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Trait
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectNamesTmpl {
 
 	@Inject extension Helper helper

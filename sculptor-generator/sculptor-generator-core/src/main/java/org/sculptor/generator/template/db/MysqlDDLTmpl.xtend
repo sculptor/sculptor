@@ -29,7 +29,9 @@ import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Reference
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class MysqlDDLTmpl {
 
 	@Inject extension DbHelperBase dbHelperBase
@@ -204,7 +206,7 @@ def String extendsForeignKey(DomainObject it, boolean initialComma) {
 		«it.^extends.getExtendsForeignKeyName()» «it.^extends.getForeignKeyType()» NOT NULL	'''
 }
 
-def extendsForeignKeyAlter(DomainObject it) {
+def String extendsForeignKeyAlter(DomainObject it) {
 	'''
 	-- Entity «name» extends «^extends.getRootExtends().name»
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT FK_«getDatabaseName(it)»_«^extends.getExtendsForeignKeyName()»

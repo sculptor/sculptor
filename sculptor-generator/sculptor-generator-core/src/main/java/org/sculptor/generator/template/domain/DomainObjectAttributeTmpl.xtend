@@ -23,7 +23,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.DomainObject
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectAttributeTmpl {
 
 	@Inject extension HelperBase helperBase

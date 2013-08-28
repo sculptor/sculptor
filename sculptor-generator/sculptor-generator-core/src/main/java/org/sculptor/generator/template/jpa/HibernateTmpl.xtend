@@ -27,7 +27,9 @@ import sculptormetamodel.Application
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.Reference
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class HibernateTmpl {
 
 	@Inject extension DbHelper dbHelper

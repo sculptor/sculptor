@@ -23,7 +23,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class RestWebContextTmpl {
 
 	@Inject extension Helper helper

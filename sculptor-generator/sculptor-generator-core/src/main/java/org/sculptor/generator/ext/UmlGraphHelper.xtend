@@ -32,7 +32,9 @@ import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.ValueObject
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 public class UmlGraphHelper {
 	@Inject var SingularPluralConverter singularPluralConverter
 
@@ -117,7 +119,7 @@ public class UmlGraphHelper {
 		retVal.filter[e | e != from].toSet
 	}
 
-	def visibleModules(Application app) {
+	def Iterable<Module> visibleModules(Application app) {
 		app.modules.filter[e | e.visible()]
 	}
 

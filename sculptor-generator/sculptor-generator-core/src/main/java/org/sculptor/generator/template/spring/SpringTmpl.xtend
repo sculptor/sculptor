@@ -32,7 +32,9 @@ import sculptormetamodel.CommandEvent
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.Service
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class SpringTmpl {
 
 	@Inject private var CamelTmpl camelTmpl

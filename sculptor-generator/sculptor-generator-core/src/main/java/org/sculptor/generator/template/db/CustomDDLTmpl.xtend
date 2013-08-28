@@ -20,7 +20,9 @@ package org.sculptor.generator.template.db
 import javax.inject.Inject
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class CustomDDLTmpl {
 
 	@Inject extension HelperBase helperBase

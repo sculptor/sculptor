@@ -25,7 +25,9 @@ import org.sculptor.generator.template.db.OracleDDLTmpl
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class OpenJpaTmpl {
 
 	@Inject private var OracleDDLTmpl oracleDDLTmpl

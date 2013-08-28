@@ -25,7 +25,9 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.RepositoryOperation
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class AccessObjectTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl

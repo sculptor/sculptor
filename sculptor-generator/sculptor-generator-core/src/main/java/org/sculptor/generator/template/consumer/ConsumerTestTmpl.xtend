@@ -24,7 +24,9 @@ import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ConsumerTestTmpl {
 
 	@Inject private var DbUnitTmpl dbUnitTmpl

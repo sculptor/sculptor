@@ -22,7 +22,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Publish
 import sculptormetamodel.Subscribe
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class PubSubTmpl {
 
 	@Inject extension HelperBase helperBase

@@ -29,7 +29,9 @@ import sculptormetamodel.HttpMethod
 import sculptormetamodel.Parameter
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ResourceTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl

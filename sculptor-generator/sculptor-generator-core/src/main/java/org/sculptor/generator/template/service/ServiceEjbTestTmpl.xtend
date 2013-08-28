@@ -24,7 +24,9 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Service
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ServiceEjbTestTmpl {
 
 	@Inject private var ServiceTestTmpl serviceTestTmpl

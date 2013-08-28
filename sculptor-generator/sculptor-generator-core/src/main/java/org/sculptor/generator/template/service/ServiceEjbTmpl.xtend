@@ -28,7 +28,9 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ServiceEjbTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl

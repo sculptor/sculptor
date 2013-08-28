@@ -28,7 +28,9 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Trait
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectPropertiesTmpl {
 
 	@Inject extension DbHelper dbHelper

@@ -24,7 +24,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectAttributeAnnotationTmpl {
 
 	@Inject extension DbHelperBase dbHelperBase

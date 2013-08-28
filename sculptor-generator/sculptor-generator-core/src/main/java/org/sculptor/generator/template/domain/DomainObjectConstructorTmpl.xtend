@@ -28,7 +28,9 @@ import sculptormetamodel.Event
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.TypedElement
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectConstructorTmpl {
 
 	@Inject extension HelperBase helperBase

@@ -56,7 +56,9 @@ import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
 import org.sculptor.generator.formatter.JavaCodeFormatter
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class Helper {
 
 	static val LOG = LoggerFactory::getLogger(typeof(Helper))
@@ -133,7 +135,7 @@ class Helper {
 	}
 
 	// TODO VYHODIT
-	def isGenerateQuick() {
+	def boolean isGenerateQuick() {
 		false
 	}
 
@@ -872,9 +874,9 @@ class Helper {
 			domainObject.getExtends.getAllEnumReferences()
 	}
 
-	def Attribute getIdentifierAttribute(Enum ^enum) {
-		if (enum.hasNaturalKey())
-			enum.attributes.findFirst[a | a.naturalKey]
+	def Attribute getIdentifierAttribute(Enum enumVal) {
+		if (enumVal.hasNaturalKey())
+			enumVal.attributes.findFirst[a | a.naturalKey]
 		else
 			null
 	}
@@ -1330,8 +1332,8 @@ class Helper {
 		op.repository.getAggregateRootTypeName() + "Properties"
 	}
 
-	def boolean isOrdinaryEnum(Enum ^enum) {
-		enum.getIdentifierAttribute() == null
+	def boolean isOrdinaryEnum(Enum enumVal) {
+		enumVal.getIdentifierAttribute() == null
 	}
 
 	def Enum getEnum(Reference ref) {
@@ -1428,8 +1430,8 @@ class Helper {
 		op.getThrows != null && op.getThrows.contains(op.getNotFoundExceptionName(false))
 	}
 
-	def String removeSurrounding(String s, String char) {
-		if (s.startsWith(char) && s.endsWith(char))
+	def String removeSurrounding(String s, String charVal) {
+		if (s.startsWith(charVal) && s.endsWith(charVal))
 			s.substring(1, s.length -1)
 		else
 			s

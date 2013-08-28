@@ -26,7 +26,9 @@ import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Attribute
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectReferenceAnnotationTmpl {
 
 	@Inject extension DbHelperBase dbHelperBase

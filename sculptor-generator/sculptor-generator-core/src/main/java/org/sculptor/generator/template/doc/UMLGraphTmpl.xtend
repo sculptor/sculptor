@@ -20,7 +20,9 @@ import sculptormetamodel.Operation
 import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class UMLGraphTmpl {
 
 	@Inject extension HelperBase helperBase

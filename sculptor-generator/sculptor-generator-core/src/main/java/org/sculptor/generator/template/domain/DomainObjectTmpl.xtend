@@ -30,7 +30,9 @@ import sculptormetamodel.Enum
 import sculptormetamodel.EnumValue
 import sculptormetamodel.Parameter
 import sculptormetamodel.Trait
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DomainObjectTmpl {
 
 	@Inject private var ExceptionTmpl exceptionTmpl

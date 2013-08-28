@@ -26,7 +26,9 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DataNucleusTmpl {
 
 	@Inject extension DbHelperBase dbHelperBase

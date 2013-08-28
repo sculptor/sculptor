@@ -26,7 +26,9 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.DomainObject
 import org.sculptor.generator.util.HelperBase
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class JPATmpl {
 
 	@Inject private var HibernateTmpl hibernateTmpl

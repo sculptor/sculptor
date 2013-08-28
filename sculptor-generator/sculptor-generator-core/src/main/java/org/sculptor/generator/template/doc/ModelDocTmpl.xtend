@@ -30,7 +30,9 @@ import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ModelDocTmpl {
 
 	@Inject private var ModelDocCssTmpl modelDocCssTmpl

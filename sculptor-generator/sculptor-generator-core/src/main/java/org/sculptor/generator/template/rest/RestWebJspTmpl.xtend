@@ -26,7 +26,9 @@ import sculptormetamodel.Application
 import sculptormetamodel.HttpMethod
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class RestWebJspTmpl {
 
 	@Inject extension HelperBase helperBase

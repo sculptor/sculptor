@@ -24,7 +24,9 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class DbUnitTmpl {
 
 	@Inject extension DbHelperBase dbHelperBase

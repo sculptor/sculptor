@@ -31,7 +31,9 @@ import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Enum
 import sculptormetamodel.Reference
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class OracleDDLTmpl {
 
 	@Inject extension DbHelperBase dbHelperBase

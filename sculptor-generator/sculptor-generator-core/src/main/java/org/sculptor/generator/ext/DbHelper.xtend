@@ -31,7 +31,9 @@ import sculptormetamodel.InheritanceType
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.SculptormetamodelFactory
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 public class DbHelper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
@@ -194,8 +196,8 @@ public class DbHelper {
 		getHintOrDefault(ref, "databaseLength", length)
 	}
 
-	def boolean isOfTypeString(sculptormetamodel.Enum ^enum) {
-		"String" == enum.getEnumType()
+	def boolean isOfTypeString(sculptormetamodel.Enum enumVal) {
+		"String" == enumVal.getEnumType()
 	}
 
 	def String getCascadeType(Reference ref) {

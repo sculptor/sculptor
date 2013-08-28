@@ -21,7 +21,9 @@ import com.google.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class EhCacheTmpl {
 
 	@Inject extension Helper helper

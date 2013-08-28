@@ -24,7 +24,9 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.XmlHelperBase
 import sculptormetamodel.Consumer
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ConsumerEjbTestTmpl {
 
 	@Inject private var ConsumerTestTmpl consumerTestTmpl

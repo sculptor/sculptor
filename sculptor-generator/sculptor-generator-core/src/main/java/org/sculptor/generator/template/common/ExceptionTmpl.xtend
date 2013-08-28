@@ -25,7 +25,9 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Module
 import sculptormetamodel.Operation
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class ExceptionTmpl {
 
 	@Inject extension HelperBase helperBase

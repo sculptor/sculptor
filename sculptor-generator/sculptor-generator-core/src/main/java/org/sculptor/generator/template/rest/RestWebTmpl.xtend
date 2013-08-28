@@ -4,7 +4,9 @@ import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class RestWebTmpl {
 
 	@Inject private var RestWebConfigTmpl restWebConfigTmpl

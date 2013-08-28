@@ -21,7 +21,9 @@ import javax.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class RestWebConfigTmpl {
 
 	@Inject private var RestWebContextTmpl contextTmpl
