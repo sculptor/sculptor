@@ -61,7 +61,7 @@ class ChainOverrideHelper {
 		val sb = new StringBuilder(methodDecl.simpleName.toUpperCase)
 		methodDecl.parameters.forEach [ param |
 			sb.append("_")
-			sb.append(param.type.simpleName.toUpperCase)
+			sb.append(param.type.simpleName.replaceAll("[<>]", "").toUpperCase)
 		]
 		sb.toString
 	}
