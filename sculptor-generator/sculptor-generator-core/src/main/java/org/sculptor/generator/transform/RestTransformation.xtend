@@ -55,9 +55,9 @@ class RestTransformation {
 		operation.parameters.filter(e | e.domainObjectType != null).map[e | e.domainObjectType].forEach[addXmlRootHint()]
 	}
 
-	def String defaultReturn(ResourceOperation operation) {
+	private def String defaultReturn(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".return"
-		val propKey2 =  "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".return"
+		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".return"
 		val value = 
 			(if (hasProperty(propKey1))
 				getProperty(propKey1)
@@ -68,9 +68,9 @@ class RestTransformation {
 			value.replacePlaceholders(operation)
 	}
 
-	def String defaultHttpMethod(ResourceOperation operation) {
+	private def String defaultHttpMethod(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".httpMethod"
-		val propKey2 =  "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".httpMethod"
+		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".httpMethod"
 		if (hasProperty(propKey1))
 			getProperty(propKey1)
 		else if (hasProperty(propKey2))
@@ -79,9 +79,9 @@ class RestTransformation {
 			"GET"
 	}
 
-	def String defaultPath(ResourceOperation operation) {
+	private def String defaultPath(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".path"
-		val propKey2 =  "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".path"
+		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".path"
 		val value = 
 			(if (hasProperty(propKey1))
 				getProperty(propKey1)
@@ -92,43 +92,41 @@ class RestTransformation {
 		value.replacePlaceholders(operation)
 	}
 
-	def String replacePlaceholders(String str, ResourceOperation op) {
-		str.replaceRecourceNamePlaceholder(op)
-			.replaceOperationNamePlaceholder(op)
-			.replaceParamNamePlaceholders(op)
+	private def String replacePlaceholders(String str, ResourceOperation op) {
+		str.replaceRecourceNamePlaceholder(op).replaceOperationNamePlaceholder(op).replaceParamNamePlaceholders(op)
 	}
 
-	def String replaceRecourceNamePlaceholder(String str, ResourceOperation op) {
+	private def String replaceRecourceNamePlaceholder(String str, ResourceOperation op) {
 		str.replaceAll("\\$\\{resourceName}", op.resource.getDomainResourceName().toFirstLower())
 	}
 	
-	def String replaceOperationNamePlaceholder(String str, ResourceOperation op) { 
+	private def String replaceOperationNamePlaceholder(String str, ResourceOperation op) { 
 		str.replaceAll("\\$\\{operationName}", op.name)
 	}
 	
-	def addModelMapParameter(ResourceOperation op) {
+	private def addModelMapParameter(ResourceOperation op) {
 		op.parameters.add(op.createModelMapParameter())
 	}
 	
-	def create FACTORY.createParameter createModelMapParameter(ResourceOperation op) {
+	private def create FACTORY.createParameter createModelMapParameter(ResourceOperation op) {
 		setName("modelMap")
 		setType("ModelMap")
 	}
 	
-	def addIdParameter(ResourceOperation op) {
+	private def addIdParameter(ResourceOperation op) {
 		op.parameters.add(op.createIdParameter())
 	}
 
-	def create FACTORY.createParameter createIdParameter(ResourceOperation op) {
+	private def create FACTORY.createParameter createIdParameter(ResourceOperation op) {
 		setName("id")
 		setType("IDTYPE")
 	}
 
-	def addThrowsException(ResourceOperation op) {
+	private def addThrowsException(ResourceOperation op) {
 		op.setThrows("java.lang.Exception")
 	}
 	
-	def addXmlRootHint(DomainObject domainObject) {
+	private def addXmlRootHint(DomainObject domainObject) {
 		domainObject.addHint("xmlRoot=true")
 	}	
 

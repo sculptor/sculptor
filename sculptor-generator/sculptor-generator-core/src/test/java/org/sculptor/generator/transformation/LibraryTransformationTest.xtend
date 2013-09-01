@@ -93,9 +93,6 @@ class LibraryTransformationTest extends XtextTest{
 		val dslModel = modelRoot as DslModel
 		
 		dslModel
-		
-        //val URI uri = URI::createURI(resourceRoot + "/" + "library.btdesign");
-        //loadModel(resourceSet, uri, getRootObjectType(uri)) as DslModel;
 	}
 	
 	
