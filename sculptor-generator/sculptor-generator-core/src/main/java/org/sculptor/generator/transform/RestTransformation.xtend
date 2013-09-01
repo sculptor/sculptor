@@ -48,7 +48,7 @@ class RestTransformation {
 				(operation.delegate != null || operation.name == "createForm" || operation.name == "updateForm") &&
 				!operation.parameters.exists(e | e.type == "ModelMap" || e.type == "Model"))
 			operation.addModelMapParameter()
-		if (operation.throws == null && (operation.httpMethod == HttpMethod::DELETE || operation.name == "updateForm"))
+		if ((operation.throws == null || operation.throws == "") && (operation.httpMethod == HttpMethod::DELETE || operation.name == "updateForm"))
 			operation.addThrowsException()
 		if (operation.domainObjectType != null)
 			operation.domainObjectType.addXmlRootHint()

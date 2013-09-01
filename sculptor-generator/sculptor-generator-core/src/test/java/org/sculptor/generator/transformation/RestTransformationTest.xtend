@@ -67,27 +67,58 @@ class RestTransformationTest extends XtextTest {
 	}
 
 	def getDomainModel() {
-		testFileNoSerializer("generator-tests/rest/model.btdesign")
+		testFileNoSerializer("generator-tests/rest/model.btdesign", "generator-tests/rest/model-person.btdesign")
 		val dslModel = modelRoot as DslModel
 		
 		dslModel
 	}
 
-    private def Module module() {
-        return app.modules.namedElement("module1")
+    private def Module restModule() {
+        return app.modules.namedElement("rest")
+    }
+
+    private def Module personModule() {
+        return app.modules.namedElement("person")
     }
 
     private def Resource personResource() {
-        val person = module().resources.namedElement("PersonResource")
+        val person = restModule.resources.namedElement("PersonResource")
         assertNotNull(person)
         person
     }
 
     private def Resource customerResource() {
-        val customer = module().resources.namedElement("CustomerResource")
+        val customer = restModule.resources.namedElement("CustomerResource")
         assertNotNull(customer)
         customer
     }
+
+    @Test
+	def void assertApplication() {
+		assertEquals("ResourceTest", app.getName())
+	}
+
+	@Test
+	def void assertModules() {
+		val modules = app.getModules()
+		assertNotNull(modules)
+		assertOneAndOnlyOne(modules, "rest", "person")
+	}
+
+	@Test
+	def void assertRestModule() {
+		val module = restModule
+		assertOneAndOnlyOne(module.domainObjects, "SomeDto", "Customer")
+		assertOneAndOnlyOne(module.services, "CustomerService")
+		assertOneAndOnlyOne(module.resources, "PersonResource", "FooBarResource", "CustomerResource")
+	}
+
+	@Test
+	def void assertDomainModule() {
+		val module = personModule
+		assertOneAndOnlyOne(module.domainObjects, "Person")
+		assertOneAndOnlyOne(module.services, "PersonService")
+	}
 
     @Test
     def void assertPersonCreateForm() {
@@ -111,6 +142,7 @@ class RestTransformationTest extends XtextTest {
         assertEquals("/person/{id}/form", updateForm.getPath())
         assertEquals("person/update", updateForm.getReturnString())
         assertOneAndOnlyOne(updateForm.getParameters(), "id", "modelMap")
+        assertEquals("java.lang.Exception", updateForm.getThrows())
     }
 
     @Test
@@ -122,6 +154,7 @@ class RestTransformationTest extends XtextTest {
         assertEquals("/person/{id}", findById.getPath())
         assertEquals("person/show", findById.getReturnString())
         assertOneAndOnlyOne(findById.getParameters(), "modelMap")
+        assertEquals("org.sculptor.example.rest.person.exception.PersonNotFoundException", findById.getThrows())
     }
 
     @Test
@@ -168,11 +201,12 @@ class RestTransformationTest extends XtextTest {
         assertEquals(HttpMethod.DELETE, delete.getHttpMethod())
         assertEquals("/person/{id}", delete.getPath())
         assertEquals("redirect:/rest/person", delete.getReturnString())
+        assertEquals("java.lang.Exception", delete.getThrows())
     }
 
     @Test
     def void assertFooBarResource() {
-        val foobar = module().resources.namedElement("FooBarResource")
+        val foobar = restModule.resources.namedElement("FooBarResource")
         assertNotNull(foobar)
 
         val foo = foobar.operations.namedElement("foo")
@@ -206,7 +240,7 @@ class RestTransformationTest extends XtextTest {
 
     @Test
     def void assertXmlRoot() {
-        val foobar = module().resources.namedElement("FooBarResource")
+        val foobar = restModule.resources.namedElement("FooBarResource")
         val something = foobar.operations.namedElement("something")
         val p = something.parameters.get(0)
         val someDto = p.getDomainObjectType()

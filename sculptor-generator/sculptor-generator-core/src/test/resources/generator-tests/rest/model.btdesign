@@ -1,7 +1,9 @@
+import "classpath:/generator-tests/rest/model-person.btdesign"
+
 Application ResourceTest {
     basePackage=org.sculptor.example.rest
 
-    Module module1 {
+    Module rest {
     	
     	Resource PersonResource {
     		findById => PersonService.findById;
@@ -11,23 +13,6 @@ Application ResourceTest {
     		update => PersonService.save;
     		delete => PersonService.delete;
     		findAll => PersonService.findAll;
-    	}
-    	
-    	Service PersonService {
-    		findById => PersonRepository.findById;
-    		findAll => PersonRepository.findAll;
-    		save => PersonRepository.save;
-    		delete => PersonRepository.delete;
-    	}
-    	
-    	Entity Person {
-    		String name
-    		Repository PersonRepository {
-    			findById;
-    			save;
-    			delete;
-    			findAll;
-    		}
     	}
     	
     	Resource FooBarResource {
@@ -43,7 +28,7 @@ Application ResourceTest {
     	Resource CustomerResource {
     		scaffold
     	}
-    	
+
     	Entity Customer {
     		scaffold
     		String name;

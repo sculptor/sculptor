@@ -1,0 +1,23 @@
+ApplicationPart Person {
+
+    Module person {
+    	
+    	Service PersonService {
+    		findById => PersonRepository.findById;
+    		findAll => PersonRepository.findAll;
+    		save => PersonRepository.save;
+    		delete => PersonRepository.delete;
+    	}
+    	
+    	Entity Person {
+    		String name
+    		Repository PersonRepository {
+    			findById;
+    			save;
+    			delete;
+    			findAll;
+    		}
+    	}
+
+    }
+}
