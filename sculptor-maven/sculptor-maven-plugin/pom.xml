@@ -76,7 +76,7 @@
 					<pomIncludes>
 						<pomInclude>test*/pom.xml</pomInclude>
 					</pomIncludes>
-					<streamLogs>false</streamLogs>
+					<streamLogs>true</streamLogs>
 					<preBuildHookScript>setup</preBuildHookScript>
 					<postBuildHookScript>verify</postBuildHookScript>
 					<localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
