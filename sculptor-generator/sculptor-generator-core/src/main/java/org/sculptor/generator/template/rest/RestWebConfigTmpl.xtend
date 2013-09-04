@@ -111,7 +111,7 @@ def String webXml(Application it) {
 	</error-page>
 
 	<resource-ref>
-	    <res-ref-name>jdbc/applicationDS</res-ref-name>
+	    <res-ref-name>java:/jdbc/«dataSourceName(it)»</res-ref-name>
 	    <res-type>javax.sql.DataSource</res-type>
 	    <res-auth>Container</res-auth>
 	</resource-ref>
