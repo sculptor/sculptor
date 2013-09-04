@@ -74,7 +74,7 @@ class ChainOverrideHelper {
 	}
 
 	/**
-	 * @return Fully qualified name of method indexes interface
+	 * @return Fully qualified name of dispatch class
 	 */
 	protected static def getDispatchClassName(Type overrideableClass) {
 		overrideableClass.qualifiedName + "MethodDispatch"
