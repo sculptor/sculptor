@@ -503,6 +503,10 @@ class Properties {
 		getBooleanProperty("generate.spring.annotation.tx")
 	}
 
+	def boolean isSpringTxAdviceToBeGenerated() {
+		jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())
+	}
+
 	def boolean isSpringDataSourceSupportToBeGenerated() {
 		getBooleanProperty("generate.spring.dataSourceSupport")
 	}

@@ -170,7 +170,7 @@ def String applicationContext(Application it) {
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more.xml")»"/>
 		«IF it.hasConsumers() && isEar() »
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml")»"/>
-		«ENDIF »
+		«ENDIF»
 		«IF mongoDb()»
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb.xml")»"/>
 		«ENDIF»
@@ -397,11 +397,11 @@ def String beanRefContext(Application it) {
 
 def String interceptor(Application it) {
 	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), OutputSlot::TO_GEN_RESOURCES, '''
-	«IF isWar() »
+	«IF isWar()»
 		«headerWithMoreNamespaces(it)»
 	«ELSE »
 		«headerWithMoreNamespaces(it)»
-	«ENDIF »
+	«ENDIF»
 
 		«aspectjAutoproxy(it)»
 	
@@ -421,22 +421,22 @@ def String interceptor(Application it) {
 		«ENDIF»
 		«IF isServiceContextToBeGenerated()»
 			<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
-		«ENDIF »
+		«ENDIF»
 		«IF mongoDb()»
 			<bean id="mongodbManagerAdvice" class="«fw("accessimpl.mongodb.DbManagerAdvice")»" >
 				<property name="dbManager" ref="mongodbManager" />
 			</bean>
-		«ENDIF »
+		«ENDIF»
 		«IF isInjectDrools()»
 			<bean id="droolsAdvice" class="«fw('drools.DroolsAdvice')»">
 				<property name="droolsRuleSet" value="${drools.rule-source}"/>
 				<property name="updateInterval" value="${drools.rule-refresh}"/>
 				<property name="catchAllExceptions" value="${drools.catch-all-exceptions}"/>
 			</bean>
-		«ENDIF »
+		«ENDIF»
 	
-		«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
-			«txAdvice(it)»
+		«IF isSpringTxAdviceToBeGenerated()»
+			«txAdvice(it, false)»
 		«ENDIF»
 	
 		«aopConfig(it) »
@@ -462,14 +462,14 @@ def String jpaInterceptor(Application it) {
 	'''
 }
 
-def String txAdvice(Application it) {
+def String txAdvice(Application it, boolean isInComment) {
 	'''
 	<tx:advice id="txAdvice" transaction-manager="txManager">
 		<tx:attributes>
-			<!-- all methods starting with 'get' or 'find' are read-only -->
+			<!-«IF !isInComment»-«ENDIF» all methods starting with 'get' or 'find' are read-only «IF !isInComment»-«ENDIF»->
 			<tx:method name="get*" read-only="true"/>
 			<tx:method name="find*" read-only="true"/>
-			<!-- all other methods are transactional and ApplicationException will cause rollback -->
+			<!-«IF !isInComment»-«ENDIF» all other methods are transactional and ApplicationException will cause rollback «IF !isInComment»-«ENDIF»->
 			<tx:method name="*" read-only="false" rollback-for="«applicationExceptionClass()»"/>
 		</tx:attributes>
 	</tx:advice>
@@ -490,14 +490,14 @@ def String aopConfig(Application it) {
 		«IF it.hasConsumers()»
 			<aop:pointcut id="messageConsumer"
 				expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>
-		«ENDIF »
+		«ENDIF»
 
-		«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
+		«IF isSpringTxAdviceToBeGenerated()»
 			<aop:advisor pointcut-ref="businessService" advice-ref="txAdvice" order="1" />
-		«ENDIF »
+		«ENDIF»
 		«IF isServiceContextToBeGenerated()»
 			<aop:advisor pointcut-ref="businessService" advice-ref="serviceContextStoreAdvice" order="2" />
-		«ENDIF »
+		«ENDIF»
 		<aop:advisor pointcut-ref="businessService" advice-ref="errorHandlingAdvice" order="3" />
 		«IF isJpaProviderHibernate()»
 			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateErrorHandlingAdvice" order="4" />
@@ -516,12 +516,12 @@ def String aopConfig(Application it) {
 		«ENDIF»
 
 		«IF it.hasConsumers()»
-			«IF jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())»
+			«IF isSpringTxAdviceToBeGenerated()»
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="txAdvice" order="1" />
-			«ENDIF »
+			«ENDIF»
 			«IF isServiceContextToBeGenerated()»
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="serviceContextStoreAdvice" order="2" />
-			«ENDIF »
+			«ENDIF»
 			<aop:advisor pointcut-ref="messageConsumer" advice-ref="errorHandlingAdvice" order="3" />
 			«IF isJpaProviderHibernate()»
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateErrorHandlingAdvice" order="4" />
@@ -531,7 +531,7 @@ def String aopConfig(Application it) {
 			«IF mongoDb()»
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="mongodbManagerAdvice" order="5" />
 			«ENDIF»
-		«ENDIF »
+		«ENDIF»
 	</aop:config>
 	'''
 }
@@ -550,10 +550,10 @@ def String interceptorTest(Application it) {
 
 def String aopConfigTest(Application it) {
 	'''
-	«IF !isWar() »
+	«IF !isWar()»
 		<!-- When isWar txAdvice is already included in included Interceptor.xml, but otherwise we need it for testing -->
 		<!-- TODO remove
-		«txAdvice(it) »
+		«txAdvice(it, true) »
 		-->
 	«ENDIF»
 
@@ -588,7 +588,7 @@ def String sessionFactory(Application it) {
 	«header(it)»
 		«IF isWar() »
 			«txManager(it)»
-		«ENDIF »
+		«ENDIF»
 
 		«IF isSpringDataSourceSupportToBeGenerated()»
 			«dataSource(it)»
@@ -644,7 +644,7 @@ def String sessionFactoryInMemory(Application it, boolean test) {
 
 		«IF isWar() »
 			«txManager(it)»
-		«ENDIF »
+		«ENDIF»
 
 		«hsqldbDataSource(it)»
 
