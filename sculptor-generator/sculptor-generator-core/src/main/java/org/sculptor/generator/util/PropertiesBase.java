@@ -293,6 +293,7 @@ public class PropertiesBase {
 		}
 		defaultProperties.setProperty("generate.resource", "false");
 		defaultProperties.setProperty("generate.restWeb", "false");
+		defaultProperties.setProperty("generate.jpa.annotation", "false");
 	}
 
 	private void initDerivedDefaultsForJpa(Properties defaultProperties) {
