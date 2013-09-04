@@ -27,7 +27,7 @@
 		<eclipse-release>kepler</eclipse-release>
 		<tycho-version>0.18.1</tycho-version>
 		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
-		<xtext-version>2.4.2</xtext-version>
+		<xtext-version>2.4.3</xtext-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.13</logback-version>
 		<junit-version>4.11</junit-version>
@@ -65,11 +65,6 @@
 		<pluginRepository>
 			<id>central</id>
 			<url>http://repo.maven.apache.org/maven2</url>
-		</pluginRepository>
-		<!-- Repository to resolve xtend-maven-plugin -->
-		<pluginRepository>
-			<id>xtend</id>
-			<url>http://build.eclipse.org/common/xtend/maven/</url>
 		</pluginRepository>
 		<!-- Repository to resolve fornax-oaw-m2-plugin -->
 		<pluginRepository>

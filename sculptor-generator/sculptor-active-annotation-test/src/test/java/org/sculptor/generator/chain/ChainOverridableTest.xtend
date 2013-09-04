@@ -47,15 +47,15 @@ class ChainOverridableTest {
 			)
 
 			// Check the AST if the generated extension class has the public non-final methods of the annotated class
-			assertNotNull('No public method', annotatedClass.findMethod('overridableMethod'))
-			assertNotNull('No overriden method', annotatedClass.findMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
+			assertNotNull('No public method', annotatedClass.findDeclaredMethod('overridableMethod'))
+			assertNotNull('No overriden method', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
 
 			// Check the AST if the generated extension class has no public final methods of the annotated class
-			assertNull('Final method renamed', annotatedClass.findMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
+			assertNull('Final method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
 
-			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findMethod("_getOverridesDispatchArray"))
+			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findDeclaredMethod("_getOverridesDispatchArray"))
 						
-			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findMethod("_chained__getOverridesDispatchArray"))
+			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findDeclaredMethod("_chained__getOverridesDispatchArray"))
 						
 			val indexInterface = findInterface('ChainOverridableTestTemplateMethodIndexes')
 			assertNotNull(indexInterface)
@@ -126,28 +126,28 @@ class ChainOverridableTest {
 			val annotatedClass = findClass('ChainOverridableDispatchTestTemplate')
 			assertNotNull(annotatedClass)
 
-			val pubMethod = annotatedClass.findMethod("dispatchTest", typeof(Object).newTypeReference())
+			val pubMethod = annotatedClass.findDeclaredMethod("dispatchTest", typeof(Object).newTypeReference())
 			assertNotNull(pubMethod)
 			assertFalse(pubMethod.returnType.isVoid)
 			assertEquals("java.lang.Integer", pubMethod.returnType.name)
 			
-			val strMethod = annotatedClass.findMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + "dispatchTest", typeof(Object).newTypeReference())
+			val strMethod = annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + "dispatchTest", typeof(Object).newTypeReference())
 			assertNotNull(strMethod)
 			assertFalse(strMethod.returnType.isVoid)
 			assertEquals("Integer", strMethod.returnType.name)
 			
 //			// Check the AST if the generated extension class has the public non-final methods of the annotated class
-//			assertNotNull('No public method', annotatedClass.findMethod('overridableMethod'))
-//			assertNotNull('No overriden method', annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
+//			assertNotNull('No public method', annotatedClass.findDeclaredMethod('overridableMethod'))
+//			assertNotNull('No overriden method', annotatedClass.findDeclaredMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
 //
-//			assertNotNull('No next dispatch method', annotatedClass.findMethod('next_overridableMethod'))
+//			assertNotNull('No next dispatch method', annotatedClass.findDeclaredMethod('next_overridableMethod'))
 //
 //			// Check the AST if the generated extension class has no public final methods of the annotated class
-//			assertNull('Final method renamed', annotatedClass.findMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
+//			assertNull('Final method renamed', annotatedClass.findDeclaredMethod(ChainOverridableProcessor::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
 //
-//			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findMethod("_getOverridesDispatchArray"))
+//			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findDeclaredMethod("_getOverridesDispatchArray"))
 //						
-//			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findMethod("_chained__getOverridesDispatchArray"))
+//			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findDeclaredMethod("_chained__getOverridesDispatchArray"))
 //						
 //			val indexInterface = findInterface('ChainOverridableTestTemplateMethodIndexes')
 //			assertNotNull(indexInterface)
