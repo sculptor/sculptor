@@ -22,6 +22,7 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import org.sculptor.generator.chain.ChainOverridable
+import org.sculptor.generator.ext.Properties
 
 @ChainOverridable
 class RestWebConfigTmpl {
@@ -29,6 +30,7 @@ class RestWebConfigTmpl {
 	@Inject private var RestWebContextTmpl contextTmpl
 
 	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 def String config(Application it) {
 	'''
@@ -111,7 +113,11 @@ def String webXml(Application it) {
 	</error-page>
 
 	<resource-ref>
-	    <res-ref-name>java:/jdbc/«dataSourceName(it)»</res-ref-name>
+		«IF applicationServer() == "jboss"»
+			<res-ref-name>java:/jdbc/«dataSourceName(it)»</res-ref-name>
+		«ELSE»
+			<res-ref-name>jdbc/«dataSourceName(it)»</res-ref-name>
+		«ENDIF»
 	    <res-type>javax.sql.DataSource</res-type>
 	    <res-auth>Container</res-auth>
 	</resource-ref>
