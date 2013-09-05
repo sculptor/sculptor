@@ -27,12 +27,14 @@ import sculptormetamodel.HttpMethod
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
 import org.sculptor.generator.chain.ChainOverridable
+import org.sculptor.generator.util.PropertiesBase
 
 @ChainOverridable
 class RestWebJspTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
+	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 def dispatch String jsp(Application it) {
@@ -205,7 +207,7 @@ def String createForm(ResourceOperation it, ResourceOperation postOperation) {
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 	<h2>New «resource.getDomainResourceName()»</h2>
-		<form:form action="/rest«postOperation.path»" method="POST" modelAttribute="«postOperation.parameters.head.name»">
+		<form:form action="«getProperty("rest.contextRoot")»/rest«postOperation.path»" method="POST" modelAttribute="«postOperation.parameters.head.name»">
 		«val formClass = postOperation.parameters.filter(e | e.domainObjectType != null).map(e|e.domainObjectType).head»
 		«IF formClass != null»
 			«FOR att : formClass.attributes.filter(e | !e.isSystemAttribute())»
@@ -235,7 +237,7 @@ def String updateForm(ResourceOperation it, ResourceOperation putOperation) {
 	<h2>Edit «resource.getDomainResourceName()»</h2>
 	«val formClass = putOperation.parameters.filter(e | e.domainObjectType != null).map(e|e.domainObjectType).head»
 	«IF formClass != null»
-		<form:form action="/rest«putOperation.path.replacePlaceholder('{id}', '${' + putOperation.parameters.head.name + '}' ) »" method="PUT" modelAttribute="«putOperation.parameters.head.name»">
+		<form:form action="«getProperty("rest.contextRoot")»/rest«putOperation.path.replacePlaceholder('{id}', '${' + putOperation.parameters.head.name + '}' ) »" method="PUT" modelAttribute="«putOperation.parameters.head.name»">
 			«FOR att : formClass.attributes»
 				«IF att.isAuditableAttribute() »
 				«ELSEIF !att.isChangeable() || att.isSystemAttribute()»
@@ -342,7 +344,7 @@ def String list(ResourceOperation it, ResourceOperation getOperation, ResourceOp
 					«ENDIF»
 					«IF deleteOperation != null»
 					<td>
-						<form:form action="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" method="DELETE">
+						<form:form action="«getProperty("rest.contextRoot")»/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" method="DELETE">
 							<input id="delete" type="submit" value="Delete"/>
 						</form:form>
 					</td>
