@@ -245,7 +245,7 @@ def String persistenceUnitPropertiesHibernate(Application it, String unitName) {
 		<property name="hibernate.show_sql" value="true" />
 		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 	«ENDIF»
-	«persistenceUnitCachePropertiesHibernate(it, unitName)»
+	«persistenceUnitCacheProperties(it, unitName)»
 	«IF isEar()»
 		«persistenceUnitTransactionProperties(it, unitName)»
 		«IF !isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss"»
