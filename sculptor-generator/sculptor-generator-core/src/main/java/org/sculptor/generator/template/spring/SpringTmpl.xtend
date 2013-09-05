@@ -815,7 +815,6 @@ def String entityManagerFactory(Application it) {
 
 		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»
 			<jee:jndi-lookup id="entityManagerFactory" jndi-name="java:/«it.persistenceUnitName()»"/>
-			«entityManagerFactoryTx(it, false)»
 		«ELSE»
 			<!-- Creates a EntityManagerFactory for use with a JPA provider -->
 			«IF isJpaProviderAppEngine()»
@@ -834,9 +833,8 @@ def String entityManagerFactory(Application it) {
 					«ENDIF»
 				</bean>
 			«ENDIF»
-			«entityManagerFactoryTx(it, false)»
 		«ENDIF»
-
+		«entityManagerFactoryTx(it, false)»
 	</beans>
 	'''
 	)
