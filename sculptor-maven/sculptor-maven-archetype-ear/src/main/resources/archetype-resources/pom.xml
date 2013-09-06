@@ -25,12 +25,19 @@
 					<applicationName>${artifactIdBase}</applicationName>
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
 					<modules>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
 						<ejbModule>
+#else
+						<jarModule>
+#end
 							<groupId>${symbol_dollar}{project.groupId}</groupId>
 							<artifactId>${artifactIdBase}</artifactId>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
 						</ejbModule>
+#else
+						</jarModule>
+#end
 					</modules>
-					<fileNameMapping>no-version</fileNameMapping>
 				</configuration>
 			</plugin>
             <plugin>
@@ -45,7 +52,9 @@
 		<dependency>
 			<groupId>${symbol_dollar}{project.groupId}</groupId>
 			<artifactId>${artifactIdBase}</artifactId>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
 			<type>ejb</type>
+#end
 			<version>${symbol_dollar}{project.version}</version>
 		</dependency>
 	</dependencies>
