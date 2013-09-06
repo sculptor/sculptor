@@ -1,0 +1,145 @@
+#set( $artifactIdBaseLength = $artifactId.length() - 4 )
+#set( $artifactIdBase = $artifactId.substring(0, $artifactIdBaseLength) )
+#set( $symbol_dollar = '$' )
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>${groupId}</groupId>
+		<artifactId>${artifactIdBase}-parent</artifactId>
+		<version>${version}</version>
+		<relativePath>../${artifactIdBase}-parent/</relativePath>
+	</parent>
+	<artifactId>${artifactId}</artifactId>
+	<packaging>war</packaging>
+	<name>New Sculptor Project :: Presentation Tier</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sculptor</groupId>
+				<artifactId>sculptor-maven-plugin</artifactId>
+				<version>${symbol_dollar}{sculptor-version}</version>
+				<configuration>
+					<verbose>false</verbose>
+				</configuration>
+				<executions>
+					<execution>
+						<id>cleanup</id>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>code-generation</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>image-generation</id>
+						<goals>
+							<goal>generate-images</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>${groupId}</groupId>
+						<artifactId>${artifactIdBase}</artifactId>
+						<version>${version}</version>
+						<classifier>client</classifier>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<packagingExcludes>
+						WEB-INF/classes/*.dot,
+						WEB-INF/classes/*.png,
+						WEB-INF/classes/*.html,
+						WEB-INF/classes/*.css
+					</packagingExcludes>
+				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.eclipse.jetty</groupId>
+			    <artifactId>jetty-maven-plugin</artifactId>
+			    <version>9.0.5.v20130815</version>
+			    <configuration>
+			        <webAppConfig>
+			            <contextPath>/</contextPath>
+			        </webAppConfig>
+			        <port>8888</port>
+			        <stopKey>STOP</stopKey>
+			        <stopPort>8889</stopPort>
+			        <systemProperties>
+			            <!-- enable easy JMX connection to JConsole -->
+			            <systemProperty>
+			                <name>com.sun.management.jmxremote</name>
+			                <value />
+			            </systemProperty>
+			            <systemProperty>
+			                <name>jetty.port</name>
+			                <value>8888</value>
+			            </systemProperty>
+			        </systemProperties>
+			        <scanIntervalSeconds>30</scanIntervalSeconds>
+			    </configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>${symbol_dollar}{project.groupId}</groupId>
+			<artifactId>${artifactIdBase}</artifactId>
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+			<type>ejb</type>
+#end
+			<version>${symbol_dollar}{project.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>servlet-api</artifactId>
+		    <version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webmvc</artifactId>
+		    <version>${spring-version}</version>
+		</dependency>
+#if( $rest == "true" || $rest == "y" || $rest == "yes")
+		<dependency>
+		   <groupId>org.springframework</groupId>
+		   <artifactId>org.springframework.oxm</artifactId>
+		   <version>${spring-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>org.springframework.beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>org.springframework.core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.codehaus.jackson</groupId>
+		    <artifactId>jackson-mapper-lgpl</artifactId>
+		    <version>1.9.13</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.thoughtworks.xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.4.4</version>
+		</dependency>
+#end
+	</dependencies>
+
+</project>

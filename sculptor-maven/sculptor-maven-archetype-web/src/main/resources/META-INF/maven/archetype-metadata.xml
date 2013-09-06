@@ -6,19 +6,24 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<requiredProperties>
+		<requiredProperty key="rest">
+			<defaultValue>false</defaultValue>
+		</requiredProperty>
 		<requiredProperty key="ejb">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
-		<requiredProperty key="web">
+		<requiredProperty key="ear">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
 	</requiredProperties>
 
 	<fileSets>
-		<fileSet filtered="true">
+	    <fileSet filtered="true">
 			<directory></directory>
 			<includes>
 				<include>pom.xml</include>
+				<include>**/*.btdesign</include>
+				<include>**/*.properties</include>
 			</includes>
 		</fileSet>
 	</fileSets>

@@ -6,7 +6,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<requiredProperties>
-		<requiredProperty key="war">
+		<requiredProperty key="web">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
 		<requiredProperty key="ear">
