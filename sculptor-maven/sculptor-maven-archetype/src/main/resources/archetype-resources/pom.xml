@@ -1,4 +1,8 @@
 #set( $symbol_dollar = '$' )
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#set( $ear = "true" )
+#end
+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -31,7 +35,7 @@
 		<ehcache-version>2.4.7</ehcache-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.13</logback-version>
-		<spring-version>3.2.3.RELEASE</spring-version>
+		<spring-version>3.2.4.RELEASE</spring-version>
 		<spring-webflow-version>2.3.2.RELEASE</spring-webflow-version>
 		<aspectj-version>1.7.2</aspectj-version>
 		<hsqldb-version>2.2.9</hsqldb-version>
@@ -233,7 +237,7 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${symbol_dollar}{hibernate-validator-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -244,7 +248,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -255,7 +259,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -266,20 +270,24 @@
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
 #end
 		</dependency>
-#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${symbol_dollar}{logback-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
+			<scope>provided</scope>
+#else
 			<!-- <scope>provided</scope> -->
+#end
 		</dependency>
+#if( $ear != "true" && $ear != "y" && $ear != "yes")
 		<!-- Remove dependency to javax.transaction when running in a transaction 
 			supporting container (jboss etc) -->
 		<dependency>
@@ -287,14 +295,11 @@
 			<artifactId>javax.transaction-api</artifactId>
 			<version>1.2</version>
 		</dependency>
+#end
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${symbol_dollar}{spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
+			<artifactId>spring-context</artifactId>
 			<version>${symbol_dollar}{spring-version}</version>
 			<exclusions>
 				<exclusion>
@@ -302,11 +307,6 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${symbol_dollar}{spring-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -404,24 +404,28 @@
 			<version>${symbol_dollar}{spring-version}</version>
 			<scope>test</scope>
 		</dependency>
+#end
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.4</version>
 			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
+			<scope>test</scope>
+#else
 			<!-- <scope>test</scope> -->
-		</dependency>
 #end
+		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${symbol_dollar}{hsqldb-version}</version>
+			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 			<scope>test</scope>
 #else
-			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- <scope>test</scope> -->
 #end
 		</dependency>
@@ -477,13 +481,13 @@
 					<artifactId>hibernate-entitymanager</artifactId>
 					<version>${symbol_dollar}{hibernate-version}</version>
 					<!-- Add scope provided when deployed in jboss -->
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 					<scope>provided</scope>
 #else
 					<!-- <scope>provided</scope> -->
 #end
 				</dependency>
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-infinispan</artifactId>
@@ -491,11 +495,15 @@
 					<!-- Add scope provided when deployed in jboss -->
 					<scope>provided</scope>
 				</dependency>
-#else
+#end
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-ehcache</artifactId>
 					<version>${symbol_dollar}{hibernate-version}</version>
+#if( $ear == "true" || $ear == "y" || $ear == "yes")
+					<scope>test</scope>
+#end
 				</dependency>
 #end
 				<dependency>
