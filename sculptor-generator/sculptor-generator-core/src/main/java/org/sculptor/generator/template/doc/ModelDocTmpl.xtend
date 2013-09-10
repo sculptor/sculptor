@@ -392,11 +392,11 @@ def dispatch String domainObjectCharacteristics(Entity it) {
 }
 
 def String notAggregateRootInfo(DomainObject it) {
-	'''
-	«val aggregateRootObject  = it.getAggregateRootObject()»
-	not aggregate root, belongs to 
-		<a href="DomainModelDoc-«aggregateRootObject.getModule().name».html#«aggregateRootObject.name»">«aggregateRootObject.name»</a>
-	'''
+	val aggregateRootObject  = it.getAggregateRootObject()
+	if (aggregateRootObject != null) '''
+			not aggregate root, belongs to 
+				<a href="DomainModelDoc-«aggregateRootObject?.getModule().name».html#«aggregateRootObject.name»">«aggregateRootObject.name»</a>
+	''' else ""
 }
 
 def dispatch String domainObjectCharacteristics(ValueObject it) {
