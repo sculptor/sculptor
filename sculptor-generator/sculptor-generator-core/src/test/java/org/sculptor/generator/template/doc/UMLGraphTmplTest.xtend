@@ -40,11 +40,11 @@ class UMLGraphTmplTest extends XtextTest {
 	
 	@Inject
 	var GeneratorModelTestFixtures generatorModelTestFixtures
-	
+
 	var extension UmlGraphHelper umlGraphHelper
 
 	var UMLGraphTmpl umlGraphTmpl
-	
+
 	@Before
 	def void setupExtensions() {
 		generatorModelTestFixtures.setupModel("generator-tests/doc/model.btdesign")
@@ -54,9 +54,9 @@ class UMLGraphTmplTest extends XtextTest {
 	}
 	
 	def Module coreModule(Application app) {
-        return app.modules.namedElement("core");
-    }
-	
+		return app.modules.namedElement("core");
+	}
+
 	@Test
 	def void assertModel() {
 		val app = generatorModelTestFixtures.app
