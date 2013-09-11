@@ -45,62 +45,62 @@ class OracleDDLTmpl {
 def String ddl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
-	«IF isDdlDropToBeGenerated()»    
-	-- ###########################################
-	-- # Drop
-	-- ###########################################
-	-- Drop index
+	«IF isDdlDropToBeGenerated()»
+		-- ###########################################
+		-- # Drop
+		-- ###########################################
+		-- Drop index
 		«it.getDomainObjectsInCreateOrder(false).map[dropIndex(it)].join()»
 
-	-- Drop many to many relations
+		-- Drop many to many relations
 		«it.resolveManyToManyRelations(false).map[dropTable(it)].join()»
-	-- Drop normal entities
+
+		-- Drop normal entities
 		«it.getDomainObjectsInCreateOrder(false).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[dropTable(it)].join()»
 
-	-- Drop pk sequence
+		-- Drop pk sequence
 		«dropSequence(it)»
 	«ENDIF»
 	-- ###########################################
 	-- # Create
 	-- ###########################################
 	-- Create pk sequence
-		«createSequence(it)»
+	«createSequence(it)»
 
 	-- Create normal entities
-		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[createTable(it)].join()»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[createTable(it)].join()»
 
 	-- Create many to many relations
-		«manyToManyRelations.map[createTable(it)]»
+	«manyToManyRelations.map[createTable(it)].join»
 
 	-- Primary keys
-		«it.getDomainObjectsInCreateOrder(true).filter(d | d.attributes.exists(a|a.name == "id")).map[idPrimaryKey(it)].join()»
-		«manyToManyRelations.map[manyToManyPrimaryKey(it)]»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | d.attributes.exists(a|a.name == "id")).map[idPrimaryKey(it)].join()»
+	«manyToManyRelations.map[manyToManyPrimaryKey(it)].join»
 
 	-- Unique constraints
-		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))) .map[uniqueConstraint(it)].join()»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))) .map[uniqueConstraint(it)].join()»
 
 	-- Foreign key constraints
-		«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[extendsForeignKeyConstraint(it)].join()»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[extendsForeignKeyConstraint(it)].join()»
 
-		«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[foreignKeyConstraint(it)].join()»
-		«manyToManyRelations.map[foreignKeyConstraint(it)].join()»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[foreignKeyConstraint(it)].join()»
+	«manyToManyRelations.map[foreignKeyConstraint(it)].join()»
 
 	-- Index
-		«it.getDomainObjectsInCreateOrder(true).map[index(it)].join()»
-
+	«it.getDomainObjectsInCreateOrder(true).map[index(it)].join()»
 	'''
 	)
 }
 
 def String dropSequence(Application it) {
 	'''
-	drop sequence hibernate_sequence;
+	DROP SEQUENCE hibernate_sequence;
 	'''
 }
 
 def String createSequence(Application it) {
 	'''
-	create sequence hibernate_sequence;
+	CREATE SEQUENCE hibernate_sequence;
 	'''
 }
 
@@ -123,141 +123,111 @@ def String createTable(DomainObject it) {
 }
 
 def String afterCreateTable(DomainObject it) {
-	'''
-	«IF hasHint(it, "tablespace")»
-	TABLESPACE «getHint(it, "tablespace").toUpperCase()»«ENDIF»
-	'''
+	'''«IF hasHint(it, "tablespace")»
+		TABLESPACE «getHint(it, "tablespace").toUpperCase()»«ENDIF»'''
 }
 
 def String columns(DomainObject it, boolean initialComma, Set<String> alreadyDone) {
-	val currentAttributes = it.attributes.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()) || e.isSystemAttributeToPutLast())]
-	alreadyDone.addAll(currentAttributes.map[e | e.getDatabaseName()])
+	val strColumns = new StringBuilder()
+	strColumns.append(it.attributes
+		.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()) || e.systemAttributeToPutLast)]
+		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + column(e, "")]
+		.join
+	)
 
-	val currentBasicTypeReferences = it.getBasicTypeReferences().filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()))]
-	alreadyDone.addAll(currentBasicTypeReferences.map[e | e.getDatabaseName()])
+	strColumns.append(it.getBasicTypeReferences()
+		.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()))]
+		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + containedColumns(e, "", false)]
+		.join
+	)
 
-	val currentEnumReferences = it.getEnumReferences().filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()))]
-	alreadyDone.addAll(currentEnumReferences.map[e | e.getDatabaseName()])
+	strColumns.append(it.getEnumReferences()
+		.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()))]
+		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + enumColumn(e, "", false)]
+		.join
+	)
 
-	val currentUniManyToThisReferences = if (it.module == null) <Reference>newHashSet else it.module.application.modules.map[domainObjects].flatten.map[references].flatten.filter[e | !e.transient && e.to == it && e.many && e.opposite == null && e.isInverse()].filter[e | !(alreadyDone.contains(e.getDatabaseName()))].toSet
-	alreadyDone.addAll(currentUniManyToThisReferences.map[e | e.getDatabaseName()])
+	strColumns.append(if (it.module == null) "" else it.module.application.modules
+		.map[domainObjects].flatten.map[references].flatten
+		.filter[e | !e.transient && e.to == it && e.many && e.opposite == null && e.isInverse()]
+		.filter[e | !(alreadyDone.contains(e.getDatabaseName()))]
+		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + uniManyForeignKeyColumn(e)]
+		.join
+	)
 
-	val currentOneReferences = it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !((e.isOneToOne() && e.isInverse()) || alreadyDone.contains(e.getDatabaseName()))].toSet
-	alreadyDone.addAll(currentOneReferences.map[e | e.getDatabaseName()])
+	strColumns.append(it.references
+		.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation())
+		.filter[e | !((e.isOneToOne() && e.isInverse()) || alreadyDone.contains(e.getDatabaseName()))]
+		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + foreignKeyColumn(e)]
+		.join
+	)
 
-	val currentSystemAttributesToPutLast = it.attributes.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()) || ! e.isSystemAttributeToPutLast() )]
-	alreadyDone.addAll(currentSystemAttributesToPutLast.map[e | e.getDatabaseName()])
-
-	'''
-	«IF initialComma && !currentAttributes.isEmpty»,
-	«ENDIF»
-	«FOR a : currentAttributes SEPARATOR ",\n"»«column(a, "")»
-		«IF (initialComma || !currentAttributes.isEmpty) && !currentOneReferences.isEmpty»,
-		«ENDIF»
-	«ENDFOR»
-	«FOR r : currentOneReferences SEPARATOR ",\n"»«foreignKeyColumn(r)»
-	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty) && !currentUniManyToThisReferences.isEmpty»,
-	«ENDIF»
-	«ENDFOR»
-	«FOR r : currentUniManyToThisReferences SEPARATOR ",\n"»«uniManyForeignKeyColumn(r)»
-	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty || !currentUniManyToThisReferences.isEmpty) && !currentBasicTypeReferences.isEmpty »,
-	«ENDIF»
-	«ENDFOR»
-	«FOR r : currentBasicTypeReferences SEPARATOR ",\n"»«containedColumns(r, "", false)»
-	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty || !currentUniManyToThisReferences.isEmpty || !currentBasicTypeReferences.isEmpty) && !currentEnumReferences.isEmpty »,
-	«ENDIF»
-	«ENDFOR»
-	«FOR r : currentEnumReferences SEPARATOR ",\n"»«enumColumn(r, "", false)»
-	«IF ((initialComma || !currentAttributes.isEmpty) || !currentOneReferences.isEmpty || !currentUniManyToThisReferences.isEmpty || !currentBasicTypeReferences.isEmpty || !currentEnumReferences.isEmpty) && !currentSystemAttributesToPutLast.isEmpty »,
-	«ENDIF»
-	«ENDFOR»
-	«FOR a : currentSystemAttributesToPutLast SEPARATOR ",\n"»«column(a, "")»
-	«ENDFOR»
-	'''
+	strColumns.append(it.attributes
+		.filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName()) || ! e.isSystemAttributeToPutLast() )]
+		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + column(e, "")]
+		.join
+	)
+	if (initialComma || strColumns.length < 2)
+		strColumns.toString
+	else
+		strColumns.substring(2)
 }
 
 def String column(Attribute it, String prefix) {
-	'''
-	«column(it, prefix, false) »
-	'''
+	'''«column(it, prefix, false) »'''
 }
 
 def String column(Attribute it, String prefix, boolean parentIsNullable) {
-	'''
-		«getDatabaseName(prefix, it)» «getDatabaseType()»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»
-	'''
+	'''«getDatabaseName(prefix, it)» «getDatabaseType(it)»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»'''
 }
 
 def String enumColumn(Reference it, String prefix, boolean parentIsNullable) {
-	'''
-		«getDatabaseName(prefix, it)» «getEnumDatabaseType(it)»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»
-	'''
+	'''«getDatabaseName(prefix, it)» «getEnumDatabaseType(it)»«if (parentIsNullable) "" else getDatabaseTypeNullability(it)»'''
 }
 
 def String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
-	val containedAttributes  = it.to.attributes.filter[e | !e.transient]
-	val containedEnumReferences  = it.to.references.filter[r | !r.transient && r.to instanceof Enum]
-	val containedBasicTypeReferences  = it.to.references.filter[r | !r.transient && r.to instanceof BasicType]
-	'''
-		«FOR a : containedAttributes SEPARATOR ", "»
-			«column(a, getDatabaseName(prefix, a), parentIsNullable || nullable)»
-			«IF !containedEnumReferences.isEmpty»
-				«IF !containedAttributes.isEmpty»,
-				«ENDIF»
-			«ENDIF»
-		«ENDFOR»
-		«FOR r : containedEnumReferences SEPARATOR ", "»
-			«enumColumn(r, getDatabaseName(prefix, r), parentIsNullable || nullable)»
-			«IF !containedBasicTypeReferences.isEmpty»
-				«IF !containedAttributes.isEmpty || !containedEnumReferences.isEmpty»,
-				«ENDIF»
-			«ENDIF»
-		«ENDFOR»
-		«FOR b : containedBasicTypeReferences SEPARATOR ", "»
-			«containedColumns(b, getDatabaseName(b), parentIsNullable || nullable)»
-		«ENDFOR»
-	'''
+	val rows = new StringBuilder()
+	rows.append(it.to.attributes.filter[e | !e.transient].map[a | ",\n\t" + column(a, getDatabaseName(prefix, a), parentIsNullable || nullable)].join)
+	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof Enum].map[r | ",\n\t" + enumColumn(r, getDatabaseName(prefix, r), parentIsNullable || nullable)].join)
+	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof BasicType].map[b | containedColumns(b, getDatabaseName(b), parentIsNullable || nullable)].join)
+	if (rows.length < 2)
+		""
+	else
+		rows.substring(2)
 }
 
 def String inheritanceSingleTable(DomainObject it, Set<String> alreadyUsedColumns) {
-	'''
-	,
+	''',
 	«discriminatorColumn(it) »
-	«it.getAllSubclasses().map[s | columns(s,true, alreadyUsedColumns)]»
-	'''
+	«it.getAllSubclasses().map[s | columns(s, true, alreadyUsedColumns)].join»'''
 }
 
 def String discriminatorColumn(DomainObject it) {
-	'''
-		«inheritance.discriminatorColumnName()» «inheritance.getDiscriminatorColumnDatabaseType()» NOT NULL	'''
+	'''«inheritance.discriminatorColumnName()» «inheritance.getDiscriminatorColumnDatabaseType()» NOT NULL'''
 }
 
 def String idPrimaryKey(DomainObject it) {
 	'''
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT PK_«getDatabaseName(it)»
-	PRIMARY KEY («attributes.filter[a | a.name == "id"].head.getDatabaseName()»)
-	«afterIdPrimaryKey(it)»;
+		PRIMARY KEY («attributes.filter[a | a.name == "id"].head.getDatabaseName()»)
+		«afterIdPrimaryKey(it)»;
 	'''
 }
 
 def String afterIdPrimaryKey(DomainObject it) {
-	'''
-	«usingIndexTablespace(it)»
-	'''
+	'''«usingIndexTablespace(it)»'''
 }
 
 def String manyToManyPrimaryKey(DomainObject it) {
 	'''
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT PK_«getDatabaseName(it)»
-	PRIMARY KEY («FOR r : references SEPARATOR ", "»«r.getForeignKeyName()»«ENDFOR»)
-	«afterManyToManyPrimaryKey(it)»;
+		PRIMARY KEY («FOR r : references SEPARATOR ", "»«r.getForeignKeyName()»«ENDFOR»)
+		«afterManyToManyPrimaryKey(it)»;
 	'''
 }
 
 def String afterManyToManyPrimaryKey(DomainObject it) {
-	'''
-	«usingIndexTablespace(it)»
-	'''
+	'''«usingIndexTablespace(it)»'''
 }
 
 def String usingIndexTablespace(DomainObject it) {
@@ -268,33 +238,28 @@ def String usingIndexTablespace(DomainObject it) {
 
 def String foreignKeyColumn(Reference it) {
 	'''
-		«IF it.hasOpposite() && "list" == opposite.getCollectionType()»
+	«IF it.hasOpposite() && "list" == opposite.getCollectionType()»
 		«opposite.getListIndexColumnName()» «getListIndexDatabaseType()»,
-		«ENDIF»
-		«getForeignKeyName(it)» «getForeignKeyType(it) »
-	'''
+	«ENDIF»
+	«getForeignKeyName(it)» «getForeignKeyType(it)»'''
 }
 
 def String uniManyForeignKeyColumn(Reference it) {
 	'''
-		«IF "list" == getCollectionType()»
+	«IF "list" == getCollectionType()»
 		«getListIndexColumnName(it)» «getListIndexDatabaseType()»,
-		«ENDIF»
-		«getOppositeForeignKeyName(it)» «from.getForeignKeyType() »
-	'''
+	«ENDIF»
+	«getOppositeForeignKeyName(it)» «from.getForeignKeyType() »'''
 }
 
 def String extendsForeignKeyColumn(DomainObject it, boolean initialComma) {
-	'''
-	«IF initialComma»,
-	«ENDIF»
-		«^extends.getExtendsForeignKeyName()» «^extends.getForeignKeyType() » NOT NULL
-	'''
+	'''«IF initialComma»,«ENDIF»«
+		^extends.getExtendsForeignKeyName()» «^extends.getForeignKeyType() » NOT NULL'''
 }
 
 def dispatch String foreignKeyConstraint(DomainObject it) {
 	'''
-		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyConstraint(it)]»
+		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyConstraint(it)].join()»
 		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyConstraint(it)].join()»
 	'''
 }
@@ -302,8 +267,8 @@ def dispatch String foreignKeyConstraint(DomainObject it) {
 def dispatch String foreignKeyConstraint(Reference it) {
 	'''
 	ALTER TABLE «from.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(from.getDatabaseName(), getDatabaseName(it))»
-	FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()» («to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»
-	;
+		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()» («to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»
+		;
 	«foreignKeyIndex(it)»
 	'''
 }
@@ -317,8 +282,8 @@ def String foreignKeyIndex(Reference it) {
 def String uniManyForeignKeyConstraint(Reference it) {
 	'''
 	ALTER TABLE «to.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(to.getDatabaseName(), from.getDatabaseName())»
-	FOREIGN KEY («getOppositeForeignKeyName(it)») REFERENCES «from.getRootExtends().getDatabaseName()» («from.getRootExtends().getIdAttribute().getDatabaseName()»)
-	;
+		FOREIGN KEY («getOppositeForeignKeyName(it)») REFERENCES «from.getRootExtends().getDatabaseName()» («from.getRootExtends().getIdAttribute().getDatabaseName()»)
+		;
 	«uniManyForeignKeyIndex(it)»
 	'''
 }
@@ -332,8 +297,8 @@ def String uniManyForeignKeyIndex(Reference it) {
 def String extendsForeignKeyConstraint (DomainObject it) {
 	'''
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT FK_«truncateLongDatabaseName(getDatabaseName(it), ^extends.getDatabaseName())»
-	FOREIGN KEY («^extends.getExtendsForeignKeyName()») REFERENCES «^extends.getRootExtends().getDatabaseName()» («^extends.getRootExtends().getIdAttribute().getDatabaseName()»)
-	;
+		FOREIGN KEY («^extends.getExtendsForeignKeyName()») REFERENCES «^extends.getRootExtends().getDatabaseName()» («^extends.getRootExtends().getIdAttribute().getDatabaseName()»)
+		;
 	«extendsForeignKeyIndex(it)»
 	'''
 }
@@ -348,14 +313,21 @@ def String uniqueConstraint(DomainObject it) {
 	'''
 	«IF hasUniqueConstraints(it)»
 	ALTER TABLE «getDatabaseName(it)»
-	«IF attributes.exists(a | a.isUuid()) »
-		ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE (UUID)
-		«ELSE»ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE («FOR key : getAllNaturalKeys(it) SEPARATOR ", "»«
-	  		IF key.isBasicTypeReference()»«FOR a : (key as Reference).to.getAllNaturalKeys() SEPARATOR ", "»«getDatabaseName(getDatabaseName(key), a)»«ENDFOR»«
-	  		ELSE»«key.getDatabaseName()»«ENDIF»«
-	  		ENDFOR»)
-	«ENDIF»
-	«afterUniqueConstraint(it)»;
+		«IF attributes.exists(a | a.isUuid()) »
+			ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE (UUID)
+		«ELSE»
+			ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE («
+			FOR key : getAllNaturalKeys(it) SEPARATOR ", "»«
+				IF key.isBasicTypeReference()»«
+					FOR a : (key as Reference).to.getAllNaturalKeys() SEPARATOR ", "
+						»«getDatabaseName(getDatabaseName(key), a)»«
+					ENDFOR»«
+				ELSE
+					»«key.getDatabaseName()»«
+				ENDIF»«
+			ENDFOR»)
+		«ENDIF»
+		«afterUniqueConstraint(it)»;
 	«ENDIF»
 	'''
 }
@@ -368,10 +340,10 @@ def String afterUniqueConstraint(DomainObject it) {
 
 def String index(DomainObject it) {
 	'''
-	«it.attributes.filter[a | a.index == true].map[i | index(i, "", it)]»
+	«it.attributes.filter[a | a.index == true].map[i | index(i, "", it)].join()»
 	«it.getBasicTypeReferences().map[containedColumnIndex(it)].join()»
 	«IF isInheritanceTypeSingleTable(it)»
-	«discriminatorIndex(it)»
+		«discriminatorIndex(it)»
 	«ENDIF»
 	'''
 }
@@ -387,13 +359,15 @@ def String index(Attribute it, String prefix, DomainObject domainObject) {
 	'''
 	CREATE INDEX IX_«truncateLongDatabaseName(actualDomainObject.getDatabaseName(), getDatabaseName(prefix, it))»
 		ON «actualDomainObject.getDatabaseName()» («getDatabaseName(prefix, it)» ASC)
-	«afterIndex(it, prefix, domainObject)»;
+		«afterIndex(it, prefix, domainObject)»;
 	'''
 }
 
 def String afterIndex(Attribute it, String prefix, DomainObject domainObject) {
 	'''
-	«IF domainObject.hasHint("tablespace")»    TABLESPACE «domainObject.getHint("tablespace").toUpperCase()»«ENDIF»
+	«IF domainObject.hasHint("tablespace")»
+		TABLESPACE «domainObject.getHint("tablespace").toUpperCase()»
+	«ENDIF»
 	'''
 }
 
@@ -401,23 +375,23 @@ def String discriminatorIndex(DomainObject it) {
 	'''
 	CREATE INDEX IX_«truncateLongDatabaseName(getDatabaseName(it), inheritance.discriminatorColumnName())»
 		ON «getDatabaseName(it)» («inheritance.discriminatorColumnName()» ASC)
-	;
+		;
 	'''
 }
 
 def String dropIndex(DomainObject it) {
 	'''
-	«it.attributes.filter(a | a.index == true).map[a | dropIndex(a, "", it)]»
+	«it.attributes.filter(a | a.index == true).map[a | dropIndex(a, "", it)].join()»
 	«it.getBasicTypeReferences().map[dropContainedColumnIndex(it)].join()»
 	«IF isInheritanceTypeSingleTable(it)»
-	«dropDiscriminatorIndex(it)»
+		«dropDiscriminatorIndex(it)»
 	«ENDIF»
 	'''
 }
 
 def String dropContainedColumnIndex(Reference it) {
 	'''
-		«it.to.attributes.filter(a | a.index == true).map[a | dropIndex(a, getDatabaseName(it) + "_", from)]»
+		«it.to.attributes.filter(a | a.index == true).map[a | dropIndex(a, getDatabaseName(it) + "_", from)].join»
 	'''
 }
 
