@@ -1,7 +1,7 @@
-Application MyApp {
+Application MyWebApp {
     basePackage=${groupId}
 
-    Module mymodule {
+    Module mywebmodule {
 
 #if( $rest == "true" || $rest == "y" || $rest == "yes")
  	    Resource FrontResource {

@@ -6,6 +6,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<requiredProperties>
+		<requiredProperty key="rest">
+			<defaultValue>false</defaultValue>
+		</requiredProperty>
 		<requiredProperty key="standalone">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
@@ -15,7 +18,7 @@
 		<requiredProperty key="ear">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
-		<requiredProperty key="rest">
+		<requiredProperty key="jboss">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
 	</requiredProperties>

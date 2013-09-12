@@ -65,6 +65,13 @@
 					</packagingExcludes>
 				</configuration>
 			</plugin>
+#if( $ear == "true" || $ear == "y" || $ear == "yes" || $jboss == "true" || $jboss == "y" || $jboss == "yes")
+			<plugin>
+				<groupId>org.jboss.as.plugins</groupId>
+				<artifactId>jboss-as-maven-plugin</artifactId>
+				<version>7.4.Final</version>
+			</plugin>
+#else
 			<plugin>
 			    <groupId>org.eclipse.jetty</groupId>
 			    <artifactId>jetty-maven-plugin</artifactId>
@@ -90,6 +97,7 @@
 			        <scanIntervalSeconds>30</scanIntervalSeconds>
 			    </configuration>
 			</plugin>
+#end
 		</plugins>
 	</build>
 

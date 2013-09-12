@@ -1,6 +1,6 @@
 #set( $symbol_dollar = '$' )
-#if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
-#set( $ear = "true" )
+#if( $ejb == "true" || $ejb == "y" || $ejb == "yes" || $ear == "true" || $ear == "y" || $ear == "yes")
+#set( $jboss = "true" )
 #end
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -237,7 +237,7 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${symbol_dollar}{hibernate-validator-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -248,7 +248,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -259,7 +259,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -270,7 +270,7 @@
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${symbol_dollar}{slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
@@ -281,13 +281,13 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${symbol_dollar}{logback-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>provided</scope>
 #else
 			<!-- <scope>provided</scope> -->
 #end
 		</dependency>
-#if( $ear != "true" && $ear != "y" && $ear != "yes")
+#if( $jboss != "true" && $jboss != "y" && $jboss != "yes")
 		<!-- Remove dependency to javax.transaction when running in a transaction 
 			supporting container (jboss etc) -->
 		<dependency>
@@ -411,7 +411,7 @@
 			<version>1.4</version>
 			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>test</scope>
 #else
 			<!-- <scope>test</scope> -->
@@ -423,7 +423,7 @@
 			<version>${symbol_dollar}{hsqldb-version}</version>
 			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 			<scope>test</scope>
 #else
 			<!-- <scope>test</scope> -->
@@ -481,13 +481,13 @@
 					<artifactId>hibernate-entitymanager</artifactId>
 					<version>${symbol_dollar}{hibernate-version}</version>
 					<!-- Add scope provided when deployed in jboss -->
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 					<scope>provided</scope>
 #else
 					<!-- <scope>provided</scope> -->
 #end
 				</dependency>
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-infinispan</artifactId>
@@ -501,7 +501,7 @@
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-ehcache</artifactId>
 					<version>${symbol_dollar}{hibernate-version}</version>
-#if( $ear == "true" || $ear == "y" || $ear == "yes")
+#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
 					<scope>test</scope>
 #end
 				</dependency>

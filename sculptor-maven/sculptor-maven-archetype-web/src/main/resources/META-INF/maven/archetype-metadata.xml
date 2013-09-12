@@ -15,6 +15,9 @@
 		<requiredProperty key="ear">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
+		<requiredProperty key="jboss">
+			<defaultValue>false</defaultValue>
+		</requiredProperty>
 	</requiredProperties>
 
 	<fileSets>
