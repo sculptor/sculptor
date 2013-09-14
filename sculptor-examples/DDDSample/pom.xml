@@ -5,9 +5,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptor</groupId>
-		<artifactId>sculptor-example</artifactId>
+		<artifactId>sculptor-examples</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
+	<groupId>org.sculptor.examples</groupId>
 	<artifactId>DDDSample</artifactId>
 	<name>Sculptor :: Examples :: DDD Sample</name>
 

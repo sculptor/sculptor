@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptor</groupId>
-		<artifactId>sculptor-example</artifactId>
+		<artifactId>sculptor-examples</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
@@ -16,8 +16,9 @@
 		</parent>
 	-->
 
+	<groupId>org.sculptor.examples.mongodb-samples</groupId>
 	<artifactId>sculptor-shipping</artifactId>
-	<name>Sculptor :: Example :: MongoDB :: Shipping</name>
+	<name>Sculptor :: Examples :: MongoDB Samples :: Shipping</name>
 	<description>MongoDB example: Business tier project for sculptor-shipping</description>
 	<!--
 		Remove properties element when using multi module, they are defined in
@@ -69,7 +70,7 @@
 
  				<dependencies>
 					<dependency>
-						<groupId>org.sculptor</groupId>
+						<groupId>org.sculptor.examples.mongodb-samples</groupId>
 						<artifactId>sculptor-shipping-generator</artifactId>
 						<version>${project.version}</version>
 					</dependency>
