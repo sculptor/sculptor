@@ -44,9 +44,9 @@
 			</modules>
 		</profile>
 		<profile>
-			<id>example</id>
+			<id>examples</id>
 			<modules>
-				<module>../../sculptor-example</module>
+				<module>../../sculptor-examples</module>
 			</modules>
 		</profile>
 		<profile>
