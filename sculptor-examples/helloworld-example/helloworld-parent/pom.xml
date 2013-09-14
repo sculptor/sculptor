@@ -16,8 +16,7 @@
 		<ehcache-version>2.4.7</ehcache-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.13</logback-version>
-		<spring-version>3.2.3.RELEASE</spring-version>
-		<spring-webflow-version>2.3.2.RELEASE</spring-webflow-version>
+		<spring-version>3.2.4.RELEASE</spring-version>
 		<aspectj-version>1.7.2</aspectj-version>
 		<hsqldb-version>2.2.9</hsqldb-version>
 	</properties>
