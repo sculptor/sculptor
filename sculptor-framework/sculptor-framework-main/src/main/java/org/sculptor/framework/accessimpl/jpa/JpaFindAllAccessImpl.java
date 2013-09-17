@@ -92,15 +92,15 @@ public class JpaFindAllAccessImpl<T> extends JpaAccessBase<T> implements FindAll
 	public void performExecute() throws PersistenceException {
 		StringBuilder queryStr = new StringBuilder();
 		queryStr.append("select e from ").append(getPersistentClass().getSimpleName()).append(" as e");
+		if (fetchEager != null && fetchEager.length != 0) {
+			for (Property<?> eagerProp : fetchEager) {
+				queryStr.append(" left join fetch e.").append(eagerProp.getName());
+			}
+		}
 		if (orderBy != null) {
 			queryStr.append(" order by e.").append(orderBy);
 			if (!isOrderByAsc()) {
 				queryStr.append(" desc");
-			}
-		}
-		if (fetchEager != null && fetchEager.length != 0) {
-			for (Property<?> eagerProp : fetchEager) {
-				queryStr.append(" left join fetch e.").append(eagerProp.getName());
 			}
 		}
 		result = executeQuery(queryStr.toString());
@@ -121,6 +121,6 @@ public class JpaFindAllAccessImpl<T> extends JpaAccessBase<T> implements FindAll
 	}
 
 	protected void prepareHints(Query query) {
-    }
+	}
 
 }
