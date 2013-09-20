@@ -61,6 +61,7 @@ def String ddl(Application it) {
 		-- Drop pk sequence
 		«dropSequence(it)»
 	«ENDIF»
+
 	-- ###########################################
 	-- # Create
 	-- ###########################################
@@ -115,10 +116,11 @@ def String createTable(DomainObject it) {
 	'''
 	«val alreadyUsedColumns = <String>newHashSet()»
 	CREATE TABLE «getDatabaseName(it)» (
-	«columns(it, false, alreadyUsedColumns)»
-	«IF isInheritanceTypeSingleTable(it)»«inheritanceSingleTable(it, alreadyUsedColumns)»«ENDIF»
-	«IF ^extends != null»«extendsForeignKeyColumn(it, !alreadyUsedColumns.isEmpty)»«ENDIF»
+	«columns(it, false, alreadyUsedColumns)»«
+	IF isInheritanceTypeSingleTable(it)»«inheritanceSingleTable(it, alreadyUsedColumns)»«ENDIF»«
+	IF ^extends != null»«extendsForeignKeyColumn(it, !alreadyUsedColumns.isEmpty)»«ENDIF»
 	)«afterCreateTable(it)»;
+	
 	'''
 }
 
@@ -190,14 +192,15 @@ def String containedColumns(Reference it, String prefix, boolean parentIsNullabl
 	rows.append(it.to.attributes.filter[e | !e.transient].map[a | ",\n\t" + column(a, getDatabaseName(prefix, a), parentIsNullable || nullable)].join)
 	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof Enum].map[r | ",\n\t" + enumColumn(r, getDatabaseName(prefix, r), parentIsNullable || nullable)].join)
 	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof BasicType].map[b | containedColumns(b, getDatabaseName(b), parentIsNullable || nullable)].join)
-	if (rows.length < 2)
+	if (rows.length < 3)
 		""
 	else
-		rows.substring(2)
+		rows.substring(3)
 }
 
 def String inheritanceSingleTable(DomainObject it, Set<String> alreadyUsedColumns) {
-	''',
+	'''
+	,
 	«discriminatorColumn(it) »
 	«it.getAllSubclasses().map[s | columns(s, true, alreadyUsedColumns)].join»'''
 }
@@ -209,25 +212,27 @@ def String discriminatorColumn(DomainObject it) {
 def String idPrimaryKey(DomainObject it) {
 	'''
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT PK_«getDatabaseName(it)»
-		PRIMARY KEY («attributes.filter[a | a.name == "id"].head.getDatabaseName()»)
-		«afterIdPrimaryKey(it)»;
+		PRIMARY KEY («attributes.filter[a | a.name == "id"].head.getDatabaseName()»)«
+		afterIdPrimaryKey(it)»;
 	'''
 }
 
 def String afterIdPrimaryKey(DomainObject it) {
-	'''«usingIndexTablespace(it)»'''
+	'''
+		«usingIndexTablespace(it)»'''
 }
 
 def String manyToManyPrimaryKey(DomainObject it) {
 	'''
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT PK_«getDatabaseName(it)»
-		PRIMARY KEY («FOR r : references SEPARATOR ", "»«r.getForeignKeyName()»«ENDFOR»)
-		«afterManyToManyPrimaryKey(it)»;
+		PRIMARY KEY («FOR r : references SEPARATOR ", "»«r.getForeignKeyName()»«ENDFOR»)«
+		afterManyToManyPrimaryKey(it)»;
 	'''
 }
 
 def String afterManyToManyPrimaryKey(DomainObject it) {
-	'''«usingIndexTablespace(it)»'''
+	'''
+	«usingIndexTablespace(it)»'''
 }
 
 def String usingIndexTablespace(DomainObject it) {
@@ -238,23 +243,25 @@ def String usingIndexTablespace(DomainObject it) {
 
 def String foreignKeyColumn(Reference it) {
 	'''
-	«IF it.hasOpposite() && "list" == opposite.getCollectionType()»
-		«opposite.getListIndexColumnName()» «getListIndexDatabaseType()»,
+	«IF it.hasOpposite() && "list" == opposite.getCollectionType()»«
+		opposite.getListIndexColumnName()» «getListIndexDatabaseType()»«",\n\t"»
 	«ENDIF»
 	«getForeignKeyName(it)» «getForeignKeyType(it)»'''
 }
 
 def String uniManyForeignKeyColumn(Reference it) {
 	'''
-	«IF "list" == getCollectionType()»
-		«getListIndexColumnName(it)» «getListIndexDatabaseType()»,
+	«IF "list" == getCollectionType()»«
+		getListIndexColumnName(it)» «getListIndexDatabaseType()»«",\n\t"»
 	«ENDIF»
-	«getOppositeForeignKeyName(it)» «from.getForeignKeyType() »'''
+	«getOppositeForeignKeyName(it)» «from.getForeignKeyType()»'''
 }
 
 def String extendsForeignKeyColumn(DomainObject it, boolean initialComma) {
-	'''«IF initialComma»,«ENDIF»«
-		^extends.getExtendsForeignKeyName()» «^extends.getForeignKeyType() » NOT NULL'''
+	'''
+	«IF initialComma»,
+	«ENDIF»
+		«^extends.getExtendsForeignKeyName()» «^extends.getForeignKeyType() » NOT NULL'''
 }
 
 def dispatch String foreignKeyConstraint(DomainObject it) {
@@ -266,9 +273,10 @@ def dispatch String foreignKeyConstraint(DomainObject it) {
 
 def dispatch String foreignKeyConstraint(Reference it) {
 	'''
+	
+	-- Reference from «from.name».«name» to «to.name»
 	ALTER TABLE «from.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(from.getDatabaseName(), getDatabaseName(it))»
-		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()» («to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»
-		;
+		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()» («to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»;
 	«foreignKeyIndex(it)»
 	'''
 }
@@ -281,9 +289,10 @@ def String foreignKeyIndex(Reference it) {
 
 def String uniManyForeignKeyConstraint(Reference it) {
 	'''
+	
+	-- Reference from «from.name».«name» to «to.name»
 	ALTER TABLE «to.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(to.getDatabaseName(), from.getDatabaseName())»
-		FOREIGN KEY («getOppositeForeignKeyName(it)») REFERENCES «from.getRootExtends().getDatabaseName()» («from.getRootExtends().getIdAttribute().getDatabaseName()»)
-		;
+		FOREIGN KEY («getOppositeForeignKeyName(it)») REFERENCES «from.getRootExtends().getDatabaseName()» («from.getRootExtends().getIdAttribute().getDatabaseName()»);
 	«uniManyForeignKeyIndex(it)»
 	'''
 }
@@ -296,9 +305,10 @@ def String uniManyForeignKeyIndex(Reference it) {
 
 def String extendsForeignKeyConstraint (DomainObject it) {
 	'''
+	
+	-- Entity «name» extends «^extends.name»
 	ALTER TABLE «getDatabaseName(it)» ADD CONSTRAINT FK_«truncateLongDatabaseName(getDatabaseName(it), ^extends.getDatabaseName())»
-		FOREIGN KEY («^extends.getExtendsForeignKeyName()») REFERENCES «^extends.getRootExtends().getDatabaseName()» («^extends.getRootExtends().getIdAttribute().getDatabaseName()»)
-		;
+		FOREIGN KEY («^extends.getExtendsForeignKeyName()») REFERENCES «^extends.getRootExtends().getDatabaseName()» («^extends.getRootExtends().getIdAttribute().getDatabaseName()»);
 	«extendsForeignKeyIndex(it)»
 	'''
 }
@@ -314,8 +324,8 @@ def String uniqueConstraint(DomainObject it) {
 	«IF hasUniqueConstraints(it)»
 	ALTER TABLE «getDatabaseName(it)»
 		«IF attributes.exists(a | a.isUuid()) »
-			ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE (UUID)
-		«ELSE»
+			ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE (UUID)«
+		ELSE»
 			ADD CONSTRAINT UQ_«getDatabaseName(it)» UNIQUE («
 			FOR key : getAllNaturalKeys(it) SEPARATOR ", "»«
 				IF key.isBasicTypeReference()»«
@@ -325,17 +335,15 @@ def String uniqueConstraint(DomainObject it) {
 				ELSE
 					»«key.getDatabaseName()»«
 				ENDIF»«
-			ENDFOR»)
-		«ENDIF»
-		«afterUniqueConstraint(it)»;
+			ENDFOR»)«
+		ENDIF»«
+		afterUniqueConstraint(it)»;
 	«ENDIF»
 	'''
 }
 
 def String afterUniqueConstraint(DomainObject it) {
-	'''
-	«usingIndexTablespace(it)»
-	'''
+	'''«usingIndexTablespace(it)»'''
 }
 
 def String index(DomainObject it) {
@@ -349,9 +357,7 @@ def String index(DomainObject it) {
 }
 
 def String containedColumnIndex(Reference it) {
-	'''
-		«it.to.attributes.filter(a | a.index == true).map[a | index(a, getDatabaseName(it) + "_", from)]»
-	'''
+	'''«it.to.attributes.filter(a | a.index == true).map[a | index(a, getDatabaseName(it) + "_", from)].join»'''
 }
 
 def String index(Attribute it, String prefix, DomainObject domainObject) {
@@ -374,8 +380,7 @@ def String afterIndex(Attribute it, String prefix, DomainObject domainObject) {
 def String discriminatorIndex(DomainObject it) {
 	'''
 	CREATE INDEX IX_«truncateLongDatabaseName(getDatabaseName(it), inheritance.discriminatorColumnName())»
-		ON «getDatabaseName(it)» («inheritance.discriminatorColumnName()» ASC)
-		;
+		ON «getDatabaseName(it)» («inheritance.discriminatorColumnName()» ASC);
 	'''
 }
 
@@ -390,9 +395,7 @@ def String dropIndex(DomainObject it) {
 }
 
 def String dropContainedColumnIndex(Reference it) {
-	'''
-		«it.to.attributes.filter(a | a.index == true).map[a | dropIndex(a, getDatabaseName(it) + "_", from)].join»
-	'''
+	'''«it.to.attributes.filter(a | a.index == true).map[a | dropIndex(a, getDatabaseName(it) + "_", from)].join»'''
 }
 
 def String dropIndex(Attribute it, String prefix, DomainObject domainObject) {
