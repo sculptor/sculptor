@@ -18,7 +18,6 @@
 package org.sculptor.generator.mwe2;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.common.util.Diagnostic;
@@ -38,6 +37,7 @@ public class SculptordslValidationWorkflowComponent extends WorkflowComponentWit
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SculptordslValidationWorkflowComponent.class);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void invokeInternal(WorkflowContext ctx, ProgressMonitor m, Issues issues) {
 		Collection<?> slotContent = (Collection<?>) ctx.get(getModelSlot());
@@ -60,12 +60,26 @@ public class SculptordslValidationWorkflowComponent extends WorkflowComponentWit
 					Diagnostic diagnostic = Diagnostician.INSTANCE.validate(application);
 					switch (diagnostic.getSeverity()) {
 					case Diagnostic.ERROR:
-						issues.addError(this, diagnostic.getMessage(), diagnostic.getData().get(0),
-								diagnostic.getException(), Collections.emptyList());
+						if (diagnostic.getChildren() !=null && diagnostic.getChildren().size() > 0) {
+							for (Diagnostic d: diagnostic.getChildren()) {
+								issues.addError(this, d.getMessage(), d.getData().get(0),
+										d.getException(), (List<Object>) d.getData());
+							}
+						} else {
+							issues.addError(this, diagnostic.getMessage(), diagnostic.getData().get(0),
+									diagnostic.getException(), (List<Object>) diagnostic.getData());
+						}
 						break;
 					case Diagnostic.WARNING:
-						issues.addWarning(this, diagnostic.getMessage(), diagnostic.getData().get(0),
-								diagnostic.getException(), null);
+						if (diagnostic.getChildren() !=null && diagnostic.getChildren().size() > 0) {
+							for (Diagnostic d: diagnostic.getChildren()) {
+								issues.addWarning(this, d.getMessage(), d.getData().get(0),
+										d.getException(), (List<Object>) d.getData());
+							}
+						} else {
+							issues.addWarning(this, diagnostic.getMessage(), diagnostic.getData().get(0),
+									diagnostic.getException(), (List<Object>) diagnostic.getData());
+						}
 						break;
 					}
 				}
