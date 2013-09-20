@@ -47,19 +47,13 @@ class MySQLDDLTest extends GeneratorTestBase {
 		assertContainsConsecutiveFragments(ddl,
 			#[
 				"CREATE TABLE MEDIA (",
-				"ID BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY",
-				",",
-				"TITLE VARCHAR(100) NOT NULL",
-				",",
-				"CREATEDDATE TIMESTAMP",
-				",",
-				"CREATEDBY VARCHAR(50)",
-				",",
-				"LASTUPDATED TIMESTAMP",
-				",",
-				"LASTUPDATEDBY VARCHAR(50)",
-				",",
-				"VERSION BIGINT NOT NULL",
+					"ID BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,",
+					"TITLE VARCHAR(100) NOT NULL,",
+					"CREATEDDATE TIMESTAMP,",
+					"CREATEDBY VARCHAR(50),",
+					"LASTUPDATED TIMESTAMP,",
+					"LASTUPDATEDBY VARCHAR(50),",
+					"VERSION BIGINT NOT NULL",
 				");"
 			])
 
@@ -67,15 +61,13 @@ class MySQLDDLTest extends GeneratorTestBase {
 		assertContainsConsecutiveFragments(ddl,
 			#[
 				"CREATE TABLE MOVIE (",
-				"URLIMDB VARCHAR(100) NOT NULL",
-				",",
-				"PLAYLENGTH INTEGER NOT NULL",
-				",",
-				"CATEGORY VARCHAR(6)",
-				",",
-				"MEDIA BIGINT NOT NULL",
-				",",
-				"CONSTRAINT UNIQUE (URLIMDB)",
+					"URLIMDB VARCHAR(100) NOT NULL,",
+					"PLAYLENGTH INTEGER NOT NULL,",
+					"CATEGORY VARCHAR(6),",
+					"MEDIA BIGINT NOT NULL,",
+					"CONSTRAINT UNIQUE (",
+						"URLIMDB",
+					")",
 				");"
 			])
 
