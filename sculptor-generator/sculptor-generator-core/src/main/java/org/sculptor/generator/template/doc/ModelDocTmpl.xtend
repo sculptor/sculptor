@@ -50,7 +50,7 @@ def void start(Application it) {
 
 def String docHtml(Application it) {
 	val title = "Summary Documentation of " + name + " Domain Model"
-	fileOutput("DomainModelDoc.html", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("DomainModelDoc.html", OutputSlot::TO_DOC, '''
 	«header(it, title)»
 
 	<div id="wrap">
@@ -72,7 +72,7 @@ def String docHtml(Application it) {
 
 def String moduleDocHtml(Module it) {
 	val title = "Summary Documentation of " + name + " module"
-	fileOutput("DomainModelDoc-" + name + ".html", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("DomainModelDoc-" + name + ".html", OutputSlot::TO_DOC, '''
 	«header(it, title + "(" + application.name + ")")»
 	<div id="wrap">
 			<a name="module_«name»"></a>
@@ -147,7 +147,10 @@ def String moduleDocContent(Module it) {
 	«it.consumers.sortBy(e|e.name).map[e | consumerDoc(e)].join()»
 	</div>
 	<div id="domainObjects">
-	«it.domainObjects.sortBy(e|e.name).map[e | domainObjectDoc(e)].join()»
+	«it.domainObjects.filter[d | ! (d instanceof sculptormetamodel.Enum)]
+		.sortBy(e|e.name).map[e | domainObjectDoc(e)].join()»
+	«it.domainObjects.filter[d | d instanceof sculptormetamodel.Enum]
+		.sortBy(e|e.name).map[e | enumDoc(e as Enum)].join()»
 	</div>
 	'''
 }

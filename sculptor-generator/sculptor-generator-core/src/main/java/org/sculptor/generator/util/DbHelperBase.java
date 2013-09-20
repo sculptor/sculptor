@@ -212,7 +212,7 @@ public class DbHelperBase {
 				attribute.setType("String");
 				attribute.setLength(helperBase.getHintImpl(_enum.getHint(), "databaseLength"));
 			} else {
-				attribute.setType("String");
+				attribute.setType(attribute.getType() != null ? attribute.getType() : "String");
 				attribute.setLength(calcEnumDatabaseLength(_enum));
 			}
 		}

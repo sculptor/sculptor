@@ -33,11 +33,12 @@ abstract class GeneratorTestBase {
 	protected val static TO_RESOURCES = "/src/main/resources"
 	protected val static TO_GEN_SRC = "/src/generated/java"
 	protected val static TO_GEN_RESOURCES = "/src/generated/resources"
-	protected val static TO_WEBROOT = "/src/main/webapp"
 	protected val static TO_SRC_TEST = "/src/test/java"
 	protected val static TO_RESOURCES_TEST = "/src/test/resources"
 	protected val static TO_GEN_SRC_TEST = "/src/test/generated/java"
 	protected val static TO_GEN_RESOURCES_TEST = "/src/test/generated/resources"
+	protected val static TO_WEBROOT = "/src/main/webapp"
+	protected val static TO_DOC = "/src/site"
 
 	/**
       * This is the directory where xtend template output will be generated to
@@ -64,11 +65,12 @@ abstract class GeneratorTestBase {
 		System::setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
 		System::setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
 		System::setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
-		System::setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
 		System::setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
 		System::setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
 		System::setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
 		System::setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST", OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
+		System::setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
+		System::setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
 
 		// Abort on invalid generated Java code
 		if (System::getProperty("java.codeformatter.error.abort") != null) {

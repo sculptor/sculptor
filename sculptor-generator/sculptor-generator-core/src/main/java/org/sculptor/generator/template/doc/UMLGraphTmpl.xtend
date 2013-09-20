@@ -72,7 +72,7 @@ def String start(Application it, Set<Module> focus, int detail) {
 
 def String start(Application it, Set<Module> focus, int detail, String subjectArea) {
 	debugTrace("start() focus=" + focus + ", detail=" + detail + ", subjectArea=" + subjectArea)
-	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_GEN_RESOURCES,
+	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_DOC,
 		startContent(it, focus, detail, subjectArea))
 }
 

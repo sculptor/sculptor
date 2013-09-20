@@ -16,7 +16,7 @@ class ModelDocCssTmpl {
 	@Inject extension Helper helper
 
 def String docCss(Application it) {
-	fileOutput("DomainModelDoc.css", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("DomainModelDoc.css", OutputSlot::TO_DOC, '''
 	/* main elements */
 
 	body,div,td {
