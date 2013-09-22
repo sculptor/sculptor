@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,19 +42,26 @@ class MysqlDDLTmpl {
 def String ddl(Application it) {
 	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
 	«IF isDdlDropToBeGenerated()»    
-	-- ###########################################
-	-- # Drop entities
-	-- ###########################################
+		-- ###########################################
+		-- # Drop entities
+		-- ###########################################
 
-	-- Many to many relations
-	«it.resolveManyToManyRelations(false).map[dropTable(it)].join»
-	-- Normal entities
-	«it.getDomainObjectsInCreateOrder(false).filter(e | !isInheritanceTypeSingleTable(getRootExtends(e.^extends))).map[dropTable(it)].join»
+		-- Many to many relations
+		«it.resolveManyToManyRelations(false).map[dropTable(it)].join»
+
+		-- Normal entities
+		«it.getDomainObjectsInCreateOrder(false).filter(e | !isInheritanceTypeSingleTable(getRootExtends(e.^extends))).map[dropTable(it)].join»
+
+		-- Drop pk sequence
+		«dropSequence(it)»
 
 	«ENDIF»
 	-- ###########################################
-	-- # Create new entities
+	-- # Create entities
 	-- ###########################################
+
+	-- Create pk sequence
+	«createSequence(it)»
 
 	-- Normal entities
 	
@@ -66,6 +73,22 @@ def String ddl(Application it) {
 	«it.resolveManyToManyRelations(true).map[r | createTable(r, true)].join»
 	'''
 	)
+}
+
+def String dropSequence(Application it) {
+	'''
+	«IF (applicationServer() == "jboss" && isJpaProviderHibernate()) || isJpaProviderHibernate4()»
+		DROP TABLE IF EXISTS hibernate_sequence;
+	«ENDIF»
+	'''
+}
+
+def String createSequence(Application it) {
+	'''
+	«IF (applicationServer() == "jboss" && isJpaProviderHibernate()) || isJpaProviderHibernate4()»
+		CREATE TABLE hibernate_sequence(next_val BIGINT);
+	«ENDIF»
+	'''
 }
 
 def String dropTable(DomainObject it) {

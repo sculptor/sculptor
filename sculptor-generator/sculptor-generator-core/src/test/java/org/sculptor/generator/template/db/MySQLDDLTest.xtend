@@ -40,6 +40,12 @@ class MySQLDDLTest extends GeneratorTestBase {
 
 		val ddl = getFileText(TO_GEN_RESOURCES + "/dbschema/Library_ddl.sql");
 
+		// Drop table with sequence
+		assertContains(ddl, "DROP TABLE IF EXISTS hibernate_sequence;")
+
+		// Create table with sequence
+		assertContains(ddl, "hibernate_sequence(next_val BIGINT);")
+
 		// Drop table
 		assertContains(ddl, "DROP TABLE IF EXISTS MEDIA;")
 
