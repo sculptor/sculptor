@@ -787,6 +787,7 @@ def String queryBasedFinderMethod(RepositoryOperation it) {
 }
 
 def String conditionBasedFinderMethod(RepositoryOperation it) {
+	val pagingParameter  = it.getPagingParameter()
 	'''
 			«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»)
 			«exceptionTmpl.throwsDecl(it)» {
@@ -798,17 +799,31 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 			«IF collectionType != null»
 				java.util.List<«it.getResultTypeName()»> result =
 				«IF !it.useTupleToObjectMapping()»
-				findByCondition(condition«IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);
+					findByCondition(condition«
+						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter == null
+							», PagingParameter.noLimits()).getValues();«
+						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter != null
+							», «pagingParameter.name»).getValues();«
+						ELSE»«
+							IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);«
+						ENDIF»
 				«ELSE»
-				new java.util.ArrayList<«it.getResultTypeName()»>();
-				for («it.getResultTypeNameForMapping()» tuple : findByCondition(condition, «it.getResultTypeNameForMapping()».class)) {
-					result.add(«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(tuple, «it.getResultTypeName()».class));
-				}
+					new java.util.ArrayList<«it.getResultTypeName()»>();
+					for («it.getResultTypeNameForMapping()» tuple : findByCondition(condition, «it.getResultTypeNameForMapping()».class)) {
+						result.add(«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(tuple, «it.getResultTypeName()».class));
+					}
 				«ENDIF»
 			«ELSE»
 				«it.getResultTypeName()» result =
 				«IF !it.useTupleToObjectMapping()»
-				findByCondition(condition, true«IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);
+						findByCondition(condition, true«
+						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter == null
+							», new PagingParameter.rowAccess(0,1));«
+						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter != null
+							», «pagingParameter.name»);«
+						ELSE»«
+							IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);
+						«ENDIF»
 				«ELSE»
 					«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(
 						findByCondition(condition, true, «it.getResultTypeNameForMapping()».class), «it.getResultTypeName()».class);
