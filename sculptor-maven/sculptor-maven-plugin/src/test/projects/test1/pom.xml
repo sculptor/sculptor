@@ -7,7 +7,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sculptor.maven</groupId>
+				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
 				<executions>
 					<execution>

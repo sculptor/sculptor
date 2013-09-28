@@ -4,13 +4,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.sculptor</groupId>
+		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-examples</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<groupId>org.sculptor.examples.mongodb-samples</groupId>
+	<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
 	<artifactId>sculptor-shipping-generator</artifactId>
 	<name>Sculptor :: Examples :: MongoDB Samples :: Shipping Generator </name>
 	<description>MongoDB example: Generator project for sculptor-shipping</description>
@@ -69,7 +69,7 @@
 	<dependencies>
 		<!-- Without this dependency, chain override annotation not getting processed. -->
 		<dependency>
-			<groupId>org.sculptor.generator</groupId>
+			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>eclipse-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -97,7 +97,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptor</groupId>
+			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${sculptor.version}</version>
 			<scope>provided</scope>

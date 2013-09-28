@@ -3,11 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.sculptor</groupId>
+		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-maven</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
-	<groupId>org.sculptor.maven</groupId>
 	<artifactId>maven-repository</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Maven :: Repository</name>

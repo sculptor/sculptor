@@ -18,7 +18,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sculptor</groupId>
+				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
 				<version>${symbol_dollar}{sculptor-version}</version>
 				<configuration>

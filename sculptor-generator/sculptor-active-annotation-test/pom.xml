@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.sculptor</groupId>
+		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
-	<groupId>org.sculptor.generator</groupId>
+	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-active-annotation-test</artifactId>
 	<name>Sculptor :: Generator :: Active annotation test</name>
 
@@ -46,13 +46,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sculptor.generator</groupId>
+			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>sculptor-active-annotation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
-			<groupId>org.sculptor.generator</groupId>
+			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>eclipse-library</artifactId>
 			<classifier>test</classifier>
 			<version>${project.version}</version>

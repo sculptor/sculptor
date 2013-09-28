@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.sculptor.examples</groupId>
+		<groupId>org.sculptorgenerator.examples</groupId>
 		<artifactId>helloworld-parent</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 		<relativePath>../helloworld-parent/</relativePath>
@@ -14,7 +14,7 @@
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
-				<groupId>org.sculptor</groupId>
+				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
 				<version>${sculptor-version}</version>
 				<configuration>
@@ -69,13 +69,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sculptor</groupId>
+			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-main</artifactId>
 			<classifier>without-ejb</classifier>
 			<version>${sculptor-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptor</groupId>
+			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-test</artifactId>
 			<version>${sculptor-version}</version>
 			<scope>test</scope>
