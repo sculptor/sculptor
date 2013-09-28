@@ -3,12 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: sculptor-metamodel;singleton:=true
 Bundle-Version: 3.0.0.qualifier
+Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: sculptorguimetamodel,
- sculptorguimetamodel.impl,
- sculptorguimetamodel.util,
- sculptormetamodel,
+Export-Package: sculptormetamodel,
  sculptormetamodel.impl,
  sculptormetamodel.util
 Require-Bundle: org.eclipse.emf.codegen.ecore;bundle-version="2.6.0",

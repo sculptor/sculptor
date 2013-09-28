@@ -20,9 +20,4 @@ Workflow {
 		genModel = "platform:/resource/${projectName}/model/sculptormetamodel.genmodel"
 		srcPath ="platform:/resource/${projectName}/src"
 	}
-	
-	component = EcoreGenerator {
-		genModel = "platform:/resource/${projectName}/model/sculptorguimetamodel.genmodel"
-		srcPath ="platform:/resource/${projectName}/src"
-	}
 }
