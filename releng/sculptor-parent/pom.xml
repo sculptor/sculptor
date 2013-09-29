@@ -7,7 +7,21 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
-	<url>https://github.io/sculptor/</url>
+	<description>Sculptor is an open source productivity tool that applies the concepts
+		 from Domain-Driven Design and Domain Specific Languages for generating high quality
+		 Java code and configuration from a textual specification.</description>
+	<url>http://sculptorgenerator.org/</url>
+
+	<scm>
+		<url>git@github.com:sculptor/sculptor.git</url>
+		<connection>scm:git:git@github.com/sculptor/sculptor.git</connection>
+		<developerConnection>scm:git:git@github.com/sculptor/sculptor.git</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/sculptor/sculptor/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 
 	<inceptionYear>2013</inceptionYear>
 	<licenses>
@@ -17,6 +31,34 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<developers>
+		<developer>
+			<id>tavoda</id>
+			<name>Pavel Tavoda</name>
+		    <email></email>
+			<roles>
+				<role>Project-Manager</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+		    <id>rsmith72</id>
+		    <name>Ron Smith</name>
+		    <email></email>
+		    <roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+		    <id>tjuerge</id>
+		    <name>Torsten Juergeleit</name>
+		    <email>torsten.juergeleit@gmail.com</email>
+		    <roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
