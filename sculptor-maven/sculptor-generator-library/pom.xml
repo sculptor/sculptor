@@ -23,24 +23,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<executions>
- 					<execution>
- 						<!-- Workaround due to GitHubs blob size limit -->
-						<id>shade-eclipse-library</id>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>eclipse</shadedClassifierName>
-							<artifactSet>
-								<includes>
-									<include>org.sculptorgenerator.generator:eclipse-library:runtime</include>
-								</includes>
-							</artifactSet>
-						</configuration>
-					</execution>
 					<execution>
 						<id>shade-sculptor-library</id>
 						<phase>package</phase>
@@ -51,7 +33,7 @@
 							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<artifactSet>
 								<includes>
-									<include>org.sculptorgenerator.generator:sculptor-*</include>
+									<include>org.sculptorgenerator.*:*</include>
 								</includes>
 							</artifactSet>
 						</configuration>

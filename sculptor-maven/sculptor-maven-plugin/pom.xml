@@ -215,13 +215,6 @@
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<!-- Workaround due to GitHubs blob size limit -->
-			<groupId>org.sculptorgenerator</groupId>
-			<artifactId>sculptor-generator-library</artifactId>
-			<version>${project.version}</version>
-			<classifier>eclipse</classifier>
-		</dependency>
 
 		<!-- Testing -->
 		<dependency>
