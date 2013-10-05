@@ -36,7 +36,7 @@
 							<shadedClassifierName>eclipse</shadedClassifierName>
 							<artifactSet>
 								<includes>
-									<include>org.sculptor.generator:eclipse-library:runtime</include>
+									<include>org.sculptorgenerator.generator:eclipse-library:runtime</include>
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -51,7 +51,7 @@
 							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<artifactSet>
 								<includes>
-									<include>org.sculptor.generator:sculptor-*</include>
+									<include>org.sculptorgenerator.generator:sculptor-*</include>
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -74,7 +74,7 @@
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
 								<fileset>
-									<directory>${maven-repository}/org/sculptor/${project.artifactId}</directory>
+									<directory>${maven-repository}/org/sculptorgenerator/${project.artifactId}</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>

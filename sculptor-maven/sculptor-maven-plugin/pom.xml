@@ -108,7 +108,7 @@
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
 								<fileset>
-									<directory>${maven-repository}/org/sculptor/${project.artifactId}</directory>
+									<directory>${maven-repository}/org/sculptorgenerator/${project.artifactId}</directory>
 									<includes>
 										<include>**/*</include>
 									</includes>
