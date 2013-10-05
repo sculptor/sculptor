@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -82,7 +82,7 @@
 		<github.global.server>github</github.global.server>
 
 		<!-- Directory the local Maven plugin repository is created -->
-		<maven-repository>${basedir}/../../sculptor-maven/maven-repository/target/repository</maven-repository>
+		<maven-repository>${basedir}/sculptor-maven/maven-repository/target/repository</maven-repository>
 	</properties>
 
 	<distributionManagement>
@@ -114,6 +114,57 @@
 			<url>http://fornax-platform.org/nexus/content/repositories/public</url>
 		</pluginRepository>
 	</pluginRepositories>
+
+	<profiles>
+		<profile>
+			<id>all</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>sculptor-eclipse</module>
+				<module>sculptor-generator</module>
+				<module>sculptor-framework</module>
+				<!-- This module has to be built last because it provides 
+					the Maven repository which is deployed -->
+				<module>sculptor-maven</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>eclipse</id>
+			<modules>
+				<module>sculptor-eclipse</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>maven</id>
+			<modules>
+				<module>sculptor-generator</module>
+				<module>sculptor-framework</module>
+				<!-- This module has to be built last because it provides 
+					the Maven repository which is deployed -->
+				<module>sculptor-maven</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>examples</id>
+			<modules>
+				<module>sculptor-examples</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>mirror</id>
+			<modules>
+				<module>devtools/eclipse-mirror</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>ide</id>
+			<modules>
+				<module>devtools/eclipse-ide</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>

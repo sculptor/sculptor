@@ -5,11 +5,9 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../releng/sculptor-parent/</relativePath>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-maven</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Maven</name>
 
