@@ -56,6 +56,8 @@ public abstract class AbstractGeneratorMojoTestCase<T extends AbstractGeneratorM
 				new File(project.getBasedir(), "src/test/generated/java"));
 		setVariableValueToObject(mojo, "outletResTestDir",
 				new File(project.getBasedir(), "src/test/generated/resources"));
+		setVariableValueToObject(mojo, "outletDocDir",
+				new File(project.getBasedir(), "src/site"));
 		setVariableValueToObject(mojo, "statusFile",
 				new File(project.getBasedir(), ".sculptor-status"));
 		return mojo;
