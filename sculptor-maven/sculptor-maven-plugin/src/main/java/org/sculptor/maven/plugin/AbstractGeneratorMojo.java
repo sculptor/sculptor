@@ -112,6 +112,13 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	protected File outletResTestDir;
 
 	/**
+	 * Directory for non-source-code test-artifacts. Existings artifacts will be
+	 * overwritten.
+	 */
+	@Parameter(defaultValue="src/site", required=true)
+	protected File outletDocDir;
+
+	/**
 	 * File holding the status of the last code generator execution.
 	 */
 	@Parameter(defaultValue=".sculptor-status", required=true)

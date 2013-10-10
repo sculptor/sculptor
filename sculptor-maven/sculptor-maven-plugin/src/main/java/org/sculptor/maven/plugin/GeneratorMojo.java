@@ -240,6 +240,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 					buildContext.refresh(outletResTestOnceDir);
 					buildContext.refresh(outletSrcTestDir);
 					buildContext.refresh(outletResTestDir);
+					buildContext.refresh(outletDocDir);
 				}
 			} else {
 				throw new MojoExecutionException("Sculptor code generator failed");
@@ -469,6 +470,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES_TEST", outletResTestOnceDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
+		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
 
 		// Execute commandline and check return code
 		Exception exception = null;
