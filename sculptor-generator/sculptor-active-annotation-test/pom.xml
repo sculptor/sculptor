@@ -19,6 +19,12 @@
 				<configuration>
 					<filesets>
 						<fileset>
+							<directory>${basedir}/src/main/xtend-gen</directory>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+						</fileset>
+						<fileset>
 							<directory>${basedir}/src/test/xtend-gen</directory>
 							<excludes>
 								<exclude>.gitignore</exclude>
@@ -33,9 +39,11 @@
 				<executions>
 					<execution>
 						<goals>
+							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>
 						<configuration>
+							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
 							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
