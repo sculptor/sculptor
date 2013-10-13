@@ -19,9 +19,9 @@
 	<url>http://sculptorgenerator.org/</url>
 
 	<scm>
-		<url>git@github.com:sculptor/sculptor.git</url>
-		<connection>scm:git:git@github.com/sculptor/sculptor.git</connection>
-		<developerConnection>scm:git:git@github.com/sculptor/sculptor.git</developerConnection>
+		<url>https://github.com/sculptor/sculptor.git</url>
+		<connection>scm:git:https://github.com/sculptor/sculptor.git</connection>
+		<developerConnection>scm:git:https://github.com/sculptor/sculptor.git</developerConnection>
 	</scm>
 
 	<issueManagement>
