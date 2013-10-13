@@ -35,7 +35,7 @@ class ChainOverrideAwareModuleTest {
 		
 		val templateExtension = templateOverride.next.next as TestTemplateExtension
 		
-		val template = templateExtension.next.next as TestTemplate
+		val template = templateExtension.next.next
 
 		// Head of chain - the override class
 		assertNotNull(templateOverride)

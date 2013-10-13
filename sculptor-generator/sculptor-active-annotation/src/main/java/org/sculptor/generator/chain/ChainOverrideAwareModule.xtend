@@ -141,7 +141,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 			var chainLink = chain as ChainLink<?>
 			while(chainLink != null) {
 				chainLink.setMethodsDispatchHead(methodsDispatchHead)
-				chainLink = chainLink.next as ChainLink<?>
+				chainLink = chainLink.next
 			}
 		
 	}
