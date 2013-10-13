@@ -265,6 +265,24 @@
 				</plugins>
 			</build>
 		</profile>
+			<profile>
+			<id>release-eclipse</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-scm-plugin</artifactId>
+							<configuration>
+								<basedir>${basedir}</basedir>
+								<includes>${basedir}/../feature/feature.xml,${basedir}/../site/site.xml</includes>
+								<message>[maven-release-plugin] prepare release of OSGI artifacts</message>
+							</configuration>
+						</plugin> 
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
 		<profile>
 			<id>release-sign-artifacts</id>
 			<activation>
@@ -398,6 +416,11 @@
 					<version>2.4.1</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagNameFormat>v@{project.version}</tagNameFormat>
+						<preparationGoals>clean -DnewVersion=${releaseVersion}
+							org.eclipse.tycho:tycho-versions-plugin:set-version
+							verify scm:checkin</preparationGoals>
+						<arguments>-Prelease-eclipse</arguments> 
 					</configuration>
 				</plugin>
 				<plugin>
