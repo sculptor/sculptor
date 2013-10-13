@@ -10,13 +10,6 @@
 	<artifactId>sculptor-generator-library</artifactId>
 	<name>Sculptor :: Maven :: Generator Library</name>
 
-	<properties>
-		<sculptor-generator-version>3.0.0-SNAPSHOT</sculptor-generator-version>
-
-		<!-- Directory the local Maven plugin repository is created -->
-		<maven-repository>${basedir}/../maven-repository/target/repository</maven-repository>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -40,48 +33,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<!-- We have to clean the repository directory before deploying a new snapshot version -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>clean-repository</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<excludeDefaultDirectories>true</excludeDefaultDirectories>
-							<filesets>
-								<fileset>
-									<directory>${maven-repository}/org/sculptorgenerator/${project.artifactId}</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>deploy-to-repository</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-						<configuration>
-							<skip>false</skip>
-							<altDeploymentRepository>internal-repo::default::file://${maven-repository}</altDeploymentRepository>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -93,12 +44,12 @@
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>eclipse-library</artifactId>
 			<classifier>runtime</classifier>
-			<version>${sculptor-generator-version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>sculptor-generator-core</artifactId>
-			<version>${sculptor-generator-version}</version>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.sculptorgenerator.generator</groupId>

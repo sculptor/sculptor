@@ -129,9 +129,8 @@
 		<dependency>
 			<groupId>org.sculptorgenerator.eclipse</groupId>
 			<artifactId>org.sculptor.dsl</artifactId>
-			<version>${sculptor-dsl-version}</version>
+			<version>${project.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>eclipse-library</artifactId>

@@ -2,6 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
@@ -45,7 +51,7 @@
 		<developer>
 		    <id>rsmith72</id>
 		    <name>Ron Smith</name>
-		    <email></email>
+		    <email>rsmith72@gmail.com</email>
 		    <roles>
 				<role>Developer</role>
 			</roles>
@@ -85,19 +91,6 @@
 		<maven-repository>${basedir}/sculptor-maven/maven-repository/target/repository</maven-repository>
 	</properties>
 
-	<distributionManagement>
-		<repository>
-			<id>github-maven-repo</id>
-			<name>GitHub Sculptor Maven Repository</name>
-			<url>https://raw.github.com/sculptor/repository/maven</url>
-		</repository>
-		<snapshotRepository>
-			<id>github-maven-snapshot-repo</id>
-			<name>GitHub Sculptor Maven Snapshot Repository</name>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<prerequisites>
 		<maven>3.0</maven>
 	</prerequisites>
@@ -124,11 +117,21 @@
 			<modules>
 				<module>sculptor-eclipse</module>
 				<module>sculptor-generator</module>
-				<module>sculptor-framework</module>
-				<!-- This module has to be built last because it provides 
-					the Maven repository which is deployed -->
 				<module>sculptor-maven</module>
+				<module>sculptor-framework</module>
 			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>eclipse</id>
@@ -145,6 +148,18 @@
 					the Maven repository which is deployed -->
 				<module>sculptor-maven</module>
 			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>examples</id>
@@ -164,55 +179,114 @@
 				<module>devtools/eclipse-ide</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>package-test-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>test-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>package-jars</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+									<goal>test-jar</goal>
+								</goals>
+								<configuration>
+									<includePom>true</includePom>
+								</configuration>
+							</execution>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>package-jars</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+									<goal>test-jar</goal>
+								</goals>
+								<configuration>
+									<includePom>true</includePom>
+								</configuration>
+							</execution>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
-		<plugins>
-			<!-- We have to clean the repository directory before deploying a new snapshot version -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>clean-repository</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<excludeDefaultDirectories>true</excludeDefaultDirectories>
-							<filesets>
-								<fileset>
-									<directory>${maven-repository}/org/sculptor/${project.artifactId}</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>deploy-to-repository</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-						<configuration>
-							<skip>false</skip>
-							<altDeploymentRepository>internal-repo::default::file://${maven-repository}</altDeploymentRepository>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -263,6 +337,57 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.4</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							</manifest>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9.1</version>
+					<configuration>
+						<debug>false</debug>
+						<minmemory>128m</minmemory>
+						<maxmemory>1024m</maxmemory>
+						<quiet>true</quiet>
+						<doctitle>${project.name} ${project.version}</doctitle>
+						<windowtitle>${project.name} ${project.version}</windowtitle>
+						<testDoctitle>${project.name} ${project.version} (TEST API)</testDoctitle>
+						<testWindowtitle>${project.name} ${project.version} (TEST API)</testWindowtitle>
+						<splitindex>true</splitindex>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<linksource>true</linksource>
+						<detectOfflineLinks>false</detectOfflineLinks>
+						<tags>
+							<tag>
+								<name>model</name>
+								<placement>X</placement>
+							</tag>
+							<tag>
+								<name>generated</name>
+								<placement>X</placement>
+							</tag>
+							<tag>
+								<name>ordered</name>
+								<placement>X</placement>
+							</tag>
+						</tags>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.4.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -279,8 +404,7 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.7</version>
 					<configuration>
-						<!-- Deployment is disabled because it's implemented
-							 by the GitHub site-maven-plugin -->
+						<!-- Deployment is disabled because it's activated for certain projects only  -->
 						<skip>true</skip>
 					</configuration>
 				</plugin>

@@ -11,10 +11,6 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Generator</name>
 
-	<properties>
-		<sculptor-dsl-version>3.0.0-SNAPSHOT</sculptor-dsl-version>
-	</properties>
-
 	<repositories>
 		<!-- Repository to resolve the Eclipse release train dependencies -->
 		<repository>
