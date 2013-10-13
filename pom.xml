@@ -419,7 +419,7 @@
 						<tagNameFormat>v@{project.version}</tagNameFormat>
 						<preparationGoals>clean -DnewVersion=${releaseVersion}
 							org.eclipse.tycho:tycho-versions-plugin:set-version
-							verify scm:checkin</preparationGoals>
+							verify scm:checkin -e</preparationGoals>
 						<arguments>-Prelease-eclipse</arguments> 
 					</configuration>
 				</plugin>
