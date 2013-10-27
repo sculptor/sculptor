@@ -9,7 +9,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -18,9 +18,9 @@
 	<url>http://sculptorgenerator.org/</url>
 
 	<scm>
-		<url>https://github.com/sculptor/sculptor.git</url>
-		<connection>scm:git:https://github.com/sculptor/sculptor.git</connection>
-		<developerConnection>scm:git:https://github.com/sculptor/sculptor.git</developerConnection>
+		<url>https://github.com/vaulttec/sculptor.git</url>
+		<connection>scm:git:https://github.com/vaulttec/sculptor.git</connection>
+		<developerConnection>scm:git:https://github.com/vaulttec/sculptor.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -86,9 +86,6 @@
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
-
-		<!-- Directory the local Maven plugin repository is created -->
-		<maven-repository>${basedir}/sculptor-maven/maven-repository/target/repository</maven-repository>
 	</properties>
 
 	<prerequisites>
@@ -296,7 +293,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>2.2</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -441,6 +437,11 @@
 						<!-- Deployment is disabled because it's activated for certain projects only  -->
 						<skip>true</skip>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -598,6 +599,7 @@
 					</dependencies>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
 					<version>2.9</version>
 					<configuration>
@@ -605,6 +607,31 @@
 						<classpathContainers>
 		   					<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
 		   				</classpathContainers>
+					</configuration>
+				</plugin>
+				<plugin>
+					<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.fornax.toolsupport</groupId>
+										<artifactId>fornax-oaw-m2-plugin</artifactId>
+										<versionRange>[3.4.0,)</versionRange>
+										<goals>
+											<goal>run-workflow</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore/>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -636,8 +663,8 @@
 				<version>3.2</version>
 				<exclusions>
 					<exclusion>
-						<artifactId>stringtemplate</artifactId>
 						<groupId>org.antlr</groupId>
+						<artifactId>stringtemplate</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

@@ -57,7 +57,7 @@ Workflow {
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
-			fragment = ecore.EcoreGeneratorFragment auto-inject {
+			fragment = ecore.EMFGeneratorFragment auto-inject {
 //				referencedGenModels = "
 //					platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel,
 //					platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel
@@ -134,7 +134,7 @@ Workflow {
             // project wizard (optional)
             fragment = projectWizard.SimpleProjectWizardFragment auto-inject {
                  generatorProjectName = "${projectName}"
-                 modelFileExtension = fileExtensions
+                 fileExtension = fileExtensions
             }
 
             // rename refactoring
@@ -150,7 +150,7 @@ Workflow {
 			fragment = templates.CodetemplatesGeneratorFragment auto-inject {}
 
 			// provides a compare view
-			fragment = compare.CompareFragment auto-inject {}
+//			fragment = compare.CompareFragment auto-inject {}
 		}
 	}
 }
