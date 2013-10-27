@@ -3,7 +3,6 @@
 
 <product name="Sculptor Eclipse IDE" uid="org.sculptor.ide" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="3.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -36,7 +35,6 @@ openFile</programArgs>
    <vm>
    </vm>
 
-
    <plugins>
    </plugins>
 
@@ -48,8 +46,6 @@ openFile</programArgs>
       <feature id="org.eclipse.emf.sdk"/>
       <feature id="org.eclipse.xtext.sdk"/>
       <feature id="org.eclipse.emf.mwe2.runtime.sdk"/>
-      <feature id="org.eclipse.egit.mylyn"/>
-      <feature id="org.eclipse.xpand.sdk"/>
       <feature id="org.eclipselabs.xtext.utils.unittesting.feature"/>
    </features>
 
