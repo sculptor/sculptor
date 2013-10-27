@@ -9,7 +9,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -18,9 +18,9 @@
 	<url>http://sculptorgenerator.org/</url>
 
 	<scm>
-		<url>https://github.com/vaulttec/sculptor.git</url>
-		<connection>scm:git:https://github.com/vaulttec/sculptor.git</connection>
-		<developerConnection>scm:git:https://github.com/vaulttec/sculptor.git</developerConnection>
+		<url>https://github.com/sculptor/sculptor.git</url>
+		<connection>scm:git:https://github.com/sculptor/sculptor.git</connection>
+		<developerConnection>scm:git:https://github.com/sculptor/sculptor.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -627,7 +627,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore/>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
