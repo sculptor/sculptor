@@ -22,8 +22,9 @@
 				<configuration>
 					<message>Sculptor Eclipse bundles ${project.version}</message>
 					<outputDirectory>${project.build.directory}/repository</outputDirectory>
-					<branch>refs/heads/eclipse</branch>
-					<repositoryName>snapshot-repository</repositoryName>
+					<repositoryName>sculptor.github.io</repositoryName>
+					<branch>refs/heads/master</branch>
+					<path>updates</path>
 					<dryRun>false</dryRun>
 				</configuration>
 			</plugin>
