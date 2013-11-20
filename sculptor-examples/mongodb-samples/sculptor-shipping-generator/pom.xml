@@ -16,7 +16,7 @@
 	<description>MongoDB example: Generator project for sculptor-shipping</description>
 
 	<properties>
-		<sculptor.version>3.0.0-SNAPSHOT</sculptor.version>
+		<sculptor.version>${project.version}</sculptor.version>
 	</properties>
 
 	<build>

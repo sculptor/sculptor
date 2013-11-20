@@ -28,7 +28,7 @@
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<ehcache.version>2.4.7</ehcache.version>
 		<spring.version>3.0.4.RELEASE</spring.version>
-		<sculptor.version>3.0.0-SNAPSHOT</sculptor.version>
+		<sculptor.version>${project.version}</sculptor.version>
 
 		<spring-integration.version>2.0.0.RELEASE</spring-integration.version>
 		<camel.version>2.6.0</camel.version>
