@@ -379,6 +379,7 @@
 					<version>1.0-alpha26</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<allowUntracked>true</allowUntracked>
 					</configuration>
 				</plugin>
 				<plugin>
