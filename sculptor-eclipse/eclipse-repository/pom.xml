@@ -25,7 +25,9 @@
 					<repositoryName>sculptor.github.io</repositoryName>
 					<branch>refs/heads/master</branch>
 					<path>updates</path>
-					<dryRun>false</dryRun>
+					<merge>true</merge>
+					<noJekyll>fals</noJekyll>
+					<message>creates Sculptor Elipse update site ${project.version}</message>
 				</configuration>
 			</plugin>
 		</plugins>
