@@ -2,7 +2,7 @@
 <feature
       id="org.sculptor.dsl.feature"
       label="Sculptor DSL Feature"
-      version="3.0.0"
+      version="3.0.1.qualifier"
       provider-name="Sculptor Project Team">
 
    <description url="http://sculptor-mdsd.org/">
