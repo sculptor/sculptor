@@ -28,12 +28,10 @@ The installation and configuration of these tools is described in [Sculptors ins
 
 Sculptor consists of an Eclipse plugin (the DSL editor) and a Maven plugin (the code generator) with its Maven archetypes:
 
-* Sculptors Eclipse plugin has to be installed with the Eclipse Update Manager `Help > Install New Software...` from one of Sculptors Eclipse repositories
- * Releases: [https://raw.github.com/sculptor/repository/eclipse](https://raw.github.com/sculptor/repository/eclipse)
- * Development Snapshots: [https://raw.github.com/sculptor/snapshot-repository/eclipse](https://raw.github.com/sculptor/snapshot-repository/eclipse)
-* Sculptors Maven plugin and its Maven archetypes are retrieved by Maven from one of Sculptors Maven repositories
- * Releases: [https://raw.github.com/sculptor/repository/maven](https://raw.github.com/sculptor/repository/maven)
- * Development Snapshots: [https://raw.github.com/sculptor/snapshot-repository/maven](https://raw.github.com/sculptor/snapshot-repository/maven)
+* Sculptors Eclipse plugin has to be installed with the Eclipse Update Manager `Help > Install New Software...` from [http://sculptorgenerator.org/updates/](http://sculptorgenerator.org/updates/)
+* Sculptors Maven plugin and its Maven archetypes are retrieved by Maven from one of the following Maven repositories
+ * Releases: [Maven Central](http://search.maven.org)
+ * Development Snapshots: [https://oss.sonatype.org/content/repositories/snapshots/](https://oss.sonatype.org/content/repositories/snapshots/)
 
 The installation and configuration of these tools is described in [Sculptors installation guide](http://sculptorgenerator.org/documentation/installation).
 
