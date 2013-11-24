@@ -4,15 +4,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>${groupId}</groupId>
-	<artifactId>${artifactId}</artifactId>
+	<groupId>\${groupId}</groupId>
+	<artifactId>\${artifactId}</artifactId>
 	<packaging>pom</packaging>
-	<version>${version}</version>
+	<version>\${version}</version>
 	<name>New Sculptor Project :: Parent</name>
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<sculptor-version>3.0.0-SNAPSHOT</sculptor-version>
+		<sculptor-version>${project.version}</sculptor-version>
         <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
 		<ehcache-version>2.4.7</ehcache-version>
 		<slf4j-version>1.7.5</slf4j-version>
@@ -23,18 +23,18 @@
 	</properties>
 
 	<modules>
-		<module>../${artifactIdBase}</module>
+		<module>../\${artifactIdBase}</module>
 #if( $web == "true" || $web == "y" || $web == "yes")
-		<module>../${artifactIdBase}-web</module>
+		<module>../\${artifactIdBase}-web</module>
 #else
 		<!-- Add web module when needed -->
-		<!-- <module>../${artifactIdBase}-web</module> -->
+		<!-- <module>../\${artifactIdBase}-web</module> -->
 #end
 #if( $ear == "true" || $ear == "y" || $ear == "yes")
-		<module>../${artifactIdBase}-ear</module>
+		<module>../\${artifactIdBase}-ear</module>
 #else
 		<!-- Add ear module when deployed as ear -->
-		<!-- <module>../${artifactIdBase}-ear</module> -->
+		<!-- <module>../\${artifactIdBase}-ear</module> -->
 #end
 	</modules>
 

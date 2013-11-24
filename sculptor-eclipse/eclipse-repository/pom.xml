@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-eclipse</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.0</version>
 	</parent>
 	<groupId>org.sculptorgenerator.eclipse</groupId>
 	<artifactId>eclipse-repository</artifactId>
@@ -22,9 +22,12 @@
 				<configuration>
 					<message>Sculptor Eclipse bundles ${project.version}</message>
 					<outputDirectory>${project.build.directory}/repository</outputDirectory>
-					<branch>refs/heads/eclipse</branch>
-					<repositoryName>snapshot-repository</repositoryName>
-					<dryRun>false</dryRun>
+					<repositoryName>sculptor.github.io</repositoryName>
+					<branch>refs/heads/master</branch>
+					<path>updates</path>
+					<merge>true</merge>
+					<noJekyll>fals</noJekyll>
+					<message>creates Sculptor Elipse update site ${project.version}</message>
 				</configuration>
 			</plugin>
 		</plugins>

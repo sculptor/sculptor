@@ -9,7 +9,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -73,7 +73,7 @@
 		<java-version>1.6</java-version>
 
 		<eclipse-release>kepler</eclipse-release>
-		<tycho-version>0.18.1</tycho-version>
+		<tycho-version>0.19.0</tycho-version>
 		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
 		<xtext-version>2.4.3</xtext-version>
 		<slf4j-version>1.7.5</slf4j-version>
@@ -177,27 +177,14 @@
 			</modules>
 		</profile>
 		<profile>
-			<id>release</id>
-			<modules>
-				<module>sculptor-eclipse</module>
-				<module>sculptor-generator</module>
-				<module>sculptor-maven</module>
-				<module>sculptor-framework</module>
-				<module>sculptor-examples</module>
-			</modules>
+			<id>release-profile</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
 			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.eclipse.tycho</groupId>
-							<artifactId>tycho-packaging-plugin</artifactId>
-							<version>${tycho-version}</version>
-							<configuration>
-								<strictVersions>false</strictVersions>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -217,21 +204,14 @@
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>package-jars</id>
-								<phase>package</phase>
+								<id>attach-sources</id>
 								<goals>
-									<goal>jar</goal>
-									<goal>test-jar</goal>
+									<goal>jar-no-fork</goal>
+									<goal>test-jar-no-fork</goal>
 								</goals>
 								<configuration>
 									<includePom>true</includePom>
 								</configuration>
-							</execution>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -240,18 +220,7 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>package-jars</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-									<goal>test-jar</goal>
-								</goals>
-								<configuration>
-									<includePom>true</includePom>
-								</configuration>
-							</execution>
-							<execution>
-								<id>attach-javadocs</id>
+								<id>attach-javadoc</id>
 								<goals>
 									<goal>jar</goal>
 								</goals>
@@ -266,37 +235,6 @@
 							<skip>false</skip>
 						</configuration>
 					</plugin>
-				</plugins>
-			</build>
-		</profile>
-			<profile>
-			<id>release-eclipse</id>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-scm-plugin</artifactId>
-							<configuration>
-								<basedir>${basedir}</basedir>
-								<includes>${basedir}/../feature/feature.xml,${basedir}/../site/site.xml</includes>
-								<message>[maven-release-plugin] prepare release of OSGI artifacts</message>
-							</configuration>
-						</plugin> 
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
-		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
@@ -350,7 +288,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.5.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -379,7 +317,29 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>2.2.1</version>
-				</plugin>
+					<executions>
+						<!--
+						 ~ This workaround prevents Maven from executing the 'generate-sources' phase twice.
+						 ~ See http://jira.codehaus.org/browse/MSOURCES-13
+						 ~ and http://blog.peterlynch.ca/2010/05/maven-how-to-prevent-generate-sources.html
+ 						-->
+ 						<execution>
+							<id>attach-sources</id>
+							<phase>invalid</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>attach-sources-no-fork</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar-no-fork</goal>
+								<goal>test-jar-no-fork</goal>
+							</goals>
+						</execution>
+					</executions>
+      			</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
@@ -414,16 +374,11 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>2.4.1</version>
+					<groupId>com.atlassian.maven.plugins</groupId>
+					<artifactId>maven-jgitflow-plugin</artifactId>
+					<version>1.0-alpha26</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
-						<tagNameFormat>v@{project.version}</tagNameFormat>
-						<preparationGoals>clean
-							org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=${releaseVersion}
-							verify scm:checkin -Dincludes=pom.xml,MANIFEST.MF -e</preparationGoals>
-						<arguments>-Prelease-eclipse</arguments> 
 					</configuration>
 				</plugin>
 				<plugin>
@@ -439,7 +394,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.7</version>
+					<version>2.8.1</version>
 					<configuration>
 						<!-- Deployment is disabled because it's activated for certain projects only  -->
 						<skip>true</skip>
@@ -541,6 +496,11 @@
 					<artifactId>tycho-p2-director-plugin</artifactId>
 					<version>${tycho-version}</version>
 				</plugin>
+ 				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+ 					<artifactId>tycho-versions-plugin</artifactId>
+ 					<version>${tycho-version}</version>
+ 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho.extras</groupId>
 					<artifactId>tycho-p2-extras-plugin</artifactId>
