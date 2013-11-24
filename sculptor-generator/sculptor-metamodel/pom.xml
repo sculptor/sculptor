@@ -23,12 +23,52 @@
 					<filesets>
 						<fileset>
 							<directory>src-gen</directory>
-							<excludes>
-								<exclude>.gitignore</exclude>
-							</excludes>
 						</fileset>
 					</filesets>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<!-- The MWE2 workflow 'GenerateMetaModel.mwe2' modifies the MANIFEST.MF 
+						file - so we're making a backup before the workflow starts and restoring it 
+						after the workflow finished -->
+					<execution>
+						<id>backup-manifest</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>META-INF/</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>${project.build.directory}/META-INF-backup/</outputDirectory>
+							<overwrite>true</overwrite>
+						</configuration>
+					</execution>
+					<execution>
+						<id>restore-manifest</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/META-INF-backup/</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>META-INF/</outputDirectory>
+							<overwrite>true</overwrite>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.fornax.toolsupport</groupId>
