@@ -44,7 +44,7 @@ the [DDD Sample](http://sculptorgenerator.org/documentation/ddd-sample),
 the [Archetype Tutorial](http://sculptorgenerator.org/documentation/archetype-tutorial)
 or the [Advanced Tutorial](http://sculptorgenerator.org/documentation/advanced-tutorial).
 
-You can learn more about the capabilities of Sculptor by reading the blog posts, e.g. 
+You can learn more about the capabilities of Sculptor by reading the [blog posts](http://sculptorgenerator.org/archive), e.g. 
 [Improving Developer Productivity with Sculptor](http://sculptorgenerator.org/2010/06/10/improving-developer-productivity-with-sculptor).
 
 
