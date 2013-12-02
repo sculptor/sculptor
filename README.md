@@ -52,7 +52,7 @@ You can learn more about the capabilities of Sculptor by reading the [blog posts
 
 Here are some ways for you to contribute:
 
-* Get involved with the community on the [Sculptor forum](https://groups.google.com/group/fornax-platform).
+* Get involved with the community on the [Sculptor forum](https://groups.google.com/group/sculptorgenerator).
   Please help out on the forum by responding to questions and joining the debate.
 * Create [GitHub tickets](https://github.com/sculptor/sculptor/issues) for bugs or new features and comment on the ones that you are interested in.
 * GitHub is for social coding: if you want to write code, we encourage contributions [through pull requests](https://help.github.com/articles/creating-a-pull-request)
