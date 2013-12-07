@@ -57,6 +57,7 @@ import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
 import org.sculptor.generator.formatter.JavaCodeFormatter
 import org.sculptor.generator.chain.ChainOverridable
+import org.sculptor.generator.GeneratorContext
 
 @ChainOverridable
 class Helper {
@@ -100,6 +101,7 @@ class Helper {
 				else
 					text)
 			out.close()
+			GeneratorContext.addGeneratedFile(fl);
 			LOG.debug("Created file : " + fl)
 		} else {
 			LOG.debug("Skipped file : " + fl)

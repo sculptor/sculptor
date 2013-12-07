@@ -19,7 +19,6 @@ package org.sculptor.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -44,6 +43,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.sculptor.generator.GeneratorContext;
 import org.sculptor.generator.SculptorGeneratorRunner;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
@@ -56,13 +56,6 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GeneratorMojo extends AbstractGeneratorMojo {
-
-	protected static final String LOGBACK_CONFIGURATION_FILE_PROPERTY = "logback.configurationFile";
-
-	protected static final String MWE2_WORKFLOW_LAUNCHER = "org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher";
-
-	protected static final String LOGBACK_NORMAL_CONFIGURATION_FILE_NAME = "logback-normal-sculptor-maven-plugin.xml";
-	protected static final String LOGBACK_VERBOSE_CONFIGURATION_FILE_NAME = "logback-verbose-sculptor-maven-plugin.xml";
 
 	protected static final String OUTPUT_SLOT_PATH_PREFIX = "outputSlot.path.";
 
@@ -432,26 +425,13 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	 *            if code generation is enforced
 	 */
 	protected List<File> executeGenerator(Set<String> changedFiles) throws MojoExecutionException {
-		List<File> createdFiles = null;
+		List<File> generatedFiles = null;
 
 		// Add resources and output directory to plugins classpath
 		List<Object> classpathEntries = new ArrayList<Object>();
 		classpathEntries.addAll(project.getResources());
 		classpathEntries.add(project.getBuild().getOutputDirectory());
 		extendPluginClasspath(classpathEntries);
-
-		// Redirect system.out and system.err
-		PrintStream oldSystemOut = System.out;
-		ScanningOutputStream stdout = new ScanningOutputStream(oldSystemOut, isVerbose());
-		System.setOut(new PrintStream(stdout));
-		PrintStream oldSystemErr = System.err;
-		ScanningOutputStream stderr = new ScanningOutputStream(oldSystemErr, isVerbose(), true);
-		System.setErr(new PrintStream(stderr));
-
-		// Prepare logback configuration
-		String logbackConfig = (isVerbose() ? LOGBACK_VERBOSE_CONFIGURATION_FILE_NAME
-				: LOGBACK_NORMAL_CONFIGURATION_FILE_NAME);
-		System.setProperty(LOGBACK_CONFIGURATION_FILE_PROPERTY, logbackConfig);
 
 		// Set system properties defined properties in the plugins
 		if (properties != null) {
@@ -472,28 +452,26 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
 
-		// Execute commandline and check return code
+		// Execute commandline and check result
 		Exception exception = null;
 		try {
 			doRunGenerator();
+			generatedFiles = GeneratorContext.getGeneratedFiles();
 		} catch (Exception e) {
 			exception = e;
 		} finally {
-			// Restore original system.out and system.err
-			System.setOut(oldSystemOut);
-			System.setErr(oldSystemErr);
+			GeneratorContext.close();
 		}
 
-		// Check exception and output streams for errors
+		// Check exception for errors
 		if (exception != null) {
 			getLog().error("Executing generator workflow failed", exception);
-		} else if (stdout.getErrorCount() == 0 && stderr.getLineCount() == 0) {
+		} else {
 
-			// Return list of created files
-			createdFiles = stdout.getCreatedFiles();
-			getLog().info("Generated " + createdFiles.size() + " files");
+			// Return list of generated files
+			getLog().info("Generated " + generatedFiles.size() + " files");
 		}
-		return createdFiles;
+		return generatedFiles;
 	}
 
 	protected void doRunGenerator() {
