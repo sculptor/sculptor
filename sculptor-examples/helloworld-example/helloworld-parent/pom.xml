@@ -5,9 +5,8 @@
 	<groupId>org.sculptorgenerator.examples</groupId>
 	<artifactId>helloworld-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<name>Sculptor :: Examples :: Hello World Parent</name>
-	<url>http://sculptorgenerator.org/documentation/hello-world-tutorial</url>
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
