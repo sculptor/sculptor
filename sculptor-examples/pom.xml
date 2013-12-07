@@ -12,7 +12,7 @@
 	<description>Aggregator project for all Sculptor examples</description>
 
 	<modules>
-		<module>helloworld-example/helloworld-parent</module>
+		<module>helloworld-example</module>
 		<module>library-example</module>
 		<module>DDDSample</module>
 <!-- 
