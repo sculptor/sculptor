@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.sculptor.generator.GeneratorContext;
 import org.sculptor.generator.SculptorGeneratorRunner;
+import org.sculptor.generator.util.PropertiesBase;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
@@ -451,6 +453,21 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
+
+		// Set system property with list of changed module files (*.btdesign)
+		if (changedFiles != null) {
+			StringBuffer changedFilesBuf = new StringBuffer();
+			for (Iterator<String> iterator = changedFiles.iterator(); iterator.hasNext();) {
+				String file = (String) iterator.next();
+				if (file.endsWith(".btdesign")) {
+					if (changedFilesBuf.length() > 0) {
+						changedFilesBuf.append(',');
+					}
+					changedFilesBuf.append(file);
+				}
+			}
+			System.setProperty(PropertiesBase.MAVEN_PLUGIN_CHANGED_FILES, changedFilesBuf.toString());
+		}
 
 		// Execute commandline and check result
 		Exception exception = null;
