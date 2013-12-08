@@ -53,7 +53,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * This plugin starts the Sculptor code generator by launching an Eclipse MWE2
  * workflow.
  * <p>
- * You can configure resources that should be checked if they are up to date to
+ * You can configure resources that should be checked if they are up-to-date to
  * avoid needless generator runs and optimize build execution time.
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
@@ -82,7 +82,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 
 	/**
 	 * A <code>java.util.List</code> of {@link FileSet}s that will be checked on
-	 * up to date. If all resources are up to date the plugin stops the
+	 * up-to-date. If all resources are up-to-date the plugin stops the
 	 * execution, because there are no files to regenerate. <br/>
 	 * The entries of this list can be relative path to the project root or
 	 * absolute path.
@@ -121,7 +121,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	/**
 	 * Properties used to define system properties (like
 	 * <code>"sculptor.generatorPropertiesLocation"</code>) or to overrride the
-	 * settings rettrieved from
+	 * settings retrieved from
 	 * <code>"default-sculptor-generator.properties"</code>.
 	 * <p>
 	 * <b>Sample:</b>
@@ -412,7 +412,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 					+ "last generator run at {1}", changedFiles.size(), df.format(new Date(statusFileLastModified)));
 			getLog().info(message);
 		} else {
-			getLog().info("Everything is up to date - no generator run is needed");
+			getLog().info("Everything is up-to-date - no generator run is needed");
 		}
 		return changedFiles;
 	}

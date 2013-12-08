@@ -52,76 +52,76 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	 * Directory for source-code artifacts. If an artifact with the same name
 	 * already exists, the generation of the artifact will be skipped.
 	 */
-	@Parameter(defaultValue="src/main/java", required=true)
+	@Parameter(defaultValue = "src/main/java", required = true)
 	protected File outletSrcOnceDir;
 
 	/**
 	 * Directory for non-source-code artifacts. If an artifact with the same
 	 * name already exists, the generation of the artifact will be skipped.
 	 */
-	@Parameter(defaultValue="src/main/resources", required=true)
+	@Parameter(defaultValue = "src/main/resources", required = true)
 	protected File outletResOnceDir;
 
 	/**
 	 * Directory for source-code artifacts. Existings artifacts will be
 	 * overwritten.
 	 */
-	@Parameter(defaultValue="src/generated/java", required=true)
+	@Parameter(defaultValue = "src/generated/java", required = true)
 	protected File outletSrcDir;
 
 	/**
 	 * Directory for non-source-code artifacts. Existings artifacts will be
 	 * overwritten.
 	 */
-	@Parameter(defaultValue="src/generated/resources", required=true)
+	@Parameter(defaultValue = "src/generated/resources", required = true)
 	protected File outletResDir;
 
 	/**
-	 * Directory for Webapp artifacts. If an artifact with the same
-	 * name already exists, the generation of the artifact will be skipped.
+	 * Directory for Webapp artifacts. If an artifact with the same name already
+	 * exists, the generation of the artifact will be skipped.
 	 */
-	@Parameter(defaultValue="src/main/webapp", required=true)
+	@Parameter(defaultValue = "src/main/webapp", required = true)
 	protected File outletWebrootDir;
 
 	/**
-	 * Directory for source-code artifacts. If an artifact with the same name
-	 * already exists, the generation of the artifact will be skipped.
+	 * Directory for test source-code artifacts. If an artifact with the same
+	 * name already exists, the generation of the artifact will be skipped.
 	 */
-	@Parameter(defaultValue="src/test/java", required=true)
+	@Parameter(defaultValue = "src/test/java", required = true)
 	protected File outletSrcTestOnceDir;
 
 	/**
-	 * Directory for source-code test-artifacts. Existings artifacts will not be
-	 * overwritten.
+	 * Directory for test non-source-code artifacts. Existings artifacts will
+	 * not be overwritten.
 	 */
-	@Parameter(defaultValue="src/test/resources", required=true)
+	@Parameter(defaultValue = "src/test/resources", required = true)
 	protected File outletResTestOnceDir;
 
 	/**
 	 * Directory for source-code test-artifacts. Existings artifacts will be
 	 * overwritten.
 	 */
-	@Parameter(defaultValue="src/test/generated/java", required=true)
+	@Parameter(defaultValue = "src/test/generated/java", required = true)
 	protected File outletSrcTestDir;
 
 	/**
 	 * Directory for non-source-code test-artifacts. Existings artifacts will be
 	 * overwritten.
 	 */
-	@Parameter(defaultValue="src/test/generated/resources", required=true)
+	@Parameter(defaultValue = "src/test/generated/resources", required = true)
 	protected File outletResTestDir;
 
 	/**
-	 * Directory for non-source-code test-artifacts. Existings artifacts will be
+	 * Directory for documentation artifacts. Existings artifacts will be
 	 * overwritten.
 	 */
-	@Parameter(defaultValue="src/site", required=true)
+	@Parameter(defaultValue = "src/site", required = true)
 	protected File outletDocDir;
 
 	/**
 	 * File holding the status of the last code generator execution.
 	 */
-	@Parameter(defaultValue=".sculptor-status", required=true)
+	@Parameter(defaultValue = ".sculptor-status", required = true)
 	protected File statusFile;
 
 	/**
@@ -129,7 +129,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	 * <p>
 	 * Can be set from command line using '-Dverbose=true'.
 	 */
-	@Parameter(property="verbose", defaultValue="false")
+	@Parameter(property = "verbose", defaultValue = "false")
 	private boolean verbose;
 
 	/**
