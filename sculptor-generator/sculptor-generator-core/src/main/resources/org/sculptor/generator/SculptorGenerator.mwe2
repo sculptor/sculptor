@@ -39,19 +39,21 @@ Workflow {
 		modelSlot = "model"
 	}
 
-	// Model transformation from DSL meta model to meta model
+	// Transform DSL meta model to generator meta model
 	component = ChainOverrideAwareGuiceWorkflowComponent {
 		inputSlot = "model"
 		outputSlot = "transformed"
 		action = "org.sculptor.generator.transform.DslTransformation.transform"
 	}
 
+	// Enrich generator meta model
 	component = ChainOverrideAwareGuiceWorkflowComponent {
 		inputSlot = "transformed"
 		outputSlot = "pass2transformation"
 		action = "org.sculptor.generator.transform.Transformation.modify"
 	}
 
+	// Generate code
 	component = ChainOverrideAwareGuiceWorkflowComponent {
 		inputSlot = "pass2transformation"
 		action = "org.sculptor.generator.template.RootTmpl.root"
