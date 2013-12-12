@@ -115,28 +115,6 @@
 
 	<repositories>
 		<repository>
-			<id>sculptor.org</id>
-			<name>Sculptor Repository</name>
-			<url>https://raw.github.com/sculptor/repository/maven</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>sculptor.org-snapshots</id>
-			<name>Sculptor Repository Snapshots</name>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>jboss.org</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
 			<releases>
@@ -152,28 +130,6 @@
 		<pluginRepository>
 			<id>xtend</id>
 			<url>http://build.eclipse.org/common/xtend/maven/</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>sculptor.org</id>
-			<name>Sculptor Repository</name>
-			<url>https://raw.github.com/sculptor/repository/maven</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>sculptor.org-snapshots</id>
-			<name>Sculptor Repository Snapshots</name>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
