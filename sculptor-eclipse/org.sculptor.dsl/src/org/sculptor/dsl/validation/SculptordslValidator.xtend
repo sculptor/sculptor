@@ -384,34 +384,30 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		var nullableKeyCount = 0
 		for (EObject each : parent.eContents()) {
 			if (each instanceof DslAttribute) {
-				val eachProp = each as DslAttribute
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
 			} else if (each instanceof DslReference) {
-				val eachProp = each as DslReference
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
 			} else if (each instanceof DslDtoAttribute) {
-				val eachProp = each as DslDtoAttribute
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
 			} else if (each instanceof DslDtoReference) {
-				val eachProp = each as DslDtoReference
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}

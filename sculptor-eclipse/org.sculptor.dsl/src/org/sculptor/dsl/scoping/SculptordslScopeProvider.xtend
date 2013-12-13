@@ -60,7 +60,7 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val option = ctx.delegate
 		if (option != null) {
 			if (option instanceof DslRepository) {
-				(option as DslRepository).operations.forEach[
+				option.operations.forEach[
 					elements.add(new EObjectDescription(QualifiedName::create(it.name), it, null))
 				]
 			} else {

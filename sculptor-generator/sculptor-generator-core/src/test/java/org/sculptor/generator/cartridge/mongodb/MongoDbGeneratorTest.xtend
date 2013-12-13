@@ -71,7 +71,6 @@ class MongoDbGeneratorTest extends GeneratorTestBase {
     	
     	
     	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
-			'@SuppressWarnings("unchecked")',
 			'private org.sculptor.framework.accessimpl.mongodb.DataMapper[] additionalDataMappers = new DataMapper[] {',
 				'JodaLocalDateMapper.getInstance(), JodaDateTimeMapper.getInstance(), EnumMapper.getInstance(),',
 				'IdMapper.getInstance(PhysicalMedia.class), IdMapper.getInstance(MediaCharacter.class),',
@@ -79,7 +78,6 @@ class MongoDbGeneratorTest extends GeneratorTestBase {
 		])
 		
     	assertContainsConsecutiveFragments(mediaRepositoryCode,#[
-			'@SuppressWarnings("unchecked")',
 			'protected DataMapper<Object, DBObject>[] getAdditionalDataMappers() {',
 				'return additionalDataMappers;',
 			'}'

@@ -30,7 +30,7 @@ import org.sculptor.generator.cartridge.mongodb.MongoDbMapperTmpl
 import sculptormetamodel.Application
 import sculptormetamodel.Module
 
-import static junit.framework.Assert.*
+import static org.junit.Assert.*
 
 import static extension org.sculptor.generator.GeneratorTestExtensions.*
 

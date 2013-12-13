@@ -23,7 +23,6 @@ import org.sculptor.dsl.sculptordsl.DslAttribute
 import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
 import org.sculptor.dsl.sculptordsl.DslComplexType
 
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
 /**

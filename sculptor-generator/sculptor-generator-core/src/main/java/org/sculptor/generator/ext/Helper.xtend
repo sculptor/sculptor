@@ -68,9 +68,9 @@ class Helper {
 	@Inject var SingularPluralConverter singularPluralConverter
 	@Inject var GenericAccessObjectManager genericAccessObjectManager
 
-	@Inject extension Properties properties
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension HelperBase helperBase
+	@Inject extension PropertiesBase propertiesBase
+	@Inject extension Properties properties
 
 	static val JAVA_EXT = ".java"
 	static val XTEND_EXT = ".xtend"
@@ -96,8 +96,8 @@ class Helper {
 			fl.parentFile.mkdirs()
 			var out = new FileWriter(fl)
 			out.write(
-				if ((fileName.endsWith(JAVA_EXT)) && getBooleanProperty("java.codeformatter.enabled"))
-					javaCodeFormatter.format(flTr, text, getBooleanProperty("java.codeformatter.error.abort"))
+				if ((fileName.endsWith(JAVA_EXT)) && propertiesBase.getBooleanProperty("java.codeformatter.enabled"))
+					javaCodeFormatter.format(flTr, text, propertiesBase.getBooleanProperty("java.codeformatter.error.abort"))
 				else
 					text)
 			out.close()
