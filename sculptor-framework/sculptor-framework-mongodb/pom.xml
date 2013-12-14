@@ -10,7 +10,7 @@
 	<name>Sculptor :: Runtime Framework :: MongoDB</name>
 
 	<properties>
-		<mongodb.version>2.11.2</mongodb.version>
+		<mongodb.version>2.11.3</mongodb.version>
 		<spring.version>3.0.4.RELEASE</spring.version>
 	</properties>
 
