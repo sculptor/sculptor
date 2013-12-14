@@ -26,14 +26,12 @@ var fileExtensions = "btdesign"
 var projectName = "org.sculptor.dsl"
 var runtimeProject = "../${projectName}"
 var generateXtendStub = true
+var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
     	scanClassPath = true
 		platformUri = "${runtimeProject}/.."
-		// The following two lines can be removed, if Xbase is not used.
-//		registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
-//		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
 	}
 
 	component = DirectoryCleaner {
@@ -57,15 +55,7 @@ Workflow {
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
-			fragment = ecore.EMFGeneratorFragment auto-inject {
-//				referencedGenModels = "
-//					platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel,
-//					platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel
-//				"
-			}
-
-			// the old serialization component
-//			fragment = parseTreeConstructor.ParseTreeConstructorFragment auto-inject {}    
+			fragment = ecore.EMFGeneratorFragment auto-inject {}
 
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
@@ -143,14 +133,11 @@ Workflow {
             // provides the necessary bindings for java types integration
             fragment = types.TypesGeneratorFragment auto-inject {}
 
-			// generates the required bindings only if the grammar inherits from Xbase
-//			fragment = xbase.XbaseGeneratorFragment auto-inject {}
-
 			// provides a preference page for template proposals
 			fragment = templates.CodetemplatesGeneratorFragment auto-inject {}
 
 			// provides a compare view
-//			fragment = compare.CompareFragment auto-inject {}
+			fragment = compare.CompareFragment auto-inject {}
 		}
 	}
 }
