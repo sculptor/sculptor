@@ -1,20 +1,19 @@
 /*
- * Copyright 2009 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.accessimpl.jpahibernate;
 
 import static org.sculptor.framework.accessapi.ColumnStatType.AVERAGE;
@@ -46,8 +45,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle9iDialect;
-import org.hibernate.dialect.PostgreSQLDialect;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.dialect.PostgreSQL82Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
 import org.sculptor.framework.accessapi.ColumnStatRequest;
@@ -138,7 +137,7 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 	private Type[] timeResultType = new Type[] {new IntegerType()};
 
 	private Projection makeTimeGroupBy(ColumnStatRequest<T> column, ColumnStatType func, Criteria criteria) {
-		if (getDialect() instanceof PostgreSQLDialect) {
+		if (getDialect() instanceof PostgreSQL82Dialect) {
 			return makeTimeGroupByPostgreSql(column, func, criteria);
 		} else if (getDialect() instanceof Oracle9iDialect || getDialect() instanceof Oracle10gDialect) {
 			return makeTimeGroupByOracle(column, func, criteria);
