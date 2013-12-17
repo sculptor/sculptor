@@ -128,7 +128,7 @@ class AutoImportVisitor extends ASTVisitor {
 			if (referenceTypeArguments != null) {
 				referenceTypeArguments.forEach [ referenceTypeArgument |
 					if (referenceTypeArgument instanceof QualifiedTypeReference) {
-						autoImport(referenceTypeArgument as QualifiedTypeReference)
+						autoImport(referenceTypeArgument)
 					}
 				]
 			}
