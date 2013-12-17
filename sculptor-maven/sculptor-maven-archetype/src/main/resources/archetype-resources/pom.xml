@@ -31,12 +31,12 @@
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<sculptor-version>${project.version}</sculptor-version>
-	    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
-		<slf4j-version>1.7.5</slf4j-version>
-		<logback-version>1.0.13</logback-version>
-		<spring-version>3.2.4.RELEASE</spring-version>
-		<aspectj-version>1.7.2</aspectj-version>
-		<hsqldb-version>2.2.9</hsqldb-version>
+	    <hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
+		<slf4j-version>${slf4j-version}</slf4j-version>
+		<logback-version>${logback-version}</logback-version>
+		<spring-version>${spring-version}</spring-version>
+		<aspectj-version>${aspectj-version}</aspectj-version>
+		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 	</properties>
 
 #end
@@ -230,7 +230,7 @@
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>1.4.4</version>
+		    <version>1.4.6</version>
 		</dependency>
 #end
 		<dependency>
@@ -472,7 +472,7 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate-version>4.2.2.Final</hibernate-version>
+				<hibernate-version>${hibernate-version}</hibernate-version>
 			</properties>
 			<build>
 			</build>
