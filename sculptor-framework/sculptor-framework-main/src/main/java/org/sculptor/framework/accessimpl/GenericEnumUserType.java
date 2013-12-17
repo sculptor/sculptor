@@ -1,13 +1,13 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2007 The Fornax Project Team, including the original
  * author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.type.AbstractSingleColumnStandardBasicType;
-import org.hibernate.type.TypeResolver;
+import org.hibernate.type.NullableType;
+import org.hibernate.type.TypeFactory;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -84,131 +83,116 @@ import org.hibernate.usertype.UserType;
  *
  * @author Martin Kersten
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings("deprecation")
 public class GenericEnumUserType implements UserType, ParameterizedType, Serializable {
+    private static final long serialVersionUID = -3519064203142497321L;
+    private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
+    private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
 
-	private static final long serialVersionUID = -3519064203142497321L;
+    @SuppressWarnings("rawtypes")
+    private Class<? extends Enum> enumClass;
+    private Class<?> identifierType;
+    private transient Method identifierMethod;
+    private transient Method valueOfMethod;
+    private NullableType type;
+    private int[] sqlTypes;
 
-	private static final String DEFAULT_IDENTIFIER_METHOD_NAME = "name";
-	private static final String DEFAULT_VALUE_OF_METHOD_NAME = "valueOf";
+    public void setParameterValues(Properties parameters) {
+        String enumClassName = parameters.getProperty("enumClass");
+        try {
+            enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
+        } catch (ClassNotFoundException cfne) {
+            throw new HibernateException("Enum class not found", cfne);
+        }
 
-	private Class<? extends Enum> enumClass;
-	private Class<?> identifierType;
-	private Method identifierMethod;
-	private Method valueOfMethod;
-	private AbstractSingleColumnStandardBasicType type;
-	private int[] sqlTypes;
+        String identifierMethodName = parameters.getProperty("identifierMethod", DEFAULT_IDENTIFIER_METHOD_NAME);
 
-	@Override
-	public void setParameterValues(final Properties parameters) {
-		final String enumClassName = parameters.getProperty("enumClass");
-		try {
-			enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
-		} catch (final ClassNotFoundException cfne) {
-			throw new HibernateException("Enum class not found", cfne);
-		}
+        try {
+            identifierMethod = enumClass.getMethod(identifierMethodName, new Class[0]);
+            identifierType = identifierMethod.getReturnType();
+        } catch (Exception e) {
+            throw new HibernateException("Failed to obtain identifier method", e);
+        }
 
-		final String identifierMethodName = parameters.getProperty("identifierMethod", DEFAULT_IDENTIFIER_METHOD_NAME);
+        type = (NullableType) TypeFactory.basic(identifierType.getName());
 
-		try {
-			identifierMethod = enumClass.getMethod(identifierMethodName, new Class[0]);
-			identifierType = identifierMethod.getReturnType();
-		} catch (final Exception e) {
-			throw new HibernateException("Failed to obtain identifier method", e);
-		}
+        if (type == null) {
+            throw new HibernateException("Unsupported identifier type " + identifierType.getName());
+        }
 
-		final TypeResolver tr = new TypeResolver();
-		type = (AbstractSingleColumnStandardBasicType) tr.basic(identifierType.getName());
+        sqlTypes = new int[] { type.sqlType() };
 
-		if (type == null) {
-			throw new HibernateException("Unsupported identifier type " + identifierType.getName());
-		}
+        String valueOfMethodName = parameters.getProperty("valueOfMethod", DEFAULT_VALUE_OF_METHOD_NAME);
 
-		sqlTypes = new int[] { type.sqlType() };
+        try {
+            valueOfMethod = enumClass.getMethod(valueOfMethodName, new Class[] { identifierType });
+        } catch (Exception e) {
+            throw new HibernateException("Failed to obtain valueOf method", e);
+        }
+    }
 
-		final String valueOfMethodName = parameters.getProperty("valueOfMethod", DEFAULT_VALUE_OF_METHOD_NAME);
+	@SuppressWarnings("rawtypes")
+    public Class returnedClass() {
+        return enumClass;
+    }
 
-		try {
-			valueOfMethod = enumClass.getMethod(valueOfMethodName, new Class[] { identifierType });
-		} catch (final Exception e) {
-			throw new HibernateException("Failed to obtain valueOf method", e);
-		}
-	}
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
+        Object identifier = type.get(rs, names[0]);
+        if (rs.wasNull()) {
+            return null;
+        }
 
-	@Override
-	public Class<? extends Enum> returnedClass() {
-		return enumClass;
-	}
+        try {
+            return valueOfMethod.invoke(enumClass, new Object[] { identifier });
+        } catch (Exception e) {
+            throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName() + "' of " +
+                    "enumeration class '" + enumClass + "'", e);
+        }
+    }
 
-	@Override
-	public Object nullSafeGet(final ResultSet rs, final String[] names, final SessionImplementor sessionImplementor, final Object owner) throws HibernateException,
-			SQLException {
-		final Object identifier = type.nullSafeGet(rs, names[0], sessionImplementor);
-		if (identifier == null) {
-			return null;
-		}
+    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
+        try {
+            if (value == null) {
+                st.setNull(index, type.sqlType());
+            } else {
+                Object identifier = identifierMethod.invoke(value, new Object[0]);
+                type.set(st, identifier, index);
+            }
+        } catch (Exception e) {
+            throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
+                    "enumeration class '" + enumClass + "'", e);
+        }
+    }
 
-		try {
-			return valueOfMethod.invoke(enumClass, new Object[] { identifier });
-		} catch (final Exception e) {
-			throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName()
-					+ "' of " + "enumeration class '" + enumClass + "'", e);
-		}
-	}
+    public int[] sqlTypes() {
+        return sqlTypes;
+    }
 
-	@Override
-	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SessionImplementor sessionImplementor) throws HibernateException,
-			SQLException {
-		try {
-			if (value == null) {
-				st.setNull(index, type.sqlType());
-			} else {
-				final Object identifier = identifierMethod.invoke(value, new Object[0]);
-				type.nullSafeSet(st, identifier, index, sessionImplementor);
-			}
-		} catch (final Exception e) {
-			throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName()
-					+ "' of " + "enumeration class '" + enumClass + "'", e);
-		}
-	}
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
+        return cached;
+    }
 
-	@Override
-	public int[] sqlTypes() {
-		return sqlTypes;
-	}
+    public Object deepCopy(Object value) throws HibernateException {
+        return value;
+    }
 
-	@Override
-	public Object assemble(final Serializable cached, final Object owner) throws HibernateException {
-		return cached;
-	}
+    public Serializable disassemble(Object value) throws HibernateException {
+        return (Serializable) value;
+    }
 
-	@Override
-	public Object deepCopy(final Object value) throws HibernateException {
-		return value;
-	}
+    public boolean equals(Object x, Object y) throws HibernateException {
+        return x == y;
+    }
 
-	@Override
-	public Serializable disassemble(final Object value) throws HibernateException {
-		return (Serializable) value;
-	}
+    public int hashCode(Object x) throws HibernateException {
+        return x.hashCode();
+    }
 
-	@Override
-	public boolean equals(final Object x, final Object y) throws HibernateException {
-		return x == y;
-	}
+    public boolean isMutable() {
+        return false;
+    }
 
-	@Override
-	public int hashCode(final Object x) throws HibernateException {
-		return x.hashCode();
-	}
-
-	@Override
-	public boolean isMutable() {
-		return false;
-	}
-
-	@Override
-	public Object replace(final Object original, final Object target, final Object owner) throws HibernateException {
-		return original;
-	}
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+        return original;
+    }
 }
