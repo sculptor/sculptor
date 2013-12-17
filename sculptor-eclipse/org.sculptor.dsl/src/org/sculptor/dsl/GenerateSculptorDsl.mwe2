@@ -39,10 +39,18 @@ Workflow {
 	}
 
 	component = DirectoryCleaner {
+		directory = "${runtimeProject}/model"
+	}
+
+	component = DirectoryCleaner {
 		directory = "${runtimeProject}.ui/src-gen"
 	}
 
-	component = Generator {
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}.test/src-gen"
+	}
+
+	component = Generator auto-inject {
 		pathRtProject = runtimeProject
 		pathUiProject = "${runtimeProject}.ui"
 		pathTestProject = "${runtimeProject}.tests"
