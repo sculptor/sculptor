@@ -58,7 +58,7 @@ class JavaCodeFormatter {
 		// Use Eclipse JDTs code formatter
 		val TextEdit textEdit = getCodeFormatter().format(
 			CodeFormatter::K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), autoImportedCode, 0,
-			autoImportedCode.length(), 0, "\n")
+			autoImportedCode.length(), 0, null)
 		val IDocument doc = new Document(autoImportedCode)
 		try {
 			textEdit.apply(doc)
