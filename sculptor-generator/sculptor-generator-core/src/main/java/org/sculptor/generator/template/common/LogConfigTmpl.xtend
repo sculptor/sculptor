@@ -64,7 +64,7 @@ class LogConfigTmpl {
 				</encoder>
 			</appender>
 			
-			<logger name="«basePackage»" level="DEBUG" />
+			<logger name="«basePackage»" level="INFO" />
 			<root level="INFO">
 				<appender-ref ref="STDOUT" />
 			</root>
