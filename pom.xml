@@ -80,7 +80,7 @@
 		<logback-version>1.0.13</logback-version>
 		
 		<aspectj-version>1.7.4</aspectj-version>
-		<spring-version>3.2.5.RELEASE</spring-version>
+		<spring-version>3.2.6.RELEASE</spring-version>
 		<spring-integration-version>2.2.6.RELEASE</spring-integration-version>
 		<hibernate-version>4.2.8.Final</hibernate-version>
 	    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
