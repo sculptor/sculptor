@@ -15,9 +15,6 @@
 		<module>helloworld-example</module>
 		<module>library-example</module>
 		<module>DDDSample</module>
-<!-- 
-		<module>mongodb-samples/sculptor-shipping-generator</module>
-		<module>mongodb-samples/sculptor-shipping</module>
- -->
+		<module>mongodb-samples</module>
 	</modules>
 </project>

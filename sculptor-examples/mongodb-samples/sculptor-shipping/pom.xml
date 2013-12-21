@@ -9,43 +9,20 @@
 		<version>3.0.1-SNAPSHOT</version>
 		<relativePath>../../</relativePath>
 	</parent>
-	<!-- Use different parent element when using multi module -->
-	<!--
-		<parent> <artifactId>shippinig-parent</artifactId>
-		<groupId>org.sculptorgenerator</groupId> <version>1.0-SNAPSHOT</version>
-		</parent>
-	-->
 
 	<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
 	<artifactId>sculptor-shipping</artifactId>
 	<name>Sculptor :: Examples :: MongoDB Samples :: Shipping</name>
 	<description>MongoDB example: Business tier project for sculptor-shipping</description>
-	<!--
-		Remove properties element when using multi module, they are defined in
-		parent pom.xml
-	-->
-	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<ehcache.version>2.4.7</ehcache.version>
-		<spring.version>3.0.4.RELEASE</spring.version>
-		<sculptor.version>${project.version}</sculptor.version>
-
-		<spring-integration.version>2.0.0.RELEASE</spring-integration.version>
-		<camel.version>2.6.0</camel.version>
-
-	</properties>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
-		
  		<plugins>
- 		
- 				<plugin>
+			<plugin>
 				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
-				<version>${sculptor.version}</version>
+				<version>${project.version}</version>
 				<configuration>
-					<verbose>true</verbose>
+					<verbose>false</verbose>
 				</configuration>
 				<executions>
 					<execution>
@@ -60,14 +37,7 @@
 							<goal>generate</goal>
 						</goals>
 					</execution>
-					<execution>
-						<id>image-generation</id>
-						<goals>
-							<goal>generate-images</goal>
-						</goals>
-					</execution>
  				</executions>
-
  				<dependencies>
 					<dependency>
 						<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
@@ -76,42 +46,19 @@
 					</dependency>
  				</dependencies>
 			</plugin>
- 
- 
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>src/generated</directory>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-								<include>**/*.dot</include>
-								<include>**/*.html</include>
-								<include>**/*.png</include>
-								<include>**/*.css</include>
-							</includes>
+							<directory>${basedir}/src/main/xtend-gen</directory>
 							<excludes>
-								<exclude>**/.svn/*</exclude>
+								<exclude>.gitignore</exclude>
 							</excludes>
-							<followSymlinks>false</followSymlinks>
 						</fileset>
 						<fileset>
-							<directory>src/test/generated</directory>
-							<includes>
-								<include>**/*.java</include>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-							</includes>
-							<excludes>
-								<exclude>**/.svn/*</exclude>
-							</excludes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-						<fileset>
-							<directory>src/main/xtend-gen</directory>
+							<directory>${basedir}/src/test/xtend-gen</directory>
 							<excludes>
 								<exclude>.gitignore</exclude>
 							</excludes>
@@ -124,56 +71,17 @@
 				<artifactId>xtend-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>initialize</phase>
 						<goals>
 							<goal>compile</goal>
+							<goal>testCompile</goal>
 						</goals>
-<!-- 						<configuration>
-							<outputDirectory>src/main/xtend-gen</outputDirectory>
-						</configuration>
- -->					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				
- 			</plugin>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<downloadSources>false</downloadSources>
-					<classpathContainers>
-						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-					</classpathContainers>
-				</configuration>
-			</plugin>
-			
-<!-- 			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>${project.artifactId}-client</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>package</phase>
 						<configuration>
-							<classifier>client</classifier>
-							<includes>
-								<include>**/serviceapi/*.class</include>
-								<include>**/domain/*.class</include>
-								<include>**/exception/*.class</include>
-								<include>**/*.btdesign</include>
-								<include>**/sculptor-generator.properties</include>
-							</includes>
+							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
- -->
- 
-
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -182,45 +90,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId> org.fornax.toolsupport</groupId>
-										<artifactId>fornax-checksum-m2-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals><goal>run</goal></goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.fornax.toolsupport</groupId>
-										<artifactId>fornax-graphviz-m2-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals><goal>run</goal></goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -242,88 +111,44 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-  					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-core</artifactId>
-			<version>${spring-integration.version}</version>
+			<version>${spring-integration-version}</version>
 		</dependency>
-	
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-	
-		<dependency>
-			<groupId>aopalliance</groupId>
-			<artifactId>aopalliance</artifactId>
-			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.1</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
-		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.7.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-  					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
-		    <!-- Need to define version 1.3 due to conflicting versions -->
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
-			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -333,49 +158,38 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
-			<artifactId>sculptor-generator-library</artifactId>
-			<version>${sculptor.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-main</artifactId>
-			<version>${sculptor.version}</version>
+			<version>${project.version}</version>
 			<classifier>without-ejb</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-mongodb</artifactId>
-			<version>${sculptor.version}</version>
+			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-test</artifactId>
-			<version>${sculptor.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2</version>
 		</dependency>
 
 		<!-- Camel BEGIN -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>${camel.version}</version>
+			<version>${camel-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -386,12 +200,12 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jms</artifactId>
-			<version>${camel.version}</version>
+			<version>${camel-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring</artifactId>
-			<version>${camel.version}</version>
+			<version>${camel-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -437,27 +251,5 @@
 		<!-- Camel END -->
 
 	</dependencies>
-
-	
-
-	<repositories>
-		<repository>
-			<id>jboss.org</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>xtend</id>
-			<url>http://build.eclipse.org/common/xtend/maven/</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>

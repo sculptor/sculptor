@@ -1,7 +1,0 @@
-module generator.Workflow
-
-Workflow {
-        component = @org.sculptor.generator.SculptorGenerator {
-                modelFile = "classpath:/model.btdesign"
-        }
-}

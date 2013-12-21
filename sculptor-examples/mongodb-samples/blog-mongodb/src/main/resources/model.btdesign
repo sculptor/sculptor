@@ -1,0 +1,53 @@
+Application Blog {
+    basePackage = org.blog
+
+    Module core {
+    
+    	Service BlogPostService {
+    		getPostsInBlog delegates to BlogPostRepository.findPostsInBlog;
+    		getPostsWithGreatComments delegates to 
+    			BlogPostRepository.findPostsWithGreatComments;
+    	}
+
+        Entity BlogPost {
+            scaffold
+            - Blog inBlog
+            String slug key
+            String title
+            String body length="2000"
+            Date published nullable
+            - Author writtenBy
+            - Set<Comment> commentSet
+            def List<Comment> getComments;
+            
+            Repository BlogPostRepository { 
+            	findByTitle(String title) condition="title i= :title";
+            	findPostsInBlog(@Blog inBlog) orderBy="title";
+            	List<@BlogPost> findPostsWithComments => AccessObject;
+            	List<@BlogPost> findPostsWithGreatComments gap;
+            	protected findByCondition;
+            }
+        }
+
+        ValueObject Comment {
+            not aggregateRoot
+            String title
+            String body
+            Timestamp timestamp
+        }
+        
+        Entity Blog {
+            scaffold
+            String ^url key
+            String title
+            String intro length="300"
+            - Set<Author> writers
+        }
+
+        Entity Author {
+            scaffold
+            String name required
+            String emailAddress
+        }
+    }
+}
