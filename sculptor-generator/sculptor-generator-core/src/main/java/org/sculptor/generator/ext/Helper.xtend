@@ -149,7 +149,7 @@ class Helper {
 			if (changed.isEmpty)
 				app.modules as List<Module>
 			else {
-				debugTrace("Partial: " + app.modules.filter[e | changed.contains(e)].map[m | m.name].join)
+				LOG.debug("Partial: " + app.modules.filter[e | changed.contains(e)].map[m | m.name].join)
 				app.modules.filter[e | changed.contains(e)].toList
 			}
 		}

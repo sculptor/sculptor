@@ -18,7 +18,7 @@
 package org.sculptor.maven.plugin;
 
 import static org.mockito.Matchers.anySet;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
@@ -216,8 +216,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 		// Create mojo
 		GeneratorMojo mojo = spy(super.createMojo(project, "generate"));
-		doNothing().when(mojo).doRunGenerator();
-
+		doReturn(Boolean.TRUE).when(mojo).doRunGenerator();
 
 		// Set default values on mojo
 		setVariableValueToObject(mojo, "model", "src/main/resources/model.btdesign");

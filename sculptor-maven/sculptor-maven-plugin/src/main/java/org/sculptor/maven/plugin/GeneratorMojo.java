@@ -219,25 +219,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				getLog().info("Automatic cleanup disabled - keeping " + "previously generated files");
 			}
 
-			// Execute Sculptor code generator and update status file
-			List<File> createdFiles = executeGenerator(changedFiles);
-			if (createdFiles != null) {
-				updateStatusFile(createdFiles);
-
-				// Refresh Eclipse workspace
-				if (createdFiles.size() > 0) {
-					buildContext.refresh(outletSrcOnceDir);
-					buildContext.refresh(outletResOnceDir);
-					buildContext.refresh(outletSrcDir);
-					buildContext.refresh(outletResDir);
-					buildContext.refresh(outletWebrootDir);
-					buildContext.refresh(outletSrcTestOnceDir);
-					buildContext.refresh(outletResTestOnceDir);
-					buildContext.refresh(outletSrcTestDir);
-					buildContext.refresh(outletResTestDir);
-					buildContext.refresh(outletDocDir);
-				}
-			} else {
+			// Execute Sculptor code generator
+			if (!executeGenerator(changedFiles)) {
 				throw new MojoExecutionException("Sculptor code generator failed");
 			}
 		}
@@ -426,8 +409,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	 *            modified since last generator execution or <code>null</code>
 	 *            if code generation is enforced
 	 */
-	protected List<File> executeGenerator(Set<String> changedFiles) throws MojoExecutionException {
-		List<File> generatedFiles = null;
+	protected boolean executeGenerator(Set<String> changedFiles) throws MojoExecutionException {
 
 		// Add resources and output directory to plugins classpath
 		List<Object> classpathEntries = new ArrayList<Object>();
@@ -469,30 +451,52 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 			System.setProperty(PropertiesBase.MAVEN_PLUGIN_CHANGED_FILES, changedFilesBuf.toString());
 		}
 
-		// Execute commandline and check result
-		Exception exception = null;
+		// Execute commandline and retrieve list of generated files
+		boolean success = false;
+		List<File> generatedFiles;
 		try {
-			doRunGenerator();
-			generatedFiles = GeneratorContext.getGeneratedFiles();
+			success = doRunGenerator();
 		} catch (Exception e) {
-			exception = e;
+			getLog().error("Executing generator workflow failed", e);
 		} finally {
+			generatedFiles = GeneratorContext.getGeneratedFiles();
 			GeneratorContext.close();
 		}
 
-		// Check exception for errors
-		if (exception != null) {
-			getLog().error("Executing generator workflow failed", exception);
-		} else {
-
-			// Return list of generated files
+		// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
+		if (success) {
+			updateStatusFile(generatedFiles);
+			if (generatedFiles.size() > 0) {
+				refreshEclipseWorkspace();
+			}
 			getLog().info("Generated " + generatedFiles.size() + " files");
+		} else {
+			for (File file : generatedFiles) {
+				try {
+					FileUtils.forceDelete(file);
+				} catch (IOException e) {
+					// we can't do anything here
+				}
+			}
 		}
-		return generatedFiles;
+		return success;
 	}
 
-	protected void doRunGenerator() {
-		SculptorGeneratorRunner.run(getModelFile().toString());
+	private void refreshEclipseWorkspace() {
+		buildContext.refresh(outletSrcOnceDir);
+		buildContext.refresh(outletResOnceDir);
+		buildContext.refresh(outletSrcDir);
+		buildContext.refresh(outletResDir);
+		buildContext.refresh(outletWebrootDir);
+		buildContext.refresh(outletSrcTestOnceDir);
+		buildContext.refresh(outletResTestOnceDir);
+		buildContext.refresh(outletSrcTestDir);
+		buildContext.refresh(outletResTestDir);
+		buildContext.refresh(outletDocDir);
+	}
+
+	protected boolean doRunGenerator() {
+		return SculptorGeneratorRunner.run(getModelFile().toString());
 	}
 
 	public void extendPluginClasspath(List<Object> classpathEntries) throws MojoExecutionException {
