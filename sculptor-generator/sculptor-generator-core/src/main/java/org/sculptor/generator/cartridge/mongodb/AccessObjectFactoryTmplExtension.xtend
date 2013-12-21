@@ -25,6 +25,7 @@ import sculptormetamodel.RepositoryOperation
 
 @ChainOverride
 class AccessObjectFactoryTmplExtension extends AccessObjectFactoryTmpl {
+
 	@Inject extension Properties properties
 	@Inject extension HelperBase helperBase
 
