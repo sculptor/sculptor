@@ -32,8 +32,6 @@ import org.eclipse.text.edits.InsertEdit
 import org.eclipse.text.edits.MultiTextEdit
 import org.eclipse.text.edits.TextEdit
 
-import static com.google.common.base.StandardSystemProperty.*
-
 import static extension org.sculptor.generator.formatter.ASTNodeHelper.*
 
 /**
@@ -68,7 +66,8 @@ class AutoImportVisitor extends ASTVisitor {
 
 	def TextEdit insertAdditionalImports(int pos) {
 		val textEdit = new MultiTextEdit
-		additionalImports.sort.forEach[importName|textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';' + LINE_SEPARATOR.value()))]
+		additionalImports.sort.forEach[importName|
+			textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';' + System.getProperty("line.separator")))]
 		textEdit
 	}
 
