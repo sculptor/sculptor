@@ -1,4 +1,4 @@
-package org.fornax.cartridges.sculptor.framework.event;
+package org.sculptor.framework.event;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
