@@ -10,7 +10,6 @@
 	<artifactId>helloworld-example</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Examples :: Hello World</name>
-	<version>3.0.1-SNAPSHOT</version>
 	<url>http://sculptorgenerator.org/documentation/hello-world-tutorial</url>
 
 	<modules>

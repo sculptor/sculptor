@@ -7,7 +7,6 @@
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-examples</artifactId>
 		<version>3.0.1-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
 	</parent>
 
 	<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
@@ -37,7 +36,7 @@
 							<goal>generate</goal>
 						</goals>
 					</execution>
- 				</executions>
+				</executions>
  				<dependencies>
 					<dependency>
 						<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
@@ -93,21 +92,57 @@
 	</build>
 
 	<dependencies>
- 		<dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
+			<artifactId>sculptor-shipping-generator</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-core</artifactId>
+			<version>${spring-integration-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-framework-mongodb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<!-- Add scope provided when deployed in jboss -->
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<!-- Add scope provided when deployed in jboss -->
+			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
+			<!-- Add scope provided when deployed in jboss -->
+			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
+			<!-- Add scope provided when deployed in jboss -->
+			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<!-- Add scope provided when deployed in jboss -->
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<!-- Remove dependency to javax.transaction when running in a transaction 
+			supporting container (jboss etc) -->
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>javax.transaction-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -119,6 +154,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 		</dependency>
 		<dependency>
@@ -126,9 +169,20 @@
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-core</artifactId>
-			<version>${spring-integration-version}</version>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -139,20 +193,12 @@
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
- 		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-framework-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -161,28 +207,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptorgenerator</groupId>
-			<artifactId>sculptor-framework-main</artifactId>
-			<version>${project.version}</version>
-			<classifier>without-ejb</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator</groupId>
-			<artifactId>sculptor-framework-mongodb</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator</groupId>
-			<artifactId>sculptor-framework-test</artifactId>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
 		</dependency>
 
 		<!-- Camel BEGIN -->

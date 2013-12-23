@@ -7,54 +7,40 @@
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-examples</artifactId>
 		<version>3.0.1-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
 	</parent>
-
 	<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
 	<artifactId>sculptor-shipping-generator</artifactId>
 	<name>Sculptor :: Examples :: MongoDB Samples :: Shipping Generator </name>
 	<description>MongoDB example: Generator project for sculptor-shipping</description>
 
-	<properties>
-		<sculptor.version>${project.version}</sculptor.version>
-	</properties>
-
 	<build>
-		<finalName>${project.artifactId}</finalName>
-		
- 		<plugins>
- 		
- 				<plugin>
-					<groupId>org.eclipse.xtend</groupId>
-					<artifactId>xtend-maven-plugin</artifactId>
-
-					<executions>
-						<execution>
-							<phase>initialize</phase>
-
-							<goals>
-								<goal>compile</goal>
-								<goal>testCompile</goal>
-							</goals>
-							<configuration>
-								<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
-								<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
- 
+		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>src/main/xtend-gen</directory>
+							<directory>${basedir}/src/main/xtend-gen</directory>
 						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -63,7 +49,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
 	</build>
 
 	<dependencies>
@@ -73,64 +58,12 @@
 			<artifactId>eclipse-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
- 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-
- 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
-			<version>${sculptor.version}</version>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
- 		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>1.6</version>
-		</dependency>
-
 	</dependencies>
-
-	
-
-	<repositories>
-		<repository>
-			<id>jboss.org</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>xtend</id>
-			<url>http://build.eclipse.org/common/xtend/maven/</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>
