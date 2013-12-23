@@ -2,9 +2,9 @@ package org.sculptor.shipping.statistics.consumer;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sculptor.framework.event.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,14 +12,17 @@ import org.springframework.stereotype.Component;
  */
 @Component("eventCounter")
 public class EventCounterImpl extends EventCounterImplBase {
-    private final Log log = LogFactory.getLog(getClass());
-    private final AtomicInteger counter = new AtomicInteger();
 
-    public EventCounterImpl() {
-    }
+	private static final Logger LOG = LoggerFactory.getLogger(EventCounterImpl.class);
 
-    public void receive(Event event) {
-        int current = counter.incrementAndGet();
-        log.info(String.format("Number of events: %s", current));
-    }
+	private final AtomicInteger counter = new AtomicInteger();
+
+	public EventCounterImpl() {
+	}
+
+	public void receive(Event event) {
+		int current = counter.incrementAndGet();
+		LOG.info("Number of events: {}", current);
+	}
+
 }
