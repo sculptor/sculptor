@@ -465,6 +465,11 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 
 		// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
 		if (success) {
+			if (isVerbose()) {
+				for (File generatedFile : generatedFiles) {
+					getLog().info("Generated: " + getProjectRelativePath(generatedFile));
+				}
+			}
 			updateStatusFile(generatedFiles);
 			if (generatedFiles.size() > 0) {
 				refreshEclipseWorkspace();
