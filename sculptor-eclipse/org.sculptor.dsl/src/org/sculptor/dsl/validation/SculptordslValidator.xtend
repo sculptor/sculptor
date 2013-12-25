@@ -887,4 +887,30 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		}
 	}
 
+	@Check
+	def checkApplicationBasepackageNameIsAllLowerCase(DslApplication application) {
+		if (application.basePackage == null) {
+			return
+		}
+		if (!application.basePackage.isAllLowerCase) {
+			warning("The basepackage name should be in lower case", DSL_APPLICATION__BASE_PACKAGE,
+				ALL_LOWERCASE_NAME, application.basePackage)
+		}
+	}
+
+	@Check
+	def checkModuleBasepackageNameIsAllLowerCase(DslModule module) {
+		if (module.basePackage == null) {
+			return
+		}
+		if (!module.basePackage.isAllLowerCase) {
+			warning("The basepackage name should be in lower case", DSL_MODULE__BASE_PACKAGE, ALL_LOWERCASE_NAME,
+				module.basePackage)
+		}
+	}
+
+	def private boolean isAllLowerCase(String name) {
+		!name.toCharArray.exists[char|Character::isUpperCase(char)]
+	}
+
 }

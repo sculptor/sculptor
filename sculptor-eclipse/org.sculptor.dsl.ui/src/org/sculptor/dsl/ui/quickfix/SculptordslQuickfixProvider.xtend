@@ -52,7 +52,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 			context |
 			val xtextDocument = context.xtextDocument
 			val firstLetter = xtextDocument.get(issue.offset, 1)
-			xtextDocument.replace(issue.getOffset(), 1, firstLetter.toUpperCase)
+			xtextDocument.replace(issue.getOffset(), 1, firstLetter.toLowerCase)
 		]
 	}
 
@@ -105,6 +105,16 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 				val xtextDocument = context.getXtextDocument
 				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
 			])
+	}
+
+	@Fix(IssueCodes::ALL_LOWERCASE_NAME)
+	def lowercaseName(Issue issue, IssueResolutionAcceptor acceptor) {
+		val name = issue.data.get(0)
+		acceptor.accept(issue, "Lowercase name", "Lowercase the name.", "lowercase.gif") [
+			context |
+			val xtextDocument = context.xtextDocument
+			xtextDocument.replace(issue.offset, name.length, name.toLowerCase)
+		]
 	}
 
 }
