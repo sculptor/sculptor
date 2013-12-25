@@ -29,4 +29,6 @@ public interface IssueCodes {
 	String CAPITALIZED_NAME = ISSUE_CODE_PREFIX + "capitalized_name";
 	String UNCAPITALIZED_NAME = ISSUE_CODE_PREFIX + "uncapitalized_name";
 	String DUPLICATE_NAME = ISSUE_CODE_PREFIX + "duplicate_name";
+	String USED_RESERVED_KEYWORD = ISSUE_CODE_PREFIX + "USED_RESERVED_KEYWORD";
+
 }

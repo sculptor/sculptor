@@ -17,9 +17,16 @@
 
 package org.sculptor.dsl;
 
+import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
+import org.sculptor.dsl.validation.SculptordslSyntaxErrorMessageProvider;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class SculptordslRuntimeModule extends AbstractSculptordslRuntimeModule {
+
+    public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
+        return SculptordslSyntaxErrorMessageProvider.class;
+    }
 
 }
