@@ -17,7 +17,9 @@
 
 package org.sculptor.dsl;
 
+import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
+import org.sculptor.dsl.conversion.SculptordslValueConverters;
 import org.sculptor.dsl.validation.SculptordslSyntaxErrorMessageProvider;
 
 /**
@@ -28,5 +30,10 @@ public class SculptordslRuntimeModule extends AbstractSculptordslRuntimeModule {
     public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
         return SculptordslSyntaxErrorMessageProvider.class;
     }
+
+    @Override
+	public Class<? extends IValueConverterService> bindIValueConverterService() {
+		return SculptordslValueConverters.class;
+	}
 
 }
