@@ -54,6 +54,7 @@ import static org.sculptor.dsl.sculptordsl.SculptordslPackage$Literals.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 import static extension org.sculptor.dsl.SculptordslExtensions.*
+import org.sculptor.dsl.sculptordsl.DslEvent
 
 /**
  * Custom validation rules. 
@@ -762,9 +763,17 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	@Check
-	def checkScaffold(DslValueObject domainObj) {
-		if (domainObj.isScaffold() && domainObj.isNotPersistent()) {
-			error("Scaffold not useful for not persistent ValueObject.", DSL_DOMAIN_OBJECT__SCAFFOLD)
+	def checkScaffoldValueObject(DslValueObject valueObj) {
+		if (valueObj.isScaffold() && valueObj.isNotPersistent()) {
+			error("Scaffold not useful for not-persistent ValueObject.", DSL_DOMAIN_OBJECT__SCAFFOLD)
+		}
+	}
+
+	@Check
+	def checkScaffoldEvent(DslEvent event) {
+		if (event.isScaffold() && !event.isPersistent()) {
+			error("Scaffold not useful for not-persistent event.", DSL_DOMAIN_OBJECT__SCAFFOLD,
+				SCAFFOLD_NON_PERSISTENT_EVENT, DSL_DOMAIN_OBJECT__SCAFFOLD.name)
 		}
 	}
 

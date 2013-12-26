@@ -253,7 +253,7 @@ DslDomainEvent :
      ("discriminatorLength" "=" discriminatorLength=STRING)? &
      ("inheritanceType" "=" inheritanceType=DslInheritanceType)? &
      ("validate" "=" validate=STRING)? &
-     ((persistent?="persistent") | (notPersistent?=NOT "persistent"))? &
+     (persistent?="persistent")? &
      ((notAggregateRoot?=NOT "aggregateRoot") | ("aggregateRoot"))? &
      ("belongsTo" (("@")?belongsTo=[DslDomainObject]))?
     )
@@ -280,7 +280,7 @@ DslCommandEvent :
      ("discriminatorLength" "=" discriminatorLength=STRING)? &
      ("inheritanceType" "=" inheritanceType=DslInheritanceType)? &
      ("validate" "=" validate=STRING)? &
-     ((persistent?="persistent") | (NOT "persistent"))? &
+     (persistent?="persistent")? &
      ((notAggregateRoot?=NOT "aggregateRoot") | ("aggregateRoot"))? &
      ("belongsTo" (("@")?belongsTo=[DslDomainObject]))?
     )

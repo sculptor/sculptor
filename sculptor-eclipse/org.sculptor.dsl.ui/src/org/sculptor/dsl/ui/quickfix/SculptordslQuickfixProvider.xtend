@@ -26,6 +26,7 @@ import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
 import org.eclipse.xtext.validation.Issue
 import org.sculptor.dsl.validation.IssueCodes
+import org.sculptor.dsl.sculptordsl.DslEvent
 
 /**
  * Custom quickfixes.
@@ -61,9 +62,9 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		val keyword = issue.data.get(0)
 		val keywordReplacement = keyword.generateUniqueIdentifier(false)
 		acceptor.accept(issue, "Change '" + keyword + "' to '" + keywordReplacement + "'.",
-			"Change '" + keyword + "' to '" + keywordReplacement + "', " +
-				"which is not a reserved keyword.", "rename.gif",
-			[ IModificationContext context |
+			"Change '" + keyword + "' to '" + keywordReplacement + "', " + "which is not a reserved keyword.",
+			"rename.gif",
+			[ context |
 				val xtextDocument = context.getXtextDocument
 				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
 			])
@@ -74,16 +75,16 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		val keyword = issue.data.get(0)
 		val keywordReplacement = keyword.generateUniqueIdentifier(true)
 		acceptor.accept(issue, "Change '" + keyword + "' to '" + keywordReplacement + "'.",
-			"Change '" + keyword + "' to '" + keywordReplacement + "', " +
-				"which is not a reserved keyword.", "rename.gif",
-			[ IModificationContext context |
+			"Change '" + keyword + "' to '" + keywordReplacement + "', " + "which is not a reserved keyword.",
+			"rename.gif",
+			[ context |
 				val xtextDocument = context.getXtextDocument
 				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
 			])
 	}
 
 	def String generateUniqueIdentifier(String it, boolean camelCase) {
-		val candidate = 'my' + if (camelCase) it.toFirstUpper else it
+		val candidate = 'my' + if(camelCase) it.toFirstUpper else it
 		var count = 1
 		val reserved = GrammarUtil::getAllKeywords(grammarAccess.getGrammar())
 		if (reserved.contains(candidate)) {
@@ -101,7 +102,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		val keywordReplacement = '^' + keyword
 		acceptor.accept(issue, "Change '" + keyword + "' to '^" + keyword + "'.",
 			"Change '" + keyword + "' to '" + keyword + "', " + "which is the escaped keyword.", "rename.gif",
-			[ IModificationContext context |
+			[ context |
 				val xtextDocument = context.getXtextDocument
 				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
 			])
@@ -114,6 +115,13 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 			context |
 			val xtextDocument = context.xtextDocument
 			xtextDocument.replace(issue.offset, name.length, name.toLowerCase)
+		]
+	}
+
+	@Fix(IssueCodes::SCAFFOLD_NON_PERSISTENT_EVENT)
+	def persistentEvent(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Make persistent", "Make the event persistent by adding the keyword 'persistent'.", null) [
+			element, context | (element as DslEvent).persistent = true
 		]
 	}
 
