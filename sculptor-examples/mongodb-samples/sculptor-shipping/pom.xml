@@ -80,13 +80,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<forkMode>once</forkMode>
-					<argLine>-Xms32m -Xmx1024m</argLine>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
