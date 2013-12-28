@@ -37,6 +37,7 @@ import org.sculptor.dsl.sculptordsl.DslEntity
 import org.sculptor.dsl.sculptordsl.DslEnum
 import org.sculptor.dsl.sculptordsl.DslEnumAttribute
 import org.sculptor.dsl.sculptordsl.DslEnumValue
+import org.sculptor.dsl.sculptordsl.DslEvent
 import org.sculptor.dsl.sculptordsl.DslModule
 import org.sculptor.dsl.sculptordsl.DslParameter
 import org.sculptor.dsl.sculptordsl.DslProperty
@@ -54,7 +55,6 @@ import static org.sculptor.dsl.sculptordsl.SculptordslPackage$Literals.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 import static extension org.sculptor.dsl.SculptordslExtensions.*
-import org.sculptor.dsl.sculptordsl.DslEvent
 
 /**
  * Custom validation rules. 
@@ -772,8 +772,16 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	@Check
 	def checkScaffoldEvent(DslEvent event) {
 		if (event.isScaffold() && !event.isPersistent()) {
-			error("Scaffold not useful for not-persistent event.", DSL_DOMAIN_OBJECT__SCAFFOLD,
-				SCAFFOLD_NON_PERSISTENT_EVENT, DSL_DOMAIN_OBJECT__SCAFFOLD.name)
+			error("Scaffold not useful for not-persistent event.", DSL_DOMAIN_OBJECT__SCAFFOLD, NON_PERSISTENT_EVENT,
+				DSL_DOMAIN_OBJECT__SCAFFOLD.name)
+		}
+	}
+
+	@Check
+	def checkRepositoryEvent(DslEvent event) {
+		if (event.repository != null && !event.isPersistent()) {
+			error("Repository not useful for not-persistent event.", DSL_DOMAIN_OBJECT__REPOSITORY,
+				NON_PERSISTENT_EVENT, DSL_DOMAIN_OBJECT__REPOSITORY.name)
 		}
 	}
 

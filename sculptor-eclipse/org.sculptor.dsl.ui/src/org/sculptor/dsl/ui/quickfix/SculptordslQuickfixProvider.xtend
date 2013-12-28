@@ -20,13 +20,12 @@ package org.sculptor.dsl.ui.quickfix
 import com.google.inject.Inject
 import org.eclipse.xtext.GrammarUtil
 import org.eclipse.xtext.IGrammarAccess
-import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
 import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
 import org.eclipse.xtext.validation.Issue
-import org.sculptor.dsl.validation.IssueCodes
 import org.sculptor.dsl.sculptordsl.DslEvent
+import org.sculptor.dsl.validation.IssueCodes
 
 /**
  * Custom quickfixes.
@@ -118,7 +117,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		]
 	}
 
-	@Fix(IssueCodes::SCAFFOLD_NON_PERSISTENT_EVENT)
+	@Fix(IssueCodes::NON_PERSISTENT_EVENT)
 	def persistentEvent(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Make persistent", "Make the event persistent by adding the keyword 'persistent'.", null) [
 			element, context | (element as DslEvent).persistent = true
