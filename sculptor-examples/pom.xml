@@ -16,5 +16,6 @@
 		<module>library-example</module>
 		<module>DDDSample</module>
 		<module>mongodb-samples</module>
+		<module>eda-samples</module>
 	</modules>
 </project>

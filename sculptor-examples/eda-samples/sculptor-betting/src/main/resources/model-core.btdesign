@@ -1,0 +1,35 @@
+ApplicationPart BettingCore {
+
+	Module core {
+		BasicType Bet {
+			String betOfferId
+			String customerId
+			Double amount
+		}
+
+		Service BettingService {
+			placeBet(@Bet bet) publish @BettingInstruction to bettingInstructionTopic;
+		}
+
+		CommandEvent BettingInstruction {
+			persistent
+			scaffold
+			- Bet bet
+		}
+
+		DomainEvent BetPlaced {
+			- Bet bet
+		}
+
+		Service BettingEngine {
+			subscribe to bettingInstructionTopic
+			eventBus=commandBus
+			inject @BettingPublisher
+		}
+
+		Service BettingPublisher {
+			publishEvent(@BetPlaced betEvent) publish to jms:topic:bet;
+		}
+	}
+
+}
