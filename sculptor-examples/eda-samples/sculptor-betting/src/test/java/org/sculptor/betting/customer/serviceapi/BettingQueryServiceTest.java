@@ -6,10 +6,14 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sculptor.betting.core.domain.Bet;
+import org.sculptor.betting.core.domain.BetPlaced;
+import org.sculptor.betting.core.serviceapi.BettingPublisher;
 import org.sculptor.betting.customer.domain.CustomerBet;
 import org.sculptor.betting.customer.mapper.CustomerBetMapper;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
@@ -27,6 +31,9 @@ public class BettingQueryServiceTest extends AbstractJUnit4SpringContextTests im
 
 	@Autowired
 	private DbManager dbManager;
+
+	@Autowired
+	private BettingPublisher bettingPublisher;
 
 	@Autowired
 	private BettingQueryService bettingQueryService;
@@ -58,15 +65,18 @@ public class BettingQueryServiceTest extends AbstractJUnit4SpringContextTests im
 
 	@Test
 	public void testGetHighStakes() throws Exception {
+		Bet bet = new Bet("abc", "1234", 20.0);
+		BetPlaced betPlaced = new BetPlaced(DateTime.now(), bet);
+		bettingPublisher.publishEvent(betPlaced);
 		waitForConsume();
-		List<CustomerBet> highStakes = bettingQueryService.getHighStakes(2.0);
+		List<CustomerBet> highStakes = bettingQueryService.getHighStakes(15.0);
 		assertFalse(highStakes.isEmpty());
 	}
 
 	private void waitForConsume() throws InterruptedException {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 50; i++) {
 			System.out.println("# waiting for message");
-			Thread.sleep(1000);
+			Thread.sleep(100);
 			if (countRowsInDBCollection(CustomerBetMapper.getInstance().getDBCollectionName()) > 0) {
 				return;
 			}
