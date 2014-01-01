@@ -373,5 +373,11 @@
             extensions="btdesign">
     </provider>
   </extension>
+  <extension
+        point="org.eclipse.xtext.ui.shared.sharedStateContributingModule">
+     <module
+           class="org.sculptor.dsl.ui.SculptordslSharedContribution">
+     </module>
+  </extension>
 
 </plugin>
