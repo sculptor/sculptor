@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sculkptor DSL
+Bundle-Name: Sculptor DSL
 Bundle-Vendor: Sculptor Team
 Bundle-Version: 3.0.1.qualifier
 Bundle-SymbolicName: org.sculptor.dsl;singleton:=true
