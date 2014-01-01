@@ -83,23 +83,14 @@ Workflow {
 			// Xtend-based API for validation
 			fragment = validation.ValidatorFragment auto-inject {
 				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-//				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 			}
     
-			// old scoping and exporting API
+			// import URI scoping and exporting API
 			fragment = scoping.ImportURIScopingFragment auto-inject {}
 			fragment = exporting.SimpleNamesFragment auto-inject {}
-    
-			// scoping and exporting API
-//			fragment = scoping.ImportNamespacesScopingFragment auto-inject {}
-//			fragment = exporting.QualifiedNamesFragment auto-inject {}
-			fragment = builder.BuilderIntegrationFragment auto-inject {}
 
-			// generator API
-//			fragment = generator.GeneratorFragment auto-inject {
-//				generateMwe = true
-//				generateJavaMain = true
-//			}
+			// integration in Eclipse incremental builder (needed for automatic update of EMF index and validation of DSL files)
+			fragment = builder.BuilderIntegrationFragment auto-inject {}
 
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}
@@ -135,9 +126,6 @@ Workflow {
 
             // rename refactoring
             fragment = refactoring.RefactorElementNameFragment auto-inject {}
-
-            // provides the necessary bindings for java types integration
-            fragment = types.TypesGeneratorFragment auto-inject {}
 
 			// provides a preference page for template proposals
 			fragment = templates.CodetemplatesGeneratorFragment auto-inject {}
