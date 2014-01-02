@@ -21,6 +21,9 @@
 		<requiredProperty key="jboss">
 			<defaultValue>false</defaultValue>
 		</requiredProperty>
+		<requiredProperty key="mongodb">
+			<defaultValue>false</defaultValue>
+		</requiredProperty>
 	</requiredProperties>
 
 	<fileSets>

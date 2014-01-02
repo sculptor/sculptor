@@ -37,7 +37,9 @@
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
+#if( $mongodb != "true" && $mongodb != "y" && $mongodb == "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
+#end
 	</properties>
 
 #end
@@ -174,9 +176,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
+#if( $mongodb == "true" || $mongodb == "y" || $mongodb == "yes")
+			<artifactId>sculptor-framework-mongodb</artifactId>
+#else
 			<artifactId>sculptor-framework-main</artifactId>
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 			<classifier>without-ejb</classifier>
+#end
 #end
 			<version>\${symbol_dollar}{sculptor-version}</version>
 		</dependency>
@@ -407,6 +413,9 @@
 			<scope>test</scope>
 		</dependency>
 #end
+#if( $mongodb == "true" || $mongodb == "y" || $mongodb == "yes")
+		</dependencies>
+#else
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -758,5 +767,6 @@
 			</dependencies>
 		</profile>
 	</profiles>
+#end
 
 </project>
