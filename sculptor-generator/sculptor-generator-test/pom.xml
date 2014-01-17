@@ -7,8 +7,8 @@
 		<version>3.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
-	<artifactId>sculptor-generator-core</artifactId>
-	<name>Sculptor :: Generator :: Core</name>
+	<artifactId>sculptor-generator-test</artifactId>
+	<name>Sculptor :: Generator :: Test support</name>
 
 	<build>
 		<plugins>
@@ -23,6 +23,12 @@
 								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
+						<fileset>
+							<directory>${basedir}/src/test/xtend-gen</directory>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>
@@ -33,9 +39,11 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
+							<goal>testCompile</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -45,19 +53,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sculptorgenerator.eclipse</groupId>
-			<artifactId>org.sculptor.dsl</artifactId>
+			<groupId>org.sculptorgenerator.generator</groupId>
+			<artifactId>sculptor-generator-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-metamodel</artifactId>
+			<artifactId>eclipse-library</artifactId>
+			<classifier>test</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-active-annotation</artifactId>
-			<version>${project.version}</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

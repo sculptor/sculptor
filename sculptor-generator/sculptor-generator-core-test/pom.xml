@@ -7,8 +7,8 @@
 		<version>3.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
-	<artifactId>sculptor-generator-core</artifactId>
-	<name>Sculptor :: Generator :: Core</name>
+	<artifactId>sculptor-generator-core-test</artifactId>
+	<name>Sculptor :: Generator :: Core tests</name>
 
 	<build>
 		<plugins>
@@ -18,7 +18,7 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>${basedir}/src/main/xtend-gen</directory>
+							<directory>${basedir}/src/test/xtend-gen</directory>
 							<excludes>
 								<exclude>.gitignore</exclude>
 							</excludes>
@@ -32,32 +32,42 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>compile</goal>
+							<goal>testCompile</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- Needed to run SculptorGeneratorRunner because
+						ContextClassLoaderAwareRuntimeResourceSetInitializer 
+						needs access to the thread context classloader -->
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<useManifestOnlyJar>false</useManifestOnlyJar>
+					<!-- Run every test class in a newly forked JVM -->
+					<reuseForks>false</reuseForks>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sculptorgenerator.eclipse</groupId>
-			<artifactId>org.sculptor.dsl</artifactId>
+			<groupId>org.sculptorgenerator.generator</groupId>
+			<artifactId>sculptor-generator-core</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-metamodel</artifactId>
+			<artifactId>sculptor-generator-test</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-active-annotation</artifactId>
-			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
