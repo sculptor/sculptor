@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL Editor
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.0.1.qualifier
+Bundle-Version: 3.0.1
 Bundle-SymbolicName: org.sculptor.dsl.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.sculptor.dsl;visibility:=reexport,
@@ -24,8 +24,7 @@ Require-Bundle: org.sculptor.dsl;visibility:=reexport,
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.sculptor.dsl.ui.contentassist,
- org.sculptor.dsl.ui.contentassist.antlr,
- org.sculptor.dsl.ui.internal,
- org.sculptor.dsl.ui.quickfix
+Export-Package: org.sculptor.dsl.ui.contentassist,org.sculptor.dsl.ui.
+ contentassist.antlr,org.sculptor.dsl.ui.internal,org.sculptor.dsl.ui.
+ quickfix
 Bundle-Activator: org.sculptor.dsl.ui.internal.SculptordslActivator
