@@ -48,7 +48,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-core</artifactId>
+			<artifactId>sculptor-generator-cartridges</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
