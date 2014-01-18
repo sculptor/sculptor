@@ -6,12 +6,13 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="btdesign"
-            id="org.sculptor.dsl.Sculptordsl"
-            name="Sculptordsl Editor">
+              class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+              contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+              default="true"
+              extensions="btdesign"
+              icon="icons/sculptor.png"
+              id="org.sculptor.dsl.Sculptordsl"
+              name="%editor.name">
         </editor>
     </extension>
     <extension
@@ -33,12 +34,42 @@
                     definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened">
             </reference>
          </activeWhen>
-      </handler>
+      	</handler>
+      	<!-- copy qualified name -->
+        <handler
+            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
+            commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName">
+            <activeWhen>
+				<reference definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened" />
+            </activeWhen>
+        </handler>
+        <handler
+            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
+            commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName">
+            <activeWhen>
+            	<and>
+            		<reference definitionId="org.sculptor.dsl.Sculptordsl.XtextEditor.opened" />
+	                <iterate>
+						<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
+					</iterate>
+				</and>
+            </activeWhen>
+        </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="org.sculptor.dsl.Sculptordsl.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
+                <with variable="activeEditor">
+                    <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
+                        value="org.sculptor.dsl.Sculptordsl" 
+                        forcePluginActivation="true"/>
+                </with>        
+            </and>
+        </definition>
+        <definition id="org.sculptor.dsl.Sculptordsl.XtextEditor.opened">
+            <and>
+                <reference definitionId="isXtextEditorActive"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
                         value="org.sculptor.dsl.Sculptordsl" 
@@ -52,21 +83,21 @@
         <page
             class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="org.sculptor.dsl.Sculptordsl"
-            name="Sculptordsl">
+            name="%page.name">
             <keywordReference id="org.sculptor.dsl.ui.keyword_Sculptordsl"/>
         </page>
         <page
             category="org.sculptor.dsl.Sculptordsl"
             class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
             id="org.sculptor.dsl.Sculptordsl.coloring"
-            name="Syntax Coloring">
+            name="%page.name.0">
             <keywordReference id="org.sculptor.dsl.ui.keyword_Sculptordsl"/>
         </page>
         <page
             category="org.sculptor.dsl.Sculptordsl"
             class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
             id="org.sculptor.dsl.Sculptordsl.templates"
-            name="Templates">
+            name="%page.name.1">
             <keywordReference id="org.sculptor.dsl.ui.keyword_Sculptordsl"/>
         </page>
     </extension>
@@ -75,7 +106,7 @@
         <page
             class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="org.sculptor.dsl.Sculptordsl"
-            name="Sculptordsl">
+            name="%page.name.2">
             <keywordReference id="org.sculptor.dsl.ui.keyword_Sculptordsl"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
@@ -87,14 +118,27 @@
         point="org.eclipse.ui.keywords">
         <keyword
             id="org.sculptor.dsl.ui.keyword_Sculptordsl"
-            label="Sculptordsl"/>
+            label="%keyword.label"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
       <command
-            description="Trigger expensive validation"
+            description="%command.description"
             id="org.sculptor.dsl.Sculptordsl.validate"
-            name="Validate">
+            name="%command.name">
+      </command>
+      <!-- copy qualified name -->
+      <command
+            id="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
+            categoryId="org.eclipse.ui.category.edit"
+            description="%command.description.0"
+            name="%command.name.0">
+      </command>
+      <command
+            id="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName"
+            categoryId="org.eclipse.ui.category.edit"
+            description="%command.description.1"
+            name="%command.name.1">
       </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
@@ -103,13 +147,43 @@
              <command
                  commandId="org.sculptor.dsl.Sculptordsl.validate"
                  style="push"
-                 tooltip="Trigger expensive validation">
+                 tooltip="%command.tooltip">
             <visibleWhen checkEnabled="false">
                 <reference
                     definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
+         </menuContribution>
+         <!-- copy qualified name -->
+         <menuContribution locationURI="popup:#TextEditorContext?after=copy">
+         	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName" 
+         		style="push" tooltip="%command.tooltip.0">
+            	<visibleWhen checkEnabled="false">
+                	<reference definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened" />
+            	</visibleWhen>
+         	</command>  
+         </menuContribution>
+         <menuContribution locationURI="menu:edit?after=copy">
+         	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
+            	style="push" tooltip="%command.tooltip.1">
+            	<visibleWhen checkEnabled="false">
+                	<reference definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened" />
+            	</visibleWhen>
+         	</command>  
+         </menuContribution>
+         <menuContribution locationURI="popup:org.eclipse.xtext.ui.outline?after=additions">
+			<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName" 
+				style="push" tooltip="%command.tooltip.2">
+         		<visibleWhen checkEnabled="false">
+	            	<and>
+	            		<reference definitionId="org.sculptor.dsl.Sculptordsl.XtextEditor.opened" />
+						<iterate>
+							<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
+						</iterate>
+					</and>
+				</visibleWhen>
+			</command>
          </menuContribution>
     </extension>
     <extension point="org.eclipse.ui.menus">
@@ -151,28 +225,28 @@
     </extension>
 
 
-    <!-- marker definitions for org.sculptor.dsl.Sculptordsl -->
-    <extension
-            id="sculptordsl.check.fast"
-            name="Sculptordsl Problem"
-            point="org.eclipse.core.resources.markers">
-        <super type="org.eclipse.xtext.ui.check.fast"/>
-        <persistent value="true"/>
-    </extension>
-    <extension
-            id="sculptordsl.check.normal"
-            name="Sculptordsl Problem"
-            point="org.eclipse.core.resources.markers">
-        <super type="org.eclipse.xtext.ui.check.normal"/>
-        <persistent value="true"/>
-    </extension>
-    <extension
-            id="sculptordsl.check.expensive"
-            name="Sculptordsl Problem"
-            point="org.eclipse.core.resources.markers">
-        <super type="org.eclipse.xtext.ui.check.expensive"/>
-        <persistent value="true"/>
-    </extension>
+	<!-- marker definitions for org.sculptor.dsl.Sculptordsl -->
+	<extension
+	        id="sculptordsl.check.fast"
+	        name="%extension.name"
+	        point="org.eclipse.core.resources.markers">
+	    <super type="org.eclipse.xtext.ui.check.fast"/>
+	    <persistent value="true"/>
+	</extension>
+	<extension
+	        id="sculptordsl.check.normal"
+	        name="%extension.name.0"
+	        point="org.eclipse.core.resources.markers">
+	    <super type="org.eclipse.xtext.ui.check.normal"/>
+	    <persistent value="true"/>
+	</extension>
+	<extension
+	        id="sculptordsl.check.expensive"
+	        name="%extension.name.1"
+	        point="org.eclipse.core.resources.markers">
+	    <super type="org.eclipse.xtext.ui.check.expensive"/>
+	    <persistent value="true"/>
+	</extension>
 
 	<!-- Quick Outline -->
 	<extension
@@ -190,9 +264,9 @@
 	<extension
 		point="org.eclipse.ui.commands">
 		<command
-			description="Open the quick outline."
+			description="%command.description.2"
 			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-			name="Quick Outline">
+			name="%command.name.2">
 		</command>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
@@ -200,78 +274,13 @@
 			locationURI="popup:#TextEditorContext?after=group.open">
 			<command commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
 				style="push"
-				tooltip="Open Quick Outline">
+				tooltip="%command.tooltip.3">
 				<visibleWhen checkEnabled="false">
 					<reference definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
 	</extension>
-   	<!-- Rename Refactoring -->
-	<extension point="org.eclipse.ui.handlers">
-		<handler 
-			class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
-			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
-			<activeWhen>
-				<reference
-					definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
-	</extension>
-    <extension point="org.eclipse.ui.menus">
-         <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
-               style="push">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="org.sculptor.dsl.Sculptordsl"
-	        class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="org.sculptor.dsl.Sculptordsl.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="org.sculptor.dsl.ui.keyword_Sculptordsl"/>
-	    </page>
-	</extension>
-
-  <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="org.sculptor.dsl.Sculptordsl.compare.contentViewers"
-            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="btdesign">
-    </viewer>
-  </extension>
-  <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="org.sculptor.dsl.Sculptordsl.compare.contentMergeViewers"
-            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="btdesign" label="Sculptordsl Compare">
-     </viewer>
-  </extension>
-  <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="org.sculptor.dsl.Sculptordsl.editors.documentProviders"
-            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="btdesign">
-    </provider>
-  </extension>
-
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="org.eclipse.xtext.projectwiz"
-            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.sculptor.dsl.ui.wizard.SculptordslNewProjectWizard"
-            id="org.sculptor.dsl.ui.wizard.SculptordslNewProjectWizard"
-            name="Sculptordsl Project"
-            project="true">
-      </wizard>
-   </extension>
-
     <!-- quickfix marker resolution generator for org.sculptor.dsl.Sculptordsl -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
@@ -300,5 +309,75 @@
             </attribute>
         </markerResolutionGenerator>
     </extension>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.xtext.projectwiz"
+            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.sculptor.dsl.ui.wizard.SculptordslNewProjectWizard"
+            id="org.sculptor.dsl.ui.wizard.SculptordslNewProjectWizard"
+            name="%wizard.name"
+            project="true">
+      </wizard>
+   </extension>
+   	<!-- Rename Refactoring -->
+	<extension point="org.eclipse.ui.handlers">
+		<handler 
+			class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
+			<activeWhen>
+				<reference
+					definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+	</extension>
+    <extension point="org.eclipse.ui.menus">
+         <menuContribution
+            locationURI="popup:#TextEditorContext?after=group.edit">
+         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference
+                     definitionId="org.sculptor.dsl.Sculptordsl.Editor.opened">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.ui.preferencePages">
+	    <page
+	        category="org.sculptor.dsl.Sculptordsl"
+	        class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        id="org.sculptor.dsl.Sculptordsl.refactoring"
+	        name="%page.name.3">
+	        <keywordReference id="org.sculptor.dsl.ui.keyword_Sculptordsl"/>
+	    </page>
+	</extension>
+
+  <extension point="org.eclipse.compare.contentViewers">
+    <viewer id="org.sculptor.dsl.Sculptordsl.compare.contentViewers"
+            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="btdesign">
+    </viewer>
+  </extension>
+  <extension point="org.eclipse.compare.contentMergeViewers">
+    <viewer id="org.sculptor.dsl.Sculptordsl.compare.contentMergeViewers"
+            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="btdesign" label="%viewer.label">
+     </viewer>
+  </extension>
+  <extension point="org.eclipse.ui.editors.documentProviders">
+    <provider id="org.sculptor.dsl.Sculptordsl.editors.documentProviders"
+            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
+            extensions="btdesign">
+    </provider>
+  </extension>
+  <extension
+        point="org.eclipse.xtext.ui.shared.sharedStateContributingModule">
+     <module
+           class="org.sculptor.dsl.ui.SculptordslSharedContribution">
+     </module>
+  </extension>
 
 </plugin>

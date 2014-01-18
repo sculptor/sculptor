@@ -18,7 +18,7 @@
 package org.sculptor.maven.plugin;
 
 import static org.mockito.Matchers.anySet;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
@@ -35,6 +35,7 @@ import junit.framework.AssertionFailedError;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.sculptor.generator.util.PropertiesBase;
 
 public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMojo> {
 
@@ -186,6 +187,26 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		assertEquals("testExecuteWithProperties-value", System.getProperty("testExecuteWithProperties"));
 	}
 
+	public void testPropertyChangedFiles() throws Exception {
+		GeneratorMojo mojo = createMojo(createProject("test2"));
+		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
+		new File(mojo.getProject().getBasedir(), "/src/main/resources/generator/sculptor-generator.properties")
+				.setLastModified(System.currentTimeMillis() + 2000);
+		new File(mojo.getProject().getBasedir(), "/src/main/resources/model.btdesign").setLastModified(System
+				.currentTimeMillis() + 2000);
+		new File(mojo.getProject().getBasedir(), "/src/main/resources/model-test.btdesign").setLastModified(System
+				.currentTimeMillis() + 2000);
+
+		mojo.execute();
+
+		String changedFiles = System.getProperty(PropertiesBase.MAVEN_PLUGIN_CHANGED_FILES);
+		assertNotNull(changedFiles);
+		String[] splittedChangedFiles = changedFiles.split(",");
+		assertEquals(2, splittedChangedFiles.length);
+		assertTrue(splittedChangedFiles[0].contains(".btdesign"));
+		assertTrue(splittedChangedFiles[1].contains(".btdesign"));
+	}
+
 	/**
 	 * Returns Mojo instance initialized with a {@link MavenProject} created
 	 * from the test projects in <code>"src/test/projects/"</code> by given
@@ -195,8 +216,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 		// Create mojo
 		GeneratorMojo mojo = spy(super.createMojo(project, "generate"));
-		doNothing().when(mojo).doRunGenerator();
-
+		doReturn(Boolean.TRUE).when(mojo).doRunGenerator();
 
 		// Set default values on mojo
 		setVariableValueToObject(mojo, "model", "src/main/resources/model.btdesign");

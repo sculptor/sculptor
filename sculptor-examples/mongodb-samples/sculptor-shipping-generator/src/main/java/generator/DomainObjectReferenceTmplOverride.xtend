@@ -28,7 +28,6 @@ override String additionalManyReferenceAccessors(Reference it) {
 
 
 override String unidirectionalReferenceAccessors(Reference it) {
-		debugTrace("aqui1")
 	'''
 		«unidirectionalReferenceAdd(it)»
 		«unidirectionalReferenceRemove(it)»

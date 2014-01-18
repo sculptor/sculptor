@@ -39,9 +39,9 @@ class MongoDbMapperTmpl {
 def String mongoDbMapper(DomainObject it) {
 	'''
 	«IF it.hasHint("gapMapper")»
- 	   «mongoDbMapperSubclass(it)»
-		«ENDIF»
-		«mongoDbMapperBase(it)»
+		«mongoDbMapperSubclass(it)»
+	«ENDIF»
+	«mongoDbMapperBase(it)»
 	'''
 }
 
@@ -444,7 +444,7 @@ def String toData(DomainObject it) {
 
 def String indexes(DomainObject it) {
 	'''
-		@Override
+	@Override
 	public java.util.List<«fw("accessimpl.mongodb.IndexSpecification")»> indexes() {
 	«IF isAggregateRoot()»
 		java.util.List<«fw("accessimpl.mongodb.IndexSpecification")»> indexes = new java.util.ArrayList<«fw("accessimpl.mongodb.IndexSpecification")»>();

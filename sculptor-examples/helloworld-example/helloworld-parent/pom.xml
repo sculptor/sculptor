@@ -2,24 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.sculptorgenerator.examples</groupId>
+	<parent>
+		<groupId>org.sculptorgenerator.examples</groupId>
+		<artifactId>helloworld-example</artifactId>
+		<version>3.0.1</version>
+	</parent>
 	<artifactId>helloworld-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.0-SNAPSHOT</version>
 	<name>Sculptor :: Examples :: Hello World Parent</name>
-	<url>http://sculptorgenerator.org/documentation/hello-world-tutorial</url>
-
-	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<sculptor-version>${project.version}</sculptor-version>
-        <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
-		<ehcache-version>2.4.7</ehcache-version>
-		<slf4j-version>1.7.5</slf4j-version>
-		<logback-version>1.0.13</logback-version>
-		<spring-version>3.2.4.RELEASE</spring-version>
-		<aspectj-version>1.7.2</aspectj-version>
-		<hsqldb-version>2.2.9</hsqldb-version>
-	</properties>
 
 	<modules>
 		<module>../helloworld</module>
@@ -40,31 +30,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>sculptorgenerator.org-snapshots</id>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sculptorgenerator.org-snapshots</id>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>

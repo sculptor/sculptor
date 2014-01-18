@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sculptorgenerator</groupId>
+		<artifactId>sculptor-examples</artifactId>
+		<version>3.0.1</version>
+	</parent>
+	<groupId>org.sculptorgenerator.examples</groupId>
+	<artifactId>helloworld-example</artifactId>
+	<packaging>pom</packaging>
+	<name>Sculptor :: Examples :: Hello World</name>
+	<url>http://sculptorgenerator.org/documentation/hello-world-tutorial</url>
+
+	<modules>
+		<module>helloworld-parent</module>
+	</modules>
+</project>

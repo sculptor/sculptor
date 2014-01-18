@@ -63,43 +63,15 @@ class SculptordslFormatter extends AbstractDeclarativeFormatter {
 			c.setNoSpace().before(it)
 			c.setSpace(" ").after(it)
 		]
-		findKeywords("gap").forEach[
+
+		// Linewrap around
+		findKeywords("gap", "scaffold", "cache").forEach [
 			c.setLinewrap().around(it)
 		]
-		findKeywords("package").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("scaffold").forEach[
-			c.setLinewrap().around(it)
-		]
-		findKeywords("belongsTo").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("aggregateRoot").forEach[
-			c.setLinewrap().after(it)
-		]
-		findKeywords("validate").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("databaseTable").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("discriminatorValue").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("discriminatorColumn").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("discriminatorType").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("discriminatorLength").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("inheritanceType").forEach[
-			c.setLinewrap().before(it)
-		]
-		findKeywords("subscribe").forEach[
+
+		// Linewrap before
+		findKeywords("package", "belongsTo", "validate", "databaseTable", "discriminatorValue", "discriminatorColumn",
+			"discriminatorType", "discriminatorLength", "inheritanceType", "subscribe", "eventbus", "inject").forEach [
 			c.setLinewrap().before(it)
 		]
 

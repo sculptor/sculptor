@@ -177,7 +177,7 @@ public class DbHelper {
 // getManyToManyJoinTableName() is used also for OnteToMany relationship with jointables
 // TODO: JPA2 supports jointables for all types of relationships, if we like to support this to, maybe we need an more common solution to get the jointable name
 // String getOneToManyJoinTableName(Reference ref) :
-//	  JAVA org.fornax.cartridges.sculptor.generator.util.DatabaseGenerationHelper.getOneToManyJoinTableName(sculptormetamodel.Reference);
+//	  JAVA org.sculptor.generator.util.DatabaseGenerationHelper.getOneToManyJoinTableName(sculptormetamodel.Reference);
 
 	// get unique list of join tables
 	def dispatch Set<? extends String> getJoinTableNames(Collection<DomainObject> domainObjects) {

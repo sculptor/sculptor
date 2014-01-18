@@ -78,7 +78,7 @@ abstract class GeneratorTestBase {
 		}
 
 		if (!SculptorGeneratorRunner::run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
-			throw new RuntimeException("Code generation failed")
+			throw new SculptorGeneratorException("Code generation failed")
 		}
 	}
 

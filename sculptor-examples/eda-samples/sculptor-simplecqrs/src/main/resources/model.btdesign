@@ -1,0 +1,107 @@
+Application SimpleCqrs {
+	basePackage=org.sculptor.simplecqrs
+
+	Module command {
+
+		Entity InventoryItem {
+			gap
+			String itemId key
+			boolean activated transient
+
+			Repository InventoryItemRepository {
+				gap
+				inject @InventoryItemEventRepository
+				findByKey;
+				save;
+			}
+
+		}
+
+		Service InventoryFacade {
+			inject @InventoryItemRepository
+			createInventoryItem(String itemId, String name);
+			deactivateInventoryItem(String itemId);
+			renameInventoryItem(String itemId, String newName);
+			checkInItemsToInventory(String itemId, int count);
+			removeItemsFromInventory(String itemId, int count);
+		}
+
+		abstract DomainEvent InventoryItemEvent {
+			persistent
+			String itemId index
+			Long aggregateVersion nullable
+			Long changeSequence nullable
+
+			Repository InventoryItemEventRepository {
+				List<@InventoryItemEvent> findAllForItem(String itemId);
+				save publish to inventoryItemTopic;
+				protected findByCondition;
+			}
+
+		}
+
+		DomainEvent InventoryItemDeactivated extends @InventoryItemEvent {
+		}
+
+		DomainEvent InventoryItemCreated extends @InventoryItemEvent {
+			String name
+		}
+
+		DomainEvent InventoryItemRenamed extends @InventoryItemEvent {
+			String newName
+		}
+
+		DomainEvent ItemsCheckedInToInventory extends @InventoryItemEvent {
+			int countChange
+		}
+
+		DomainEvent ItemsRemovedFromInventory extends @InventoryItemEvent {
+			int countChange
+		}
+
+	}
+
+	Module ^query {
+
+		Entity InventoryItemDetails {
+			String itemId key
+			String name required
+			int currentCount
+
+			Repository InventoryItemDetailsRepository {
+				findByKey;
+				save;
+				delete;
+			}
+
+		}
+
+		Entity InventoryItemList {
+			String itemId key
+			String name required
+
+			Repository InventoryItemListRepository {
+				findByKey;
+				findAll;
+				save;
+				delete;
+			}
+
+		}
+
+		Service InventoryListView {
+			subscribe to inventoryItemTopic inject @InventoryItemListRepository
+		}
+
+		Service InventoryItemDetailView {
+			subscribe to inventoryItemTopic inject @InventoryItemDetailsRepository
+		}
+
+		Service ReadModelFacade {
+			getInventoryItems => InventoryItemListRepository.findAll;
+			getInventoryItemDetails => InventoryItemDetailsRepository.findByKey;
+		}
+
+	}
+
+}

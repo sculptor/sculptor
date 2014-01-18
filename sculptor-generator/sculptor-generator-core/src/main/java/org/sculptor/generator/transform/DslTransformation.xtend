@@ -400,9 +400,9 @@ class DslTransformation {
 			setRepository(domainObject.repository.transform)
 	}
 
-	def dispatch create FACTORY.createDomainEvent transformSimpleDomainObject(DslEvent event) {
+	def dispatch create FACTORY.createDomainEvent transformSimpleDomainObject(DslEvent dslEvent) {
 		// Never used, only purpose is to be an 'abstract' placeholder
-		error("Unexpected call to transform(DslEvent): " + event)
+		error("Unexpected call to transform(DslEvent): " + dslEvent)
 	}
 
 	def dispatch create FACTORY.createDomainEvent transformSimpleDomainObject(DslDomainEvent dslEvent) {
@@ -758,7 +758,7 @@ class DslTransformation {
 		domainObject.transformSimpleDomainObject.scaffold()
 	}
 
-	def void scaffold(DomainObject domainObject) {
+	def scaffold(DomainObject domainObject) {
 		if (domainObject.repository == null)
 			domainObject.addRepository()
 

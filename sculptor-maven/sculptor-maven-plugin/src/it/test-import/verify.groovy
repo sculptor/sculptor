@@ -1,6 +1,5 @@
 File log = new File(basedir, 'build.log')
 assert log.exists()
-assert log.getText().contains("[INFO] Created file : ")
 assert log.getText().contains("[INFO] Generated ")
 assert log.getText().contains("[INFO] BUILD SUCCESS")
 

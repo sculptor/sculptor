@@ -20,11 +20,11 @@ package org.sculptor.framework.accessimpl.mongodb;
 import java.io.Serializable;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sculptor.framework.accessapi.PopulateAssociationsAccess;
 import org.sculptor.framework.accessimpl.jpa.JpaPopulateAssociationsAccessImpl;
 import org.sculptor.framework.domain.AssociationSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ import org.sculptor.framework.domain.AssociationSpecification;
 public class MongoDbPopulateAssociationsAccessImpl<T> extends MongoDbFindByIdAccessImpl<T, Serializable> implements
         PopulateAssociationsAccess<T> {
 
-    private static Log log = LogFactory.getLog(JpaPopulateAssociationsAccessImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaPopulateAssociationsAccessImpl.class);
 
     private T entity;
     private AssociationSpecification associationSpecification;

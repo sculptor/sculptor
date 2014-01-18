@@ -67,8 +67,9 @@ public class SculptorGeneratorRunner {
 			runner.run(WORKFLOW_MODULE, map);
 			success = true;
 		} catch (Exception e) {
-			if (e.getCause() instanceof WorkflowInterruptedException) {
-				LOGGER.error(e.getCause().getMessage());
+			Throwable cause = e.getCause();
+			if (cause instanceof WorkflowInterruptedException || cause instanceof SculptorGeneratorException) {
+				LOGGER.error(cause.getMessage());
 			} else {
 				LOGGER.error("Running workflow failed", e);
 			}

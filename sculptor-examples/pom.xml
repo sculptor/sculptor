@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.1</version>
 	</parent>
 	<artifactId>sculptor-examples</artifactId>
 	<packaging>pom</packaging>
@@ -12,12 +12,10 @@
 	<description>Aggregator project for all Sculptor examples</description>
 
 	<modules>
-		<module>helloworld-example/helloworld-parent</module>
+		<module>helloworld-example</module>
 		<module>library-example</module>
 		<module>DDDSample</module>
-<!-- 
-		<module>mongodb-samples/sculptor-shipping-generator</module>
-		<module>mongodb-samples/sculptor-shipping</module>
- -->
+		<module>mongodb-samples</module>
+		<module>eda-samples</module>
 	</modules>
 </project>

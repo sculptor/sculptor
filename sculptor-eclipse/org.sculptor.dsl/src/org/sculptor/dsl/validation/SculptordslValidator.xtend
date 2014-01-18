@@ -37,6 +37,7 @@ import org.sculptor.dsl.sculptordsl.DslEntity
 import org.sculptor.dsl.sculptordsl.DslEnum
 import org.sculptor.dsl.sculptordsl.DslEnumAttribute
 import org.sculptor.dsl.sculptordsl.DslEnumValue
+import org.sculptor.dsl.sculptordsl.DslEvent
 import org.sculptor.dsl.sculptordsl.DslModule
 import org.sculptor.dsl.sculptordsl.DslParameter
 import org.sculptor.dsl.sculptordsl.DslProperty
@@ -384,34 +385,30 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		var nullableKeyCount = 0
 		for (EObject each : parent.eContents()) {
 			if (each instanceof DslAttribute) {
-				val eachProp = each as DslAttribute
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
 			} else if (each instanceof DslReference) {
-				val eachProp = each as DslReference
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
 			} else if (each instanceof DslDtoAttribute) {
-				val eachProp = each as DslDtoAttribute
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
 			} else if (each instanceof DslDtoReference) {
-				val eachProp = each as DslDtoReference
-				if (eachProp.key) {
+				if (each.key) {
 					keyCount = keyCount + 1
-					if (eachProp.nullable) {
+					if (each.nullable) {
 						nullableKeyCount = nullableKeyCount + 1
 					}
 				}
@@ -766,9 +763,25 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	@Check
-	def checkScaffold(DslValueObject domainObj) {
-		if (domainObj.isScaffold() && domainObj.isNotPersistent()) {
-			error("Scaffold not useful for not persistent ValueObject.", DSL_DOMAIN_OBJECT__SCAFFOLD)
+	def checkScaffoldValueObject(DslValueObject valueObj) {
+		if (valueObj.isScaffold() && valueObj.isNotPersistent()) {
+			error("Scaffold not useful for not-persistent ValueObject.", DSL_DOMAIN_OBJECT__SCAFFOLD)
+		}
+	}
+
+	@Check
+	def checkScaffoldEvent(DslEvent event) {
+		if (event.isScaffold() && !event.isPersistent()) {
+			error("Scaffold not useful for not-persistent event.", DSL_DOMAIN_OBJECT__SCAFFOLD, NON_PERSISTENT_EVENT,
+				DSL_DOMAIN_OBJECT__SCAFFOLD.name)
+		}
+	}
+
+	@Check
+	def checkRepositoryEvent(DslEvent event) {
+		if (event.repository != null && !event.isPersistent()) {
+			error("Repository not useful for not-persistent event.", DSL_DOMAIN_OBJECT__REPOSITORY,
+				NON_PERSISTENT_EVENT, DSL_DOMAIN_OBJECT__REPOSITORY.name)
 		}
 	}
 
@@ -889,6 +902,32 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		   parameterType.firstDomainObjectForType != null) {
 			warning("Use @" + parameterType.type, DSL_PARAMETER__PARAMETER_TYPE, parameterType.type)
 		}
+	}
+
+	@Check
+	def checkApplicationBasepackageNameIsAllLowerCase(DslApplication application) {
+		if (application.basePackage == null) {
+			return
+		}
+		if (!application.basePackage.isAllLowerCase) {
+			warning("The basepackage name should be in lower case", DSL_APPLICATION__BASE_PACKAGE,
+				ALL_LOWERCASE_NAME, application.basePackage)
+		}
+	}
+
+	@Check
+	def checkModuleBasepackageNameIsAllLowerCase(DslModule module) {
+		if (module.basePackage == null) {
+			return
+		}
+		if (!module.basePackage.isAllLowerCase) {
+			warning("The basepackage name should be in lower case", DSL_MODULE__BASE_PACKAGE, ALL_LOWERCASE_NAME,
+				module.basePackage)
+		}
+	}
+
+	def private boolean isAllLowerCase(String name) {
+		!name.toCharArray.exists[char|Character::isUpperCase(char)]
 	}
 
 }

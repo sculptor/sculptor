@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Sculptor Eclipse IDE" uid="org.sculptor.ide" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="3.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Sculptor Eclipse IDE" uid="org.sculptor.ide" id="org.eclipse.platform.ide" application="org.eclipse.ui.ide.workbench" version="1.0.0" useFeatures="true" includeLaunchers="true">
+
 
    <configIni use="default">
    </configIni>
@@ -34,6 +35,7 @@ openFile</programArgs>
 
    <vm>
    </vm>
+
 
    <plugins>
    </plugins>

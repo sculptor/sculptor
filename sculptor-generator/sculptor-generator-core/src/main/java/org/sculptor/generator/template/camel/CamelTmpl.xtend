@@ -1,13 +1,13 @@
 /*
- * Copyright 2010 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,8 +64,8 @@ class CamelTmpl {
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 		xmlns:camel="http://camel.apache.org/schema/spring" xmlns:broker="http://activemq.apache.org/schema/core"
 		xsi:schemaLocation="
-				http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+				http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 				http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 		'''

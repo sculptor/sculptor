@@ -59,8 +59,9 @@ public class PropertiesBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
 
+	public static final String MAVEN_PLUGIN_CHANGED_FILES = "sculptor-maven-plugin.changedFiles";
+
 	private static final String CHANGED_MODULE = "changed.module";
-	private static final String MAVEN_PLUGIN_CHANGED_FILES = "sculptor-maven-plugin.changedFiles";
 	private static final String PROPERTIES_RESOURCE = System.getProperty("sculptor.generatorPropertiesLocation",
 			"generator/sculptor-generator.properties");
 	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty("sculptor.guiGeneratorPropertiesLocation",

@@ -24,8 +24,10 @@ import sculptormetamodel.Repository
 
 @ChainOverride
 class RepositoryTmplExtension extends RepositoryTmpl {
-	@Inject extension Properties properties
+
 	@Inject private var MongoDbAccessObjectFactoryTmpl mongoDbAccessObjectFactoryTmpl
+
+	@Inject extension Properties properties
 
 	private def String dbManagerDependency(Repository it) {
 		'''
@@ -44,7 +46,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 		«next.extraRepositoryBaseDependencies(it)»
 		'''
 	}
-	
+
 	override String accessObjectFactory(Repository it) {
 		'''
 		«next.accessObjectFactory(it)»
@@ -52,6 +54,5 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 		«mongoDbAccessObjectFactoryTmpl.ensureIndex(it)»
 		'''
 	}
-	
 
 }

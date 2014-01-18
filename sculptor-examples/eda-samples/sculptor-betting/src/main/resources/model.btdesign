@@ -1,0 +1,6 @@
+import "classpath:/model-core.btdesign"
+import "classpath:/model-customer.btdesign"
+
+Application Betting {
+    basePackage=org.sculptor.betting
+}

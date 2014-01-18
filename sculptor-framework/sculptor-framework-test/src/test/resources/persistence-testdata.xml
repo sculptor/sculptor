@@ -6,8 +6,8 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>  
     <jta-data-source>java:jdbc/UniverseDS</jta-data-source>  
     <!-- annotated classes -->  
-    <class>org.fornax.cartridges.sculptor.examples.helloworld.milkyway.domain.Moon</class>  
-    <class>org.fornax.cartridges.sculptor.examples.helloworld.milkyway.domain.Planet</class>  
+    <class>org.sculptor.examples.helloworld.milkyway.domain.Moon</class>  
+    <class>org.sculptor.examples.helloworld.milkyway.domain.Planet</class>  
     <!-- propeties  -->  
     <properties> 
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>  

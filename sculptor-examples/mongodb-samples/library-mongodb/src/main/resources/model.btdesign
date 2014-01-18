@@ -1,0 +1,117 @@
+import "classpath:/model-person.btdesign"
+
+Application Library {
+    basePackage = org.sculptor.examples.library
+
+    Module media {
+   
+        Service LibraryService {
+          hint="umlgraph=core"
+          findLibraryByName => LibraryRepository.findLibraryByName;
+          findMediaByName => MediaRepository.findMediaByName;
+          findMediaByCharacter => MediaRepository.findMediaByCharacter;
+          findPersonByName => PersonService.findPersonByName;
+        }
+
+        Entity Library {
+          gap
+          scaffold
+          hint="umlgraph=core"
+          String name key
+          - Set<@PhysicalMedia> media <-> library
+          
+          Repository LibraryRepository {
+            findByCondition;
+            @Library findLibraryByName(String name) throws LibraryNotFoundException gap;
+          }
+        }
+
+        Entity PhysicalMedia {
+          scaffold
+          hint="umlgraph=core"
+          String status length="3"
+          String location
+          - @Library library nullable <-> media
+          - Set<@Media> media <-> physicalMedia
+
+          Repository PhysicalMediaRepository {
+          	gap
+          	inject @MediaRepository
+          	PagedResult findByCondition(PagingParameter pagingParameter);
+          }
+        }
+
+        Service MediaService {
+          findAll => MediaRepository.findAll;
+        }
+       
+        abstract Entity Media {
+          gap
+          hint="umlgraph=core"
+          String title !changeable
+          - Set<@PhysicalMedia> physicalMedia inverse <-> media
+          - Set<@Engagement> engagements
+          - Set<@MediaCharacter> mediaCharacters <-> existsInMedia
+          
+          Repository MediaRepository {
+            > @MediaCharacterRepository
+            int getNumberOfMovies(IDTYPE libraryId) gap;
+            List<@Media> findMediaByCharacter(IDTYPE libraryId, String characterName) gap;
+            findById;
+            save;
+            findAll;
+            protected findByKeys(Set<String> keys, String keyPropertyName, Class persistentClass);
+            List<@Media> findMediaByName(IDTYPE libraryId, String name) gap;
+            Map<String, @Movie> findMovieByUrlIMDB(Set<String> keys) gap;
+            findByCondition;
+          }
+        }
+        
+        Entity Book extends @Media {
+          hint="umlgraph=core"
+          !auditable
+          String isbn key length="20"
+        }
+        
+        Entity Movie extends @Media {
+          gap
+          hint="umlgraph=core"
+          !auditable
+          String urlIMDB key
+          Integer playLength
+          - @Genre category nullable
+        }
+        
+        enum Genre {
+            ACTION,
+            COMEDY,
+            DRAMA,
+            SCI_FI,
+            SHORT
+        }
+       
+        ValueObject Engagement {
+          belongsTo Media
+          String role
+          - @Person person 
+        }
+        
+        Service MediaCharacterService {
+          findAll => MediaCharacterRepository.findAll;
+        }
+        
+        ValueObject MediaCharacter {
+          String name !changeable
+          - Set<@Person> playedBy
+          - Set<@Media> existsInMedia <-> mediaCharacters
+          
+          Repository MediaCharacterRepository {
+            findByCondition;
+            findAll;
+            save;
+          }
+        }
+
+    }
+
+}

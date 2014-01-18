@@ -9,7 +9,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -75,10 +75,24 @@
 		<eclipse-release>kepler</eclipse-release>
 		<tycho-version>0.19.0</tycho-version>
 		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
-		<xtext-version>2.4.3</xtext-version>
+		<xtext-version>2.5.0</xtext-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.13</logback-version>
+		
+		<aspectj-version>1.7.4</aspectj-version>
+		<spring-version>3.2.6.RELEASE</spring-version>
+		<spring-integration-version>2.2.6.RELEASE</spring-integration-version>
+		<hibernate-version>4.2.8.Final</hibernate-version>
+	    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
+		<validation-version>1.0.0.GA</validation-version>
+		<appengine-version>1.8.8</appengine-version>
+		<drools-version>5.5.0.Final</drools-version>
+		<camel-version>2.12.2</camel-version>
+		<mongodb-version>2.11.3</mongodb-version>
+		<joda-time-version>2.3</joda-time-version>
+
 		<junit-version>4.11</junit-version>
+		<hsqldb-version>2.3.1</hsqldb-version>
 
 		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse>
 		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</p2-repository-eclipse-xtext>
@@ -91,6 +105,27 @@
 	<prerequisites>
 		<maven>3.0</maven>
 	</prerequisites>
+
+	<repositories>
+		<!-- Repository to resolve the Eclipse release train dependencies -->
+		<repository>
+			<id>p2.eclipse</id>
+			<url>${p2-repository-eclipse}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the XText dependencies -->
+		<repository>
+			<id>p2.eclipse.xtext</id>
+			<url>${p2-repository-eclipse-xtext}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the xtext-utils dependencies -->
+		<repository>
+			<id>p2.xtext-utils</id>
+			<url>${p2-repository-xtext-utils}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
 
 	<pluginRepositories>
 		<!-- Maven Central -->
@@ -279,6 +314,10 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.16</version>
+					<configuration>
+						<forkMode>once</forkMode>
+						<argLine>-Xms32m -Xmx1024m</argLine>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -509,7 +548,7 @@
 				<plugin>
 					<groupId>com.github.github</groupId>
 					<artifactId>site-maven-plugin</artifactId>
-					<version>0.8</version>
+					<version>0.9</version>
 					<!-- Deploying the p2 repository to a GitHub repository branch as described in
 						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
 					<configuration>
@@ -613,9 +652,86 @@
 				<version>${xtext-version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.transaction</groupId>
+						<artifactId>jta</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectj-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectj-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${hibernate-validator-version}</version>
+		</dependency>
+			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>14.0.1</version>
+				<version>15.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
@@ -636,9 +752,19 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-cli</groupId>
 				<artifactId>commons-cli</artifactId>
-				<version>1.1</version>
+				<version>1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -654,6 +780,55 @@
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>1.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.8.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>${hsqldb-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xmlParserAPIs</artifactId>
+				<version>2.6.2</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>2.6.2</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>1.6.1</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -681,15 +856,42 @@
 				<version>${logback-version}</version>
 			</dependency>
 			<dependency>
+				<groupId>javax.transaction</groupId>
+				<artifactId>javax.transaction-api</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.transaction</groupId>
+				<artifactId>jta</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.5</version>
+			</dependency>
+			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.dbunit</groupId>
+				<artifactId>dbunit</artifactId>
+				<version>2.4.9</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.powermock</groupId>
 				<artifactId>powermock-module-junit4</artifactId>
-				<version>1.5</version>
+				<version>1.5.2</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

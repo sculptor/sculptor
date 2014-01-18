@@ -17,18 +17,24 @@
 
 package org.sculptor.dsl.ui.quickfix
 
+import com.google.inject.Inject
+import org.eclipse.xtext.GrammarUtil
+import org.eclipse.xtext.IGrammarAccess
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
 import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
 import org.eclipse.xtext.validation.Issue
+import org.sculptor.dsl.sculptordsl.DslEvent
 import org.sculptor.dsl.validation.IssueCodes
 
 /**
  * Custom quickfixes.
- *
+ * <p>
  * see http://www.eclipse.org/Xtext/documentation.html#quickfixes
  */
 class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
+
+	@Inject IGrammarAccess grammarAccess
 
 	@Fix(IssueCodes::CAPITALIZED_NAME)
 	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
@@ -46,7 +52,75 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 			context |
 			val xtextDocument = context.xtextDocument
 			val firstLetter = xtextDocument.get(issue.offset, 1)
-			xtextDocument.replace(issue.getOffset(), 1, firstLetter.toUpperCase)
+			xtextDocument.replace(issue.getOffset(), 1, firstLetter.toLowerCase)
+		]
+	}
+
+	@Fix(IssueCodes::USED_RESERVED_KEYWORD)
+	def reservedKeywordWithPrefix(Issue issue, IssueResolutionAcceptor acceptor) {
+		val keyword = issue.data.get(0)
+		val keywordReplacement = keyword.generateUniqueIdentifier(false)
+		acceptor.accept(issue, "Change '" + keyword + "' to '" + keywordReplacement + "'.",
+			"Change '" + keyword + "' to '" + keywordReplacement + "', " + "which is not a reserved keyword.",
+			"rename.gif",
+			[ context |
+				val xtextDocument = context.getXtextDocument
+				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
+			])
+	}
+
+	@Fix(IssueCodes::USED_RESERVED_KEYWORD)
+	def reservedKeywordWithCamelCasePrefix(Issue issue, IssueResolutionAcceptor acceptor) {
+		val keyword = issue.data.get(0)
+		val keywordReplacement = keyword.generateUniqueIdentifier(true)
+		acceptor.accept(issue, "Change '" + keyword + "' to '" + keywordReplacement + "'.",
+			"Change '" + keyword + "' to '" + keywordReplacement + "', " + "which is not a reserved keyword.",
+			"rename.gif",
+			[ context |
+				val xtextDocument = context.getXtextDocument
+				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
+			])
+	}
+
+	def String generateUniqueIdentifier(String it, boolean camelCase) {
+		val candidate = 'my' + if(camelCase) it.toFirstUpper else it
+		var count = 1
+		val reserved = GrammarUtil::getAllKeywords(grammarAccess.getGrammar())
+		if (reserved.contains(candidate)) {
+			while (reserved.contains(candidate + count)) {
+				count = count + 1
+			}
+			return candidate + count
+		}
+		return candidate
+	}
+
+	@Fix(IssueCodes::USED_RESERVED_KEYWORD)
+	def reservedKeywordWithEscape(Issue issue, IssueResolutionAcceptor acceptor) {
+		val keyword = issue.data.get(0)
+		val keywordReplacement = '^' + keyword
+		acceptor.accept(issue, "Change '" + keyword + "' to '^" + keyword + "'.",
+			"Change '" + keyword + "' to '" + keyword + "', " + "which is the escaped keyword.", "rename.gif",
+			[ context |
+				val xtextDocument = context.getXtextDocument
+				xtextDocument.replace(issue.offset, issue.length, keywordReplacement)
+			])
+	}
+
+	@Fix(IssueCodes::ALL_LOWERCASE_NAME)
+	def lowercaseName(Issue issue, IssueResolutionAcceptor acceptor) {
+		val name = issue.data.get(0)
+		acceptor.accept(issue, "Lowercase name", "Lowercase the name.", "lowercase.gif") [
+			context |
+			val xtextDocument = context.xtextDocument
+			xtextDocument.replace(issue.offset, name.length, name.toLowerCase)
+		]
+	}
+
+	@Fix(IssueCodes::NON_PERSISTENT_EVENT)
+	def persistentEvent(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Make persistent", "Make the event persistent by adding the keyword 'persistent'.", null) [
+			element, context | (element as DslEvent).persistent = true
 		]
 	}
 

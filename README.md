@@ -1,4 +1,4 @@
-# [![Sculptor](https://raw.github.com/sculptor/sculptor.github.io/master/images/sculptor-banner.png)](http://sculptorgenerator.org)  [![Build Status](https://travis-ci.org/sculptor/sculptor.png?branch=master)](https://travis-ci.org/sculptor/sculptor) #
+# [![Sculptor](https://raw.github.com/sculptor/sculptor.github.io/master/images/sculptor-banner.png)](http://sculptorgenerator.org)  [![Build Status](https://travis-ci.org/sculptor/sculptor.png?branch=develop)](https://travis-ci.org/sculptor/sculptor) #
 
 
 [Sculptor](http://sculptorgenerator.org) is an open source productivity tool that applies the concepts from [Domain-Driven Design](http://domaindrivendesign.org/books/) and [Domain Specific Languages](http://en.wikipedia.org/wiki/Domain-specific_language).
@@ -28,12 +28,10 @@ The installation and configuration of these tools is described in [Sculptors ins
 
 Sculptor consists of an Eclipse plugin (the DSL editor) and a Maven plugin (the code generator) with its Maven archetypes:
 
-* Sculptors Eclipse plugin has to be installed with the Eclipse Update Manager `Help > Install New Software...` from one of Sculptors Eclipse repositories
- * Releases: [https://raw.github.com/sculptor/repository/eclipse](https://raw.github.com/sculptor/repository/eclipse)
- * Development Snapshots: [https://raw.github.com/sculptor/snapshot-repository/eclipse](https://raw.github.com/sculptor/snapshot-repository/eclipse)
-* Sculptors Maven plugin and its Maven archetypes are retrieved by Maven from one of Sculptors Maven repositories
- * Releases: [https://raw.github.com/sculptor/repository/maven](https://raw.github.com/sculptor/repository/maven)
- * Development Snapshots: [https://raw.github.com/sculptor/snapshot-repository/maven](https://raw.github.com/sculptor/snapshot-repository/maven)
+* Sculptors Eclipse plugin has to be installed with the Eclipse Update Manager `Help > Install New Software...` from [http://sculptorgenerator.org/updates/](http://sculptorgenerator.org/updates/)
+* Sculptors Maven plugin and its Maven archetypes are retrieved by Maven from one of the following Maven repositories
+ * Releases: [Maven Central](http://search.maven.org)
+ * Development Snapshots: [https://oss.sonatype.org/content/repositories/snapshots/](https://oss.sonatype.org/content/repositories/snapshots/)
 
 The installation and configuration of these tools is described in [Sculptors installation guide](http://sculptorgenerator.org/documentation/installation).
 
@@ -46,7 +44,7 @@ the [DDD Sample](http://sculptorgenerator.org/documentation/ddd-sample),
 the [Archetype Tutorial](http://sculptorgenerator.org/documentation/archetype-tutorial)
 or the [Advanced Tutorial](http://sculptorgenerator.org/documentation/advanced-tutorial).
 
-You can learn more about the capabilities of Sculptor by reading the blog posts, e.g. 
+You can learn more about the capabilities of Sculptor by reading the [blog posts](http://sculptorgenerator.org/archive), e.g. 
 [Improving Developer Productivity with Sculptor](http://sculptorgenerator.org/2010/06/10/improving-developer-productivity-with-sculptor).
 
 
@@ -54,7 +52,7 @@ You can learn more about the capabilities of Sculptor by reading the blog posts,
 
 Here are some ways for you to contribute:
 
-* Get involved with the community on the [Sculptor forum](https://groups.google.com/group/fornax-platform).
+* Get involved with the community on the [Sculptor forum](https://groups.google.com/group/sculptorgenerator).
   Please help out on the forum by responding to questions and joining the debate.
 * Create [GitHub tickets](https://github.com/sculptor/sculptor/issues) for bugs or new features and comment on the ones that you are interested in.
 * GitHub is for social coding: if you want to write code, we encourage contributions [through pull requests](https://help.github.com/articles/creating-a-pull-request)

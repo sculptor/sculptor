@@ -2,9 +2,10 @@
 #if( $ejb == "true" || $ejb == "y" || $ejb == "yes" || $ear == "true" || $ear == "y" || $ear == "yes")
 #set( $jboss = "true" )
 #end
-
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 #if( $standalone == "false" || $standalone == "n" || $standalone == "no")
 	<parent>
@@ -31,14 +32,14 @@
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<sculptor-version>${project.version}</sculptor-version>
-	    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
-		<ehcache-version>2.4.7</ehcache-version>
-		<slf4j-version>1.7.5</slf4j-version>
-		<logback-version>1.0.13</logback-version>
-		<spring-version>3.2.4.RELEASE</spring-version>
-		<spring-webflow-version>2.3.2.RELEASE</spring-webflow-version>
-		<aspectj-version>1.7.2</aspectj-version>
-		<hsqldb-version>2.2.9</hsqldb-version>
+	    <hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
+		<slf4j-version>${slf4j-version}</slf4j-version>
+		<logback-version>${logback-version}</logback-version>
+		<spring-version>${spring-version}</spring-version>
+		<aspectj-version>${aspectj-version}</aspectj-version>
+#if( $mongodb != "true" && $mongodb != "y" && $mongodb == "yes")
+		<hsqldb-version>${hsqldb-version}</hsqldb-version>
+#end
 	</properties>
 
 #end
@@ -175,9 +176,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
+#if( $mongodb == "true" || $mongodb == "y" || $mongodb == "yes")
+			<artifactId>sculptor-framework-mongodb</artifactId>
+#else
 			<artifactId>sculptor-framework-main</artifactId>
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 			<classifier>without-ejb</classifier>
+#end
 #end
 			<version>\${symbol_dollar}{sculptor-version}</version>
 		</dependency>
@@ -232,7 +237,7 @@
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>1.4.4</version>
+		    <version>1.4.6</version>
 		</dependency>
 #end
 		<dependency>
@@ -295,8 +300,8 @@
 			supporting container (jboss etc) -->
 		<dependency>
 			<groupId>javax.transaction</groupId>
-			<artifactId>javax.transaction-api</artifactId>
-			<version>1.2</version>
+			<artifactId>jta</artifactId>
+			<version>1.1</version>
 		</dependency>
 #end
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
@@ -408,6 +413,9 @@
 			<scope>test</scope>
 		</dependency>
 #end
+#if( $mongodb == "true" || $mongodb == "y" || $mongodb == "yes")
+		</dependencies>
+#else
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -474,7 +482,7 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate-version>4.2.2.Final</hibernate-version>
+				<hibernate-version>${hibernate-version}</hibernate-version>
 			</properties>
 			<build>
 			</build>
@@ -759,33 +767,6 @@
 			</dependencies>
 		</profile>
 	</profiles>
-
-#if( $standalone == "true" || $standalone == "y" || $standalone == "yes")
-	<repositories>
-		<repository>
-			<id>sculptorgenerator.org-snapshots</id>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sculptorgenerator.org-snapshots</id>
-			<url>https://raw.github.com/sculptor/snapshot-repository/maven/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
 #end
+
 </project>

@@ -24,6 +24,7 @@ import org.eclipse.jdt.internal.compiler.ast.ImportReference
 import org.eclipse.jdt.internal.compiler.ast.ParameterizedQualifiedTypeReference
 import org.eclipse.jdt.internal.compiler.ast.QualifiedNameReference
 import org.eclipse.jdt.internal.compiler.ast.QualifiedTypeReference
+import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.eclipse.jdt.internal.compiler.lookup.BlockScope
 import org.eclipse.jdt.internal.compiler.lookup.ClassScope
 import org.eclipse.jdt.internal.compiler.lookup.CompilationUnitScope
@@ -32,7 +33,6 @@ import org.eclipse.text.edits.MultiTextEdit
 import org.eclipse.text.edits.TextEdit
 
 import static extension org.sculptor.generator.formatter.ASTNodeHelper.*
-import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 
 /**
  * This {@link ASTVisitor} provides {@link TextEdit} instances to replace all
@@ -66,7 +66,8 @@ class AutoImportVisitor extends ASTVisitor {
 
 	def TextEdit insertAdditionalImports(int pos) {
 		val textEdit = new MultiTextEdit
-		additionalImports.sort.forEach[importName|textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';\n'))]
+		additionalImports.sort.forEach[importName|
+			textEdit.addChild(new InsertEdit(pos, 'import ' + importName + ';' + System.getProperty("line.separator")))]
 		textEdit
 	}
 
@@ -128,7 +129,7 @@ class AutoImportVisitor extends ASTVisitor {
 			if (referenceTypeArguments != null) {
 				referenceTypeArguments.forEach [ referenceTypeArgument |
 					if (referenceTypeArgument instanceof QualifiedTypeReference) {
-						autoImport(referenceTypeArgument as QualifiedTypeReference)
+						autoImport(referenceTypeArgument)
 					}
 				]
 			}

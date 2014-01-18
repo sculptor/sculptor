@@ -4,21 +4,19 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-framework</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.1</version>
 	</parent>
 	<artifactId>sculptor-framework-main</artifactId>
 	<name>Sculptor :: Runtime Framework :: Main</name>
 
 	<properties>
-		<spring.version>3.0.4.RELEASE</spring.version>
-		<hibernate.version>3.5.5-Final</hibernate.version>
-		<validation.version>1.0.0.GA</validation.version>
-		<appengine.version>1.4.0</appengine.version>
-		<drools.version>5.5.0.Final</drools.version>
-		<camel.version>2.5.0</camel.version>
-		<spring-integration.version>2.0.0.RELEASE</spring-integration.version>
+		<!-- We have to build against Hibernate 3.5 because Hibernate3 with JPA1 is still supported -->
+		<!-- FIXME using this runtime library with Hibernate4 will break in GenericEnumUserType,
+			 JpaHibFindByConditionStatAccessImpl and NumericLikeExpression due to changed Hibernate API
+			 (see https://github.com/sculptor/sculptor/issues/79) -->
+		<hibernate-version>3.5.5-Final</hibernate-version>
 	</properties>
-
+ 
 	<build>
 		<plugins>
 			<plugin>
@@ -77,67 +75,64 @@
 		<dependency>
 	    	<groupId>org.hibernate.javax.persistence</groupId>
 	    	<artifactId>hibernate-jpa-2.0-api</artifactId>
-	    	<version>1.0.0.Final</version>
+	    	<version>1.0.1.Final</version>
 			<scope>provided</scope>
 	  	</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
+			<version>${hibernate-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>${validation.version}</version>
+			<version>${validation-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jms</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-compiler</artifactId>
-			<version>${drools.version}</version>
+			<version>${drools-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-core</artifactId>
-			<version>${drools.version}</version>
+			<version>${drools-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-decisiontables</artifactId>
-			<version>${drools.version}</version>
+			<version>${drools-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-templates</artifactId>
-			<version>${drools.version}</version>
+			<version>${drools-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -147,50 +142,40 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
+			<version>3.2.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xmlParserAPIs</artifactId>
-			<version>2.6.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
-			<version>2.6.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>1.6</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time-hibernate</artifactId>
-			<version>1.2</version>
+			<version>1.3</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -208,13 +193,12 @@
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-1.0-sdk</artifactId>
-			<version>${appengine.version}</version>
+			<version>${appengine-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>hsqldb</groupId>
+			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.7</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -232,7 +216,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -242,32 +225,25 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>aspectj</groupId>
+			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.5.3</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>${camel.version}</version>
+			<version>${camel-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-core</artifactId>
-			<version>${spring-integration.version}</version>
+			<version>${spring-integration-version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,13 +1,13 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.sculptor.generator.SculptorGeneratorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,9 @@ import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
  * 
  */
 public class HelperBase {
+
 	private static final Logger LOG = LoggerFactory.getLogger(HelperBase.class);
+	
 	private PropertiesBase propBase;
 
 	private PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
@@ -594,7 +597,7 @@ public class HelperBase {
 
 	public String getRepositoryBaseName(Repository repository) {
 		if (!repository.getName().endsWith("Repository")) {
-			throw new IllegalArgumentException("Expect name of repository argument to end with \"Repository\"");
+			throw new SculptorGeneratorException("Expect name of repository argument to end with \"Repository\"");
 		}
 		String baseName = repository.getName().substring(0, repository.getName().length() - "Repository".length());
 		return baseName;
@@ -802,13 +805,8 @@ public class HelperBase {
 	 * Service.
 	 */
 	public void addDefaultValues(Resource resource) {
-		try {
-			for (ResourceOperation op : resource.getOperations()) {
-				addDefaultValues(op);
-			}
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-			throw e;
+		for (ResourceOperation op : resource.getOperations()) {
+			addDefaultValues(op);
 		}
 	}
 
@@ -817,13 +815,8 @@ public class HelperBase {
 	 * Repository.
 	 */
 	public void addDefaultValues(Service service) {
-		try {
-			for (ServiceOperation op : (List<ServiceOperation>) service.getOperations()) {
-				addDefaultValues(op);
-			}
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-			throw e;
+		for (ServiceOperation op : (List<ServiceOperation>) service.getOperations()) {
+			addDefaultValues(op);
 		}
 	}
 
@@ -905,12 +898,10 @@ public class HelperBase {
 				// class names
 				operation.setThrows(fullyQualifiedThrows(delegate));
 			}
-
 		}
-
 	}
 
-	public String serviceContextClass() {
+	protected String serviceContextClass() {
 		String propName = "framework.errorhandling.ServiceContext";
 		if (propBase.hasProperty(propName)) {
 			return propBase.getProperty(propName);
@@ -927,23 +918,18 @@ public class HelperBase {
 		} else if (op instanceof ResourceOperation) {
 			return ((ResourceOperation) op).getResource().getModule();
 		} else {
-			throw new IllegalArgumentException("Unsupported operation type: " + op.getClass().getName());
+			throw new SculptorGeneratorException("Unsupported operation type: " + op.getClass().getName());
 		}
 	}
 
-	public void debugTrace(String msg) {
-		LOG.info(msg);
-	}
-
 	/**
-	 * Throws a RuntimeException to stop the generation with an error message.
+	 * Throws a {@link SculptorGeneratorException} to stop the generation with an error message.
 	 * 
 	 * @param msg
 	 *            message to log
 	 */
 	public void error(String msg) {
-		LOG.error(msg);
-		throw new RuntimeException(msg);
+		throw new SculptorGeneratorException(msg);
 	}
 
 	public Long currentTimeMillis() {
@@ -1409,7 +1395,7 @@ public class HelperBase {
 		return isPersistent(d);
 	}
 
-	public boolean isPersistent(DomainObject domainObject) {
+	protected boolean isPersistent(DomainObject domainObject) {
 		if (domainObject instanceof Entity) {
 			return true;
 		} else if (domainObject instanceof ValueObject) {

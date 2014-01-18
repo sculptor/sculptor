@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.sculptor.dsl.feature"
-      label="Sculptor DSL Feature"
-      version="3.0.0"
-      provider-name="Sculptor Project Team">
+      label="Sculptor DSL Editor"
+      version="3.0.1"
+      provider-name="Sculptor Project Team"
+      plugin="org.sculptor.dsl.ui">
 
-   <description url="http://sculptor-mdsd.org/">
+   <description url="http://sculptorgenerator.org/">
       Editor for the Domain Specific Language of Sculptor.
    </description>
 
@@ -28,7 +29,7 @@ and limitations under the License.
    </license>
 
    <url>
-      <update label="Sculptor" url="http://sculptor-mdsd.org/updatesite/"/>
+      <update label="Sculptor" url="http://sculptorgenerator.org/updates/"/>
    </url>
 
    <plugin

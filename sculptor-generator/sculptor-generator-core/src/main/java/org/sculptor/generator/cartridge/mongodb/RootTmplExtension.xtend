@@ -34,10 +34,8 @@ class RootTmplExtension extends RootTmpl {
 	@Inject extension Helper helper
 
 	override root(Application it) {
-		
 		if (!modules.isEmpty && isRepositoryToBeGenerated()) {
 			if (mongoDb()) {
-				// it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[mongoDbMapperTmpl.mongoDbMapper(it)]»
 				it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[mongoDbMapperTmpl.mongoDbMapper(it)]
 			}
 		}

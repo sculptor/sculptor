@@ -37,7 +37,7 @@ class MongoDbAccessObjectFactoryTmpl {
 		val allNonEnumNaturalKeyReferences = it.aggregateRoot.getNaturalKeyReferences().filter[e|!e.isEnumReference()]
 
 		'''
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings("rawtypes")
 			private «fw("accessimpl.mongodb.DataMapper")»[] additionalDataMappers =
 				new «fw("accessimpl.mongodb.DataMapper")»[] {
 					«IF isJodaDateTimeLibrary()»
