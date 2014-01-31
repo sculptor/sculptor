@@ -13,13 +13,104 @@
 			<outputDirectory>/</outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
+				<include>org/osgi/framework/*</include>
+				<include>org/osgi/service/log/*</include>
+				<include>org/osgi/util/tracker/*</include>
+
+				<include>org/eclipse/osgi/framework/internal/core/*</include>
+
+				<include>org/eclipse/emf/codegen/util/*</include>
+
+				<include>org/eclipse/xtend/core/*</include>
+				<include>org/eclipse/xtend/core/compiler/*</include>
+				<include>org/eclipse/xtend/core/compiler/batch/*</include>
+				<include>org/eclipse/xtend/core/conversion/*</include>
+				<include>org/eclipse/xtend/core/documentation/*</include>
+				<include>org/eclipse/xtend/core/formatting/*</include>
+				<include>org/eclipse/xtend/core/imports/*</include>
+				<include>org/eclipse/xtend/core/jvmmodel/*</include>
+				<include>org/eclipse/xtend/core/linking/*</include>
+				<include>org/eclipse/xtend/core/naming/*</include>
+				<include>org/eclipse/xtend/core/macro/*</include>
+				<include>org/eclipse/xtend/core/macro/declaration/*</include>
+				<include>org/eclipse/xtend/core/parser/antlr/*</include>
+				<include>org/eclipse/xtend/core/parser/antlr/internal/*</include>
+				<include>org/eclipse/xtend/core/resource/*</include>
+				<include>org/eclipse/xtend/core/richstring/*</include>
+				<include>org/eclipse/xtend/core/scoping/*</include>
+				<include>org/eclipse/xtend/core/serializer/*</include>
+				<include>org/eclipse/xtend/core/services/*</include>
+				<include>org/eclipse/xtend/core/typesystem/*</include>
+				<include>org/eclipse/xtend/core/typing/*</include>
+				<include>org/eclipse/xtend/core/validation/*</include>
+				<include>org/eclipse/xtend/core/services/*</include>
+				<include>org/eclipse/xtend/core/xtend/*</include>
+				<include>org/eclipse/xtend/core/xtend/impl/*</include>
+
+				<include>org/eclipse/xtext/common/types/descriptions/*</include>
+				<include>org/eclipse/xtext/debug/*</include>
+				<include>org/eclipse/xtext/documentation/*</include>
+				<include>org/eclipse/xtext/documentation/impl/*</include>
+				<include>org/eclipse/xtext/generator/*</include>
+				<include>org/eclipse/xtext/generator/trace/*</include>
 				<include>org/eclipse/xtext/junit4/**</include>
+				<include>org/eclipse/xtext/xbase/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/scoping/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/serializer/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/services/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/typesystem/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/typing/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/validation/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/xAnnotations/*</include>
+				<include>org/eclipse/xtext/xbase/annotations/xAnnotations/impl/*</include>
+				<include>org/eclipse/xtext/xbase/compiler/*</include>
+				<include>org/eclipse/xtext/xbase/compiler/output/*</include>
+				<include>org/eclipse/xtext/xbase/controlflow/*</include>
+				<include>org/eclipse/xtext/xbase/conversion/*</include>
+				<include>org/eclipse/xtext/xbase/debug/*</include>
+				<include>org/eclipse/xtext/xbase/featurecalls/*</include>
+				<include>org/eclipse/xtext/xbase/file/*</include>
+				<include>org/eclipse/xtext/xbase/formatting/*</include>
+				<include>org/eclipse/xtext/xbase/imports/*</include>
+				<include>org/eclipse/xtext/xbase/impl/*</include>
+				<include>org/eclipse/xtext/xbase/interpreter/*</include>
+				<include>org/eclipse/xtext/xbase/interpreter/impl/*</include>
 				<include>org/eclipse/xtext/xbase/junit/**</include>
+				<include>org/eclipse/xtext/xbase/jvmmodel/*</include>
+				<include>org/eclipse/xtext/xbase/linking/*</include>
+				<include>org/eclipse/xtext/xbase/resource/*</include>
+				<include>org/eclipse/xtext/xbase/scoping/*</include>
+				<include>org/eclipse/xtext/xbase/scoping/batch/*</include>
+				<include>org/eclipse/xtext/xbase/scoping/featurecalls/*</include>
+				<include>org/eclipse/xtext/xbase/serializer/*</include>
+				<include>org/eclipse/xtext/xbase/services/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/arguments/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/computation/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/conformance/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/internal/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/legacy/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/override/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/references/*</include>
+				<include>org/eclipse/xtext/xbase/typesystem/util/*</include>
+				<include>org/eclipse/xtext/xbase/typing/*</include>
+				<include>org/eclipse/xtext/xbase/util/*</include>
+				<include>org/eclipse/xtext/xbase/validation/*</include>
+				<include>org/eclipse/xtext/xbase/util/*</include>
+				<include>org/eclipse/xtext/xbase/util/*</include>
+				<include>org/eclipse/xtext/xbase/util/*</include>
+				<include>org/eclipse/xtext/xtype/*</include>
+				<include>org/eclipse/xtext/xtype/impl/*</include>
+				<include>org/eclipse/xtext/xtype/util/*</include>
+
 				<include>org/eclipselabs/xtext/utils/unittesting/**</include>
 			</includes>
 			<excludes>
+				<exclude>**/*.html</exclude>
 				<exclude>**/*.java</exclude>
 				<exclude>**/*.xtend</exclude>
+				<exclude>**/*._trace</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>

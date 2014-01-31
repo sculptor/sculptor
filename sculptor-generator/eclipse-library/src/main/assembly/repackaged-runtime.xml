@@ -16,7 +16,8 @@
 				<include>model/**</include>
 				<include>org/eclipse/osgi/framework/debug/*</include>
 				<include>org/eclipse/osgi/service/debug/*</include>
-				<include>org/eclipse/osgi/utils/*</include>
+				<include>org/eclipse/osgi/util/*</include>
+
 				<include>org/eclipse/emf/common/*</include>
 				<include>org/eclipse/emf/common/archive/*</include>
 				<include>org/eclipse/emf/common/notify/*</include>
@@ -41,6 +42,7 @@
 				<include>org/eclipse/emf/mwe/core/monitor/*</include>
 				<include>org/eclipse/emf/mwe/internal/core/ast/parser/*</include>
 				<include>org/eclipse/emf/mwe/internal/core/util/*</include>
+				<include>org/eclipse/emf/mwe/utils/*</include>
 				<include>org/eclipse/emf/mwe2/language/*</include>
 				<include>org/eclipse/emf/mwe2/language/factory/*</include>
 				<include>org/eclipse/emf/mwe2/language/formatting/*</include>
@@ -58,7 +60,10 @@
 				<include>org/eclipse/emf/mwe2/launch/runtime/*</include>
 				<include>org/eclipse/emf/mwe2/runtime/*</include>
 				<include>org/eclipse/emf/mwe2/runtime/workflow/*</include>
-				<include>org/eclipse/xtend2/lib/*</include>
+
+				<include>org/eclipse/xtend/lib/**</include>
+				<include>org/eclipse/xtend2/lib/**</include>
+
 				<include>org/eclipse/xtext/*</include>
 				<include>org/eclipse/xtext/common/*</include>
 				<include>org/eclipse/xtext/common/parseTreeConstruction/*</include>
@@ -110,8 +115,7 @@
 				<include>org/eclipse/xtext/util/internal/*</include>
 				<include>org/eclipse/xtext/validation/*</include>
 				<include>org/eclipse/xtext/validation/impl/*</include>
-				<include>org/eclipse/xtext/xbase/lib/*</include>
-				<include>org/eclipse/xtext/xbase/lib/internal/*</include>
+				<include>org/eclipse/xtext/xbase/lib/**</include>
 
 				<!-- Eclipse JDT Code Formatter -->
 				<include>org/eclipse/core/internal/runtime/*</include>
@@ -125,6 +129,7 @@
 				<include>org/eclipse/jdt/internal/compiler/*</include>
 				<include>org/eclipse/jdt/internal/compiler/ast/*</include>
 				<include>org/eclipse/jdt/internal/compiler/batch/*</include>
+				<include>org/eclipse/jdt/internal/compiler/classfmt/*</include>
 				<include>org/eclipse/jdt/internal/compiler/codegen/*</include>
 				<include>org/eclipse/jdt/internal/compiler/env/*</include>
 				<include>org/eclipse/jdt/internal/compiler/flow/*</include>
@@ -142,11 +147,12 @@
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
 				<exclude>org/eclipse/xtext/xbase/junit/**</exclude>
+				<exclude>**/*.html</exclude>
 				<exclude>**/*.mwe2</exclude>
 				<exclude>**/*.ecore</exclude>
-				<exclude>**/*.html</exclude>
 				<exclude>**/*.java</exclude>
 				<exclude>**/*.xtend</exclude>
+				<exclude>**/*._trace</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>

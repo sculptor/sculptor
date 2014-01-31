@@ -6,8 +6,8 @@
 		<artifactId>sculptor-maven</artifactId>
 		<version>3.0.2-SNAPSHOT</version>
 	</parent>
-	<artifactId>sculptor-generator-library</artifactId>
-	<name>Sculptor :: Maven :: Generator Library</name>
+	<artifactId>sculptor-generator-test</artifactId>
+	<name>Sculptor :: Maven :: Generator test support</name>
 
 	<build>
 		<plugins>
@@ -37,18 +37,9 @@
 	</build>
 
 	<dependencies>
-		<!-- The stand-alone Eclipse library has to be in front of the other Eclipse 
-			plugins because its "plugin.properties" file must be the first in the shaded 
-			JAR!!! -->
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<classifier>runtime</classifier>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-cartridges</artifactId>
+			<artifactId>sculptor-generator-test</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

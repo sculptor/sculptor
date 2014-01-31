@@ -36,11 +36,12 @@
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
 				<exclude>org/eclipse/xtext/xbase/junit/**</exclude>
+				<exclude>**/*.html</exclude>
 				<exclude>**/*.mwe2</exclude>
 				<exclude>**/*.ecore</exclude>
-				<exclude>**/*.html</exclude>
 				<exclude>**/*.java</exclude>
 				<exclude>**/*.xtend</exclude>
+				<exclude>**/*._trace</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>

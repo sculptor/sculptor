@@ -315,7 +315,6 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.16</version>
 					<configuration>
-						<forkMode>once</forkMode>
 						<argLine>-Xms32m -Xmx1024m</argLine>
 					</configuration>
 				</plugin>
