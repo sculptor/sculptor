@@ -15,7 +15,6 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 
 	override String bidirectionalReferenceAdd(Reference it) {
 		'''
-			
 			«IF !isSetterPrivate()»
 				/**
 				 * Adds an object to the bidirectional many-to-one
@@ -29,7 +28,7 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 					add«name.toFirstUpper().singular()»(«name.singular()»Element);
 				};
 			«ENDIF»
-			
+
 			«next.bidirectionalReferenceAdd(it)»
 		'''
 	}

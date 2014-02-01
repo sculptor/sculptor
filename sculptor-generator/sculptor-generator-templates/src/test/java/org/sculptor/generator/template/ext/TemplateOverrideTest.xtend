@@ -39,6 +39,12 @@ class TemplateOverrideTest extends GeneratorTestBase {
 	}
 
 	@Test
+	def void assertOverriddenTemplateInMediaBase() {
+		val mediaCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/domain/MediaBase.java");
+		assertContains(mediaCode, 'public void addToEngagements(Engagement engagementElement) {');
+	}
+
+	@Test
 	def void assertEmbeddedColumnNamesInPersonBase() {
 		val personCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/person/domain/PersonBase.java");
 		assertContains(personCode, 'name = "SSN_NUMBER"');
