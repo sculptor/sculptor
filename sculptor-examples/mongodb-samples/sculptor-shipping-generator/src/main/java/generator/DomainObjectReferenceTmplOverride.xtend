@@ -8,26 +8,14 @@ import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Reference
 
 @ChainOverride
+/**
+ * Override DomainObjectReferenceTmpl to add 'addTo*' methods for bidirectional and unidirectional references.
+ */
 class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 
-	override String manyReferenceAccessors(Reference it) {
-		next.manyReferenceAccessors(it)
-	}
-
-	override String additionalManyReferenceAccessors(Reference it) {
-		next.additionalManyReferenceAccessors(it)
-	}
-
-	override String unidirectionalReferenceAccessors(Reference it) {
-		'''
-			«unidirectionalReferenceAdd(it)»
-			«unidirectionalReferenceRemove(it)»
-			«unidirectionalReferenceRemoveAll(it)»
-		'''
-	}
 
 	override String bidirectionalReferenceAdd(Reference it) {
 		'''
@@ -45,6 +33,7 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 				};
 			«ENDIF»
 			
+			// Delegate to next template in chain so regular add method gets generated as well
 			«next.bidirectionalReferenceAdd(it)»
 		'''
 	}
@@ -62,8 +51,8 @@ class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 			};
 		«ENDIF»
 
+		// Delegate to next template in chain so regular add method gets generated as well
 		«next.unidirectionalReferenceAdd(it)»
 		'''
 	}
-
 }
