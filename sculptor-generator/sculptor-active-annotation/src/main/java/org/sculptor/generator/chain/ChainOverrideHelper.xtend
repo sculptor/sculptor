@@ -102,24 +102,29 @@ class ChainOverrideHelper {
 			OverridableMethodInfo methodInfo, extension TransformationContext context) {
 		val publicMethod = methodInfo.publicMethod
 		val methodName = methodInfo.methodName
-
-		publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
-		publicMethod.visibility = Visibility::PUBLIC
-
-		// add new public delegate method
-		annotatedClass.addMethod(methodName) [ delegateMethod |
-			delegateMethod.returnType = publicMethod.returnType
-			delegateMethod.^default = publicMethod.^default
-			delegateMethod.varArgs = publicMethod.varArgs
-			delegateMethod.exceptions = publicMethod.exceptions
-			publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
-			delegateMethod.docComment = publicMethod.docComment
-			delegateMethod.body = ['''
-				«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
-					methodIndexName»];
-				«IF !publicMethod.returnType.isVoid»return«ENDIF» headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
-					parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
-			''']
-		]
+		try {
+			publicMethod.returnType.isVoid();
+	
+			publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
+			publicMethod.visibility = Visibility::PUBLIC
+	
+			// add new public delegate method
+			annotatedClass.addMethod(methodName) [ delegateMethod |
+				delegateMethod.returnType = publicMethod.returnType
+				delegateMethod.^default = publicMethod.^default
+				delegateMethod.varArgs = publicMethod.varArgs
+				delegateMethod.exceptions = publicMethod.exceptions
+				publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
+				delegateMethod.docComment = publicMethod.docComment
+				delegateMethod.body = ['''
+					«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
+						methodIndexName»];
+					«IF !publicMethod.returnType.isVoid»return «ENDIF»headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
+						parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+				''']
+			]
+		} catch (UnsupportedOperationException ex) {
+			// is inferred - skip it
+		}
 	}
 }

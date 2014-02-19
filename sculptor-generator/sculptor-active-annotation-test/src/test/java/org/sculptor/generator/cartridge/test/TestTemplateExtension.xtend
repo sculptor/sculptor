@@ -25,5 +25,5 @@ class TestTemplateExtension extends TestTemplate {
 
 	override test() {
 		"new code"
-	}	
+	}
 }
