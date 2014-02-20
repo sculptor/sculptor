@@ -26,7 +26,7 @@ import org.eclipse.xtend.lib.macro.declaration.Type
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 
 class ChainOverrideHelper {
-	
+
 	public static final String RENAMED_METHOD_NAME_PREFIX = '_chained_'
 
 	/**
@@ -53,7 +53,6 @@ class ChainOverrideHelper {
 		]
 	}
 
-	
 	/**
 	 * @return Name of index constant for the given method
 	 */
@@ -82,7 +81,7 @@ class ChainOverrideHelper {
 
 	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
 		val dispatchMethods=annotatedClass.declaredMethods.filter[it.simpleName.startsWith("_")].map[it.simpleName.substring(1)].toSet
-		annotatedClass.declaredMethods.filter[!dispatchMethods.exists[dm | simpleName == dm] && visibility == Visibility::PUBLIC && static == false && final == false].toList
+		annotatedClass.declaredMethods.filter[!dispatchMethods.exists[dm | simpleName == dm] && visibility == Visibility::PUBLIC && static == false && final == false && !returnType.inferred].toList
 	}
 
 	protected static def getOverrideableMethodsInfo(MutableClassDeclaration annotatedClass) {
@@ -92,8 +91,7 @@ class ChainOverrideHelper {
 		])
 		result
 	}
-	
-	
+
 	/**
 	 * Modify the identified overrideable method, renaming the actual method, and replacing it with a public method that
 	 * delegates to the head of the chain.
@@ -102,29 +100,23 @@ class ChainOverrideHelper {
 			OverridableMethodInfo methodInfo, extension TransformationContext context) {
 		val publicMethod = methodInfo.publicMethod
 		val methodName = methodInfo.methodName
-		try {
-			publicMethod.returnType.isVoid();
-	
-			publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
-			publicMethod.visibility = Visibility::PUBLIC
-	
-			// add new public delegate method
-			annotatedClass.addMethod(methodName) [ delegateMethod |
-				delegateMethod.returnType = publicMethod.returnType
-				delegateMethod.^default = publicMethod.^default
-				delegateMethod.varArgs = publicMethod.varArgs
-				delegateMethod.exceptions = publicMethod.exceptions
-				publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
-				delegateMethod.docComment = publicMethod.docComment
-				delegateMethod.body = ['''
-					«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
-						methodIndexName»];
-					«IF !publicMethod.returnType.isVoid»return «ENDIF»headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
-						parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
-				''']
-			]
-		} catch (UnsupportedOperationException ex) {
-			// is inferred - skip it
-		}
+		publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
+		publicMethod.visibility = Visibility::PUBLIC
+
+		// add new public delegate method
+		annotatedClass.addMethod(methodName) [ delegateMethod |
+			delegateMethod.returnType = publicMethod.returnType
+			delegateMethod.^default = publicMethod.^default
+			delegateMethod.varArgs = publicMethod.varArgs
+			delegateMethod.exceptions = publicMethod.exceptions
+			publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
+			delegateMethod.docComment = publicMethod.docComment
+			delegateMethod.body = ['''
+				«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
+					methodIndexName»];
+				«IF !publicMethod.returnType.isVoid»return «ENDIF»headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
+					parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
+			''']
+		]
 	}
 }

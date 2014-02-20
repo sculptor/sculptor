@@ -32,34 +32,59 @@ class ChainOverrideAwareModuleTest {
 		val injector = Guice::createInjector(new ChainOverrideAwareModule(templateClass));
 
 		val templateOverride = injector.getInstance(templateClass) as TestTemplateOverride
-		
+		assertNotNull(templateOverride)
+
 		val templateExtension = templateOverride.next.next as TestTemplateExtension
-		
-		val template = templateExtension.next.next
+		assertNotNull(templateExtension)
+
+		val templateExtension2 = templateExtension.next.next as org.sculptor.generator.cartridge.test2.TestTemplateExtension
+		assertNotNull(templateExtension2)
+
+		val template = templateExtension2.next.next
+		assertNotNull(template)
 
 		// Head of chain - the override class
-		assertNotNull(templateOverride)
-		val templateOverrideNextObj = templateOverride.next as TestTemplateMethodDispatch
-		assertEquals(5, templateOverrideNextObj.methodsDispatchTable.size)	
-		
-		
-		assertSame(templateExtension, templateOverrideNextObj.methodsDispatchTable.get(0))
-		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(1))
-		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(2))
-		
 		val methodDispatchHead = template.methodsDispatchHead
 		assertNotNull(methodDispatchHead)
+		assertEquals(5, methodDispatchHead.size)	
 
-		assertSame(templateExtension, methodDispatchHead.get(0))
+		assertSame(template, methodDispatchHead.get(0))
 		assertSame(template, methodDispatchHead.get(1))
 		assertSame(templateOverride, methodDispatchHead.get(2))
+		assertSame(template, methodDispatchHead.get(3))
+		assertSame(template, methodDispatchHead.get(4))
 
+		// Next in chain - the first extension
+		val templateOverrideNextObj = templateOverride.next as TestTemplateMethodDispatch
+		assertEquals(5, templateOverrideNextObj.methodsDispatchTable.size)	
+
+		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(0))
+		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(1))
+		assertSame(templateExtension, templateOverrideNextObj.methodsDispatchTable.get(2))
+		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(3))
+		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(4))
+
+		// Next in chain - the second extension
 		val templateExtensionNextObj = templateExtension.next as TestTemplateMethodDispatch
-		
-		assertEquals(5, templateExtensionNextObj.methodsDispatchTable.size)
+		assertNotNull(templateExtensionNextObj)
+		assertEquals(5, templateExtensionNextObj.methodsDispatchTable.size)	
+
 		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(0))
 		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(1))
-		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(2))
-		
+		assertSame(templateExtension2, templateExtensionNextObj.methodsDispatchTable.get(2))
+		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(3))
+		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(4))
+
+		// Last in chain - the template
+		val templateExtension2NextObj = templateExtension2.next as TestTemplateMethodDispatch
+		assertNotNull(templateExtension2NextObj)
+		assertEquals(5, templateExtension2NextObj.methodsDispatchTable.size)	
+
+		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(0))
+		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(1))
+		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(2))
+		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(3))
+		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(4))
 	}
+
 }

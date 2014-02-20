@@ -166,6 +166,22 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- Xtext -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.builder.standalone</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.xtext</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.apache.maven.plugin-testing</groupId>

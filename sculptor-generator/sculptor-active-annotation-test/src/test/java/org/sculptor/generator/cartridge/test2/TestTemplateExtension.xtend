@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.generator.cartridge.test
+package org.sculptor.generator.cartridge.test2
 
 import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.chain.TestTemplate
@@ -24,6 +24,6 @@ import org.sculptor.generator.chain.TestTemplate
 class TestTemplateExtension extends TestTemplate {
 
 	override String test2() {
-		"new code"
+		"new code2"
 	}
 }
