@@ -73,7 +73,6 @@ def String spring(Application it) {
 		«springRemoting(it)»
 	«ENDIF»
 
-	«serviceContext(it)»
 	«IF hasConsumers(it) && isEar()»
 		«jms(it)»
 	«ENDIF»
@@ -177,9 +176,19 @@ def String applicationContext(Application it) {
 		«IF isSpringRemotingToBeGenerated()»
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml")»"/>
 		«ENDIF»
+
+		«applicationContextAdditions(it)»
 	</beans>
 	'''
 	)
+}
+
+/*
+ * Extension point to generate more Spring beans to the Spring application context.
+ */
+def String applicationContextAdditions(Application it) {
+	'''
+	'''
 }
 
 def String applicationContextTest(Application it) {
@@ -209,9 +218,18 @@ def String applicationContextTest(Application it) {
 		«IF mongoDb()»
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb-test.xml")»"/>
 		«ENDIF»
+		«applicationContextTestAdditions(it)»
 	</beans>
 	'''
 	)
+}
+
+/*
+ * Extension point to generate more Spring beans to the test Spring application context.
+ */
+def String applicationContextTestAdditions(Application it) {
+	'''
+	'''
 }
 
 def String springPropertyConfig(Application it) {
@@ -317,8 +335,17 @@ def String generatedSpringProperties(Application it) {
 		java.naming.factory.initial=org.jboss.naming.remote.client.InitialContextFactory
 		java.naming.provider.url=remote://localhost:4447
 	«ENDIF»
+	«generatedSpringPropertiesAdditions(it)»
 	'''
 	)
+}
+
+/*
+ * Extension point to generate more properties to the Spring properties.
+ */
+def String generatedSpringPropertiesAdditions(Application it) {
+	'''
+	'''
 }
 
 def String serviceContext(Application it) {
@@ -441,9 +468,18 @@ def String interceptor(Application it) {
 	
 		«aopConfig(it) »
 
+		«interceptorAdditions(it)»
 	</beans>
 	'''
 	)
+}
+
+/*
+ * Extension point to generate more beans to the Spring interceptor chain.
+ */
+def String interceptorAdditions(Application it) {
+	'''
+	'''
 }
 
 def String aspectjAutoproxy(Application it) {
@@ -532,6 +568,8 @@ def String aopConfig(Application it) {
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="mongodbManagerAdvice" order="5" />
 			«ENDIF»
 		«ENDIF»
+
+		«aopConfigAdditions(it, false)»
 	</aop:config>
 	'''
 }
@@ -576,7 +614,16 @@ def String aopConfigTest(Application it) {
 			<aop:advisor pointcut-ref="repository" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
 		«ENDIF»
 
+		«aopConfigAdditions(it, true)»
 	</aop:config>
+	'''
+}
+
+/*
+ * Extension point to generate more beans to the Spring AOP configuration (test = true indicates the test environment).
+ */
+def String aopConfigAdditions(Application it, boolean test) {
+	'''
 	'''
 }
 
@@ -604,7 +651,7 @@ def String sessionFactory(Application it) {
 			«IF isSpringDataSourceSupportToBeGenerated()»
 				<property name="dataSource" ref="dataSource"/>
 			«ENDIF»
-			<!-- extension point for adding additional configuration -->
+			<!-- add additional configurations by extending SpringTmpl::sessionFactoryAdditions -->
 			«sessionFactoryAdditions(it)»
 		</bean>
 		«IF isAuditableToBeGenerated()»
@@ -696,12 +743,15 @@ def String dataSource(Application it) {
 		<property name="url" value="${jdbc.url}"/>
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
-		<!-- add additional properties by extending Spring::dataSourceAdditions -->
+		<!-- add additional properties by extending SpringTmpl::dataSourceAdditions -->
 		«dataSourceAdditions(it)»
 	</bean>
 	'''
 }
 
+/*
+ * Extension point to generate more properties in data source bean.
+ */
 def String dataSourceAdditions(Application it) {
 	'''
 	'''
@@ -835,6 +885,8 @@ def String entityManagerFactory(Application it) {
 			«ENDIF»
 		«ENDIF»
 		«entityManagerFactoryTx(it, false)»
+		<!-- add additional beans by extending SpringTmpl::entityManagerFactoryAdditions -->
+		«entityManagerFactoryAdditions(it, false)»
 	</beans>
 	'''
 	)
@@ -862,9 +914,19 @@ def String entityManagerFactoryTest(Application it) {
 		</bean>
 		«ENDIF»
 		«entityManagerFactoryTx(it, true)»
+		<!-- add additional beans by extending SpringTmpl::entityManagerFactoryAdditions -->
+		«entityManagerFactoryAdditions(it, true)»
 	</beans>
 	'''
 	)
+}
+
+/*
+ * Extension point to generate more Spring beans in entity manager factory (test = true indicates the test entity manager factory).
+ */
+def String entityManagerFactoryAdditions(Application it, boolean test) {
+	'''
+	'''
 }
 
 def String entityManagerFactoryTx(Application it, boolean test) {
@@ -1064,4 +1126,5 @@ def String serviceExporter(Service it, String exporterClass) {
 	-->
 	'''
 }
+
 }

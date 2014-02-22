@@ -872,6 +872,12 @@ def String subclassRepositoryMethod(RepositoryOperation it) {
 	'''
 }
 
+def String repositoryMethodAnnotation(RepositoryOperation it) {
+	'''
+		«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
+		«repositoryMethodAnnotationHook(it)»
+	'''
+}
 
 def String repositoryDependencyInjectionJUnit(Repository it) {
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
@@ -937,8 +943,6 @@ def String paramTypeAndName(Parameter it) {
 
 /*
  * Extension point to generate more stuff in repository interface.
- * Use AROUND repositoryTmpl.repositoryInterfaceHook FOR Repository
- * in SpecialCases.xpt
  */
 def String repositoryInterfaceHook(Repository it) {
 	""
@@ -946,19 +950,16 @@ def String repositoryInterfaceHook(Repository it) {
 
 /*
  * Extension point to generate more stuff in repository implementation.
- * Use AROUND repositoryTmpl.repositoryHook FOR Repository
- * in SpecialCases.xpt
  */
 def String repositoryHook(Repository it) {
 	""
 }
 
 /*
- * Extension point to generate annotations for repository methods.
- * Use AROUND repositoryTmpl.repositoryMethodAnnotation FOR RepositoryOperation
- * in SpecialCases.xpt
+ * Extension point to generate more annotations for repository methods.
  */
-def String repositoryMethodAnnotation(RepositoryOperation it) {
-	'''«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»'''
+def String repositoryMethodAnnotationHook(RepositoryOperation it) {
+	""
 }
+
 }
