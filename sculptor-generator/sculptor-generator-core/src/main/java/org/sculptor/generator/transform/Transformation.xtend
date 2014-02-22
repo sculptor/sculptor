@@ -357,25 +357,25 @@ class Transformation {
 
 	def dispatch void modifySubscriber(Service service) {
 		if (service.subscribe != null && !service.operations.exists(e|e.name == "receive"))
-			service.operations.add(createSubscriberRecieve(service))
+			service.operations.add(createSubscriberReceive(service))
 	}
 
-	def create FACTORY.createServiceOperation createSubscriberRecieve(Service service) {
+	def create FACTORY.createServiceOperation createSubscriberReceive(Service service) {
 		setName("receive")
-		parameters.add(createSubscriberRecieveEventParam(it))
+		parameters.add(createSubscriberReceiveEventParam(it))
 	}
 
 	def dispatch void modifySubscriber(Repository repository) {
 		if (repository.subscribe != null && !repository.operations.exists(e|e.name == "receive"))
-			repository.operations.add(createSubscriberRecieve(repository))
+			repository.operations.add(createSubscriberReceive(repository))
 	}
 
-	def create FACTORY.createRepositoryOperation createSubscriberRecieve(Repository repository) {
+	def create FACTORY.createRepositoryOperation createSubscriberReceive(Repository repository) {
 		setName("receive")
-		parameters.add(createSubscriberRecieveEventParam(it))
+		parameters.add(createSubscriberReceiveEventParam(it))
 	}
 
-	def create FACTORY.createParameter createSubscriberRecieveEventParam(Operation op) {
+	def create FACTORY.createParameter createSubscriberReceiveEventParam(Operation op) {
 		setName("event")
 		setType(fw("event.Event"))
 	}
