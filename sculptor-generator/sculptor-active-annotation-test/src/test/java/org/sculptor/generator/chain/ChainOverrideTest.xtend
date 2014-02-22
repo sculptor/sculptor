@@ -52,9 +52,36 @@ class ChainOverrideTest {
 						
 			assertNull("_getOverridesDispatchArray shouldn't get chained", clazz.findDeclaredMethod("_chained__getOverridesDispatchArray"))			
 		]
-			
-			
+	}
 
+	@Test
+	def void testInferredReturnCode() {
+		'''
+			@org.sculptor.generator.chain.ChainOverride
+			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
+				override test() {
+					""
+				}
+			}
+
+			@org.sculptor.generator.chain.ChainOverridable
+			class ChainOverrideTestTemplate {
+				def String test() {
+					""
+				}
+			}
+		'''.compile[
+			val extension ctx = transformationContext
+
+			 // Check the AST if the annotated class has the warning problem
+			val clazz = findClass('ChainOverrideTestTemplateOverride')
+			assertNotNull(clazz)
+			val method = clazz.findDeclaredMethod('test')
+			assertNotNull(method)
+			assertTrue(
+				method.problems.exists[
+					message.startsWith('Inferred return types')]
+			)]
 	}
 
 	@Test(expected=typeof(RuntimeException))
@@ -112,7 +139,7 @@ class ChainOverrideTest {
 			assertNotNull(clazz)
 			assertTrue(
 				clazz.problems.exists[
-					message.endsWith('is not annotated with SupportChainOverriding')]
+					message.endsWith('is not annotated with ChainOverridable')]
 			)]
 	}
 

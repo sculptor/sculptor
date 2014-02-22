@@ -42,34 +42,29 @@ public annotation ChainOverridable {}
 class ChainOverridableProcessor extends AbstractClassProcessor {
 
 	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverridableProcessor))
-	
+
 	override doRegisterGlobals(ClassDeclaration annotatedClass, RegisterGlobalsContext context) {
 		context.registerInterface(annotatedClass.methodIndexesName)
 		context.registerClass(annotatedClass.dispatchClassName)
 	}
 
-  
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
-		
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
 		if (validate(annotatedClass, context)) {
-			
 			val overrideableMethodsInfo = annotatedClass.overrideableMethodsInfo
-			
+
 			buildMethodNamesInterface(annotatedClass, context, overrideableMethodsInfo)
-			
+
 			transformAnnotatedClass(annotatedClass, context, overrideableMethodsInfo)
 
 			buildMethodDispatchClass(annotatedClass, context, overrideableMethodsInfo)
-
 		}
 	}
-	
-	
+
 	/**
 	 * Build interface of constants for the method indexes
 	 */
-	 private def buildMethodNamesInterface(MutableClassDeclaration annotatedClass,
+	private def buildMethodNamesInterface(MutableClassDeclaration annotatedClass,
 		extension TransformationContext context, List<OverridableMethodInfo> overridableMethodsInfo) {
 		val methodIndexesInterface = findInterface(annotatedClass.methodIndexesName)
 		methodIndexesInterface.setDocComment(
@@ -142,7 +137,6 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 					«annotatedClass.simpleName» nextObj = methodsDispatchTable[«annotatedClass.methodIndexesName».«methodInfo.methodIndexName»];
 					«IF !publicMethod.returnType.isVoid»return«ENDIF» nextObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
 				''']
-				
 			]
 		]
 	}
@@ -156,8 +150,10 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		}
 		true
 	}
-	
-	private def modifyAddMethodDispatchBaseClass(MutableClassDeclaration classToModify, MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+
+	private def modifyAddMethodDispatchBaseClass(MutableClassDeclaration classToModify,
+		MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+
 		// Extend from original overrideable class
 		val annotatedClassRef = annotatedClass.newTypeReference
 		classToModify.extendedClass = annotatedClassRef
@@ -186,7 +182,9 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		]
 	}
 
-	private def modifyAddChainLinkBaseClass(MutableClassDeclaration classToModify, MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+	private def modifyAddChainLinkBaseClass(MutableClassDeclaration classToModify,
+		MutableClassDeclaration annotatedClass, extension TransformationContext context) {
+
 		// Extend from chain link class referencing the annotated class
 		val annotatedClassRef = annotatedClass.newTypeReference
 		classToModify.extendedClass = typeof(ChainLink).newTypeReference(annotatedClassRef)
@@ -198,9 +196,10 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 			body = ['''super(next);''']
 		]
 	}
-	
-	
-	private def transformAnnotatedClass(MutableClassDeclaration annotatedClass, extension TransformationContext context,
+
+	private def transformAnnotatedClass(
+		MutableClassDeclaration annotatedClass,
+		extension TransformationContext context,
 		List<OverridableMethodInfo> overridableMethodsInfo
 	) {
 		LOG.debug("Transforming annotated class '" + annotatedClass.qualifiedName + "'")
@@ -211,7 +210,8 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		overridableMethodsInfo.forEach [ methodInfo |
 			annotatedClass.modifyOverrideableMethod(annotatedClass.newTypeReference.type, methodInfo, context)
 		]
-		
+
 		annotatedClass.addGetOverridesDispatchArrayMethod(annotatedClass, context, overridableMethodsInfo)
 	}
+
 }

@@ -66,29 +66,25 @@ class ChainOverrideHelper {
 	}
 
 	/**
-	 * @return Fully qualified name of method indexes interface
+	 * @return List of overridable methods (including the ones with inferred return types!!!) of the given class.   
 	 */
-	protected static def getMethodIndexesName(Type overrideableClass) {
-		overrideableClass.qualifiedName + "MethodIndexes"
+	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
+		val dispatchMethods = annotatedClass.declaredMethods.filter[it.simpleName.startsWith("_")].map[
+			it.simpleName.substring(1)].toSet
+		annotatedClass.declaredMethods.filter[
+			!dispatchMethods.exists[dm|simpleName == dm] && visibility == Visibility::PUBLIC && static == false &&
+				final == false].toList
 	}
 
 	/**
-	 * @return Fully qualified name of dispatch class
+	 * @return List of OverridableMethodInfo instances created for all overridable methods (excluding the ones with inferred return types!!!) of the given class.  
 	 */
-	protected static def getDispatchClassName(Type overrideableClass) {
-		overrideableClass.qualifiedName + "MethodDispatch"
-	}
-
-	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
-		val dispatchMethods=annotatedClass.declaredMethods.filter[it.simpleName.startsWith("_")].map[it.simpleName.substring(1)].toSet
-		annotatedClass.declaredMethods.filter[!dispatchMethods.exists[dm | simpleName == dm] && visibility == Visibility::PUBLIC && static == false && final == false && !returnType.inferred].toList
-	}
-
 	protected static def getOverrideableMethodsInfo(MutableClassDeclaration annotatedClass) {
 		val result = new ArrayList<OverridableMethodInfo>()
-		result.addAll(annotatedClass.overrideableMethods.map[method|
-			new OverridableMethodInfo(method.indexName, method, new String(method.simpleName))
-		])
+		result.addAll(
+			annotatedClass.overrideableMethods.filter[!returnType.inferred].map [ method |
+				new OverridableMethodInfo(method.indexName, method, new String(method.simpleName))
+			])
 		result
 	}
 
@@ -118,5 +114,23 @@ class ChainOverrideHelper {
 					parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
 			''']
 		]
+	}
+
+	//
+	// Naming convention generators
+	//
+
+	/**
+	 * @return Fully qualified name of method indexes interface
+	 */
+	protected static def getMethodIndexesName(Type overrideableClass) {
+		overrideableClass.qualifiedName + "MethodIndexes"
+	}
+
+	/**
+	 * @return Fully qualified name of dispatch class
+	 */
+	protected static def getDispatchClassName(Type overrideableClass) {
+		overrideableClass.qualifiedName + "MethodDispatch"
 	}
 }

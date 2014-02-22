@@ -29,7 +29,13 @@ import org.slf4j.LoggerFactory
 import static extension org.sculptor.generator.chain.ChainOverrideHelper.*
 
 /**
- * Adds additional constructor used for chainining.
+ * This active annotation does the following modifications in order to support chain overriding:
+ * <ol>
+ * <li>Adds an additional constructor used for chainining.
+ * <li>Modifies the overrideable methods by renaming the actual method and replacing it with a public method that delegates to the head of the chain.
+ * <li>Add a method to get the dispatch array for each overrideable method.
+ * </ol>
+ * @see ChainOverridable
  * @see ChainLink
  */
 @Target(ElementType::TYPE)
@@ -44,26 +50,24 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
 		if (validate(annotatedClass, context)) {
+			val originalTmplClass = annotatedClass.extendedClass.type
 
-			val overrideableMethodsInfo = annotatedClass.overrideableMethodsInfo
-			
 			// Add constructor needed for chaining
 			annotatedClass.addConstructor [
 				addParameter('next', annotatedClass.extendedClass)
 				addParameter('methodsDispatchNext', annotatedClass.extendedClass.newArrayTypeReference)
 				body = ['''super(next);''']
 			]
-			
-			
-			val originalTmplClass = annotatedClass.extendedClass.type
-			
+
+			// Modify the overrideable methods, rename the actual method and replace it with a public method that delegates to the head of the chain
+			val overrideableMethodsInfo = annotatedClass.overrideableMethodsInfo
 			overrideableMethodsInfo.forEach [ methodInfo |
 				annotatedClass.modifyOverrideableMethod(originalTmplClass, methodInfo, context)
 			]
 
-			annotatedClass.addGetOverridesDispatchArrayMethod(annotatedClass.extendedClass.type, context, overrideableMethodsInfo)
+			// Add a method to get the dispatch array for each overrideable method
+			annotatedClass.addGetOverridesDispatchArrayMethod(originalTmplClass, context, overrideableMethodsInfo)
 		}
-		
 	}
 
 	private def validate(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
@@ -80,8 +84,15 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 			return false
 		}
 
+		// Check for inferred override method
+		annotatedClass.overrideableMethods.forEach [
+			if (returnType.inferred) {
+				addWarning("Inferred return types are not supported by ChainOverride")
+			}
+		]
+
 		// If the extended class is on the classpath than the corresponding Xtend class is checked
-		// for the SupportChainOverriding annotation  
+		// for the ChainOverridable annotation  
 //		if (findTypeGlobally(extendedClass.name) != null) {
 //			val extendedClassDeclaration = findClass(extendedClass.name)
 //			if (extendedClassDeclaration == null) {

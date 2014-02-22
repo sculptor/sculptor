@@ -18,6 +18,10 @@ package org.sculptor.generator.chain
 
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
 
+/**
+ * This value objects holds the data of a single overridable method needed for chaining.
+ * @see ChainLink
+ */
 @Data
 class OverridableMethodInfo {
 	

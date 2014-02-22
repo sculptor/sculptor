@@ -54,21 +54,24 @@ class ChainOverrideAwareModule extends AbstractModule {
 
 	public new(Class<?> startClassOn) {
 		startClasses = #[startClassOn]
-		setProperties()
+		setProperties
 	}
 
 	public new(List<? extends Class<?>> startClassesOn) {
 		startClasses = startClassesOn
-		setProperties()
+		setProperties
 	}
 
 	def protected setProperties() {
 		val defaultOverridesPkgProp = System::getProperty("sculptor.defaultOverridesPackage")
-		if(defaultOverridesPkgProp != null) {
-			defaultOverridesPackage = defaultOverridesPkgProp 
+		if (defaultOverridesPkgProp != null) {
+			defaultOverridesPackage = defaultOverridesPkgProp
+		}
+		if (LOG.debugEnabled) {
+			LOG.debug("Enabled cartridges: {}", cartridgeNames.toList)
 		}
 	}
-	
+
 	override protected configure() {
 		buildChainForClasses(<Class<?>>newHashSet(), startClasses)
 	}
@@ -77,9 +80,10 @@ class ChainOverrideAwareModule extends AbstractModule {
 		val onlyNew = newClasses.filter[c|!mapped.contains(c)].toList
 		mapped.addAll(onlyNew)
 		val HashSet<Class<?>> discovered = newHashSet()
-		onlyNew.forEach[clazz | buildChainForClass(discovered, clazz)]
-		if (discovered.size > 0)
+		onlyNew.forEach[clazz|buildChainForClass(discovered, clazz)]
+		if (discovered.size > 0) {
 			buildChainForClasses(mapped, discovered.toList)
+		}
 	}
 
 	/**
@@ -93,42 +97,34 @@ class ChainOverrideAwareModule extends AbstractModule {
 
 		// Instantiate template - try overrideable version first
 		val T template = try {
-			
 			clazz.getConstructor(clazz).newInstance(null as T)
 		} catch (Throwable t) {
 			// fall-back to non-overrideable class constructor
 			clazz.newInstance
 		}
-		
-		
 
 		// Add all classes injected into template to discovered  
-		discoverInjectedFields(discovered, template.^class)
+		template.^class.discoverInjectedFields(discovered)
 
 		// If template is overridable/chainable then try to prepare whole chain, with the overridable class being the last element in chain
 		// chain ends up being the head of the chain or the template itself if not overridable/chainable.
 		var T chain
 		if (template instanceof ChainLink<?>) {
+			val methodsDispatchHead = (template as ChainLink<?>)._getOverridesDispatchArray as T[]
 
-			// TODO: Do this via casting
-			val getOverridesDispatchArrayMethod = template.class.getMethod("_getOverridesDispatchArray")
-			val methodsDispatchHead = getOverridesDispatchArrayMethod.invoke(template) as T[]
-			
 			// Prepare list of class names to add to chain if they exist
 			val needsToBeChained = new Stack<String>()
-			needsToBeChained.push(makeOverrideClassName(clazz))
-
-			cartridgeNames.forEach[cartridgeName|needsToBeChained.push(makeTemplateClassName(clazz, cartridgeName))]
-
-			if(LOG.debugEnabled) {
-				LOG.debug("Classes to check to add to chain: " + needsToBeChained.join(","))
+			needsToBeChained.push(clazz.overrideClassName)
+			cartridgeNames.forEach[cartridgeName|needsToBeChained.push(clazz.getTemplateClassName(cartridgeName))]
+			if (LOG.debugEnabled) {
+				LOG.debug("Classes to check to add to chain: {}", needsToBeChained.join(", "))
 			}
-			chain = buildChainForInstance(template, template.^class, discovered, needsToBeChained, methodsDispatchHead)
+
+			// Create the override chain for needsToBeChained, removing elements off the stack as it goes
+			chain = template.buildChainForInstance(template.^class, discovered, needsToBeChained, methodsDispatchHead)
 			
-			// Now set methodsDispatchHead into each chain member
+			// Finally set methodsDispatchHead into each chain member
 			chain.updateChainWithMethodsDispatchHead(methodsDispatchHead)
-
-
 		} else {
 			chain = template
 		}
@@ -136,18 +132,20 @@ class ChainOverrideAwareModule extends AbstractModule {
 		// Bind loaded chain to class
 		bind(clazz).toInstance(chain)
 	}
-	
+
+	/**
+	 * Iterates through the whole chain and sets the methodsDispatchHead of each chain member.
+	 */
 	private def <T> updateChainWithMethodsDispatchHead(T chain, T[] methodsDispatchHead) {
-			var chainLink = chain as ChainLink<?>
-			while(chainLink != null) {
-				chainLink.setMethodsDispatchHead(methodsDispatchHead)
-				chainLink = chainLink.next
-			}
-		
+		var chainLink = chain as ChainLink<?>
+		while (chainLink != null) {
+			chainLink.setMethodsDispatchHead(methodsDispatchHead)
+			chainLink = chainLink.next
+		}
 	}
 
 	/**
-	 * Build out the override chain for needsToBeChained, removing elements off the stack as it goes.
+	 * Build out the override chain for needsToBeChained recursively, removing elements off the stack as it goes.
 	 * @param object current head of chain.  New ChainLink instance will be made to point to object
 	 * @param templateClass Original template class
 	 * @param discovered Classes discovered so far that are to be injected into ChainLink classes
@@ -156,8 +154,9 @@ class ChainOverrideAwareModule extends AbstractModule {
 	def <T> T buildChainForInstance(T object, Class<?> templateClass, HashSet<Class<?>> discovered, Stack<String> needsToBeChained,
 		T[] methodsDispatchHead
 	) {
-		if (needsToBeChained.isEmpty)
+		if (needsToBeChained.isEmpty) {
 			return object
+		}
 
 		var result = object
 		val className = needsToBeChained.pop
@@ -165,22 +164,27 @@ class ChainOverrideAwareModule extends AbstractModule {
 			val chainedClass = Class::forName(className)
 			if (typeof(ChainLink).isAssignableFrom(chainedClass)) {
 				LOG.debug("    chaining with class '{}'", chainedClass)
-				val const = chainedClass.getConstructor(templateClass, methodsDispatchHead.class)
-				
-				val nextDispatchObj = createNextDispatchObjFromHead(methodsDispatchHead, templateClass, object)
-				
-				// Create chained instance
-				result = (const.newInstance(nextDispatchObj, null) as T)
-				
+
+				// Create an instance of MethodDispatch class for the given templateClass and the current head of chain object
+				val nextDispatchObj = methodsDispatchHead.createNextDispatchObjFromHead(templateClass, object)
+
+				// Create chain instance via chaining constructor added by ChainOverride annotation
+				val constructor = chainedClass.getConstructor(templateClass, methodsDispatchHead.class)
+				result = (constructor.newInstance(nextDispatchObj, null) as T)
+
+				// Update methodsDispatchHead with dispatch array returned by chainLink of newly created chained instance
 				methodsDispatchHead.updateFromObjDispatchArray(result)
 				
+				// Inject fields and methods into given object
 				requestInjection(object)
-				discoverInjectedFields(discovered, chainedClass)
+
+				// Discover the classes of injected fields and add them to the given list
+				chainedClass.discoverInjectedFields(discovered)
 			} else {
 				LOG.debug("    found class {} but not assignable to ChainLink.  skipping.", className)
 			}
 		} catch (ClassNotFoundException ex) {
-			if(LOG.traceEnabled) {
+			if (LOG.traceEnabled) {
 				LOG.trace("Could not find class extension or override class {}", className)
 			}
 
@@ -189,35 +193,39 @@ class ChainOverrideAwareModule extends AbstractModule {
 		// Recursive
 		buildChainForInstance(result, templateClass, discovered, needsToBeChained, methodsDispatchHead);
 	}
-	
-	private def <T> createNextDispatchObjFromHead(T[] methodsDispatchHead, Class<?> templateClass, T object) {
-		val methodsDispatchNextArr = methodsDispatchHead.copyMethodsDispatchHead(templateClass)
 
-		val methodDispatchClass = Class::forName(templateClass.name + "MethodDispatch")
-		val methodDispatchConst = methodDispatchClass.getConstructor(templateClass, methodsDispatchNextArr.class)
-		val mdoRes = methodDispatchConst.newInstance(object, methodsDispatchNextArr as Object)
-		mdoRes as T
+	/**
+	 * Creates an instance of MethodDispatch class for the given templateClass and methodsDispatchHead.
+	 */
+	private def <T> createNextDispatchObjFromHead(T[] methodsDispatchHead, Class<?> templateClass, T object) {
+		val methodsDispatchNext = methodsDispatchHead.copyMethodsDispatchHead(templateClass)
+
+		val methodDispatchClass = Class::forName(templateClass.dispatchClassName)
+		val methodDispatchConst = methodDispatchClass.getConstructor(templateClass, methodsDispatchNext.class)
+		methodDispatchConst.newInstance(object, methodsDispatchNext as Object) as T
 	}
-	
+
+	/**
+	 * Returns a copy of the given methodsDispatchHead for the given overrideableClass.
+	 */
 	private def <T> T[] copyMethodsDispatchHead(T[] methodsDispatchHead, Class<?> overrideableClass) {
 		val T[] methodsDispatchNext = Array::newInstance(overrideableClass, methodsDispatchHead.size) as T[]
 		System.arraycopy(methodsDispatchHead, 0, methodsDispatchNext, 0, methodsDispatchHead.length)
 		methodsDispatchNext
 	}
-	
+
 	/**
 	 * Update methodsDispatchHead with dispatch array returned by chainLink.
 	 */
 	private def <T> updateFromObjDispatchArray(T[] methodsDispatchHead, T chainLink) {
 		val cl = chainLink as ChainLink<?>
-		
-		val dispatchArray = cl._getOverridesDispatchArray()
-		if(dispatchArray != null) {
-			dispatchArray.forEach[dispatchObj, i|
-				if(dispatchObj != null) {
+
+		val dispatchArray = cl._getOverridesDispatchArray
+		if (dispatchArray != null) {
+			dispatchArray.forEach [ dispatchObj, i |
+				if (dispatchObj != null) {
 					methodsDispatchHead.set(i, dispatchObj as T)
 				}
-				
 			]
 		}
 	}
@@ -225,7 +233,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	/**
 	 * Discover any Inject annotated declared fields in newClass and add the classes to discovered.  Will process newClass base classes too.
 	 */
-	def void discoverInjectedFields(HashSet<Class<?>> discovered, Class<?> newClass) {
+	def void discoverInjectedFields(Class<?> newClass, HashSet<Class<?>> discovered) {
 		var cls = newClass;
 		do {
 			discovered.addAll(
@@ -239,34 +247,31 @@ class ChainOverrideAwareModule extends AbstractModule {
 	//
 	// Naming convention generators
 	//
-	def <T> String makeOverrideClassName(Class<T> clazz) {
+
+	/**
+	 * @return Fully qualified name of override class
+	 */
+	def <T> String getOverrideClassName(Class<T> clazz) {
 		defaultOverridesPackage + "." + clazz.simpleName + "Override"
 	}
 
-	def <T> String makeTemplateClassName(Class<T> clazz, String cartridgeName) {
+	/**
+	 * @return Fully qualified name of template class from given cartridge
+	 */
+	static def <T> String getTemplateClassName(Class<T> clazz, String cartridgeName) {
 		"org.sculptor.generator.cartridge." + cartridgeName + "." + clazz.simpleName + "Extension"
 	}
 
 	/**
-	 * Load properties from resource into properties
+	 * @return Fully qualified name of method dispatch class
 	 */
-	def protected void loadProperties(Properties properties, String resource) {
-		var ClassLoader classLoader = Thread::currentThread().getContextClassLoader();
-		if (classLoader == null) {
-			classLoader = this.getClass.getClassLoader();
-		}
-		val InputStream resourceInputStream = classLoader.getResourceAsStream(resource);
-		if (resourceInputStream == null) {
-			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
-				"");
-		}
-		try {
-			properties.load(resourceInputStream);
-		} catch (IOException e) {
-			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "");
-		}
-
+	static def <T> String getDispatchClassName(Class<T> clazz) {
+		clazz.name + "MethodDispatch"
 	}
+
+	//
+	// System properties support
+	//
 
 	private var Properties props
 
@@ -289,6 +294,26 @@ class ChainOverrideAwareModule extends AbstractModule {
 			cartString.split("[,; ]")
 		} else {
 			<String>newArrayOfSize(0)
+		}
+	}
+
+	/**
+	 * Load properties from resource into properties
+	 */
+	def protected void loadProperties(Properties properties, String resource) {
+		var ClassLoader classLoader = Thread::currentThread().getContextClassLoader();
+		if (classLoader == null) {
+			classLoader = this.getClass.getClassLoader();
+		}
+		val InputStream resourceInputStream = classLoader.getResourceAsStream(resource);
+		if (resourceInputStream == null) {
+			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
+				"");
+		}
+		try {
+			properties.load(resourceInputStream);
+		} catch (IOException e) {
+			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "");
 		}
 	}
 
