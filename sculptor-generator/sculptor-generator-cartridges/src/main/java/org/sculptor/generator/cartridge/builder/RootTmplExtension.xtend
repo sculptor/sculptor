@@ -32,7 +32,7 @@ class RootTmplExtension extends RootTmpl {
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
-	override root(Application it) {
+	override String root(Application it) {
 		if (isDomainObjectToBeGenerated()) {
 			getAllDomainObjects(false).filter[e | e.needsBuilder()].forEach[e | builderTmpl.builder(e)]
 		}
