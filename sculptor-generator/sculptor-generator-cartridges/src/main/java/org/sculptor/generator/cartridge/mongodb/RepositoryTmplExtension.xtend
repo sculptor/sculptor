@@ -29,29 +29,29 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 
 	@Inject extension Properties properties
 
-	private def String dbManagerDependency(Repository it) {
-		'''
-			@org.springframework.beans.factory.annotation.Autowired
-			private «fw("accessimpl.mongodb.DbManager")» dbManager;
-			
-			protected «fw("accessimpl.mongodb.DbManager")» getDbManager() {
-				return dbManager;
-			}
-		'''
-	}
-
 	override String extraRepositoryBaseDependencies(Repository it) {
 		'''
-		«dbManagerDependency(it)»
-		«next.extraRepositoryBaseDependencies(it)»
+			«dbManagerDependency(it)»
+			«next.extraRepositoryBaseDependencies(it)»
 		'''
 	}
 
 	override String accessObjectFactory(Repository it) {
 		'''
-		«next.accessObjectFactory(it)»
-		«mongoDbAccessObjectFactoryTmpl.getAdditionalDataMappers(it)»
-		«mongoDbAccessObjectFactoryTmpl.ensureIndex(it)»
+			«next.accessObjectFactory(it)»
+			«mongoDbAccessObjectFactoryTmpl.getAdditionalDataMappers(it)»
+			«mongoDbAccessObjectFactoryTmpl.ensureIndex(it)»
+		'''
+	}
+
+	private def String dbManagerDependency(Repository it) {
+		'''
+			@org.springframework.beans.factory.annotation.Autowired
+			private «fw("accessimpl.mongodb.DbManager")» dbManager;
+
+			protected «fw("accessimpl.mongodb.DbManager")» getDbManager() {
+				return dbManager;
+			}
 		'''
 	}
 

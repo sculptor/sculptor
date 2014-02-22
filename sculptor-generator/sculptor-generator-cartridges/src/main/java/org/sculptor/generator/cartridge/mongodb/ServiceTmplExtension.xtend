@@ -34,8 +34,6 @@ class ServiceTmplExtension extends ServiceTmpl {
 		if (isTestToBeGenerated() && mongoDb()) {
 			mongoDbServiceTestTmpl.serviceJUnitSubclassMongoDb(it);
 		}
-		
 		next.service(it)
-		""
 	}
 }
