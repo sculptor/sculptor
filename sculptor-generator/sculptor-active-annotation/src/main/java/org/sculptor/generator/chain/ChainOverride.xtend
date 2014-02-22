@@ -87,7 +87,7 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 		// Check for inferred override method
 		annotatedClass.overrideableMethods.forEach [
 			if (returnType.inferred) {
-				addWarning("Inferred return types are not supported by ChainOverride")
+				addError("Methods with inferred return type are not supported by ChainOverride")
 			}
 		]
 

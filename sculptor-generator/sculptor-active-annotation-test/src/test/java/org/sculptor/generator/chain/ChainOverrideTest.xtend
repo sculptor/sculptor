@@ -54,8 +54,8 @@ class ChainOverrideTest {
 		]
 	}
 
-	@Test
-	def void testInferredReturnCode() {
+	@Test(expected=typeof(RuntimeException))
+	def void testInferredReturnType() {
 		'''
 			@org.sculptor.generator.chain.ChainOverride
 			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
@@ -70,18 +70,7 @@ class ChainOverrideTest {
 					""
 				}
 			}
-		'''.compile[
-			val extension ctx = transformationContext
-
-			 // Check the AST if the annotated class has the warning problem
-			val clazz = findClass('ChainOverrideTestTemplateOverride')
-			assertNotNull(clazz)
-			val method = clazz.findDeclaredMethod('test')
-			assertNotNull(method)
-			assertTrue(
-				method.problems.exists[
-					message.startsWith('Inferred return types')]
-			)]
+		'''.compile[]
 	}
 
 	@Test(expected=typeof(RuntimeException))
