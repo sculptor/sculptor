@@ -60,6 +60,7 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.check.CheckCrossLink
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -82,6 +83,7 @@ import sculptormetamodel.Trait
 /**
  * Transforms DSL meta model to generator meta model.
  */
+@ChainOverridable
 class DslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
@@ -413,7 +415,7 @@ class DslTransformation {
 		transformCommonEventFeatures(it, dslEvent)
 	}
 
-	def transformCommonEventFeatures(Event event, DslEvent dslEvent) {
+	def void transformCommonEventFeatures(Event event, DslEvent dslEvent) {
 		event.setModule((dslEvent.eContainer as DslModule).transform)
 		event.setDoc(dslEvent.doc)
 		event.setName(dslEvent.name)
@@ -689,7 +691,7 @@ class DslTransformation {
 		operations.addAll(repository.operations.map[e | transform(e)])
 	}
 
-	def transformDependencies(DslService service) {
+	def void transformDependencies(DslService service) {
 		service.transform.serviceDependencies.addAll(
 			(service.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
 		service.transform.repositoryDependencies.addAll(
@@ -698,12 +700,12 @@ class DslTransformation {
 			service.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
 	}
 
-	def transformDependencies(DslResource resource) {
+	def void transformDependencies(DslResource resource) {
 		resource.transform.serviceDependencies.addAll(
 			(resource.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
 	}
 
-	def transformDependencies(DslConsumer consumer) {
+	def void transformDependencies(DslConsumer consumer) {
 		consumer.transform.serviceDependencies.addAll(
 			(consumer.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
 		consumer.transform.repositoryDependencies.addAll(
@@ -740,25 +742,23 @@ class DslTransformation {
 			dependency.name
 	}
 
-	def transformDependencies(DslDomainObject domainObject) {
+	def void transformDependencies(DslDomainObject domainObject) {
 		if (domainObject.repository != null)
 			domainObject.repository.transformDependencies
-		else
-			null
 	}
 
-	def transformDependencies(DslRepository repository) {
+	def void transformDependencies(DslRepository repository) {
 		repository.transform.repositoryDependencies.addAll(
 			repository.dependencies.map[e | transformRepositoryDependency(e)].filter(r | r != null))
 		repository.transform.otherDependencies.addAll(
 			repository.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
 	}
 
-	def scaffold(DslDomainObject domainObject) {
+	def void scaffold(DslDomainObject domainObject) {
 		domainObject.transformSimpleDomainObject.scaffold()
 	}
 
-	def scaffold(DomainObject domainObject) {
+	def void scaffold(DomainObject domainObject) {
 		if (domainObject.repository == null)
 			domainObject.addRepository()
 
@@ -768,46 +768,46 @@ class DslTransformation {
 		domainObject.module.services.filter(s | s.name == (domainObject.name + "Service")).forEach[addServiceScaffoldOperations(domainObject.repository)]
 	}
 
-	def scaffold(DslResource resource) {
+	def void scaffold(DslResource resource) {
 		resource.transform.scaffold()
 	}
 
-	def scaffold(Resource resource) {
+	def void scaffold(Resource resource) {
 		val serviceName = resource.getDomainResourceName() + "Service"
 		val delegateService = resource.module.application.modules.map[services].flatten.findFirst(e|e.name == serviceName)
 		resource.addResourceScaffoldOperations(delegateService)
 	}
 
-	def private boolean isGapClassToBeGenerated(DslService dslService) {
+	def boolean isGapClassToBeGenerated(DslService dslService) {
 		if (hasGapOperations(dslService))
 			true
 		else
 			isGapClassToBeGenerated(dslService.gapClass, dslService.noGapClass)
 	}
 
-	def private boolean isGapClassToBeGenerated(DslResource dslResource) {
+	def boolean isGapClassToBeGenerated(DslResource dslResource) {
 		if (hasGapOperations(dslResource))
 			true
 		else
 			isGapClassToBeGenerated(dslResource.gapClass, dslResource.noGapClass)
 	}
 
-	def private boolean isGapClassToBeGenerated(DslRepository dslRepository) {
+	def boolean isGapClassToBeGenerated(DslRepository dslRepository) {
 		if (hasGapOperations(dslRepository))
 			true
 		else
 			isGapClassToBeGenerated(dslRepository.gapClass, dslRepository.noGapClass)
 	}
 
-	def private boolean hasGapOperations(DslService dslService) {
+	def boolean hasGapOperations(DslService dslService) {
 		dslService.operations.exists(op | !scaffoldOperations().contains(op.name) && op.delegateHolder == null)
 	}
 
-	def private boolean hasGapOperations(DslResource dslResource) {
+	def boolean hasGapOperations(DslResource dslResource) {
 		dslResource.operations.exists(op | op.delegateHolder == null)
 	}
 
-	def private boolean hasGapOperations(DslRepository dslRepository) {
+	def boolean hasGapOperations(DslRepository dslRepository) {
 		dslRepository.operations.exists(op |
 			!scaffoldOperations().contains(op.name) &&
 			!op.delegateToAccessObject && op.accessObjectName == null &&
@@ -836,7 +836,6 @@ class DslTransformation {
 		handleParameterizedAnnotation("url", "protocol,host,port,message", attribute.url, attribute.validate) +
 		handleParameterizedAnnotation("range", "min,max,message", attribute.range, attribute.validate) +
 		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
-		
 	}
 
 	def private String handleValidation(DslDtoAttribute attribute) {
@@ -861,7 +860,6 @@ class DslTransformation {
 		handleParameterizedAnnotation("url", "protocol,host,port,message", attribute.url, attribute.validate) +
 		handleParameterizedAnnotation("range", "min,max,message", attribute.range, attribute.validate) +
 		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
-		
 	}
 
 	def private String handleValidation(DslReference reference) {
@@ -870,7 +868,6 @@ class DslTransformation {
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("notEmpty", reference.notEmpty, reference.notEmptyMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
-		
 	}
 
 	def private String handleValidation(DslDtoReference reference) {
@@ -878,6 +875,6 @@ class DslTransformation {
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
-		
 	}
+
 }
