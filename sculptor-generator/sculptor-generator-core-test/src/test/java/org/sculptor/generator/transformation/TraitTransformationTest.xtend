@@ -48,7 +48,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class TraitTransformationTest extends XtextTest {
-	
+
 	extension Properties properties
 
 	extension Helper helper
@@ -56,9 +56,9 @@ class TraitTransformationTest extends XtextTest {
 	extension HelperBase helperBase
 
 	extension DbHelper dbHelper
-	
+
 	extension DbHelperBase dbHelperBase
-	
+
 	var DslApplication model
 	var Provider<DslTransformation> dslTransformProvider
 	var Provider<Transformation> transformationProvider
@@ -66,6 +66,10 @@ class TraitTransformationTest extends XtextTest {
 
 	@Before
 	def void setupDslModel() {
+
+		// Activate cartridge 'test' with transformation extensions 
+		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/transformation/sculptor-generator.properties")
+
 		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
 		val Injector injector = Guice::createInjector(uniLoadModule)
 		properties = injector.getInstance(typeof(Properties))
@@ -77,122 +81,118 @@ class TraitTransformationTest extends XtextTest {
 		transformationProvider = injector.getProvider(typeof(Transformation))
 
 		model = getDomainModel().app
-		
+
 		val dslTransformation = dslTransformProvider.get
 		app = dslTransformation.transform(model)
-		
+
 		val transformation = transformationProvider.get
 		app = transformation.modify(app)
-
 	}
 
-	def  getDomainModel() {
-		
+	def getDomainModel() {
 		testFileNoSerializer("generator-tests/trait/trait.btdesign")
-		val dslModel = modelRoot as DslModel
-		
-		dslModel
+		modelRoot as DslModel
 	}
 
-    @Test
-    def void assertApplication() {
-        assertEquals("DtoApp", app.name)
-        assertEquals(1, app.modules.size())
-    }
+	@Test
+	def void assertApplication() {
+		assertEquals("DtoApp", app.name)
+		assertEquals(1, app.modules.size())
+	}
 
-    private def module() {
-        return app.modules.namedElement("catalog")
-    }
+	private def module() {
+		return app.modules.namedElement("catalog")
+	}
 
-    @Test
-    def void assertProduct() {
-        val product = module.domainObjects.namedElement("Product") as Trait
+	@Test
+	def void assertProduct() {
+		val product = module.domainObjects.namedElement("Product") as Trait
 
-        assertOneAndOnlyOne(product.getAttributes(), "title");
-        assertOneAndOnlyOne(product.getOperations(), "price", "priceFactor", "getTitle", "setTitle");
+		assertOneAndOnlyOne(product.attributes, "title")
+		assertOneAndOnlyOne(product.operations, "price", "priceFactor", "getTitle", "setTitle")
 
-        val price = product.operations.namedElement("price")
-        assertSame(product, price.getDomainObject());
+		val price = product.operations.namedElement("price")
+		assertSame(product, price.getDomainObject())
 
-        val priceFactor = product.operations.namedElement("priceFactor")
-        assertTrue(priceFactor.isAbstract());
+		val priceFactor = product.operations.namedElement("priceFactor")
+		assertTrue(priceFactor.isAbstract())
 
-        val getTitle = product.operations.namedElement("getTitle")
-        assertEquals("public", getTitle.getVisibility());
-        assertSame(product, getTitle.getDomainObject());
-        assertEquals("String", getTitle.getType());
-    }
+		val getTitle = product.operations.namedElement("getTitle")
+		assertEquals("public", getTitle.getVisibility())
+		assertSame(product, getTitle.getDomainObject())
+		assertEquals("String", getTitle.getType())
+	}
 
-    @Test
-    def void assertProductMixin() {
-        val movie = module.domainObjects.namedElement("Movie") as Entity
+	@Test
+	def void assertProductMixin() {
+		val movie = module.domainObjects.namedElement("Movie") as Entity
 
-        assertOneAndOnlyOne(movie.getAttributes(), "title", "urlIMDB", "playLength")
-        assertOneAndOnlyOne(movie.getOperations(), "price", "priceFactor")
+		assertOneAndOnlyOne(movie.attributes, "title", "urlIMDB", "playLength")
+		assertOneAndOnlyOne(movie.operations, "price", "priceFactor")
 
-        val title = movie.attributes.namedElement("title")
-        assertEquals("trait=Product", title.getHint())
+		val title = movie.attributes.namedElement("title")
+		assertEquals("trait=Product", title.hint)
 
-        val price = movie.operations.namedElement("price")
-        assertEquals("trait=Product", price.getHint());
-        assertFalse(price.isAbstract());
-        assertSame(movie, price.getDomainObject());
+		val price = movie.operations.namedElement("price")
+		assertEquals("trait=Product", price.hint)
+		assertFalse(price.isAbstract())
+		assertSame(movie, price.getDomainObject())
 
-        val priceFactor = movie.operations.namedElement("priceFactor")
-        assertEquals("trait=Product", price.getHint());
-        assertTrue(priceFactor.isAbstract());
+		val priceFactor = movie.operations.namedElement("priceFactor")
+		assertEquals("trait=Product", price.hint)
+		assertTrue(priceFactor.isAbstract())
 
-        assertTrue(movie.isGapClass());
-    }
+		assertTrue(movie.gapClass)
+	}
 
-    @Test
-    def void shouldRecognizeExistingPropertiesAndOperations() {
-        val qwerty = module.domainObjects.namedElement("Qwerty") as Entity
-        assertOneAndOnlyOne(qwerty.getAttributes(), "qqq", "www", "eee", "ddd");
-        assertOneAndOnlyOne(qwerty.getOperations(), "getAaa", "spellCheck", "somethingElse");
-    }
+	@Test
+	def void shouldRecognizeExistingPropertiesAndOperations() {
+		val qwerty = module.domainObjects.namedElement("Qwerty") as Entity
+		assertOneAndOnlyOne(qwerty.attributes, "qqq", "www", "eee", "ddd")
+		assertOneAndOnlyOne(qwerty.operations, "getAaa", "spellCheck", "somethingElse")
+	}
 
-    @Test
-    def void shouldMixinSeveralTraitsInOrder() {
-        val abc = module.domainObjects.namedElement("Abc") as Entity
-        assertOneAndOnlyOne(abc.getAttributes(), "aaa", "bbb", "ccc", "ddd", "eee");
-        assertOneAndOnlyOne(abc.getOperations(), "aha", "boom", "caboom", "ding", "eeh");
+	@Test
+	def void shouldMixinSeveralTraitsInOrder() {
+		val abc = module.domainObjects.namedElement("Abc") as Entity
+		assertOneAndOnlyOne(abc.attributes, "aaa", "bbb", "ccc", "ddd", "eee")
+		assertOneAndOnlyOne(abc.operations, "aha", "boom", "caboom", "ding", "eeh")
 
-        assertEquals("Bcd", abc.traits.get(0).name);
-        assertEquals("Cde", abc.traits.get(1).name);
+		assertEquals("Bcd", abc.traits.get(0).name)
+		assertEquals("Cde", abc.traits.get(1).name)
 
-        val aha = abc.operations.namedElement("aha");
-        assertNull(aha.getHint());
+		val aha = abc.operations.namedElement("aha")
+		assertNull(aha.hint)
 
-        val boom = abc.operations.namedElement("boom");
-        assertNull(boom.getHint());
+		val boom = abc.operations.namedElement("boom")
+		assertNull(boom.hint)
 
-        val caboom = abc.operations.namedElement("caboom");
-        assertEquals("trait=Bcd", caboom.getHint());
+		val caboom = abc.operations.namedElement("caboom")
+		assertEquals("trait=Bcd", caboom.hint)
 
-        val ding = abc.operations.namedElement("ding");
-        assertEquals("trait=Cde", ding.getHint());
+		val ding = abc.operations.namedElement("ding")
+		assertEquals("trait=Cde", ding.hint)
 
-        val eeh = abc.operations.namedElement("eeh");
-        assertEquals("trait=Cde", eeh.getHint());
-    }
+		val eeh = abc.operations.namedElement("eeh")
+		assertEquals("trait=Cde", eeh.hint)
+	}
 
-    @Test
-    def void shouldAssignGapFromOperations() {
-        val e1 = module.domainObjects.namedElement("Ent1");
-        assertTrue(e1.isGapClass());
+	@Test
+	def void shouldAssignGapFromOperations() {
+		val e1 = module.domainObjects.namedElement("Ent1")
+		assertTrue(e1.gapClass)
 
-        val e2 = module.domainObjects.namedElement("Ent2");
-        assertFalse(e2.isGapClass());
-    }
+		val e2 = module.domainObjects.namedElement("Ent2")
+		assertFalse(e2.gapClass)
+	}
 
-    @Test
-    def void shouldAssignGapFromTraitOperations() {
-        val e3 = module.domainObjects.namedElement("Ent3")
-        assertFalse(e3.isGapClass());
+	@Test
+	def void shouldAssignGapFromTraitOperations() {
+		val e3 = module.domainObjects.namedElement("Ent3")
+		assertFalse(e3.gapClass)
 
-        val e4 = module.domainObjects.namedElement("Ent4");
-        assertTrue(e4.isGapClass());
-    }
+		val e4 = module.domainObjects.namedElement("Ent4")
+		assertTrue(e4.gapClass)
+	}
 
 }

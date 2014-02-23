@@ -44,7 +44,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class RestTransformationTest extends XtextTest {
-	
+
 	var DslApplication model
 	var Provider<DslTransformation> dslTransformProvider
 	var Provider<Transformation> transformationProvider
@@ -52,25 +52,27 @@ class RestTransformationTest extends XtextTest {
 
 	@Before
 	def void setupDslModel() {
+
+		// Activate cartridge 'test' with transformation extensions 
+		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/transformation/sculptor-generator.properties")
+
 		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
 		val Injector injector = Guice::createInjector(uniLoadModule)
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 		transformationProvider = injector.getProvider(typeof(Transformation))
 
 		model = getDomainModel().app
-		
+
 		val dslTransformation = dslTransformProvider.get
 		app = dslTransformation.transform(model)
-		
+
 		val transformation = transformationProvider.get
 		app = transformation.modify(app)
 	}
 
 	def getDomainModel() {
 		testFileNoSerializer("generator-tests/rest/model.btdesign", "generator-tests/rest/model-person.btdesign")
-		val dslModel = modelRoot as DslModel
-		
-		dslModel
+		modelRoot as DslModel
 	}
 
     private def Module restModule() {

@@ -1,0 +1,14 @@
+import "classpath:/generator-tests/nested/nested3.btdesign"
+import "classpath:/generator-tests/nested/nested4.btdesign"
+
+ApplicationPart NestedPart2 {
+ 
+    Module nested2 {
+    	ValueObject B {
+    		String b
+    		- @C c
+    		- @D d
+    	}
+    }
+}
+

@@ -61,8 +61,8 @@ class ShippingTransformationTest extends XtextTest {
 	@Before
 	def void setupDslModel() {
 		
+		// Activate cartridge 'mongodb' with template extensions 
 		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/shipping/sculptor-generator.properties");
-
 		
 		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
 		val Injector injector = Guice::createInjector(uniLoadModule)
@@ -78,7 +78,6 @@ class ShippingTransformationTest extends XtextTest {
 		
 		val transformation = transformationProvider.get
 		app = transformation.modify(app)
-
 	}
 
 	def  getDomainModel() {
@@ -88,7 +87,6 @@ class ShippingTransformationTest extends XtextTest {
 		
 		dslModel
 	}
-	
 
     private def coreModule() {
         app.modules.namedElement("core")
@@ -129,41 +127,41 @@ class ShippingTransformationTest extends XtextTest {
     @Test
     def assertInspectorConsumer() {
         val consumer = curiousModule.consumers.namedElement("Inspector") 
-        assertEquals("shippingChannel", consumer.getSubscribe().getTopic());
-        assertEquals("extraBus", consumer.getSubscribe().getEventBus());
-        assertEquals("shippingChannel", consumer.getChannel());
+        assertEquals("shippingChannel", consumer.subscribe.topic);
+        assertEquals("extraBus", consumer.subscribe.eventBus);
+        assertEquals("shippingChannel", consumer.channel);
     }
 
     @Test
     def assertStatisticsSubscriber() throws Exception {
         val service = statisticsModule.services.namedElement("Statistics");
-        assertEquals("statisticsChannel", service.getSubscribe().getTopic());
-        assertNull(service.getSubscribe().getEventBus());
+        assertEquals("statisticsChannel", service.subscribe.topic);
+        assertNull(service.subscribe.eventBus);
         val op = service.operations.namedElement("receive")
         assertNotNull(op);
-        assertOneAndOnlyOne(op.getParameters(), "event");
+        assertOneAndOnlyOne(op.parameters, "event");
     }
     
     @Test
     def assertPublishInReferenceDataService() {
         val service = coreModule.services.namedElement("ReferenceDataService")
         val op = service.operations.namedElement("saveShip")
-        assertNotNull(op.getPublish());
-        assertEquals("shippingChannel", op.getPublish().getTopic());
-        assertNotNull(op.getPublish().getEventType());
-        assertEquals("SavedDomainObjectEvent", op.getPublish().getEventType().getName());
-        assertNull(op.getPublish().getEventBus());
+        assertNotNull(op.publish);
+        assertEquals("shippingChannel", op.publish.topic);
+        assertNotNull(op.publish.eventType);
+        assertEquals("SavedDomainObjectEvent", op.publish.eventType.name);
+        assertNull(op.publish.eventBus);
     }
 
     @Test
     def assertPublishToCommandBus() {
         val service = coreModule.services.namedElement("TrackingService")
         val op = service.operations.namedElement("recordArrival2")
-        assertNotNull(op.getPublish());
-        assertEquals("shippingProcessor", op.getPublish().getTopic());
-        assertNotNull(op.getPublish().getEventType());
-        assertEquals("RecordArrival", op.getPublish().getEventType().getName());
-        assertEquals("commandBus", op.getPublish().getEventBus());
+        assertNotNull(op.publish);
+        assertEquals("shippingProcessor", op.publish.topic);
+        assertNotNull(op.publish.eventType);
+        assertEquals("RecordArrival", op.publish.eventType.name);
+        assertEquals("commandBus", op.publish.eventBus);
     }
 
 }

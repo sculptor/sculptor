@@ -36,8 +36,10 @@ import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
 
+import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
+
 @RunWith(typeof(JUnit4))
-class SculptorDslTransformationTest {
+class DslTransformationTest {
 
 	private static val SculptordslFactory FACTORY = SculptordslFactory::eINSTANCE
 
@@ -48,6 +50,10 @@ class SculptorDslTransformationTest {
 
 	@Before
 	def void setupDslModel() {
+
+		// Activate cartridge 'test' with transformation extensions 
+		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/transformation/sculptor-generator.properties")
+
 		val Injector injector = Guice::createInjector(new ChainOverrideAwareModule(typeof(DslTransformation)))
 		helper = injector.getInstance(typeof(Helper))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
@@ -64,7 +70,7 @@ class SculptorDslTransformationTest {
 		assertEquals("com.acme", app.basePackage)
 		assertEquals("appDoc", app.doc)
 
-		assertEquals(2, app.modules.size)
+		assertOneAndOnlyOne(app.modules, "module1Name", "module2Name")
 		for (i : 1..2) {
 			val module = app.modules.get(i - 1)
 			assertEquals("module" + i + "Name", module.name)
@@ -87,13 +93,9 @@ class SculptorDslTransformationTest {
 		transformation.transform(model)
 	}
 
-	def getModule(String name) {
-		transformedApp.modules.findFirst(mod | mod.name == name)
-	}
-
 	@Test
 	def void testTransformEntity() {
-		val module = getModule("module1Name")
+		val module = transformedApp.modules.namedElement("module1Name")
 		assertNotNull(module)
 		assertEquals(2, module.domainObjects.size)
 		val Entity entity1 = module.domainObjects.findFirst[name == "Entity1"] as Entity
@@ -121,10 +123,10 @@ class SculptorDslTransformationTest {
 			// TODO: Verify references, attributes, etc
 		]
 	}
-	
+
 	@Test
 	def void testTransformValueObject() {
-		val module = getModule("module1Name")
+		val module = transformedApp.modules.namedElement("module1Name")
 		val ValueObject vo1 = module.domainObjects.findFirst[name == "ValueObject1"] as ValueObject
 		assertNotNull(vo1)
 		vo1 => [
@@ -133,14 +135,13 @@ class SculptorDslTransformationTest {
 			// TODO
 		]
 	}
-	
+
 	def createDslModel() {
 		val service1 = FACTORY.createDslService
 		service1.setName("service1Name")
 		service1.setDoc("service1Doc")
 		service1.setHint("key1 = service1Value1 , notRemote, notLocal , key2 = service1Value2 , key3")
 
-		
 		val entity1 = FACTORY.createDslEntity => [
 			name = "Entity1"
 			doc = "Documentation1"
@@ -167,8 +168,7 @@ class SculptorDslTransformationTest {
 			
 			// TODO
 		]
-		
-		
+
 		val module1 = FACTORY.createDslModule
 		module1.setBasePackage("com.acme.module1")
 		module1.setName("module1Name")
@@ -197,4 +197,5 @@ class SculptorDslTransformationTest {
 
 		app
 	}
+
 }
