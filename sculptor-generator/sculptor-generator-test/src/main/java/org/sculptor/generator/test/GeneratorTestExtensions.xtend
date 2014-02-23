@@ -94,4 +94,13 @@ class GeneratorTestExtensions {
 			actualNames.sort.equals(expectedNamesList.sort))
 	}
 
+	def static <NE extends NamedElement> void assertOneAndOnlyOneWithoutFilter(EList<NE> listOfNamedElements, String... expectedNames) {
+		val expectedNamesList = newArrayList(expectedNames)
+
+		val actualNames = listOfNamedElements.map[ne|ne.name].toList
+
+		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames,
+			actualNames.sort.equals(expectedNamesList.sort))
+	}
+
 }
