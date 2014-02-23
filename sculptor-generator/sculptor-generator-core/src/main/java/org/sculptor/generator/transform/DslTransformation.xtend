@@ -60,7 +60,6 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
-import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.check.CheckCrossLink
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -83,7 +82,6 @@ import sculptormetamodel.Trait
 /**
  * Transforms DSL meta model to generator meta model.
  */
-@ChainOverridable
 class DslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
@@ -104,16 +102,18 @@ class DslTransformation {
 		setName(app.name)
 		setBasePackage(app.basePackage)
 		modules.addAll(allDslModules.map[e | transform(e)])
-		// have to transform the dependencies afterwards, otherwise strange errors
+
+		// Transforming the dependencies must happen after all elements defined in the modules are initialized - otherwise we end up with multiple instances  
 		allDslModules.map[services].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[resources].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[consumers].flatten.forEach[transformDependencies(it)]
-		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
-			.forEach[d | transformDependencies(d)]
-		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
-			.filter(d | d.scaffold).forEach(d | scaffold(d))
+		allDslModules.map[domainObjects].flatten.filter[it instanceof DslDomainObject].map[it as DslDomainObject].
+			forEach[transformDependencies(it)]
 
-		allDslModules.map[resources].flatten.filter(r | r.scaffold).forEach(r | scaffold(r))
+		// Scaffolding must happen after all elements defined in the modules are initialized - otherwise we end up with multiple instances  
+		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[it as DslDomainObject].
+			filter[scaffold].forEach[scaffold(it)]
+		allDslModules.map[resources].flatten.filter[scaffold].forEach[scaffold(it)]
 	}
 
 	def create FACTORY.createModule transform(DslModule module) {
@@ -208,7 +208,7 @@ class DslTransformation {
 			setPublish(operation.publish.transform)
 
 		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null) && (operation.delegateHolder.delegate instanceof DslRepository))
-			setDelegate((operation.delegateHolder.delegateOperation  as DslRepositoryOperation).transform)
+			setDelegate((operation.delegateHolder.delegateOperation as DslRepositoryOperation).transform)
 
 		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null) && (operation.delegateHolder.delegate instanceof DslService))
 			setServiceDelegate(((operation.delegateHolder.delegateOperation as DslServiceOperation)).transform)
@@ -759,13 +759,17 @@ class DslTransformation {
 	}
 
 	def void scaffold(DomainObject domainObject) {
+
+		// Scaffold repository
 		if (domainObject.repository == null)
 			domainObject.addRepository()
-
 		domainObject.repository.addRepositoryScaffoldOperations()
-		if (!domainObject.module.services.exists(s | s.name == (domainObject.name + "Service")))
-			domainObject.module.addService(domainObject.name + "Service")
-		domainObject.module.services.filter(s | s.name == (domainObject.name + "Service")).forEach[addServiceScaffoldOperations(domainObject.repository)]
+
+		// Scaffold service
+		val serviceName = domainObject.name + "Service"
+		if (!domainObject.module.services.exists(s | s.name == serviceName))
+			domainObject.module.addService(serviceName)
+		domainObject.module.services.filter(s | s.name == serviceName).forEach[addServiceScaffoldOperations(domainObject.repository)]
 	}
 
 	def void scaffold(DslResource resource) {
@@ -778,14 +782,14 @@ class DslTransformation {
 		resource.addResourceScaffoldOperations(delegateService)
 	}
 
-	def boolean isGapClassToBeGenerated(DslService dslService) {
+	def private boolean isGapClassToBeGenerated(DslService dslService) {
 		if (hasGapOperations(dslService))
 			true
 		else
 			isGapClassToBeGenerated(dslService.gapClass, dslService.noGapClass)
 	}
 
-	def boolean isGapClassToBeGenerated(DslResource dslResource) {
+	def private boolean isGapClassToBeGenerated(DslResource dslResource) {
 		if (hasGapOperations(dslResource))
 			true
 		else
@@ -799,15 +803,15 @@ class DslTransformation {
 			isGapClassToBeGenerated(dslRepository.gapClass, dslRepository.noGapClass)
 	}
 
-	def boolean hasGapOperations(DslService dslService) {
+	def private boolean hasGapOperations(DslService dslService) {
 		dslService.operations.exists(op | !scaffoldOperations().contains(op.name) && op.delegateHolder == null)
 	}
 
-	def boolean hasGapOperations(DslResource dslResource) {
+	def private boolean hasGapOperations(DslResource dslResource) {
 		dslResource.operations.exists(op | op.delegateHolder == null)
 	}
 
-	def boolean hasGapOperations(DslRepository dslRepository) {
+	def private boolean hasGapOperations(DslRepository dslRepository) {
 		dslRepository.operations.exists(op |
 			!scaffoldOperations().contains(op.name) &&
 			!op.delegateToAccessObject && op.accessObjectName == null &&
