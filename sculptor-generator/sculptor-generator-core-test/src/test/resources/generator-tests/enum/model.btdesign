@@ -1,0 +1,70 @@
+Application app {
+	basePackage=org.sculptor.test
+
+	Module module {
+
+		Entity EnumTest {
+			- @SimpleEnum simpleEnum;
+			- @SimpleEnum simpleEnumWithHintDatabaseLength hint="databaseLength=20";
+			- @SimpleOrdinalEnum simpleOrdinalEnum;
+		}
+
+		enum SimpleEnum {
+			TEST1, TEST2, TEST3
+		}
+
+		enum SimpleOrdinalEnum {
+			ordinal TEST1, TEST2
+		}
+
+		enum EnumWithDefaultParameter {
+			TEST1(1), TEST2(2), TEST3(3)
+		}
+
+		enum EnumWithHintDatabaseLength {
+			hint="databaseLength=10" TEST1(1), TEST2(2), TEST3(3)
+		}
+
+		enum EnumWithDefaultStringParameter {
+			TEST1("A1"), TEST2("B2"), TEST3("C3")
+		}
+
+		enum OrdinalEnumWithParametersWithoutKeyAttribute {
+			ordinal
+			String test1;
+			Integer test2;
+			String test3;
+			TEST1("A", 1, "A1"), TEST2("B", 2, "A2"), TEST3("C", 3, "A3")
+		}
+
+		enum EnumWithParametersWithoutKeyAttribute {
+			String test1;
+			Integer test2;
+			String test3;
+			TEST1("A", 1, "A1"), TEST2("B", 2, "A2"), TEST3("C", 3, "A3")
+		}
+
+		enum EnumWithParametersWithDoubleKeyAttribute {
+			String test1;
+			Double test2 key;
+			String test3;
+			TEST1("A", "1.1", "A1"), TEST2("B", "2.2", "A2"), TEST3("C", "3.3", "A3")
+		}
+
+		enum EnumWithParametersWithIntKeyAttribute {
+			String test1;
+			int test2 key;
+			String test3;
+			TEST1("A", 1, "A1"), TEST2("B", 2, "A2"), TEST3("C", 3, "A3")
+		}
+
+		enum EnumWithParametersWithStringKeyAttribute {
+			String test1;
+			Integer test2;
+			String test3 key;
+			TEST1("A", 1, "A1"), TEST2("B", 2, "A2"), TEST3("C", 3, "A3")
+		}
+
+	}
+
+}
