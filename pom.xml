@@ -74,7 +74,6 @@
 
 		<eclipse-release>kepler</eclipse-release>
 		<tycho-version>0.19.0</tycho-version>
-		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
 		<xtext-version>2.5.2</xtext-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.13</logback-version>
@@ -168,8 +167,6 @@
 			<modules>
 				<module>sculptor-generator</module>
 				<module>sculptor-framework</module>
-				<!-- This module has to be built last because it provides 
-					the Maven repository which is deployed -->
 				<module>sculptor-maven</module>
 			</modules>
 			<build>
