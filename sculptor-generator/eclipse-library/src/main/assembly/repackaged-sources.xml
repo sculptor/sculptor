@@ -13,17 +13,8 @@
 			<outputDirectory>/</outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
-				<include>model/**</include>
 				<include>org/osgi/**</include>
-				<include>org/eclipse/osgi/**</include>
-				<include>org/eclipse/emf/codegen/**</include>
-				<include>org/eclipse/emf/common/**</include>
-				<include>org/eclipse/emf/ecore/**</include>
-				<include>org/eclipse/emf/mwe/**</include>
-				<include>org/eclipse/emf/mwe2/**</include>
-				<include>org/eclipse/xtend/**</include>
-				<include>org/eclipse/xtend2/**</include>
-				<include>org/eclipse/xtext/**</include>
+
 				<!-- Eclipse JDT Code Formatter -->
 				<include>org/eclipse/core/internal/**</include>
 				<include>org/eclipse/core/resources/**</include>
@@ -32,6 +23,7 @@
 				<include>org/eclipse/jface/text/**</include>
 				<include>org/eclipse/jdt/core/**</include>
 				<include>org/eclipse/jdt/internal/**</include>
+
 				<!-- Test Support -->
 				<include>org/eclipse/xtext/junit4/**</include>
 				<include>org/eclipse/xtext/xbase/junit/**</include>

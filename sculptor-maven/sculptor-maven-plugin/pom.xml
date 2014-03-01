@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-maven</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 	<artifactId>sculptor-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -164,6 +164,22 @@
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Xtext -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.builder.standalone</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.xtext</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Testing -->

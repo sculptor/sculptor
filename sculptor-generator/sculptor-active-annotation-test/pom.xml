@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-active-annotation-test</artifactId>
@@ -57,13 +57,9 @@
 			<artifactId>sculptor-active-annotation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<classifier>test</classifier>
-			<version>${project.version}</version>
-			<scope>test</scope>
+			<groupId>org.eclipse.xtend</groupId>
+			<artifactId>org.eclipse.xtend.core</artifactId>
 		</dependency>
 	</dependencies>
 </project>

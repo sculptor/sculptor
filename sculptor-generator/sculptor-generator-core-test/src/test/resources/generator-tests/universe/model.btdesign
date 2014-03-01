@@ -1,0 +1,62 @@
+Application Universe {
+	basePackage=org.sculptor.examples.universe
+
+	Module milkyway {
+
+		Service PlanetService {
+			String sayHello(String planetName) throws PlanetNotFoundException;
+			protected findByExample => PlanetRepository.findByExample;
+			@Planet getPlanet(String planetName) throws PlanetNotFoundException;
+		}
+
+		Entity Planet {
+			scaffold
+			String name key;
+			String message;
+			Integer diameter nullable;
+			Integer population nullable;
+			- Set<@Moon> moons opposite planet;
+
+			Repository PlanetRepository {
+				findByExample;
+				findByKeys;
+				save;
+			}
+		}
+
+		Entity Moon {
+			not aggregateRoot // belongs to Planet Aggregate
+			String name key;
+			Integer diameter nullable;
+			- @Planet planet opposite moons;
+		}
+
+		Consumer PlanetConsumer {
+			inject @PlanetRepository unmarshall to @PlanetMessage
+		}
+
+		ValueObject PlanetMessage {
+			package=consumer not persistent
+			- List<@Planet> planets
+		}
+
+		Consumer MoonConsumer {
+			inject @PlanetRepository unmarshall to @MoonMessage
+		}
+
+		ValueObject MoonMessage {
+			package=consumer not persistent
+			- List<@XmlMoon> moons
+		}
+
+		ValueObject XmlMoon {
+			package=consumer not persistent
+
+			not immutable
+			String name required;
+			String planetName;
+		}
+
+	}
+
+}

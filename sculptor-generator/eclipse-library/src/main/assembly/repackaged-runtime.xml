@@ -13,105 +13,6 @@
 			<outputDirectory>/</outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
-				<include>model/**</include>
-				<include>org/eclipse/osgi/framework/debug/*</include>
-				<include>org/eclipse/osgi/service/debug/*</include>
-				<include>org/eclipse/osgi/utils/*</include>
-				<include>org/eclipse/emf/common/*</include>
-				<include>org/eclipse/emf/common/archive/*</include>
-				<include>org/eclipse/emf/common/notify/*</include>
-				<include>org/eclipse/emf/common/notify/impl/*</include>
-				<include>org/eclipse/emf/common/util/*</include>
-				<include>org/eclipse/emf/ecore/*</include>
-				<include>org/eclipse/emf/ecore/impl/*</include>
-				<include>org/eclipse/emf/ecore/plugin/*</include>
-				<include>org/eclipse/emf/ecore/resource/*</include>
-				<include>org/eclipse/emf/ecore/resource/impl/*</include>
-				<include>org/eclipse/emf/ecore/util/*</include>
-				<include>org/eclipse/emf/ecore/xmi/*</include>
-				<include>org/eclipse/emf/ecore/xmi/impl/*</include>
-				<include>org/eclipse/emf/ecore/xml/type/*</include>
-				<include>org/eclipse/emf/ecore/xml/type/impl/*</include>
-				<include>org/eclipse/emf/ecore/xml/type/internal/*</include>
-				<include>org/eclipse/emf/ecore/xml/type/util/*</include>
-				<include>org/eclipse/emf/mwe/core/*</include>
-				<include>org/eclipse/emf/mwe/core/container/*</include>
-				<include>org/eclipse/emf/mwe/core/issues/*</include>
-				<include>org/eclipse/emf/mwe/core/lib/*</include>
-				<include>org/eclipse/emf/mwe/core/monitor/*</include>
-				<include>org/eclipse/emf/mwe/internal/core/ast/parser/*</include>
-				<include>org/eclipse/emf/mwe/internal/core/util/*</include>
-				<include>org/eclipse/emf/mwe2/language/*</include>
-				<include>org/eclipse/emf/mwe2/language/factory/*</include>
-				<include>org/eclipse/emf/mwe2/language/formatting/*</include>
-				<include>org/eclipse/emf/mwe2/language/lexer/*</include>
-				<include>org/eclipse/emf/mwe2/language/mwe2/*</include>
-				<include>org/eclipse/emf/mwe2/language/mwe2/impl/*</include>
-				<include>org/eclipse/emf/mwe2/language/parser/antlr/*</include>
-				<include>org/eclipse/emf/mwe2/language/parser/antlr/internal/*</include>
-				<include>org/eclipse/emf/mwe2/language/parser/antlr/lexer/*</include>
-				<include>org/eclipse/emf/mwe2/language/resource/*</include>
-				<include>org/eclipse/emf/mwe2/language/scoping/*</include>
-				<include>org/eclipse/emf/mwe2/language/serializer/*</include>
-				<include>org/eclipse/emf/mwe2/language/services/*</include>
-				<include>org/eclipse/emf/mwe2/language/validation/*</include>
-				<include>org/eclipse/emf/mwe2/launch/runtime/*</include>
-				<include>org/eclipse/emf/mwe2/runtime/*</include>
-				<include>org/eclipse/emf/mwe2/runtime/workflow/*</include>
-				<include>org/eclipse/xtend2/lib/*</include>
-				<include>org/eclipse/xtext/*</include>
-				<include>org/eclipse/xtext/common/*</include>
-				<include>org/eclipse/xtext/common/parseTreeConstruction/*</include>
-				<include>org/eclipse/xtext/common/services/*</include>
-				<include>org/eclipse/xtext/common/types/*</include>
-				<include>org/eclipse/xtext/common/types/access/*</include>
-				<include>org/eclipse/xtext/common/types/access/impl/*</include>
-				<include>org/eclipse/xtext/common/types/impl/*</include>
-				<include>org/eclipse/xtext/common/types/util/*</include>
-				<include>org/eclipse/xtext/common/types/xtext/*</include>
-				<include>org/eclipse/xtext/conversion/*</include>
-				<include>org/eclipse/xtext/conversion/impl/*</include>
-				<include>org/eclipse/xtext/diagnostics/*</include>
-				<include>org/eclipse/xtext/formatting/*</include>
-				<include>org/eclipse/xtext/formatting/impl/*</include>
-				<include>org/eclipse/xtext/grammaranalysis/*</include>
-				<include>org/eclipse/xtext/grammaranalysis/impl/*</include>
-				<include>org/eclipse/xtext/impl/*</include>
-				<include>org/eclipse/xtext/linking/*</include>
-				<include>org/eclipse/xtext/linking/impl/*</include>
-				<include>org/eclipse/xtext/linking/lazy/*</include>
-				<include>org/eclipse/xtext/mwe/*</include>
-				<include>org/eclipse/xtext/naming/*</include>
-				<include>org/eclipse/xtext/nodemodel/*</include>
-				<include>org/eclipse/xtext/nodemodel/impl/*</include>
-				<include>org/eclipse/xtext/nodemodel/util/*</include>
-				<include>org/eclipse/xtext/parser/*</include>
-				<include>org/eclipse/xtext/parser/antlr/*</include>
-				<include>org/eclipse/xtext/parser/impl/*</include>
-				<include>org/eclipse/xtext/parsetree/reconstr/*</include>
-				<include>org/eclipse/xtext/parsetree/reconstr/impl/*</include>
-				<include>org/eclipse/xtext/preferences/*</include>
-				<include>org/eclipse/xtext/resource/*</include>
-				<include>org/eclipse/xtext/resource/containers/*</include>
-				<include>org/eclipse/xtext/resource/impl/*</include>
-				<include>org/eclipse/xtext/scoping/*</include>
-				<include>org/eclipse/xtext/scoping/impl/*</include>
-				<include>org/eclipse/xtext/serializer/*</include>
-				<include>org/eclipse/xtext/serializer/acceptor/*</include>
-				<include>org/eclipse/xtext/serializer/analysis/*</include>
-				<include>org/eclipse/xtext/serializer/diagnostic/*</include>
-				<include>org/eclipse/xtext/serializer/impl/*</include>
-				<include>org/eclipse/xtext/serializer/sequencer/*</include>
-				<include>org/eclipse/xtext/serializer/tokens/*</include>
-				<include>org/eclipse/xtext/service/*</include>
-				<include>org/eclipse/xtext/util/*</include>
-				<include>org/eclipse/xtext/util/concurrent/*</include>
-				<include>org/eclipse/xtext/util/formallang/*</include>
-				<include>org/eclipse/xtext/util/internal/*</include>
-				<include>org/eclipse/xtext/validation/*</include>
-				<include>org/eclipse/xtext/validation/impl/*</include>
-				<include>org/eclipse/xtext/xbase/lib/*</include>
-				<include>org/eclipse/xtext/xbase/lib/internal/*</include>
 
 				<!-- Eclipse JDT Code Formatter -->
 				<include>org/eclipse/core/internal/runtime/*</include>
@@ -125,6 +26,7 @@
 				<include>org/eclipse/jdt/internal/compiler/*</include>
 				<include>org/eclipse/jdt/internal/compiler/ast/*</include>
 				<include>org/eclipse/jdt/internal/compiler/batch/*</include>
+				<include>org/eclipse/jdt/internal/compiler/classfmt/*</include>
 				<include>org/eclipse/jdt/internal/compiler/codegen/*</include>
 				<include>org/eclipse/jdt/internal/compiler/env/*</include>
 				<include>org/eclipse/jdt/internal/compiler/flow/*</include>
@@ -142,11 +44,12 @@
 			<excludes>
 				<exclude>org/eclipse/xtext/junit4/**</exclude>
 				<exclude>org/eclipse/xtext/xbase/junit/**</exclude>
+				<exclude>**/*.html</exclude>
 				<exclude>**/*.mwe2</exclude>
 				<exclude>**/*.ecore</exclude>
-				<exclude>**/*.html</exclude>
 				<exclude>**/*.java</exclude>
 				<exclude>**/*.xtend</exclude>
+				<exclude>**/*._trace</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>

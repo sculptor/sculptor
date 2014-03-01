@@ -9,7 +9,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.1</version>
+	<version>3.0.2</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -74,13 +74,17 @@
 
 		<eclipse-release>kepler</eclipse-release>
 		<tycho-version>0.19.0</tycho-version>
-		<fornax-oaw-m2-version>3.4.0</fornax-oaw-m2-version>
-		<xtext-version>2.5.0</xtext-version>
+		<xtext-version>2.5.3</xtext-version>
 		<slf4j-version>1.7.5</slf4j-version>
 		<logback-version>1.0.13</logback-version>
+		<emf-version>[2.8.0,)</emf-version>
+		<guava-version>14.0</guava-version>
+		<guice-version>3.0</guice-version>
+		<slf4j-version>1.7.6</slf4j-version>
+		<logback-version>1.1.1</logback-version>
 		
 		<aspectj-version>1.7.4</aspectj-version>
-		<spring-version>3.2.6.RELEASE</spring-version>
+		<spring-version>3.2.8.RELEASE</spring-version>
 		<spring-integration-version>2.2.6.RELEASE</spring-integration-version>
 		<hibernate-version>4.2.8.Final</hibernate-version>
 	    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
@@ -126,20 +130,7 @@
 			<layout>p2</layout>
 		</repository>
 	</repositories>
-
-	<pluginRepositories>
-		<!-- Maven Central -->
-		<pluginRepository>
-			<id>central</id>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</pluginRepository>
-		<!-- Repository to resolve fornax-oaw-m2-plugin -->
-		<pluginRepository>
-			<id>fornax.oaw</id>
-			<url>http://fornax-platform.org/nexus/content/repositories/public</url>
-		</pluginRepository>
-	</pluginRepositories>
-
+ 
 	<profiles>
 		<profile>
 			<id>all</id>
@@ -176,8 +167,6 @@
 			<modules>
 				<module>sculptor-generator</module>
 				<module>sculptor-framework</module>
-				<!-- This module has to be built last because it provides 
-					the Maven repository which is deployed -->
 				<module>sculptor-maven</module>
 			</modules>
 			<build>
@@ -315,7 +304,6 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.16</version>
 					<configuration>
-						<forkMode>once</forkMode>
 						<argLine>-Xms32m -Xmx1024m</argLine>
 					</configuration>
 				</plugin>
@@ -461,6 +449,11 @@
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.8</version>
 				</plugin>
@@ -593,16 +586,6 @@
 					<groupId>org.eclipse.xtend</groupId>
 					<artifactId>xtend-maven-plugin</artifactId>
 					<version>${xtext-version}</version>
-					<dependencies>
-						<!-- these dependencies are contributed in Eclipse by the "Xtend Library" 
-							classpath container -->
-						<dependency>
-							<groupId>org.eclipse.xtend</groupId>
-							<artifactId>org.eclipse.xtend.lib</artifactId>
-							<version>${xtext-version}</version>
-							<type>pom</type>
-						</dependency>
-					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -647,8 +630,48 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>org.eclipse.xtext</groupId>
+				<artifactId>org.eclipse.xtext.xtext</artifactId>
+				<version>${xtext-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.xtext</groupId>
+				<artifactId>org.eclipse.xtext.builder.standalone</artifactId>
+				<version>${xtext-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.emf</groupId>
+				<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+				<version>${emf-version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.eclipse.xtend</groupId>
-				<artifactId>org.eclipse.xtend.standalone</artifactId>
+				<artifactId>org.eclipse.xtend.core</artifactId>
+				<version>${xtext-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>org.eclipse.xtend.lib</artifactId>
 				<version>${xtext-version}</version>
 			</dependency>
 			<dependency>
@@ -727,16 +750,16 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>${hibernate-validator-version}</version>
-		</dependency>
+			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>15.0</version>
+				<version>${guava-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
-				<version>3.0</version>
+				<version>${guice-version}</version>
 			</dependency>
 			<!-- Explicit antlr-runtime dependency to 3.2 to avoid loading of mismatched 
 				transitive dependencies -->
@@ -754,7 +777,7 @@
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.2</version>
+				<version>${joda-time-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>

@@ -26,7 +26,7 @@ import org.eclipse.emf.mwe2.language.Mwe2RuntimeModule;
 import org.eclipse.emf.mwe2.language.Mwe2StandaloneSetup;
 import org.eclipse.emf.mwe2.launch.runtime.Mwe2Runner;
 import org.eclipse.xtext.mwe.RuntimeResourceSetInitializer;
-import org.sculptor.generator.mwe2.ContextClassLoaderAwareRuntimeResourceSetInitializer;
+import org.sculptor.generator.xtext.ContextClassLoaderAwareRuntimeResourceSetInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

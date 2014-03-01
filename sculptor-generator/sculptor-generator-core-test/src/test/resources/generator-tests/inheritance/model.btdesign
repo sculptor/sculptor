@@ -1,0 +1,84 @@
+Application InheritanceTest {
+	basePackage=org.sculptor.examples.inheritance
+
+	Module module1 {
+
+		abstract Entity Media1 {
+			String title ! changeable
+		}
+
+		Entity Book1 extends @Media1 {
+			String isbn key
+		}
+
+		Entity Movie1 extends @Media1 {
+			String urlIMDB
+			Integer playLength
+		}
+
+		Entity Person1 {
+		}
+
+	}
+
+	Module module2 {
+
+		abstract Entity Media2 {
+			inheritanceType=SINGLE_TABLE
+			String title ! changeable
+		}
+
+		Entity Book2 extends @Media2 {
+			String isbn nullable
+		}
+
+		Entity Movie2 extends @Media2 {
+			discriminatorValue="M2"
+			String urlIMDB nullable
+			Integer playLength nullable
+		}
+
+	}
+
+	Module module3 {
+
+		abstract Entity Media3 {
+			inheritanceType=SINGLE_TABLE
+
+			discriminatorColumn="MEDIA_TYPE"
+			discriminatorType=CHAR
+			String title ! changeable
+		}
+
+		Entity Book3 extends @Media3 {
+			discriminatorValue="B"
+			String isbn nullable
+		}
+
+		Entity Movie3 extends @Media3 {
+			discriminatorValue="M"
+			String urlIMDB nullable
+			Integer playLength nullable
+		}
+
+	}
+
+	Module module4 {
+
+		abstract Entity Media4 {
+			inheritanceType=SINGLE_TABLE
+			String title ! changeable
+		}
+
+		Entity Book4 extends @Media4 {
+			discriminatorValue="B4"
+			String isbn nullable
+		}
+
+		Entity Book44 extends @Book4 {
+			discriminatorValue="B44"
+		}
+
+	}
+
+}

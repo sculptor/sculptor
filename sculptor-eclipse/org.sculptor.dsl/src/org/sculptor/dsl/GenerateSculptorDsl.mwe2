@@ -21,16 +21,31 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var grammarURI = "classpath:/org/sculptor/dsl/Sculptordsl.xtext"
 var fileExtensions = "btdesign"
 var projectName = "org.sculptor.dsl"
+
+// grammarURI has to be platform:/resource as it is not on the classpath
+var grammarURI = "platform:/resource/${projectName}/src/org/sculptor/dsl/Sculptordsl.xtext"
 var runtimeProject = "../${projectName}"
 var generateXtendStub = true
 var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
-    	scanClassPath = true
+		// use an XtextResourceset throughout the process, which is able to resolve classpath:/ URIs.
+		resourceSet = org.eclipse.xtext.resource.XtextResourceSet : theResourceSet {}
+
+		// add mappings from platform:/resource to classpath:/
+		uriMap = {
+			from = "platform:/resource/org.eclipse.xtext.xbase/"
+			to = "classpath:/"
+		}
+		uriMap = {
+			from = "platform:/resource/org.eclipse.xtext.common.types/"
+			to = "classpath:/"
+		}
+
+		// register current projects and its siblings for platform URI map, as they are not on the classpath.
 		platformUri = "${runtimeProject}/.."
 	}
 
@@ -56,14 +71,20 @@ Workflow {
 		pathTestProject = "${runtimeProject}.tests"
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
+		encoding = encoding
 		language = auto-inject {
+    		// make sure we use the resourceSet created during standalone setup.
+    		forcedResourceSet = theResourceSet
+
 			uri = grammarURI
 
 			// Java API to access grammar elements (required by several other fragments)
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
-			fragment = ecore.EMFGeneratorFragment auto-inject {}
+			fragment = ecore.EMFGeneratorFragment auto-inject {
+				javaModelDirectory = "/${projectName}/src-gen"
+			}
 
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
@@ -119,10 +140,10 @@ Workflow {
             fragment = junit.Junit4Fragment auto-inject {}
 
             // project wizard (optional)
-            fragment = projectWizard.SimpleProjectWizardFragment auto-inject {
-                 generatorProjectName = "${projectName}"
-                 fileExtension = fileExtensions
-            }
+//            fragment = projectWizard.SimpleProjectWizardFragment auto-inject {
+//                 generatorProjectName = "${projectName}"
+//                 fileExtension = fileExtensions
+//            }
 
             // rename refactoring
             fragment = refactoring.RefactorElementNameFragment auto-inject {}

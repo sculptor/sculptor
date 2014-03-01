@@ -17,12 +17,20 @@
 
 package org.sculptor.generator.chain;
 
+/**
+ * This class provides the logic for chain-linking the overriden methods of an
+ * overridable template. The {@link ChainOverridable} annotation applies this
+ * class as base class for the overriden templates.
+ * 
+ * @param <T> the overridable template
+ * @see ChainOverridable
+ */
 public abstract class ChainLink<T extends ChainLink<T>> {
 
 	private T nextLink;
 
 	T[] methodsDispatchHead = null;
-	
+
 	public T[] getMethodsDispatchHead() {
 		return methodsDispatchHead;
 	}
@@ -35,10 +43,11 @@ public abstract class ChainLink<T extends ChainLink<T>> {
 	public void setMethodsDispatchHead(Object[] methodsDispatchHead) {
 		this.methodsDispatchHead = (T[])methodsDispatchHead;		
 	}
-	
+
 	protected T getNext() {
 		return nextLink;
 	}
 
 	protected abstract T[] _getOverridesDispatchArray();
+
 }

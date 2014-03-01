@@ -13,17 +13,8 @@
 			<outputDirectory>/</outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
-				<include>model/**</include>
 				<include>org/osgi/**</include>
-				<include>org/eclipse/osgi/**</include>
-				<include>org/eclipse/emf/codegen/**</include>
-				<include>org/eclipse/emf/common/**</include>
-				<include>org/eclipse/emf/ecore/**</include>
-				<include>org/eclipse/emf/mwe/**</include>
-				<include>org/eclipse/emf/mwe2/**</include>
-				<include>org/eclipse/xtend/**</include>
-				<include>org/eclipse/xtend2/**</include>
-				<include>org/eclipse/xtext/**</include>
+
 				<!-- Eclipse JDT Code Formatter -->
 				<include>org/eclipse/core/internal/**</include>
 				<include>org/eclipse/core/resources/**</include>
@@ -34,13 +25,12 @@
 				<include>org/eclipse/jdt/internal/**</include>
 			</includes>
 			<excludes>
-				<exclude>org/eclipse/xtext/junit4/**</exclude>
-				<exclude>org/eclipse/xtext/xbase/junit/**</exclude>
+				<exclude>**/*.html</exclude>
 				<exclude>**/*.mwe2</exclude>
 				<exclude>**/*.ecore</exclude>
-				<exclude>**/*.html</exclude>
 				<exclude>**/*.java</exclude>
 				<exclude>**/*.xtend</exclude>
+				<exclude>**/*._trace</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>

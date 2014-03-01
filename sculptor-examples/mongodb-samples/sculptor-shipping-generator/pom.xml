@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator.examples</groupId>
 		<artifactId>mongodb-samples</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 	<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
 	<artifactId>sculptor-shipping-generator</artifactId>
@@ -41,21 +41,33 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- Needed to run SculptorGeneratorRunner because ContextClassLoaderAwareRuntimeResourceSetInitializer 
+						needs access to the thread context classloader -->
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<useManifestOnlyJar>false</useManifestOnlyJar>
+					<!-- Run every test class in a newly forked JVM -->
+					<reuseForks>false</reuseForks>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
-		<!-- Without this dependency, chain override annotation not getting processed. -->
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-generator-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

@@ -1,0 +1,9 @@
+ApplicationPart NestedPart4 {
+ 
+    Module nested4 {
+    	ValueObject D {
+    		String d
+    	}
+    }
+}
+

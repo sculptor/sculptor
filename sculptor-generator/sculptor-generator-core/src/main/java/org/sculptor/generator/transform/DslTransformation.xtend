@@ -102,16 +102,18 @@ class DslTransformation {
 		setName(app.name)
 		setBasePackage(app.basePackage)
 		modules.addAll(allDslModules.map[e | transform(e)])
-		// have to transform the dependencies afterwards, otherwise strange errors
+
+		// Transforming the dependencies must happen after all elements defined in the modules are initialized - otherwise we end up with multiple instances  
 		allDslModules.map[services].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[resources].flatten.forEach[transformDependencies(it)]
 		allDslModules.map[consumers].flatten.forEach[transformDependencies(it)]
-		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
-			.forEach[d | transformDependencies(d)]
-		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[(it as DslDomainObject)]
-			.filter(d | d.scaffold).forEach(d | scaffold(d))
+		allDslModules.map[domainObjects].flatten.filter[it instanceof DslDomainObject].map[it as DslDomainObject].
+			forEach[transformDependencies(it)]
 
-		allDslModules.map[resources].flatten.filter(r | r.scaffold).forEach(r | scaffold(r))
+		// Scaffolding must happen after all elements defined in the modules are initialized - otherwise we end up with multiple instances  
+		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[it as DslDomainObject].
+			filter[scaffold].forEach[scaffold(it)]
+		allDslModules.map[resources].flatten.filter[scaffold].forEach[scaffold(it)]
 	}
 
 	def create FACTORY.createModule transform(DslModule module) {
@@ -206,7 +208,7 @@ class DslTransformation {
 			setPublish(operation.publish.transform)
 
 		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null) && (operation.delegateHolder.delegate instanceof DslRepository))
-			setDelegate((operation.delegateHolder.delegateOperation  as DslRepositoryOperation).transform)
+			setDelegate((operation.delegateHolder.delegateOperation as DslRepositoryOperation).transform)
 
 		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null) && (operation.delegateHolder.delegate instanceof DslService))
 			setServiceDelegate(((operation.delegateHolder.delegateOperation as DslServiceOperation)).transform)
@@ -413,7 +415,7 @@ class DslTransformation {
 		transformCommonEventFeatures(it, dslEvent)
 	}
 
-	def transformCommonEventFeatures(Event event, DslEvent dslEvent) {
+	def void transformCommonEventFeatures(Event event, DslEvent dslEvent) {
 		event.setModule((dslEvent.eContainer as DslModule).transform)
 		event.setDoc(dslEvent.doc)
 		event.setName(dslEvent.name)
@@ -689,7 +691,7 @@ class DslTransformation {
 		operations.addAll(repository.operations.map[e | transform(e)])
 	}
 
-	def transformDependencies(DslService service) {
+	def void transformDependencies(DslService service) {
 		service.transform.serviceDependencies.addAll(
 			(service.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
 		service.transform.repositoryDependencies.addAll(
@@ -698,12 +700,12 @@ class DslTransformation {
 			service.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
 	}
 
-	def transformDependencies(DslResource resource) {
+	def void transformDependencies(DslResource resource) {
 		resource.transform.serviceDependencies.addAll(
 			(resource.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
 	}
 
-	def transformDependencies(DslConsumer consumer) {
+	def void transformDependencies(DslConsumer consumer) {
 		consumer.transform.serviceDependencies.addAll(
 			(consumer.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
 		consumer.transform.repositoryDependencies.addAll(
@@ -740,39 +742,41 @@ class DslTransformation {
 			dependency.name
 	}
 
-	def transformDependencies(DslDomainObject domainObject) {
+	def void transformDependencies(DslDomainObject domainObject) {
 		if (domainObject.repository != null)
 			domainObject.repository.transformDependencies
-		else
-			null
 	}
 
-	def transformDependencies(DslRepository repository) {
+	def void transformDependencies(DslRepository repository) {
 		repository.transform.repositoryDependencies.addAll(
 			repository.dependencies.map[e | transformRepositoryDependency(e)].filter(r | r != null))
 		repository.transform.otherDependencies.addAll(
 			repository.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
 	}
 
-	def scaffold(DslDomainObject domainObject) {
+	def void scaffold(DslDomainObject domainObject) {
 		domainObject.transformSimpleDomainObject.scaffold()
 	}
 
-	def scaffold(DomainObject domainObject) {
+	def void scaffold(DomainObject domainObject) {
+
+		// Scaffold repository
 		if (domainObject.repository == null)
 			domainObject.addRepository()
-
 		domainObject.repository.addRepositoryScaffoldOperations()
-		if (!domainObject.module.services.exists(s | s.name == (domainObject.name + "Service")))
-			domainObject.module.addService(domainObject.name + "Service")
-		domainObject.module.services.filter(s | s.name == (domainObject.name + "Service")).forEach[addServiceScaffoldOperations(domainObject.repository)]
+
+		// Scaffold service
+		val serviceName = domainObject.name + "Service"
+		if (!domainObject.module.services.exists(s | s.name == serviceName))
+			domainObject.module.addService(serviceName)
+		domainObject.module.services.filter(s | s.name == serviceName).forEach[addServiceScaffoldOperations(domainObject.repository)]
 	}
 
-	def scaffold(DslResource resource) {
+	def void scaffold(DslResource resource) {
 		resource.transform.scaffold()
 	}
 
-	def scaffold(Resource resource) {
+	def void scaffold(Resource resource) {
 		val serviceName = resource.getDomainResourceName() + "Service"
 		val delegateService = resource.module.application.modules.map[services].flatten.findFirst(e|e.name == serviceName)
 		resource.addResourceScaffoldOperations(delegateService)
@@ -792,7 +796,7 @@ class DslTransformation {
 			isGapClassToBeGenerated(dslResource.gapClass, dslResource.noGapClass)
 	}
 
-	def private boolean isGapClassToBeGenerated(DslRepository dslRepository) {
+	def boolean isGapClassToBeGenerated(DslRepository dslRepository) {
 		if (hasGapOperations(dslRepository))
 			true
 		else
@@ -836,7 +840,6 @@ class DslTransformation {
 		handleParameterizedAnnotation("url", "protocol,host,port,message", attribute.url, attribute.validate) +
 		handleParameterizedAnnotation("range", "min,max,message", attribute.range, attribute.validate) +
 		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
-		
 	}
 
 	def private String handleValidation(DslDtoAttribute attribute) {
@@ -861,7 +864,6 @@ class DslTransformation {
 		handleParameterizedAnnotation("url", "protocol,host,port,message", attribute.url, attribute.validate) +
 		handleParameterizedAnnotation("range", "min,max,message", attribute.range, attribute.validate) +
 		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
-		
 	}
 
 	def private String handleValidation(DslReference reference) {
@@ -870,7 +872,6 @@ class DslTransformation {
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("notEmpty", reference.notEmpty, reference.notEmptyMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
-		
 	}
 
 	def private String handleValidation(DslDtoReference reference) {
@@ -878,6 +879,6 @@ class DslTransformation {
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
-		
 	}
+
 }

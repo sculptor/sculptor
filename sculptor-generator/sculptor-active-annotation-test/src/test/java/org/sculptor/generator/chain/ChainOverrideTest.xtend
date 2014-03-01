@@ -52,9 +52,25 @@ class ChainOverrideTest {
 						
 			assertNull("_getOverridesDispatchArray shouldn't get chained", clazz.findDeclaredMethod("_chained__getOverridesDispatchArray"))			
 		]
-			
-			
+	}
 
+	@Test(expected=typeof(RuntimeException))
+	def void testInferredReturnType() {
+		'''
+			@org.sculptor.generator.chain.ChainOverride
+			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
+				override test() {
+					""
+				}
+			}
+
+			@org.sculptor.generator.chain.ChainOverridable
+			class ChainOverrideTestTemplate {
+				def String test() {
+					""
+				}
+			}
+		'''.compile[]
 	}
 
 	@Test(expected=typeof(RuntimeException))
@@ -112,7 +128,7 @@ class ChainOverrideTest {
 			assertNotNull(clazz)
 			assertTrue(
 				clazz.problems.exists[
-					message.endsWith('is not annotated with SupportChainOverriding')]
+					message.endsWith('is not annotated with ChainOverridable')]
 			)]
 	}
 

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 	<artifactId>sculptor-maven</artifactId>
 	<packaging>pom</packaging>
@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>sculptor-generator-library</module>
+		<module>sculptor-generator-test</module>
 		<module>sculptor-maven-plugin</module>
 		<module>sculptor-maven-archetype-parent</module>
 		<module>sculptor-maven-archetype</module>

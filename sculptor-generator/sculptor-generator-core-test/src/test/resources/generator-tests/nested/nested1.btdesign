@@ -1,0 +1,17 @@
+import "classpath:/generator-tests/nested/nested2.btdesign"
+import "classpath:/generator-tests/nested/nested3.btdesign"
+import "classpath:/generator-tests/nested/nested4.btdesign"
+
+Application Nested {
+    basePackage = org.sculptor.test.nested
+
+    Module nested1 {
+    	ValueObject A {
+    		String a
+    		- @B b
+    	}
+    }
+   
+}
+
+

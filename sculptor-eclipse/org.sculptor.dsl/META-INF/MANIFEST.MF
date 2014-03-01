@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.0.1
+Bundle-Version: 3.0.2
 Bundle-SymbolicName: org.sculptor.dsl;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,

@@ -4,48 +4,11 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-core</artifactId>
 	<name>Sculptor :: Generator :: Core</name>
-
-	<profiles>
-		<profile>
-			<id>shade</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<configuration>
-							<forceCreation>true</forceCreation>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-shade-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>shade</goal>
-								</goals>
-								<configuration>
-									<createDependencyReducedPom>false</createDependencyReducedPom>
-									<transformers>
-										<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-											<mainClass>org.sculptor.generator.Main</mainClass>
-										</transformer>
-									</transformers>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<build>
 		<plugins>
@@ -60,12 +23,6 @@
 								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
-						<fileset>
-							<directory>${basedir}/src/test/xtend-gen</directory>
-							<excludes>
-								<exclude>.gitignore</exclude>
-							</excludes>
-						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>
@@ -76,47 +33,20 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
-							<goal>testCompile</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
-							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<!-- Needed to run SculptorGeneratorRunner because
-						ContextClassLoaderAwareRuntimeResourceSetInitializer 
-						needs access to the thread context classloader -->
-					<useSystemClassLoader>true</useSystemClassLoader>
-					<useManifestOnlyJar>false</useManifestOnlyJar>
-					<!-- Run every test class in a newly forked JVM -->
-					<reuseForks>false</reuseForks>
-					<excludes>
-						<exclude>**/UMLGraphTmplTest.java</exclude>
-						<exclude>**/DomainObjectReferenceAnnotationTmplTest.java</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
-		<!-- The stand-alone Eclipse library has to be in front of the other Eclipse 
-			plugins because its "plugin.properties" file must be the first in the shaded 
-			JAR!!! -->
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<version>${project.version}</version>
-			</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-active-annotation</artifactId>
+			<groupId>org.sculptorgenerator.eclipse</groupId>
+			<artifactId>org.sculptor.dsl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -125,16 +55,15 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptorgenerator.eclipse</groupId>
-			<artifactId>org.sculptor.dsl</artifactId>
+			<groupId>org.sculptorgenerator.generator</groupId>
+			<artifactId>sculptor-active-annotation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>eclipse-library</artifactId>
-			<classifier>test</classifier>
 			<version>${project.version}</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

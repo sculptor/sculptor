@@ -8,32 +8,13 @@ import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Reference
 
 @ChainOverride
+/**
+ * Override DomainObjectReferenceTmpl to add 'addTo*' methods for bidirectional and unidirectional references.
+ */
 class DomainObjectReferenceTmplOverride extends DomainObjectReferenceTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-
-
-
-override String manyReferenceAccessors(Reference it) {
-		next.manyReferenceAccessors(it)
-}
-
-
-override String additionalManyReferenceAccessors(Reference it) {
-		next.additionalManyReferenceAccessors(it)
-}
-
-
-
-
-override String unidirectionalReferenceAccessors(Reference it) {
-	'''
-		«unidirectionalReferenceAdd(it)»
-		«unidirectionalReferenceRemove(it)»
-		«unidirectionalReferenceRemoveAll(it)»
-	'''
-}
 
 
 	override String bidirectionalReferenceAdd(Reference it) {
@@ -50,28 +31,28 @@ override String unidirectionalReferenceAccessors(Reference it) {
 				«getVisibilityLitteralSetter()»void addTo«name.toFirstUpper().plural()»(«getTypeName()» «name.singular()»Element) {
 					add«name.toFirstUpper().singular()»(«name.singular()»Element);
 				};
-			   «ENDIF»
+			«ENDIF»
 			
+			// Delegate to next template in chain so regular add method gets generated as well
 			«next.bidirectionalReferenceAdd(it)»
 		'''
 	}
 
-override String unidirectionalReferenceAdd(Reference it) {
-	'''
-	«IF !it.isSetterPrivate()»
-		/**
-		 * Adds an object to the unidirectional to-many
-		 * association.
-		 * It is added the collection {@link #get«name.toFirstUpper()»}.
-		 */
-		«it.getVisibilityLitteralSetter()»void addTo«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
-			get«name.toFirstUpper()»().add(«name.singular()»Element);
-		};
-	«ENDIF»
-	«next.unidirectionalReferenceAdd(it)»
+	override String unidirectionalReferenceAdd(Reference it) {
+		'''
+		«IF !it.isSetterPrivate()»
+			/**
+			 * Adds an object to the unidirectional to-many
+			 * association.
+			 * It is added the collection {@link #get«name.toFirstUpper()»}.
+			 */
+			«it.getVisibilityLitteralSetter()»void addTo«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
+				get«name.toFirstUpper()»().add(«name.singular()»Element);
+			};
+		«ENDIF»
 
-	'''
-}
-
-
+		// Delegate to next template in chain so regular add method gets generated as well
+		«next.unidirectionalReferenceAdd(it)»
+		'''
+	}
 }

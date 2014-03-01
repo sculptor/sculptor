@@ -18,6 +18,7 @@
 package org.sculptor.generator.transform
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -49,7 +50,9 @@ import sculptormetamodel.ValueObject
 /**
  * Enriches generator meta model.
  */
+@ChainOverridable
 class Transformation {
+
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
 
 	@Inject extension DbHelper dbHelper
@@ -106,17 +109,17 @@ class Transformation {
 		domainObject.addIfNotExists(op.mixinClone(domainObject))
 	}
 
-	def dispatch addIfNotExists(DomainObject domainObject, Attribute a) {
+	def dispatch void addIfNotExists(DomainObject domainObject, Attribute a) {
 		if (!domainObject.attributes.exists(e | e.name == a.name))
 			domainObject.attributes.add(a)
 	}
 
-	def dispatch addIfNotExists(DomainObject domainObject, Reference r) {
+	def dispatch void addIfNotExists(DomainObject domainObject, Reference r) {
 		if (!domainObject.references.exists(e | r.name == r.name))
 			domainObject.references.add(r)
 	}
 
-	def dispatch addIfNotExists(DomainObject domainObject, DomainObjectOperation op) {
+	def dispatch void addIfNotExists(DomainObject domainObject, DomainObjectOperation op) {
 		if (((op.parameters.size != 1) || !domainObject.attributes.exists(e | "set" + e.name.toFirstUpper() == op.name))
 			&& (!op.parameters.isEmpty || !domainObject.attributes.exists(e | e.getGetAccessor() == op.name))
 			&& !domainObject.operations.exists(e | e.name == op.name && e.type == op.type && e.parameters.size == op.parameters.size))
@@ -197,15 +200,15 @@ class Transformation {
 		setType(param.type)
 	}
 
-	def serviceAddDefaultValues(Module module) {
+	def void serviceAddDefaultValues(Module module) {
 		module.services.forEach[it.addDefaultValues()]
 	}
 
-	def resourceAddDefaultValues(Module module) {
+	def void resourceAddDefaultValues(Module module) {
 		module.resources.forEach[it.addDefaultValues()]
 	}
 
-	def modify(Module module) {
+	def void modify(Module module) {
 		module.setPersistenceUnit(if (module.hasHint("persistenceUnit")) module.getHint("persistenceUnit") else module.application.persistenceUnitName())
 		if (isServiceContextToBeGenerated())
 			module.services.forEach[modifyServiceContextParameter()]
@@ -226,11 +229,11 @@ class Transformation {
 		module.domainObjects.forEach[modifyInheritance()]
 	}
 
-	def modifyModuleDatabaseNames(Module module) {
+	def void modifyModuleDatabaseNames(Module module) {
 		module.getNonEnumDomainObjects().forEach[it.modifyDatabaseNames()]
 	}
 
-	def modifyModuleReferencesDatabaseNames(Module module) {
+	def void modifyModuleReferencesDatabaseNames(Module module) {
 		module.getNonEnumDomainObjects().forEach[it.modifyReferencesDatabaseNames()]
 	}
 
@@ -249,33 +252,33 @@ class Transformation {
 		service.operations.forEach[modifyApplicationExceptionOperation()]
 	}
 
-	def modifyApplicationExceptionOperation(ServiceOperation operation) {
+	def void modifyApplicationExceptionOperation(ServiceOperation operation) {
 		if (operation.^throws == "ApplicationException")
 			operation.setThrows(applicationExceptionClass())
 	}
 
 	// when using scaffold method names gapClass is wrong and must be redefined
-	def dispatch modifyGapClass(Service service) {
+	def dispatch void modifyGapClass(Service service) {
 		if (!service.gapClass && !service.operations.isEmpty && service.operations.exists(op | op.isImplementedInGapClass()))
 			service.setGapClass(true)
 	}
 
-	def dispatch modifyGapClass(Resource resource) {
+	def dispatch void modifyGapClass(Resource resource) {
 		if (!resource.gapClass && !resource.operations.isEmpty && resource.operations.exists(op | op.isImplementedInGapClass()))
 			resource.setGapClass(true)
 	}
 
-	def dispatch modifyGapClass(DomainObject domainObject) {
+	def dispatch void modifyGapClass(DomainObject domainObject) {
 		if (domainObject.operations.exists(op | op.isImplementedInGapClass()))
 			domainObject.setGapClass(true)
 	}
 
-	def modifyTransient(DomainObject domainObject) {
+	def void modifyTransient(DomainObject domainObject) {
 		if (domainObject.isPersistent())
 			domainObject.references.filter(e | !e.isEnumReference() && !e.to.isPersistent()).forEach[it.modifyTransientToTrue()]
 	}
 
-	def modifyTransientToTrue(Reference reference) {
+	def void modifyTransientToTrue(Reference reference) {
 		reference.setTransient(true)
 	}
 
@@ -301,32 +304,29 @@ class Transformation {
 		trait.references.filter(r | r.naturalKey).forEach[modifyChangeableToFalse()]
 	}
 
-	def defaultModifyChangeable(DomainObject domainObject) {
+	def void defaultModifyChangeable(DomainObject domainObject) {
 		domainObject.attributes.filter(a | a == domainObject.getIdAttribute()).forEach[modifyChangeableToFalse()]
 		domainObject.attributes.filter(a | a.naturalKey).forEach[modifyChangeableToFalse()]
 		domainObject.references.filter(r | r.naturalKey).forEach[modifyChangeableToFalse()]
 	}
 
-	def dispatch modifyChangeableToFalse(Attribute attribute) {
+	def dispatch void modifyChangeableToFalse(Attribute attribute) {
 		attribute.setChangeable(false)
 	}
 
-	def dispatch modifyChangeableToFalse(Reference reference) {
+	def dispatch void modifyChangeableToFalse(Reference reference) {
 		reference.setChangeable(false)
 	}
 
-	def dispatch modifyAuditable(Entity entity) {
+	def dispatch void modifyAuditable(Entity entity) {
 		if (!isAuditableToBeGenerated())
 			entity.setAuditable(false)
 
 		if (entity.auditable && (entity.^extends == null || !((entity.^extends as Entity).auditable)))
 			addAuditable(entity)
-		else
-			null
 	}
 
-	def dispatch modifyAuditable(DomainObject domainObject) {
-		null
+	def dispatch void modifyAuditable(DomainObject domainObject) {
 	}
 
 	def void modifyDomainEvent(DomainEvent event) {
@@ -355,60 +355,54 @@ class Transformation {
 		it.setChangeable(false)
 	}
 
-	def dispatch modifySubscriber(Service service) {
+	def dispatch void modifySubscriber(Service service) {
 		if (service.subscribe != null && !service.operations.exists(e|e.name == "receive"))
-			service.operations.add(createSubscriberRecieve(service))
+			service.operations.add(createSubscriberReceive(service))
 	}
 
-	def create FACTORY.createServiceOperation createSubscriberRecieve(Service service) {
+	def create FACTORY.createServiceOperation createSubscriberReceive(Service service) {
 		setName("receive")
-		parameters.add(createSubscriberRecieveEventParam(it))
+		parameters.add(createSubscriberReceiveEventParam(it))
 	}
 
-	def dispatch modifySubscriber(Repository repository) {
+	def dispatch void modifySubscriber(Repository repository) {
 		if (repository.subscribe != null && !repository.operations.exists(e|e.name == "receive"))
-			repository.operations.add(createSubscriberRecieve(repository))
+			repository.operations.add(createSubscriberReceive(repository))
 	}
 
-	def create FACTORY.createRepositoryOperation createSubscriberRecieve(Repository repository) {
+	def create FACTORY.createRepositoryOperation createSubscriberReceive(Repository repository) {
 		setName("receive")
-		parameters.add(createSubscriberRecieveEventParam(it))
+		parameters.add(createSubscriberReceiveEventParam(it))
 	}
 
-	def create FACTORY.createParameter createSubscriberRecieveEventParam(Operation op) {
+	def create FACTORY.createParameter createSubscriberReceiveEventParam(Operation op) {
 		setName("event")
 		setType(fw("event.Event"))
 	}
 
-	def dispatch modifyOptimisticLocking(DomainObject domainObject) {
+	def dispatch void modifyOptimisticLocking(DomainObject domainObject) {
 		if (isOptimisticLockingToBeGenerated() && domainObject.optimisticLocking && (domainObject.^extends == null || !domainObject.^extends.optimisticLocking))
 			addVersionAttribute(domainObject)
-		else
-			null
 	}
 
-	def dispatch modifyOptimisticLocking(ValueObject valueObject) {
+	def dispatch void modifyOptimisticLocking(ValueObject valueObject) {
 		if (isOptimisticLockingToBeGenerated() && valueObject.persistent && !valueObject.immutable && valueObject.optimisticLocking && (valueObject.^extends == null || !valueObject.^extends.optimisticLocking))
 			addVersionAttribute(valueObject)
-		else
-			null
 	}
 
-	def dispatch modifyOptimisticLocking(Trait trait) {
-		null
+	def dispatch void modifyOptimisticLocking(Trait trait) {
 	}
 
-	def dispatch modifyOptimisticLocking(BasicType basicType) {
-		null
+	def dispatch void modifyOptimisticLocking(BasicType basicType) {
 	}
 
-	def dispatch modifyDatabaseNames(DomainObject domainObject) {
+	def dispatch void modifyDatabaseNames(DomainObject domainObject) {
 		if (domainObject.databaseTable == null)
 			domainObject.setDatabaseTable(domainObject.getDefaultDatabaseName())
 		domainObject.attributes.forEach[it.modifyDatabaseColumn()]
 	}
 
-	def dispatch modifyDatabaseNames(ValueObject valueObject) {
+	def dispatch void modifyDatabaseNames(ValueObject valueObject) {
 		if (valueObject.persistent) {
 			if (valueObject.databaseTable == null)
 				valueObject.setDatabaseTable(valueObject.getDefaultDatabaseName())
@@ -416,11 +410,11 @@ class Transformation {
 		}
 	}
 
-	def dispatch modifyDatabaseNames(BasicType basicType) {
+	def dispatch void modifyDatabaseNames(BasicType basicType) {
 		basicType.attributes.forEach[modifyDatabaseColumn()]
 	}
 
-	def modifyReferencesDatabaseNames(DomainObject domainObject) {
+	def void modifyReferencesDatabaseNames(DomainObject domainObject) {
 		if (domainObject.isPersistent())
 			domainObject.references.forEach[modifyDatabaseColumn()]
 	}
@@ -438,37 +432,30 @@ class Transformation {
 			reference.setDatabaseColumn(reference.getDefaultForeignKeyName())
 	}
 
-	def dispatch modifyIdAttribute(BasicType basicType) {
-		null
+	def dispatch void modifyIdAttribute(BasicType basicType) {
 	}
 
-	def dispatch modifyIdAttribute(DataTransferObject dto) {
-		null
+	def dispatch void modifyIdAttribute(DataTransferObject dto) {
 	}
 
-	def dispatch modifyIdAttribute(Trait trait) {
-		null
+	def dispatch void modifyIdAttribute(Trait trait) {
 	}
 
-	def dispatch modifyIdAttribute(ValueObject valueObject) {
+	def dispatch void modifyIdAttribute(ValueObject valueObject) {
 		if (valueObject.persistent)
 			addIdAttribute(valueObject)
-		else
-			null
 	}
 
-	def dispatch modifyIdAttribute(DomainObject domainObject) {
+	def dispatch void modifyIdAttribute(DomainObject domainObject) {
 		addIdAttribute(domainObject)
 	}
 
-	def DomainObject addIdAttribute(DomainObject domainObject) {
-		if (domainObject.attributes.exists(a | a.name == "id"))
-			null
-		else
+	def void addIdAttribute(DomainObject domainObject) {
+		if (!domainObject.attributes.exists(a | a.name == "id"))
 			addIdAttributeImpl(domainObject)
 	}
 
-	def modifyExtends(DomainObject domainObject) {
+	def void modifyExtends(DomainObject domainObject) {
 		if (domainObject.extendsName != null) {
 			val matchingDomainObject = findDomainObjectByName(domainObject.module.application, domainObject.extendsName)
 			if (matchingDomainObject != null) {
@@ -478,38 +465,41 @@ class Transformation {
 		}
 	}
 
-	def modifyBelongsToAggregate(DomainObject domainObject) {
+	def void modifyBelongsToAggregate(DomainObject domainObject) {
 		if (domainObject.belongsToAggregate == null)
 			domainObject.setBelongsToAggregate(domainObject.getAggregateRootObject())
 	}
 
 	def private DomainObject findDomainObjectByName(Application app, String domainObjectName) {
 		val match = app.modules.map[domainObjects].flatten.filter(e | e.name == domainObjectName)
-		if (match.isEmpty) null else match.head
+		if (match.isEmpty)
+			null
+		else
+			match.head
 	}
 
-	def dispatch modifySubclassesPersistent(ValueObject domainObject) {
+	def dispatch void modifySubclassesPersistent(ValueObject domainObject) {
 		if (!domainObject.persistent)
 			domainObject.getAllSubclasses().filter[it instanceof ValueObject].forEach[(it as ValueObject).setPersistent(false)]
 	}
 
 	// different defaults for DomainEvent
-	def dispatch modifySubclassesPersistent(DomainEvent domainObject) {
+	def dispatch void modifySubclassesPersistent(DomainEvent domainObject) {
 		if (domainObject.persistent)
 			domainObject.getAllSubclasses().filter[it instanceof ValueObject].forEach[(it as ValueObject).setPersistent(true)]
 	}
 
-	def modifyAbstractPersistent(ValueObject domainObject) {
+	def void modifyAbstractPersistent(ValueObject domainObject) {
 		if (domainObject.^abstract && !domainObject.getAllSubclasses().filter[it instanceof ValueObject].exists(e|(e as ValueObject).persistent))
 			domainObject.setPersistent(false)
 	}
 
-	def modifyTrait(Trait trait) {
+	def void modifyTrait(Trait trait) {
 		trait.attributes.forEach[addDerivedTraitPropertyAccessors(trait)]
 		trait.references.forEach[addDerivedTraitPropertyAccessors(trait)]
 	}
 
-	def dispatch addDerivedTraitPropertyAccessors(Attribute att, Trait trait) {
+	def dispatch void addDerivedTraitPropertyAccessors(Attribute att, Trait trait) {
 		val getter = createDerivedTraitGetter(trait, att)
 		val setter = createDerivedTraitSetter(trait, att)
 		if (!trait.operations.exists(e|e.name == getter.name && e.type == getter.type && e.parameters.isEmpty))
@@ -518,7 +508,7 @@ class Transformation {
 			trait.operations.add(setter)
 	}
 
-	def dispatch addDerivedTraitPropertyAccessors(Reference ref, Trait trait) {
+	def dispatch void addDerivedTraitPropertyAccessors(Reference ref, Trait trait) {
 		val getter = createDerivedTraitGetter(trait, ref)
 		val setter = createDerivedTraitSetter(trait, ref)
 		if (!trait.operations.exists(e|e.name == getter.name && e.domainObjectType == getter.domainObjectType && e.parameters.isEmpty))
@@ -591,13 +581,16 @@ class Transformation {
 		domainObject.getAllAttributes().exists(e | e.name == "uuid")
 	}
 
-	def modifyInheritance(DomainObject domainObject) {
-		if (!domainObject.hasSubClass()) domainObject.setInheritance(null)
-		if (domainObject.hasSuperClass() && domainObject.getRootExtends().isInheritanceTypeSingleTable()) domainObject.setInheritance(null)
-		if (!domainObject.hasSuperClass()) domainObject.setDiscriminatorColumnValue(null)
+	def void modifyInheritance(DomainObject domainObject) {
+		if (!domainObject.hasSubClass())
+			domainObject.setInheritance(null)
+		if (domainObject.hasSuperClass() && domainObject.getRootExtends().isInheritanceTypeSingleTable())
+			domainObject.setInheritance(null)
+		if (!domainObject.hasSuperClass())
+			domainObject.setDiscriminatorColumnValue(null)
 	}
 
-	def modifyPagingOperations(Repository repository) {
+	def void modifyPagingOperations(Repository repository) {
 		val pagingOperations = repository.operations.filter(e | e.hasPagingParameter())
 		val pagedFindAll = pagingOperations.findFirst(e|e.name == "findAll")
 		val pagedFindByQuery = pagingOperations.findFirst(e|e.name == "findByQuery")
@@ -636,14 +629,14 @@ class Transformation {
 		it.setRepository(repository)
 	}
 
-	def modifyPagingOperation(RepositoryOperation op) {
+	def void modifyPagingOperation(RepositoryOperation op) {
 		if ((op.type == "PagedResult" || op.type == null) && op.domainObjectType == null) {
 			op.setType("PagedResult")
 			op.setDomainObjectType(op.repository.aggregateRoot)
 		}
 	}
 
-	def modifyDynamicFinderOperations(RepositoryOperation op) {
+	def void modifyDynamicFinderOperations(RepositoryOperation op) {
 		if (op.type == null && op.domainObjectType == null) {
 			op.setDomainObjectType(op.repository.aggregateRoot)
 			op.setCollectionType("List")
@@ -660,14 +653,14 @@ class Transformation {
 			op.modifyConditionOperations()
 	}
 
-	def modifyQueryOperations(RepositoryOperation op) {
+	def void modifyQueryOperations(RepositoryOperation op) {
 		if (op.collectionType == null && !op.repository.operations.exists(e|e.name == "findByQuery" && e.parameters.exists(p|p.name == "useSingleResult")))
 			op.repository.operations.add(createFindByQuerySingleResult(op.repository, true))
 		if (op.collectionType != null && !op.repository.operations.exists(e|e.name == "findByQuery"))
 			op.repository.operations.add(createFindByQuerySingleResult(op.repository, false))
 	}
 
-	def modifyConditionOperations(RepositoryOperation op) {
+	def void modifyConditionOperations(RepositoryOperation op) {
 		if (op.collectionType == null && !op.repository.operations.exists(e|e.name == "findByCondition" && e.parameters.exists(p|p.name == "useSingleResult")))
 			op.repository.operations.add(createFindByCondition(op.repository, true))
 		if (op.collectionType != null && !op.repository.operations.exists(e|e.name == "findByCondition"))
@@ -690,4 +683,5 @@ class Transformation {
 		it.setName(name)
 		it.setType(type)
 	}
+
 }

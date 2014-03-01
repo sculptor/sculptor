@@ -23,7 +23,7 @@ import org.sculptor.generator.chain.TestTemplate
 @ChainOverride
 class TestTemplateExtension extends TestTemplate {
 
-	override test() {
+	override String test2() {
 		"new code"
-	}	
+	}
 }
