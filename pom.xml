@@ -561,67 +561,9 @@
 					</executions>
 				</plugin>
 				<plugin>
-					<groupId>org.fornax.toolsupport</groupId>
-					<artifactId>fornax-oaw-m2-plugin</artifactId>
-					<version>${fornax-oaw-m2-version}</version>
-					<configuration>
-						<workflowEngine>mwe2</workflowEngine>
-						<jvmSettings>
-						    <jvmArgs>
-						        <jvmArg>-Xms256m</jvmArg>
-						        <jvmArg>-Xmx1g</jvmArg>
-						    </jvmArgs>
-						</jvmSettings>
-					</configuration>
-					<executions>
-						<execution>
-							<phase>generate-sources</phase>
-							<goals>
-								<goal>run-workflow</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.eclipse.xtend</groupId>
 					<artifactId>xtend-maven-plugin</artifactId>
 					<version>${xtext-version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.9</version>
-					<configuration>
-						<downloadSources>true</downloadSources>
-						<classpathContainers>
-		   					<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-		   				</classpathContainers>
-					</configuration>
-				</plugin>
-				<plugin>
-					<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.fornax.toolsupport</groupId>
-										<artifactId>fornax-oaw-m2-plugin</artifactId>
-										<versionRange>[3.4.0,)</versionRange>
-										<goals>
-											<goal>run-workflow</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
