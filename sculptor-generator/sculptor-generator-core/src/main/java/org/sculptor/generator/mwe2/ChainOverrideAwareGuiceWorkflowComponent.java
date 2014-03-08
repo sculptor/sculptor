@@ -26,6 +26,7 @@ import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
+import org.sculptor.generator.SculptorGeneratorException;
 import org.sculptor.generator.chain.ChainOverrideAwareModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +142,11 @@ public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowCo
 					ctx.set(outputSlot, result);
 				}
 			} catch (Throwable th) {
-				issues.addError(this, "Error invoking action '"+action+"'", null, th, null);
+				if (th.getCause() instanceof SculptorGeneratorException) {
+					issues.addError(this, "Error invoking action '" + action + "': " + th.getCause().getMessage());
+				} else {
+					issues.addError(this, "Error invoking action '" + action + "'", null, th, null);
+				}
 			}
 		}
 	}
