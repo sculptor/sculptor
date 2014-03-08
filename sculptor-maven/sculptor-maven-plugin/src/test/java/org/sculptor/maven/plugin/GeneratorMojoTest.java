@@ -113,8 +113,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 	@SuppressWarnings("unchecked")
 	public void testExecuteSkip() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test1"));
-		doThrow(AssertionFailedError.class).when(mojo).executeGenerator(
-				anySet());
+		doThrow(AssertionFailedError.class).when(mojo).executeGenerator();
 		setVariableValueToObject(mojo, "skip", true);
 
 		mojo.execute();
