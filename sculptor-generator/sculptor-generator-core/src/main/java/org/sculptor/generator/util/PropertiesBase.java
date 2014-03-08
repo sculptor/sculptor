@@ -17,7 +17,6 @@
 
 package org.sculptor.generator.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,9 +58,6 @@ public class PropertiesBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
 
-	public static final String MAVEN_PLUGIN_CHANGED_FILES = "sculptor-maven-plugin.changedFiles";
-
-	private static final String CHANGED_MODULE = "changed.module";
 	private static final String PROPERTIES_RESOURCE = System.getProperty("sculptor.generatorPropertiesLocation",
 			"generator/sculptor-generator.properties");
 	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty("sculptor.guiGeneratorPropertiesLocation",
@@ -241,10 +237,6 @@ public class PropertiesBase {
 		}
 
 		initDerivedDefaultsForRest(defaultProperties);
-
-		if (hasProperty(MAVEN_PLUGIN_CHANGED_FILES) || hasProperty(CHANGED_MODULE)) {
-			defaultProperties.setProperty("generate.quick", "true");
-		}
 
 		if (getBooleanProperty("generate.quick")) {
 			initQuick(defaultProperties);
@@ -780,40 +772,6 @@ public class PropertiesBase {
 
 	public void setProperty(String key, String value) {
 		getProperties().setProperty(key, value);
-	}
-
-	public List<String> getChangedModules() {
-		if (hasProperty(CHANGED_MODULE)) {
-			String s = getProperty(CHANGED_MODULE);
-			String[] split = s.split(",");
-			return Arrays.asList(split);
-		} else if (hasProperty(MAVEN_PLUGIN_CHANGED_FILES)) {
-			String s = getProperty(MAVEN_PLUGIN_CHANGED_FILES);
-			String[] split = s.split(",");
-			List<String> result = new ArrayList<String>();
-			for (String each : split) {
-				String module = moduleFromFileName(each);
-				if (module != null) {
-					result.add(module);
-				}
-			}
-			return result;
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	private String moduleFromFileName(String fileName) {
-		File file = new File(fileName);
-		String name = file.getName();
-		if (!name.endsWith(".btdesign")) {
-			return null;
-		}
-		name = name.substring(0, name.length() - ".btdesign".length());
-		if (name.startsWith("model-") || name.startsWith("model_")) {
-			name = name.substring("model-".length());
-		}
-		return name;
 	}
 
 	public String getBuilderPackage() {
