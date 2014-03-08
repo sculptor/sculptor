@@ -22,7 +22,6 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<createSourcesJar>true</createSourcesJar>
 							<artifactSet>
 								<includes>
