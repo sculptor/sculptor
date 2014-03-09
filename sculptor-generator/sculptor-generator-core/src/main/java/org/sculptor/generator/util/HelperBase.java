@@ -196,10 +196,6 @@ public class HelperBase {
 		return concatPackage(getBasePackage(module), propBase.getServiceProxyPackage());
 	}
 
-	public String getServicestubPackage(Module module) {
-		return concatPackage(getBasePackage(module), propBase.getServiceStubPackage());
-	}
-
 	public String getConsumerPackage(Consumer consumer) {
 		return concatPackage(getBasePackage(consumer.getModule()), propBase.getConsumerPackage());
 	}
@@ -826,8 +822,6 @@ public class HelperBase {
 	private void addDefaultValues(ServiceOperation operation) {
 		if (operation.getDelegate() != null) {
 			copyFromDelegate(operation, operation.getDelegate(), true);
-			// special case for rcp nature save methods
-			adjustRcpServiceSaveScaffoldOperation(operation, operation.getDelegate());
 		} else if (operation.getServiceDelegate() != null) {
 			// make sure that the service delegate has been populated first
 			addDefaultValues(operation.getServiceDelegate());
@@ -843,20 +837,6 @@ public class HelperBase {
 	private void addDefaultValues(ResourceOperation operation) {
 		if (operation.getDelegate() != null) {
 			copyFromDelegate(operation, operation.getDelegate(), false);
-		}
-	}
-
-	private void adjustRcpServiceSaveScaffoldOperation(ServiceOperation serviceOp, RepositoryOperation repositoryOp) {
-		if (!"save".equals(serviceOp.getName())) {
-			return;
-		}
-		if (!propBase.hasProjectNature("rcp")) {
-			return;
-		}
-		if (serviceOp.getType() == null && serviceOp.getDomainObjectType() == null && serviceOp.getParameters().size() > 0) {
-			Parameter param = (Parameter) serviceOp.getParameters().get(0);
-			serviceOp.setDomainObjectType(param.getDomainObjectType());
-			serviceOp.setCollectionType(param.getCollectionType());
 		}
 	}
 

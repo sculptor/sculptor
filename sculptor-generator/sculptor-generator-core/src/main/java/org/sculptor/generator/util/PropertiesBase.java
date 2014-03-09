@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li><code>sculptor.generatorPropertiesLocation</code> - default
  * <code>generator/sculptor-generator.properties</code></li>
- * <li><code>sculptor.guiGeneratorPropertiesLocation</code> - default
- * <code>generator/sculptor-gui-generator.properties</code></li>
  * <li><code>sculptor.commonGeneratorPropertiesLocation</code> - common
  * <code>common-sculptor-generator.properties</code></li>
  * <li><code>sculptor.defaultGeneratorPropertiesLocation</code> - default
@@ -62,14 +60,11 @@ public class PropertiesBase {
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
 
 	public static final String PROPERTIES_LOCATION_PROPERTY = "sculptor.generatorPropertiesLocation";
-	public static final String GUI_PROPERTIES_LOCATION_PROPERTY = "sculptor.guiGeneratorPropertiesLocation";
 	public static final String COMMON_PROPERTIES_LOCATION_PROPERTY = "sculptor.commonGeneratorPropertiesLocation";
 	public static final String DEFAULT_PROPERTIES_LOCATION_PROPERTY = "sculptor.defaultGeneratorPropertiesLocation";
 
 	private static final String PROPERTIES_RESOURCE = System.getProperty(PROPERTIES_LOCATION_PROPERTY,
 			"generator/sculptor-generator.properties");
-	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty(GUI_PROPERTIES_LOCATION_PROPERTY,
-			"generator/sculptor-gui-generator.properties");
 	private static final String COMMON_PROPERTIES_RESOURCE = System.getProperty(COMMON_PROPERTIES_LOCATION_PROPERTY,
 			"common-sculptor-generator.properties");
 	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(DEFAULT_PROPERTIES_LOCATION_PROPERTY,
@@ -105,23 +100,16 @@ public class PropertiesBase {
 		Properties defaultProperties = new Properties();
 		loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE);
 
-		Properties p0 = new Properties(defaultProperties);
+		Properties p1 = new Properties(defaultProperties);
 		try {
-			loadProperties(p0, COMMON_PROPERTIES_RESOURCE);
-		} catch (MissingResourceException e) {
-			// ignore, it is not mandatory
-		}
-
-		Properties p1 = new Properties(p0);
-		try {
-			loadProperties(p1, PROPERTIES_RESOURCE);
+			loadProperties(p1, COMMON_PROPERTIES_RESOURCE);
 		} catch (MissingResourceException e) {
 			// ignore, it is not mandatory
 		}
 
 		Properties p2 = new Properties(p1);
 		try {
-			loadProperties(p2, PROPERTIES_GUI_RESOURCE);
+			loadProperties(p2, PROPERTIES_RESOURCE);
 		} catch (MissingResourceException e) {
 			// ignore, it is not mandatory
 		}
@@ -187,13 +175,6 @@ public class PropertiesBase {
 			defaultProperties.setProperty("generate.test.dbunitTestData", "false");
 		}
 
-		// check if user has entered old deprecated spring webflow crud gui
-		// property, and if, throw exception
-		if (hasProperty("generate.springWebflowCrudGui")) {
-			throw new IllegalArgumentException(
-					"The spring webflow crud gui with jsp as rendering enginge isn't supported in Sculptor version 1.6 and above. Use version 1.5 if you want to stick to that implementation or use the jsf webflow variant.");
-		}
-
 		// deployment.type = war for Tomcat and Jetty
 		if (getProperty("deployment.applicationServer").equalsIgnoreCase("tomcat")
 				|| getProperty("deployment.applicationServer").equalsIgnoreCase("jetty")) {
@@ -206,18 +187,10 @@ public class PropertiesBase {
 		}
 
 		// generate directives
-		if (hasProjectNature("presentation-tier")) {
-			initDerivedDefaultsForPresentationTier(defaultProperties);
-		}
 		if (!hasProjectNature("business-tier")) {
 			initDerivedDefaultsForNonBusinessTier(defaultProperties);
 		}
 
-		if (hasProjectNature("rcp")) {
-			defaultProperties.setProperty("scaffold.operations", getProperty("scaffold.operations")
-					+ ",populateAssociations");
-			defaultProperties.setProperty("generate.springRemoting", "true");
-		}
 		if (hasProjectNature("business-tier") && hasProjectNature("pure-ejb3")) {
 			initDerivedDefaultsForPureEjb3(defaultProperties);
 		}
@@ -292,20 +265,6 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.modeldoc", "false");
 	}
 
-	private void initDerivedDefaultsForPresentationTier(Properties defaultProperties) {
-		if (hasProjectNature("rcp")) {
-			defaultProperties.setProperty("generate.jsfCrudGui", "false");
-			defaultProperties.setProperty("generate.rcpCrudGui", "true");
-			defaultProperties.setProperty("generate.springRemoting", "true");
-		} else {
-			defaultProperties.setProperty("generate.jsfCrudGui", "true");
-			defaultProperties.setProperty("generate.rcpCrudGui", "false");
-		}
-		defaultProperties.setProperty("generate.resource", "false");
-		defaultProperties.setProperty("generate.restWeb", "false");
-		defaultProperties.setProperty("generate.jpa.annotation", "false");
-	}
-
 	private void initDerivedDefaultsForJpa(Properties defaultProperties) {
 		if (getBooleanProperty("generate.jpa.annotation")) {
 			if (!getProperty("jpa.provider").equals("hibernate")) {
@@ -370,8 +329,6 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.restWeb", "false");
 		defaultProperties.setProperty("naming.suffix.Impl", "Bean");
 		defaultProperties.setProperty("generate.logbackConfig", "false");
-		// TODO we probably need to do something to still be able to use
-		// spring in presentation-tier
 	}
 
 	private void initDerivedDefaultsForAppengine(Properties defaultProperties) {
@@ -676,14 +633,6 @@ public class PropertiesBase {
 
 	public String getMapperPackage() {
 		return getProperty("package.mapper");
-	}
-
-	public String getWebPackage() {
-		return getProperty("package.web");
-	}
-
-	public String getRichClientPackage() {
-		return getProperty("package.richClient");
 	}
 
 	public List<String> scaffoldOperations() {

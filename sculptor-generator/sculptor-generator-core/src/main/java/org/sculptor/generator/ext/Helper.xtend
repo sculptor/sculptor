@@ -213,10 +213,6 @@ class Helper {
 		getServiceproxyPackage(service.module)
 	}
 
-	def String getServicestubPackage(Service service) {
-		getServicestubPackage(service.module)
-	}
-
 	def boolean isPagedResult(TypedElement e) {
 		e.type == "PagedResult"
 	}
