@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Technical properties to customize the code generation is defined in
  * <code>default-sculptor-generator.properties</code> and may be overridden in
+ * <code>common-sculptor-generator.properties</code>,
  * <code>sculptor-generator.properties</code> or in Java system properties.
  * These properties are available via this class.
  * <p>
@@ -47,6 +48,8 @@ import org.slf4j.LoggerFactory;
  * <code>generator/sculptor-generator.properties</code></li>
  * <li><code>sculptor.guiGeneratorPropertiesLocation</code> - default
  * <code>generator/sculptor-gui-generator.properties</code></li>
+ * <li><code>sculptor.commonGeneratorPropertiesLocation</code> - common
+ * <code>common-sculptor-generator.properties</code></li>
  * <li><code>sculptor.defaultGeneratorPropertiesLocation</code> - default
  * <code>default-sculptor-generator.properties</code></li>
  * </ul>
@@ -58,12 +61,19 @@ public class PropertiesBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
 
-	private static final String PROPERTIES_RESOURCE = System.getProperty("sculptor.generatorPropertiesLocation",
+	public static final String PROPERTIES_LOCATION_PROPERTY = "sculptor.generatorPropertiesLocation";
+	public static final String GUI_PROPERTIES_LOCATION_PROPERTY = "sculptor.guiGeneratorPropertiesLocation";
+	public static final String COMMON_PROPERTIES_LOCATION_PROPERTY = "sculptor.commonGeneratorPropertiesLocation";
+	public static final String DEFAULT_PROPERTIES_LOCATION_PROPERTY = "sculptor.defaultGeneratorPropertiesLocation";
+
+	private static final String PROPERTIES_RESOURCE = System.getProperty(PROPERTIES_LOCATION_PROPERTY,
 			"generator/sculptor-generator.properties");
-	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty("sculptor.guiGeneratorPropertiesLocation",
+	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty(GUI_PROPERTIES_LOCATION_PROPERTY,
 			"generator/sculptor-gui-generator.properties");
-	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(
-			"sculptor.defaultGeneratorPropertiesLocation", "default-sculptor-generator.properties");
+	private static final String COMMON_PROPERTIES_RESOURCE = System.getProperty(COMMON_PROPERTIES_LOCATION_PROPERTY,
+			"common-sculptor-generator.properties");
+	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(DEFAULT_PROPERTIES_LOCATION_PROPERTY,
+			"default-sculptor-generator.properties");
 	private static Properties properties;
 
 	/**
@@ -95,7 +105,14 @@ public class PropertiesBase {
 		Properties defaultProperties = new Properties();
 		loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE);
 
-		Properties p1 = new Properties(defaultProperties);
+		Properties p0 = new Properties(defaultProperties);
+		try {
+			loadProperties(p0, COMMON_PROPERTIES_RESOURCE);
+		} catch (MissingResourceException e) {
+			// ignore, it is not mandatory
+		}
+
+		Properties p1 = new Properties(p0);
 		try {
 			loadProperties(p1, PROPERTIES_RESOURCE);
 		} catch (MissingResourceException e) {
