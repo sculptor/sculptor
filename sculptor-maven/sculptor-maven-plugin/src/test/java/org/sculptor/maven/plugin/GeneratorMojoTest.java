@@ -17,7 +17,6 @@
 
 package org.sculptor.maven.plugin;
 
-import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;

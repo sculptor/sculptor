@@ -17,6 +17,7 @@
 
 package org.sculptor.maven.plugin;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -62,7 +63,8 @@ public class CleanMojo extends AbstractGeneratorMojo {
 			deleteGeneratedFiles();
 
 			// Finally delete the status file
-			if (statusFile.exists()) {
+			File statusFile = getStatusFile();
+			if (statusFile != null) {
 				try {
 					// We have to make sure the file is deleted on Windows as
 					// well

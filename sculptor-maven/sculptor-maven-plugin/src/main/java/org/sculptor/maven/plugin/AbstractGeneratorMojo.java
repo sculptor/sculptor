@@ -122,7 +122,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	 * File holding the status of the last code generator execution.
 	 */
 	@Parameter(defaultValue = ".sculptor-status", required = true)
-	protected File statusFile;
+	private File statusFile;
 
 	/**
 	 * Verbose logging.
@@ -169,7 +169,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	 */
 	protected boolean updateStatusFile(List<File> createdFiles) {
 		boolean success;
-		Properties statusProperties = new Properties();
+		final Properties statusProperties = new Properties();
 		try {
 			for (File createdFile : createdFiles) {
 				try {
@@ -181,10 +181,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 							"Checksum calculation failed: " + e.getMessage());
 				}
 			}
-			statusProperties.store(new FileWriter(statusFile),
-					"Sculptor created the following " + createdFiles.size()
-							+ " files");
-			success = true;
+			final FileWriter statusWriter = new FileWriter(statusFile);
+			try {
+				statusProperties.store(statusWriter,
+						"Sculptor created the following " + createdFiles.size()
+								+ " files");
+				success = true;
+			} finally {
+				statusWriter.close();
+			}
 		} catch (IOException e) {
 			getLog().warn("Updating status file failed: " + e.getMessage());
 			success = false;
@@ -197,13 +202,30 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	 * {@link #statusFile}) or <code>null</code> if no StatusFile exists.
 	 */
 	protected Set<String> getGeneratedFiles() {
-		File statusFile = getStatusFile();
+		Properties statusFileProps = getStatusProperties();
+		if (statusFileProps != null) {
+			return statusFileProps.stringPropertyNames();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link Properties} instance populated from the StatusFile
+	 * (defined via {@link #statusFile}) or <code>null</code> if no StatusFile
+	 * exists.
+	 */
+	private Properties getStatusProperties() {
+		final File statusFile = getStatusFile();
 		if (statusFile != null) {
 			try {
-				// Read status file and return the list of generated files
 				Properties statusFileProps = new Properties();
-				statusFileProps.load(new FileReader(statusFile));
-				return statusFileProps.stringPropertyNames();
+				final FileReader statusReader = new FileReader(statusFile);
+				try {
+					statusFileProps.load(statusReader);
+					return statusFileProps;
+				} finally {
+					statusReader.close();
+				}
 			} catch (IOException e) {
 				getLog().warn("Reading status file failed: " + e.getMessage());
 			}
@@ -229,17 +251,17 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 		cleanDirectory(outletResTestDir);
 
 		// Finally delete the non-modified one-shot generated files in the other folders
-		File statusFile = getStatusFile();
-		if (statusFile == null) {
+		Properties statusFileProps = getStatusProperties();
+
+		// If there is no status file to compare against or no files are
+		// generated then skip deletion
+		if (statusFileProps == null || statusFileProps.isEmpty()) {
 
 			// No status file - we can't delete any previously generated files
 			success = true;
 		} else {
 			try {
-				// Read status file and iterate through the list of generated
-				// files
-				Properties statusFileProps = new Properties();
-				statusFileProps.load(new FileReader(statusFile));
+				// Iterate through the list of generated files
 				for (String fileName : statusFileProps.stringPropertyNames()) {
 					File file = new File(getProject().getBasedir(), fileName);
 					if (file.exists()) {

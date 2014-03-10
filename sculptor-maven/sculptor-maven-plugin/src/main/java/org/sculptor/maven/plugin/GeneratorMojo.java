@@ -337,7 +337,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 
 		// If there is no status file to compare against then always run the
 		// generator
-		if (!statusFile.exists()) {
+		File statusFile = getStatusFile();
+		if (statusFile == null) {
 			return null;
 		}
 		final long statusFileLastModified = statusFile.lastModified();
