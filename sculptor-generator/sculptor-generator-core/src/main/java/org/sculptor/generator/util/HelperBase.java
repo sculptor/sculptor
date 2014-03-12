@@ -394,11 +394,10 @@ public class HelperBase {
 	}
 
 	private String getMapKeyType(DomainObjectTypedElement element) {
-		// DomainObject domainObject = element.getMapKeyDomainObjectType();
-		// if (domainObject != null) {
-		// return getJavaTypeOrVoid(getDomainPackage(domainObject) + "." +
-		// domainObject.getName());
-		// }
+		DomainObject domainObject = element.getMapKeyDomainObjectType();
+		if (domainObject != null) {
+			return getJavaTypeOrVoid(getDomainPackage(domainObject) + "." + domainObject.getName());
+		}
 		String type = element.getMapKeyType();
 		if (type != null) {
 			return type;

@@ -1,0 +1,22 @@
+Application App {
+	basePackage=org.sculptor.example
+
+	Module app {
+
+		BasicType Foo {
+		}
+
+		ValueObject Bar {
+		}
+
+		Entity FooBar {
+
+			Repository FooBarRepository {
+				Map<@Foo, @Bar> allFooBars();
+			}
+
+		}
+
+	}
+
+}
