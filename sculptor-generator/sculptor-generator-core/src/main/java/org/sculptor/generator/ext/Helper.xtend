@@ -114,7 +114,10 @@ class Helper {
 	}
 
 	def String simpleMetaTypeName(NamedElement element) {
-		element.^class.simpleName //name.split("::").last()
+		var simpleName = element.^class.simpleName
+		if (simpleName.endsWith("Impl")) {
+			simpleName = simpleName.substring(0, simpleName.lastIndexOf("Impl"))
+		}
 	}
 
 	def String docMetaTypeName(NamedElement element) {
@@ -973,8 +976,8 @@ class Helper {
 	}
 
 	def dispatch boolean isXmlElementToBeGenerated(Attribute attr) {
-	isXmlBindAnnotationToBeGenerated() &&
-		isXmlBindAnnotationToBeGenerated(attr.getDomainObject().simpleMetaTypeName())
+		isXmlBindAnnotationToBeGenerated() &&
+			isXmlBindAnnotationToBeGenerated(attr.getDomainObject().simpleMetaTypeName())
 	}
 
 	def dispatch boolean isXmlElementToBeGenerated(Reference ref) {
