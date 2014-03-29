@@ -87,4 +87,11 @@ class ChainOverrideAwareModuleTest {
 		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(4))
 	}
 
+	@Test
+	def void testCommonProperties() {
+		val module = new ChainOverrideAwareModule(templateClass)
+		assertNotNull(module)
+		assertEquals("test,test2", module.cartridgeNames.join(','))
+	}
+
 }

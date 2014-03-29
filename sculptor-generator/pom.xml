@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.0.3</version>
 	</parent>
 	<artifactId>sculptor-generator</artifactId>
 	<packaging>pom</packaging>
@@ -22,6 +22,27 @@
 		<module>sculptor-generator-templates</module>
 		<module>sculptor-generator-cartridges</module>
 	</modules>
+
+	<repositories>
+		<!-- Repository to resolve the Eclipse release train dependencies -->
+		<repository>
+			<id>p2.eclipse</id>
+			<url>${p2-repository-eclipse}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the XText dependencies -->
+		<repository>
+			<id>p2.eclipse.xtext</id>
+			<url>${p2-repository-eclipse-xtext}</url>
+			<layout>p2</layout>
+		</repository>
+		<!-- Repository to resolve the xtext-utils dependencies -->
+		<repository>
+			<id>p2.xtext-utils</id>
+			<url>${p2-repository-xtext-utils}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>

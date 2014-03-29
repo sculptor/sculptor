@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.sculptor.generator.GeneratorContext;
 import org.sculptor.generator.SculptorGeneratorRunner;
-import org.sculptor.generator.util.PropertiesBase;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
@@ -220,7 +218,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 			}
 
 			// Execute Sculptor code generator
-			if (!executeGenerator(changedFiles)) {
+			if (!executeGenerator()) {
 				throw new MojoExecutionException("Sculptor code generator failed");
 			}
 		}
@@ -339,7 +337,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 
 		// If there is no status file to compare against then always run the
 		// generator
-		if (!statusFile.exists()) {
+		File statusFile = getStatusFile();
+		if (statusFile == null) {
 			return null;
 		}
 		final long statusFileLastModified = statusFile.lastModified();
@@ -403,13 +402,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	/**
 	 * Executes the commandline running the Eclipse MWE2 launcher and returns
 	 * the commandlines exit value.
-	 * 
-	 * @param changedFiles
-	 *            list of files from <code>checkFileSets</code> which are
-	 *            modified since last generator execution or <code>null</code>
-	 *            if code generation is enforced
 	 */
-	protected boolean executeGenerator(Set<String> changedFiles) throws MojoExecutionException {
+	protected boolean executeGenerator() throws MojoExecutionException {
 
 		// Add resources and output directory to plugins classpath
 		List<Object> classpathEntries = new ArrayList<Object>();
@@ -435,21 +429,6 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
-
-		// Set system property with list of changed module files (*.btdesign)
-		if (changedFiles != null) {
-			StringBuffer changedFilesBuf = new StringBuffer();
-			for (Iterator<String> iterator = changedFiles.iterator(); iterator.hasNext();) {
-				String file = (String) iterator.next();
-				if (file.endsWith(".btdesign")) {
-					if (changedFilesBuf.length() > 0) {
-						changedFilesBuf.append(',');
-					}
-					changedFilesBuf.append(file);
-				}
-			}
-			System.setProperty(PropertiesBase.MAVEN_PLUGIN_CHANGED_FILES, changedFilesBuf.toString());
-		}
 
 		// Execute commandline and retrieve list of generated files
 		boolean success = false;

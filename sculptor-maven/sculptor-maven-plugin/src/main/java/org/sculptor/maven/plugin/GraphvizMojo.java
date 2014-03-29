@@ -110,15 +110,15 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 	protected Set<String> getChangedDotFiles() {
 		Set<String> generatedFiles = getGeneratedFiles();
 
-		// If there is no status file to compare against then skip image
-		// generation
-		if (generatedFiles == null) {
+		// If there is no status file to compare against or no files are
+		// generated then skip image generation
+		if (generatedFiles == null || generatedFiles.isEmpty()) {
 			return null;
 		}
 
 		// Check if images for generated dot files are missing or outdated
 		Set<String> changedDotFiles = new HashSet<String>();
-		for (String generatedFile : getGeneratedFiles()) {
+		for (String generatedFile : generatedFiles) {
 			if (generatedFile.endsWith(".dot")) {
 				File dotFile = new File(getProject().getBasedir(),
 						generatedFile);

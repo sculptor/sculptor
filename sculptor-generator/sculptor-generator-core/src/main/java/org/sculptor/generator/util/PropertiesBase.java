@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 package org.sculptor.generator.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Technical properties to customize the code generation is defined in
  * <code>default-sculptor-generator.properties</code> and may be overridden in
+ * <code>common-sculptor-generator.properties</code>,
  * <code>sculptor-generator.properties</code> or in Java system properties.
  * These properties are available via this class.
  * <p>
@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li><code>sculptor.generatorPropertiesLocation</code> - default
  * <code>generator/sculptor-generator.properties</code></li>
- * <li><code>sculptor.guiGeneratorPropertiesLocation</code> - default
- * <code>generator/sculptor-gui-generator.properties</code></li>
+ * <li><code>sculptor.commonGeneratorPropertiesLocation</code> - common
+ * <code>common-sculptor-generator.properties</code></li>
  * <li><code>sculptor.defaultGeneratorPropertiesLocation</code> - default
  * <code>default-sculptor-generator.properties</code></li>
  * </ul>
@@ -59,15 +59,16 @@ public class PropertiesBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
 
-	public static final String MAVEN_PLUGIN_CHANGED_FILES = "sculptor-maven-plugin.changedFiles";
+	public static final String PROPERTIES_LOCATION_PROPERTY = "sculptor.generatorPropertiesLocation";
+	public static final String COMMON_PROPERTIES_LOCATION_PROPERTY = "sculptor.commonGeneratorPropertiesLocation";
+	public static final String DEFAULT_PROPERTIES_LOCATION_PROPERTY = "sculptor.defaultGeneratorPropertiesLocation";
 
-	private static final String CHANGED_MODULE = "changed.module";
-	private static final String PROPERTIES_RESOURCE = System.getProperty("sculptor.generatorPropertiesLocation",
+	private static final String PROPERTIES_RESOURCE = System.getProperty(PROPERTIES_LOCATION_PROPERTY,
 			"generator/sculptor-generator.properties");
-	private static final String PROPERTIES_GUI_RESOURCE = System.getProperty("sculptor.guiGeneratorPropertiesLocation",
-			"generator/sculptor-gui-generator.properties");
-	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(
-			"sculptor.defaultGeneratorPropertiesLocation", "default-sculptor-generator.properties");
+	private static final String COMMON_PROPERTIES_RESOURCE = System.getProperty(COMMON_PROPERTIES_LOCATION_PROPERTY,
+			"common-sculptor-generator.properties");
+	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(DEFAULT_PROPERTIES_LOCATION_PROPERTY,
+			"default-sculptor-generator.properties");
 	private static Properties properties;
 
 	/**
@@ -101,14 +102,14 @@ public class PropertiesBase {
 
 		Properties p1 = new Properties(defaultProperties);
 		try {
-			loadProperties(p1, PROPERTIES_RESOURCE);
+			loadProperties(p1, COMMON_PROPERTIES_RESOURCE);
 		} catch (MissingResourceException e) {
 			// ignore, it is not mandatory
 		}
 
 		Properties p2 = new Properties(p1);
 		try {
-			loadProperties(p2, PROPERTIES_GUI_RESOURCE);
+			loadProperties(p2, PROPERTIES_RESOURCE);
 		} catch (MissingResourceException e) {
 			// ignore, it is not mandatory
 		}
@@ -174,13 +175,6 @@ public class PropertiesBase {
 			defaultProperties.setProperty("generate.test.dbunitTestData", "false");
 		}
 
-		// check if user has entered old deprecated spring webflow crud gui
-		// property, and if, throw exception
-		if (hasProperty("generate.springWebflowCrudGui")) {
-			throw new IllegalArgumentException(
-					"The spring webflow crud gui with jsp as rendering enginge isn't supported in Sculptor version 1.6 and above. Use version 1.5 if you want to stick to that implementation or use the jsf webflow variant.");
-		}
-
 		// deployment.type = war for Tomcat and Jetty
 		if (getProperty("deployment.applicationServer").equalsIgnoreCase("tomcat")
 				|| getProperty("deployment.applicationServer").equalsIgnoreCase("jetty")) {
@@ -193,18 +187,10 @@ public class PropertiesBase {
 		}
 
 		// generate directives
-		if (hasProjectNature("presentation-tier")) {
-			initDerivedDefaultsForPresentationTier(defaultProperties);
-		}
 		if (!hasProjectNature("business-tier")) {
 			initDerivedDefaultsForNonBusinessTier(defaultProperties);
 		}
 
-		if (hasProjectNature("rcp")) {
-			defaultProperties.setProperty("scaffold.operations", getProperty("scaffold.operations")
-					+ ",populateAssociations");
-			defaultProperties.setProperty("generate.springRemoting", "true");
-		}
 		if (hasProjectNature("business-tier") && hasProjectNature("pure-ejb3")) {
 			initDerivedDefaultsForPureEjb3(defaultProperties);
 		}
@@ -242,10 +228,6 @@ public class PropertiesBase {
 
 		initDerivedDefaultsForRest(defaultProperties);
 
-		if (hasProperty(MAVEN_PLUGIN_CHANGED_FILES) || hasProperty(CHANGED_MODULE)) {
-			defaultProperties.setProperty("generate.quick", "true");
-		}
-
 		if (getBooleanProperty("generate.quick")) {
 			initQuick(defaultProperties);
 		}
@@ -281,20 +263,6 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.ddl", "false");
 		defaultProperties.setProperty("generate.umlgraph", "false");
 		defaultProperties.setProperty("generate.modeldoc", "false");
-	}
-
-	private void initDerivedDefaultsForPresentationTier(Properties defaultProperties) {
-		if (hasProjectNature("rcp")) {
-			defaultProperties.setProperty("generate.jsfCrudGui", "false");
-			defaultProperties.setProperty("generate.rcpCrudGui", "true");
-			defaultProperties.setProperty("generate.springRemoting", "true");
-		} else {
-			defaultProperties.setProperty("generate.jsfCrudGui", "true");
-			defaultProperties.setProperty("generate.rcpCrudGui", "false");
-		}
-		defaultProperties.setProperty("generate.resource", "false");
-		defaultProperties.setProperty("generate.restWeb", "false");
-		defaultProperties.setProperty("generate.jpa.annotation", "false");
 	}
 
 	private void initDerivedDefaultsForJpa(Properties defaultProperties) {
@@ -361,8 +329,6 @@ public class PropertiesBase {
 		defaultProperties.setProperty("generate.restWeb", "false");
 		defaultProperties.setProperty("naming.suffix.Impl", "Bean");
 		defaultProperties.setProperty("generate.logbackConfig", "false");
-		// TODO we probably need to do something to still be able to use
-		// spring in presentation-tier
 	}
 
 	private void initDerivedDefaultsForAppengine(Properties defaultProperties) {
@@ -669,14 +635,6 @@ public class PropertiesBase {
 		return getProperty("package.mapper");
 	}
 
-	public String getWebPackage() {
-		return getProperty("package.web");
-	}
-
-	public String getRichClientPackage() {
-		return getProperty("package.richClient");
-	}
-
 	public List<String> scaffoldOperations() {
 		String value = getProperty("scaffold.operations");
 		String[] operations = value.split(",");
@@ -780,40 +738,6 @@ public class PropertiesBase {
 
 	public void setProperty(String key, String value) {
 		getProperties().setProperty(key, value);
-	}
-
-	public List<String> getChangedModules() {
-		if (hasProperty(CHANGED_MODULE)) {
-			String s = getProperty(CHANGED_MODULE);
-			String[] split = s.split(",");
-			return Arrays.asList(split);
-		} else if (hasProperty(MAVEN_PLUGIN_CHANGED_FILES)) {
-			String s = getProperty(MAVEN_PLUGIN_CHANGED_FILES);
-			String[] split = s.split(",");
-			List<String> result = new ArrayList<String>();
-			for (String each : split) {
-				String module = moduleFromFileName(each);
-				if (module != null) {
-					result.add(module);
-				}
-			}
-			return result;
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	private String moduleFromFileName(String fileName) {
-		File file = new File(fileName);
-		String name = file.getName();
-		if (!name.endsWith(".btdesign")) {
-			return null;
-		}
-		name = name.substring(0, name.length() - ".btdesign".length());
-		if (name.startsWith("model-") || name.startsWith("model_")) {
-			name = name.substring("model-".length());
-		}
-		return name;
 	}
 
 	public String getBuilderPackage() {

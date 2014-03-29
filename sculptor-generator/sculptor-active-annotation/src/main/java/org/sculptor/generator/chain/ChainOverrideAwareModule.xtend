@@ -23,11 +23,11 @@ import java.lang.reflect.Array
 import java.util.HashSet
 import java.util.List
 import java.util.MissingResourceException
-import java.util.Properties
 import java.util.Stack
 import javax.inject.Inject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.Properties
 
 /**
  * Binds specified class(es) to instanc(es) with support for creating
@@ -41,11 +41,16 @@ class ChainOverrideAwareModule extends AbstractModule {
 	// Properties support for reading 'cartridges' property
 	// TODO: Move this and loadProperties into separate class shared with PropertiesBase?
 	//
-	private static final String PROPERTIES_RESOURCE = System::getProperty("sculptor.generatorPropertiesLocation",
-		"generator/sculptor-generator.properties");
+	public static final String PROPERTIES_LOCATION_PROPERTY = "sculptor.generatorPropertiesLocation"
+	public static final String COMMON_PROPERTIES_LOCATION_PROPERTY = "sculptor.commonGeneratorPropertiesLocation"
+	public static final String DEFAULT_PROPERTIES_LOCATION_PROPERTY = "sculptor.defaultGeneratorPropertiesLocation"
 
-	private static final String DEFAULT_PROPERTIES_RESOURCE = System::getProperty(
-			"sculptor.defaultGeneratorPropertiesLocation", "default-sculptor-generator.properties");
+	private static final String PROPERTIES_RESOURCE = System.getProperty(PROPERTIES_LOCATION_PROPERTY,
+			"generator/sculptor-generator.properties")
+	private static final String COMMON_PROPERTIES_RESOURCE = System.getProperty(COMMON_PROPERTIES_LOCATION_PROPERTY,
+			"common-sculptor-generator.properties")
+	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(DEFAULT_PROPERTIES_LOCATION_PROPERTY,
+			"default-sculptor-generator.properties")
 
 	// Package where override packages will be looked for
 	var String defaultOverridesPackage = "generator";
@@ -278,12 +283,18 @@ class ChainOverrideAwareModule extends AbstractModule {
 	def getCartridgeNames() {
 		if (props == null) {
 			
-			val defaultProperties = new Properties();
-			loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE);
+			val defaultProperties = new Properties
+			loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE)
 	
-			props = new Properties(defaultProperties);
+			val commonProperties = new Properties(defaultProperties)
 			try {
-				loadProperties(props, PROPERTIES_RESOURCE);
+				loadProperties(commonProperties, COMMON_PROPERTIES_RESOURCE)
+			} catch (MissingResourceException e) {
+				// ignore, it is not mandatory
+			}
+			props = new Properties(commonProperties)
+			try {
+				loadProperties(props, PROPERTIES_RESOURCE)
 			} catch (MissingResourceException e) {
 				// ignore, it is not mandatory
 			}
@@ -301,19 +312,19 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 * Load properties from resource into properties
 	 */
 	def protected void loadProperties(Properties properties, String resource) {
-		var ClassLoader classLoader = Thread::currentThread().getContextClassLoader();
+		var ClassLoader classLoader = Thread::currentThread().getContextClassLoader()
 		if (classLoader == null) {
-			classLoader = this.getClass.getClassLoader();
+			classLoader = this.getClass.getClassLoader()
 		}
-		val InputStream resourceInputStream = classLoader.getResourceAsStream(resource);
+		val InputStream resourceInputStream = classLoader.getResourceAsStream(resource)
 		if (resourceInputStream == null) {
 			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
-				"");
+				"")
 		}
 		try {
-			properties.load(resourceInputStream);
+			properties.load(resourceInputStream)
 		} catch (IOException e) {
-			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "");
+			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "")
 		}
 	}
 

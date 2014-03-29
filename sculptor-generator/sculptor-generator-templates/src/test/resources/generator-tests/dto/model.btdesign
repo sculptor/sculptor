@@ -1,0 +1,34 @@
+Application DtoApp {
+	basePackage=org.dto
+
+	Module media {
+		DataTransferObject LibraryDto {
+			hint="xmlRoot=true"
+			String id
+			String name key
+			- List<@PhysicalMediaDto> media
+			- Rating rating
+		}
+
+		DataTransferObject PhysicalMediaDto {
+			String id
+			String status
+			String location
+		}
+
+		enum Rating {
+			BAD, OK, GOOD
+		}
+
+		Service LibraryDtoService {
+			webservice
+			@LibraryDto findByName(String name);
+			@LibraryDto findById(String id);
+			@LibraryDto save(@LibraryDto library);
+			delete(@LibraryDto library);
+			List<@LibraryDto> findAll();
+		}
+
+	}
+
+}

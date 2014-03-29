@@ -22,6 +22,9 @@ import java.io.FileWriter
 import java.util.Collection
 import java.util.List
 import javax.inject.Inject
+import org.sculptor.generator.GeneratorContext
+import org.sculptor.generator.chain.ChainOverridable
+import org.sculptor.generator.formatter.JavaCodeFormatter
 import org.sculptor.generator.util.DependencyConstraints
 import org.sculptor.generator.util.GenericAccessObjectManager
 import org.sculptor.generator.util.HelperBase
@@ -55,9 +58,6 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
-import org.sculptor.generator.formatter.JavaCodeFormatter
-import org.sculptor.generator.chain.ChainOverridable
-import org.sculptor.generator.GeneratorContext
 
 @ChainOverridable
 class Helper {
@@ -114,7 +114,10 @@ class Helper {
 	}
 
 	def String simpleMetaTypeName(NamedElement element) {
-		element.^class.simpleName //name.split("::").last()
+		var simpleName = element.^class.simpleName
+		if (simpleName.endsWith("Impl")) {
+			simpleName = simpleName.substring(0, simpleName.lastIndexOf("Impl"))
+		}
 	}
 
 	def String docMetaTypeName(NamedElement element) {
@@ -136,44 +139,15 @@ class Helper {
 			.filter[includeExternal || !aggregateRoot.module.external].sortBy[name]
 	}
 
-	// TODO VYHODIT
-	def boolean isGenerateQuick() {
-		false
-	}
-
-	def List<Module> collectChangedModules(Application app) {
-		if (!isGenerateQuick())
-			app.modules
-		else {
-			val changed = changedModulesWithDependingModules(app)
-			if (changed.isEmpty)
-				app.modules as List<Module>
-			else {
-				LOG.debug("Partial: " + app.modules.filter[e | changed.contains(e)].map[m | m.name].join)
-				app.modules.filter[e | changed.contains(e)].toList
-			}
-		}
-	}
-
 	// All DomainObjects in the Applications, including those belonging to external modules
 	def public Collection<DomainObject> getAllDomainObjects(Application app) {
 		getAllDomainObjects(app, true)
 	}
 
-
 	// Use this witha includeExternal=false to retrieve all DomainObjects except those belonging
 	// to external modules
 	def Collection<DomainObject> getAllDomainObjects(Application app, boolean includeExternal) {
-		app.collectChangedModules().filter[m | includeExternal || !m.external].map[domainObjects].flatten.sortBy[name]
-	}
-
-	def List<Module> changedModulesWithDependingModules(Application app) {
-		app.changedModules().map[m | m.modulesDependingOn].flatten.toList
-	}
-
-	def List<Module> changedModules(Application app) {
-		val result = getChangedModules().map(e | e.moduleFor(app))
-		if (result.contains(null)) newArrayList else result
+		app.modules.filter[m | includeExternal || !m.external].map[domainObjects].flatten.sortBy[name]
 	}
 
 	def Module moduleFor(String name, Application app) {
@@ -240,10 +214,6 @@ class Helper {
 
 	def String getServiceproxyPackage(Service service) {
 		getServiceproxyPackage(service.module)
-	}
-
-	def String getServicestubPackage(Service service) {
-		getServicestubPackage(service.module)
 	}
 
 	def boolean isPagedResult(TypedElement e) {
@@ -1006,8 +976,8 @@ class Helper {
 	}
 
 	def dispatch boolean isXmlElementToBeGenerated(Attribute attr) {
-	isXmlBindAnnotationToBeGenerated() &&
-		isXmlBindAnnotationToBeGenerated(attr.getDomainObject().simpleMetaTypeName())
+		isXmlBindAnnotationToBeGenerated() &&
+			isXmlBindAnnotationToBeGenerated(attr.getDomainObject().simpleMetaTypeName())
 	}
 
 	def dispatch boolean isXmlElementToBeGenerated(Reference ref) {

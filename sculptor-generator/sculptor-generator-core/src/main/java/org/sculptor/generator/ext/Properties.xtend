@@ -188,37 +188,6 @@ class Properties {
 		fw("accessimpl.GenericEnumUserType")
 	}
 
-	def String jpaFlowExecutionListenerListenerClass() {
-	if (isJpaProviderEclipseLink() || isJpaProviderDataNucleus())
-			fw("web.jpa.JpaFlowExecutionListener")
-		else
-			"org.springframework.webflow.persistence.JpaFlowExecutionListener"
-	}
-
-	def String openHibernateSessionInConversationListenerClass() {
-		fw("web.hibernate.OpenHibernateSessionInConversationListener")
-	}
-
-	def String disconnectHibernateInterceptor() {
-		fw("web.hibernate.DisconnectHibernateInterceptor")
-	}
-
-	def String webExceptionUtilClass() {
-		fw("web.errorhandling.ExceptionUtil")
-	}
-
-	def String webExceptionAdviceClass() {
-		fw("web.errorhandling.ExceptionAdvice")
-	}
-
-	def String conversationDomainObjectRepositoryInterface() {
-		fw("web.hibernate.ConversationDomainObjectRepository")
-	}
-
-	def String conversationDomainObjectJpaRepositoryImplClass() {
-		fw("web.jpa.ConversationDomainObjectJpaRepositoryImpl")
-	}
-
 	def String optionEditorClass() {
 		fw("propertyeditor.OptionEditor")
 	}
@@ -261,22 +230,6 @@ class Properties {
 
 	def String notChangeableReferenceSetterVisibility() {
 		getProperty("notChangeableReferenceSetter.visibility")
-	}
-
-	def boolean isGuiDefaultsToBeCreated() {
-		getBooleanProperty("gui.createDefaults")
-	}
-
-	def boolean isJSFCrudGuiToBeGenerated() {
-		getBooleanProperty("generate.jsfCrudGui")
-	}
-
-	def boolean isRcpCrudGuiToBeGenerated() {
-		getBooleanProperty("generate.rcpCrudGui")
-	}
-
-	def boolean isRapCrudGuiToBeGenerated() {
-		getBooleanProperty("generate.rapCrudGui")
 	}
 
 	def boolean isBuilderToBeGenerated() {
@@ -431,14 +384,6 @@ class Properties {
 
 	def String getDateTimeLibrary() {
 		getProperty("datetime.library")
-	}
-
-	def boolean isHighlightMissingMessageResources() {
-		getBooleanProperty("gui.highlightMissingMessageResources")
-	}
-
-	def boolean isStubService() {
-		getBooleanProperty("gui.stubService")
 	}
 
 	def String getResourceDir(Application application, String name) {
