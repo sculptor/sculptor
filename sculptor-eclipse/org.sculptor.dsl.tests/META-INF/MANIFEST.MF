@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL Tests
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.0.3.qualifier
+Bundle-Version: 3.0.3
 Bundle-SymbolicName: org.sculptor.dsl.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.sculptor.dsl,
