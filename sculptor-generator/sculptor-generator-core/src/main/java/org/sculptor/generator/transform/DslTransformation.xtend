@@ -60,6 +60,7 @@ import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
 import org.sculptor.dsl.sculptordsl.DslVisibility
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.check.CheckCrossLink
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -82,6 +83,7 @@ import sculptormetamodel.Trait
 /**
  * Transforms DSL meta model to generator meta model.
  */
+@ChainOverridable
 class DslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
@@ -264,14 +266,14 @@ class DslTransformation {
 		setHint(operation.hint)
 	}
 
-	def private String convertVisibility(DslVisibility dslVisibility) {
+	def String convertVisibility(DslVisibility dslVisibility) {
 		if (dslVisibility == null)
 			"public"
 		else
 			dslVisibility.toString()
 	}
 
-	def private String convertCollectionType(DslComplexType dslComplexType) {
+	def String convertCollectionType(DslComplexType dslComplexType) {
 		if (dslComplexType == null)
 			null
 		else if (dslComplexType.mapCollectionType != null)
@@ -280,7 +282,7 @@ class DslTransformation {
 			convertCollectionTypeEnum(dslComplexType.collectionType)
 	}
 
-	def private String convertCollectionTypeEnum(DslCollectionType collectionType) {
+	def String convertCollectionTypeEnum(DslCollectionType collectionType) {
 		if (collectionType == null || collectionType == DslCollectionType::NONE)
 			null
 		else
@@ -482,7 +484,7 @@ class DslTransformation {
 		setDiscriminatorType(mapDiscriminatorType(domainObject.discriminatorType))
 	}
 
-	def private DiscriminatorType mapDiscriminatorType(DslDiscriminatorType dslDiscriminatorType) {
+	def DiscriminatorType mapDiscriminatorType(DslDiscriminatorType dslDiscriminatorType) {
 		switch (dslDiscriminatorType) {
 			case DslDiscriminatorType::CHAR :
 				DiscriminatorType::CHAR
@@ -493,28 +495,28 @@ class DslTransformation {
 		}
 	}
 
-	def private transformExtends(DslEntity dslDomainObject, DomainObject domainObject) {
+	def transformExtends(DslEntity dslDomainObject, DomainObject domainObject) {
 		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
 	}
 
-	def private transformExtends(DslValueObject dslDomainObject, DomainObject domainObject) {
+	def transformExtends(DslValueObject dslDomainObject, DomainObject domainObject) {
 		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
 	}
 
-	def private dispatch transformExtendsEvent(DslEvent dslEvent, DomainObject domainObject) {
+	def dispatch transformExtendsEvent(DslEvent dslEvent, DomainObject domainObject) {
 		// Never used, only purpose is to be an 'abstract' placeholder
 		error("Unexpected call to transformExtends(DslEvent): " + dslEvent)
 	}
 
-	def private dispatch transformExtendsEvent(DslCommandEvent dslDomainObject, DomainObject domainObject) {
+	def dispatch transformExtendsEvent(DslCommandEvent dslDomainObject, DomainObject domainObject) {
 		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
 	}
 
-	def private dispatch transformExtendsEvent(DslDomainEvent dslDomainObject, DomainObject domainObject) {
+	def dispatch transformExtendsEvent(DslDomainEvent dslDomainObject, DomainObject domainObject) {
 		dslDomainObject.transformExtendsImpl(dslDomainObject.^extends, domainObject)
 	}
 
-	def private dispatch transformExtendsEvent(DslDomainEvent dslEvent, DomainEvent event) {
+	def dispatch transformExtendsEvent(DslDomainEvent dslEvent, DomainEvent event) {
 		if (dslEvent.^extends != null)
 			event.setExtends(dslEvent.^extends.transformSimpleDomainObject)
 
@@ -522,7 +524,7 @@ class DslTransformation {
 			event.setExtendsName(dslEvent.extendsName)
 	}
 
-	def private transformExtendsImpl(DslDomainObject dslDomainObject, DslDomainObject dslExtendsDomainObject, DomainObject domainObject) {
+	def transformExtendsImpl(DslDomainObject dslDomainObject, DslDomainObject dslExtendsDomainObject, DomainObject domainObject) {
 		if (dslExtendsDomainObject != null)
 			domainObject.setExtends(dslExtendsDomainObject.transformSimpleDomainObject)
 
@@ -530,7 +532,7 @@ class DslTransformation {
 			domainObject.setExtendsName(dslDomainObject.extendsName)
 	}
 
-	def private transformExtends(DslDataTransferObject dslDto, DataTransferObject dto) {
+	def transformExtends(DslDataTransferObject dslDto, DataTransferObject dto) {
 		if (dslDto.^extends != null)
 			dto.setExtends(dslDto.^extends.transformSimpleDomainObject)
 
@@ -643,7 +645,7 @@ class DslTransformation {
 		
 	}
 
-	def private String buildOrderColumnHint(DslReference reference) {
+	def String buildOrderColumnHint(DslReference reference) {
 		if (reference.orderColumnName != null) "orderColumn="+reference.orderColumnName else "orderColumn"
 	}
 
@@ -782,14 +784,14 @@ class DslTransformation {
 		resource.addResourceScaffoldOperations(delegateService)
 	}
 
-	def private boolean isGapClassToBeGenerated(DslService dslService) {
+	def boolean isGapClassToBeGenerated(DslService dslService) {
 		if (hasGapOperations(dslService))
 			true
 		else
 			isGapClassToBeGenerated(dslService.gapClass, dslService.noGapClass)
 	}
 
-	def private boolean isGapClassToBeGenerated(DslResource dslResource) {
+	def boolean isGapClassToBeGenerated(DslResource dslResource) {
 		if (hasGapOperations(dslResource))
 			true
 		else
@@ -803,22 +805,22 @@ class DslTransformation {
 			isGapClassToBeGenerated(dslRepository.gapClass, dslRepository.noGapClass)
 	}
 
-	def private boolean hasGapOperations(DslService dslService) {
+	def boolean hasGapOperations(DslService dslService) {
 		dslService.operations.exists(op | !scaffoldOperations().contains(op.name) && op.delegateHolder == null)
 	}
 
-	def private boolean hasGapOperations(DslResource dslResource) {
+	def boolean hasGapOperations(DslResource dslResource) {
 		dslResource.operations.exists(op | op.delegateHolder == null)
 	}
 
-	def private boolean hasGapOperations(DslRepository dslRepository) {
+	def boolean hasGapOperations(DslRepository dslRepository) {
 		dslRepository.operations.exists(op |
 			!scaffoldOperations().contains(op.name) &&
 			!op.delegateToAccessObject && op.accessObjectName == null &&
 			!op.transform.isGenericAccessObject())
 	}
 
-	def private String handleValidation(DslAttribute attribute) {
+	def String handleValidation(DslAttribute attribute) {
 		(if (attribute.validate != null) attribute.validate else "") +
 		handleParameterizedAnnotation("digits", "integer,fraction,message", attribute.digits, attribute.validate) +
 		handleParameterizedAnnotation("size", "min,max,message", attribute.size, attribute.validate) +
@@ -842,7 +844,7 @@ class DslTransformation {
 		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
 	}
 
-	def private String handleValidation(DslDtoAttribute attribute) {
+	def String handleValidation(DslDtoAttribute attribute) {
 		(if (attribute.validate != null) attribute.validate else "") +
 		handleParameterizedAnnotation("digits", "integer,fraction,message", attribute.digits, attribute.validate) +
 		handleParameterizedAnnotation("size", "min,max,message", attribute.size, attribute.validate) +
@@ -866,7 +868,7 @@ class DslTransformation {
 		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
 	}
 
-	def private String handleValidation(DslReference reference) {
+	def String handleValidation(DslReference reference) {
 		(if (reference.validate != null) reference.validate else "") +
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
@@ -874,7 +876,7 @@ class DslTransformation {
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
 	}
 
-	def private String handleValidation(DslDtoReference reference) {
+	def String handleValidation(DslDtoReference reference) {
 		(if (reference.validate != null) reference.validate else "") +
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +

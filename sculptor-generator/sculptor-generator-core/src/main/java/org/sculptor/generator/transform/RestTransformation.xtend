@@ -18,6 +18,7 @@
 package org.sculptor.generator.transform
 
 import com.google.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.PropertiesBase
@@ -26,6 +27,7 @@ import sculptormetamodel.HttpMethod
 import sculptormetamodel.ResourceOperation
 import sculptormetamodel.SculptormetamodelFactory
 
+@ChainOverridable
 class RestTransformation {
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
 
@@ -55,7 +57,7 @@ class RestTransformation {
 		operation.parameters.filter(e | e.domainObjectType != null).map[e | e.domainObjectType].forEach[addXmlRootHint()]
 	}
 
-	private def String defaultReturn(ResourceOperation operation) {
+	def String defaultReturn(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".return"
 		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".return"
 		val value = 
@@ -68,7 +70,7 @@ class RestTransformation {
 			value.replacePlaceholders(operation)
 	}
 
-	private def String defaultHttpMethod(ResourceOperation operation) {
+	def String defaultHttpMethod(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".httpMethod"
 		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".httpMethod"
 		if (hasProperty(propKey1))
@@ -79,7 +81,7 @@ class RestTransformation {
 			"GET"
 	}
 
-	private def String defaultPath(ResourceOperation operation) {
+	def String defaultPath(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".path"
 		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".path"
 		val value = 
@@ -92,41 +94,41 @@ class RestTransformation {
 		value.replacePlaceholders(operation)
 	}
 
-	private def String replacePlaceholders(String str, ResourceOperation op) {
+	def String replacePlaceholders(String str, ResourceOperation op) {
 		str.replaceRecourceNamePlaceholder(op).replaceOperationNamePlaceholder(op).replaceParamNamePlaceholders(op)
 	}
 
-	private def String replaceRecourceNamePlaceholder(String str, ResourceOperation op) {
+	def String replaceRecourceNamePlaceholder(String str, ResourceOperation op) {
 		str.replaceAll("\\$\\{resourceName}", op.resource.getDomainResourceName().toFirstLower())
 	}
 	
-	private def String replaceOperationNamePlaceholder(String str, ResourceOperation op) { 
+	def String replaceOperationNamePlaceholder(String str, ResourceOperation op) { 
 		str.replaceAll("\\$\\{operationName}", op.name)
 	}
 	
-	private def addModelMapParameter(ResourceOperation op) {
+	def addModelMapParameter(ResourceOperation op) {
 		op.parameters.add(op.createModelMapParameter())
 	}
 	
-	private def create FACTORY.createParameter createModelMapParameter(ResourceOperation op) {
+	def create FACTORY.createParameter createModelMapParameter(ResourceOperation op) {
 		setName("modelMap")
 		setType("ModelMap")
 	}
 	
-	private def addIdParameter(ResourceOperation op) {
+	def addIdParameter(ResourceOperation op) {
 		op.parameters.add(op.createIdParameter())
 	}
 
-	private def create FACTORY.createParameter createIdParameter(ResourceOperation op) {
+	def create FACTORY.createParameter createIdParameter(ResourceOperation op) {
 		setName("id")
 		setType("IDTYPE")
 	}
 
-	private def addThrowsException(ResourceOperation op) {
+	def addThrowsException(ResourceOperation op) {
 		op.setThrows("java.lang.Exception")
 	}
 	
-	private def addXmlRootHint(DomainObject domainObject) {
+	def addXmlRootHint(DomainObject domainObject) {
 		domainObject.addHint("xmlRoot=true")
 	}	
 
