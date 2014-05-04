@@ -27,7 +27,7 @@ import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.sculptor.generator.SculptorGeneratorException;
-import org.sculptor.generator.chain.ChainOverrideAwareModule;
+import org.sculptor.generator.chain.ChainOverrideAwareInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,8 +107,7 @@ public class ChainOverrideAwareGuiceWorkflowComponent extends AbstractWorkflowCo
 		if (!issues.hasErrors()) {
 			try {
 				if (guiceModule == null) {
-					Module module = new ChainOverrideAwareModule(actionClass);
-					injector = Guice.createInjector(module);
+					injector = ChainOverrideAwareInjector.createInjector(actionClass);
 				} else {
 					Class<?> forName = Class.forName(guiceModule);
 					Object moduleInst = forName.newInstance();

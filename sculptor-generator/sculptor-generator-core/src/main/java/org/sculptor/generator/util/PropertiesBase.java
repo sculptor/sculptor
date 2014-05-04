@@ -17,412 +17,285 @@
 
 package org.sculptor.generator.util;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.sculptor.generator.configuration.ConfigurationProvider;
+import org.sculptor.generator.configuration.MutableConfigurationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Technical properties to customize the code generation is defined in
- * <code>default-sculptor-generator.properties</code> and may be overridden in
- * <code>common-sculptor-generator.properties</code>,
- * <code>sculptor-generator.properties</code> or in Java system properties.
- * These properties are available via this class.
- * <p>
- * The locations of these property files can be defined with the following
- * system properties.
- * <ul>
- * <li><code>sculptor.generatorPropertiesLocation</code> - default
- * <code>generator/sculptor-generator.properties</code></li>
- * <li><code>sculptor.commonGeneratorPropertiesLocation</code> - common
- * <code>common-sculptor-generator.properties</code></li>
- * <li><code>sculptor.defaultGeneratorPropertiesLocation</code> - default
- * <code>default-sculptor-generator.properties</code></li>
- * </ul>
- * 
- * <strong>These property files are retrieved as classpath resources from the
- * current threads context classloader.</strong>.
+ * Technical properties to customize the code generation .
  */
 public class PropertiesBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesBase.class);
 
-	public static final String PROPERTIES_LOCATION_PROPERTY = "sculptor.generatorPropertiesLocation";
-	public static final String COMMON_PROPERTIES_LOCATION_PROPERTY = "sculptor.commonGeneratorPropertiesLocation";
-	public static final String DEFAULT_PROPERTIES_LOCATION_PROPERTY = "sculptor.defaultGeneratorPropertiesLocation";
+	@Inject
+	private ConfigurationProvider configuration;
 
-	private static final String PROPERTIES_RESOURCE = System.getProperty(PROPERTIES_LOCATION_PROPERTY,
-			"generator/sculptor-generator.properties");
-	private static final String COMMON_PROPERTIES_RESOURCE = System.getProperty(COMMON_PROPERTIES_LOCATION_PROPERTY,
-			"common-sculptor-generator.properties");
-	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(DEFAULT_PROPERTIES_LOCATION_PROPERTY,
-			"default-sculptor-generator.properties");
-	private static Properties properties;
+	@Inject
+	@Named("Mutable Defaults")
+	private MutableConfigurationProvider defaultConfiguration;
 
-	/**
-	 * Normally, this class is not instantiated, but to be able to reload
-	 * configuration from the workflow an instance can be created, i.e. this
-	 * constructor will load properties files (again)
-	 */
-	public PropertiesBase() {
-		initProperties(true);
+	@Inject
+	private void init() {
+		initDerivedDefaults();
+		LOG.debug("Initialized properties: {}", getAllPConfigurationKeyValues(configuration));
 	}
 
 	/**
-	 * Dependency injection, to avoid loading from files.
+	 * Prepare the default values with values inherited from the configuration.
 	 */
-	public void setProperties(Properties p) {
-		properties = p;
-	}
-
-	private Properties getProperties() {
-		initProperties(false);
-		return properties;
-	}
-
-	public void initProperties(boolean reload) {
-		if (!reload && properties != null) {
-			// already initialized
-			return;
-		}
-		Properties defaultProperties = new Properties();
-		loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE);
-
-		Properties p1 = new Properties(defaultProperties);
-		try {
-			loadProperties(p1, COMMON_PROPERTIES_RESOURCE);
-		} catch (MissingResourceException e) {
-			// ignore, it is not mandatory
-		}
-
-		Properties p2 = new Properties(p1);
-		try {
-			loadProperties(p2, PROPERTIES_RESOURCE);
-		} catch (MissingResourceException e) {
-			// ignore, it is not mandatory
-		}
-
-		Properties p3 = new Properties(p2);
-		copySystemProperties(p3);
-
-		properties = p3;
-
-		initDerivedDefaults(defaultProperties);
-
-		List<String> propertyKeyValues = getAllPropertiesKeyValues(properties);
-		LOG.debug("Initialized properties: {}", propertyKeyValues);
-	}
-
-	/**
-	 * Returns a sorted list of all key-value pairs stored in given properties instance.
-	 * This includes the defaults as well. 
-	 */
-	private List<String> getAllPropertiesKeyValues(Properties p) {
-		List<String> propertyValues = new ArrayList<String>();
-		for (Enumeration<?> propertyNames = p.propertyNames(); propertyNames.hasMoreElements();) {
-			String propertyName = (String) propertyNames.nextElement();
-			propertyValues.add(propertyName + "=" + p.getProperty(propertyName));
-		}
-		Collections.sort(propertyValues);
-		return propertyValues;
-	}
-
-	private void copySystemProperties(Properties p) {
-		Properties sysProperties = System.getProperties();
-		for (Object key : sysProperties.keySet()) {
-			p.put(key, sysProperties.get(key));
-		}
-	}
-
-	private void loadProperties(Properties properties, String resource) {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		if (classLoader != null) {
-			LOG.debug("Loading '{}' from threads current context classloader: {}", resource, classLoader);
-		} else {
-			classLoader = PropertiesBase.class.getClassLoader();
-			LOG.debug("Loading '{}' from PropertiesBase classloader: {}", resource, classLoader);
-		}
-
-		URL resourceURL = classLoader.getResource(resource);
-		if (resourceURL == null) {
-			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
-					"");
-		}
-		LOG.debug("Loading properties from '{}'", resourceURL);
-		try {
-			properties.load(resourceURL.openStream());
-		} catch (IOException e) {
-			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "");
-		}
-	}
-
-	private void initDerivedDefaults(Properties defaultProperties) {
+	private void initDerivedDefaults() {
 
 		if (hasProperty("test.dbunit.dataSetFile")) {
 			// don't generate data set file for each service/consumer
-			defaultProperties.setProperty("generate.test.dbunitTestData", "false");
+			defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
 		}
 
 		// deployment.type = war for Tomcat and Jetty
 		if (getProperty("deployment.applicationServer").equalsIgnoreCase("tomcat")
 				|| getProperty("deployment.applicationServer").equalsIgnoreCase("jetty")) {
-			defaultProperties.setProperty("deployment.type", "war");
+			defaultConfiguration.setString("deployment.type", "war");
 		}
 
 		if (getProperty("deployment.applicationServer").equalsIgnoreCase("appengine")) {
-			initDerivedDefaultsForAppengine(defaultProperties);
+			initDerivedDefaultsForAppengine(defaultConfiguration);
 
 		}
 
 		// generate directives
 		if (!hasProjectNature("business-tier")) {
-			initDerivedDefaultsForNonBusinessTier(defaultProperties);
+			initDerivedDefaultsForNonBusinessTier(defaultConfiguration);
 		}
 
 		if (hasProjectNature("business-tier") && hasProjectNature("pure-ejb3")) {
-			initDerivedDefaultsForPureEjb3(defaultProperties);
+			initDerivedDefaultsForPureEjb3(defaultConfiguration);
 		}
 
-		initDerivedDefaultsSystemAttributes(defaultProperties);
+		initDerivedDefaultsSystemAttributes(defaultConfiguration);
 
 		// fetch eager single level
-		if (getProperty("generate.singleLevelFetchEager").equals("true")) {
-			defaultProperties.setProperty("default.fetchStrategy", "lazy");
+		if (getBooleanProperty("generate.singleLevelFetchEager")) {
+			defaultConfiguration.setString("default.fetchStrategy", "lazy");
 		}
 
 		// deployment.applicationServer = JBoss for ear
 		if (getProperty("deployment.type").equals("ear")) {
-			defaultProperties.setProperty("deployment.applicationServer", "JBoss");
+			defaultConfiguration.setString("deployment.applicationServer", "JBoss");
 		}
 
 		// for JBoss AS 7 use Infinispan cache instead of Ehcache
 		if (getProperty("deployment.applicationServer").toLowerCase().equals("jboss")) {
-			defaultProperties.setProperty("cache.provider", "Infinispan");
-			defaultProperties.setProperty("generate.datasource", "true");
+			defaultConfiguration.setString("cache.provider", "Infinispan");
+			defaultConfiguration.setBoolean("generate.datasource", true);
 		}
 
 		// joda-time
 		if (getProperty("datetime.library").equals("joda")) {
-			initDerivedDefaultsForJoda(defaultProperties);
+			initDerivedDefaultsForJoda(defaultConfiguration);
 		}
 
 		if (!getProperty("nosql.provider").equals("none")) {
-			initDerivedDefaultsForNosql(defaultProperties);
+			initDerivedDefaultsForNosql(defaultConfiguration);
 		} else if (!getProperty("jpa.provider").equals("none")) {
-			initDerivedDefaultsForJpa(defaultProperties);
+			initDerivedDefaultsForJpa(defaultConfiguration);
 		} else {
-			initDerivedDefaultsWithoutPersistence(defaultProperties);
+			initDerivedDefaultsWithoutPersistence(defaultConfiguration);
 		}
 
-		initDerivedDefaultsForRest(defaultProperties);
+		initDerivedDefaultsForRest(defaultConfiguration);
 
 		if (getBooleanProperty("generate.quick")) {
-			initQuick(defaultProperties);
+			initQuick(defaultConfiguration);
 		}
 
 	}
 
-	private void initDerivedDefaultsForRest(Properties defaultProperties) {
+	private void initDerivedDefaultsForRest(MutableConfigurationProvider defaultConfiguration) {
 		if (!getBooleanProperty("generate.resource")) {
-			defaultProperties.setProperty("generate.restWeb", "false");
+			defaultConfiguration.setBoolean("generate.restWeb", false);
 		}
 		if (!getBooleanProperty("generate.restWeb")) {
-			String restScaffoldOperations = defaultProperties.getProperty("rest.scaffold.operations");
+			String restScaffoldOperations = defaultConfiguration.getString("rest.scaffold.operations");
 			restScaffoldOperations = restScaffoldOperations.replaceFirst(",createForm", "");
 			restScaffoldOperations = restScaffoldOperations.replaceFirst(",updateForm", "");
-			defaultProperties.setProperty("rest.scaffold.operations", restScaffoldOperations);
+			defaultConfiguration.setString("rest.scaffold.operations", restScaffoldOperations);
 		}
 	}
 
-	private void initQuick(Properties defaultProperties) {
-		defaultProperties.setProperty("generate.ddl", "false");
-		defaultProperties.setProperty("generate.umlgraph", "false");
-		defaultProperties.setProperty("generate.modeldoc", "false");
+	private void initQuick(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setBoolean("generate.ddl", false);
+		defaultConfiguration.setBoolean("generate.umlgraph", false);
+		defaultConfiguration.setBoolean("generate.modeldoc", false);
 	}
 
-	private void initDerivedDefaultsForNonBusinessTier(Properties defaultProperties) {
-		defaultProperties.setProperty("generate.domainObject", "false");
-		defaultProperties.setProperty("generate.exception", "false");
-		defaultProperties.setProperty("generate.repository", "false");
-		defaultProperties.setProperty("generate.service", "false");
-		defaultProperties.setProperty("generate.consumer", "false");
-		defaultProperties.setProperty("generate.spring", "false");
-		defaultProperties.setProperty("generate.hibernate", "false");
-		defaultProperties.setProperty("generate.ddl", "false");
-		defaultProperties.setProperty("generate.umlgraph", "false");
-		defaultProperties.setProperty("generate.modeldoc", "false");
+	private void initDerivedDefaultsForNonBusinessTier(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setBoolean("generate.domainObject", false);
+		defaultConfiguration.setBoolean("generate.exception", false);
+		defaultConfiguration.setBoolean("generate.repository", false);
+		defaultConfiguration.setBoolean("generate.service", false);
+		defaultConfiguration.setBoolean("generate.consumer", false);
+		defaultConfiguration.setBoolean("generate.spring", false);
+		defaultConfiguration.setBoolean("generate.hibernate", false);
+		defaultConfiguration.setBoolean("generate.ddl", false);
+		defaultConfiguration.setBoolean("generate.umlgraph", false);
+		defaultConfiguration.setBoolean("generate.modeldoc", false);
 	}
 
-	private void initDerivedDefaultsForJpa(Properties defaultProperties) {
+	private void initDerivedDefaultsForJpa(MutableConfigurationProvider defaultConfiguration) {
 		if (getBooleanProperty("generate.jpa.annotation")) {
 			if (!getProperty("jpa.provider").equals("hibernate")) {
-				defaultProperties.setProperty("generate.hibernate", "false");
-				defaultProperties.setProperty("datetime.library", "java");
-				errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
+				defaultConfiguration.setBoolean("generate.hibernate", false);
+				defaultConfiguration.setString("datetime.library", "java");
+				errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 			}
 		}
 	}
 
-	private void initDerivedDefaultsForNosql(Properties defaultProperties) {
-		defaultProperties.setProperty("generate.jpa.annotation", "false");
-		defaultProperties.setProperty("generate.hibernate", "false");
-		defaultProperties.setProperty("generate.test.dbunitTestData", "false");
-		defaultProperties.setProperty("generate.test.emptyDbunitTestData", "false");
-		defaultProperties.setProperty("cache.provider", "none");
-		defaultProperties.setProperty("framework.accessimpl.package", fw("accessimpl.mongodb"));
-		defaultProperties.setProperty("framework.accessimpl.prefix", "MongoDb");
-		defaultProperties.setProperty("javaType.IDTYPE", "String");
-		defaultProperties.setProperty("generate.validation.annotation", "false");
-		defaultProperties.setProperty("jpa.provider", "none");
-		defaultProperties.setProperty("jpa.version", "none");
-		defaultProperties.setProperty("generate.ddl", "false");
-		defaultProperties.setProperty("framework.accessimpl.AccessBase",
+	private void initDerivedDefaultsForNosql(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setBoolean("generate.jpa.annotation", false);
+		defaultConfiguration.setBoolean("generate.hibernate", false);
+		defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
+		defaultConfiguration.setBoolean("generate.test.emptyDbunitTestData", false);
+		defaultConfiguration.setString("cache.provider", "none");
+		defaultConfiguration.setString("framework.accessimpl.package", fw("accessimpl.mongodb"));
+		defaultConfiguration.setString("framework.accessimpl.prefix", "MongoDb");
+		defaultConfiguration.setString("javaType.IDTYPE", "String");
+		defaultConfiguration.setBoolean("generate.validation.annotation", false);
+		defaultConfiguration.setString("jpa.provider", "none");
+		defaultConfiguration.setString("jpa.version", "none");
+		defaultConfiguration.setBoolean("generate.ddl", false);
+		defaultConfiguration.setString("framework.accessimpl.AccessBase",
 				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBase");
-		defaultProperties.setProperty("framework.accessimpl.AccessBaseWithException",
+		defaultConfiguration.setString("framework.accessimpl.AccessBaseWithException",
 				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBaseWithException");
-		errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
+		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 	}
 
-	private void errorHandlingInterceptorWithoutHibernateDependency(Properties defaultProperties) {
+	private void errorHandlingInterceptorWithoutHibernateDependency(MutableConfigurationProvider defaultConfiguration) {
 		// for ejb3
-		defaultProperties.setProperty("framework.errorhandling.ErrorHandlingInterceptor",
+		defaultConfiguration.setString("framework.errorhandling.ErrorHandlingInterceptor",
 				"org.sculptor.framework.errorhandling.ErrorHandlingInterceptor2");
 	}
 
-	private void initDerivedDefaultsWithoutPersistence(Properties defaultProperties) {
-		defaultProperties.setProperty("generate.jpa.annotation", "false");
-		defaultProperties.setProperty("generate.hibernate", "false");
-		defaultProperties.setProperty("generate.test.dbunitTestData", "false");
-		defaultProperties.setProperty("generate.test.emptyDbunitTestData", "false");
-		defaultProperties.setProperty("generate.datasource", "false");
-		defaultProperties.setProperty("javaType.IDTYPE", "String");
-		defaultProperties.setProperty("generate.validation.annotation", "false");
-		defaultProperties.setProperty("generate.ddl", "false");
-		defaultProperties.setProperty("cache.provider", "none");
+	private void initDerivedDefaultsWithoutPersistence(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setBoolean("generate.jpa.annotation", false);
+		defaultConfiguration.setBoolean("generate.hibernate", false);
+		defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
+		defaultConfiguration.setBoolean("generate.test.emptyDbunitTestData", false);
+		defaultConfiguration.setBoolean("generate.datasource", false);
+		defaultConfiguration.setString("javaType.IDTYPE", "String");
+		defaultConfiguration.setBoolean("generate.validation.annotation", false);
+		defaultConfiguration.setBoolean("generate.ddl", false);
+		defaultConfiguration.setString("cache.provider", "none");
 		// customize by implementing the access obj yourself and define
 		// framework.accessimpl.package
-		defaultProperties.setProperty("framework.accessimpl.package", fw("accessimpl.todo"));
-		defaultProperties.setProperty("framework.accessimpl.prefix", "");
-		defaultProperties.setProperty("framework.accessimpl.AccessBase",
+		defaultConfiguration.setString("framework.accessimpl.package", fw("accessimpl.todo"));
+		defaultConfiguration.setString("framework.accessimpl.prefix", "");
+		defaultConfiguration.setString("framework.accessimpl.AccessBase",
 				"org.sculptor.framework.accessimpl.todo.AccessBase");
-		defaultProperties.setProperty("framework.accessimpl.AccessBaseWithException",
+		defaultConfiguration.setString("framework.accessimpl.AccessBaseWithException",
 				"org.sculptor.framework.accessimpl.todo.BaseWithException");
-		errorHandlingInterceptorWithoutHibernateDependency(defaultProperties);
+		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 	}
 
-	private void initDerivedDefaultsForPureEjb3(Properties defaultProperties) {
-		defaultProperties.setProperty("deployment.type", "ear");
-		defaultProperties.setProperty("generate.spring", "false");
-		defaultProperties.setProperty("generate.resource", "false");
-		defaultProperties.setProperty("generate.restWeb", "false");
-		defaultProperties.setProperty("naming.suffix.Impl", "Bean");
-		defaultProperties.setProperty("generate.logbackConfig", "false");
+	private void initDerivedDefaultsForPureEjb3(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setString("deployment.type", "ear");
+		defaultConfiguration.setBoolean("generate.spring", false);
+		defaultConfiguration.setBoolean("generate.resource", false);
+		defaultConfiguration.setBoolean("generate.restWeb", false);
+		defaultConfiguration.setString("naming.suffix.Impl", "Bean");
+		defaultConfiguration.setBoolean("generate.logbackConfig", false);
 	}
 
-	private void initDerivedDefaultsForAppengine(Properties defaultProperties) {
-		defaultProperties.setProperty("deployment.type", "war");
-		defaultProperties.setProperty("jpa.provider", "appengine");
-		defaultProperties.setProperty("jpa.version", "1.0");
-		defaultProperties.setProperty("generate.ddl", "false");
-		defaultProperties.setProperty("generate.domainObject.builder", "false");
-		defaultProperties.setProperty("generate.validation.annotation", "false");
-		defaultProperties.setProperty("javaType.IDTYPE", "com.google.appengine.api.datastore.Key");
-		defaultProperties.setProperty("cache.provider", "memcache");
-		defaultProperties.setProperty("generate.test.dbunitTestData", "false");
-		defaultProperties.setProperty("generate.test.emptyDbunitTestData", "false");
-		defaultProperties.setProperty("generate.logbackConfig", "false");
+	private void initDerivedDefaultsForAppengine(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setString("deployment.type", "war");
+		defaultConfiguration.setString("jpa.provider", "appengine");
+		defaultConfiguration.setString("jpa.version", "1.0");
+		defaultConfiguration.setBoolean("generate.ddl", false);
+		defaultConfiguration.setBoolean("generate.domainObject.builder", false);
+		defaultConfiguration.setBoolean("generate.validation.annotation", false);
+		defaultConfiguration.setString("javaType.IDTYPE", "com.google.appengine.api.datastore.Key");
+		defaultConfiguration.setString("cache.provider", "memcache");
+		defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
+		defaultConfiguration.setBoolean("generate.test.emptyDbunitTestData", false);
+		defaultConfiguration.setBoolean("generate.logbackConfig", false);
 	}
 
-	private void initDerivedDefaultsForJoda(Properties defaultProperties) {
-		defaultProperties.setProperty("javaType.Date", "org.joda.time.LocalDate");
-		defaultProperties.setProperty("javaType.DateTime", "org.joda.time.DateTime");
-		defaultProperties.setProperty("javaType.Timestamp", "org.joda.time.DateTime");
+	private void initDerivedDefaultsForJoda(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setString("javaType.Date", "org.joda.time.LocalDate");
+		defaultConfiguration.setString("javaType.DateTime", "org.joda.time.DateTime");
+		defaultConfiguration.setString("javaType.Timestamp", "org.joda.time.DateTime");
 
 		if ("hibernate3".equalsIgnoreCase(getProperty("jpa.provider"))) {
-			defaultProperties.setProperty("hibernateType.Date", "org.joda.time.contrib.hibernate.PersistentLocalDate");
-			defaultProperties.setProperty("hibernateType.DateTime", "org.joda.time.contrib.hibernate.PersistentDateTime");
-			defaultProperties.setProperty("hibernateType.Timestamp", "org.joda.time.contrib.hibernate.PersistentDateTime");
+			defaultConfiguration.setString("hibernateType.Date", "org.joda.time.contrib.hibernate.PersistentLocalDate");
+			defaultConfiguration.setString("hibernateType.DateTime", "org.joda.time.contrib.hibernate.PersistentDateTime");
+			defaultConfiguration.setString("hibernateType.Timestamp", "org.joda.time.contrib.hibernate.PersistentDateTime");
 		} else {
-			defaultProperties.setProperty("hibernateType.Date", "org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
-			defaultProperties.setProperty("hibernateType.DateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
-			defaultProperties.setProperty("hibernateType.Timestamp", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+			defaultConfiguration.setString("hibernateType.Date", "org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
+			defaultConfiguration.setString("hibernateType.DateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+			defaultConfiguration.setString("hibernateType.Timestamp", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
 		}
-		defaultProperties
-				.setProperty(
+		defaultConfiguration
+				.setString(
 						"propertyEditor.Date",
 						"org.sculptor.framework.propertyeditor.LocalDateEditor(getMessagesAccessor().getMessage(\"format.DatePattern\", \"yyyy-MM-dd\"), true)");
-		defaultProperties
-				.setProperty(
+		defaultConfiguration
+				.setString(
 						"propertyEditor.DateTime",
 						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
-		defaultProperties
-				.setProperty(
+		defaultConfiguration
+				.setString(
 						"propertyEditor.Timestamp",
 						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
 
-		defaultProperties.setProperty("framework.xml.DateHandler",
+		defaultConfiguration.setString("framework.xml.DateHandler",
 				"org.sculptor.framework.xml.JodaLocalDateHandler");
-		defaultProperties.setProperty("framework.xml.TimeStampHandler",
+		defaultConfiguration.setString("framework.xml.TimeStampHandler",
 				"org.sculptor.framework.xml.JodaDateTimeHandler");
 
-		defaultProperties.setProperty("generate.auditable.joda", "true");
+		defaultConfiguration.setBoolean("generate.auditable.joda", true);
 	}
 
-	private void initDerivedDefaultsSystemAttributes(Properties defaultProperties) {
+	private void initDerivedDefaultsSystemAttributes(MutableConfigurationProvider defaultConfiguration) {
 		if (!getBooleanProperty("generate.auditable")) {
-			String value = defaultProperties.getProperty("systemAttributes");
+			String value = defaultConfiguration.getString("systemAttributes");
 			value = value.replaceAll(",createdBy", "");
 			value = value.replaceAll(",createdDate", "");
 			value = value.replaceAll(",updatedBy", "");
 			value = value.replaceAll(",updatedDate", "");
 			value = value.replaceAll(",lastUpdated", "");
 			value = value.replaceAll(",lastUpdatedBy", "");
-			defaultProperties.setProperty("systemAttributes", value);
+			defaultConfiguration.setString("systemAttributes", value);
 		}
 	}
 
 	public String getProperty(String propertyName) {
-		String value = getProperties().getProperty(propertyName);
-		if (value == null) {
-			throw new MissingResourceException("Property not found: " + propertyName, "GeneratorProperties",
-					propertyName);
-		}
-		return value;
+		return configuration.getString(propertyName);
 	}
 
 	public boolean hasProperty(String propertyName) {
-		return getProperties().getProperty(propertyName) != null;
+		return configuration.has(propertyName);
 	}
 
 	public boolean getBooleanProperty(String propertyName) {
-		String value = getProperty(propertyName);
-		return value.equalsIgnoreCase("true");
+		return configuration.getBoolean(propertyName);
 	}
 
 	Set<String> getPropertyNames() {
-		return getPropertyNames(getProperties());
-	}
-
-	@SuppressWarnings("unchecked")
-	static Set<String> getPropertyNames(Properties properties) {
-		Set<String> result = new HashSet<String>();
-		for (Enumeration<String> iter = (Enumeration<String>) properties.propertyNames(); iter.hasMoreElements();) {
-			String propertyName = iter.nextElement();
-			result.add(propertyName);
-		}
-		return result;
+		return configuration.keys();
 	}
 
 	/**
@@ -446,8 +319,9 @@ public class PropertiesBase {
 	Properties getProperties(String prefix, boolean removePrefix) {
 		Properties result = new Properties();
 		for (String key : getPropertyNames()) {
-			if (key.startsWith(prefix))
+			if (key.startsWith(prefix)) {
 				result.put((removePrefix) ? key.substring(prefix.length()) : key, getProperty(key));
+			}
 		}
 		return result;
 	}
@@ -461,7 +335,7 @@ public class PropertiesBase {
 	 */
 	public Map<String, String> getPropertiesAsMap(Properties properties) {
 		Map<String, String> result = new HashMap<String, String>();
-		for (String key : getPropertyNames(properties)) {
+		for (String key : properties.stringPropertyNames()) {
 			result.put(key, properties.getProperty(key));
 		}
 		return result;
@@ -675,7 +549,7 @@ public class PropertiesBase {
 		return projectNature().contains(nature);
 	}
 
-	Map<String, String> singular2pluralDefinitions() {
+	public Map<String, String> singular2pluralDefinitions() {
 		Map<String, String> result = new HashMap<String, String>();
 		String prefix = "singular2plural.";
 		Set<String> names = getPropertyNames();
@@ -736,16 +610,24 @@ public class PropertiesBase {
 		return getPropertiesAsMap(getProperties("validation.annotation.", true));
 	}
 
-	public void setProperty(String key, String value) {
-		getProperties().setProperty(key, value);
-	}
-
 	public String getBuilderPackage() {
 		return getProperty("package.builder");
 	}
 
 	public boolean getGenerateBuilder() {
 		return Boolean.valueOf(getProperty("generate.domainObject.builder"));
+	}
+
+	/**
+	 * Returns a sorted list of all key-value pairs defined in given configuration instance.
+	 */
+	private List<String> getAllPConfigurationKeyValues(ConfigurationProvider configuration) {
+		List<String> keyValues = new ArrayList<String>();
+		for (String key : configuration.keys()) {
+			keyValues.add(key + "=\"" + configuration.getString(key) + "\"");
+		}
+		Collections.sort(keyValues);
+		return keyValues;
 	}
 
 }

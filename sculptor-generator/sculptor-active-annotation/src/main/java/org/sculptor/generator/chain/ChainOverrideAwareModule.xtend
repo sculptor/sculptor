@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,67 +17,40 @@
 package org.sculptor.generator.chain
 
 import com.google.inject.AbstractModule
-import java.io.IOException
-import java.io.InputStream
+import com.google.inject.Injector
 import java.lang.reflect.Array
 import java.util.HashSet
 import java.util.List
-import java.util.MissingResourceException
 import java.util.Stack
 import javax.inject.Inject
+import org.sculptor.generator.configuration.ConfigurationProvider
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.Properties
 
 /**
- * Binds specified class(es) to instanc(es) with support for creating
- * chains from override or extension classes.      
+ * Binds specified class(es) to instanc(es) with support for creating chains from override or extension classes.      
  */
 class ChainOverrideAwareModule extends AbstractModule {
 
 	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverrideAwareModule))
 
-	//
-	// Properties support for reading 'cartridges' property
-	// TODO: Move this and loadProperties into separate class shared with PropertiesBase?
-	//
-	public static final String PROPERTIES_LOCATION_PROPERTY = "sculptor.generatorPropertiesLocation"
-	public static final String COMMON_PROPERTIES_LOCATION_PROPERTY = "sculptor.commonGeneratorPropertiesLocation"
-	public static final String DEFAULT_PROPERTIES_LOCATION_PROPERTY = "sculptor.defaultGeneratorPropertiesLocation"
-
-	private static final String PROPERTIES_RESOURCE = System.getProperty(PROPERTIES_LOCATION_PROPERTY,
-			"generator/sculptor-generator.properties")
-	private static final String COMMON_PROPERTIES_RESOURCE = System.getProperty(COMMON_PROPERTIES_LOCATION_PROPERTY,
-			"common-sculptor-generator.properties")
-	private static final String DEFAULT_PROPERTIES_RESOURCE = System.getProperty(DEFAULT_PROPERTIES_LOCATION_PROPERTY,
-			"default-sculptor-generator.properties")
-
-	// Package where override packages will be looked for
-	var String defaultOverridesPackage = "generator";
-	
 	private val List<? extends Class<?>> startClasses
+	private Injector bootstrapInjector
 
-	public new(Class<?> startClassOn) {
-		startClasses = #[startClassOn]
-		setProperties
+	public new(Injector bootstrapInjector, Class<?> startClass) {
+		this.bootstrapInjector = bootstrapInjector
+		this.startClasses = #[startClass]
 	}
 
-	public new(List<? extends Class<?>> startClassesOn) {
-		startClasses = startClassesOn
-		setProperties
-	}
-
-	def protected setProperties() {
-		val defaultOverridesPkgProp = System::getProperty("sculptor.defaultOverridesPackage")
-		if (defaultOverridesPkgProp != null) {
-			defaultOverridesPackage = defaultOverridesPkgProp
-		}
-		if (LOG.debugEnabled) {
-			LOG.debug("Enabled cartridges: {}", cartridgeNames.toList)
-		}
+	public new(Injector bootstrapInjector, Class<?>... startClasses) {
+		this.bootstrapInjector = bootstrapInjector
+		this.startClasses = startClasses
 	}
 
 	override protected configure() {
+		if (LOG.debugEnabled) {
+			LOG.debug("Enabled cartridges: {}", cartridgeNames.toList)
+		}
 		buildChainForClasses(<Class<?>>newHashSet(), startClasses)
 	}
 
@@ -136,6 +109,25 @@ class ChainOverrideAwareModule extends AbstractModule {
 
 		// Bind loaded chain to class
 		bind(clazz).toInstance(chain)
+	}
+
+	/**
+	 * Returns list of cartridge names from Sculptor properties.
+	 */
+	private def getCartridgeNames() {
+		val cartridgeNames = getConfigurationString("cartridges")
+		if (cartridgeNames != null && cartridgeNames.length > 0) {
+			cartridgeNames.split("[,; ]").map[it.trim].toList
+		} else {
+			<String>newArrayList()
+		}
+	}
+
+	/**
+	 * Returns the value for the given configuration key .  
+	 */
+	private def getConfigurationString(String key) {
+		bootstrapInjector.getInstance(typeof(ConfigurationProvider)).getString(key)
 	}
 
 	/**
@@ -243,8 +235,8 @@ class ChainOverrideAwareModule extends AbstractModule {
 		do {
 			discovered.addAll(
 				cls.declaredFields.filter[f|
-					f.getAnnotation(typeof(Inject)) != null || f.getAnnotation(typeof(com.google.inject.Inject)) != null].
-					map[f|f.type].toList)
+					(f.getAnnotation(typeof(Inject)) != null ||
+						f.getAnnotation(typeof(com.google.inject.Inject)) != null) && !f.type.interface].map[f|f.type].toList)
 			cls = cls.superclass
 		} while (cls != typeof(Object))
 	}
@@ -257,7 +249,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 * @return Fully qualified name of override class
 	 */
 	def <T> String getOverrideClassName(Class<T> clazz) {
-		defaultOverridesPackage + "." + clazz.simpleName + "Override"
+		getConfigurationString("defaultOverridesPackage") + "." + clazz.simpleName + "Override"
 	}
 
 	/**
@@ -272,60 +264,6 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 */
 	static def <T> String getDispatchClassName(Class<T> clazz) {
 		clazz.name + "MethodDispatch"
-	}
-
-	//
-	// System properties support
-	//
-
-	private var Properties props
-
-	def getCartridgeNames() {
-		if (props == null) {
-			
-			val defaultProperties = new Properties
-			loadProperties(defaultProperties, DEFAULT_PROPERTIES_RESOURCE)
-	
-			val commonProperties = new Properties(defaultProperties)
-			try {
-				loadProperties(commonProperties, COMMON_PROPERTIES_RESOURCE)
-			} catch (MissingResourceException e) {
-				// ignore, it is not mandatory
-			}
-			props = new Properties(commonProperties)
-			try {
-				loadProperties(props, PROPERTIES_RESOURCE)
-			} catch (MissingResourceException e) {
-				// ignore, it is not mandatory
-			}
-		}
-
-		val cartString = props.getProperty("cartridges")
-		if (cartString != null && cartString.length > 0) {
-			cartString.split("[,; ]")
-		} else {
-			<String>newArrayOfSize(0)
-		}
-	}
-
-	/**
-	 * Load properties from resource into properties
-	 */
-	def protected void loadProperties(Properties properties, String resource) {
-		var ClassLoader classLoader = Thread::currentThread().getContextClassLoader()
-		if (classLoader == null) {
-			classLoader = this.getClass.getClassLoader()
-		}
-		val InputStream resourceInputStream = classLoader.getResourceAsStream(resource)
-		if (resourceInputStream == null) {
-			throw new MissingResourceException("Properties resource not available: " + resource, "GeneratorProperties",
-				"")
-		}
-		try {
-			properties.load(resourceInputStream)
-		} catch (IOException e) {
-			throw new MissingResourceException("Can't load properties from: " + resource, "GeneratorProperties", "")
-		}
 	}
 
 }

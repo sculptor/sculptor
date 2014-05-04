@@ -16,8 +16,6 @@
  */
 package org.sculptor.generator.chain
 
-import com.google.inject.Guice
-import generator.TestTemplateOverride
 import org.junit.Test
 import org.sculptor.generator.cartridge.test.TestTemplateExtension
 
@@ -25,14 +23,10 @@ import static org.junit.Assert.*
 
 class ChainOverrideAwareModuleTest {
 
-	val templateClass = typeof(TestTemplate)
-
 	@Test
 	def void testTmplateExtensions() {
-		val injector = Guice::createInjector(new ChainOverrideAwareModule(templateClass));
-
-		val templateOverride = injector.getInstance(templateClass) as TestTemplateOverride
-		assertNotNull(templateOverride)
+		val injector = ChainOverrideAwareInjector.createInjector(typeof(TestTemplate))
+		val templateOverride = injector.getInstance(typeof(TestTemplate))
 
 		val templateExtension = templateOverride.next.next as TestTemplateExtension
 		assertNotNull(templateExtension)
@@ -85,13 +79,6 @@ class ChainOverrideAwareModuleTest {
 		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(2))
 		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(3))
 		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(4))
-	}
-
-	@Test
-	def void testCommonProperties() {
-		val module = new ChainOverrideAwareModule(templateClass)
-		assertNotNull(module)
-		assertEquals("test,test2", module.cartridgeNames.join(','))
 	}
 
 }

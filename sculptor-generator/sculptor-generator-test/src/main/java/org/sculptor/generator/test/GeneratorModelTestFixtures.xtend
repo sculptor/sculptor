@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.test
 
-import com.google.inject.Guice
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Provider
@@ -27,14 +25,14 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.xtext.resource.IResourceServiceProvider$Registry
+import org.eclipse.xtext.resource.IResourceServiceProvider.Registry
 import org.eclipse.xtext.util.Pair
 import org.eclipse.xtext.util.Tuples
 import org.eclipse.xtext.validation.CheckMode
 import org.eclipselabs.xtext.utils.unittesting.FluentIssueCollection
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
-import org.sculptor.generator.chain.ChainOverrideAwareModule
+import org.sculptor.generator.chain.ChainOverrideAwareInjector
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.slf4j.LoggerFactory
@@ -175,8 +173,7 @@ class GeneratorModelTestFixtures {
 
 	def void setupModel(String resource, String... referencedResources) {
 
-		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
-		injector = Guice::createInjector(uniLoadModule)
+		injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
 
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 		transformationProvider = injector.getProvider(typeof(Transformation))

@@ -16,8 +16,6 @@
  */
 package org.sculptor.generator.transformation
 
-import com.google.inject.Guice
-import com.google.inject.Injector
 import com.google.inject.Provider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
@@ -28,7 +26,8 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
-import org.sculptor.generator.chain.ChainOverrideAwareModule
+import org.sculptor.generator.chain.ChainOverrideAwareInjector
+import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -66,10 +65,10 @@ class EnumTransformationTest extends XtextTest {
 	def void setupDslModel() {
 
 		// Activate cartridge 'test' with transformation extensions 
-		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/transformation/sculptor-generator.properties")
+		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
+			"generator-tests/transformation/sculptor-generator.properties")
 
-		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
-		val Injector injector = Guice::createInjector(uniLoadModule)
+		val injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
 		properties = injector.getInstance(typeof(Properties))
 		helper = injector.getInstance(typeof(Helper))
 		helperBase = injector.getInstance(typeof(HelperBase))
