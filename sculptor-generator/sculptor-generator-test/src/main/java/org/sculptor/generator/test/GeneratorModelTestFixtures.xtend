@@ -46,7 +46,7 @@ import static org.junit.Assert.*
  */
 class GeneratorModelTestFixtures {
 
-	static val LOG = LoggerFactory::getLogger(typeof(GeneratorModelTestFixtures))
+	static val LOG = LoggerFactory.getLogger(typeof(GeneratorModelTestFixtures))
 
 	@Inject
 	protected var ResourceSet resourceSet;
@@ -145,7 +145,6 @@ class GeneratorModelTestFixtures {
 				LOG.error("   " + issue.line + ": " + issue.message)
 				errors.append("\n  - " + issue.getLine() + ": " + issue.getMessage());
 			]
-
 		}
 
 		val o = resource.getContents().get(0);
@@ -159,7 +158,6 @@ class GeneratorModelTestFixtures {
 	}
 
 	def protected DslModel getDomainModel(String resource, String... referencedResources) {
-
 		for (String referencedResource : referencedResources) {
 			val uri = URI::createURI(resourceRoot + "/" + referencedResource);
 			loadModel(resourceSet, uri, rootObjectType);
@@ -170,10 +168,15 @@ class GeneratorModelTestFixtures {
 		val dslModel = rootElement as DslModel
 		dslModel
 	}
+	
+	def void setupInjector(Class<?>... templates) {
+		injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)] + templates)
+	}
 
 	def void setupModel(String resource, String... referencedResources) {
-
-		injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
+		if (injector == null) {
+			throw new IllegalStateException("Injector not initialized - 'setupInjector()' must be called first")
+		}
 
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 		transformationProvider = injector.getProvider(typeof(Transformation))
@@ -185,13 +188,15 @@ class GeneratorModelTestFixtures {
 
 		val transformation = transformationProvider.get
 		app = transformation.modify(app)
-
 	}
 
 	def <T> getProvidedObject(Class<T> clazz) {
+		if (injector == null) {
+			throw new IllegalStateException("Injector not initialized - 'setupInjector()' must be called first")
+		}
+
 		val provider = injector.getProvider(clazz)
 		provider.get
-
 	}
 
 }

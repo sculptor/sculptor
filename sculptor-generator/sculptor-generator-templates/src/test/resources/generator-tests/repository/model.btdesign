@@ -1,7 +1,7 @@
 Application App {
 	basePackage=org.sculptor.example
 
-	Module app {
+	Module foobars {
 
 		BasicType Foo {
 		}

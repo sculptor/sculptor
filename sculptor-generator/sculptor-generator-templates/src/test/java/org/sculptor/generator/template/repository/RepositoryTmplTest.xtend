@@ -16,62 +16,51 @@
  */
 package org.sculptor.generator.template.repository
 
+import javax.inject.Inject
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
-import org.junit.BeforeClass
+import org.eclipselabs.xtext.utils.unittesting.XtextTest
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
-import org.sculptor.generator.test.GeneratorTestBase
+import org.sculptor.generator.test.GeneratorModelTestFixtures
 
-import static org.sculptor.generator.test.GeneratorTestExtensions.*
+import static org.junit.Assert.*
+
+import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
 @RunWith(typeof(XtextRunner2))
 @InjectWith(typeof(SculptordslInjectorProvider))
-class RepositoryTmplTest extends GeneratorTestBase /* XtextTest */ {
+class RepositoryTmplTest extends XtextTest {
 
-// @FIXME use this code after #112 is fixed
+	@Inject
+	var GeneratorModelTestFixtures generatorModelTestFixtures
 
-//	@Inject
-//	var GeneratorModelTestFixtures generatorModelTestFixtures
-//
-//	var RepositoryTmpl repositoryTmpl
-//
-//	@Before
-//	def void setup() {
-//		generatorModelTestFixtures.setupModel("generator-tests/repository/model.btdesign")
-//
-//		repositoryTmpl = generatorModelTestFixtures.getProvidedObject(typeof(RepositoryTmpl))
-//	}
-//
-//	@Test
-//	def void assertMapRepositoryOperation() {
-//		val module = generatorModelTestFixtures.app.modules.namedElement("app")
-//		assertNotNull(module)
-//
-//		val repository = module.domainObjects.namedElement("FooBars").repository
-//		assertNotNull(repository)
-//
-//		val code = repositoryTmpl.interfaceRepositoryMethod(repository.operations.get(0))
-//		assertNotNull(code)
-//		assertContains(code, 'public Map<Foo, Bar> allFooBars();')
-//	}
+	var RepositoryTmpl repositoryTmpl
 
-	static val TEST_NAME = "repository"
+	@Before
+	def void setup() {
+		generatorModelTestFixtures.setupInjector(typeof(RepositoryTmpl))
+		generatorModelTestFixtures.setupModel("generator-tests/repository/model.btdesign")
 
-	new() {
-		super(TEST_NAME)
-	}
-
-	@BeforeClass
-	def static void setup() {
-		runGenerator(TEST_NAME)
+		repositoryTmpl = generatorModelTestFixtures.getProvidedObject(typeof(RepositoryTmpl))
 	}
 
 	@Test
 	def void assertMapRepositoryOperation() {
-		val repository = getFileText(TO_GEN_SRC + "/org/sculptor/example/app/domain/FooBarRepository.java")
-		assertContains(repository, 'public Map<Foo, Bar> allFooBars();')
+		val app = generatorModelTestFixtures.app
+		assertNotNull(app)
+
+		val module = app.modules.namedElement("foobars")
+		assertNotNull(module)
+
+		val repository = module.domainObjects.namedElement("FooBar").repository
+		assertNotNull(repository)
+
+		val code = repositoryTmpl.interfaceRepositoryMethod(repository.operations.get(0))
+		assertNotNull(code)
+		assertContains(code, 'java.util.Map<org.sculptor.example.foobars.domain.Foo, org.sculptor.example.foobars.domain.Bar> allFooBars()')
 	}
 
 }

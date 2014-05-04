@@ -25,8 +25,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.generator.test.GeneratorModelTestFixtures
-import sculptormetamodel.Application
-import sculptormetamodel.Module
 
 import static org.junit.Assert.*
 
@@ -43,31 +41,30 @@ class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
 
 	@Before
 	def void setup() {
+		generatorModelTestFixtures.setupInjector(typeof(DomainObjectReferenceAnnotationTmpl))
 		generatorModelTestFixtures.setupModel("generator-tests/helloworld/model.btdesign")
 
 		domainObjectReferenceAnnotationTmpl = generatorModelTestFixtures.getProvidedObject(
 			typeof(DomainObjectReferenceAnnotationTmpl))
 	}
 
-	def Module milkywayModule(Application app) {
-		return app.modules.namedElement("milkyway");
-	}
-
 	@Test
 	def void testAppTransformation() {
 		val app = generatorModelTestFixtures.app
 		assertNotNull(app)
+
 		assertEquals(1, app.modules.size)
 	}
 
 	@Test
 	def void assertOneToManyWithCascadeTypeAllInPlanetBaseForReferenceMoons() {
 		val app = generatorModelTestFixtures.app
+		assertNotNull(app)
 
-		val milkywayModule = app.milkywayModule
-		assertNotNull(milkywayModule)
+		val module = app.modules.namedElement("milkyway")
+		assertNotNull(module)
 
-		val planet = milkywayModule.domainObjects.namedElement("Planet")
+		val planet = module.domainObjects.namedElement("Planet")
 		val moons = planet.references.namedElement("moons")
 		assertNotNull(moons)
 
