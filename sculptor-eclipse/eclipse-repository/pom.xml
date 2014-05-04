@@ -27,7 +27,7 @@
 					<path>updates</path>
 					<merge>true</merge>
 					<noJekyll>false</noJekyll>
-					<message>creates Sculptor Elipse update site ${project.version}</message>
+					<message>creates Sculptor Eclipse update site ${project.version}</message>
 				</configuration>
 			</plugin>
 		</plugins>
