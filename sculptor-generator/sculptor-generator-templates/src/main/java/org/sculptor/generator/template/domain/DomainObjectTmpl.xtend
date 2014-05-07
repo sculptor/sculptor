@@ -527,15 +527,14 @@ def String methodParameterTypeAndName(Parameter it) {
 }
 
 /* Extension point to generate more stuff in DomainObjects.
- * Use AROUND domainObjectTmplTmpl.domainObjectHook FOR DomainObject
- * in SpecialCases.xpt */
+ * Use Sculptor extension mechanism to use hook.*/
 def String domainObjectHook(DomainObject it) {
 	''''''
 }
 
 /* Extension point to generate more stuff in DataTransferObjects.
- * Use AROUND domainObjectTmplTmpl.dataTransferObjectHook FOR DataTransferObject
- * in SpecialCases.xpt */
+ * Use Sculptor extension mechanism to use hook.
+ */
 def String dataTransferObjectHook(DataTransferObject it) {
 	''''''
 }
