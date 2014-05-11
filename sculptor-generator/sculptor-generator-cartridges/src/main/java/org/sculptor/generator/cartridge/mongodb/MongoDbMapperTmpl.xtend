@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
@@ -31,6 +30,7 @@ import sculptormetamodel.Reference
 
 class MongoDbMapperTmpl {
 
+	@Inject extension MongoDbHelper mongoDbHelper
 	@Inject extension DbHelper dbHelper
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

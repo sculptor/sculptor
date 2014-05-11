@@ -240,11 +240,7 @@ public class HelperBase {
 		return concatPackage(getBasePackage(module), propBase.getExceptionPackage());
 	}
 
-	public String getMapperPackage(Module module) {
-		return concatPackage(getBasePackage(module), propBase.getMapperPackage());
-	}
-
-	private String concatPackage(String pkg1, String pkg2) {
+	public String concatPackage(String pkg1, String pkg2) {
 		if (pkg2 == null || pkg2.equals("")) {
 			return pkg1;
 		}

@@ -32,16 +32,21 @@ class MongoDbProperties {
 	 */
 	@Inject
 	protected def initDerivedDefaults(@Named("Mutable Defaults") MutableConfigurationProvider defaultConfiguration) {
-		defaultConfiguration.setString("framework.accessimpl.package", fw("accessimpl.mongodb"));
-		defaultConfiguration.setString("framework.accessimpl.prefix", "MongoDb");
+		defaultConfiguration.setString("package.mapper", "mapper")
+		defaultConfiguration.setString("framework.accessimpl.package", fw("accessimpl.mongodb"))
+		defaultConfiguration.setString("framework.accessimpl.prefix", "MongoDb")
 		defaultConfiguration.setString("framework.accessimpl.AccessBase",
-				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBase");
+				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBase")
 		defaultConfiguration.setString("framework.accessimpl.AccessBaseWithException",
-				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBaseWithException");
+				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBaseWithException")
 	}
 
 	def mongoDb() {
 		getProperty("nosql.provider") == "mongoDb"
+	}
+
+	def getMapperPackage() {
+		getProperty("package.mapper")
 	}
 
 }

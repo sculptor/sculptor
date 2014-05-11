@@ -27,6 +27,7 @@ import sculptormetamodel.Reference
 @ChainOverride
 class DomainObjectReferenceTmplExtension extends DomainObjectReferenceTmpl {
 
+	@Inject extension MongoDbHelper mongoDbHelper
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension MongoDbProperties mongoDbProperties

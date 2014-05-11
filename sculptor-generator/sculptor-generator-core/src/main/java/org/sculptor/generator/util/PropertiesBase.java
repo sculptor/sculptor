@@ -490,10 +490,6 @@ public class PropertiesBase {
 		return getProperty("package.accessImplementation");
 	}
 
-	public String getMapperPackage() {
-		return getProperty("package.mapper");
-	}
-
 	public List<String> scaffoldOperations() {
 		String value = getProperty("scaffold.operations");
 		String[] operations = value.split(",");

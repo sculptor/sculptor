@@ -17,24 +17,16 @@
 package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
-import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.repository.AccessObjectFactoryTmpl
-import sculptormetamodel.RepositoryOperation
+import org.sculptor.generator.util.HelperBase
+import sculptormetamodel.Module
 
-@ChainOverride
-class AccessObjectFactoryTmplExtension extends AccessObjectFactoryTmpl {
+class MongoDbHelper {
 
-	@Inject extension MongoDbHelper mongoDbHelper
-	@Inject extension MongoDbProperties mongoDbProperties
+	@Inject extension HelperBase helperBase
+	@Inject extension MongoDbProperties properties
 
-	override String factoryMethodInit(RepositoryOperation it) {
-		'''
-			«next.factoryMethodInit(it)»
-			«IF mongoDb»
-				ao.setDbManager(dbManager);
-				ao.setDataMapper(«repository.aggregateRoot.module.mapperPackage».«repository.aggregateRoot.name»Mapper.getInstance());
-				ao.setAdditionalDataMappers(getAdditionalDataMappers());
-			«ENDIF»
-		'''
+	def getMapperPackage(Module module) {
+		concatPackage(getBasePackage(module), getMapperPackage())
 	}
+
 }
