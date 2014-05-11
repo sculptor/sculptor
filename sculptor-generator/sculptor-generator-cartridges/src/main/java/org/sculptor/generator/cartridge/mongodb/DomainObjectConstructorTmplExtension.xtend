@@ -18,20 +18,26 @@ package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.consumer.ConsumerTmpl
-import sculptormetamodel.Consumer
+import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.template.domain.DomainObjectConstructorTmpl
+import sculptormetamodel.NamedElement
 
 @ChainOverride
-class ConsumerTmplExtension extends ConsumerTmpl {
+class DomainObjectConstructorTmplExtension extends DomainObjectConstructorTmpl {
 
 	@Inject extension MongoDbProperties mongoDbProperties
+	@Inject extension Helper helper
 
-	override void consumerTest(Consumer it) {
-		if (mongoDb) {
-			/* TODO */
-		} else {
-			next.consumerTest(it)
-		}
+	override String propertyConstructorBaseParameterAssignmentForUnownedOneReference(NamedElement it) {
+		'''
+			«IF mongoDb»
+				this.«name»«unownedReferenceSuffix» = («name» == null ? null : «name».getId());
+				this.«name» = «name»;
+				this.«name»IsLoaded = true;
+			«ELSE»
+				«next.propertyConstructorBaseParameterAssignmentForUnownedOneReference(it)»
+			«ENDIF»
+		'''
 	}
 
 }

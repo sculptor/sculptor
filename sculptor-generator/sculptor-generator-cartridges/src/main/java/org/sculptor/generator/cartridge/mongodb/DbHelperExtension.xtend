@@ -18,19 +18,19 @@ package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.consumer.ConsumerTmpl
-import sculptormetamodel.Consumer
+import org.sculptor.generator.ext.DbHelper
+import sculptormetamodel.NamedElement
 
 @ChainOverride
-class ConsumerTmplExtension extends ConsumerTmpl {
+class DbHelperExtension extends DbHelper {
 
 	@Inject extension MongoDbProperties mongoDbProperties
 
-	override void consumerTest(Consumer it) {
-		if (mongoDb) {
-			/* TODO */
+	override String getDefaultDatabaseName(NamedElement element) {
+		if (mongoDb && element.name == "id") {
+			"_id"
 		} else {
-			next.consumerTest(it)
+			next.getDefaultDatabaseName(element)
 		}
 	}
 

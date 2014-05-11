@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.mongodb
 
 import com.google.inject.Inject
@@ -30,13 +29,15 @@ class RootTmplExtension extends RootTmpl {
 
 	@Inject var MongoDbMapperTmpl mongoDbMapperTmpl
 
+	@Inject extension MongoDbProperties mongoDbProperties
 	@Inject extension Properties properties
 	@Inject extension Helper helper
 
 	override String root(Application it) {
-		if (!modules.isEmpty && isRepositoryToBeGenerated()) {
-			if (mongoDb()) {
-				it.getAllDomainObjects(false).filter(e | e.isPersistent() || e instanceof BasicType).forEach[mongoDbMapperTmpl.mongoDbMapper(it)]
+		if (!modules.isEmpty && isRepositoryToBeGenerated) {
+			if (mongoDb) {
+				it.getAllDomainObjects(false).filter(e|e.isPersistent || e instanceof BasicType).forEach[
+					mongoDbMapperTmpl.mongoDbMapper(it)]
 			}
 		}
 		next.root(it)

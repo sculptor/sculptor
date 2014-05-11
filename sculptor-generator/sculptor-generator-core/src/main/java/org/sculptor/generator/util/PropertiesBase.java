@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.util;
 
 import java.util.ArrayList;
@@ -44,20 +43,11 @@ public class PropertiesBase {
 	@Inject
 	private ConfigurationProvider configuration;
 
-	@Inject
-	@Named("Mutable Defaults")
-	private MutableConfigurationProvider defaultConfiguration;
-
-	@Inject
-	private void init() {
-		initDerivedDefaults();
-		LOG.debug("Initialized properties: {}", getAllPConfigurationKeyValues(configuration));
-	}
-
 	/**
 	 * Prepare the default values with values inherited from the configuration.
 	 */
-	private void initDerivedDefaults() {
+	@Inject
+	private void initDerivedDefaults(@Named("Mutable Defaults") MutableConfigurationProvider defaultConfiguration) {
 
 		if (hasProperty("test.dbunit.dataSetFile")) {
 			// don't generate data set file for each service/consumer
@@ -121,6 +111,7 @@ public class PropertiesBase {
 			initQuick(defaultConfiguration);
 		}
 
+		LOG.debug("Initialized properties: {}", getAllPConfigurationKeyValues(configuration));
 	}
 
 	private void initDerivedDefaultsForRest(MutableConfigurationProvider defaultConfiguration) {
@@ -170,17 +161,11 @@ public class PropertiesBase {
 		defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
 		defaultConfiguration.setBoolean("generate.test.emptyDbunitTestData", false);
 		defaultConfiguration.setString("cache.provider", "none");
-		defaultConfiguration.setString("framework.accessimpl.package", fw("accessimpl.mongodb"));
-		defaultConfiguration.setString("framework.accessimpl.prefix", "MongoDb");
 		defaultConfiguration.setString("javaType.IDTYPE", "String");
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("jpa.provider", "none");
 		defaultConfiguration.setString("jpa.version", "none");
 		defaultConfiguration.setBoolean("generate.ddl", false);
-		defaultConfiguration.setString("framework.accessimpl.AccessBase",
-				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBase");
-		defaultConfiguration.setString("framework.accessimpl.AccessBaseWithException",
-				"org.sculptor.framework.accessimpl.mongodb.MongoDbAccessBaseWithException");
 		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 	}
 
