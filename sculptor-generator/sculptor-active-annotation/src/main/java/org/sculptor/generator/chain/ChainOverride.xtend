@@ -22,6 +22,7 @@ import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
+import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -50,8 +51,7 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
 		if (validate(annotatedClass, context)) {
-			val originalTmplClass = annotatedClass.extendedClass.type
-
+			
 			// Add constructor needed for chaining
 			annotatedClass.addConstructor [
 				addParameter('next', annotatedClass.extendedClass)
@@ -59,8 +59,15 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 				body = ['''super(next);''']
 			]
 
+			val originalTmplClass = annotatedClass.extendedClass.type as ClassDeclaration
+
+			val originalTmplMethodsMap = originalTmplClass.overrideableMethods.toMap[method| method.indexName]
+			
 			// Modify the overrideable methods, rename the actual method and replace it with a public method that delegates to the head of the chain
+			// Filter out non-override methods.  MethodDeclaration doesn't carry an override indicator, so
+			// so instead we look for methods with the same signature in base class to detect an override.
 			val overrideableMethodsInfo = annotatedClass.overrideableMethodsInfo
+				.filter[methodInfo | originalTmplMethodsMap.containsKey(methodInfo.publicMethod.indexName)].toList
 			overrideableMethodsInfo.forEach [ methodInfo |
 				annotatedClass.modifyOverrideableMethod(originalTmplClass, methodInfo, context)
 			]

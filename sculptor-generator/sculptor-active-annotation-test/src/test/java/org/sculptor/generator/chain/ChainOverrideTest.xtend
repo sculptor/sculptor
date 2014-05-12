@@ -54,6 +54,43 @@ class ChainOverrideTest {
 		]
 	}
 
+	@Test
+	def void testNoOverrideKeyword() {
+		'''
+			@org.sculptor.generator.chain.ChainOverride
+			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
+				def String test2(String foo) {
+					"code2"
+				}
+				override def String test2() {
+					"foo"
+				}
+			}
+			
+			@org.sculptor.generator.chain.ChainOverridable
+			class ChainOverrideTestTemplate {
+				def String test2() {
+					"bar"
+				}
+				
+			}
+		'''.compile[
+			val extension ctx = transformationContext
+
+			 // Check the AST if the annotated class has the generated constructor
+			val clazz = findClass('ChainOverrideTestTemplateOverride')
+			assertNotNull(clazz)
+
+			val methods = clazz.declaredMethods
+			assertEquals(4, methods.size)
+			assertTrue(methods.exists[m|m.simpleName == "_chained_test2" && m.parameters.size == 0])
+			assertTrue(methods.exists[m|m.simpleName == "test2" && m.parameters.size == 0])
+			assertTrue(methods.exists[m|m.simpleName == "test2" && m.parameters.size == 1])
+			assertNotNull("_getOverridesDispatchArray should be generated", clazz.findDeclaredMethod("_getOverridesDispatchArray"))
+						
+		]
+	}
+
 	@Test(expected=typeof(RuntimeException))
 	def void testInferredReturnType() {
 		'''

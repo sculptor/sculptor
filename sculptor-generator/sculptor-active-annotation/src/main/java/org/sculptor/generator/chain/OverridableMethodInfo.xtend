@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator.chain
 
-import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
+import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 
 /**
  * This value objects holds the data of a single overridable method needed for chaining.
@@ -33,7 +33,7 @@ class OverridableMethodInfo {
 	/**
 	 * The public method
 	 */
-	MutableMethodDeclaration publicMethod
+	MethodDeclaration publicMethod
 	
 	/**
 	 * The original method name.  Saved because publicMethod will be modified and the name will change

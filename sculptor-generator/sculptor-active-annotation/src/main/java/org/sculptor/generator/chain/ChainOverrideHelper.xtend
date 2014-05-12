@@ -19,6 +19,8 @@ package org.sculptor.generator.chain
 
 import java.util.List
 import org.eclipse.xtend.lib.macro.TransformationContext
+import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
+import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Type
@@ -55,7 +57,7 @@ class ChainOverrideHelper {
 	/**
 	 * @return Name of index constant for the given method
 	 */
-	static def getIndexName(MutableMethodDeclaration methodDecl) {
+	static def getIndexName(MethodDeclaration methodDecl) {
 		val sb = new StringBuilder(methodDecl.simpleName.toUpperCase)
 		methodDecl.parameters.forEach [ param |
 			sb.append("_")
@@ -67,7 +69,7 @@ class ChainOverrideHelper {
 	/**
 	 * @return List of overridable methods (including the ones with inferred return types!!!) of the given class.   
 	 */
-	static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
+	static def getOverrideableMethods(ClassDeclaration annotatedClass) {
 		val dispatchMethodNames = annotatedClass.dispatchMethodNames
 		annotatedClass.declaredMethods.filter[
 			visibility == Visibility.PUBLIC && !static && !final && !abstract &&
@@ -77,7 +79,7 @@ class ChainOverrideHelper {
 	/**
 	 * @return List with names of dispatch methods in the given class.   
 	 */
-	static def getDispatchMethodNames(MutableClassDeclaration annotatedClass) {
+	static def getDispatchMethodNames(ClassDeclaration annotatedClass) {
 		annotatedClass.declaredMethods.filter[simpleName.startsWith("_") && visibility == Visibility.PROTECTED].map[
 			simpleName.substring(1)].toSet
 	}
@@ -96,7 +98,7 @@ class ChainOverrideHelper {
 	 */
 	static def modifyOverrideableMethod(MutableClassDeclaration annotatedClass, Type originalTmplClass,
 			OverridableMethodInfo methodInfo, extension TransformationContext context) {
-		val publicMethod = methodInfo.publicMethod
+		val publicMethod = methodInfo.publicMethod as MutableMethodDeclaration
 		val methodName = methodInfo.methodName
 		publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
 		publicMethod.visibility = Visibility.PUBLIC
