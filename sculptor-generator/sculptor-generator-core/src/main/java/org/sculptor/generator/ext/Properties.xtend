@@ -407,10 +407,6 @@ class Properties {
 		getProperty("nosql.provider") != "none"
 	}
 
-	def mongoDb() {
-		getProperty("nosql.provider") == "mongoDb"
-	}
-
 	def isJpaAnnotationToBeGenerated() {
 		getBooleanProperty("generate.jpa.annotation")
 	}

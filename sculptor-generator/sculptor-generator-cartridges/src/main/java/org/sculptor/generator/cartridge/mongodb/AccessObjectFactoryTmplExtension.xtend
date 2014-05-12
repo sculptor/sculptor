@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,23 +18,21 @@ package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.repository.AccessObjectFactoryTmpl
-import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.RepositoryOperation
 
 @ChainOverride
 class AccessObjectFactoryTmplExtension extends AccessObjectFactoryTmpl {
 
-	@Inject extension Properties properties
-	@Inject extension HelperBase helperBase
+	@Inject extension MongoDbHelper mongoDbHelper
+	@Inject extension MongoDbProperties mongoDbProperties
 
 	override String factoryMethodInit(RepositoryOperation it) {
 		'''
 			«next.factoryMethodInit(it)»
-			«IF mongoDb()»
+			«IF mongoDb»
 				ao.setDbManager(dbManager);
-				ao.setDataMapper(«repository.aggregateRoot.module.getMapperPackage()».«repository.aggregateRoot.name»Mapper.getInstance());
+				ao.setDataMapper(«repository.aggregateRoot.module.mapperPackage».«repository.aggregateRoot.name»Mapper.getInstance());
 				ao.setAdditionalDataMappers(getAdditionalDataMappers());
 			«ENDIF»
 		'''

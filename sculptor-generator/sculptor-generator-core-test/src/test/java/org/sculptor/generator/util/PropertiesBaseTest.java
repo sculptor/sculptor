@@ -44,8 +44,12 @@ public class PropertiesBaseTest {
 		ConfigurationProvider configuration = ChainOverrideAwareInjector.createInjector(PropertiesBase.class).getInstance(
 				ConfigurationProvider.class);
 		assertEquals("business-tier", configuration.getString("project.nature"));
+
+		// common
 		assertEquals("common1", configuration.getString("property1"));
 		assertEquals("local2", configuration.getString("property2"));
+
+		// derived defaults
 		assertEquals("org.joda.time.LocalDate", configuration.getString("javaType.Date"));
     }
 

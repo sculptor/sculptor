@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +66,7 @@ def String service(Service it) {
 			«serviceEjbTestTmpl.serviceJUnitSubclassOpenEjb(it)»
 		«ELSEIF applicationServer() == "appengine"»
 			«serviceTestTmpl.serviceJUnitSubclassAppEngine(it)»
-		«ELSEIF mongoDb() /** TODO: Leave for now to prevent else clause from getting triggered */»
+		«ELSEIF nosql() /** TODO: Leave for now to prevent else clause from getting triggered */»
 		«ELSE»
 			«serviceTestTmpl.serviceJUnitSubclassWithAnnotations(it)»
 		«ENDIF»

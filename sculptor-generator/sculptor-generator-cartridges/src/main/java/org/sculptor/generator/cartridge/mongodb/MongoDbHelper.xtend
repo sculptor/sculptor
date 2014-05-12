@@ -17,21 +17,16 @@
 package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
-import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.template.consumer.ConsumerTmpl
-import sculptormetamodel.Consumer
+import org.sculptor.generator.util.HelperBase
+import sculptormetamodel.Module
 
-@ChainOverride
-class ConsumerTmplExtension extends ConsumerTmpl {
+class MongoDbHelper {
 
-	@Inject extension MongoDbProperties mongoDbProperties
+	@Inject extension HelperBase helperBase
+	@Inject extension MongoDbProperties properties
 
-	override void consumerTest(Consumer it) {
-		if (mongoDb) {
-			/* TODO */
-		} else {
-			next.consumerTest(it)
-		}
+	def getMapperPackage(Module module) {
+		concatPackage(getBasePackage(module), getMapperPackage())
 	}
 
 }
