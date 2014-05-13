@@ -220,10 +220,6 @@ class Properties {
 		getProperty("notChangeableReferenceSetter.visibility")
 	}
 
-	def isBuilderToBeGenerated() {
-		getBooleanProperty("generate.domainObject.builder")
-	}
-
 	def isDomainObjectToBeGenerated() {
 		getBooleanProperty("generate.domainObject")
 	}

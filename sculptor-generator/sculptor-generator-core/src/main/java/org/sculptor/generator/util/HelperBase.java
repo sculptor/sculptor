@@ -1428,14 +1428,6 @@ public class HelperBase {
 		counters.put(counter, initValue);
 	}
 
-	public String getBuilderPackage(DomainObject domainObject) {
-		return getBuilderPackage(domainObject.getModule());
-	}
-
-	public String getBuilderPackage(Module module) {
-		return concatPackage(getBasePackage(module), propBase.getBuilderPackage());
-	}
-
 	public String getReferencePathFromReturnType(RepositoryOperation op) {
 		DomainObject returnType = op.getDomainObjectType();
 		if (returnType == null) {

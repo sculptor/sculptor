@@ -210,7 +210,6 @@ public class PropertiesBase {
 		defaultConfiguration.setString("jpa.provider", "appengine");
 		defaultConfiguration.setString("jpa.version", "1.0");
 		defaultConfiguration.setBoolean("generate.ddl", false);
-		defaultConfiguration.setBoolean("generate.domainObject.builder", false);
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("javaType.IDTYPE", "com.google.appengine.api.datastore.Key");
 		defaultConfiguration.setString("cache.provider", "memcache");
@@ -589,14 +588,6 @@ public class PropertiesBase {
 	 */
 	public Map<String, String> validationAnnotationDefinitions() {
 		return getPropertiesAsMap(getProperties("validation.annotation.", true));
-	}
-
-	public String getBuilderPackage() {
-		return getProperty("package.builder");
-	}
-
-	public boolean getGenerateBuilder() {
-		return Boolean.valueOf(getProperty("generate.domainObject.builder"));
 	}
 
 	/**

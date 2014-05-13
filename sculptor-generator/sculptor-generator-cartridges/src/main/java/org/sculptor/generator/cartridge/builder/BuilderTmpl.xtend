@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.builder
 
 import java.util.List
@@ -33,6 +32,7 @@ import sculptormetamodel.Reference
 
 class BuilderTmpl {
 
+	@Inject extension BuilderHelper builderHelper
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension Properties properties
@@ -60,10 +60,10 @@ def String builderBody(DomainObject it) {
 	 */
 	public class «it.getBuilderClassName()» {
 
-		«it.getBuilderAttributes().map[a | domainObjectAttributeTmpl.attribute(a, false)].join()»
+		«it.getBuilderAttributes().map[a | domainObjectAttributeTmpl.attribute(a, false)].join»
 
-		«it.getBuilderReferences().filter(r| !r.many).map[e | domainObjectReferenceTmpl.oneReferenceAttribute(e, false)].join()»
-		«it.getBuilderReferences().filter(r| r.many).map[e | domainObjectReferenceTmpl.manyReferenceAttribute(e, false)].join()»
+		«it.getBuilderReferences().filter(r| !r.many).map[e | domainObjectReferenceTmpl.oneReferenceAttribute(e, false)].join»
+		«it.getBuilderReferences().filter(r| r.many).map[e | domainObjectReferenceTmpl.manyReferenceAttribute(e, false)].join»
 
 		/**
 		 * Static factory method for «it.getBuilderClassName()»
@@ -84,15 +84,15 @@ def String builderBody(DomainObject it) {
 			}
 		«ENDIF»
 
-		«it.getBuilderAttributes() .map[a | builderAttributeSetter(a, it)].join()»
+		«it.getBuilderAttributes().map[a | builderAttributeSetter(a, it)].join»
 
-		«it.getBuilderReferences().filter(r | !r.many).map[r | builderSingleReferenceSetter(r, it)].join()»
-		«it.getBuilderReferences().filter(r| r.many).map[r | multiReferenceAdd(r, it)].join()»
+		«it.getBuilderReferences().filter(r | !r.many).map[r | builderSingleReferenceSetter(r, it)].join»
+		«it.getBuilderReferences().filter(r| r.many).map[r | multiReferenceAdd(r, it)].join»
 
-		«it.getBuilderAttributes() .map[a | domainObjectAttributeTmpl.propertyGetter(a)].join()»
+		«it.getBuilderAttributes().map[a | domainObjectAttributeTmpl.propertyGetter(a)].join»
 
-		«it.getBuilderReferences().filter(r| !r.many).map[r | domainObjectReferenceTmpl.oneReferenceGetter(r, false)].join()»
-		«it.getBuilderReferences().filter(r| r.many).map[r | domainObjectReferenceTmpl.manyReferenceGetter(r, false)].join()»
+		«it.getBuilderReferences().filter(r| !r.many).map[r | domainObjectReferenceTmpl.oneReferenceGetter(r, false)].join»
+		«it.getBuilderReferences().filter(r| r.many).map[r | domainObjectReferenceTmpl.manyReferenceGetter(r, false)].join»
 
 		/**
 		 * @return new «name» instance constructed based on the values that have been set into this builder
@@ -147,7 +147,6 @@ def String multiReferenceAdd(Reference it, DomainObject obj) {
 	'''
 }
 
-
 def String builderAttribute(Attribute it) {
 	'''
 	protected «it.getImplTypeName()» «name»;
@@ -170,9 +169,8 @@ def String builderSingleReferenceSetter(Reference it, DomainObject obj) {
 	public «obj.name»Builder «name»(«it.getTypeName()» «name») {
 		this.«name» = «name»;
 		return this;
-	};
+	}
 	'''
 }
-
 
 }
