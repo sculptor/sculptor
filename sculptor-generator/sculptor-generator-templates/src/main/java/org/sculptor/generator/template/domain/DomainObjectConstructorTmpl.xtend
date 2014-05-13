@@ -278,7 +278,7 @@ def dispatch String copyModifier(Attribute it, DomainObject target) {
 			    return «IF target.gapClass»(«target.name») «ENDIF»this;
 			}
 			return new «target.name»(«FOR a : target.getConstructorParameters() SEPARATOR ", "»«IF a == it»«it.name»«ELSE»«a.getGetAccessor()»()«ENDIF»«ENDFOR»);
-		};
+		}
 	'''
 }
 
@@ -292,7 +292,7 @@ def dispatch String copyModifier(Reference it, DomainObject target) {
 			    return «IF target.gapClass»(«target.name») «ENDIF»this;
 			}
 			return new «target.name»(«FOR a : target.getConstructorParameters() SEPARATOR ", "»«IF a == it»«it.name»«ELSE»«a.getGetAccessor()»()«ENDIF»«ENDFOR»);
-		};
+		}
 	'''
 }
 

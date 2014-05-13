@@ -91,7 +91,7 @@ def String propertyGetter(Attribute it, boolean annotations) {
 				}
 			«ENDIF »
 			return «name»;
-		};
+		}
 	'''
 }
 
@@ -105,7 +105,7 @@ def String propertySetter(Attribute it) {
 				receiveInternalAuditHandler().recordChange(«it.getDomainObject().name»Properties.«name»(), this.«name», «name»);
 				«ENDIF»
 				this.«name» = «name»;
-			};
+			}
 		«ENDIF»
 	'''
 }
@@ -124,7 +124,7 @@ def String notChangeablePropertySetter(Attribute it) {
 				throw new IllegalArgumentException("Not allowed to change the «name» property.");
 			}
 			this.«name» = «name»;
-		};
+		}
 		«ENDIF»
 	'''
 }
@@ -148,7 +148,7 @@ def String notChangeablePrimitivePropertySetter(Attribute it) {
 				}
 				this.«name» = «name»;
 				this.«name»IsSet = true;
-			};
+			}
 		«ENDIF»
 	'''
 }
@@ -175,7 +175,7 @@ def String idPropertySetter(Attribute it) {
 				throw new IllegalArgumentException("Not allowed to change the id property.");
 			}
 			this.«name» = «name»;
-		};
+		}
 	'''
 }
 

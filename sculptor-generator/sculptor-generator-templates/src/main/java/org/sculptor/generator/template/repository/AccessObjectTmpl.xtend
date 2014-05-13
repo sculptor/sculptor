@@ -277,7 +277,7 @@ def String parameterGetter(Parameter it) {
 	'''
 		public «it.getTypeName()» get«name.toFirstUpper()»() {
 			return «name»;
-		};
+		}
 	'''
 }
 
@@ -285,7 +285,7 @@ def String parameterSetter(Parameter it) {
 	'''
 		public void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
 			this.«name» = «name»;
-		};
+		}
 	'''
 }
 

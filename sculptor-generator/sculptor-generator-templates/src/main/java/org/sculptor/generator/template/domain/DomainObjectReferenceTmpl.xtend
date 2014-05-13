@@ -127,7 +127,7 @@ def String oneReferenceGetter(Reference it, boolean annotations) {
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getTypeName()» get«name.toFirstUpper()»() {
 			return «name»;
-		};
+		}
 	'''
 }
 
@@ -139,7 +139,7 @@ def String oneReferenceIdGetter(Reference it) {
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«getJavaType("IDTYPE")» get«name.toFirstUpper()»«it.unownedReferenceSuffix()»() {
 			«oneReferenceIdGetterBody(it)»
-		};
+		}
 	'''
 }
 
@@ -155,7 +155,7 @@ def String oneReferenceIdSetter(Reference it) {
 		«it.formatJavaDoc()»
 		«it.getVisibilityLitteralSetter()»void set«name.toFirstUpper()»«it.unownedReferenceSuffix()»(«getJavaType("IDTYPE")» «name»«it.unownedReferenceSuffix()») {
 			«oneReferenceIdSetterBody(it)»
-		};
+		}
 		«ENDIF»
 	'''
 }
@@ -176,7 +176,7 @@ def String oneReferenceSetter(Reference it) {
 			receiveInternalAuditHandler().recordChange(«it.getDomainObject().name»Properties.«name»(), this.«name», «name»);
 			«ENDIF»
 			this.«name» = «name»;
-		};
+		}
 		«ENDIF»
 	'''
 }
@@ -202,7 +202,7 @@ def String notChangeableOneReferenceSetter(Reference it) {
 				throw new IllegalArgumentException("Not allowed to change the «name» reference.");
 			}
 			this.«name» = «name»;
-		};
+		}
 		«ENDIF»
 	'''
 }
@@ -260,7 +260,7 @@ def String manyReferenceIdsGetter(Reference it) {
 				«name»«it.unownedReferenceSuffix()» = new «it.getCollectionImplType()»<«getJavaType("IDTYPE")»>();
 			}
 			«manyReferenceIdsGetterBody(it)»
-		};
+		}
 	'''
 }
 
@@ -308,7 +308,7 @@ def String manyReferenceGetter(Reference it, boolean annotations) {
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getCollectionInterfaceType()»<«it.getTypeName()»> get«name.toFirstUpper()»() {
 			return «name»;
-		};
+		}
 	'''
 }
 
@@ -345,7 +345,7 @@ def String bidirectionalReferenceAdd(Reference it) {
 		«it.getVisibilityLitteralSetter()»void add«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 			«name.singular()»Element.set«opposite.name.toFirstUpper()»((«opposite.getTypeName()») this);
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -372,7 +372,7 @@ def String bidirectionalReferenceRemove(Reference it) {
 			«IF clearOpposite»
 			«name.singular()»Element.set«opposite.name.toFirstUpper()»(null);
 		«ENDIF»
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -400,7 +400,7 @@ def String bidirectionalReferenceRemoveAll(Reference it) {
 				}
 			«ENDIF»
 			get«name.toFirstUpper()»().clear();
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -423,7 +423,7 @@ def String unidirectionalReferenceAdd(Reference it) {
 		 */
 		«it.getVisibilityLitteralSetter()»void add«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -438,7 +438,7 @@ def String unidirectionalReferenceRemove(Reference it) {
 			*/
 		«it.getVisibilityLitteralSetter()»void remove«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().remove(«name.singular()»Element);
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -453,7 +453,7 @@ def String unidirectionalReferenceRemoveAll(Reference it) {
 			*/
 		«it.getVisibilityLitteralSetter()»void removeAll«name.toFirstUpper()»() {
 			get«name.toFirstUpper()»().clear();
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -481,7 +481,7 @@ def String many2manyBidirectionalReferenceAdd(Reference it) {
 		«it.getVisibilityLitteralSetter()»void add«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().add(«name.singular()»Element);
 			«name.singular()»Element.get«opposite.name.toFirstUpper()»().add((«opposite.getTypeName()») this);
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -500,7 +500,7 @@ def String many2manyBidirectionalReferenceRemove(Reference it) {
 		«it.getVisibilityLitteralSetter()»void remove«name.toFirstUpper().singular()»(«it.getTypeName()» «name.singular()»Element) {
 			get«name.toFirstUpper()»().remove(«name.singular()»Element);
 			«name.singular()»Element.get«opposite.name.toFirstUpper()»().remove((«opposite.getTypeName()») this);
-		};
+		}
 	«ENDIF»
 	'''
 }
@@ -522,7 +522,7 @@ def String many2manyBidirectionalReferenceRemoveAll(Reference it) {
 			}
 			get«name.toFirstUpper()»().clear();
 
-		};
+		}
 	«ENDIF»
 	'''
 }
