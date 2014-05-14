@@ -345,10 +345,14 @@ class DslTransformation {
 //		null
 //	}
 	
+	private def DomainObject dummyCreateDomainObject() {
+		null
+	}
+	
 	// this "method" is not used, it is kind of "abstract"
-	def dispatch DomainObject transformSimpleDomainObject(DslSimpleDomainObject domainObject) {
+	def dispatch create dummyCreateDomainObject transformSimpleDomainObject(DslSimpleDomainObject domainObject) {
 		error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] passed into transformSimpleDomainObject")
-		(null as DomainObject)
+//		(null as DomainObject)
 	}
 
 	def dispatch create FACTORY.createEntity transformSimpleDomainObject(DslEntity domainObject) {

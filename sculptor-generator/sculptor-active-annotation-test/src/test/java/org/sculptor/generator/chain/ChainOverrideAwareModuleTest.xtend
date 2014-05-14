@@ -40,7 +40,7 @@ class ChainOverrideAwareModuleTest {
 		// Head of chain - the override class
 		val methodDispatchHead = template.methodsDispatchHead
 		assertNotNull(methodDispatchHead)
-		assertEquals(5, methodDispatchHead.size)	
+		assertEquals(7, methodDispatchHead.size)	
 
 		assertSame(template, methodDispatchHead.get(0))
 		assertSame(template, methodDispatchHead.get(1))
@@ -50,7 +50,7 @@ class ChainOverrideAwareModuleTest {
 
 		// Next in chain - the first extension
 		val templateOverrideNextObj = templateOverride.next as TestTemplateMethodDispatch
-		assertEquals(5, templateOverrideNextObj.methodsDispatchTable.size)	
+		assertEquals(7, templateOverrideNextObj.methodsDispatchTable.size)	
 
 		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(0))
 		assertSame(template, templateOverrideNextObj.methodsDispatchTable.get(1))
@@ -61,7 +61,7 @@ class ChainOverrideAwareModuleTest {
 		// Next in chain - the second extension
 		val templateExtensionNextObj = templateExtension.next as TestTemplateMethodDispatch
 		assertNotNull(templateExtensionNextObj)
-		assertEquals(5, templateExtensionNextObj.methodsDispatchTable.size)	
+		assertEquals(7, templateExtensionNextObj.methodsDispatchTable.size)	
 
 		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(0))
 		assertSame(template, templateExtensionNextObj.methodsDispatchTable.get(1))
@@ -72,7 +72,7 @@ class ChainOverrideAwareModuleTest {
 		// Last in chain - the template
 		val templateExtension2NextObj = templateExtension2.next as TestTemplateMethodDispatch
 		assertNotNull(templateExtension2NextObj)
-		assertEquals(5, templateExtension2NextObj.methodsDispatchTable.size)	
+		assertEquals(7, templateExtension2NextObj.methodsDispatchTable.size)	
 
 		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(0))
 		assertSame(template, templateExtension2NextObj.methodsDispatchTable.get(1))

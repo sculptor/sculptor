@@ -68,12 +68,29 @@ class ChainOverrideHelper {
 
 	/**
 	 * @return List of overridable methods (including the ones with inferred return types!!!) of the given class.   
+	 * @TODO: This should probably be optimized
 	 */
 	static def getOverrideableMethods(ClassDeclaration annotatedClass) {
 		val dispatchMethodNames = annotatedClass.dispatchMethodNames
-		annotatedClass.declaredMethods.filter[
+		
+		val nonDispatchOvMethods = annotatedClass.declaredMethods.filter[
 			visibility == Visibility.PUBLIC && !static && !final && !abstract &&
-				!dispatchMethodNames.contains(simpleName)].toList
+				hasInferredTypes == false &&
+				!dispatchMethodNames.contains(simpleName)]
+		// TODO: Do we need to get more precise about picking out these dispatch methods?
+		val dispatchOvMethods = annotatedClass.declaredMethods.filter[
+			simpleName.startsWith("_") &&
+			visibility == Visibility.PROTECTED && !static && !final && !abstract
+		]
+		(nonDispatchOvMethods + dispatchOvMethods).toList
+	}
+	
+	/**
+	 * @return true if the given method has an inferred type either in the return type or a parameter
+	 */
+	static def hasInferredTypes(MethodDeclaration meth) {
+		meth.returnType.inferred ||
+			meth.parameters.exists[param|param.type.inferred]
 	}
 
 	/**
@@ -93,31 +110,35 @@ class ChainOverrideHelper {
 	}
 
 	/**
-	 * Modify the identified overrideable method, renaming the actual method, and replacing it with a public method that
-	 * delegates to the head of the chain.
+	 * Modify the identified overrideable method, modifying the body of the method to delegate to the head of the chain, and
+	 * create  a new method to hold the original implementation.
 	 */
 	static def modifyOverrideableMethod(MutableClassDeclaration annotatedClass, Type originalTmplClass,
 			OverridableMethodInfo methodInfo, extension TransformationContext context) {
 		val publicMethod = methodInfo.publicMethod as MutableMethodDeclaration
 		val methodName = methodInfo.methodName
-		publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
-		publicMethod.visibility = Visibility.PUBLIC
 
-		// add new public delegate method
-		annotatedClass.addMethod(methodName) [ delegateMethod |
+		// add new public method to hold original implementation
+		annotatedClass.addMethod(RENAMED_METHOD_NAME_PREFIX + methodName) [ delegateMethod |
+			delegateMethod.visibility = Visibility.PUBLIC
 			delegateMethod.returnType = publicMethod.returnType
 			delegateMethod.^default = publicMethod.^default
 			delegateMethod.varArgs = publicMethod.varArgs
 			delegateMethod.exceptions = publicMethod.exceptions
 			publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
 			delegateMethod.docComment = publicMethod.docComment
-			delegateMethod.body = ['''
+			delegateMethod.body = publicMethod.body 
+		]
+
+		// Change the original method to now do delegation to head of chain
+		publicMethod.visibility = Visibility.PUBLIC
+			publicMethod.body = ['''
 				«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
 					methodIndexName»];
 				«IF !publicMethod.returnType.isVoid»return «ENDIF»headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
 					parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
 			''']
-		]
+
 	}
 
 	//

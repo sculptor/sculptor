@@ -37,11 +37,12 @@ class ChainOverridableTest {
 
 				def inferredMethod() { "" }
 
-				def dispatch String dispatchMethod(long i) {}
+				def dispatch String dispatchMethod(Long i) {}
 				def dispatch String dispatchMethod(int i) {}
 
 				def dispatch create Boolean.TRUE dispatchCreateMethod(long i) {}
 				def dispatch create Boolean.TRUE dispatchCreateMethod(int i) {}
+				
 			}
 		'''.compile[
 			val extension ctx = transformationContext
@@ -54,6 +55,10 @@ class ChainOverridableTest {
 					parameters.size == 1 && parameters.get(0).simpleName == 'next']
 			)
 
+
+			val methods = annotatedClass.declaredMethods
+			System.out.println(methods.map[it.simpleName].join(", "))
+			
 			// Check the AST if the generated extension class has the overriden methods of the annotated class
 			assertNotNull('No public method', annotatedClass.findDeclaredMethod('overridableMethod'))
 			assertNotNull('No overriden method', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
@@ -61,7 +66,9 @@ class ChainOverridableTest {
 			// Check the AST if the generated extension class has no non-overridable methods of the annotated class
 			assertNull('Final method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
 			assertNull('Inferred method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'inferredMethod'))
-			assertNull('Dispatch method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'dispatchMethod'))
+
+			assertNotNull('Dispatch method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + '_dispatchMethod', newTypeReference(typeof(Long))))
+			assertNotNull('Dispatch method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + '_dispatchMethod', newTypeReference(typeof(Integer))))
 			assertNull('Dispatch create method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + 'dispatchCreateMethod'))
 
 			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findDeclaredMethod("_getOverridesDispatchArray"))
@@ -70,12 +77,13 @@ class ChainOverridableTest {
 			val indexInterface = findInterface('ChainOverridableTestTemplateMethodIndexes')
 			assertNotNull(indexInterface)
 			val fields = indexInterface.declaredFields.toList
-			assertEquals(2, fields.size)
+			assertEquals(4, fields.size)
 			assertEquals("OVERRIDABLEMETHOD", fields.get(0).simpleName)
 			assertEquals("int", fields.get(0).type.simpleName)
 			
-			assertEquals("NUM_METHODS", fields.get(1).simpleName)
-			assertEquals("int", fields.get(1).type.simpleName)
+			val numMethodsField = fields.findFirst[simpleName == "NUM_METHODS"]
+			assertNotNull(numMethodsField)
+			assertEquals("int", numMethodsField.type.simpleName)
 		]
 	}
 

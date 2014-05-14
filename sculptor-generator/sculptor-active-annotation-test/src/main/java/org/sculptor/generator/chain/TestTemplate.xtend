@@ -1,7 +1,5 @@
 package org.sculptor.generator.chain
 
-import org.sculptor.generator.chain.ChainOverridable
-
 @ChainOverridable
 class TestTemplate {
 
@@ -24,5 +22,14 @@ class TestTemplate {
 	def int intMethod() {
 		1
 	}
+	
+	def dispatch String uno(String i) {
+		i
+	}
+
+	def dispatch Integer uno(Integer i) {
+		i
+	}
+	
 	
 }
