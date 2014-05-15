@@ -18,14 +18,17 @@ package org.sculptor.generator.cartridge.builder
 
 import java.util.List
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.DomainObject
+import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 
+@ChainOverridable
 class BuilderHelper {
 
 	@Inject extension HelperBase helperBase
@@ -71,7 +74,7 @@ class BuilderHelper {
 		domainObject.^abstract == false
 	}
 
-	def dispatch boolean needsBuilder(sculptormetamodel.Enum domainObject) {
+	def dispatch boolean needsBuilder(Enum domainObject) {
 		false
 	}
 
