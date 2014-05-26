@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.chain;
 
 /**
@@ -28,23 +27,22 @@ package org.sculptor.generator.chain;
 public abstract class ChainLink<T extends ChainLink<T>> {
 
 	private T nextLink;
-
-	T[] methodsDispatchHead = null;
-
-	public T[] getMethodsDispatchHead() {
-		return methodsDispatchHead;
-	}
+	private T[] methodsDispatchHead = null;
 
 	public ChainLink(T next) {
 		nextLink = next;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setMethodsDispatchHead(Object[] methodsDispatchHead) {
-		this.methodsDispatchHead = (T[])methodsDispatchHead;		
+	public final T[] getMethodsDispatchHead() {
+		return methodsDispatchHead;
 	}
 
-	protected T getNext() {
+	@SuppressWarnings("unchecked")
+	public final void setMethodsDispatchHead(Object[] methodsDispatchHead) {
+		this.methodsDispatchHead = (T[]) methodsDispatchHead;
+	}
+
+	protected final T getNext() {
 		return nextLink;
 	}
 
