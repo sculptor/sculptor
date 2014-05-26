@@ -14,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.chain
 
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
-import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.junit.Ignore
 import org.junit.Test
 
 import static org.junit.Assert.*
-
 import static org.sculptor.generator.chain.ChainOverrideTestHelper.*
-
 
 class ChainOverrideTest {
 
@@ -83,7 +79,6 @@ class ChainOverrideTest {
 
 			val tmplClazz = findClass('ChainOverrideTestTemplate')
 			assertNotNull(tmplClazz)
-//			System.out.println(tmplClazz.declaredMethods.map[it.simpleName].join(", "))
 			assertMethodInfo('Dispatch method renamed', tmplClazz, ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
 			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
 			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
@@ -96,19 +91,12 @@ class ChainOverrideTest {
 
 			val ovMethods = overrideClazz.declaredMethods
 			assertEquals(4, ovMethods.size)
-//			System.out.println(overrideClazz.declaredMethods.map[it.simpleName].join(", "))
 			assertMethodInfo("", overrideClazz, "_dispatchCreateMethod", Visibility::PROTECTED, newTypeReference(typeof(String)))
 			assertMethodInfo("", overrideClazz, "dispatchCreateMethod", Visibility::PUBLIC, newTypeReference(typeof(Object)))
 			assertMethodInfo("", overrideClazz, "_getOverridesDispatchArray", Visibility::PUBLIC)
 		]
 	}
 	
-	
-	/**
-				
-
-	 */
-
 	@Test
 	def void testNoOverrideKeyword() {
 		'''
