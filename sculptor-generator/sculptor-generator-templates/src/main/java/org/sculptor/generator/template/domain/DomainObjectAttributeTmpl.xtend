@@ -101,12 +101,19 @@ def String propertySetter(Attribute it) {
 			«it.formatJavaDoc()»
 			«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 			«it.getVisibilityLitteralSetter()»void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
-				«IF isFullyAuditable() && !transient»
-				receiveInternalAuditHandler().recordChange(«it.getDomainObject().name»Properties.«name»(), this.«name», «name»);
-				«ENDIF»
-				this.«name» = «name»;
+				«propertySetterBody»
 			}
 		«ENDIF»
+	'''
+}
+
+def String propertySetterBody(Attribute it) {
+	'''
+		«IF isFullyAuditable() && !transient»
+		receiveInternalAuditHandler().recordChange(«it.getDomainObject().name»Properties.«name»(), this.«name», «name»);
+		«ENDIF»
+		this.«name» = «name»;
+
 	'''
 }
 
@@ -120,12 +127,18 @@ def String notChangeablePropertySetter(Attribute it) {
 		«ENDIF »
 		«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 		«notChangeablePropertySetterVisibility()» void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
-			if ((this.«name» != null) && !this.«name».equals(«name»)) {
-				throw new IllegalArgumentException("Not allowed to change the «name» property.");
-			}
-			this.«name» = «name»;
+			«notChangeablePropertySetterBody»
 		}
 		«ENDIF»
+	'''
+}
+
+def String notChangeablePropertySetterBody(Attribute it) {
+	'''
+		if ((this.«name» != null) && !this.«name».equals(«name»)) {
+			throw new IllegalArgumentException("Not allowed to change the «name» property.");
+		}
+		this.«name» = «name»;
 	'''
 }
 
@@ -143,13 +156,19 @@ def String notChangeablePrimitivePropertySetter(Attribute it) {
 			«ENDIF »
 			«domainObjectAttributeAnnotationTmpl.propertySetterAnnotations(it)»
 			«notChangeablePropertySetterVisibility()» void set«name.toFirstUpper()»(«it.getTypeName()» «name») {
-				if (this.«name»IsSet && (this.«name» != «name»)) {
-					throw new IllegalArgumentException("Not allowed to change the «name» property.");
-				}
-				this.«name» = «name»;
-				this.«name»IsSet = true;
+				«notChangeablePrimitivePropertySetterBody»
 			}
 		«ENDIF»
+	'''
+}
+
+def String notChangeablePrimitivePropertySetterBody(Attribute it) {
+	'''
+		if (this.«name»IsSet && (this.«name» != «name»)) {
+			throw new IllegalArgumentException("Not allowed to change the «name» property.");
+		}
+		this.«name» = «name»;
+		this.«name»IsSet = true;
 	'''
 }
 
