@@ -406,7 +406,7 @@ def dispatch String domainObject(Enum it) {
 	«ELSE »
 		«it.formatJavaDoc()»
 	«ENDIF »
-	public enum «name» implements java.io.Serializable {
+	public enum «name» implements «getImplementsLitteral» {
 		«it.values.map[v | enumValue(v)].join(",")»;
 
 		«enumIdentifierMap(it)»

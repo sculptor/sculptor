@@ -230,6 +230,10 @@ class Helper {
 		 domainObject.getExtendsLitteral() + domainObject.getImplementsLitteral()
 	}
 
+	def String getImplementsLitteral(Enum enumObject) {
+		"java.io.Serializable"
+	}
+	
 	def String getExtendsLitteral(DomainObject domainObject) {
 		if (domainObject.getExtendsClassName() == "")
 			""
