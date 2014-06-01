@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL Editor
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.0.4.qualifier
+Bundle-Version: 3.0.4
 Bundle-SymbolicName: org.sculptor.dsl.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.sculptor.dsl;visibility:=reexport,
