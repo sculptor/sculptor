@@ -114,9 +114,7 @@ public class DbHelper {
 	}
 
 	def String getDefaultDatabaseName(NamedElement element) {
-		if (mongoDb() && element.name == "id")
-			"_id"
-		else if (isJpaProviderAppEngine() || nosql())
+		if (isJpaProviderAppEngine() || nosql())
 			element.name
 		else
 			element.getDefaultDatabaseName2()

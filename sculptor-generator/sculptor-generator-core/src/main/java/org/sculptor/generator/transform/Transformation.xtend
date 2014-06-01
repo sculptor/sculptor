@@ -610,7 +610,7 @@ class Transformation {
 		pagedFindAll.setHint(base + "countOperation=countAll")
 	}
 
-	def private create FACTORY.createRepositoryOperation createFindByQuerySingleResult(Repository repository, boolean useSingleResult) {
+	def create FACTORY.createRepositoryOperation createFindByQuerySingleResult(Repository repository, boolean useSingleResult) {
 		it.setName("findByQuery")
 		it.setVisibility("protected")
 		it.setRepository(repository)
@@ -618,12 +618,12 @@ class Transformation {
 			it.parameters.add(createUseSingleResultParameter(it))
 	}
 
-	def private create FACTORY.createParameter createUseSingleResultParameter(RepositoryOperation operation) {
+	def create FACTORY.createParameter createUseSingleResultParameter(RepositoryOperation operation) {
 		it.setName("useSingleResult")
 		it.setType("boolean")
 	}
 
-	def private create FACTORY.createRepositoryOperation createCountAll(Repository repository) {
+	def create FACTORY.createRepositoryOperation createCountAll(Repository repository) {
 		it.setName("countAll")
 		it.setVisibility("protected")
 		it.setRepository(repository)

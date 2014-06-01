@@ -27,8 +27,6 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.generator.ext.UmlGraphHelper
 import org.sculptor.generator.test.GeneratorModelTestFixtures
-import sculptormetamodel.Application
-import sculptormetamodel.Module
 
 import static org.junit.Assert.*
 
@@ -41,40 +39,36 @@ class UMLGraphTmplTest extends XtextTest {
 	@Inject
 	var GeneratorModelTestFixtures generatorModelTestFixtures
 
+	var UMLGraphTmpl umlGraphTmpl
 	var extension UmlGraphHelper umlGraphHelper
 
-	var UMLGraphTmpl umlGraphTmpl
-
 	@Before
-	def void setupExtensions() {
+	def void setup() {
+		generatorModelTestFixtures.setupInjector(typeof(UMLGraphTmpl), typeof(UmlGraphHelper))
 		generatorModelTestFixtures.setupModel("generator-tests/doc/model.btdesign")
 		
 		umlGraphTmpl = generatorModelTestFixtures.getProvidedObject(typeof(UMLGraphTmpl))
 		umlGraphHelper = generatorModelTestFixtures.getProvidedObject(typeof(UmlGraphHelper))
-	}
-	
-	def Module coreModule(Application app) {
-		return app.modules.namedElement("core");
 	}
 
 	@Test
 	def void assertModel() {
 		val app = generatorModelTestFixtures.app
 		
-		assertEquals(2, app.modules.size())
+		assertEquals(2, app.modules.size)
 	}
 
 	@Test
 	def void testEntityDot() {
 		val app = generatorModelTestFixtures.app
 		
-		val code = umlGraphTmpl.startContent(app, app.visibleModules().toSet, 0, "entity")
+		val code = umlGraphTmpl.startContent(app, app.visibleModules.toSet, 0, "entity")
 		assertNotNull(code)
 
         code.assertContainsConsecutiveFragments(#[
             'edge [arrowhead = "none"]',
             'edge [arrowtail="none" arrowhead = "open" headlabel="" taillabel="" labeldistance="2.0" labelangle="-30"]'
-        ]);
+        ])
 	}
 
 }

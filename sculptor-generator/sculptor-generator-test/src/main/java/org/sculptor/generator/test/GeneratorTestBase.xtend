@@ -20,6 +20,7 @@ import java.io.File
 import java.io.IOException
 import org.sculptor.generator.SculptorGeneratorException
 import org.sculptor.generator.SculptorGeneratorRunner
+import org.sculptor.generator.configuration.Configuration
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
@@ -60,26 +61,26 @@ abstract class GeneratorTestBase {
 	protected static def void runGenerator(String testName) {
 		deleteDirectory(new File(OUTPUT_DIR, testName))
 
-		System::setProperty("sculptor.generatorPropertiesLocation",
+		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
 			CONFIG_DIR + testName + "/sculptor-generator.properties")
 
-		System::setProperty("outputSlot.path.TO_SRC", OUTPUT_DIR + testName + TO_SRC)
-		System::setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
-		System::setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
-		System::setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
-		System::setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
-		System::setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
-		System::setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
-		System::setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST", OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
-		System::setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
-		System::setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
+		System.setProperty("outputSlot.path.TO_SRC", OUTPUT_DIR + testName + TO_SRC)
+		System.setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
+		System.setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
+		System.setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
+		System.setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
+		System.setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
+		System.setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
+		System.setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST", OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
+		System.setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
+		System.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
 
 		// Abort on invalid generated Java code
-		if (System::getProperty("java.codeformatter.error.abort") != null) {
-			System::setProperty("java.codeformatter.error.abort", "true")
+		if (System.getProperty("java.codeformatter.error.abort") != null) {
+			System.setProperty("java.codeformatter.error.abort", "true")
 		}
 
-		if (!SculptorGeneratorRunner::run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
+		if (!SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
 			throw new SculptorGeneratorException("Code generation failed")
 		}
 	}

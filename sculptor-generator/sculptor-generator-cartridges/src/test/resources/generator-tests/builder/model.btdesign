@@ -1,0 +1,17 @@
+Application FooBar {
+	basePackage=org.sculptor.example.builder
+
+	Module foobar {
+
+		BasicType Foo {
+			String name key
+			Timestamp timestamp key
+		}
+
+		enum Bar {
+			ONE, TWO, THREE
+		}
+
+	}
+
+}

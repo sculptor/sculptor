@@ -9,7 +9,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.3</version>
+	<version>3.0.4</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -74,7 +74,7 @@
 
 		<eclipse-release>kepler</eclipse-release>
 		<tycho-version>0.20.0</tycho-version>
-		<xtext-version>2.5.3</xtext-version>
+		<xtext-version>2.6.0</xtext-version>
 		<guava-version>14.0</guava-version>
 		<guice-version>3.0</guice-version>
 		<slf4j-version>1.7.6</slf4j-version>
@@ -86,7 +86,8 @@
 		<hibernate-version>4.2.8.Final</hibernate-version>
 	    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
 		<validation-version>1.0.0.GA</validation-version>
-		<appengine-version>1.8.8</appengine-version>
+		<!-- We have to stay with GAE version 1.8.1 here because this is the last version which supports Java 6 -->
+		<appengine-version>1.8.1</appengine-version>
 		<drools-version>5.5.0.Final</drools-version>
 		<camel-version>2.12.2</camel-version>
 		<mongodb-version>2.11.3</mongodb-version>
@@ -444,7 +445,7 @@
 					<!-- make sure our code only has 1.6 dependencies -->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
-					<version>1.10</version>
+					<version>1.11</version>
 					<configuration>
 						<signature>
 							<groupId>org.codehaus.mojo.signature</groupId>

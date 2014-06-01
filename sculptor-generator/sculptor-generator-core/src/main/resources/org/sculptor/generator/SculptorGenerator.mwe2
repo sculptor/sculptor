@@ -16,13 +16,14 @@
  */
 module org.sculptor.generator.SculptorGenerator
 
+import org.sculptor.generator.mwe2.ChainOverrideAwareGuiceWorkflowComponent
 import org.sculptor.generator.mwe2.ImportAwareUriBaseReader
 import org.sculptor.generator.mwe2.SculptordslValidationWorkflowComponent
-import org.sculptor.generator.mwe2.ChainOverrideAwareGuiceWorkflowComponent
 
 var modelFile
 
 Workflow {
+
 	// Read DSL model instance
 	component = ImportAwareUriBaseReader {
 		uri = modelFile
@@ -58,4 +59,5 @@ Workflow {
 		inputSlot = "pass2transformation"
 		action = "org.sculptor.generator.template.RootTmpl.root"
 	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.ext
 
 import java.io.File
@@ -101,7 +100,7 @@ class Helper {
 				else
 					text)
 			out.close()
-			GeneratorContext.addGeneratedFile(fl);
+			GeneratorContext.addGeneratedFile(fl)
 			LOG.debug("Created file : " + fl)
 		} else {
 			LOG.debug("Skipped file : " + fl)
@@ -231,6 +230,10 @@ class Helper {
 		 domainObject.getExtendsLitteral() + domainObject.getImplementsLitteral()
 	}
 
+	def String getImplementsLitteral(Enum enumObject) {
+		"java.io.Serializable"
+	}
+	
 	def String getExtendsLitteral(DomainObject domainObject) {
 		if (domainObject.getExtendsClassName() == "")
 			""
@@ -1580,42 +1583,6 @@ class Helper {
 			isValidationAnnotationToBeGenerated()
 	}
 
-	// Builder-related extensions
-	def List<Attribute> getBuilderAttributes(DomainObject domainObject) {
-		domainObject.getAllAttributes().filter[a | !a.isUuid() && a != domainObject.getIdAttribute() && a.name != "version"].toList
-	}
-
-	def List<Reference> getBuilderReferences(DomainObject domainObject) {
-		domainObject.getAllReferences().toList
-	}
-
-	def List<NamedElement> getBuilderConstructorParameters(DomainObject domainObject) {
-		domainObject.getConstructorParameters()
-	}
-
-	def List<NamedElement> getBuilderProperties(DomainObject domainObject) {
-		val List<NamedElement> retVal = newArrayList
-		retVal.addAll(domainObject.getBuilderAttributes)
-		retVal.addAll(domainObject.getBuilderReferences)
-		retVal
-	}
-
-	def String getBuilderClassName(DomainObject domainObject) {
-		domainObject.name + "Builder"
-	}
-
-	def String getBuilderFqn(DomainObject domainObject) {
-		domainObject.getBuilderPackage + "." + domainObject.getBuilderClassName()
-	}
-
-	def dispatch boolean needsBuilder(DomainObject domainObject) {
-		domainObject.^abstract == false
-	}
-
-	def dispatch boolean needsBuilder(Enum domainObject) {
-		false
-	}
-
 	/**
 	 * Get the generic type declaration for generic access objects.
 	 */
@@ -1641,4 +1608,5 @@ class Helper {
 			strategy.addDefaultValues(operation)
 		}
 	}
+
 }

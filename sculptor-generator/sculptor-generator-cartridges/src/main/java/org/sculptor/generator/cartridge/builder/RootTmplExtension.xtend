@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.builder
 
 import com.google.inject.Inject
@@ -29,12 +28,13 @@ class RootTmplExtension extends RootTmpl {
 
 	@Inject var BuilderTmpl builderTmpl
 
-	@Inject extension Properties properties
+	@Inject extension BuilderHelper builderHelper
 	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 	override String root(Application it) {
 		if (isDomainObjectToBeGenerated()) {
-			getAllDomainObjects(false).filter[e | e.needsBuilder()].forEach[e | builderTmpl.builder(e)]
+			getAllDomainObjects(false).filter[e|e.needsBuilder].forEach[e|builderTmpl.builder(e)]
 		}
 		next.root(it)
 	}

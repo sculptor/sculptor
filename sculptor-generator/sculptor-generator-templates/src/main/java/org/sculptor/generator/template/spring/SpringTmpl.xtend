@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,10 +81,6 @@ def String spring(Application it) {
 		«ehcacheTmpl.ehcacheXml(it)»
 	«ENDIF»
 
-	«IF mongoDb()»
-		«mongodb(it)»
-	«ENDIF»
-
 	«IF isTestToBeGenerated()»
 		«applicationContextTest(it)»
 		«springPropertiesTest(it)»
@@ -105,9 +101,6 @@ def String spring(Application it) {
 				«springIntegrationTmpl.springIntegrationTestConfig(it)»
 			«ENDIF»
 		«ENDIF»
-		«IF mongoDb()»
-			«mongodbTest(it)»
-		«ENDIF»
 	«ENDIF»
 	'''
 }
@@ -126,23 +119,41 @@ def String headerWithMoreNamespaces(Object it) {
 	'''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:aop="http://www.springframework.org/schema/aop"
-		xmlns:tx="http://www.springframework.org/schema/tx"
-		xmlns:jee="http://www.springframework.org/schema/jee"
-		xmlns:context="http://www.springframework.org/schema/context"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="
-			http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
-			http://www.springframework.org/schema/context
-			http://www.springframework.org/schema/context/spring-context.xsd
-			http://www.springframework.org/schema/aop
-			http://www.springframework.org/schema/aop/spring-aop.xsd
-			http://www.springframework.org/schema/jee
-			http://www.springframework.org/schema/jee/spring-jee.xsd
-			http://www.springframework.org/schema/tx
-			http://www.springframework.org/schema/tx/spring-tx.xsd">
+			xmlns:aop="http://www.springframework.org/schema/aop"
+			xmlns:tx="http://www.springframework.org/schema/tx"
+			xmlns:jee="http://www.springframework.org/schema/jee"
+			xmlns:context="http://www.springframework.org/schema/context"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			«headerNamespaceAdditions»
+			xsi:schemaLocation="
+				http://www.springframework.org/schema/beans
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context
+				http://www.springframework.org/schema/context/spring-context.xsd
+				http://www.springframework.org/schema/aop
+				http://www.springframework.org/schema/aop/spring-aop.xsd
+				http://www.springframework.org/schema/jee
+				http://www.springframework.org/schema/jee/spring-jee.xsd
+				http://www.springframework.org/schema/tx
+				http://www.springframework.org/schema/tx/spring-tx.xsd
+				«headerSchemaLocationAdditions»">
 
+	'''
+}
+
+/*
+ * Extension point to generate more namespaces in header.
+ */
+def String headerNamespaceAdditions(Object it) {
+	'''
+	'''
+}
+
+/*
+ * Extension point to generate more schema locations in header.
+ */
+def String headerSchemaLocationAdditions(Object it) {
+	'''
 	'''
 }
 
@@ -169,9 +180,6 @@ def String applicationContext(Application it) {
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more.xml")»"/>
 		«IF it.hasConsumers() && isEar() »
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml")»"/>
-		«ENDIF»
-		«IF mongoDb()»
-			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb.xml")»"/>
 		«ENDIF»
 		«IF isSpringRemotingToBeGenerated()»
 			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml")»"/>
@@ -215,9 +223,6 @@ def String applicationContextTest(Application it) {
 		«ENDIF»
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml")»"/>
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml")»"/>
-		«IF mongoDb()»
-			<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("mongodb-test.xml")»"/>
-		«ENDIF»
 		«applicationContextTestAdditions(it)»
 	</beans>
 	'''
@@ -282,16 +287,6 @@ def String generatedSpringProperties(Application it) {
 	«ENDIF»
 	«IF getSpringRemotingType() == "rmi" »
 		rmiRegistry.port=1199
-	«ENDIF»
-	«IF mongoDb()»
-		mongodb.dbname=«name»
-		mongodb.url1=localhost:27017
-		mongodb.url2=
-		mongodbOptions.connectionsPerHost=10
-		mongodbOptions.threadsAllowedToBlockForConnectionMultiplier=5
-		mongodbOptions.connectTimeout=0
-		mongodbOptions.socketTimeout=0
-		mongodbOptions.autoConnectRetry=false
 	«ENDIF»
 	«IF isSpringDataSourceSupportToBeGenerated()»
 		# datasource provider
@@ -449,11 +444,6 @@ def String interceptor(Application it) {
 		«IF isServiceContextToBeGenerated()»
 			<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
 		«ENDIF»
-		«IF mongoDb()»
-			<bean id="mongodbManagerAdvice" class="«fw("accessimpl.mongodb.DbManagerAdvice")»" >
-				<property name="dbManager" ref="mongodbManager" />
-			</bean>
-		«ENDIF»
 		«IF isInjectDrools()»
 			<bean id="droolsAdvice" class="«fw('drools.DroolsAdvice')»">
 				<property name="droolsRuleSet" value="${drools.rule-source}"/>
@@ -543,9 +533,6 @@ def String aopConfig(Application it) {
 		«IF jpa()»
 			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="5" />
 		«ENDIF»
-		«IF mongoDb()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="mongodbManagerAdvice" order="5" />
-		«ENDIF»
 
 		«IF isInjectDrools()»
 			<aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="6" />
@@ -563,9 +550,6 @@ def String aopConfig(Application it) {
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateErrorHandlingAdvice" order="4" />
 			«ELSEIF isValidationAnnotationToBeGenerated()»
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-			«ENDIF»
-			«IF mongoDb()»
-				<aop:advisor pointcut-ref="messageConsumer" advice-ref="mongodbManagerAdvice" order="5" />
 			«ENDIF»
 		«ENDIF»
 
@@ -971,60 +955,6 @@ def String jtaTxManager(Application it) {
 	'''
 	<tx:jta-transaction-manager/>
 			<alias name="transactionManager" alias="txManager"/>
-	'''
-}
-
-def String mongodb(Application it) {
-	fileOutput(it.getResourceDir("spring") + "mongodb.xml", OutputSlot::TO_GEN_RESOURCES, '''
-	«header(it)»
-		«mongodbManager(it)»
-		«mongodbOptions(it)»
-	</beans>
-	'''
-	)
-}
-
-def String mongodbManager(Application it) {
-	'''
-	<bean id="mongodbManager" class="«fw("accessimpl.mongodb.DbManager")»">
-		<property name="dbname" value="${mongodb.dbname}" />
-		<property name="dbUrl1" value="${mongodb.url1}" />
-		<property name="dbUrl2" value="${mongodb.url2}" />
-		<property name="options" ref="mongodbOptions" />
-	</bean>
-	'''
-}
-
-def String mongodbOptions(Application it) {
-	'''
-	<bean id="mongodbOptions" class="«fw("accessimpl.mongodb.MongoOptionsWrapper")»">
-		<property name="connectionsPerHost" value="${mongodbOptions.connectionsPerHost}" />
-		<property name="threadsAllowedToBlockForConnectionMultiplier" value="${mongodbOptions.threadsAllowedToBlockForConnectionMultiplier}" />
-		<property name="connectTimeout" value="${mongodbOptions.connectTimeout}" />
-		<property name="socketTimeout" value="${mongodbOptions.socketTimeout}" />
-		<property name="autoConnectRetry" value="${mongodbOptions.autoConnectRetry}" />
-	</bean>
-	'''
-}
-
-def String mongodbTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + "mongodb-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
-	«header(it)»
-		«mongodbManagerTest(it)»
-		«mongodbOptions(it)»
-	</beans>
-	'''
-	)
-}
-
-def String mongodbManagerTest(Application it) {
-	'''
-	<bean id="mongodbManager" class="«fw("accessimpl.mongodb.DbManager")»">
-		<property name="dbname" value="«name»-test" />
-		<property name="dbUrl1" value="${mongodb.url1}" />
-		<property name="dbUrl2" value="${mongodb.url2}" />
-		<property name="options" ref="mongodbOptions" />
-	</bean>
 	'''
 }
 

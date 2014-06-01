@@ -17,9 +17,10 @@
 
 package org.sculptor.generator.chain
 
-import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtend.lib.macro.TransformationContext
+import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
+import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableMethodDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Type
@@ -32,14 +33,14 @@ class ChainOverrideHelper {
 	/**
 	 * Add a method to get the dispatch array for each overrideable method for classToModify
 	 */
-	protected static def addGetOverridesDispatchArrayMethod(
+	static def addGetOverridesDispatchArrayMethod(
 		MutableClassDeclaration classToModify,
 		Type overrideableClass,
 		extension TransformationContext context,
 		List<OverridableMethodInfo> overridableMethodsInfo
 	) {
 		classToModify.addMethod("_getOverridesDispatchArray") [
-			visibility = Visibility::PUBLIC
+			visibility = Visibility.PUBLIC
 			final = false
 			returnType = overrideableClass.newTypeReference.newArrayTypeReference
 			val methodIndexesName = overrideableClass.methodIndexesName
@@ -56,7 +57,7 @@ class ChainOverrideHelper {
 	/**
 	 * @return Name of index constant for the given method
 	 */
-	protected static def getIndexName(MutableMethodDeclaration methodDecl) {
+	static def getIndexName(MethodDeclaration methodDecl) {
 		val sb = new StringBuilder(methodDecl.simpleName.toUpperCase)
 		methodDecl.parameters.forEach [ param |
 			sb.append("_")
@@ -67,53 +68,77 @@ class ChainOverrideHelper {
 
 	/**
 	 * @return List of overridable methods (including the ones with inferred return types!!!) of the given class.   
+	 * @TODO: This should probably be optimized
 	 */
-	protected static def getOverrideableMethods(MutableClassDeclaration annotatedClass) {
-		val dispatchMethods = annotatedClass.declaredMethods.filter[it.simpleName.startsWith("_")].map[
-			it.simpleName.substring(1)].toSet
-		annotatedClass.declaredMethods.filter[
-			!dispatchMethods.exists[dm|simpleName == dm] && visibility == Visibility::PUBLIC && static == false &&
-				final == false].toList
+	static def getOverrideableMethods(ClassDeclaration annotatedClass) {
+		val dispatchMethodNames = annotatedClass.dispatchMethodNames
+		
+		val nonDispatchOvMethods = annotatedClass.declaredMethods.filter[
+			visibility == Visibility.PUBLIC && !static && !final && !abstract &&
+				hasInferredTypes == false &&
+				!dispatchMethodNames.contains(simpleName)]
+		// TODO: Do we need to get more precise about picking out these dispatch methods?
+		val dispatchOvMethods = annotatedClass.declaredMethods.filter[
+			simpleName.startsWith("_") &&
+			visibility == Visibility.PROTECTED && !static && !final && !abstract
+		]
+		(nonDispatchOvMethods + dispatchOvMethods).toList
+	}
+	
+	/**
+	 * @return true if the given method has an inferred type either in the return type or a parameter
+	 */
+	static def hasInferredTypes(MethodDeclaration meth) {
+		meth.returnType.inferred ||
+			meth.parameters.exists[param|param.type.inferred]
+	}
+
+	/**
+	 * @return List with names of dispatch methods in the given class.   
+	 */
+	static def getDispatchMethodNames(ClassDeclaration annotatedClass) {
+		annotatedClass.declaredMethods.filter[simpleName.startsWith("_") && visibility == Visibility.PROTECTED].map[
+			simpleName.substring(1)].toSet
 	}
 
 	/**
 	 * @return List of OverridableMethodInfo instances created for all overridable methods (excluding the ones with inferred return types!!!) of the given class.  
 	 */
-	protected static def getOverrideableMethodsInfo(MutableClassDeclaration annotatedClass) {
-		val result = new ArrayList<OverridableMethodInfo>()
-		result.addAll(
-			annotatedClass.overrideableMethods.filter[!returnType.inferred].map [ method |
-				new OverridableMethodInfo(method.indexName, method, new String(method.simpleName))
-			])
-		result
+	static def getOverrideableMethodsInfo(MutableClassDeclaration annotatedClass) {
+		annotatedClass.overrideableMethods.filter[!returnType.inferred].map[method|
+			new OverridableMethodInfo(method.indexName, method, new String(method.simpleName))].toList
 	}
 
 	/**
-	 * Modify the identified overrideable method, renaming the actual method, and replacing it with a public method that
-	 * delegates to the head of the chain.
+	 * Modify the identified overrideable method, modifying the body of the method to delegate to the head of the chain, and
+	 * create  a new method to hold the original implementation.
 	 */
-	protected static def modifyOverrideableMethod(MutableClassDeclaration annotatedClass, Type originalTmplClass,
+	static def modifyOverrideableMethod(MutableClassDeclaration annotatedClass, Type originalTmplClass,
 			OverridableMethodInfo methodInfo, extension TransformationContext context) {
-		val publicMethod = methodInfo.publicMethod
+		val publicMethod = methodInfo.publicMethod as MutableMethodDeclaration
 		val methodName = methodInfo.methodName
-		publicMethod.simpleName = RENAMED_METHOD_NAME_PREFIX + methodName
-		publicMethod.visibility = Visibility::PUBLIC
 
-		// add new public delegate method
-		annotatedClass.addMethod(methodName) [ delegateMethod |
+		// add new public method to hold original implementation
+		annotatedClass.addMethod(RENAMED_METHOD_NAME_PREFIX + methodName) [ delegateMethod |
+			delegateMethod.visibility = Visibility.PUBLIC
 			delegateMethod.returnType = publicMethod.returnType
 			delegateMethod.^default = publicMethod.^default
 			delegateMethod.varArgs = publicMethod.varArgs
 			delegateMethod.exceptions = publicMethod.exceptions
 			publicMethod.parameters.forEach[delegateMethod.addParameter(simpleName, type)]
 			delegateMethod.docComment = publicMethod.docComment
-			delegateMethod.body = ['''
+			delegateMethod.body = publicMethod.body 
+		]
+
+		// Change the original method to now do delegation to head of chain
+		publicMethod.visibility = Visibility.PUBLIC
+			publicMethod.body = ['''
 				«originalTmplClass.simpleName» headObj = getMethodsDispatchHead()[«originalTmplClass.methodIndexesName».«methodInfo.
 					methodIndexName»];
 				«IF !publicMethod.returnType.isVoid»return «ENDIF»headObj.«RENAMED_METHOD_NAME_PREFIX + methodName»(«FOR p : publicMethod.
 					parameters SEPARATOR ", "»«p.simpleName»«ENDFOR»);
 			''']
-		]
+
 	}
 
 	//
@@ -123,14 +148,14 @@ class ChainOverrideHelper {
 	/**
 	 * @return Fully qualified name of method indexes interface
 	 */
-	protected static def getMethodIndexesName(Type overrideableClass) {
+	static def getMethodIndexesName(Type overrideableClass) {
 		overrideableClass.qualifiedName + "MethodIndexes"
 	}
 
 	/**
 	 * @return Fully qualified name of dispatch class
 	 */
-	protected static def getDispatchClassName(Type overrideableClass) {
+	static def getDispatchClassName(Type overrideableClass) {
 		overrideableClass.qualifiedName + "MethodDispatch"
 	}
 }

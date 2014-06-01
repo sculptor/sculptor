@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.chain
 
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
+import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.junit.Ignore
 import org.junit.Test
 
 import static org.junit.Assert.*
+import static org.sculptor.generator.chain.ChainOverrideTestHelper.*
 
 class ChainOverrideTest {
 
@@ -54,7 +55,87 @@ class ChainOverrideTest {
 		]
 	}
 
+	@Test
+	def void testGeneratedCodeForDispatchMethods() {
+		'''
+			@org.sculptor.generator.chain.ChainOverride
+			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
+				override dispatch create Boolean.TRUE dispatchCreateMethod(String s) {}
+			}
+			
+			@org.sculptor.generator.chain.ChainOverridable
+			class ChainOverrideTestTemplate {
+				def dispatch create Boolean.TRUE dispatchCreateMethod(Object o) {}
+				def dispatch create Boolean.TRUE dispatchCreateMethod(String s) {}
+				def dispatch create Boolean.TRUE dispatchCreateMethod(Integer i) {}
+				
+				def dispatch String doDispatch(String a) {a}
+
+				def dispatch Integer doDispatch(int i) {i}
+				
+			}
+		'''.compile[
+			val extension ctx = transformationContext
+
+			val tmplClazz = findClass('ChainOverrideTestTemplate')
+			assertNotNull(tmplClazz)
+			assertMethodInfo('Dispatch method renamed', tmplClazz, ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Integer)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Integer)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, 'doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Object)))
+			
+			val overrideClazz = findClass('ChainOverrideTestTemplateOverride')
+			assertNotNull(overrideClazz)
+
+			val ovMethods = overrideClazz.declaredMethods
+			assertEquals(4, ovMethods.size)
+			assertMethodInfo("", overrideClazz, "_dispatchCreateMethod", Visibility::PROTECTED, newTypeReference(typeof(String)))
+			assertMethodInfo("", overrideClazz, "dispatchCreateMethod", Visibility::PUBLIC, newTypeReference(typeof(Object)))
+			assertMethodInfo("", overrideClazz, "_getOverridesDispatchArray", Visibility::PUBLIC)
+		]
+	}
+	
+	@Test
+	def void testNoOverrideKeyword() {
+		'''
+			@org.sculptor.generator.chain.ChainOverride
+			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
+				def String test2(String foo) {
+					"code2"
+				}
+				override def String test2() {
+					"foo"
+				}
+			}
+			
+			@org.sculptor.generator.chain.ChainOverridable
+			class ChainOverrideTestTemplate {
+				def String test2() {
+					"bar"
+				}
+				
+			}
+		'''.compile[
+			val extension ctx = transformationContext
+
+			 // Check the AST if the annotated class has the generated constructor
+			val clazz = findClass('ChainOverrideTestTemplateOverride')
+			assertNotNull(clazz)
+
+			val methods = clazz.declaredMethods
+			assertEquals(4, methods.size)
+			assertTrue(methods.exists[m|m.simpleName == "_chained_test2" && m.parameters.size == 0])
+			assertTrue(methods.exists[m|m.simpleName == "test2" && m.parameters.size == 0])
+			assertTrue(methods.exists[m|m.simpleName == "test2" && m.parameters.size == 1])
+			assertNotNull("_getOverridesDispatchArray should be generated", clazz.findDeclaredMethod("_getOverridesDispatchArray"))
+						
+		]
+	}
+
 	@Test(expected=typeof(RuntimeException))
+	@Ignore
 	def void testInferredReturnType() {
 		'''
 			@org.sculptor.generator.chain.ChainOverride

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.mongodb
 
 import com.google.inject.Inject
@@ -28,10 +27,11 @@ class ServiceTmplExtension extends ServiceTmpl {
 
 	@Inject private var MongoDbServiceTestTmpl mongoDbServiceTestTmpl
 
+	@Inject extension MongoDbProperties mongoDbProperties
 	@Inject extension Properties properties
 
 	override String service(Service it) {
-		if (isTestToBeGenerated() && mongoDb()) {
+		if (isTestToBeGenerated && mongoDb) {
 			mongoDbServiceTestTmpl.serviceJUnitSubclassMongoDb(it);
 		}
 		next.service(it)

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.3</version>
+		<version>3.0.4</version>
 	</parent>
 	<artifactId>sculptor-generator</artifactId>
 	<packaging>pom</packaging>
@@ -13,6 +13,7 @@
 	<modules>
 		<module>eclipse-library</module>
 		<module>sculptor-metamodel</module>
+		<module>sculptor-generator-configuration</module>
 		<module>sculptor-active-annotation</module>
 		<module>sculptor-active-annotation-test</module>
 		<module>sculptor-generator-dependencies</module>

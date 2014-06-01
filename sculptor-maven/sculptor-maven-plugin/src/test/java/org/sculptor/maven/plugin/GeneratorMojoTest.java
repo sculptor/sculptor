@@ -109,7 +109,6 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 				statusFileProps.getProperty(GENERATED_FILE));
 	}
 
-	@SuppressWarnings("unchecked")
 	public void testExecuteSkip() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test1"));
 		doThrow(AssertionFailedError.class).when(mojo).executeGenerator();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,7 +77,6 @@ def String parameterAnnotations(NamedElement it) {
 	'''«IF isGenerateParameterName()»@«fw("annotation.Name")»("«name»")«ENDIF»'''
 }
 
-
 def String propertyConstructorBase(DomainObject it) {
 	'''
 		«IF !getConstructorParameters(it).isEmpty »
@@ -88,21 +87,25 @@ def String propertyConstructorBase(DomainObject it) {
 				«val par = it.getConstructorParameters()»
 				«{par.removeAll(it.getSuperConstructorParameters()); ""}»
 				«FOR a : par»
-					«IF a.validateNotNullInConstructor() »
+					«IF a.validateNotNullInConstructor()»
 						«validateNotNull(it, a.name) »
 					«ENDIF»
-					«IF a instanceof Reference && (a as Reference).many »
+					«IF a instanceof Reference && (a as Reference).many»
 						this.«a.name».addAll(«a.name»);
-					«ELSEIF a.isUnownedReference() && mongoDb() »
-						this.«a.name»«a.unownedReferenceSuffix()» = («a.name» == null ? null : «a.name».getId());
-						this.«a.name» = «a.name»;
-						this.«a.name»IsLoaded = true;
+					«ELSEIF a.isUnownedReference()»
+						«propertyConstructorBaseParameterAssignmentForUnownedOneReference(a)»
 					«ELSE»
 						this.«a.name» = «a.name»;
 					«ENDIF»
 				«ENDFOR»
 			}
 		«ENDIF»
+	'''
+}
+
+def String propertyConstructorBaseParameterAssignmentForUnownedOneReference(NamedElement it) {
+	'''
+		this.«name» = «name»;
 	'''
 }
 
@@ -275,7 +278,7 @@ def dispatch String copyModifier(Attribute it, DomainObject target) {
 			    return «IF target.gapClass»(«target.name») «ENDIF»this;
 			}
 			return new «target.name»(«FOR a : target.getConstructorParameters() SEPARATOR ", "»«IF a == it»«it.name»«ELSE»«a.getGetAccessor()»()«ENDIF»«ENDFOR»);
-		};
+		}
 	'''
 }
 
@@ -289,7 +292,7 @@ def dispatch String copyModifier(Reference it, DomainObject target) {
 			    return «IF target.gapClass»(«target.name») «ENDIF»this;
 			}
 			return new «target.name»(«FOR a : target.getConstructorParameters() SEPARATOR ", "»«IF a == it»«it.name»«ELSE»«a.getGetAccessor()»()«ENDIF»«ENDFOR»);
-		};
+		}
 	'''
 }
 

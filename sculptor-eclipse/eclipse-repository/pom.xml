@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-eclipse</artifactId>
-		<version>3.0.3</version>
+		<version>3.0.4</version>
 	</parent>
 	<groupId>org.sculptorgenerator.eclipse</groupId>
 	<artifactId>eclipse-repository</artifactId>
@@ -27,7 +27,7 @@
 					<path>updates</path>
 					<merge>true</merge>
 					<noJekyll>false</noJekyll>
-					<message>creates Sculptor Elipse update site ${project.version}</message>
+					<message>creates Sculptor Eclipse update site ${project.version}</message>
 				</configuration>
 			</plugin>
 		</plugins>

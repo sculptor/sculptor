@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,13 @@ package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.consumer.ConsumerTmpl
 import sculptormetamodel.Consumer
 
 @ChainOverride
 class ConsumerTmplExtension extends ConsumerTmpl {
-	@Inject extension Properties properties
+
+	@Inject extension MongoDbProperties mongoDbProperties
 
 	override void consumerTest(Consumer it) {
 		if (mongoDb) {
@@ -33,5 +33,5 @@ class ConsumerTmplExtension extends ConsumerTmpl {
 			next.consumerTest(it)
 		}
 	}
-	
+
 }

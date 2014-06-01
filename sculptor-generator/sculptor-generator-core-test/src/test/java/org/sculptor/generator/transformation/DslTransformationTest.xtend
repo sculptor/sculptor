@@ -17,8 +17,6 @@
 
 package org.sculptor.generator.transformation
 
-import com.google.inject.Guice
-import com.google.inject.Injector
 import javax.inject.Provider
 import org.junit.Before
 import org.junit.Test
@@ -27,7 +25,8 @@ import org.junit.runners.JUnit4
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslInheritanceType
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
-import org.sculptor.generator.chain.ChainOverrideAwareModule
+import org.sculptor.generator.chain.ChainOverrideAwareInjector
+import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.transform.DslTransformation
 import sculptormetamodel.Entity
@@ -52,9 +51,10 @@ class DslTransformationTest {
 	def void setupDslModel() {
 
 		// Activate cartridge 'test' with transformation extensions 
-		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/transformation/sculptor-generator.properties")
+		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
+			"generator-tests/transformation/sculptor-generator.properties")
 
-		val Injector injector = Guice::createInjector(new ChainOverrideAwareModule(typeof(DslTransformation)))
+		val injector = ChainOverrideAwareInjector.createInjector(typeof(DslTransformation))
 		helper = injector.getInstance(typeof(Helper))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 

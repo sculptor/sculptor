@@ -16,8 +16,6 @@
  */
 package org.sculptor.generator.transformation
 
-import com.google.inject.Guice
-import com.google.inject.Injector
 import com.google.inject.Provider
 import org.eclipse.emf.common.util.EList
 import org.eclipse.xtext.junit4.InjectWith
@@ -29,7 +27,8 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
-import org.sculptor.generator.chain.ChainOverrideAwareModule
+import org.sculptor.generator.chain.ChainOverrideAwareInjector
+import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.HelperBase
@@ -57,14 +56,14 @@ class NestedTransformationTest extends XtextTest {
 	def void setupDslModel() {
 
 		// Activate cartridge 'test' with transformation extensions 
-		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/transformation/sculptor-generator.properties")
+		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
+			"generator-tests/transformation/sculptor-generator.properties")
 
 		// Disable generation of module nested3 and nested4 (to keep their objects as external ones) 
-		System::getProperties().setProperty("generate.module.nested3", "false")
-		System::getProperties().setProperty("generate.module.nested4", "false")
+		System.setProperty("generate.module.nested3", "false")
+		System.setProperty("generate.module.nested4", "false")
 
-		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
-		val Injector injector = Guice::createInjector(uniLoadModule)
+		val injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
 		helperBase = injector.getInstance(typeof(HelperBase))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 		transformationProvider = injector.getProvider(typeof(Transformation))

@@ -26,8 +26,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.generator.test.GeneratorModelTestFixtures
-import sculptormetamodel.Application
-import sculptormetamodel.Module
 
 import static org.junit.Assert.*
 
@@ -44,29 +42,28 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 	
 	@Before
 	def void setupExtensions() {
+		generatorModelTestFixtures.setupInjector(typeof(MongoDbMapperTmpl))
 		generatorModelTestFixtures.setupModel("generator-tests/mongodb/model.btdesign", "generator-tests/mongodb/model-person.btdesign")
 		
 		mongoDbMapperTmpl = generatorModelTestFixtures.getProvidedObject(typeof(MongoDbMapperTmpl))
 	}
 
-    def Module mediaModule(Application app) {
-        return app.modules.namedElement("media")
-    }
-
 	@Test
 	def void testAppTransformation() {
 		val app = generatorModelTestFixtures.app
 		assertNotNull(app)
+
 		assertEquals(2, app.modules.size)
 	}
 
 	@Test
 	def void testToDataInheritedOneManyAssoc() {
 		val app = generatorModelTestFixtures.app
-		
-		val mediaModule = app.mediaModule
+		assertNotNull(app)
+
+		val mediaModule = app.modules.namedElement("media")
 		assertNotNull(mediaModule)
-		
+
 		val book = mediaModule.domainObjects.namedElement("Book")
 		
 		val code = mongoDbMapperTmpl.toData(book)

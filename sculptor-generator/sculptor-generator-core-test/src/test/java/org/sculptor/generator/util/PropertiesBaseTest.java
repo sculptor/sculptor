@@ -17,32 +17,40 @@
 
 package org.sculptor.generator.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sculptor.generator.chain.ChainOverrideAwareInjector;
+import org.sculptor.generator.configuration.ConfigurationProvider;
+import org.sculptor.generator.configuration.ConfigurationProviderModule;
 
 public class PropertiesBaseTest {
 
 	@Before
 	public void prepareSystemProperties() {
-		System.setProperty(PropertiesBase.PROPERTIES_LOCATION_PROPERTY, "properties/generator.properties");
-		System.setProperty(PropertiesBase.COMMON_PROPERTIES_LOCATION_PROPERTY, "properties/common-generator.properties");
+		System.setProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY, "properties/generator.properties");
+		System.setProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY, "properties/common-generator.properties");
 	}
 
 	@Before
 	public void clearSystemProperties() {
-		System.clearProperty(PropertiesBase.PROPERTIES_LOCATION_PROPERTY);
-		System.clearProperty(PropertiesBase.COMMON_PROPERTIES_LOCATION_PROPERTY);
+		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY);
+		System.clearProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY);
 	}
 
 	@Test
     public void assertProperties() {
-		PropertiesBase propertiesBase = new PropertiesBase();
-		propertiesBase.initProperties(true);
-		assertEquals("business-tier", propertiesBase.getProperty("project.nature"));
-		assertEquals("common1", propertiesBase.getProperty("property1"));
-		assertEquals("local2", propertiesBase.getProperty("property2"));
+		ConfigurationProvider configuration = ChainOverrideAwareInjector.createInjector(PropertiesBase.class).getInstance(
+				ConfigurationProvider.class);
+		assertEquals("business-tier", configuration.getString("project.nature"));
+
+		// common
+		assertEquals("common1", configuration.getString("property1"));
+		assertEquals("local2", configuration.getString("property2"));
+
+		// derived defaults
+		assertEquals("org.joda.time.LocalDate", configuration.getString("javaType.Date"));
     }
 
 }

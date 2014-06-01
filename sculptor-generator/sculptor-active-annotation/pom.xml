@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
-		<version>3.0.3</version>
+		<version>3.0.4</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-active-annotation</artifactId>
@@ -52,8 +52,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-dependencies</artifactId>
-			<type>pom</type>
+			<artifactId>sculptor-generator-configuration</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

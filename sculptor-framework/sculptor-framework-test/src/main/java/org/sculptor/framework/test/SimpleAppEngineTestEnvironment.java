@@ -29,11 +29,6 @@ public class SimpleAppEngineTestEnvironment implements ApiProxy.Environment {
     }
 
 	@Override
-	public String getModuleId() {
-		return "";
-	}
-
-	@Override
     public String getVersionId() {
         return "1.0";
     }

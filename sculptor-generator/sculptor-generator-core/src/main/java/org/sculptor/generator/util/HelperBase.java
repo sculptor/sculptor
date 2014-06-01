@@ -240,11 +240,7 @@ public class HelperBase {
 		return concatPackage(getBasePackage(module), propBase.getExceptionPackage());
 	}
 
-	public String getMapperPackage(Module module) {
-		return concatPackage(getBasePackage(module), propBase.getMapperPackage());
-	}
-
-	private String concatPackage(String pkg1, String pkg2) {
+	public String concatPackage(String pkg1, String pkg2) {
 		if (pkg2 == null || pkg2.equals("")) {
 			return pkg1;
 		}
@@ -1430,14 +1426,6 @@ public class HelperBase {
 
 	public void counterReset(String counter, Integer initValue) {
 		counters.put(counter, initValue);
-	}
-
-	public String getBuilderPackage(DomainObject domainObject) {
-		return getBuilderPackage(domainObject.getModule());
-	}
-
-	public String getBuilderPackage(Module module) {
-		return concatPackage(getBasePackage(module), propBase.getBuilderPackage());
 	}
 
 	public String getReferencePathFromReturnType(RepositoryOperation op) {

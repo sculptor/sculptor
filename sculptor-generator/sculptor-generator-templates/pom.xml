@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
-		<version>3.0.3</version>
+		<version>3.0.4</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-templates</artifactId>
@@ -59,10 +59,6 @@
 					<useManifestOnlyJar>false</useManifestOnlyJar>
 					<!-- Run every test class in a newly forked JVM -->
 					<reuseForks>false</reuseForks>
-					<excludes>
-						<exclude>**/UMLGraphTmplTest.java</exclude>
-						<exclude>**/DomainObjectReferenceAnnotationTmplTest.java</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

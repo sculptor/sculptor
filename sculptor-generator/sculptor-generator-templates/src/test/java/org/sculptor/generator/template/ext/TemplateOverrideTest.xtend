@@ -34,7 +34,7 @@ class TemplateOverrideTest extends GeneratorTestBase {
 	def static void setup() {
 
 		// Define property with package where override classes will be looked for -> here the class "DomainObjectReferenceTmplOverride"
-		System::setProperty("sculptor.defaultOverridesPackage", "org.sculptor.generator.template.ext")
+		System.setProperty("defaultOverridesPackage", "org.sculptor.generator.template.ext")
 		runGenerator(TEST_NAME)
 	}
 

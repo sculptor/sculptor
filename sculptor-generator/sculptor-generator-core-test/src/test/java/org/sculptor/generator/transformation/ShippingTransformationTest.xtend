@@ -17,8 +17,6 @@
 
 package org.sculptor.generator.transformation
 
-import com.google.inject.Guice
-import com.google.inject.Injector
 import com.google.inject.Provider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
@@ -29,7 +27,8 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
-import org.sculptor.generator.chain.ChainOverrideAwareModule
+import org.sculptor.generator.chain.ChainOverrideAwareInjector
+import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
@@ -60,22 +59,22 @@ class ShippingTransformationTest extends XtextTest {
 	
 	@Before
 	def void setupDslModel() {
-		
+
 		// Activate cartridge 'mongodb' with template extensions 
-		System::setProperty("sculptor.generatorPropertiesLocation", "generator-tests/shipping/sculptor-generator.properties");
-		
-		val uniLoadModule = new ChainOverrideAwareModule(#[typeof(DslTransformation), typeof(Transformation)])
-		val Injector injector = Guice::createInjector(uniLoadModule)
+		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
+			"generator-tests/shipping/sculptor-generator.properties");
+
+		val injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
 		helper = injector.getInstance(typeof(Helper))
 		helperBase = injector.getInstance(typeof(HelperBase))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 		transformationProvider = injector.getProvider(typeof(Transformation))
 
 		model = getDomainModel().app
-		
+
 		val dslTransformation = dslTransformProvider.get
 		app = dslTransformation.transform(model)
-		
+
 		val transformation = transformationProvider.get
 		app = transformation.modify(app)
 	}
