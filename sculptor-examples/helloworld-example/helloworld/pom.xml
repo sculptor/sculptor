@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator.examples</groupId>
 		<artifactId>helloworld-parent</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5-SNAPSHOT</version>
 		<relativePath>../helloworld-parent/</relativePath>
 	</parent>
 	<artifactId>helloworld</artifactId>
