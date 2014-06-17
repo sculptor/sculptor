@@ -199,6 +199,7 @@ def String applicationContextAdditions(Application it) {
 	'''
 }
 
+
 def String applicationContextTest(Application it) {
 	fileOutput("applicationContext-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
@@ -206,6 +207,16 @@ def String applicationContextTest(Application it) {
 	
 		«springPropertyConfigTest(it)»
 	
+		«applicationContextTestImports(it)»
+		
+		«applicationContextTestAdditions(it)»
+	</beans>
+	'''
+	)
+}
+
+def String applicationContextTestImports(Application it) {
+'''
 		«IF jpa()»
 			«IF isJpaProviderAppEngine()»
 				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml")»"/>
@@ -223,10 +234,9 @@ def String applicationContextTest(Application it) {
 		«ENDIF»
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml")»"/>
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml")»"/>
-		«applicationContextTestAdditions(it)»
-	</beans>
-	'''
-	)
+
+'''
+	
 }
 
 /*
