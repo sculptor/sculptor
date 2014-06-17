@@ -28,6 +28,7 @@ import org.dbunit.DataSourceDatabaseTester;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseSequenceFilter;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ReplacementDataSet;
@@ -71,11 +72,54 @@ public class DbUnitDataSourceUtils {
         if (dataSetFileName == null) {
             dataSetFileName = defaultDataSetFileName(clazz);
         }
+        
+        setUpDatabaseTester(clazz, dataSource, new String[] {dataSetFileName});
+    }
+
+    /**
+      * creates the dataset executes the dbunit setup operation from multiple files
+      * 
+      * @param clazz
+      *            test class
+      * @param dataSource
+      * @param dataSetFileNames
+      * @throws Exception
+      */
+    public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, String[] dataSetFileNames)
+            throws Exception {
 
         // create dataset
-        ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(clazz.getClassLoader().getResource(
-                dataSetFileName), false, true));
-        dataSet.addReplacementObject("[NULL]", null);
+    	IDataSet dataSet;
+    	if(dataSetFileNames.length == 1) {
+            dataSet = new FlatXmlDataSet(clazz.getClassLoader().getResource(
+                    dataSetFileNames[0]), false, true);
+    	} else {
+    		IDataSet[] dataSets = new IDataSet[dataSetFileNames.length];
+    		for (int i = 0; i < dataSetFileNames.length; i++) {
+				dataSets[i] = new FlatXmlDataSet(clazz.getClassLoader().getResource(
+	                    dataSetFileNames[i]), false, true);
+    		}
+        	dataSet = new CompositeDataSet(dataSets);
+    	}
+    		
+        ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataSet);
+        replacementDataSet.addReplacementObject("[NULL]", null);
+
+        setUpDatabaseTester(clazz, dataSource, replacementDataSet);
+    }
+    
+    /**
+     * creates the dataset executes the dbunit setup operation from a DataSet
+     * 
+     * @param clazz
+     *            test class
+     * @param dataSource
+     * @param dataSet
+     * @throws Exception
+     */
+    public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, IDataSet dataSet)
+            throws Exception {
+
 
         // setup database tester
         if (databaseTester == null) {

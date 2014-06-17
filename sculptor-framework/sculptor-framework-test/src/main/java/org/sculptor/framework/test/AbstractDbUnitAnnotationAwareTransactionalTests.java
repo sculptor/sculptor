@@ -26,6 +26,7 @@ import javax.sql.DataSource;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -101,10 +102,31 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
     @Before
     public void setUpDatabaseTester() throws Exception {
     	buildSchema();
-        DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), getDataSetFile());
+        
+    	IDataSet dataSet = getDataSet();
+    	String[] compositeDataSetFileNames = getCompositeDataSetFiles();
+     	
+    	if(dataSet != null) {
+             DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), dataSet);    		
+    	} else if (compositeDataSetFileNames != null) {
+             DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), compositeDataSetFileNames);    		
+     	} else {
+             DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), getDataSetFile());
+     	}
+ 
         restartSequence();
     }
 
+    /**
+     * Override this method to specify a DataSet to use for test data.
+     * If dataSet is not set, getCompompositeDataSetFiles() and getDataSetFile() will be called.
+     * 
+     * @return Data set to use
+     */
+    protected IDataSet getDataSet() {
+    	return null;
+    }
+    
     /**
      * Start the id sequence from a high value to avoid conflicts with test
      * data. You can define the sequence name with {@link #getSequenceName}.
@@ -172,6 +194,17 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
     protected String getDataSetFile() {
         return null;
     }
+    
+
+    /**
+      * Override this method to specify multiple XML files with DBUnit test data to be processed as a CompositeDataSetFile.
+      * If filename is not set, getDataSetFile() will be called.
+      * 
+      * @return Array of filenames with test data
+      */
+     protected String[] getCompositeDataSetFiles() {
+     	return null;
+     }
 
     protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
         return countRowsInTable(domainObjectClass, "");
