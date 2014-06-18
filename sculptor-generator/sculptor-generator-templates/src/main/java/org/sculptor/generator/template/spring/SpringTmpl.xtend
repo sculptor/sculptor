@@ -512,10 +512,8 @@ def String txAdvice(Application it, boolean isInComment) {
 	'''
 }
 
-def String aopConfig(Application it) {
+def String aopConfigServicePointcuts(Application it) {
 	'''
-	<aop:config>
-
 		<aop:pointcut id="businessService"
 			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..))"/>
 		<aop:pointcut id="readOnlyBusinessService"
@@ -523,6 +521,15 @@ def String aopConfig(Application it) {
 		<!-- Repeating the expression, since I can't find a way to refer to the other pointcuts. -->
 		<aop:pointcut id="updatingBusinessService"
 			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..)) and not (execution(public * «basePackage»..«subPackage("serviceInterface")».*.get*(..)) or execution(public * «basePackage»..«subPackage("serviceInterface")».*.find*(..)))"/>
+	'''	
+}
+
+def String aopConfig(Application it) {
+	'''
+	<aop:config>
+
+		«aopConfigServicePointcuts»
+		
 		«IF it.hasConsumers()»
 			<aop:pointcut id="messageConsumer"
 				expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>
