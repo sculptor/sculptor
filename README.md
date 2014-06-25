@@ -3,7 +3,7 @@
 
 [Sculptor](http://sculptorgenerator.org) is an open source productivity tool that applies the concepts from [Domain-Driven Design](http://domaindrivendesign.org/books/) and [Domain Specific Languages](http://en.wikipedia.org/wiki/Domain-specific_language).
 
-You express your design intent in a textual specification (within an Eclipse editor), from which Sculptor generates (with a Maven plugin) high quality
+You express your design intent in a textual specification (within an [Eclipse editor](http://sculptorgenerator.org/documentation/eclipse-plugin)), from which Sculptor generates (with a [Maven plugin](http://sculptorgenerator.org/documentation/maven-plugin)) high quality
 Java code and configuration. You can use the concepts from Domain-Driven Design (DDD) in the textual Domain Specific Language (DSL).
 E.g. Service, Module, Entity, Value Object, Repository.
 
@@ -26,7 +26,7 @@ The installation and configuration of these tools is described in [Sculptors ins
 
 ## Installation
 
-Sculptor consists of an Eclipse plugin (the DSL editor) and a Maven plugin (the code generator) with its Maven archetypes:
+Sculptor consists of an [Eclipse plugin](http://sculptorgenerator.org/documentation/eclipse-plugin) (the DSL editor) and a [Maven plugin](http://sculptorgenerator.org/documentation/maven-plugin) (the code generator) with its [Maven archetypes](http://sculptorgenerator.org/documentation/maven-archetypes):
 
 * Sculptors Eclipse plugin has to be installed with the Eclipse Update Manager `Help > Install New Software...` from [http://sculptorgenerator.org/updates/](http://sculptorgenerator.org/updates/)
 * Sculptors Maven plugin and its Maven archetypes are retrieved by Maven from one of the following Maven repositories
