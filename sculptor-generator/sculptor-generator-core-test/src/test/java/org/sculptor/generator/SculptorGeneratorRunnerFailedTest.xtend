@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import org.junit.Test
+import org.sculptor.generator.test.GeneratorTestBase
 
-/**
- * Initialization support for running Xtext languages without equinox extension registry
- */
-public class SculptordslStandaloneSetup extends
-		org.sculptor.dsl.SculptordslStandaloneSetup {
+class SculptorGeneratorRunnerFailedTest extends GeneratorTestBase {
 
-	public Injector createInjector() {
-		return Guice.createInjector(
-				new org.sculptor.dsl.SculptordslRuntimeModule());
+	static val TEST_NAME = "runner-failed"
+
+	new() {
+		super(TEST_NAME)
 	}
+
+	@Test(expected=typeof(SculptorGeneratorException))
+	def void assertFailureDueToMissingGapKeyword() {
+		runGenerator(TEST_NAME)
+	}
+
 }

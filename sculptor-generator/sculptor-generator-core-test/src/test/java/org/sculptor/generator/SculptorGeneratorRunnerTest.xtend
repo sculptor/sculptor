@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ package org.sculptor.generator;
 import org.junit.Test
 import org.sculptor.generator.test.GeneratorTestBase
 
-public class SculptorGeneratorRunnerTest extends GeneratorTestBase {
+class SculptorGeneratorRunnerTest extends GeneratorTestBase {
 
 	static val TEST_NAME = "runner"
 
@@ -27,9 +27,18 @@ public class SculptorGeneratorRunnerTest extends GeneratorTestBase {
 		super(TEST_NAME)
 	}
 
-	@Test(expected=typeof(SculptorGeneratorException))
-	def void assertFailureDueToMissingGapKeyword() {
+	@Test
+	def void assertGeneratedFiles() {
 		runGenerator(TEST_NAME)
+
+		// Standard templates
+		getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/domain/Planet.java");
+		getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/domain/PlanetBase.java");
+		getFileText(TO_SRC_TEST + "/org/sculptor/example/helloworld/milkyway/serviceapi/PlanetServiceTest.java");
+		getFileText(TO_GEN_SRC_TEST + "/org/sculptor/example/helloworld/milkyway/serviceapi/PlanetServiceTestBase.java");
+
+		// Builder cartridge
+		getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/domain/PlanetBuilder.java");
 	}
 
 }

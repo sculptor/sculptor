@@ -2,7 +2,7 @@
 import "classpath:/generator-tests/library/model-person.btdesign"
 
 Application Library {
-	basePackage=org.fornax.cartridges.sculptor.examples.library
+	basePackage=org.sculptor.examples.library
 
 	Module media {
 

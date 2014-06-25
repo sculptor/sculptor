@@ -71,7 +71,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-templates</artifactId>
+			<artifactId>sculptor-generator-cartridges</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
