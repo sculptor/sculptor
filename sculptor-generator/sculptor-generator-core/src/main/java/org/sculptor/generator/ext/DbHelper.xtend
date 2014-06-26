@@ -20,24 +20,25 @@ import java.util.Collection
 import java.util.List
 import java.util.Set
 import javax.inject.Inject
-import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.chain.ChainOverridable
+import org.sculptor.generator.util.CamelCaseConverter
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DiscriminatorType
 import sculptormetamodel.DomainObject
+import sculptormetamodel.Enum
 import sculptormetamodel.Inheritance
 import sculptormetamodel.InheritanceType
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.SculptormetamodelFactory
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 public class DbHelper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
-	@Inject extension DbHelperBase dbHelperBase
+	@Inject extension org.sculptor.generator.util.DbHelperBase dbHelperBase
 	@Inject extension Helper helper
 
 	def String getCascade(Reference ref) {
@@ -194,7 +195,7 @@ public class DbHelper {
 		getHintOrDefault(ref, "databaseLength", length)
 	}
 
-	def boolean isOfTypeString(sculptormetamodel.Enum enumVal) {
+	def boolean isOfTypeString(Enum enumVal) {
 		"String" == enumVal.getEnumType()
 	}
 
@@ -412,4 +413,55 @@ public class DbHelper {
 	def boolean isSystemAttributeToPutLast(Attribute attr) {
 		getSystemAttributesToPutLast().contains(attr.name)
 	}
+
+	def getExtendsForeignKeyName(DomainObject extendedClass) {
+		var idAttribute = getIdAttribute(extendedClass)
+		checkIdAttribute(extendedClass, idAttribute)
+		var name = extendedClass.databaseTable
+		name += idSuffix(name, extendedClass)
+		name
+	}
+
+	private def checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
+		if (idAttribute === null) {
+			throw new IllegalArgumentException(
+				'Referenced class ' + referencedClass.name + " doesn't contain 'id' attribute");
+		}
+	}
+
+	private def convertDatabaseName(String name) {
+		var String resName = name
+
+		if (propertiesBase.getBooleanProperty('db.useUnderscoreNaming')) {
+			resName = CamelCaseConverter::camelCaseToUnderscore(name)
+		}
+		truncateLongDatabaseName(resName).toUpperCase
+	}
+
+	private def idSuffix(String name, DomainObject to) {
+		if (useIdSuffixInForeignKey) {
+			var idAttribute = getIdAttribute(to)
+			if (idAttribute !== null) {
+				var idName = idAttribute.databaseColumn.toUpperCase
+				var convertedName = convertDatabaseName(name)
+				if (idName == convertedName && idName.startsWith(to.databaseTable)) {
+					idName = idName.substring(to.databaseTable.length)
+				} else if (idName.startsWith(convertedName)) {
+					idName = idName.substring(convertedName.length)
+				}
+				if (idName.startsWith('_')) {
+					return idName;
+				} else {
+					return ('_' + idName);
+				}
+			}
+		}
+		''
+	}
+
+	private def useIdSuffixInForeignKey() {
+		propertiesBase.getBooleanProperty('db.useIdSuffixInForeigKey')
+	}
+
+
 }
