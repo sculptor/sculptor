@@ -422,14 +422,14 @@ public class DbHelper {
 		name
 	}
 
-	private def checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
+	protected def checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
 		if (idAttribute === null) {
 			throw new IllegalArgumentException(
 				'Referenced class ' + referencedClass.name + " doesn't contain 'id' attribute");
 		}
 	}
 
-	private def convertDatabaseName(String name) {
+	protected def convertDatabaseName(String name) {
 		var String resName = name
 
 		if (propertiesBase.getBooleanProperty('db.useUnderscoreNaming')) {
@@ -438,8 +438,8 @@ public class DbHelper {
 		truncateLongDatabaseName(resName).toUpperCase
 	}
 
-	private def idSuffix(String name, DomainObject to) {
-		if (useIdSuffixInForeignKey) {
+	protected def idSuffix(String name, DomainObject to) {
+		if (useIdSuffixInForeigKey) {
 			var idAttribute = getIdAttribute(to)
 			if (idAttribute !== null) {
 				var idName = idAttribute.databaseColumn.toUpperCase
@@ -458,10 +458,5 @@ public class DbHelper {
 		}
 		''
 	}
-
-	private def useIdSuffixInForeignKey() {
-		propertiesBase.getBooleanProperty('db.useIdSuffixInForeigKey')
-	}
-
 
 }
