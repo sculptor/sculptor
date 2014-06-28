@@ -24,6 +24,7 @@ import static org.mockito.Mockito.spy;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,6 @@ import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMojo> {
@@ -78,11 +78,9 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 	public void testChangedFilesUpdatedGeneratorConfigFiles() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test2"));
 		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
-		new File(mojo.getProject().getBasedir(),
-				"/src/main/resources/generator/java-code-formatter.properties")
+		new File(mojo.getProject().getBasedir(), "/src/main/resources/generator/java-code-formatter.properties")
 				.setLastModified(System.currentTimeMillis() + 2000);
-		new File(mojo.getProject().getBasedir(),
-				"/src/main/resources/generator/sculptor-generator.properties")
+		new File(mojo.getProject().getBasedir(), "/src/main/resources/generator/sculptor-generator.properties")
 				.setLastModified(System.currentTimeMillis() + 2000);
 
 		Set<String> changedFiles = mojo.getChangedFiles();
@@ -94,8 +92,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		GeneratorMojo mojo = createMojo(createProject("test2"));
 
 		List<File> files = new ArrayList<File>();
-		files.add(new File(mojo.getProject().getBasedir(),
-				ONE_SHOT_GENERATED_FILE));
+		files.add(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE));
 		files.add(new File(mojo.getProject().getBasedir(), GENERATED_FILE));
 		assertTrue(mojo.updateStatusFile(files));
 
@@ -103,10 +100,8 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		statusFileProps.load(new FileReader(mojo.getStatusFile()));
 
 		assertEquals(2, statusFileProps.size());
-		assertEquals("e747f800870423a6c554ae2ec80aeeb6",
-				statusFileProps.getProperty(ONE_SHOT_GENERATED_FILE));
-		assertEquals("7d436134142a2e69dfc98eb9f22f5907",
-				statusFileProps.getProperty(GENERATED_FILE));
+		assertEquals("e747f800870423a6c554ae2ec80aeeb6", statusFileProps.getProperty(ONE_SHOT_GENERATED_FILE));
+		assertEquals("7d436134142a2e69dfc98eb9f22f5907", statusFileProps.getProperty(GENERATED_FILE));
 	}
 
 	public void testExecuteSkip() throws Exception {
@@ -124,8 +119,10 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		setVariableValueToObject(mojo, "force", true);
 		try {
 			mojo.execute();
-		} catch (MojoExecutionException e) {
-			return;
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("testExecuteForce")) {
+				return;
+			}
 		}
 		fail();
 	}
@@ -140,11 +137,11 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		setVariableValueToObject(mojo, "clean", true);
 		try {
 			mojo.execute();
-		} catch (MojoExecutionException e) {
-			assertFalse(new File(mojo.getProject().getBasedir(),
-					ONE_SHOT_GENERATED_FILE).exists());
-			assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE)
-					.exists());
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("testExecuteWithClean")) {
+				assertFalse(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
+				assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE).exists());
+			}
 			return;
 		}
 		fail();
@@ -160,11 +157,11 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		setVariableValueToObject(mojo, "clean", false);
 		try {
 			mojo.execute();
-		} catch (MojoExecutionException e) {
-			assertTrue(new File(mojo.getProject().getBasedir(),
-					ONE_SHOT_GENERATED_FILE).exists());
-			assertTrue(new File(mojo.getProject().getBasedir(), GENERATED_FILE)
-					.exists());
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("testExecuteWithoutClean")) {
+				assertTrue(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
+				assertTrue(new File(mojo.getProject().getBasedir(), GENERATED_FILE).exists());
+			}
 			return;
 		}
 		fail();
@@ -192,7 +189,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 		// Create mojo
 		GeneratorMojo mojo = spy(super.createMojo(project, "generate"));
-		doReturn(Boolean.TRUE).when(mojo).doRunGenerator();
+		doReturn(Collections.emptyList()).when(mojo).doRunGenerator();
 
 		// Set default values on mojo
 		setVariableValueToObject(mojo, "model", "src/main/resources/model.btdesign");

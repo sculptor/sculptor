@@ -16,23 +16,48 @@
  */
 package org.sculptor.generator;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.sculptor.generator.util.FileHelper;
 import org.sculptor.generator.workflow.SculptorGeneratorWorkflow;
 
 import com.google.inject.Injector;
 
 /**
  * Retrieves an instance of the generators internal workflow from the generators
- * guice-configured setup and executes it.
+ * guice-configured setup, executes it and returns the list of generated
+ * {@link File}s or <code>null</code> on error.
  * 
  * @see SculptorGeneratorSetup#createInjectorAndDoEMFRegistration()
  * @see SculptorGeneratorWorkflow#run(String)
  */
 public class SculptorGeneratorRunner {
 
-	public static final boolean run(String modelURI) {
+	public static final List<File> run(String modelURI) {
 		Injector injector = new SculptorGeneratorSetup().createInjectorAndDoEMFRegistration();
 		SculptorGeneratorWorkflow workflow = injector.getInstance(SculptorGeneratorWorkflow.class);
-		return workflow.run(modelURI);
+		SculptorGeneratorContext.getGeneratedFiles().clear();
+		try {
+			boolean success = workflow.run(modelURI);
+			List<File> generatedFiles = SculptorGeneratorContext.getGeneratedFiles();
+			if (success) {
+				return generatedFiles;
+			}
+
+			// If generation failed then delete any generated files
+			for (File file : generatedFiles) {
+				try {
+					FileHelper.deleteFile(file);
+				} catch (IOException e) {
+					// we can't do anything here
+				}
+			}
+		} finally {
+			SculptorGeneratorContext.close();
+		}
+		return null;
 	}
 
 }

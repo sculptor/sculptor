@@ -29,7 +29,7 @@ import java.util.List;
  * the file list from the current thread. Otherwise this class is leaking
  * memory!!!</strong>
  */
-public class GeneratorContext {
+public class SculptorGeneratorContext {
 
 	private static final ThreadLocal<List<File>> generatedFilesHolder = new ThreadLocal<List<File>>() {
 		@Override

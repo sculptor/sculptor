@@ -43,7 +43,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.sculptor.generator.GeneratorContext;
 import org.sculptor.generator.SculptorGeneratorRunner;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
@@ -431,19 +430,10 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
 
 		// Execute commandline and retrieve list of generated files
-		boolean success = false;
-		List<File> generatedFiles;
-		try {
-			success = doRunGenerator();
-		} catch (Exception e) {
-			getLog().error("Executing generator workflow failed", e);
-		} finally {
-			generatedFiles = GeneratorContext.getGeneratedFiles();
-			GeneratorContext.close();
-		}
+		List<File> generatedFiles = doRunGenerator();
+		if (generatedFiles != null) {
 
-		// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
-		if (success) {
+			// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
 			if (isVerbose()) {
 				for (File generatedFile : generatedFiles) {
 					getLog().info("Generated: " + getProjectRelativePath(generatedFile));
@@ -454,16 +444,11 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				refreshEclipseWorkspace();
 			}
 			getLog().info("Generated " + generatedFiles.size() + " files");
+			return true;
 		} else {
-			for (File file : generatedFiles) {
-				try {
-					FileUtils.forceDelete(file);
-				} catch (IOException e) {
-					// we can't do anything here
-				}
-			}
+			getLog().error("Executing generator workflow failed");
 		}
-		return success;
+		return false;
 	}
 
 	private void refreshEclipseWorkspace() {
@@ -479,7 +464,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		buildContext.refresh(outletDocDir);
 	}
 
-	protected boolean doRunGenerator() {
+	protected List<File> doRunGenerator() {
 		return SculptorGeneratorRunner.run(getModelFile().toString());
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@ package org.sculptor.generator.test
 
 import java.io.File
 import java.io.IOException
+import java.util.List
 import org.sculptor.generator.SculptorGeneratorException
 import org.sculptor.generator.SculptorGeneratorRunner
 import org.sculptor.generator.configuration.Configuration
@@ -58,7 +59,7 @@ abstract class GeneratorTestBase {
 		f.text
 	}
 
-	protected static def void runGenerator(String testName) {
+	protected static def List<File> runGenerator(String testName) {
 		deleteDirectory(new File(OUTPUT_DIR, testName))
 
 		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
@@ -80,7 +81,8 @@ abstract class GeneratorTestBase {
 			System.setProperty("java.codeformatter.error.abort", "true")
 		}
 
-		if (!SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
+		// Run generator and return list of generated files
+		if (SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign") == null) {
 			throw new SculptorGeneratorException("Code generation failed")
 		}
 	}
