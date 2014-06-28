@@ -535,39 +535,40 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkEnumOrdinal(DslEnum dslEnum) {
-		if (!dslEnum.getHint().contains("ordinal")) {
-			return
-		}
-		for (DslEnumAttribute attr : dslEnum.attributes) {
-			if (attr.key) {
-				error("ordinal is not allowed for enums with a key attribute", DSL_ENUM__ATTRIBUTES)
-				return
+		val hint = dslEnum.hint
+		if (hint != null && hint.contains("ordinal")) {
+			for (DslEnumAttribute attr : dslEnum.attributes) {
+				if (attr.key) {
+					error("ordinal is not allowed for enums with a key attribute", DSL_ENUM__ATTRIBUTES)
+					return
+				}
 			}
-		}
-		for (DslEnumValue each : dslEnum.values) {
-			if (each.getParameters().size() == 1 && dslEnum.attributes.isEmpty()) {
-				error("ordinal is not allowed for enum with implicit value", DSL_ENUM__VALUES)
-				return
+			for (DslEnumValue each : dslEnum.values) {
+				if (each.getParameters().size() == 1 && dslEnum.attributes.isEmpty()) {
+					error("ordinal is not allowed for enum with implicit value", DSL_ENUM__VALUES)
+					return
+				}
 			}
 		}
 	}
 
 	@Check
 	def checkEnumOrdinalOrDatabaseLength(DslEnum dslEnum) {
-		if (dslEnum.getHint().contains("ordinal") && dslEnum.getHint().contains("databaseLength")) {
+		val hint = dslEnum.hint
+		if (hint != null && hint.contains("ordinal") && hint.contains("databaseLength")) {
 			error("ordinal in combination with databaseLength is not allowed", DSL_ENUM__ATTRIBUTES)
 		}
 	}
 
 	@Check
 	def checkEnumDatabaseLength(DslEnum dslEnum) {
-		if (!dslEnum.getHint().contains("databaseLength")) {
-			return
-		}
-		for (DslEnumAttribute attr : dslEnum.attributes) {
-			if (attr.key && !attr.type.equals("String")) {
-				error("databaseLength is not allowed for enums not having a key of type String", DSL_ENUM__ATTRIBUTES)
-				return
+		val hint = dslEnum.hint
+		if (hint != null && hint.contains("databaseLength")) {
+			for (DslEnumAttribute attr : dslEnum.attributes) {
+				if (attr.key && !attr.type.equals("String")) {
+					error("databaseLength is not allowed for enums not having a key of type String", DSL_ENUM__ATTRIBUTES)
+					return
+				}
 			}
 		}
 	}
