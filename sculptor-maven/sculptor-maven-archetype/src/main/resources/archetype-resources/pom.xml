@@ -391,11 +391,6 @@
 			<artifactId>aspectjrt</artifactId>
 			<version>\${symbol_dollar}{aspectj-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-			<version>2.2.2</version>
-		</dependency>
 #end
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
