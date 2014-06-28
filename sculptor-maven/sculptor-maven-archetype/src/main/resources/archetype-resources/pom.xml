@@ -38,6 +38,7 @@
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
 		<jackson-version>${jackson-version}</jackson-version>
+		<xstream-version>${xstream-version}</xstream-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 #end
@@ -248,7 +249,7 @@
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>1.4.6</version>
+		    <version>\${symbol_dollar}{xstream-version}</version>
 		</dependency>
 #end
 		<dependency>

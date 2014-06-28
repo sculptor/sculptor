@@ -156,7 +156,7 @@
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>1.4.4</version>
+		    <version>\${symbol_dollar}{xstream-version}</version>
 		</dependency>
 #end
 	</dependencies>

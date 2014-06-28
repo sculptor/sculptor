@@ -20,6 +20,7 @@
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
 		<jackson-version>${jackson-version}</jackson-version>
+		<xstream-version>${xstream-version}</xstream-version>
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 	</properties>
 
