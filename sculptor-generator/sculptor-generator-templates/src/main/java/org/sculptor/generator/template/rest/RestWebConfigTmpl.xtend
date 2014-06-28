@@ -171,7 +171,7 @@ def String restServletXml(Application it) {
 					<property name="modelKey" value="result" />
 				</bean>
 				<bean
-					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
 			</list>
 		</property>
 	</bean>
@@ -206,7 +206,7 @@ def String restServletXml(Application it) {
 		<property name="unmarshaller" ref="xstreamMarshaller" />
 	</bean>
 	<bean id="jsonMarshallingHttpMessageConverter"
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 
 	</beans>
 	'''

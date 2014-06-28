@@ -37,6 +37,7 @@
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
+		<jackson-version>${jackson-version}</jackson-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 #end
@@ -240,9 +241,9 @@
 		   <version>\${spring-version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.codehaus.jackson</groupId>
-		    <artifactId>jackson-mapper-lgpl</artifactId>
-		    <version>1.9.13</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>\${symbol_dollar}{jackson-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>

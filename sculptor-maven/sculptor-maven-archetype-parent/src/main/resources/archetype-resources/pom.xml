@@ -19,6 +19,7 @@
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
+		<jackson-version>${jackson-version}</jackson-version>
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 	</properties>
 
