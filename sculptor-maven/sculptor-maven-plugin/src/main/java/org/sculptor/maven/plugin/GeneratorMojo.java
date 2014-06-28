@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.maven.plugin;
 
 import java.io.File;
@@ -54,7 +53,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * You can configure resources that should be checked if they are up-to-date to
  * avoid needless generator runs and optimize build execution time.
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class GeneratorMojo extends AbstractGeneratorMojo {
 
 	protected static final String OUTPUT_SLOT_PATH_PREFIX = "outputSlot.path.";
