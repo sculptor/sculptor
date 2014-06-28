@@ -234,12 +234,12 @@
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-webmvc</artifactId>
-		    <version>\${spring-version}</version>
+		    <version>\${symbol_dollar}{spring-version}</version>
 		</dependency>
 		<dependency>
 		   <groupId>org.springframework</groupId>
 		   <artifactId>spring-oxm</artifactId>
-		   <version>\${spring-version}</version>
+		   <version>\${symbol_dollar}{spring-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

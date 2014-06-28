@@ -21,7 +21,9 @@
 		<aspectj-version>${aspectj-version}</aspectj-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
+#if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
+#end
 	</properties>
 
 	<modules>
