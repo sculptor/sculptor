@@ -18,7 +18,9 @@ package org.sculptor.generator.workflow
 
 import com.google.inject.Injector
 import java.lang.reflect.Method
+import java.util.Properties
 import javax.inject.Inject
+import javax.inject.Named
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
@@ -34,6 +36,7 @@ import org.eclipse.xtext.validation.CheckMode
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
 import org.sculptor.generator.SculptorGeneratorException
+import org.sculptor.generator.configuration.MutableConfigurationProvider
 import org.slf4j.LoggerFactory
 import sculptormetamodel.Application
 
@@ -42,6 +45,7 @@ import static org.eclipse.xtext.diagnostics.Severity.*
 /**
  * This class provides a strategy implementation of the Sculptor generators internal workflow:
  * <ol>
+ * <li>updates the generator configuration with the given properties
  * <li>read the Sculptor DSL model from a given URL
  * <li>validate the resources of the DSL model 
  * <li>validate the DSL model
@@ -58,6 +62,10 @@ class SculptorGeneratorWorkflow {
 	var Injector injector
 
 	@Inject
+	@Named("Mutable Defaults")
+	var MutableConfigurationProvider configuration
+
+	@Inject
 	var IResourceServiceProvider.Registry registry
 
 	@Inject
@@ -71,7 +79,8 @@ class SculptorGeneratorWorkflow {
 		this.resourceSet = resourceSet
 	}
 
-	def final boolean run(String modelURI) {
+	def final boolean run(String modelURI, Properties properties) {
+		updateConfiguration(properties)
 		if (readModel(modelURI)) {
 			if (validateResources()) {
 				val dslApp = getApplication()
@@ -86,6 +95,12 @@ class SculptorGeneratorWorkflow {
 			}
 		}
 		false
+	}
+
+	protected def updateConfiguration(Properties properties) {
+		if (properties != null) {
+			properties.stringPropertyNames.forEach[key|configuration.setString(key, properties.getProperty(key))]
+		}
 	}
 
 	protected def boolean readModel(String modelURI) {

@@ -19,6 +19,7 @@ package org.sculptor.generator.test
 import java.io.File
 import java.io.IOException
 import java.util.List
+import java.util.Properties
 import org.sculptor.generator.SculptorGeneratorException
 import org.sculptor.generator.SculptorGeneratorRunner
 import org.sculptor.generator.configuration.Configuration
@@ -62,19 +63,23 @@ abstract class GeneratorTestBase {
 	protected static def List<File> runGenerator(String testName) {
 		deleteDirectory(new File(OUTPUT_DIR, testName))
 
+		// Read the generator configuration from within the test folder 
 		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
 			CONFIG_DIR + testName + "/sculptor-generator.properties")
 
-		System.setProperty("outputSlot.path.TO_SRC", OUTPUT_DIR + testName + TO_SRC)
-		System.setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
-		System.setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
-		System.setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
-		System.setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
-		System.setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
-		System.setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
-		System.setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST", OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
-		System.setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
-		System.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
+		// Prepare properties with the ouput slot paths for the code generator 
+		val generatorProperties = new Properties();
+		generatorProperties.setProperty("outputSlot.path.TO_SRC", OUTPUT_DIR + testName + TO_SRC)
+		generatorProperties.setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
+		generatorProperties.setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST",
+			OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
+		generatorProperties.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
 
 		// Abort on invalid generated Java code
 		if (System.getProperty("java.codeformatter.error.abort") != null) {
@@ -82,7 +87,8 @@ abstract class GeneratorTestBase {
 		}
 
 		// Run generator and return list of generated files
-		if (SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign") == null) {
+		if (SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign",
+				generatorProperties) == null) {
 			throw new SculptorGeneratorException("Code generation failed")
 		}
 	}

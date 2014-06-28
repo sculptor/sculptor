@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
@@ -410,27 +411,30 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		classpathEntries.add(project.getBuild().getOutputDirectory());
 		extendPluginClasspath(classpathEntries);
 
-		// Set system properties defined properties in the plugins
+		// Prepare properties for the code generator
+		Properties generatorProperties = new Properties();
+
+		// Set properties defined properties in the plugins
 		if (properties != null) {
 			for (String key : properties.keySet()) {
-				System.setProperty(key, properties.get(key));
+				generatorProperties.setProperty(key, properties.get(key));
 			}
 		}
 
-		// Set system properties with output slot paths
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC", outletSrcOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES", outletResOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC", outletSrcDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES", outletResDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_WEBROOT", outletWebrootDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC_TEST", outletSrcTestOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES_TEST", outletResTestOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
+		// Set properties with output slot paths
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC", outletSrcOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES", outletResOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC", outletSrcDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES", outletResDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_WEBROOT", outletWebrootDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC_TEST", outletSrcTestOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES_TEST", outletResTestOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
 
 		// Execute commandline and retrieve list of generated files
-		List<File> generatedFiles = doRunGenerator();
+		List<File> generatedFiles = doRunGenerator(generatorProperties);
 		if (generatedFiles != null) {
 
 			// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
@@ -464,8 +468,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		buildContext.refresh(outletDocDir);
 	}
 
-	protected List<File> doRunGenerator() {
-		return SculptorGeneratorRunner.run(getModelFile().toString());
+	protected List<File> doRunGenerator(Properties generatorProperties) {
+		return SculptorGeneratorRunner.run(getModelFile().toString(), generatorProperties);
 	}
 
 	public void extendPluginClasspath(List<Object> classpathEntries) throws MojoExecutionException {

@@ -19,6 +19,7 @@ package org.sculptor.generator;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import org.sculptor.generator.util.FileHelper;
 import org.sculptor.generator.workflow.SculptorGeneratorWorkflow;
@@ -35,12 +36,12 @@ import com.google.inject.Injector;
  */
 public class SculptorGeneratorRunner {
 
-	public static final List<File> run(String modelURI) {
+	public static final List<File> run(String modelURI, Properties generatorProperties) {
 		Injector injector = new SculptorGeneratorSetup().createInjectorAndDoEMFRegistration();
 		SculptorGeneratorWorkflow workflow = injector.getInstance(SculptorGeneratorWorkflow.class);
 		SculptorGeneratorContext.getGeneratedFiles().clear();
 		try {
-			boolean success = workflow.run(modelURI);
+			boolean success = workflow.run(modelURI, generatorProperties);
 			List<File> generatedFiles = SculptorGeneratorContext.getGeneratedFiles();
 			if (success) {
 				return generatedFiles;

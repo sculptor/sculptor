@@ -17,6 +17,7 @@
 
 package org.sculptor.maven.plugin;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -34,6 +35,7 @@ import java.util.Set;
 import junit.framework.AssertionFailedError;
 
 import org.apache.maven.project.MavenProject;
+import org.mockito.ArgumentCaptor;
 
 public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMojo> {
 
@@ -114,7 +116,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 	public void testExecuteForce() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test2"));
-		doThrow(new RuntimeException("testExecuteForce")).when(mojo).doRunGenerator();
+		doThrow(new RuntimeException("testExecuteForce")).when(mojo).doRunGenerator(any(Properties.class));
 
 		setVariableValueToObject(mojo, "force", true);
 		try {
@@ -129,7 +131,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 	public void testExecuteWithClean() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test2"));
-		doThrow(new RuntimeException("testExecuteWithClean")).when(mojo).doRunGenerator();
+		doThrow(new RuntimeException("testExecuteWithClean")).when(mojo).doRunGenerator(any(Properties.class));
 
 		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
 		mojo.getModelFile().setLastModified(System.currentTimeMillis() + 2000);
@@ -149,7 +151,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 	public void testExecuteWithoutClean() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test2"));
-		doThrow(new RuntimeException("testExecuteWithoutClean")).when(mojo).doRunGenerator();
+		doThrow(new RuntimeException("testExecuteWithoutClean")).when(mojo).doRunGenerator(any(Properties.class));
 
 		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
 		mojo.getModelFile().setLastModified(System.currentTimeMillis() + 2000);
@@ -169,6 +171,8 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 	public void testExecuteWithProperties() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test2"));
+		ArgumentCaptor<Properties> argument = ArgumentCaptor.forClass(Properties.class);
+		doReturn(Collections.emptyList()).when(mojo).doRunGenerator(argument.capture());
 
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put("testExecuteWithProperties", "testExecuteWithProperties-value");
@@ -177,7 +181,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		setVariableValueToObject(mojo, "force", true);
 
 		mojo.execute();
-		assertEquals("testExecuteWithProperties-value", System.getProperty("testExecuteWithProperties"));
+		assertEquals("testExecuteWithProperties-value", argument.getValue().getProperty("testExecuteWithProperties"));
 	}
 
 	/**
@@ -189,7 +193,7 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 		// Create mojo
 		GeneratorMojo mojo = spy(super.createMojo(project, "generate"));
-		doReturn(Collections.emptyList()).when(mojo).doRunGenerator();
+		doReturn(Collections.emptyList()).when(mojo).doRunGenerator(any(Properties.class));
 
 		// Set default values on mojo
 		setVariableValueToObject(mojo, "model", "src/main/resources/model.btdesign");
@@ -199,4 +203,5 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		mojo.initMojoMultiValueParameters();
 		return mojo;
 	}
+
 }
