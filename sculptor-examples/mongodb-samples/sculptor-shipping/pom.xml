@@ -185,10 +185,6 @@
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-test</artifactId>
 			<version>${project.version}</version>
