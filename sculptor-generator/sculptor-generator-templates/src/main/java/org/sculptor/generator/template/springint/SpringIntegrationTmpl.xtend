@@ -89,7 +89,7 @@ def String header(Application it) {
 				http://www.springframework.org/schema/integration/xml
 				http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd
 				http://www.springframework.org/schema/integration/file
-				http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+				http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
 				«headerSchemaLocationAdditions»">
 
 	'''
