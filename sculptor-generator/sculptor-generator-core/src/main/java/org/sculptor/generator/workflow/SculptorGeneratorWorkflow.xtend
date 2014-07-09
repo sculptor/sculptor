@@ -26,7 +26,6 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.Diagnostician
-import org.eclipse.xtext.resource.ClasspathUriResolutionException
 import org.eclipse.xtext.resource.IResourceServiceProvider
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.XtextResourceSet
@@ -105,28 +104,47 @@ class SculptorGeneratorWorkflow {
 
 	protected def boolean readModel(String modelURI) {
 		LOG.debug("Reading model from '{}'", modelURI)
-		try {
-			val resource = resourceSet.getResource(URI.createURI(modelURI), true)
-			if (resource.contents.empty) {
-				LOG.error("Model is empty")
-			} else {
-				val model = resource.contents.get(0) as DslModel
-				val app = model.app
 
-				// Read all imported models recursively
-				return model.imports.forall [
-					LOG.debug(
-						"Application" + if (app.basePackage != null && !app.basePackage.empty)
-							""
-						else
-							"Part" + " '{}' imports resource URI '{}'", app.name, it.importURI)
-					readModel(it.importURI)
-				]
+		// Read all the models from given URI and check for imports 
+		var newUris = newArrayList
+		newUris.add(modelURI)
+		var int numberResources
+		do {
+
+			// Remember the current number of resources in the resource set 
+			numberResources = resourceSet.resources.size
+
+			// Convert given text into URIs
+			var realUris = newArrayList
+			for (uri : newUris) {
+				try {
+					realUris.add(URI.createURI(uri))
+				} catch (Exception e) {
+					LOG.error("Invalid URI '{}' ({})", uri, e.message)
+					return false
+				}
 			}
-		} catch (ClasspathUriResolutionException e) {
-			LOG.error(e.cause.message)
-		}
-		false
+
+			// Check the exising URIs for new URIs from imports
+			newUris = newArrayList
+			for (uri : realUris) {
+				val resource = resourceSet.getResource(uri, true)
+				for (obj : resource.contents) {
+					if (obj instanceof DslModel) {
+						for (import : obj.imports) {
+							val app = obj.app
+							LOG.debug(
+								"Application " + if (app.basePackage != null && !app.basePackage.empty)
+									"'{}'"
+								else
+									"Part '{}' imports resource URI '{}'", app.name, import.importURI)
+							newUris.add(import.importURI)
+						}
+					}
+				}
+			}
+		} while (!newUris.empty && numberResources != resourceSet.resources.size)
+		true
 	}
 
 	protected def boolean validateResources() {

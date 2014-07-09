@@ -1,3 +1,5 @@
+import "classpath:/generator-tests/runner/model-milkyway.btdesign"	// cyclic import!!!
+
 ApplicationPart Milkyway {
 
     Module milkyway {
