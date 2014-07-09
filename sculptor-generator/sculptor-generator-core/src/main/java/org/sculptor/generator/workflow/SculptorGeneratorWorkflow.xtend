@@ -79,6 +79,7 @@ class SculptorGeneratorWorkflow {
 	}
 
 	def final boolean run(String modelURI, Properties properties) {
+		LOG.debug("Executing workflow with model from '{}'", modelURI)
 		updateConfiguration(properties)
 		if (readModel(modelURI)) {
 			if (validateResources()) {
@@ -93,11 +94,13 @@ class SculptorGeneratorWorkflow {
 				}
 			}
 		}
+		LOG.debug("Executing workflow failed")
 		false
 	}
 
 	protected def updateConfiguration(Properties properties) {
 		if (properties != null) {
+			LOG.debug("Updating configuration with {}", properties)
 			properties.stringPropertyNames.forEach[key|configuration.setString(key, properties.getProperty(key))]
 		}
 	}
@@ -134,8 +137,8 @@ class SculptorGeneratorWorkflow {
 						for (import : obj.imports) {
 							val app = obj.app
 							LOG.debug(
-								"Application " + if (app.basePackage != null && !app.basePackage.empty)
-									"'{}'"
+								"Application" + if (app.basePackage != null && !app.basePackage.empty)
+									" '{}'"
 								else
 									"Part '{}' imports resource URI '{}'", app.name, import.importURI)
 							newUris.add(import.importURI)
@@ -148,6 +151,7 @@ class SculptorGeneratorWorkflow {
 	}
 
 	protected def boolean validateResources() {
+		LOG.debug("Validating resource in resourceset '{}'", resourceSet)
 
 		// Validate all resources in resource set
 		resourceSet.resources.forall [
@@ -164,10 +168,8 @@ class SculptorGeneratorWorkflow {
 					}
 					case WARNING:
 						LOG.warn(message)
-					case INFO:
+					default:
 						LOG.info(message)
-					default: {
-					}
 				}
 				true
 			]
@@ -175,6 +177,7 @@ class SculptorGeneratorWorkflow {
 	}
 
 	protected def DslApplication getApplication() {
+		LOG.debug("Retrieving application from resource set '{}'", resourceSet)
 		var DslApplication mainApp = null
 		for (Resource resource : resourceSet.resources) {
 			for (EObject obj : resource.contents) {
@@ -188,6 +191,11 @@ class SculptorGeneratorWorkflow {
 				}
 			}
 		}
+		if (mainApp != null) {
+			LOG.debug("Found application '{}'", mainApp.name)
+		} else {
+			LOG.error("No application found in resource set", resourceSet)
+		}
 		mainApp
 	}
 
@@ -195,22 +203,31 @@ class SculptorGeneratorWorkflow {
 		LOG.debug("Validating application '{}'", application.name)
 		val appDiagnostic = diagnostitian.validate(application)
 		if (appDiagnostic.getSeverity() != Diagnostic.OK) {
+			LOG.error("Validating application '{}' failed", application.name)
 			logDiagnostic(appDiagnostic)
 			return false
 		}
 		true
 	}
 
-	protected def Application transformAndModifyApplication(DslApplication app) {
-		val transformedApp = runAction("org.sculptor.generator.transform.DslTransformation.transform", app) as Application
-		if (transformedApp != null) {
-			return runAction("org.sculptor.generator.transform.Transformation.modify", transformedApp) as Application
+	protected def Application transformAndModifyApplication(DslApplication application) {
+		LOG.debug("Transforming application '{}'", application.name)
+		var transformedApplication = runAction("org.sculptor.generator.transform.DslTransformation.transform",
+			application) as Application
+		if (transformedApplication != null) {
+			LOG.debug("Modifying transformed application '{}'", transformedApplication.name)
+			transformedApplication = runAction("org.sculptor.generator.transform.Transformation.modify",
+				transformedApplication) as Application
 		}
-		transformedApp
+		if (transformedApplication == null) {
+			LOG.error("Transformation and modification of application '{}' failed", application.name)
+		}
+		transformedApplication
 	}
 
-	protected def Object generateCode(Application app) {
-		runAction("org.sculptor.generator.template.RootTmpl.root", app)
+	protected def Object generateCode(Application application) {
+		LOG.debug("Generating code from application '{}'", application.name)
+		runAction("org.sculptor.generator.template.RootTmpl.root", application)
 	}
 
 	protected def Object runAction(String actionName, Object input) {
