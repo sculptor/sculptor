@@ -183,10 +183,8 @@ def String persistenceUnitProvider(Application it) {
 	<provider>org.hibernate.ejb.HibernatePersistence</provider>
 	«ELSEIF isJpaProviderEclipseLink()»
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-	«ELSEIF isJpaProviderDataNucleus()»
+	«ELSEIF isJpaProviderDataNucleus() || isJpaProviderAppEngine()»
 		<provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
-	«ELSEIF isJpaProviderAppEngine()»
-		<provider>org.datanucleus.store.appengine.jpa.DatastorePersistenceProvider</provider>
 	«ELSEIF isJpaProviderOpenJpa()»
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 	«ENDIF»
@@ -287,6 +285,7 @@ def String persistenceUnitPropertiesAppEngine(Application it) {
 			<property name="datanucleus.NontransactionalRead" value="true"/>
 			<property name="datanucleus.NontransactionalWrite" value="true"/>
 			<property name="datanucleus.ConnectionURL" value="appengine"/>
+			<property name="datanucleus.singletonEMFForName" value="true"/>
 			<!-- <property name="datanucleus.appengine.autoCreateDatastoreTxns" value="true"/> -->
 			<!-- <property name="datanucleus.manageRelationshipsChecks" value="false"/> -->
 	'''
