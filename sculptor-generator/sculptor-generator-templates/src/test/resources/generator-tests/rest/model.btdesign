@@ -1,0 +1,37 @@
+Application App {
+    basePackage=org.helloworld
+
+    Module milkyway {
+
+ 	    Resource FrontResource {
+			String front return="front/overview";
+	    }
+
+		Resource PlanetResource {
+		    show => PlanetService.findById;
+		    String createForm;
+		    create => PlanetService.save;
+		    delete => PlanetService.delete;
+		    showAll => PlanetService.findAll;
+		}
+
+		Service PlanetService {
+		    findById => PlanetRepository.findById;
+		    findAll => PlanetRepository.findAll;
+		    save => PlanetRepository.save;
+		    delete => PlanetRepository.delete;
+		}
+
+		Entity Planet {
+		    String name
+		    int diameter
+		    Repository PlanetRepository {
+		        findById;
+		        save;
+		        delete;
+		        findAll;
+		    }
+		}
+	}
+
+}

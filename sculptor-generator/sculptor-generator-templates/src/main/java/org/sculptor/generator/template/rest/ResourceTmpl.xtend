@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.rest
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DomainObject
 import sculptormetamodel.HttpMethod
 import sculptormetamodel.Parameter
 import sculptormetamodel.Resource
 import sculptormetamodel.ResourceOperation
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ResourceTmpl {
@@ -38,7 +36,6 @@ class ResourceTmpl {
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
 def String resource(Resource it) {
@@ -147,7 +144,7 @@ def String gaeKeyIdPropertyEditor(DomainObject it) {
 				    setValue(null);
 				} else {
 				    com.google.appengine.api.datastore.Key key = com.google.appengine.api.datastore.KeyFactory.createKey(
-				    	«getDomainPackage()».«name».class.getSimpleName(), Long.valueOf(text));
+				    	«it.getDomainPackage()».«name».class.getSimpleName(), Long.valueOf(text));
 				    setValue(key);
 				}
 			}
