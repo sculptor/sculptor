@@ -120,10 +120,9 @@ def String persistenceUnitContent(Application it, String unitName) {
 }
 
 def String persistenceUnit(Application it, String unitName) {
-	/*
+	'''
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-	*/
-	""
+	'''
 }
 
 def String persistenceUnitAnnotatedClasses(Application it, String unitName) {
