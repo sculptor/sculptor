@@ -140,7 +140,7 @@ def String versionAnnotations(Attribute it) {
 	'''
 		@javax.persistence.Version
 		@javax.persistence.Column(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
-			!nullable, "nullable", nullable))»)
+			!isJpaProviderAppEngine() && !nullable, "nullable", nullable))»)
 	'''
 }
 
@@ -153,6 +153,8 @@ def String auditAnnotations(Attribute it) {
 			@org.eclipse.persistence.annotations.Convert("JodaConverter")
 		«ELSEIF isJpaProviderOpenJpa() && it.isJodaTemporal()»
 			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
+		«ELSEIF isJpaProviderAppEngine()»
+			@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
 		«ELSE»
 			@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 		«ENDIF»
