@@ -173,7 +173,7 @@ def String columnAnnotations(Attribute it) {
 		«formatAnnotationParameters(<Object>newArrayList( true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
 			it.getDatabaseLength() != null, "length", it.getDatabaseLength(),
-			(it.isUuid() || it.isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()), "unique", "true",
+			(it.isUuid() || it.isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()) && !isJpaProviderAppEngine(), "unique", "true",
 			dbType != null, "columnDefinition", '"' + dbType + '"'
 		))»)
 		«columnDateAnnotations(it)»
