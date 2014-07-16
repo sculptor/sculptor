@@ -102,11 +102,11 @@ def String persistenceUnitContent(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»" «IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»transaction-type="JTA"«ELSE»transaction-type="RESOURCE_LOCAL"«ENDIF»>
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-		«persistenceUnit(it, unitName)»
 		«persistenceUnitProvider(it)»
 		«persistenceUnitDataSource(it, unitName)»
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
+		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
 		«IF isJpa2()»
 		    «persistenceUnitSharedCacheMode(it)»
 		    «persistenceUnitValidationMode(it)»
@@ -116,12 +116,6 @@ def String persistenceUnitContent(Application it, String unitName) {
 		<!-- add additional configuration by overriding "JPATmpl.persistenceUnitAdditions(Application)" -->
 		«persistenceUnitAdditions(it, unitName)»
 	</persistence-unit>
-	'''
-}
-
-def String persistenceUnit(Application it, String unitName) {
-	'''
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 	'''
 }
 
@@ -147,7 +141,14 @@ def String persistenceUnitAnnotatedClasses(DomainObject it) {
 		«IF gapClass»
 			<class>«getDomainPackage()».«name»Base</class>
 		«ENDIF»
-	«ENDIF»'''
+	«ENDIF»
+	'''
+}
+
+def String persistenceUnitExcludeUnlistedClasses(Application it, String unitName) {
+	'''
+	<exclude-unlisted-classes>true</exclude-unlisted-classes>
+	'''
 }
 
 def String persistenceUnitDataSource(Application it, String unitName) {
@@ -432,10 +433,10 @@ def String persistenceUnitContentTest(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»">
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-		«persistenceUnit(it, unitName)»
 		«persistenceUnitProvider(it)»
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
+		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
 		«IF isJpa2()»
 			«persistenceUnitSharedCacheMode(it)»
 			«persistenceUnitValidationMode(it)»
