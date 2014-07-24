@@ -44,6 +44,7 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle9iDialect;
 import org.hibernate.dialect.PostgreSQLDialect;
@@ -98,8 +99,8 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 		return this.statResult;
 	}
 
-	ColumnStatType[] timeGroups = {GROUP_BY_DAY, GROUP_BY_DOW, GROUP_BY_DOY, GROUP_BY_HOUR
-			, GROUP_BY_MONTH, GROUP_BY_QUARTER, GROUP_BY_WEEK, GROUP_BY_YEAR};
+	private static final ColumnStatType[] TIME_GROUPS = { GROUP_BY_DAY, GROUP_BY_DOW, GROUP_BY_DOY, GROUP_BY_HOUR,
+			GROUP_BY_MONTH, GROUP_BY_QUARTER, GROUP_BY_WEEK, GROUP_BY_YEAR };
 
 	private void addStatProjection(Criteria criteria) throws PersistenceException {
 		ProjectionList projList = Projections.projectionList();
@@ -125,7 +126,7 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 			}
 
 			// Time groups
-			for (ColumnStatType flag : timeGroups) {
+			for (ColumnStatType flag : TIME_GROUPS) {
 				if (column.isFlag(flag)) {
 					projList.add(makeTimeGroupBy(column, flag, criteria));
 				}
@@ -135,17 +136,18 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 		criteria.setProjection(projList);
 	}
 
-	private Type[] timeResultType = new Type[] {new IntegerType()};
+	private static final Type[] TIME_RESULT_TYPES = new Type[] { new IntegerType() };
 
 	private Projection makeTimeGroupBy(ColumnStatRequest<T> column, ColumnStatType func, Criteria criteria) {
 		if (getDialect() instanceof PostgreSQLDialect) {
 			return makeTimeGroupByPostgreSql(column, func, criteria);
 		} else if (getDialect() instanceof Oracle9iDialect || getDialect() instanceof Oracle10gDialect) {
 			return makeTimeGroupByOracle(column, func, criteria);
-		} else {
-			// TODO Add more dialects
-			throw new RuntimeException("findByConditionStat "+func.name()+" is supported only on Oracle and PostgreSQL");
+		} else if (getDialect() instanceof MySQLDialect) {
+			return makeTimeGroupByMySql(column, func, criteria);
 		}
+		// TODO Add more dialects
+		throw new RuntimeException("findByConditionStat "+func.name()+" is supported only on Oracle, PostgreSQL and MySQL");
 	}
 
 	private Projection makeTimeGroupByPostgreSql(ColumnStatRequest<T> column, ColumnStatType statType, Criteria criteria) {
@@ -177,7 +179,7 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 		return Projections.alias(Projections.sqlGroupProjection(sqlFunc + " as " + fldName
 				, fldName
 				, new String[] {fldName}
-				, timeResultType)
+				, TIME_RESULT_TYPES)
 			, fldName
 		);
 	}
@@ -210,7 +212,41 @@ public class JpaHibFindByConditionStatAccessImpl<T> extends JpaHibFindByConditio
 		return Projections.alias(Projections.sqlGroupProjection(sqlFunc + " as " + fldName
 				, fldName
 				, new String[] {fldName}
-				, timeResultType)
+				, TIME_RESULT_TYPES)
+			, fldName
+		);
+	}
+
+	private Projection makeTimeGroupByMySql(ColumnStatRequest<T> column, ColumnStatType statType, Criteria criteria) {
+		String func;
+		if (statType.equals(GROUP_BY_DAY)) {
+			func = "day";
+		} else if (statType.equals(GROUP_BY_DOW)) {
+			func = "dayofwek";
+		} else if (statType.equals(GROUP_BY_DOY)) {
+			func = "dayofyear";
+		} else if (statType.equals(GROUP_BY_HOUR)) {
+			func = "hour";
+		} else if (statType.equals(GROUP_BY_MONTH)) {
+			func = "month";
+		} else if (statType.equals(GROUP_BY_QUARTER)) {
+			func = "quarter";
+		} else if (statType.equals(GROUP_BY_WEEK)) {
+			func = "week";
+		} else if (statType.equals(GROUP_BY_YEAR)) {
+			func = "year";
+		} else {
+			func = "day";
+		}
+
+		String colName = column.getColumn().getName();
+		String fldName = colName + "_"+func;
+		String sqlFunc = "extract("+func+" from {alias}." + colName + ")";
+		criteria.addOrder(Order.asc(fldName));
+		return Projections.alias(Projections.sqlGroupProjection(sqlFunc + " as " + fldName
+				, fldName
+				, new String[] {fldName}
+				, TIME_RESULT_TYPES)
 			, fldName
 		);
 	}
