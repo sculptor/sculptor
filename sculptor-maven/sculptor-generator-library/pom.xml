@@ -35,19 +35,36 @@
 	</build>
 
 	<dependencies>
-		<!-- The stand-alone Eclipse library has to be in front of the other Eclipse 
-			plugins because its "plugin.properties" file must be the first in the shaded 
-			JAR!!! -->
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<classifier>runtime</classifier>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>sculptor-generator-cartridges</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<!-- The following runtime-dependencies are not added to the shaded library -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.xtext</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtend</groupId>
+			<artifactId>org.eclipse.xtend.lib</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
