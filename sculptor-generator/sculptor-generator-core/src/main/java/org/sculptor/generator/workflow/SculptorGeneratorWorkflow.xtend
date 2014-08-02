@@ -203,9 +203,11 @@ class SculptorGeneratorWorkflow {
 		LOG.debug("Validating application '{}'", application.name)
 		val appDiagnostic = diagnostitian.validate(application)
 		if (appDiagnostic.getSeverity() != Diagnostic.OK) {
-			LOG.error("Validating application '{}' failed", application.name)
 			logDiagnostic(appDiagnostic)
-			return false
+			if (appDiagnostic.getSeverity() == Diagnostic.ERROR) {
+				LOG.error("Validating application '{}' failed", application.name)
+				return false
+			}
 		}
 		true
 	}
