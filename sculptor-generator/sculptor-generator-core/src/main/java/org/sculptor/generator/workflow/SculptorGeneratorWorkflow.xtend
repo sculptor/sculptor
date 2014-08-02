@@ -245,7 +245,7 @@ class SculptorGeneratorWorkflow {
 			return actionMethod.invoke(actionObj, input)
 		} catch (Throwable t) {
 			LOG.error("Error running action '{}': {}", actionName,
-				if(t.cause instanceof SculptorGeneratorException) t.cause.message else t.message)
+				if(t.cause instanceof SculptorGeneratorException) t.cause.message else t.message, t)
 		}
 		null
 	}
