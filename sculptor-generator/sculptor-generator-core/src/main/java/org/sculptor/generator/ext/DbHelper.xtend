@@ -33,13 +33,17 @@ import sculptormetamodel.InheritanceType
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.SculptormetamodelFactory
+import org.slf4j.LoggerFactory
 
 @ChainOverridable
 public class DbHelper {
-	@Inject extension PropertiesBase propertiesBase
-	@Inject extension Properties properties
-	@Inject extension org.sculptor.generator.util.DbHelperBase dbHelperBase
-	@Inject extension Helper helper
+	
+	static val LOG = LoggerFactory::getLogger(typeof(DbHelper))
+
+	@Inject protected extension PropertiesBase propertiesBase
+	@Inject protected extension Properties properties
+	@Inject protected extension org.sculptor.generator.util.DbHelperBase dbHelperBase
+	@Inject protected extension Helper helper
 
 	def String getCascade(Reference ref) {
 		if (ref.cascade == null || ref.cascade == "")
@@ -414,7 +418,7 @@ public class DbHelper {
 		getSystemAttributesToPutLast().contains(attr.name)
 	}
 
-	def getExtendsForeignKeyName(DomainObject extendedClass) {
+	def String getExtendsForeignKeyName(DomainObject extendedClass) {
 		var idAttribute = getIdAttribute(extendedClass)
 		checkIdAttribute(extendedClass, idAttribute)
 		var name = extendedClass.databaseTable
