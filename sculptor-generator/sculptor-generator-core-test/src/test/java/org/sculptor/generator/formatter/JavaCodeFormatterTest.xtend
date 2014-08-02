@@ -16,10 +16,13 @@
  */
 package org.sculptor.generator.formatter
 
+import com.google.inject.Guice
 import org.junit.Before
 import org.junit.Test
+import org.sculptor.generator.configuration.ConfigurationProviderModule
 
 import static org.junit.Assert.*
+import org.junit.After
 
 class JavaCodeFormatterTest {
 
@@ -27,8 +30,15 @@ class JavaCodeFormatterTest {
 
 	@Before
 	def void setup() {
+		System.setProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY, "formatter/generator.properties")
+		val bootstrapInjector = Guice.createInjector(new ConfigurationProviderModule())
 		codeFormatter = new JavaCodeFormatter
-		codeFormatter.javaCodeAutoImporter = new JavaCodeAutoImporter
+		bootstrapInjector.injectMembers(codeFormatter)
+	}
+
+	@After
+	def void clearSystemProperties() {
+		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY)
 	}
 
 	@Test
@@ -107,6 +117,42 @@ class JavaCodeFormatterTest {
 
 				import javax.xml.bind.annotation.XmlSchema;
 				
+			'''.toString, source)
+	}
+
+	@Test
+	def testFormatWithAdditionalProperties() {
+		val source = codeFormatter.format("Test.java",
+			'''
+				package      com.acme;
+				    
+				    
+				     
+				«JavaCodeFormatter.IMPORT_MARKER_PATTERN»
+				    
+				    
+				class Test {
+				
+				
+				private String text1;
+				private String text2;
+				private String text3;
+				
+				}
+			''', true)
+		assertEquals(
+			'''
+				package com.acme;
+
+				class Test {
+				
+					private String text1;
+				
+					private String text2;
+
+					private String text3;
+
+				}
 			'''.toString, source)
 	}
 
