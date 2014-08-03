@@ -43,6 +43,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.sculptor.generator.SculptorGeneratorIssue;
+import org.sculptor.generator.SculptorGeneratorResult;
+import org.sculptor.generator.SculptorGeneratorResult.Status;
 import org.sculptor.generator.SculptorGeneratorRunner;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
@@ -468,7 +471,29 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	}
 
 	protected List<File> doRunGenerator(Properties generatorProperties) {
-		return SculptorGeneratorRunner.run(getModelFile().toString(), generatorProperties);
+		SculptorGeneratorResult result = SculptorGeneratorRunner.run(getModelFile().toString(), generatorProperties);
+
+		// Log all issues occured during workflow execution
+		for (SculptorGeneratorIssue issue : result.getIssues()) {
+			switch (issue.getSeverity()) {
+				case ERROR :
+					if (issue.getThrowable() != null) {
+						getLog().error(issue.getMessage(), issue.getThrowable());
+					} else {
+						getLog().error(issue.getMessage());
+					}
+					break;
+				case WARNING :
+					getLog().warn(issue.getMessage());
+					break;
+				case INFO :
+					getLog().info(issue.getMessage());
+					break;
+			}
+		}
+
+		// Abort build on error
+		return (result.getStatus() == Status.SUCCESS ? result.getGeneratedFiles() : null);
 	}
 
 	public void extendPluginClasspath(List<Object> classpathEntries) throws MojoExecutionException {

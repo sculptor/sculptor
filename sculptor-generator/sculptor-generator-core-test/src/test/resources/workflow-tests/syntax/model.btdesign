@@ -1,0 +1,9 @@
+ApplicationPart SecurityAuthentication {
+    Module authentication {
+        basePackage=com.acme.security.authentication
+
+        Entit Authority {	// syntax error in "Entity"
+            String name key
+        }
+    }
+}

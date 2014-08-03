@@ -34,12 +34,13 @@ import org.eclipse.xtext.validation.AbstractValidationDiagnostic
 import org.eclipse.xtext.validation.CheckMode
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
+import org.sculptor.generator.SculptorGeneratorContext
 import org.sculptor.generator.SculptorGeneratorException
+import org.sculptor.generator.SculptorGeneratorIssue.SculptorGeneratorIssueImpl
+import org.sculptor.generator.SculptorGeneratorIssue.Severity
 import org.sculptor.generator.configuration.MutableConfigurationProvider
 import org.slf4j.LoggerFactory
 import sculptormetamodel.Application
-
-import static org.eclipse.xtext.diagnostics.Severity.*
 
 /**
  * This class provides a strategy implementation of the Sculptor generators internal workflow:
@@ -51,6 +52,10 @@ import static org.eclipse.xtext.diagnostics.Severity.*
  * <li>transform the DSL model into a generator model  
  * <li>generate the code from the generator model
  * </ol>
+ * 
+ * Any problems occuring during workflow execution are stored as SculptorGeneratorIssue in
+ * the SculptorGeneratorContext.
+ *  
  * @see #run(String)
  */
 class SculptorGeneratorWorkflow {
@@ -123,7 +128,8 @@ class SculptorGeneratorWorkflow {
 				try {
 					realUris.add(URI.createURI(uri))
 				} catch (Exception e) {
-					LOG.error("Invalid URI '{}' ({})", uri, e.message)
+					SculptorGeneratorContext.addIssue(
+						new SculptorGeneratorIssueImpl(Severity.ERROR, "Invalid URI '" + uri + "' : " + e.message, e))
 					return false
 				}
 			}
@@ -163,13 +169,16 @@ class SculptorGeneratorWorkflow {
 					if(it.uriToProblem != null) " of " + it.uriToProblem.trimFragment else ""
 				switch it.severity {
 					case ERROR: {
-						LOG.error(message)
+						SculptorGeneratorContext.addIssue(
+							new SculptorGeneratorIssueImpl(Severity.ERROR, message))
 						return false
 					}
 					case WARNING:
-						LOG.warn(message)
+						SculptorGeneratorContext.addIssue(
+							new SculptorGeneratorIssueImpl(Severity.WARNING, message))
 					default:
-						LOG.info(message)
+						SculptorGeneratorContext.addIssue(
+							new SculptorGeneratorIssueImpl(Severity.INFO, message))
 				}
 				true
 			]
@@ -194,7 +203,9 @@ class SculptorGeneratorWorkflow {
 		if (mainApp != null) {
 			LOG.debug("Found application '{}'", mainApp.name)
 		} else {
-			LOG.error("No application found in resource set", resourceSet)
+			SculptorGeneratorContext.addIssue(
+				new SculptorGeneratorIssueImpl(Severity.ERROR,
+					"No application found in resource set: " + resourceSet))
 		}
 		mainApp
 	}
@@ -205,7 +216,9 @@ class SculptorGeneratorWorkflow {
 		if (appDiagnostic.getSeverity() != Diagnostic.OK) {
 			logDiagnostic(appDiagnostic)
 			if (appDiagnostic.getSeverity() == Diagnostic.ERROR) {
-				LOG.error("Validating application '{}' failed", application.name)
+				SculptorGeneratorContext.addIssue(
+					new SculptorGeneratorIssueImpl(Severity.ERROR,
+						"Validating  application '" + application.name + "' failed"))
 				return false
 			}
 		}
@@ -222,7 +235,9 @@ class SculptorGeneratorWorkflow {
 				transformedApplication) as Application
 		}
 		if (transformedApplication == null) {
-			LOG.error("Transformation and modification of application '{}' failed", application.name)
+			SculptorGeneratorContext.addIssue(
+				new SculptorGeneratorIssueImpl(Severity.ERROR,
+					"Transformation and modification of application '" + application.name + "' failed"))
 		}
 		transformedApplication
 	}
@@ -246,8 +261,10 @@ class SculptorGeneratorWorkflow {
 			val actionObj = injector.getInstance(actionClass)
 			return actionMethod.invoke(actionObj, input)
 		} catch (Throwable t) {
-			LOG.error("Error running action '{}': {}", actionName,
-				if(t.cause instanceof SculptorGeneratorException) t.cause.message else t.message)
+			SculptorGeneratorContext.addIssue(
+				new SculptorGeneratorIssueImpl(Severity.ERROR,
+					"Error running action '" + actionName + "': " +
+						if(t.cause instanceof SculptorGeneratorException) t.cause.message else t.message, t))
 		}
 		null
 	}
@@ -262,11 +279,11 @@ class SculptorGeneratorWorkflow {
 				EmfFormatter.objPath(eObject)
 			switch diagnostic.severity {
 				case Diagnostic.ERROR:
-					LOG.error(message)
+					SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.ERROR, message))
 				case Diagnostic.WARNING:
-					LOG.warn(message)
+					SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.WARNING, message))
 				default:
-					LOG.info(message)
+					SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.INFO, message))
 			}
 		}
 		if (diagnostic.getChildren() != null) {

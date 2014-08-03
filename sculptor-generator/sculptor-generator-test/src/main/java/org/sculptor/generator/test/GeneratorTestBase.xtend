@@ -21,6 +21,7 @@ import java.io.IOException
 import java.util.List
 import java.util.Properties
 import org.sculptor.generator.SculptorGeneratorException
+import org.sculptor.generator.SculptorGeneratorResult.Status
 import org.sculptor.generator.SculptorGeneratorRunner
 import org.sculptor.generator.configuration.Configuration
 
@@ -81,16 +82,13 @@ abstract class GeneratorTestBase {
 		generatorProperties.setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
 		generatorProperties.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
 
-		// Abort on invalid generated Java code
-		if (System.getProperty("java.codeformatter.error.abort") != null) {
-			System.setProperty("java.codeformatter.error.abort", "true")
-		}
-
 		// Run generator and return list of generated files
-		if (SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign",
-				generatorProperties) == null) {
+		val result = SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign",
+				generatorProperties)
+		if (result.status != Status.SUCCESS) {
 			throw new SculptorGeneratorException("Code generation failed")
 		}
+		result.generatedFiles
 	}
 
 	private static def void deleteDirectory(File directory) {

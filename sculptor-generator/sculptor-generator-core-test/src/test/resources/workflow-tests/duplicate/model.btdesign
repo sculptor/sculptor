@@ -1,0 +1,13 @@
+ApplicationPart SecurityAuthentication {
+    Module authentication {
+        basePackage=com.acme.security.authentication
+
+        Entity Authority {
+            String name key
+        }
+
+        BasicType Authority {	// duplicate
+            String name key
+        }
+    }
+}

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator;
 
 import java.io.File;
@@ -23,31 +22,44 @@ import java.util.List;
 
 /**
  * This class uses a {@link ThreadLocal} to hold a list of file created by the
- * code generator.
+ * code generator and a list of issues which came up during code generation.
  * 
  * <strong>After finshings with the file list call {@link #close()} to remove
  * the file list from the current thread. Otherwise this class is leaking
  * memory!!!</strong>
  */
-public class SculptorGeneratorContext {
+public final class SculptorGeneratorContext {
 
-	private static final ThreadLocal<List<File>> generatedFilesHolder = new ThreadLocal<List<File>>() {
+	private static final ThreadLocal<SculptorGeneratorContextHolder> threadLocal = new ThreadLocal<SculptorGeneratorContextHolder>() {
 		@Override
-		protected List<File> initialValue() {
-			return new ArrayList<File>();
+		protected SculptorGeneratorContextHolder initialValue() {
+			return new SculptorGeneratorContextHolder();
 		}
 	};
 
 	public static void addGeneratedFile(File file) {
-		generatedFilesHolder.get().add(file);
+		threadLocal.get().generatedFiles.add(file);
 	}
 
 	public static List<File> getGeneratedFiles() {
-		return generatedFilesHolder.get();
+		return threadLocal.get().generatedFiles;
+	}
+
+	public static void addIssue(SculptorGeneratorIssue issue) {
+		threadLocal.get().issues.add(issue);
+	}
+
+	public static List<SculptorGeneratorIssue> getIssues() {
+		return threadLocal.get().issues;
 	}
 
 	public static void close() {
-		generatedFilesHolder.remove();
+		threadLocal.remove();
+	}
+
+	private static class SculptorGeneratorContextHolder {
+		private final List<File> generatedFiles = new ArrayList<File>();
+		private final List<SculptorGeneratorIssue> issues = new ArrayList<SculptorGeneratorIssue>();
 	}
 
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import org.sculptor.generator.SculptorGeneratorResult.Status;
 import org.sculptor.generator.util.FileHelper;
 import org.sculptor.generator.workflow.SculptorGeneratorWorkflow;
 
@@ -28,37 +29,44 @@ import com.google.inject.Injector;
 
 /**
  * Retrieves an instance of the generators internal workflow from the generators
- * guice-configured setup, executes it and returns the list of generated
- * {@link File}s or <code>null</code> on error.
+ * guice-configured setup, executes it and returns a
+ * {@link SculptorGeneratorResult} instance (holding lists of generated
+ * {@link File}s and {@link SculptorGeneratorIssue} instances).
  * 
  * @see SculptorGeneratorSetup#createInjectorAndDoEMFRegistration()
  * @see SculptorGeneratorWorkflow#run(String)
  */
 public class SculptorGeneratorRunner {
 
-	public static final List<File> run(String modelURI, Properties generatorProperties) {
+	public static final SculptorGeneratorResult run(String modelURI, Properties generatorProperties) {
 		Injector injector = new SculptorGeneratorSetup().createInjectorAndDoEMFRegistration();
 		SculptorGeneratorWorkflow workflow = injector.getInstance(SculptorGeneratorWorkflow.class);
 		SculptorGeneratorContext.getGeneratedFiles().clear();
 		try {
+
+			// Execute the generators workflow
 			boolean success = workflow.run(modelURI, generatorProperties);
+
+			// Create a result object holding a list of generated files and issues occured during code generation
+			List<SculptorGeneratorIssue> issues = SculptorGeneratorContext.getIssues();
 			List<File> generatedFiles = SculptorGeneratorContext.getGeneratedFiles();
-			if (success) {
-				return generatedFiles;
-			}
+			SculptorGeneratorResult result = new SculptorGeneratorResult((success ? Status.SUCCESS : Status.FAILED),
+					issues, generatedFiles);
 
 			// If generation failed then delete any generated files
-			for (File file : generatedFiles) {
-				try {
-					FileHelper.deleteFile(file);
-				} catch (IOException e) {
-					// we can't do anything here
+			if (!success) {
+				for (File file : generatedFiles) {
+					try {
+						FileHelper.deleteFile(file);
+					} catch (IOException e) {
+						// we can't do anything here
+					}
 				}
 			}
+			return result;
 		} finally {
 			SculptorGeneratorContext.close();
 		}
-		return null;
 	}
 
 }
