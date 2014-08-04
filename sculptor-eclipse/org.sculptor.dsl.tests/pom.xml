@@ -53,10 +53,6 @@
 						<phase>test</phase>
 						<configuration>
 							<testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
-							<excludes>
-							</excludes>
-							<!-- Run every test class in a newly forked JVM -->
-							<reuseForks>false</reuseForks>
 						</configuration>
 						<goals>
 							<goal>test</goal>
