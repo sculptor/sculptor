@@ -3,12 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
-		<artifactId>sculptor-generator</artifactId>
+		<artifactId>sculptor-cartridges</artifactId>
 		<version>3.0.5-SNAPSHOT</version>
 	</parent>
-	<groupId>org.sculptorgenerator.generator</groupId>
-	<artifactId>sculptor-generator-cartridges</artifactId>
-	<name>Sculptor :: Generator :: Cartridges</name>
+	<artifactId>sculptor-cartridge-builder</artifactId>
+	<name>Sculptor :: Cartridges :: Builder</name>
 
 	<build>
 		<plugins>
@@ -61,12 +60,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-templates</artifactId>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.xtext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtend</groupId>
+			<artifactId>org.eclipse.xtend.lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-test</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

@@ -1,0 +1,10 @@
+Application Test {
+    basePackage=com.acme
+
+	Module library {
+        Entity Media {
+        	String id key
+        	String name
+        }
+    }
+}

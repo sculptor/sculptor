@@ -127,6 +127,7 @@
 			<modules>
 				<module>sculptor-eclipse</module>
 				<module>sculptor-generator</module>
+				<module>sculptor-cartridges</module>
 				<module>sculptor-maven</module>
 				<module>sculptor-framework</module>
 			</modules>
@@ -150,9 +151,16 @@
 			</modules>
 		</profile>
 		<profile>
+			<id>cartridges</id>
+			<modules>
+				<module>sculptor-cartridges</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>maven</id>
 			<modules>
 				<module>sculptor-generator</module>
+				<module>sculptor-cartridges</module>
 				<module>sculptor-framework</module>
 				<module>sculptor-maven</module>
 			</modules>

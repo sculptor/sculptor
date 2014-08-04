@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.mongodb
 
 import com.google.inject.Inject
@@ -37,9 +36,9 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 
 	@Inject
 	var GeneratorModelTestFixtures generatorModelTestFixtures
-	
+
 	var MongoDbMapperTmpl mongoDbMapperTmpl
-	
+
 	@Before
 	def void setupExtensions() {
 		generatorModelTestFixtures.setupInjector(typeof(MongoDbMapperTmpl))

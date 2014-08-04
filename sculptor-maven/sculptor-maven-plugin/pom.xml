@@ -105,6 +105,16 @@
 			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-cartridge-builder</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-cartridge-mongodb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 	    <!-- Maven -->
  		<dependency>

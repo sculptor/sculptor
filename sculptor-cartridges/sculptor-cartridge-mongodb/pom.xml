@@ -3,12 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
-		<artifactId>sculptor-generator</artifactId>
+		<artifactId>sculptor-cartridges</artifactId>
 		<version>3.0.5-SNAPSHOT</version>
 	</parent>
-	<groupId>org.sculptorgenerator.generator</groupId>
-	<artifactId>sculptor-generator-core-test</artifactId>
-	<name>Sculptor :: Generator :: Core tests</name>
+	<artifactId>sculptor-cartridge-mongodb</artifactId>
+	<name>Sculptor :: Cartridges :: MongoDB</name>
 
 	<build>
 		<plugins>
@@ -17,6 +16,12 @@
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
+						<fileset>
+							<directory>${basedir}/src/main/xtend-gen</directory>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+						</fileset>
 						<fileset>
 							<directory>${basedir}/src/test/xtend-gen</directory>
 							<excludes>
@@ -32,9 +37,11 @@
 				<executions>
 					<execution>
 						<goals>
+							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>
 						<configuration>
+							<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
 							<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
 						</configuration>
 					</execution>
@@ -53,21 +60,23 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-core</artifactId>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-generator-library</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.xtext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtend</groupId>
+			<artifactId>org.eclipse.xtend.lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-test</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>sculptor-generator-templates</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

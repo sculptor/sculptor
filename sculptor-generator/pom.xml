@@ -21,7 +21,6 @@
 		<module>sculptor-generator-core-test</module>
 		<module>sculptor-generator-test</module>
 		<module>sculptor-generator-templates</module>
-		<module>sculptor-generator-cartridges</module>
 	</modules>
 
 	<repositories>

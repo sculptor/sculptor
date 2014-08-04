@@ -31,14 +31,10 @@ class SculptorGeneratorRunnerTest extends GeneratorTestBase {
 	def void assertGeneratedFiles() {
 		runGenerator(TEST_NAME)
 
-		// Standard templates
 		getFileText(TO_SRC + "/org/sculptor/example/helloworld/milkyway/domain/Planet.java");
 		getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/domain/PlanetBase.java");
 		getFileText(TO_SRC_TEST + "/org/sculptor/example/helloworld/milkyway/serviceapi/PlanetServiceTest.java");
 		getFileText(TO_GEN_SRC_TEST + "/org/sculptor/example/helloworld/milkyway/serviceapi/PlanetServiceTestBase.java");
-
-		// Builder cartridge
-		getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/domain/PlanetBuilder.java");
 	}
 
 }
