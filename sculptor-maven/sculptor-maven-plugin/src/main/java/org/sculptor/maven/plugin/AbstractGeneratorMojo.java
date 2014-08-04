@@ -30,7 +30,6 @@ import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
@@ -45,7 +44,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	/**
 	 * The enclosing project.
 	 */
-	@Component
+	@Parameter(defaultValue="${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
