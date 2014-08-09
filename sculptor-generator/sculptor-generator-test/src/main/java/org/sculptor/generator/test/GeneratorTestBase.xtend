@@ -21,9 +21,13 @@ import java.io.IOException
 import java.util.List
 import java.util.Properties
 import org.sculptor.generator.SculptorGeneratorException
+import org.sculptor.generator.SculptorGeneratorIssue
 import org.sculptor.generator.SculptorGeneratorResult.Status
 import org.sculptor.generator.SculptorGeneratorRunner
 import org.sculptor.generator.configuration.Configuration
+import org.slf4j.LoggerFactory
+
+import static org.sculptor.generator.SculptorGeneratorIssue.Severity.*
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
@@ -31,6 +35,8 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
  * Base class for tests that execute the Sculptor generator.
  */
 abstract class GeneratorTestBase {
+
+	val static LOG = LoggerFactory.getLogger(GeneratorTestBase)
 
 	private val static CONFIG_DIR = "generator-tests/"
 	private val static OUTPUT_DIR = "target/sculptor-generator-tests/"
@@ -85,6 +91,22 @@ abstract class GeneratorTestBase {
 		// Run generator and return list of generated files
 		val result = SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign",
 				generatorProperties)
+
+		// Log all issues occured during workflow execution
+		for (SculptorGeneratorIssue issue : result.getIssues()) {
+			switch (issue.getSeverity()) {
+				case ERROR :
+					if (issue.getThrowable() != null) {
+						LOG.error(issue.getMessage(), issue.getThrowable())
+					} else {
+						LOG.error(issue.getMessage())
+					}
+				case WARNING :
+					LOG.warn(issue.getMessage())
+				case INFO :
+					LOG.info(issue.getMessage())
+			}
+		}
 		if (result.status != Status.SUCCESS) {
 			throw new SculptorGeneratorException("Code generation failed")
 		}
