@@ -14,7 +14,6 @@
 	<modules>
 		<module>sculptor-cartridge-builder</module>
 		<module>sculptor-cartridge-mongodb</module>
-		<module>sculptor-cartridge-springdatajpa</module>
 	</modules>
 
 	<build>
