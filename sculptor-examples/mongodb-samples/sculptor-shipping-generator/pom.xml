@@ -61,7 +61,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
-			<artifactId>sculptor-generator-test</artifactId>
+			<artifactId>sculptor-generator-test-library</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

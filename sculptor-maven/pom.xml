@@ -11,8 +11,6 @@
 	<name>Sculptor :: Maven</name>
 
 	<modules>
-		<module>sculptor-generator-library</module>
-		<module>sculptor-generator-test</module>
 		<module>sculptor-maven-plugin</module>
 		<module>sculptor-maven-archetype-parent</module>
 		<module>sculptor-maven-archetype</module>
