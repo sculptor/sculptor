@@ -414,7 +414,7 @@ public class DbHelper {
 		getSystemAttributesToPutLast().contains(attr.name)
 	}
 
-	def getExtendsForeignKeyName(DomainObject extendedClass) {
+	def String getExtendsForeignKeyName(DomainObject extendedClass) {
 		var idAttribute = getIdAttribute(extendedClass)
 		checkIdAttribute(extendedClass, idAttribute)
 		var name = extendedClass.databaseTable
