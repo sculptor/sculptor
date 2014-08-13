@@ -18,6 +18,7 @@ package org.sculptor.generator.cartridge.builder
 
 import java.util.List
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.domain.DomainObjectAttributeTmpl
@@ -30,6 +31,7 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 
+@ChainOverridable
 class BuilderTmpl {
 
 	@Inject extension BuilderHelper builderHelper

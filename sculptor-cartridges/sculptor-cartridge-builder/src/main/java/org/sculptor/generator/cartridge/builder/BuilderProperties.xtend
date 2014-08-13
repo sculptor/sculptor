@@ -20,7 +20,9 @@ import javax.inject.Inject
 import javax.inject.Named
 import org.sculptor.generator.configuration.MutableConfigurationProvider
 import org.sculptor.generator.util.PropertiesBase
+import org.sculptor.generator.chain.ChainOverridable
 
+@ChainOverridable
 class BuilderProperties {
 
 	@Inject extension PropertiesBase propertiesBase
