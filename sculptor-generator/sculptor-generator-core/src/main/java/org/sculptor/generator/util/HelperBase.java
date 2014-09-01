@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.util;
 
 import java.util.ArrayList;
@@ -69,14 +68,13 @@ import sculptormetamodel.ValueObject;
 import sculptormetamodel.impl.SculptormetamodelFactoryImpl;
 
 /**
- * Utilities for code generation and transformation. It is used from oAW
- * templates and transformations via oAW extensions.
- * 
+ * Utilities for code generation and transformation. It is used from templates
+ * and transformations via extensions.
  */
 public class HelperBase {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HelperBase.class);
-	
+
 	private PropertiesBase propBase;
 
 	private PrimitiveTypeMapper primitiveTypeMapper = new PrimitiveTypeMapper();
@@ -99,8 +97,6 @@ public class HelperBase {
 		collectionImplTypeMapper.put(null, propBase.getJavaTypeImpl("Set"));
 	}
 
-	private static Application app;
-
 	public static void printEnvironment() {
 		LOG.warn("######################################################");
 		LOG.warn("# Runtime environment");
@@ -121,10 +117,10 @@ public class HelperBase {
 		LOG.warn("######################################################");
 	}
 
-	private static final Pattern envPattern = Pattern.compile("\\$\\{[^}]*\\}");
+	private static final Pattern PLACE_HOLDER_PATTERN = Pattern.compile("\\$\\{[^}]*\\}");
 
 	public String processPath(String input) {
-		Matcher matcher = envPattern.matcher(input);
+		Matcher matcher = PLACE_HOLDER_PATTERN.matcher(input);
 		StringBuffer out = new StringBuffer();
 		while(matcher.find()) {
 			String match = matcher.group();
@@ -1017,14 +1013,6 @@ public class HelperBase {
 		return value.startsWith("\"") && value.endsWith("\"");
 	}
 
-	public Application getGlobalApp() {
-		return app;
-	}
-
-	public void setGlobalApp(Application app) {
-		HelperBase.app = app;
-	}
-
 	/**
 	 * Handles Validation Annotations for DomainObjects.
 	 * 
@@ -1456,4 +1444,5 @@ public class HelperBase {
 	public String toConditionalCriteria(String condition, String root) {
 		return new QueryConverter.ConditionalCriteriaStrategy(condition,root).toQueryDsl();
 	}
+
 }

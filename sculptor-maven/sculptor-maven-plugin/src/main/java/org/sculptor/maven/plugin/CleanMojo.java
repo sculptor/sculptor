@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.maven.plugin;
 
 import java.io.File;
@@ -31,7 +30,7 @@ import org.codehaus.plexus.util.FileUtils;
  * This plugin deletes all files created by a previous run of the Sculptor code
  * generator. The {@link AbstractGeneratorMojo#statusFile} is deleted as well.
  */
-@Mojo(name = "clean", defaultPhase = LifecyclePhase.CLEAN)
+@Mojo(name = "clean", defaultPhase = LifecyclePhase.CLEAN, threadSafe = true)
 public class CleanMojo extends AbstractGeneratorMojo {
 
 	/**

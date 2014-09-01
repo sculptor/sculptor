@@ -149,14 +149,14 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>org.codehaus.jackson</groupId>
-		    <artifactId>jackson-mapper-lgpl</artifactId>
-		    <version>1.9.13</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>\${symbol_dollar}{jackson-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>1.4.4</version>
+		    <version>\${symbol_dollar}{xstream-version}</version>
 		</dependency>
 #end
 	</dependencies>

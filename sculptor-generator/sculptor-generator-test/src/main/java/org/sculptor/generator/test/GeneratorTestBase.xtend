@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,16 @@ package org.sculptor.generator.test
 
 import java.io.File
 import java.io.IOException
+import java.util.List
+import java.util.Properties
 import org.sculptor.generator.SculptorGeneratorException
+import org.sculptor.generator.SculptorGeneratorIssue
+import org.sculptor.generator.SculptorGeneratorResult.Status
 import org.sculptor.generator.SculptorGeneratorRunner
 import org.sculptor.generator.configuration.Configuration
+import org.slf4j.LoggerFactory
+
+import static org.sculptor.generator.SculptorGeneratorIssue.Severity.*
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
@@ -28,6 +35,8 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
  * Base class for tests that execute the Sculptor generator.
  */
 abstract class GeneratorTestBase {
+
+	val static LOG = LoggerFactory.getLogger(GeneratorTestBase)
 
 	private val static CONFIG_DIR = "generator-tests/"
 	private val static OUTPUT_DIR = "target/sculptor-generator-tests/"
@@ -58,31 +67,50 @@ abstract class GeneratorTestBase {
 		f.text
 	}
 
-	protected static def void runGenerator(String testName) {
+	protected static def List<File> runGenerator(String testName) {
 		deleteDirectory(new File(OUTPUT_DIR, testName))
 
+		// Read the generator configuration from within the test folder 
 		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
 			CONFIG_DIR + testName + "/sculptor-generator.properties")
 
-		System.setProperty("outputSlot.path.TO_SRC", OUTPUT_DIR + testName + TO_SRC)
-		System.setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
-		System.setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
-		System.setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
-		System.setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
-		System.setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
-		System.setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
-		System.setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST", OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
-		System.setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
-		System.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
+		// Prepare properties with the ouput slot paths for the code generator 
+		val generatorProperties = new Properties();
+		generatorProperties.setProperty("outputSlot.path.TO_SRC", OUTPUT_DIR + testName + TO_SRC)
+		generatorProperties.setProperty("outputSlot.path.TO_RESOURCES", OUTPUT_DIR + testName + TO_RESOURCES)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_SRC", OUTPUT_DIR + testName + TO_GEN_SRC)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_RESOURCES", OUTPUT_DIR + testName + TO_GEN_RESOURCES)
+		generatorProperties.setProperty("outputSlot.path.TO_SRC_TEST", OUTPUT_DIR + testName + TO_SRC_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_RESOURCES_TEST", OUTPUT_DIR + testName + TO_RESOURCES_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_SRC_TEST", OUTPUT_DIR + testName + TO_GEN_SRC_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_GEN_RESOURCES_TEST",
+			OUTPUT_DIR + testName + TO_GEN_RESOURCES_TEST)
+		generatorProperties.setProperty("outputSlot.path.TO_WEBROOT", OUTPUT_DIR + testName + TO_WEBROOT)
+		generatorProperties.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
 
-		// Abort on invalid generated Java code
-		if (System.getProperty("java.codeformatter.error.abort") != null) {
-			System.setProperty("java.codeformatter.error.abort", "true")
+		// Run generator and return list of generated files
+		val result = SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign",
+				generatorProperties)
+
+		// Log all issues occured during workflow execution
+		for (SculptorGeneratorIssue issue : result.getIssues()) {
+			switch (issue.getSeverity()) {
+				case ERROR :
+					if (issue.getThrowable() != null) {
+						LOG.error(issue.getMessage(), issue.getThrowable())
+					} else {
+						LOG.error(issue.getMessage())
+					}
+				case WARNING :
+					LOG.warn(issue.getMessage())
+				case INFO :
+					LOG.info(issue.getMessage())
+			}
 		}
-
-		if (!SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign")) {
+		if (result.status != Status.SUCCESS) {
 			throw new SculptorGeneratorException("Code generation failed")
 		}
+		result.generatedFiles
 	}
 
 	private static def void deleteDirectory(File directory) {

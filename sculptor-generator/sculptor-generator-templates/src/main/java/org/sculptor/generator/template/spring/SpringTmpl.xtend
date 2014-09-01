@@ -199,6 +199,7 @@ def String applicationContextAdditions(Application it) {
 	'''
 }
 
+
 def String applicationContextTest(Application it) {
 	fileOutput("applicationContext-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
@@ -206,6 +207,16 @@ def String applicationContextTest(Application it) {
 	
 		«springPropertyConfigTest(it)»
 	
+		«applicationContextTestImports(it)»
+		
+		«applicationContextTestAdditions(it)»
+	</beans>
+	'''
+	)
+}
+
+def String applicationContextTestImports(Application it) {
+'''
 		«IF jpa()»
 			«IF isJpaProviderAppEngine()»
 				<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml")»"/>
@@ -223,10 +234,9 @@ def String applicationContextTest(Application it) {
 		«ENDIF»
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml")»"/>
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml")»"/>
-		«applicationContextTestAdditions(it)»
-	</beans>
-	'''
-	)
+
+'''
+	
 }
 
 /*
@@ -502,10 +512,8 @@ def String txAdvice(Application it, boolean isInComment) {
 	'''
 }
 
-def String aopConfig(Application it) {
+def String aopConfigServicePointcuts(Application it) {
 	'''
-	<aop:config>
-
 		<aop:pointcut id="businessService"
 			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..))"/>
 		<aop:pointcut id="readOnlyBusinessService"
@@ -513,6 +521,15 @@ def String aopConfig(Application it) {
 		<!-- Repeating the expression, since I can't find a way to refer to the other pointcuts. -->
 		<aop:pointcut id="updatingBusinessService"
 			expression="execution(public * «basePackage»..«subPackage("serviceInterface")».*.*(..)) and not (execution(public * «basePackage»..«subPackage("serviceInterface")».*.get*(..)) or execution(public * «basePackage»..«subPackage("serviceInterface")».*.find*(..)))"/>
+	'''	
+}
+
+def String aopConfig(Application it) {
+	'''
+	<aop:config>
+
+		«aopConfigServicePointcuts»
+		
 		«IF it.hasConsumers()»
 			<aop:pointcut id="messageConsumer"
 				expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>

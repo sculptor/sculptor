@@ -102,11 +102,11 @@ def String persistenceUnitContent(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»" «IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»transaction-type="JTA"«ELSE»transaction-type="RESOURCE_LOCAL"«ENDIF»>
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-		«persistenceUnit(it, unitName)»
 		«persistenceUnitProvider(it)»
 		«persistenceUnitDataSource(it, unitName)»
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
+		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
 		«IF isJpa2()»
 		    «persistenceUnitSharedCacheMode(it)»
 		    «persistenceUnitValidationMode(it)»
@@ -117,13 +117,6 @@ def String persistenceUnitContent(Application it, String unitName) {
 		«persistenceUnitAdditions(it, unitName)»
 	</persistence-unit>
 	'''
-}
-
-def String persistenceUnit(Application it, String unitName) {
-	/*
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-	*/
-	""
 }
 
 def String persistenceUnitAnnotatedClasses(Application it, String unitName) {
@@ -148,7 +141,14 @@ def String persistenceUnitAnnotatedClasses(DomainObject it) {
 		«IF gapClass»
 			<class>«getDomainPackage()».«name»Base</class>
 		«ENDIF»
-	«ENDIF»'''
+	«ENDIF»
+	'''
+}
+
+def String persistenceUnitExcludeUnlistedClasses(Application it, String unitName) {
+	'''
+	<exclude-unlisted-classes>true</exclude-unlisted-classes>
+	'''
 }
 
 def String persistenceUnitDataSource(Application it, String unitName) {
@@ -183,10 +183,8 @@ def String persistenceUnitProvider(Application it) {
 	<provider>org.hibernate.ejb.HibernatePersistence</provider>
 	«ELSEIF isJpaProviderEclipseLink()»
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-	«ELSEIF isJpaProviderDataNucleus()»
+	«ELSEIF isJpaProviderDataNucleus() || isJpaProviderAppEngine()»
 		<provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
-	«ELSEIF isJpaProviderAppEngine()»
-		<provider>org.datanucleus.store.appengine.jpa.DatastorePersistenceProvider</provider>
 	«ELSEIF isJpaProviderOpenJpa()»
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 	«ENDIF»
@@ -287,6 +285,7 @@ def String persistenceUnitPropertiesAppEngine(Application it) {
 			<property name="datanucleus.NontransactionalRead" value="true"/>
 			<property name="datanucleus.NontransactionalWrite" value="true"/>
 			<property name="datanucleus.ConnectionURL" value="appengine"/>
+			<property name="datanucleus.singletonEMFForName" value="true"/>
 			<!-- <property name="datanucleus.appengine.autoCreateDatastoreTxns" value="true"/> -->
 			<!-- <property name="datanucleus.manageRelationshipsChecks" value="false"/> -->
 	'''
@@ -434,10 +433,10 @@ def String persistenceUnitContentTest(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»">
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-		«persistenceUnit(it, unitName)»
 		«persistenceUnitProvider(it)»
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
+		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
 		«IF isJpa2()»
 			«persistenceUnitSharedCacheMode(it)»
 			«persistenceUnitValidationMode(it)»

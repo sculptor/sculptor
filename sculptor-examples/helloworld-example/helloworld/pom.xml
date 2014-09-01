@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator.examples</groupId>
 		<artifactId>helloworld-parent</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 		<relativePath>../helloworld-parent/</relativePath>
 	</parent>
 	<artifactId>helloworld</artifactId>
@@ -164,10 +164,6 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.dbunit</groupId>

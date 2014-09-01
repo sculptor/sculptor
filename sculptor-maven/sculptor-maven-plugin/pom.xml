@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-maven</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 	</parent>
 	<artifactId>sculptor-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -43,11 +43,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<configuration>
-					<!-- ContextClassLoaderAwareRuntimeResourceSetInitializer 
-						needs access to the thread context classloader -->
-					<useSystemClassLoader>false</useSystemClassLoader>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -103,9 +98,21 @@
 	</reporting>
 
 	<dependencies>
+
+	    <!-- Sculptor -->
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-cartridge-builder</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-cartridge-mongodb</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -128,7 +135,7 @@
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<version>3.2</version>
+			<version>3.3</version>
 			<scope>provided</scope>
 		</dependency>
 

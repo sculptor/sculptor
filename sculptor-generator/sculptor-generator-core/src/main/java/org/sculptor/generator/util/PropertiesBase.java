@@ -208,14 +208,13 @@ public class PropertiesBase {
 	private void initDerivedDefaultsForAppengine(MutableConfigurationProvider defaultConfiguration) {
 		defaultConfiguration.setString("deployment.type", "war");
 		defaultConfiguration.setString("jpa.provider", "appengine");
-		defaultConfiguration.setString("jpa.version", "1.0");
+		defaultConfiguration.setString("jpa.version", "2.0");
 		defaultConfiguration.setBoolean("generate.ddl", false);
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("javaType.IDTYPE", "com.google.appengine.api.datastore.Key");
 		defaultConfiguration.setString("cache.provider", "memcache");
 		defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
 		defaultConfiguration.setBoolean("generate.test.emptyDbunitTestData", false);
-		defaultConfiguration.setBoolean("generate.logbackConfig", false);
 	}
 
 	private void initDerivedDefaultsForJoda(MutableConfigurationProvider defaultConfiguration) {

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.maven.plugin;
 
 import java.io.File;
@@ -31,6 +30,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
@@ -43,7 +43,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.sculptor.generator.GeneratorContext;
+import org.sculptor.generator.SculptorGeneratorIssue;
+import org.sculptor.generator.SculptorGeneratorResult;
+import org.sculptor.generator.SculptorGeneratorResult.Status;
 import org.sculptor.generator.SculptorGeneratorRunner;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
@@ -54,7 +56,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * You can configure resources that should be checked if they are up-to-date to
  * avoid needless generator runs and optimize build execution time.
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class GeneratorMojo extends AbstractGeneratorMojo {
 
 	protected static final String OUTPUT_SLOT_PATH_PREFIX = "outputSlot.path.";
@@ -63,7 +65,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	 * The current build session instance. This is used for toolchain manager
 	 * API calls.
 	 */
-	@Component
+	@Parameter(defaultValue="${session}", readonly = true)
 	private MavenSession session;
 
 	/**
@@ -411,39 +413,33 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		classpathEntries.add(project.getBuild().getOutputDirectory());
 		extendPluginClasspath(classpathEntries);
 
-		// Set system properties defined properties in the plugins
+		// Prepare properties for the code generator
+		Properties generatorProperties = new Properties();
+
+		// Set properties defined properties in the plugins
 		if (properties != null) {
 			for (String key : properties.keySet()) {
-				System.setProperty(key, properties.get(key));
+				generatorProperties.setProperty(key, properties.get(key));
 			}
 		}
 
-		// Set system properties with output slot paths
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC", outletSrcOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES", outletResOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC", outletSrcDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES", outletResDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_WEBROOT", outletWebrootDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC_TEST", outletSrcTestOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES_TEST", outletResTestOnceDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
-		System.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
+		// Set properties with output slot paths
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC", outletSrcOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES", outletResOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC", outletSrcDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES", outletResDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_WEBROOT", outletWebrootDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_SRC_TEST", outletSrcTestOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_RESOURCES_TEST", outletResTestOnceDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_SRC_TEST", outletSrcTestDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_GEN_RESOURCES_TEST", outletResTestDir.toString());
+		generatorProperties.setProperty(OUTPUT_SLOT_PATH_PREFIX + "TO_DOC", outletDocDir.toString());
 
 		// Execute commandline and retrieve list of generated files
-		boolean success = false;
-		List<File> generatedFiles;
-		try {
-			success = doRunGenerator();
-		} catch (Exception e) {
-			getLog().error("Executing generator workflow failed", e);
-		} finally {
-			generatedFiles = GeneratorContext.getGeneratedFiles();
-			GeneratorContext.close();
-		}
+		List<File> generatedFiles = doRunGenerator(generatorProperties);
+		if (generatedFiles != null) {
 
-		// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
-		if (success) {
+			// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
 			if (isVerbose()) {
 				for (File generatedFile : generatedFiles) {
 					getLog().info("Generated: " + getProjectRelativePath(generatedFile));
@@ -454,16 +450,11 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				refreshEclipseWorkspace();
 			}
 			getLog().info("Generated " + generatedFiles.size() + " files");
+			return true;
 		} else {
-			for (File file : generatedFiles) {
-				try {
-					FileUtils.forceDelete(file);
-				} catch (IOException e) {
-					// we can't do anything here
-				}
-			}
+			getLog().error("Executing generator workflow failed");
 		}
-		return success;
+		return false;
 	}
 
 	private void refreshEclipseWorkspace() {
@@ -479,8 +470,30 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		buildContext.refresh(outletDocDir);
 	}
 
-	protected boolean doRunGenerator() {
-		return SculptorGeneratorRunner.run(getModelFile().toString());
+	protected List<File> doRunGenerator(Properties generatorProperties) {
+		SculptorGeneratorResult result = SculptorGeneratorRunner.run(getModelFile().toString(), generatorProperties);
+
+		// Log all issues occured during workflow execution
+		for (SculptorGeneratorIssue issue : result.getIssues()) {
+			switch (issue.getSeverity()) {
+				case ERROR :
+					if (issue.getThrowable() != null) {
+						getLog().error(issue.getMessage(), issue.getThrowable());
+					} else {
+						getLog().error(issue.getMessage());
+					}
+					break;
+				case WARNING :
+					getLog().warn(issue.getMessage());
+					break;
+				case INFO :
+					getLog().info(issue.getMessage());
+					break;
+			}
+		}
+
+		// Abort build on error
+		return (result.getStatus() == Status.SUCCESS ? result.getGeneratedFiles() : null);
 	}
 
 	public void extendPluginClasspath(List<Object> classpathEntries) throws MojoExecutionException {

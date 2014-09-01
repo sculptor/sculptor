@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-eclipse</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 	</parent>
 	<groupId>org.sculptorgenerator.eclipse</groupId>
 	<artifactId>org.sculptor.dsl.tests</artifactId>
@@ -53,9 +53,7 @@
 						<phase>test</phase>
 						<configuration>
 							<testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
-							<excludes>
-							</excludes>
-							<!-- Run every test class in a newly forked JVM -->
+							<!-- Due to our use of system properties we have to run every test class in a newly forked JVM -->
 							<reuseForks>false</reuseForks>
 						</configuration>
 						<goals>

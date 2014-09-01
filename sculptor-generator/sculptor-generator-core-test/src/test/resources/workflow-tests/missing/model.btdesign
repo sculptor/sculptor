@@ -1,0 +1,18 @@
+Application Universe {
+	basePackage=org.sculptor.examples.universe
+
+	Module milkyway {
+
+		Entity Planet {
+			String name key
+			- Set<@Moon> moons	// error
+
+			Repository planetRepository {
+				findByKeys;
+				save;
+			}
+		}
+
+	}
+
+}

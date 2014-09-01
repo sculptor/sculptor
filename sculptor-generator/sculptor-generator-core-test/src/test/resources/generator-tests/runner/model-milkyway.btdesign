@@ -1,0 +1,38 @@
+import "classpath:/generator-tests/runner/model-milkyway.btdesign"	// cyclic import!!!
+
+ApplicationPart Milkyway {
+
+    Module milkyway {
+
+        Service PlanetService {
+            String sayHello(String planetName) throws PlanetNotFoundException;
+            protected findByKey => PlanetRepository.findByKey;
+            @Planet getPlanet(String planetName) throws PlanetNotFoundException;
+        }
+
+        Entity Planet {
+            gap
+            scaffold
+            String name key
+            String message
+            Integer diameter nullable min="1"
+            Integer population nullable min="0"
+            - Set<@Moon> moons opposite planet
+
+            Repository PlanetRepository {
+                findByKeys;
+                findByKey;
+                save;
+                findAll(PagingParameter pagingParameter);
+                findAl;
+            }
+        }
+
+        Entity Moon {
+            not aggregateRoot // belongs to Planet Aggregate
+            String name key
+            Integer diameter nullable
+            - @Planet planet opposite moons
+        }
+    }
+}

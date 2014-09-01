@@ -7,7 +7,7 @@ if [ -z $1 ] || [ -z $2 ]; then
    exit 1
 fi
 
-mvn jgitflow:release-start -P!all -DreleaseVersion=$1
+mvn jgitflow:release-start -P!all -DreleaseVersion=$1 -DdevelopmentVersion=$2-SNAPSHOT
 if [ $? -ne 0 ]; then
 	exit 1
 fi

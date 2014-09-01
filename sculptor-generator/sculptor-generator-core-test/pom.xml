@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-core-test</artifactId>
@@ -44,12 +44,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<!-- Needed to run SculptorGeneratorRunner because
-						ContextClassLoaderAwareRuntimeResourceSetInitializer 
-						needs access to the thread context classloader -->
-					<useSystemClassLoader>true</useSystemClassLoader>
-					<useManifestOnlyJar>false</useManifestOnlyJar>
-					<!-- Run every test class in a newly forked JVM -->
+					<!-- Due to our use of system properties we have to run every test class in a newly forked JVM -->
 					<reuseForks>false</reuseForks>
 				</configuration>
 			</plugin>

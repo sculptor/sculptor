@@ -135,9 +135,9 @@ def String restServletXml(Application it) {
 	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
 		xmlns:oxm="http://www.springframework.org/schema/oxm"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-				http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+				http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd">
 
 	<context:component-scan base-package="«basePackage»" use-default-filters="false">
 	    <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
@@ -171,7 +171,7 @@ def String restServletXml(Application it) {
 					<property name="modelKey" value="result" />
 				</bean>
 				<bean
-					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
 			</list>
 		</property>
 	</bean>
@@ -206,7 +206,7 @@ def String restServletXml(Application it) {
 		<property name="unmarshaller" ref="xstreamMarshaller" />
 	</bean>
 	<bean id="jsonMarshallingHttpMessageConverter"
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 
 	</beans>
 	'''

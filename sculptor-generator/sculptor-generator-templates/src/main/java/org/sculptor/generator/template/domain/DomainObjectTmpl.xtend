@@ -18,11 +18,14 @@
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
@@ -30,10 +33,11 @@ import sculptormetamodel.Enum
 import sculptormetamodel.EnumValue
 import sculptormetamodel.Parameter
 import sculptormetamodel.Trait
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DomainObjectTmpl {
+
+	private static final Logger LOG = LoggerFactory::getLogger(typeof(DomainObjectTmpl))
 
 	@Inject private var ExceptionTmpl exceptionTmpl
 	@Inject private var DomainObjectPropertiesTmpl domainObjectPropertiesTmpl
@@ -50,6 +54,9 @@ class DomainObjectTmpl {
 	@Inject extension Properties properties
 
 def dispatch String domainObject(DomainObject it) {
+	if(LOG.isDebugEnabled()) {
+		LOG.debug('''domainObject(«it.name»)''')	
+	}
 	'''
 	«IF gapClass»
 		«domainObjectSubclass(it)»

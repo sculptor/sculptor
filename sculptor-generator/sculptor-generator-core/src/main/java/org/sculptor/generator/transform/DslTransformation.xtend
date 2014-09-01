@@ -66,6 +66,7 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.PropertiesBase
+import sculptormetamodel.Application
 import sculptormetamodel.CommandEvent
 import sculptormetamodel.DataTransferObject
 import sculptormetamodel.DiscriminatorType
@@ -94,11 +95,13 @@ class DslTransformation {
 	@Inject extension Properties properties
 
 	@Inject extension CheckCrossLink checkCrossLink
+
+	var Application globalApp
 	
 	def create FACTORY.createApplication transform(DslApplication app) {
+		globalApp = it
 		val List<DslModule> allDslModules = EcoreUtil2::eAllOfType(app, typeof(DslModule))
 		initPropertiesHook()
-		setGlobalApp(it)
 		allDslModules.forEach[checkCrossLink()]
 		setDoc(app.doc)
 		setName(app.name)
@@ -113,13 +116,13 @@ class DslTransformation {
 			forEach[transformDependencies(it)]
 
 		// Scaffolding must happen after all elements defined in the modules are initialized - otherwise we end up with multiple instances  
-		allDslModules.map[getDomainObjects()].flatten.filter[it instanceof DslDomainObject].map[it as DslDomainObject].
+		allDslModules.map[domainObjects].flatten.filter[it instanceof DslDomainObject].map[it as DslDomainObject].
 			filter[scaffold].forEach[scaffold(it)]
 		allDslModules.map[resources].flatten.filter[scaffold].forEach[scaffold(it)]
 	}
 
 	def create FACTORY.createModule transform(DslModule module) {
-		setApplication(getGlobalApp())
+		setApplication(globalApp)
 		setDoc(module.doc)
 		setName(module.name)
 		setHint(module.hint)
@@ -315,8 +318,8 @@ class DslTransformation {
 		if (operation.cache)
 			addHint("cache")
 
-		if (operation.construct) it.addHint("construct")
-		if (operation.build) it.addHint("build")
+		if (operation.construct) addHint("construct")
+		if (operation.build) addHint("build")
 		if (operation.gapOperation) addHint("gap")
 		if (operation.query != null) addHint("query=" + operation.query, ";")
 		if (operation.^select != null) addHint("select=" + operation.^select, ";")

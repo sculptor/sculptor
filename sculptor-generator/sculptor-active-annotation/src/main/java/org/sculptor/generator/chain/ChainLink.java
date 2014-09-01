@@ -42,10 +42,10 @@ public abstract class ChainLink<T extends ChainLink<T>> {
 		this.methodsDispatchHead = (T[]) methodsDispatchHead;
 	}
 
-	public final T getNext() {
+	protected final T getNext() {
 		return nextLink;
 	}
 
-	public abstract T[] _getOverridesDispatchArray();
+	protected abstract T[] _getOverridesDispatchArray();
 
 }

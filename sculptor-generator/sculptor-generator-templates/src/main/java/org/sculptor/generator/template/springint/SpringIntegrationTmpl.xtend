@@ -34,9 +34,9 @@ def String springIntegrationConfig(Application it) {
 	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", OutputSlot::TO_RESOURCES, '''
 	«header(it)»
 
-	«springIntegrationEventBus(it)»
+		«springIntegrationEventBus(it)»
 	
-	«springIntegrationConfigHook(it)»
+		«springIntegrationConfigHook(it)»
 
 	</beans:beans>
 	'''
@@ -46,9 +46,10 @@ def String springIntegrationConfig(Application it) {
 def String springIntegrationTestConfig(Application it) {
 	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
 	«header(it)»
-	<beans:import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
 
-	«springIntegrationTestConfigHook(it)»
+		<beans:import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>
+
+		«springIntegrationTestConfigHook(it)»
 
 	</beans:beans>
 	'''
@@ -89,7 +90,7 @@ def String header(Application it) {
 				http://www.springframework.org/schema/integration/xml
 				http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd
 				http://www.springframework.org/schema/integration/file
-				http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+				http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
 				«headerSchemaLocationAdditions»">
 
 	'''

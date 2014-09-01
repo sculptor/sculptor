@@ -288,6 +288,11 @@ public class DbHelperBase {
 		return name;
 	}
 
+	/** 
+	 * Moved to DbHelper
+	 * @deprecated
+	 */
+	@Deprecated 
 	private String convertDatabaseName(String name) {
 		if (propBase.getBooleanProperty("db.useUnderscoreNaming")) {
 			name = CamelCaseConverter.camelCaseToUnderscore(name);
@@ -350,14 +355,12 @@ public class DbHelperBase {
 		return convertDatabaseName(name);
 	}
 
-	public String getExtendsForeignKeyName(DomainObject extendedClass) {
-		Attribute idAttribute = getIdAttribute(extendedClass);
-		checkIdAttribute(extendedClass, idAttribute);
-		String name = extendedClass.getDatabaseTable();
-		name += idSuffix(name, extendedClass);
-		return name;
-	}
-
+	
+	/** 
+	 * Moved to DbHelper
+	 * @deprecated
+	 */
+	@Deprecated 
 	private String idSuffix(String name, DomainObject to) {
 		if (useIdSuffixInForeignKey()) {
 			Attribute idAttribute = getIdAttribute(to);
@@ -379,6 +382,11 @@ public class DbHelperBase {
 		return "";
 	}
 
+	/** 
+	 * Use Properties.useIdSuffixInForeigKey() instead
+	 * @deprecated
+	 */
+	@Deprecated 
 	private boolean useIdSuffixInForeignKey() {
 		return propBase.getBooleanProperty("db.useIdSuffixInForeigKey");
 	}
@@ -415,6 +423,11 @@ public class DbHelperBase {
 		return type;
 	}
 
+	/** 
+	 * Moved to DbHelper
+	 * @deprecated
+	 */
+	@Deprecated 
 	private void checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
 		if (idAttribute == null) {
 			throw new IllegalArgumentException("Referenced class " + referencedClass.getName() + " doesn't contain 'id' attribute");

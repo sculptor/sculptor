@@ -82,10 +82,17 @@ public class CargoRepositoryTest extends AbstractDbUnitJpaTests {
     }
 
     @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
+    protected String[] getCompositeDataSetFiles() {
+        return new String[] {"dbunit/TestData.xml","dbunit/ExtraCargo.xml" };
     }
 
+    @Test
+    public void testFindByCargoIdExtra() throws Exception {
+        Cargo cargo = cargoRepository.find(trackingId("JJJ"), true);
+        assertEquals(Long.valueOf(6), cargo.getOrigin().getId());
+        assertEquals(Long.valueOf(2), cargo.getDestination().getId());
+    }
+    
     @Test
     public void testFindByCargoId() throws Exception {
         Cargo cargo = cargoRepository.find(trackingId("FGH"), true);
@@ -241,7 +248,7 @@ public class CargoRepositoryTest extends AbstractDbUnitJpaTests {
     public void testFindAll() {
         List<Cargo> all = cargoRepository.findAll();
         assertNotNull(all);
-        assertEquals(6, all.size());
+        assertEquals(7, all.size());
     }
 
     @Test

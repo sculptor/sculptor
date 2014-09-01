@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator.examples</groupId>
 		<artifactId>mongodb-samples</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 	</parent>
 	<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
 	<artifactId>sculptor-shipping</artifactId>
@@ -183,10 +183,6 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>

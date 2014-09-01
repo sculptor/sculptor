@@ -1,13 +1,5 @@
-Application Test {
-    basePackage=com.acme
+import "classpath:/generator-tests/runner/model-milkyway.btdesign"
 
-	Module library {
-        Entity Media {
-
-            Repository MediaRepository {
-            	"*** This finder method has a missing 'gap' keyword ***"
-                List<@Media> findMediaByName(IDTYPE libraryId, String name);
-            }
-        }
-    }
+Application Universe {
+    basePackage=org.sculptor.example.helloworld
 }

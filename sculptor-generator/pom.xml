@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 	</parent>
 	<artifactId>sculptor-generator</artifactId>
 	<packaging>pom</packaging>
@@ -21,7 +21,8 @@
 		<module>sculptor-generator-core-test</module>
 		<module>sculptor-generator-test</module>
 		<module>sculptor-generator-templates</module>
-		<module>sculptor-generator-cartridges</module>
+		<module>sculptor-generator-library</module>
+		<module>sculptor-generator-test-library</module>
 	</modules>
 
 	<repositories>

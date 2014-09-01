@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.maven.plugin;
 
 import java.io.File;
@@ -42,7 +41,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * for all graph files (<code>src/generated/resources/*.dot</code>) created
  * during the previous run of the Sculptor code generator.
  */
-@Mojo(name = "generate-images", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo(name = "generate-images", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class GraphvizMojo extends AbstractGeneratorMojo {
 
 	/**

@@ -21,7 +21,6 @@ import java.io.FileWriter
 import java.util.Collection
 import java.util.List
 import javax.inject.Inject
-import org.sculptor.generator.GeneratorContext
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.formatter.JavaCodeFormatter
 import org.sculptor.generator.util.DependencyConstraints
@@ -57,6 +56,7 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
+import org.sculptor.generator.SculptorGeneratorContext
 
 @ChainOverridable
 class Helper {
@@ -100,7 +100,7 @@ class Helper {
 				else
 					text)
 			out.close()
-			GeneratorContext.addGeneratedFile(fl)
+			SculptorGeneratorContext.addGeneratedFile(fl)
 			LOG.debug("Created file : " + fl)
 		} else {
 			LOG.debug("Skipped file : " + fl)

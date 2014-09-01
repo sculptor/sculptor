@@ -140,7 +140,7 @@ def String versionAnnotations(Attribute it) {
 	'''
 		@javax.persistence.Version
 		@javax.persistence.Column(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
-			!nullable, "nullable", nullable))»)
+			!isJpaProviderAppEngine() && !nullable, "nullable", nullable))»)
 	'''
 }
 
@@ -153,6 +153,8 @@ def String auditAnnotations(Attribute it) {
 			@org.eclipse.persistence.annotations.Convert("JodaConverter")
 		«ELSEIF isJpaProviderOpenJpa() && it.isJodaTemporal()»
 			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
+		«ELSEIF isJpaProviderAppEngine()»
+			@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
 		«ELSE»
 			@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 		«ENDIF»
@@ -171,7 +173,7 @@ def String columnAnnotations(Attribute it) {
 		«formatAnnotationParameters(<Object>newArrayList( true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
 			it.getDatabaseLength() != null, "length", it.getDatabaseLength(),
-			(it.isUuid() || it.isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()), "unique", "true",
+			(it.isUuid() || it.isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()) && !isJpaProviderAppEngine(), "unique", "true",
 			dbType != null, "columnDefinition", '"' + dbType + '"'
 		))»)
 		«columnDateAnnotations(it)»

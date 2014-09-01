@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.formatter
 
 import com.google.inject.Inject
@@ -25,6 +24,7 @@ import org.eclipse.jdt.core.formatter.CodeFormatter
 import org.eclipse.jface.text.Document
 import org.eclipse.jface.text.IDocument
 import org.eclipse.text.edits.TextEdit
+import org.sculptor.generator.configuration.ConfigurationProvider
 import org.slf4j.LoggerFactory
 
 /**
@@ -41,11 +41,8 @@ class JavaCodeFormatter {
 
 	public static String IMPORT_MARKER_PATTERN = "/// Sculptor code formatter imports ///"
 
-	@Inject protected var JavaCodeAutoImporter javaCodeAutoImporter
-
-	def void setAutoImporter(JavaCodeAutoImporter autoImporter) {
-		javaCodeAutoImporter = autoImporter
-	}
+	@Inject var ConfigurationProvider configuration
+	@Inject var JavaCodeAutoImporter javaCodeAutoImporter
 
 	def format(String path, String code, boolean abortOnError) {
 
@@ -77,17 +74,27 @@ class JavaCodeFormatter {
 	private def getCodeFormatter() {
 		if (codeFormatter == null) {
 			val classLoader = Thread::currentThread().getContextClassLoader() ?: this.^class.getClassLoader()
+
+			// Read default properties
 			val props = new Properties()
+			LOG.debug("Loading default properties for Java code formatter from file 'default-java-code-formatter.properties'")
 			props.load(classLoader.getResourceAsStream("default-java-code-formatter.properties"))
-			props.getProperty("java.code.formatter.props", "").split("[,; ]").forEach [
-				val stream = classLoader.getResourceAsStream(it)
-				if (stream != null) {
-					LOG.debug("Loading properties for Java code formatter from file '{}'", it)
-					props.load(classLoader.getResourceAsStream(it))
-				} else {
-					LOG.warn("File '{}' with properties for Java code formatter not found", it)
+
+			// Read additional properties
+			if (configuration.has("java.code.formatter.props")) {
+				val additionalProps = configuration.getString("java.code.formatter.props")
+				if (!additionalProps.nullOrEmpty) {
+					additionalProps.split("[,; ]").forEach [
+						val stream = classLoader.getResourceAsStream(it)
+						if (stream != null) {
+							LOG.debug("Loading additional properties for Java code formatter from file '{}'", it)
+							props.load(classLoader.getResourceAsStream(it))
+						} else {
+							LOG.warn("File '{}' with additional properties for Java code formatter not found", it)
+						}
+					]
 				}
-			]
+			}
 			codeFormatter = ToolFactory::createCodeFormatter(props)
 		}
 		codeFormatter

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,68 +14,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.mwe.core.WorkflowInterruptedException;
-import org.eclipse.emf.mwe2.language.Mwe2RuntimeModule;
-import org.eclipse.emf.mwe2.language.Mwe2StandaloneSetup;
-import org.eclipse.emf.mwe2.launch.runtime.Mwe2Runner;
-import org.eclipse.xtext.mwe.RuntimeResourceSetInitializer;
-import org.sculptor.generator.xtext.ContextClassLoaderAwareRuntimeResourceSetInitializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sculptor.generator.SculptorGeneratorResult.Status;
+import org.sculptor.generator.util.FileHelper;
+import org.sculptor.generator.workflow.SculptorGeneratorWorkflow;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+/**
+ * Retrieves an instance of the generators internal workflow from the generators
+ * guice-configured setup, executes it and returns a
+ * {@link SculptorGeneratorResult} instance (holding lists of generated
+ * {@link File}s and {@link SculptorGeneratorIssue} instances).
+ * 
+ * @see SculptorGeneratorSetup#createInjectorAndDoEMFRegistration()
+ * @see SculptorGeneratorWorkflow#run(String)
+ */
 public class SculptorGeneratorRunner {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SculptorGeneratorRunner.class);
-
-	public static final String WORKFLOW_MODULE = "org.sculptor.generator.SculptorGenerator";
-
-	@Inject
-	public Mwe2Runner runner;
-
-	public static boolean run(String modelFile) {
-		Injector injector = new Mwe2StandaloneSetup() {
-			@Override
-			public Injector createInjector() {
-				return Guice.createInjector(new Mwe2RuntimeModule() {
-					@SuppressWarnings("unused")
-					public Class<? extends RuntimeResourceSetInitializer> bindRuntimeResourceSetInitializer() {
-						return ContextClassLoaderAwareRuntimeResourceSetInitializer.class;
-					}
-				});
-			}
-		}.createInjectorAndDoEMFRegistration();
-		SculptorGeneratorRunner runner = injector.getInstance(SculptorGeneratorRunner.class);
-		return runner.doRun(modelFile);
-	}
-
-	private boolean doRun(String modelFile) {
-		boolean success;
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("modelFile", URI.createFileURI(modelFile).toString());
+	public static final SculptorGeneratorResult run(String modelURI, Properties generatorProperties) {
+		Injector injector = new SculptorGeneratorSetup().createInjectorAndDoEMFRegistration();
+		SculptorGeneratorWorkflow workflow = injector.getInstance(SculptorGeneratorWorkflow.class);
+		SculptorGeneratorContext.getGeneratedFiles().clear();
 		try {
-			runner.run(WORKFLOW_MODULE, map);
-			success = true;
-		} catch (Exception e) {
-			Throwable cause = e.getCause();
-			if (cause instanceof WorkflowInterruptedException || cause instanceof SculptorGeneratorException) {
-				LOGGER.error(cause.getMessage());
-			} else {
-				LOGGER.error("Running workflow failed", e);
+
+			// Execute the generators workflow
+			boolean success = workflow.run(modelURI, generatorProperties);
+
+			// Create a result object holding a list of generated files and issues occured during code generation
+			List<SculptorGeneratorIssue> issues = SculptorGeneratorContext.getIssues();
+			List<File> generatedFiles = SculptorGeneratorContext.getGeneratedFiles();
+			SculptorGeneratorResult result = new SculptorGeneratorResult((success ? Status.SUCCESS : Status.FAILED),
+					issues, generatedFiles);
+
+			// If generation failed then delete any generated files
+			if (!success) {
+				for (File file : generatedFiles) {
+					try {
+						FileHelper.deleteFile(file);
+					} catch (IOException e) {
+						// we can't do anything here
+					}
+				}
 			}
-			success = false;
+			return result;
+		} finally {
+			SculptorGeneratorContext.close();
 		}
-		return success;
 	}
 
 }
