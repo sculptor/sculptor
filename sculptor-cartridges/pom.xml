@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-cartridges</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Cartridges</name>
 	<description>Aggregator project for all Sculptor cartridges</description>
 
-	<modules>
+	<version xmlns="">3.0.5-SNAPSHOT</version><modules>
 		<module>sculptor-cartridge-builder</module>
 		<module>sculptor-cartridge-mongodb</module>
 	</modules>

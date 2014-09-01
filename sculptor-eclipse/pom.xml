@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-eclipse</artifactId>
 	<packaging>pom</packaging>
@@ -17,7 +17,7 @@
 		<module>org.sculptor.dsl.feature</module>
 	</modules>
 
-	<profiles>
+	<version xmlns="">3.0.5-SNAPSHOT</version><profiles>
 		<profile>
 			<id>release-finish</id>
 			<activation>

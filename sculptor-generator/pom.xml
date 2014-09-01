@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-generator</artifactId>
 	<packaging>pom</packaging>
@@ -25,7 +25,7 @@
 		<module>sculptor-generator-test-library</module>
 	</modules>
 
-	<repositories>
+	<version xmlns="">3.0.5-SNAPSHOT</version><repositories>
 		<!-- Repository to resolve the Eclipse release train dependencies -->
 		<repository>
 			<id>p2.eclipse</id>
