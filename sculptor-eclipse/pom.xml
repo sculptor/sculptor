@@ -17,7 +17,7 @@
 		<module>org.sculptor.dsl.feature</module>
 	</modules>
 
-	<version xmlns="">3.0.5-SNAPSHOT</version><profiles>
+	<profiles>
 		<profile>
 			<id>release-finish</id>
 			<activation>

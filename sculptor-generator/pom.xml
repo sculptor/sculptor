@@ -25,7 +25,7 @@
 		<module>sculptor-generator-test-library</module>
 	</modules>
 
-	<version xmlns="">3.0.5-SNAPSHOT</version><repositories>
+	<repositories>
 		<!-- Repository to resolve the Eclipse release train dependencies -->
 		<repository>
 			<id>p2.eclipse</id>
