@@ -9,14 +9,6 @@
 	<artifactId>sculptor-framework-main</artifactId>
 	<name>Sculptor :: Runtime Framework :: Main</name>
 
-	<properties>
-		<!-- We have to build against Hibernate 3.5 because Hibernate3 with JPA1 is still supported -->
-		<!-- FIXME using this runtime library with Hibernate4 will break in GenericEnumUserType,
-			 JpaHibFindByConditionStatAccessImpl and NumericLikeExpression due to changed Hibernate API
-			 (see https://github.com/sculptor/sculptor/issues/79) -->
-		<hibernate-version>3.5.5-Final</hibernate-version>
-	</properties>
- 
 	<build>
 		<plugins>
 			<plugin>

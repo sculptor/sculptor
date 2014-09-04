@@ -91,7 +91,7 @@
 		<aspectj-version>1.7.4</aspectj-version>
 		<spring-version>3.2.10.RELEASE</spring-version>
 		<spring-integration-version>2.2.6.RELEASE</spring-integration-version>
-		<hibernate-version>4.2.15.Final</hibernate-version>
+		<hibernate-version>4.3.6.Final</hibernate-version>
 	    <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
 		<validation-version>1.0.0.GA</validation-version>
 		<!-- We have to stay with GAE version 1.8.1 here because this is the last version which supports Java 6 -->
