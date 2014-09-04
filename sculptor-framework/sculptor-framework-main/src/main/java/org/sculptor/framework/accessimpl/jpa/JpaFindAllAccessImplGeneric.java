@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.Arrays;
 import java.util.List;
@@ -101,8 +101,4 @@ public class JpaFindAllAccessImplGeneric<T,R>
         this.orderBy = orderBy;
     }
 
-    @Override
-    @Deprecated
-    public void setOrderByAsc(boolean orderByAsc) {
-    }
 }

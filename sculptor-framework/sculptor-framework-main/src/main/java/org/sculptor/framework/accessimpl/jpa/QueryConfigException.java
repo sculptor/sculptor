@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.errorhandling.SystemException;
 

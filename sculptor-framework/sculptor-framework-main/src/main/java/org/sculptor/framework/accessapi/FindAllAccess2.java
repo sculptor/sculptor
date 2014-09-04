@@ -30,7 +30,4 @@ public interface FindAllAccess2<R> extends FindAllAccess<R>, Countable {
 
 	// allow to set query hints like timeout,...
 	void setHint(String hint, Object value);
-
-	@Deprecated
-    void setOrderByAsc(boolean orderByAsc);
 }

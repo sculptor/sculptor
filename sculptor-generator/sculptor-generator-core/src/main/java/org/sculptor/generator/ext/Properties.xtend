@@ -130,7 +130,6 @@ class Properties {
 	// and in Developer's Guide.
 	def genericAccessObjectImplementation(String name) {
 		val jpa = isJpaAnnotationToBeGenerated()
-		val hibernate = (!jpa || isJpaProviderHibernate()) && !isJpa2()
 
 		// don't use Spring when using jpa
 		val spring = !jpa && isSpringToBeGenerated() && isJpaProviderHibernate()
@@ -138,23 +137,22 @@ class Properties {
 		if (hasProperty("framework.accessimpl." + implName))
 			fw("accessimpl." + implName)
 		else
-			mapGenericAccessObjectImplementationPackage(jpa, hibernate, spring) + "." +
-				mapGenericAccessObjectImplementationPrefix(jpa, hibernate, spring) + implName
+			mapGenericAccessObjectImplementationPackage(jpa, spring) + "." +
+				mapGenericAccessObjectImplementationPrefix(jpa, spring) + implName
 	}
 
-	def private String mapGenericAccessObjectImplementationPrefix(boolean jpa, boolean hibernate, boolean spring) {
+	def private String mapGenericAccessObjectImplementationPrefix(boolean jpa, boolean spring) {
 		if (hasProperty("framework.accessimpl.prefix"))
 			getProperty("framework.accessimpl.prefix")
 		else
-			(if(jpa) "Jpa" else "") + (if(hibernate) "Hib" else "") + (if(spring) "Sp" else "")
+			(if(jpa) "Jpa" else "") + (if(spring) "Sp" else "")
 	}
 
-	def private String mapGenericAccessObjectImplementationPackage(boolean jpa, boolean hibernate, boolean spring) {
+	def private String mapGenericAccessObjectImplementationPackage(boolean jpa, boolean spring) {
 		if (hasProperty("framework.accessimpl.package"))
 			getProperty("framework.accessimpl.package")
 		else {
-			val lastPart = (if(jpa) ( if(isJpa2()) "jpa2" else "jpa") else "") + (if(hibernate) "hibernate" else "") +
-				(if(spring) "spring" else "")
+			val lastPart = (if(jpa) "jpa" else "") + (if(spring) "spring" else "")
 			fw(if(lastPart == "") "accessimpl" else "accessimpl." + lastPart)
 		}
 	}
@@ -465,14 +463,6 @@ class Properties {
 	}
 
 	def isJpaProviderHibernate() {
-		jpaProvider() == "hibernate" || jpaProvider() == "hibernate3"
-	}
-
-	def isJpaProviderHibernate3() {
-		jpaProvider() == "hibernate3"
-	}
-
-	def isJpaProviderHibernate4() {
 		jpaProvider() == "hibernate"
 	}
 
@@ -490,18 +480,6 @@ class Properties {
 
 	def isJpaProviderOpenJpa() {
 		jpaProvider() == "openjpa"
-	}
-
-	def jpaVersion() {
-		getProperty("jpa.version")
-	}
-
-	def isJpa1() {
-		"1.0" == jpaVersion() && jpa()
-	}
-
-	def isJpa2() {
-		"2.0" == jpaVersion() && jpa()
 	}
 
 	def validationProvider() {

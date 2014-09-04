@@ -145,11 +145,6 @@ def String repositoryBase(Repository it) {
 		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).map[op | abstractBaseRepositoryMethod(op)].join()»
 		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && op.isGeneratedFinder()).map[op | finderMethod(op)].join()»
 
-		«IF isJpa1() && isJpaProviderDataNucleus() && !pureEjb3()»
-			@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
-			private javax.persistence.EntityManager entityManager;
-		«ENDIF»
-	
 		«IF pureEjb3() && jpa()»
 			«entityManagerDependency(it) »
 		«ELSEIF isSpringToBeGenerated() && jpa()»
@@ -343,12 +338,7 @@ def String baseRepositoryMethod(RepositoryOperation it) {
 		ao.execute();
 
 		«IF it.isPagedResult()»
-			«IF isJpa1() && isJpaProviderDataNucleus()»
-				«"java.util.ArrayList<" + domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
-				result.addAll(ao.getResult());
-			«ELSE»
-				«it.getAccessObjectResultTypeName()» result = ao.getResult();
-			«ENDIF»
+			«it.getAccessObjectResultTypeName()» result = ao.getResult();
 
 			«calculateMaxPages(it)»
 	
@@ -360,14 +350,7 @@ def String baseRepositoryMethod(RepositoryOperation it) {
 				, additionalRows);
 			return pagedResult;
 		«ELSEIF it.getTypeName() != "void" »
-			«IF isJpa1() && isJpaProviderDataNucleus() && it.getTypeName().startsWith("java.util.List")»
-				// workaround for datanucleus serialization issue
-				java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
-				result.addAll(ao.getResult());
-				return result;
-			«ELSE»
-				return ao.getResult();
-			«ENDIF»
+			return ao.getResult();
 		«ENDIF»
 	}
 	'''
@@ -392,16 +375,13 @@ def String setEagerColumns (RepositoryOperation it) {
 def String setOrdered(RepositoryOperation it) {
 	'''
 		«/* JPA2 supports multiple ordering columns, e.g. hint="orderBy=col1 asc, col2 desc" */»
-		«IF isJpa2()»
+		«IF jpa()»
 			«IF it.hasHint("orderBy")»
 				ao.setOrderBy("«it.getHint("orderBy",";")»");
 			«ENDIF»
 		«ELSE»
 			«IF it.hasHint("orderBy")»
 				ao.setOrderBy("«it.getHint("orderBy")»");
-			«ENDIF»
-			«IF it.hasHint("orderByAsc") && it.getHint("orderByAsc") != "true"»
-				ao.setOrderByAsc(false);
 			«ENDIF»
 		«ENDIF»
 	'''
@@ -450,7 +430,7 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 			«ENDIF»
 			«IF name != "findByKey"»
 				«/* TODO: why do you need to remove persistentClass from parameter list? */»
-				«FOR parameter : parameters.filter[e | !(isJpa2() && e.name == "persistentClass")]»
+				«FOR parameter : parameters.filter[e | !(jpa() && e.name == "persistentClass")]»
 					ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
 				«ENDFOR»
 			«ENDIF»
@@ -459,18 +439,10 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 			ao.execute();
 			«IF it.getTypeName() != "void" »
 				«nullThrowsNotFoundExcpetion(it)»
-				«findByKeySpecialCase2(it)»
 				«IF (parameters.exists(e|e.name == "useSingleResult") || it.hasHint("useSingleResult")) && it.collectionType == null»
-					return «IF !isJpa2() && it.getTypeName() != "Object"»(«it.getTypeName().getObjectTypeName()») «ENDIF»ao.getSingleResult();
+					return «IF !jpa() && it.getTypeName() != "Object"»(«it.getTypeName().getObjectTypeName()») «ENDIF»ao.getSingleResult();
 				«ELSE»
-					«IF isJpa1() && isJpaProviderDataNucleus() && it.getTypeName().startsWith("java.util.List")»
-						// workaround for datanucleus serialization issue
-						java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
-						result.addAll(ao.getResult());
-						return result;
-					«ELSE»
-						return ao.getResult();
-					«ENDIF»
+					return ao.getResult();
 				«ENDIF»
 			«ENDIF»
 		}
@@ -504,14 +476,7 @@ def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 
 		ao.execute();
 		«IF it.isPagedResult()»
-			«IF isJpa1() && isJpaProviderDataNucleus()»
-
-				// workaround for datanucleus serialization issue
-				java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»> result = new java.util.ArrayList<«domainObjectType.getDomainPackage() + "." + domainObjectType.name»>();
-				result.addAll(ao.getResult());
-			«ELSE»
-				«it.getAccessObjectResultTypeName()» result = ao.getResult();
-			«ENDIF»
+			«it.getAccessObjectResultTypeName()» result = ao.getResult();
 			«calculateMaxPages(it)»
 	
 			«it.getTypeName()» pagedResult = new «it.getTypeName()»(result
@@ -555,7 +520,7 @@ def String calculateMaxPages(RepositoryOperation it) {
 						«ELSE»
 							Long countNumber = «countOperation.name»(«FOR param : countOperation.parameters SEPARATOR ", "»«IF parameters.exists(e|e.name == param.name)»«param.name»«ELSE»null«ENDIF»«ENDFOR»);
 						«ENDIF»
-				«ELSEIF  countQueryHint != null || (isJpa1() && name == "findByQuery")»
+				«ELSEIF countQueryHint != null»
 					«val countOperation1 = it.repository.operations.findFirst(e | e != it && e.name == "findByQuery" && e.parameters.exists(p | p.name == "useSingleResult"))»
 					«val countOperation2 = it.repository.operations.findFirst(e | e != it && e.name == "findByQuery")»
 					«val countOperation = if (countOperation1 != null) countOperation1 else countOperation2»
@@ -577,10 +542,6 @@ def String calculateMaxPages(RepositoryOperation it) {
 					«ELSEIF (it.useGenericAccessStrategy())»
 						// If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
 						ao.executeResultCount();
-						Long countNumber = ao.getResultCount();
-					«ELSEIF (isJpa1() && name == "findByCondition")»
-						// If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
-						ao.executeCount();
 						Long countNumber = ao.getResultCount();
 					«ELSE»
 						// If you need to calculate max pages you should define hint="countOperation=..." or hint="countQuery=..."
@@ -634,11 +595,6 @@ def String findByNaturalKeys(RepositoryOperation it, Repository repository, Stri
 			// convert to Map with «naturalKeyObjectType» key type
 			java.util.Map<«naturalKeyObjectType», «fullAggregateRootName»> result2 = new java.util.HashMap<«naturalKeyObjectType», «fullAggregateRootName»>();
 			for (java.util.Map.Entry<Object, «fullAggregateRootName»> e : result1.entrySet()) {
-				«IF isJpa1() && isJpaProviderDataNucleus()»
-					// Workaround for datanucleus, bug with @Version
-					if (entityManager != null)
-						entityManager.refresh(e.getValue());
-				«ENDIF»
 				result2.put((«naturalKeyObjectType») e.getKey(), e.getValue());
 			}
 			return result2;
@@ -681,18 +637,6 @@ def String findByKeySpecialCase(RepositoryOperation it) {
 				ao.setKeyPropertyValues(«repository.aggregateRoot.getUuid().name»);
 			«ENDIF »
 		«ENDIF »
-	'''
-}
-
-def String findByKeySpecialCase2(RepositoryOperation it) {
-	'''
-		«IF (name == "findByKey") && repository.aggregateRoot.hasNaturalKey() »
-			«IF isJpa1() && isJpaProviderDataNucleus()»
-			// Workaround for datanucleus, bug with @Version
-			if (entityManager != null)
-				entityManager.refresh(ao.getResult());
-			«ENDIF»
-		«ENDIF»
 	'''
 }
 
@@ -805,12 +749,12 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter != null
 							», «pagingParameter.name»).getValues();«
 						ELSE»«
-							IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);«
+							IF jpa()», «it.getResultTypeName()».class«ENDIF»);«
 						ENDIF»
 				«ELSE»
 					new java.util.ArrayList<«it.getResultTypeName()»>();
 					for («it.getResultTypeNameForMapping()» tuple : findByCondition(condition, «it.getResultTypeNameForMapping()».class)) {
-						result.add(«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(tuple, «it.getResultTypeName()».class));
+						result.add(«fw("accessimpl.jpa.JpaHelper")».mapTupleToObject(tuple, «it.getResultTypeName()».class));
 					}
 				«ENDIF»
 			«ELSE»
@@ -822,10 +766,10 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter != null
 							», «pagingParameter.name»);«
 						ELSE»«
-							IF isJpa2()», «it.getResultTypeName()».class«ENDIF»);
+							IF jpa()», «it.getResultTypeName()».class«ENDIF»);
 						«ENDIF»
 				«ELSE»
-					«fw("accessimpl.jpa2.JpaHelper")».mapTupleToObject(
+					«fw("accessimpl.jpa.JpaHelper")».mapTupleToObject(
 						findByCondition(condition, true, «it.getResultTypeNameForMapping()».class), «it.getResultTypeName()».class);
 				«ENDIF»
 			«ENDIF»

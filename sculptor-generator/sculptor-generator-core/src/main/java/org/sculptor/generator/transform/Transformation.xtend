@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.transform
 
 import javax.inject.Inject
@@ -595,12 +594,12 @@ class Transformation {
 		val pagedFindAll = pagingOperations.findFirst(e|e.name == "findAll")
 		val pagedFindByQuery = pagingOperations.findFirst(e|e.name == "findByQuery")
 		pagingOperations.forEach[modifyPagingOperation()]
-		if (!isJpa2() && pagedFindAll != null && !pagedFindAll.hasHint("countQuery") && !pagedFindAll.hasHint("countOperation")) {
+		if (!jpa() && pagedFindAll != null && !pagedFindAll.hasHint("countQuery") && !pagedFindAll.hasHint("countOperation")) {
 			pagedFindAll.addCountAllHint()
 			if (!repository.operations.exists(e|e.name == "countAll"))
 				repository.operations.add(createCountAll(repository))
 		}
-		if (!isJpa2() && (pagedFindByQuery != null || pagingOperations.exists(e|e.hasHint("countQuery"))) &&
+		if (!jpa() && (pagedFindByQuery != null || pagingOperations.exists(e|e.hasHint("countQuery"))) &&
 			!repository.operations.exists(e|e.name == "findByQuery" && e.parameters.exists(p|p.name == "useSingleResult")))
 			repository.operations.add(createFindByQuerySingleResult(repository, true))
 	}

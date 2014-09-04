@@ -1423,7 +1423,7 @@ class Helper {
 	}
 
 	def boolean isQueryBased(RepositoryOperation op) {
-		isJpa2() && op.hasHint("query")
+		jpa && op.hasHint("query")
 	}
 
 	def boolean isConditionBased(RepositoryOperation op) {
@@ -1432,7 +1432,7 @@ class Helper {
 
 	// TODO: quick solution, it would be better to implement a new access strategy
 	def boolean useGenericAccessStrategy(RepositoryOperation op) {
-		isJpa2() &&
+		jpa &&
 				(op.name == "findAll" ||
 				 op.name == "findByQuery" ||
 				 op.name == "findByExample" ||
@@ -1443,7 +1443,7 @@ class Helper {
 	}
 
 	def boolean useTupleToObjectMapping(RepositoryOperation op) {
-		isJpa2() && (!op.hasHint("construct") && (op.hasHint("map") || op.isReturningDataTranferObject()))
+		jpa && (!op.hasHint("construct") && (op.hasHint("map") || op.isReturningDataTranferObject()))
 	}
 
 	def private boolean isReturningDataTranferObject(RepositoryOperation op) {

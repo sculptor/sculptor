@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The Fornax Project Team, including the original
+ * Copyright 2007 The Fornax Project Team, including the original
  * author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,44 +15,38 @@
  * limitations under the License.
  */
 
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaQuery;
-
-import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
+import org.sculptor.framework.accessapi.FindByQueryAccess2;
 
 
 /**
  * <p>
- * Implementation of Access command FindByCriteriaQueryAccess.
+ * Implementation of Access command FindByQueryAccessGeneric.
  * </p>
  * <p>
  * Command design pattern.
  * </p>
  */
-public class JpaFindByCriteriaQueryAccessImplGeneric<T,R>
-    extends JpaCriteriaQueryAccessBase<T,R>
-    implements FindByCriteriaQueryAccess<R> {
+public class JpaFindByQueryAccessImplGeneric<T,R>
+    extends JpaJpqlQueryAccessBase<T,R>
+    implements FindByQueryAccess2<R> {
 
-    public JpaFindByCriteriaQueryAccessImplGeneric() {
+    public JpaFindByQueryAccessImplGeneric() {
         super();
     }
 
-    public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type) {
+    public JpaFindByQueryAccessImplGeneric(Class<T> type) {
         super(type);
     }
 
-    public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
-        super(type,resultType);
+    public JpaFindByQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
+        super(type, resultType);
     }
 
     public List<R> getResult() {
         return getListResult();
-    }
-
-    public void setQuery(CriteriaQuery<R> criteriaQuery) {
-        setCriteriaQuery(criteriaQuery);
     }
 }

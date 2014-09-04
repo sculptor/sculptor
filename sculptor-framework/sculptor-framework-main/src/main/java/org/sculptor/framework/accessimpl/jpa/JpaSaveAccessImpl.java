@@ -35,56 +35,57 @@ import org.sculptor.framework.accessapi.SaveAccess;
  */
 public class JpaSaveAccessImpl<T> extends JpaAccessBase<T> implements SaveAccess<T> {
 
-    private T entity;
-    private T result;
-    private Collection<T> entities;
+	private T entity;
+	private T result;
+	private Collection<T> entities;
 
-    public JpaSaveAccessImpl() {
-    }
+	public JpaSaveAccessImpl() {
+	}
 
-    public JpaSaveAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public JpaSaveAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public T getEntity() {
-        return entity;
-    }
+	public T getEntity() {
+		return entity;
+	}
 
-    public void setEntity(T entity) {
-        this.entity = entity;
-    }
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 
-    public Collection<T> getEntities() {
-        return entities;
-    }
+	public Collection<T> getEntities() {
+		return entities;
+	}
 
-    public void setEntities(Collection<T> entities) {
-        this.entities = entities;
-    }
+	public void setEntities(Collection<T> entities) {
+		this.entities = entities;
+	}
 
-    public T getResult() {
-        return result;
-    }
+	public T getResult() {
+		return result;
+	}
 
-    @Override
-    public void performExecute() throws PersistenceException {
-        if (entity != null) {
-            result = performMerge(entity);
-        }
-        if (entities != null) {
-            List<T> newInstances = new ArrayList<T>();
-            for (T each : getEntities()) {
-                newInstances.add(performMerge(each));
-            }
-            setEntities(newInstances);
-        }
-    }
+	@Override
+	public void performExecute() throws PersistenceException {
+		if (entity != null) {
+			result = performMerge(entity);
+		}
+		if (entities != null) {
+			List<T> newInstances = new ArrayList<T>();
+			for (T each : getEntities()) {
+				newInstances.add(performMerge(each));
+			}
+			setEntities(newInstances);
+		}
+	}
 
-    protected T performMerge(T obj) {
-        if (getEntityManager().contains(obj)) {
-            return obj;
-        } else {
-            return getEntityManager().merge(obj);
-        }
-    }
+	protected T performMerge(T obj) {
+		if (getEntityManager().contains(obj)) {
+			return obj;
+		} else {
+			return getEntityManager().merge(obj);
+		}
+	}
+
 }

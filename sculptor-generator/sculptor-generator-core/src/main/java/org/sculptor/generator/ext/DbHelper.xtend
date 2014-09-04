@@ -229,11 +229,11 @@ public class DbHelper {
 	}
 
 	def boolean isOrphanRemoval(String cascade) {
-		isJpa2() && cascade != null && cascade.contains("all-delete-orphan")
+		jpa && cascade != null && cascade.contains("all-delete-orphan")
 	}
 
 	def boolean isOrphanRemoval(String cascade, Reference ref) {
-		isJpa2() && (isOrphanRemoval(cascade) || !isAggregateRoot(ref.to))
+		jpa && (isOrphanRemoval(cascade) || !isAggregateRoot(ref.to))
 	}
 
 	def String getHibernateCascadeType(Reference ref) {
@@ -246,11 +246,11 @@ public class DbHelper {
 
 	def String mapHibernateCascadeType(String cascade) {
 		switch (cascade.trim()) {
-			case "all-delete-orphan" : (if (isJpa2()) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
-			case "delete-orphan" : (if (isJpa2()) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
+			case "all-delete-orphan" : (if (jpa) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
+			case "delete-orphan" : (if (jpa) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
 			case "delete" : "org.hibernate.annotations.CascadeType.DELETE"
 			case "save-update" : "org.hibernate.annotations.CascadeType.SAVE_UPDATE"
-			case "evict" : (if(isJpa2()) null else "org.hibernate.annotations.CascadeType.EVICT")
+			case "evict" : (if(jpa) null else "org.hibernate.annotations.CascadeType.EVICT")
 			case "replicate" : "org.hibernate.annotations.CascadeType.REPLICATE"
 			case "lock" : "org.hibernate.annotations.CascadeType.LOCK"
 			default : null

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +32,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.metamodel.ManagedType;
 
-import org.sculptor.framework.accessimpl.jpa2.QueryPropertyRestriction.Operator;
+import org.sculptor.framework.accessimpl.jpa.QueryPropertyRestriction.Operator;
 
 /**
  * <p>
@@ -73,19 +73,6 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 
     public void setOrderBy(String orderBy) {
         expressions.addOrders(orderBy);
-    }
-
-    @Deprecated
-    public boolean isOrderByAsc() {
-        if (getConfig().throwExceptionOnConfigurationError())
-            throw new QueryConfigException("orderByAsc is not supported for JPA2 anymore, use orderBy instead");
-        return false;
-    }
-
-    @Deprecated
-    public void setOrderByAsc(boolean orderByAsc) {
-        if (getConfig().throwExceptionOnConfigurationError())
-            throw new QueryConfigException("orderByAsc is not supported for JPA2 anymore, use orderBy instead");
     }
 
     public void setSelections(String selections) {

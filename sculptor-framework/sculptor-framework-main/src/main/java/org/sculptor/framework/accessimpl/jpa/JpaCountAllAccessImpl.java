@@ -17,8 +17,8 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.sculptor.framework.accessapi.CountAllAccess;
 
@@ -31,32 +31,30 @@ import org.sculptor.framework.accessapi.CountAllAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaCountAllAccessImpl<T> extends JpaAccessBase<T> implements CountAllAccess<T> {
-
-    private long result;
+@Deprecated
+public class JpaCountAllAccessImpl<T>
+    extends JpaCriteriaQueryAccessBase<T,Long>
+    implements CountAllAccess<T> {
 
     public JpaCountAllAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+        super(persistentClass, Long.class);
     }
 
     public long getResult() {
-        return this.result;
+        return getSingleResult();
     }
 
-	@Override
-    public void performExecute() throws PersistenceException {
-		StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select count(e) from ").append(getPersistentClass().getSimpleName()).append(" e");
-		result = executeQuery(queryStr.toString());
+    @Override
+    protected void prepareConfig(QueryConfig config) {
+        config.setSingleResult(true);
     }
 
-	protected long executeQuery(String queryStr) {
-		Query query = getEntityManager().createQuery(queryStr.toString());
-		prepareHints(query);
-		return ((Number) query.getSingleResult()).longValue();
-	}
-
-	protected void prepareHints(Query query) {
+    @Override
+    protected void prepareSelect(CriteriaQuery<Long> criteriaQuery, Root<T> root, QueryConfig config) {
+    	if (config.isDistinct()) {
+        	criteriaQuery.select(getCriteriaBuilder().countDistinct(root));
+    	} else {
+        	criteriaQuery.select(getCriteriaBuilder().count(root));
+    	}
     }
-
 }

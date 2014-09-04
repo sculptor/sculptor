@@ -1,9 +1,9 @@
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sculptor.framework.accessimpl.jpa2.QueryExpressions;
+import org.sculptor.framework.accessimpl.jpa.QueryExpressions;
 
 /**
  * Holds the expressions of the query

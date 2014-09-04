@@ -17,10 +17,6 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import java.util.List;
-
-import javax.persistence.PersistenceException;
-
 import org.sculptor.framework.accessapi.FindByExampleAccess;
 
 
@@ -33,55 +29,15 @@ import org.sculptor.framework.accessapi.FindByExampleAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByExampleAccessImpl<T> extends JpaAccessBase<T> implements FindByExampleAccess<T> {
+public class JpaFindByExampleAccessImpl<T>
+    extends JpaFindByExampleAccessImplGeneric<T,T>
+    implements FindByExampleAccess<T> {
 
-    private T exampleInstance;
-    private String orderBy;
-    private boolean orderByAsc = true;
-    private String[] excludeProperties;
-    private List<T> result;
-
-    public JpaFindByExampleAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+    public JpaFindByExampleAccessImpl() {
+        super();
     }
 
-    public T getExample() {
-        return exampleInstance;
-    }
-
-    public void setExample(T example) {
-        this.exampleInstance = example;
-    }
-
-    public String getOrderBy() {
-        return orderBy;
-    }
-
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
-    }
-
-    public boolean isOrderByAsc() {
-        return orderByAsc;
-    }
-
-    public void setOrderByAsc(boolean orderByAsc) {
-        this.orderByAsc = orderByAsc;
-    }
-
-    public String[] getExcludeProperties() {
-        return excludeProperties;
-    }
-
-    public void setExcludeProperties(String[] excludeProperties) {
-        this.excludeProperties = excludeProperties;
-    }
-
-    public List<T> getResult() {
-        return this.result;
-    }
-
-    public void performExecute() throws PersistenceException {
-        throw new UnsupportedOperationException("FindByExample is not supported.");
+    public JpaFindByExampleAccessImpl(Class<T> type) {
+        super(type);
     }
 }

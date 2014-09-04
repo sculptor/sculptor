@@ -17,16 +17,7 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.PersistenceException;
-
 import org.sculptor.framework.accessapi.FindByCriteriaAccess;
-
 
 /**
  * <p>
@@ -36,83 +27,15 @@ import org.sculptor.framework.accessapi.FindByCriteriaAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByCriteriaAccessImpl<T> extends JpaAccessBase<T> implements FindByCriteriaAccess<T> {
+public class JpaFindByCriteriaAccessImpl<T>
+    extends JpaFindByCriteriaAccessImplGeneric<T,T>
+    implements FindByCriteriaAccess<T> {
 
-    private Map<String, Object> restrictions = new HashMap<String, Object>();
-    private Set<String> fetchAssociations = new HashSet<String>();
-    private String orderBy;
-    private boolean orderByAsc = true;
-    private int firstResult = -1;
-    private int maxResult = 0;
-    private List<T> result;
-
-    public JpaFindByCriteriaAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+    public JpaFindByCriteriaAccessImpl() {
+        super();
     }
 
-    public void setRestrictions(Map<String, Object> parameters) {
-        this.restrictions = parameters;
-    }
-
-    protected Map<String, Object> getRestrictions() {
-        return restrictions;
-    }
-
-    public void addRestriction(String name, Object value) {
-        restrictions.put(name, value);
-    }
-
-    public void setFetchAssociations(Set<String> associationPaths) {
-        this.fetchAssociations = associationPaths;
-    }
-
-    public void addFetchAssociation(String associationPath) {
-        this.fetchAssociations.add(associationPath);
-    }
-
-    protected Set<String> getFetchAssociations() {
-        return fetchAssociations;
-    }
-
-    public String getOrderBy() {
-        return orderBy;
-    }
-
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
-    }
-
-    public boolean isOrderByAsc() {
-        return orderByAsc;
-    }
-
-    public void setOrderByAsc(boolean orderByAsc) {
-        this.orderByAsc = orderByAsc;
-    }
-
-    protected int getFirstResult() {
-        return firstResult;
-    }
-
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
-
-    protected int getMaxResult() {
-        return maxResult;
-    }
-
-    public void setMaxResult(int maxResult) {
-        this.maxResult = maxResult;
-    }
-
-
-    public List<T> getResult() {
-        return this.result;
-    }
-
-    @Override
-    public void performExecute() throws PersistenceException {
-        throw new UnsupportedOperationException("FindByCriteris is not supported.");
+    public JpaFindByCriteriaAccessImpl(Class<T> type) {
+        super(type);
     }
 }

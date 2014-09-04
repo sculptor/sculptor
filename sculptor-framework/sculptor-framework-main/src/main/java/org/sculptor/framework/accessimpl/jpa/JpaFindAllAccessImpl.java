@@ -17,13 +17,7 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import java.util.List;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-
 import org.sculptor.framework.accessapi.FindAllAccess;
-import org.sculptor.framework.domain.Property;
 
 
 /**
@@ -35,92 +29,15 @@ import org.sculptor.framework.domain.Property;
  * Command design pattern.
  * </p>
  */
-public class JpaFindAllAccessImpl<T> extends JpaAccessBase<T> implements FindAllAccess<T> {
+public class JpaFindAllAccessImpl<T>
+    extends JpaFindAllAccessImplGeneric<T,T>
+    implements FindAllAccess<T> {
 
-	private String orderBy;
-    private boolean orderByAsc = true;
-    private int firstResult = -1;
-    private int maxResult = 0;
-    private List<T> result;
-	private Property<?>[] fetchEager;
-
-    public JpaFindAllAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+    public JpaFindAllAccessImpl() {
+        super();
     }
 
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
+    public JpaFindAllAccessImpl(Class<T> type) {
+        super(type);
     }
-
-    public boolean isOrderByAsc() {
-        return orderByAsc;
-    }
-
-    public void setOrderByAsc(boolean orderByAsc) {
-        this.orderByAsc = orderByAsc;
-    }
-
-    public void setFetchEager(Property<?>[] fetchEager) {
-        this.fetchEager = fetchEager;
-    }
-
-    public Property<?>[] getFetchEager() {
-        return fetchEager;
-    }
-
-    protected int getFirstResult() {
-        return firstResult;
-    }
-
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
-
-    protected int getMaxResult() {
-        return maxResult;
-    }
-
-    public void setMaxResult(int maxResult) {
-        this.maxResult = maxResult;
-    }
-
-    public List<T> getResult() {
-        return this.result;
-    }
-
-	@Override
-	public void performExecute() throws PersistenceException {
-		StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select e from ").append(getPersistentClass().getSimpleName()).append(" as e");
-		if (fetchEager != null && fetchEager.length != 0) {
-			for (Property<?> eagerProp : fetchEager) {
-				queryStr.append(" left join fetch e.").append(eagerProp.getName());
-			}
-		}
-		if (orderBy != null) {
-			queryStr.append(" order by e.").append(orderBy);
-			if (!isOrderByAsc()) {
-				queryStr.append(" desc");
-			}
-		}
-		result = executeQuery(queryStr.toString());
-	}
-
-	@SuppressWarnings("unchecked")
-	protected List<T> executeQuery(String queryStr) {
-		Query query = getEntityManager().createQuery(queryStr.toString());
-		prepareHints(query);
-
-		if (firstResult >= 0) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResult >= 1) {
-			query.setMaxResults(maxResult);
-		}
-		return query.getResultList();
-	}
-
-	protected void prepareHints(Query query) {
-	}
-
 }

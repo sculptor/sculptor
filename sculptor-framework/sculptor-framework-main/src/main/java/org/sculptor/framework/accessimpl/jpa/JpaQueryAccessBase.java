@@ -15,7 +15,7 @@ String[] * Copyright 2007 The Fornax Project Team, including the original
  * limitations under the License.
  */
 
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +25,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import org.sculptor.framework.accessimpl.jpa.JpaAccessBase;
 
 /**
  * <p>

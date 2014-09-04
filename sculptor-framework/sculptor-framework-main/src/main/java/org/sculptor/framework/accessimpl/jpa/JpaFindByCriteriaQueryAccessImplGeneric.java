@@ -15,39 +15,44 @@
  * limitations under the License.
  */
 
-package org.sculptor.framework.accessimpl.jpa2;
+package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.List;
 
-import org.sculptor.framework.accessapi.FindByConditionAccess;
+import javax.persistence.criteria.CriteriaQuery;
+
+import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
 
 
 /**
  * <p>
- * Implementation of Access command FindByConditionAccess.
+ * Implementation of Access command FindByCriteriaQueryAccess.
  * </p>
  * <p>
  * Command design pattern.
  * </p>
  */
-public class JpaFindByConditionAccessImpl<T>
-    extends JpaFindByConditionAccessImplGeneric<T,T>
-    implements FindByConditionAccess<T> {
+public class JpaFindByCriteriaQueryAccessImplGeneric<T,R>
+    extends JpaCriteriaQueryAccessBase<T,R>
+    implements FindByCriteriaQueryAccess<R> {
 
-    public JpaFindByConditionAccessImpl() {
+    public JpaFindByCriteriaQueryAccessImplGeneric() {
         super();
     }
 
-    public JpaFindByConditionAccessImpl(Class<T> type) {
+    public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type) {
         super(type);
     }
 
-    public List<T> getResult() {
+    public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
+        super(type,resultType);
+    }
+
+    public List<R> getResult() {
         return getListResult();
     }
 
-	@Override
-	public void executeCount() {
-		executeResultCount();
-	}
+    public void setQuery(CriteriaQuery<R> criteriaQuery) {
+        setCriteriaQuery(criteriaQuery);
+    }
 }

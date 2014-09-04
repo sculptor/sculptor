@@ -43,8 +43,5 @@ public interface FindByExampleAccess2<T,R> extends Cacheable, Ordered {
     void setUseSingleResult(boolean singleResult);
     R getSingleResult();
 
-    @Deprecated
-    void setOrderByAsc(boolean orderByAsc);
-
     List<R> getResult();
 }

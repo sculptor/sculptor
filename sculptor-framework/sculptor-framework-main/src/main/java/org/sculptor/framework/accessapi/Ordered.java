@@ -12,9 +12,4 @@ public interface Ordered {
      */
     void setOrderBy(String orderBy);
 
-    /**
-     * Order ascending or descending.
-     */
-    void setOrderByAsc(boolean orderByAsc);
-
 }

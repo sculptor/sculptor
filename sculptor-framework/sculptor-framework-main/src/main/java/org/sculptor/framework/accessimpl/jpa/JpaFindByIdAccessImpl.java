@@ -24,7 +24,6 @@ import javax.persistence.PersistenceException;
 
 import org.sculptor.framework.accessapi.FindByIdAccess;
 
-
 /**
  * <p>
  * Find an entity by its id. Implementation of Access command FindByIdAccess.
@@ -33,45 +32,47 @@ import org.sculptor.framework.accessapi.FindByIdAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByIdAccessImpl<T, ID extends Serializable> extends JpaAccessBase<T> implements FindByIdAccess<T, ID> {
+public class JpaFindByIdAccessImpl<T, ID extends Serializable> extends JpaAccessBase<T> implements
+		FindByIdAccess<T, ID> {
 
-    private boolean lock;
-    private ID id;
-    private T result;
+	private boolean lock;
+	private ID id;
+	private T result;
 
-    public JpaFindByIdAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
-    
-    protected boolean isLock() {
+	public JpaFindByIdAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
+
+	protected boolean isLock() {
 		return lock;
 	}
-    
-    public void setLock(boolean lock) {
-        this.lock = lock;
-    }
+
+	public void setLock(boolean lock) {
+		this.lock = lock;
+	}
 
 	protected ID getId() {
 		return id;
 	}
 
 	public void setId(ID id) {
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    public T getResult() {
-        return result;
-    }
-    
-    protected void setResult(T result) {
+	public T getResult() {
+		return result;
+	}
+
+	protected void setResult(T result) {
 		this.result = result;
 	}
 
-    public void performExecute() throws PersistenceException {
+	public void performExecute() throws PersistenceException {
 		result = (T) getEntityManager().find(getPersistentClass(), id);
-        if (lock) {
-        	// use pessimistic locking strategy
-            getEntityManager().lock(result, LockModeType.WRITE);
-        }
-    }
+		if (lock) {
+			// use pessimistic locking strategy
+			getEntityManager().lock(result, LockModeType.WRITE);
+		}
+	}
+
 }

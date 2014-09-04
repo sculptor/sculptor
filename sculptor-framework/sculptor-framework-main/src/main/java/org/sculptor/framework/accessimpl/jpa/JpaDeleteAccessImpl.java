@@ -23,7 +23,6 @@ import javax.persistence.PersistenceException;
 
 import org.sculptor.framework.accessapi.DeleteAccess;
 
-
 /**
  * <p>
  * Removes an entity.
@@ -34,48 +33,48 @@ import org.sculptor.framework.accessapi.DeleteAccess;
  */
 public class JpaDeleteAccessImpl<T> extends JpaAccessBase<T> implements DeleteAccess<T> {
 
-    private T entity;
-    private Collection<T> entities;
+	private T entity;
+	private Collection<T> entities;
 
-    public JpaDeleteAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public JpaDeleteAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public T getEntity() {
-        return entity;
-    }
+	public T getEntity() {
+		return entity;
+	}
 
-    public void setEntity(T entity) {
-        this.entity = entity;
-    }
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 
-    public Collection<T> getEntities() {
-        return entities;
-    }
+	public Collection<T> getEntities() {
+		return entities;
+	}
 
-    public void setEntities(Collection<T> entities) {
-        this.entities = entities;
-    }
+	public void setEntities(Collection<T> entities) {
+		this.entities = entities;
+	}
 
-    @Override
-    public void performExecute() throws PersistenceException {
-    	if (entity != null) {
-            performRemove(entity);
-        }
-        if (entities != null) {
-            for (T e : entities) {
-                performRemove(e);
-            }
-        }
-    }
+	@Override
+	public void performExecute() throws PersistenceException {
+		if (entity != null) {
+			performRemove(entity);
+		}
+		if (entities != null) {
+			for (T e : entities) {
+				performRemove(e);
+			}
+		}
+	}
 
-    protected void performRemove(T obj) {
-        if (getEntityManager().contains(obj)) {
-            getEntityManager().remove(obj);
-        } else {
-            T merged = getEntityManager().merge(obj);
-            getEntityManager().remove(merged);
-        }
-    }
+	protected void performRemove(T obj) {
+		if (getEntityManager().contains(obj)) {
+			getEntityManager().remove(obj);
+		} else {
+			T merged = getEntityManager().merge(obj);
+			getEntityManager().remove(merged);
+		}
+	}
 
 }

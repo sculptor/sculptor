@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.sculptor.examples.library.media.domain.Media;
 import org.sculptor.examples.library.media.domain.Movie;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
-import org.sculptor.framework.accessimpl.jpa2.JpaHelper;
+import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 

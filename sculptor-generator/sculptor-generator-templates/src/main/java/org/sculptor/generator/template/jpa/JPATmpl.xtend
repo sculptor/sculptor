@@ -82,19 +82,11 @@ def String persistenceUnitXmlFile(Application it) {
 
 def String persistenceUnitHeader(Application it) {
 	'''
-	«IF isJpa1()»
-	<?xml version="1.0" encoding="UTF-8"?>
-	<persistence xmlns="http://java.sun.com/xml/ns/persistence"
-				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-				 version="1.0">
-	«ELSE»
 	<?xml version="1.0" encoding="UTF-8"?>
 	<persistence xmlns="http://java.sun.com/xml/ns/persistence"
 				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 				 version="2.0">
-	«ENDIF»
 	'''
 }
 
@@ -107,10 +99,8 @@ def String persistenceUnitContent(Application it, String unitName) {
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
 		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
-		«IF isJpa2()»
-		    «persistenceUnitSharedCacheMode(it)»
-		    «persistenceUnitValidationMode(it)»
-		«ENDIF»
+	    «persistenceUnitSharedCacheMode(it)»
+	    «persistenceUnitValidationMode(it)»
 		<!-- properties -->
 		«persistenceUnitProperties(it, unitName)»
 		<!-- add additional configuration by overriding "JPATmpl.persistenceUnitAdditions(Application)" -->
@@ -318,11 +308,7 @@ def String persistenceUnitCachePropertiesHibernate(Application it, String unitNa
 		<property name="hibernate.cache.use_second_level_cache" value="true"/>
 		<property name="hibernate.cache.region_prefix" value=""/>
 		«IF cacheProvider() == "EhCache"»
-			«IF isJpaProviderHibernate3()»
-				<property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
-			«ELSE»
-				<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
-			«ENDIF»
+			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
 		«ELSEIF cacheProvider() == "TreeCache"»
 			<property name="hibernate.cache.provider_class" value="org.hibernate.cache.TreeCacheProvider"/>
 		«ELSEIF cacheProvider() == "JbossTreeCache"»
@@ -437,10 +423,8 @@ def String persistenceUnitContentTest(Application it, String unitName) {
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
 		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
-		«IF isJpa2()»
-			«persistenceUnitSharedCacheMode(it)»
-			«persistenceUnitValidationMode(it)»
-		«ENDIF»
+		«persistenceUnitSharedCacheMode(it)»
+		«persistenceUnitValidationMode(it)»
 		<!-- properties -->
 		«persistenceUnitPropertiesTest(it, unitName)»
 		<!-- add additional configuration by overriding "JPATmpl.persistenceUnitAdditions(Application)" -->
@@ -483,17 +467,10 @@ def String persistenceUnitPropertiesTestHibernate(Application it, String unitNam
 		<property name="hibernate.dialect" value="«fw("persistence.CustomHSQLDialect")»" />
 		<property name="hibernate.show_sql" value="true" />
 		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-		«IF !isJpa2()»
-			<property name="hibernate.ejb.cfgfile" value="hibernate.cfg.xml"/>
-		«ENDIF»
 		<property name="query.substitutions" value="true 1, false 0" />
 		<property name="hibernate.cache.use_query_cache" value="true"/>
 		<property name="hibernate.cache.use_second_level_cache" value="true"/>
-		«IF isJpaProviderHibernate3()»
-			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.SingletonEhCacheRegionFactory"/>
-		«ELSE»
-			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
-		«ENDIF»
+		<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
 	'''
 }
 

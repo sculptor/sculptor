@@ -17,8 +17,6 @@
 
 package org.sculptor.framework.accessapi;
 
-
-
 /**
  * <p>
  * Access command for finding objects by simple restrictions
@@ -40,7 +38,4 @@ public interface FindByCriteriaAccess2<R> extends FindByCriteriaAccess<R>, Count
 
     void setSelections(String selections);
     void setGroupBy(String selections);
-
-    @Deprecated
-    void setOrderByAsc(boolean orderByAsc);
 }
