@@ -117,15 +117,6 @@ def String commandImplBase(RepositoryOperation it) {
 	public abstract class «getAccessNormalizedName()»ImplBase extends «it.getAccessBase()»
 	implements «getAccessapiPackage(repository.aggregateRoot.module)».«getAccessNormalizedName()» {
 
-	«IF jpa()»
-		«IF isSpringToBeGenerated() »
-			«IF isJpaProviderHibernate()»
-				«jpaHibernateTemplate(it)»
-			«ENDIF»
-			«jpaTemplate(it)»
-		«ENDIF»
-	«ENDIF»
-	
 		«it.parameters.filter(e|!e.isPagingParameter()).map[parameterAttribute(it)].join»
 
 		«IF it.getTypeName() != "void"»
@@ -190,43 +181,6 @@ def String pageableProperties(RepositoryOperation it) {
 
 		public void setMaxResult(int maxResult) {
 			this.maxResult = maxResult;
-		}
-	'''
-}
-
-def String jpaTemplate(RepositoryOperation it) {
-	'''
-		private org.springframework.orm.jpa.JpaTemplate jpaTemplate;
-		
-		/**
-		 * creates the JpaTemplate to be used in AccessObject for convenience
-		 *
-		 * @return Spring JpaTemplate
-		 */
-		protected org.springframework.orm.jpa.JpaTemplate getJpaTemplate() {
-			if (jpaTemplate == null) {
-				jpaTemplate = new org.springframework.orm.jpa.JpaTemplate(getEntityManager());
-			}
-			return jpaTemplate;
-		}
-	'''
-}
-
-def String jpaHibernateTemplate(RepositoryOperation it) {
-	'''
-		private org.springframework.orm.hibernate3.HibernateTemplate hibernateTemplate;
-		
-		/**
-		 * creates the HibernateTemplate to be used in AccessObject for convenience
-		 *
-		 * @return Spring HibernateTemplate
-		 */
-		protected org.springframework.orm.hibernate3.HibernateTemplate getHibernateTemplate() {
-			if (hibernateTemplate == null) {
-				hibernateTemplate = new org.springframework.orm.hibernate3.HibernateTemplate(
-				    «fw("accessimpl.jpahibernate.HibernateSessionHelper")».getHibernateSession(getEntityManager()).getSessionFactory());
-			}
-			return hibernateTemplate;
 		}
 	'''
 }
