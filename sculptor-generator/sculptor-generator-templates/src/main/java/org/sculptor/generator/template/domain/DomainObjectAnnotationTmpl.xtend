@@ -104,17 +104,17 @@ def dispatch String domainObjectBaseAnnotations(DataTransferObject it) {
 
 def dispatch String domainObjectBaseAnnotations(DomainObject it) {
 	'''
-		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && (it.getValidationEntityListener() != null || it.getAuditEntityListener() != null)»
-		«jpaEntityListenersAnnotation(it)»
+		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && it.getAuditEntityListener() != null»
+			«jpaEntityListenersAnnotation(it)»
 		«ENDIF»
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
-		«it.getValidationAnnotations()»
+			«it.getValidationAnnotations()»
 		«ENDIF»
 		«IF !gapClass && it.isXmlRootToBeGenerated()»
-		«xmlRootAnnotation(it)»
+			«xmlRootAnnotation(it)»
 		«ENDIF»
 		«IF !gapClass && isXstreamAnnotationToBeGenerated()»
-		«xstreamAliasAnnotation(it)»
+			«xstreamAliasAnnotation(it)»
 		«ENDIF»
 	'''
 }

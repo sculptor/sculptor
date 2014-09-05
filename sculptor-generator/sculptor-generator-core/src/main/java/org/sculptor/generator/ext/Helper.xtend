@@ -937,23 +937,6 @@ class Helper {
 		!ref.many && ref.to instanceof ValueObject
 	}
 
-	def List<String> getEntityListeners(DomainObject domainObject) {
-		var List<String> list = newArrayList()
-		if (domainObject instanceof Entity || domainObject instanceof ValueObject)
-			list.add(validationEntityListener())
-		else
-			list = null
-
-		list
-	}
-
-	def String getValidationEntityListener(DomainObject domainObject) {
-		if (isValidationAnnotationToBeGenerated() && (domainObject instanceof Entity) || (domainObject instanceof ValueObject))
-			validationEntityListener()
-		else
-			null
-	}
-
 	def dispatch String getAuditEntityListener(DomainObject domainObject) {
 		null
 	}

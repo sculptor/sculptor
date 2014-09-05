@@ -501,13 +501,6 @@ class Properties {
 			fw("domain.AuditListener")
 	}
 
-	def validationEntityListener() {
-		if (isValidationAnnotationToBeGenerated())
-			"org.sculptor.framework.validation.ValidationEventListener"
-		else
-			null
-	}
-
 	def dispatch String getApplicationContextFile(Application application, String fileName) {
 		fileName
 	}

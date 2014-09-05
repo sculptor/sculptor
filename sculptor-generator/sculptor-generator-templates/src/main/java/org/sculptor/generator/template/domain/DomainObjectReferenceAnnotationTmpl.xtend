@@ -84,8 +84,8 @@ def String oneReferenceGetterAnnotations(Reference it) {
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
 			«oneReferenceValidationAnnotations(it)»
 		«ENDIF»
-		«ENDIF»
-		«IF it.isXmlElementToBeGenerated()»
+	«ENDIF»
+	«IF it.isXmlElementToBeGenerated()»
 		«xmlElementAnnotation(it)»
 	«ENDIF»
 	'''
