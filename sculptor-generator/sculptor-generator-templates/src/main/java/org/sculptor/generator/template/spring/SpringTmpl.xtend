@@ -446,11 +446,6 @@ def String interceptor(Application it) {
 		«ELSE»
 			<bean id="errorHandlingAdvice" class="«fw("errorhandling.ErrorHandlingAdvice")»" />
 		«ENDIF»
-		«IF isJpaProviderHibernate()»
-			<bean id="hibernateErrorHandlingAdvice" class="«fw("errorhandling.HibernateErrorHandlingAdvice")»" />
-		«ELSEIF isValidationAnnotationToBeGenerated()»
-			<bean id="hibernateValidatorErrorHandlingAdvice" class="«fw("errorhandling.HibernateValidatorErrorHandlingAdvice")»" />
-		«ENDIF»
 		«IF isServiceContextToBeGenerated()»
 			<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
 		«ENDIF»
@@ -529,7 +524,7 @@ def String aopConfig(Application it) {
 	<aop:config>
 
 		«aopConfigServicePointcuts»
-		
+
 		«IF it.hasConsumers()»
 			<aop:pointcut id="messageConsumer"
 				expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>
@@ -542,17 +537,12 @@ def String aopConfig(Application it) {
 			<aop:advisor pointcut-ref="businessService" advice-ref="serviceContextStoreAdvice" order="2" />
 		«ENDIF»
 		<aop:advisor pointcut-ref="businessService" advice-ref="errorHandlingAdvice" order="3" />
-		«IF isJpaProviderHibernate()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-		«ELSEIF isValidationAnnotationToBeGenerated()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-		«ENDIF»
 		«IF jpa()»
-			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="5" />
+			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="4" />
 		«ENDIF»
 
 		«IF isInjectDrools()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="6" />
+			<aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="5" />
 		«ENDIF»
 
 		«IF it.hasConsumers()»
@@ -563,11 +553,6 @@ def String aopConfig(Application it) {
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="serviceContextStoreAdvice" order="2" />
 			«ENDIF»
 			<aop:advisor pointcut-ref="messageConsumer" advice-ref="errorHandlingAdvice" order="3" />
-			«IF isJpaProviderHibernate()»
-				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-			«ELSEIF isValidationAnnotationToBeGenerated()»
-				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-			«ENDIF»
 		«ENDIF»
 
 		«aopConfigAdditions(it, false)»
@@ -609,11 +594,6 @@ def String aopConfigTest(Application it) {
 
 		<!-- Need this when JUnit directly to Repository -->
 		<aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
-		«IF isJpaProviderHibernate()»
-			<aop:advisor pointcut-ref="repository" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-		«ELSEIF isValidationAnnotationToBeGenerated()»
-			<aop:advisor pointcut-ref="repository" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-		«ENDIF»
 
 		«aopConfigAdditions(it, true)»
 	</aop:config>

@@ -150,7 +150,6 @@ public class PropertiesBase {
 			if (!getProperty("jpa.provider").equals("hibernate")) {
 				defaultConfiguration.setBoolean("generate.hibernate", false);
 				defaultConfiguration.setString("datetime.library", "java");
-				errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 			}
 		}
 	}
@@ -165,13 +164,6 @@ public class PropertiesBase {
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("jpa.provider", "none");
 		defaultConfiguration.setBoolean("generate.ddl", false);
-		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
-	}
-
-	private void errorHandlingInterceptorWithoutHibernateDependency(MutableConfigurationProvider defaultConfiguration) {
-		// for ejb3
-		defaultConfiguration.setString("framework.errorhandling.ErrorHandlingInterceptor",
-				"org.sculptor.framework.errorhandling.ErrorHandlingInterceptor2");
 	}
 
 	private void initDerivedDefaultsWithoutPersistence(MutableConfigurationProvider defaultConfiguration) {
@@ -192,7 +184,6 @@ public class PropertiesBase {
 				"org.sculptor.framework.accessimpl.todo.AccessBase");
 		defaultConfiguration.setString("framework.accessimpl.AccessBaseWithException",
 				"org.sculptor.framework.accessimpl.todo.BaseWithException");
-		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 	}
 
 	private void initDerivedDefaultsForPureEjb3(MutableConfigurationProvider defaultConfiguration) {
