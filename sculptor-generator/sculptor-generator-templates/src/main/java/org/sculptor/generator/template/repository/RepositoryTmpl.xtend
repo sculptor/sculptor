@@ -145,10 +145,8 @@ def String repositoryBase(Repository it) {
 		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && !op.isGeneratedFinder()).map[op | abstractBaseRepositoryMethod(op)].join()»
 		«it.operations.filter(op | !op.delegateToAccessObject && !op.isGenericAccessObject() && op.isGeneratedFinder()).map[op | finderMethod(op)].join()»
 
-		«IF pureEjb3() && jpa()»
+		«IF jpa()»
 			«entityManagerDependency(it) »
-		«ELSEIF isSpringToBeGenerated() && jpa()»
-			«daoSupportEntityManagerDependency(it) »
 		«ENDIF»
 	
 		«extraRepositoryBaseDependencies»
@@ -188,27 +186,6 @@ def String entityManagerDependency(Repository it) {
 		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
 		protected void setEntityManager(javax.persistence.EntityManager entityManager) {
 			this.entityManager = entityManager;
-		}
-
-		protected javax.persistence.EntityManager getEntityManager() {
-			return entityManager;
-		}
-	'''
-}
-
-
-def String daoSupportEntityManagerDependency(Repository it) {
-	'''
-		private javax.persistence.EntityManager entityManager;
-
-		/**
-		 * Dependency injection
-		 */
-		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
-		protected void setEntityManagerDependency(javax.persistence.EntityManager entityManager) {
-			this.entityManager = entityManager;
-			// for JpaDaoSupport, JpaTemplate
-			setEntityManager(entityManager);
 		}
 
 		protected javax.persistence.EntityManager getEntityManager() {

@@ -1108,14 +1108,9 @@ class Helper {
 	def dispatch String extendsLitteral(Repository repository) {
 		val prop = defaultExtendsClass(repository.simpleMetaTypeName())
 		if (prop != '')
-			("extends " + prop)
+			"extends " + prop
 		else
-			if (!isSpringToBeGenerated())
-				""
-			else if (jpa())
-				"extends org.springframework.orm.jpa.support.JpaDaoSupport"
-			else
-				""
+			""
 	}
 
 	def dispatch String extendsLitteral(Service service) {
