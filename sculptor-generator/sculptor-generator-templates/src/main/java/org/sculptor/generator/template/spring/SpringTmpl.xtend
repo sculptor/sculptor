@@ -438,9 +438,8 @@ def String interceptor(Application it) {
 		«aspectjAutoproxy(it)»
 	
 		«IF jpa()»
-			«jpaInterceptor(it) »
+			<bean id="jpaFlushEagerAdvice" class="org.sculptor.framework.errorhandling.JpaFlushEagerAdvice" />
 		«ENDIF»
-	
 		«IF nosql()»
 			<bean id="errorHandlingAdvice" class="«fw("errorhandling.BasicErrorHandlingAdvice")»" />
 		«ELSE»
@@ -480,16 +479,6 @@ def String interceptorAdditions(Application it) {
 def String aspectjAutoproxy(Application it) {
 	'''
 	<aop:aspectj-autoproxy/>
-	'''
-}
-
-def String jpaInterceptor(Application it) {
-	'''
-	<bean id="jpaInterceptorFlushEager" class="org.springframework.orm.jpa.JpaInterceptor">
-		<property name="entityManagerFactory" ref="entityManagerFactory"/>
-		<!-- Need to flush to detect OptimisticLockingException and do proper rollback. -->
-		<property name="flushEager" value="true"/>
-	</bean>
 	'''
 }
 
@@ -538,7 +527,7 @@ def String aopConfig(Application it) {
 		«ENDIF»
 		<aop:advisor pointcut-ref="businessService" advice-ref="errorHandlingAdvice" order="3" />
 		«IF jpa()»
-			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="4" />
+			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaFlushEagerAdvice" order="4" />
 		«ENDIF»
 
 		«IF isInjectDrools()»
