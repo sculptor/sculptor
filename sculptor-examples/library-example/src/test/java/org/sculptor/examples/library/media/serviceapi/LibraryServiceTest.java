@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.examples.library.media.serviceapi;
 
 import static org.junit.Assert.assertEquals;
@@ -25,17 +24,15 @@ import static org.junit.Assert.fail;
 import java.util.Date;
 import java.util.List;
 
-import org.sculptor.examples.library.media.domain.LibraryProperties;
-import org.sculptor.examples.library.media.domain.PhysicalMedia;
-import org.sculptor.examples.library.media.exception.LibraryNotFoundException;
-import org.sculptor.examples.library.media.serviceapi.LibraryService;
-import org.sculptor.examples.library.media.serviceapi.LibraryServiceTestBase;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sculptor.examples.library.media.domain.Library;
+import org.sculptor.examples.library.media.domain.LibraryProperties;
 import org.sculptor.examples.library.media.domain.Media;
 import org.sculptor.examples.library.media.domain.Movie;
+import org.sculptor.examples.library.media.domain.PhysicalMedia;
+import org.sculptor.examples.library.media.exception.LibraryNotFoundException;
 import org.sculptor.examples.library.person.domain.Person;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -45,22 +42,17 @@ import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.errorhandling.OptimisticLockingException;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.NotTransactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Spring based transactional test with DbUnit support.
  */
-
-@SuppressWarnings("deprecation")
 public class LibraryServiceTest extends AbstractDbUnitJpaTests implements LibraryServiceTestBase {
     private final long libraryId = 1;
 
-    private LibraryService libraryService;
-
     @Autowired
-    public void setLibraryService(LibraryService libraryService) {
-        this.libraryService = libraryService;
-    }
+    private LibraryService libraryService;
 
     @Override
     protected String getDataSetFile() {
@@ -116,7 +108,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
     }
 
     @Test(expected=OptimisticLockingException.class)
-    @NotTransactional
+    @Transactional(propagation = Propagation.NEVER)
     public void testOptimisticLocking() throws Exception {
     	// TODO: expected exception not thrown for datanucleus, find out why.
         if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
@@ -153,7 +145,6 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
 
         Movie movie = (Movie) movieList.get(0);
         assertEquals("Die Another Day", movie.getTitle());
-
     }
 
     @Test
