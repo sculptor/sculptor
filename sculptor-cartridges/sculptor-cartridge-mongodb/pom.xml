@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-cartridges</artifactId>
-		<version>3.0.5</version>
+		<version>3.0.6</version>
 	</parent>
 	<artifactId>sculptor-cartridge-mongodb</artifactId>
 	<name>Sculptor :: Cartridges :: MongoDB</name>
