@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.emf.common.util.URI;
 import org.sculptor.generator.SculptorGeneratorResult.Status;
 import org.sculptor.generator.util.FileHelper;
 import org.sculptor.generator.workflow.SculptorGeneratorWorkflow;
@@ -29,25 +30,27 @@ import com.google.inject.Injector;
 
 /**
  * Retrieves an instance of the generators internal workflow from the generators
- * guice-configured setup, executes it and returns a
- * {@link SculptorGeneratorResult} instance (holding lists of generated
- * {@link File}s and {@link SculptorGeneratorIssue} instances).
+ * guice-configured setup, executes it with the given model + generator
+ * properties and returns a {@link SculptorGeneratorResult} instance (holding
+ * lists of generated {@link File}s and {@link SculptorGeneratorIssue}
+ * instances).
  * 
  * @see SculptorGeneratorSetup#createInjectorAndDoEMFRegistration()
  * @see SculptorGeneratorWorkflow#run(String)
  */
 public class SculptorGeneratorRunner {
 
-	public static final SculptorGeneratorResult run(String modelURI, Properties generatorProperties) {
+	public static final SculptorGeneratorResult run(File modelFile, Properties generatorProperties) {
 		Injector injector = new SculptorGeneratorSetup().createInjectorAndDoEMFRegistration();
 		SculptorGeneratorWorkflow workflow = injector.getInstance(SculptorGeneratorWorkflow.class);
 		SculptorGeneratorContext.getGeneratedFiles().clear();
 		try {
 
 			// Execute the generators workflow
-			boolean success = workflow.run(modelURI, generatorProperties);
+			boolean success = workflow.run(URI.createFileURI(modelFile.toString()).toString(), generatorProperties);
 
-			// Create a result object holding a list of generated files and issues occured during code generation
+			// Create a result object holding a list of generated files and
+			// issues occured during code generation
 			List<SculptorGeneratorIssue> issues = SculptorGeneratorContext.getIssues();
 			List<File> generatedFiles = SculptorGeneratorContext.getGeneratedFiles();
 			SculptorGeneratorResult result = new SculptorGeneratorResult((success ? Status.SUCCESS : Status.FAILED),

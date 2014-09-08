@@ -89,8 +89,8 @@ abstract class GeneratorTestBase {
 		generatorProperties.setProperty("outputSlot.path.TO_DOC", OUTPUT_DIR + testName + TO_DOC)
 
 		// Run generator and return list of generated files
-		val result = SculptorGeneratorRunner.run("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign",
-				generatorProperties)
+		val result = SculptorGeneratorRunner.run(
+			new File("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign"), generatorProperties)
 
 		// Log all issues occured during workflow execution
 		for (SculptorGeneratorIssue issue : result.getIssues()) {
