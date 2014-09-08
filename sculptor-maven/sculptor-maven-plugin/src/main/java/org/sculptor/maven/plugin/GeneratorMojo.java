@@ -471,7 +471,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	}
 
 	protected List<File> doRunGenerator(Properties generatorProperties) {
-		SculptorGeneratorResult result = SculptorGeneratorRunner.run(getModelFile().toString(), generatorProperties);
+		SculptorGeneratorResult result = SculptorGeneratorRunner.run(getModelFile(), generatorProperties);
 
 		// Log all issues occured during workflow execution
 		for (SculptorGeneratorIssue issue : result.getIssues()) {
