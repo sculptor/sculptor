@@ -2,7 +2,7 @@
 <feature
       id="org.sculptor.dsl.feature"
       label="Sculptor DSL Editor"
-      version="3.0.5"
+      version="3.0.6.qualifier"
       provider-name="Sculptor Project Team"
       plugin="org.sculptor.dsl.ui">
 
