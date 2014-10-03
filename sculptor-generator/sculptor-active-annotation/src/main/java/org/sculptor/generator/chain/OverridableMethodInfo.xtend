@@ -16,6 +16,7 @@
  */
 package org.sculptor.generator.chain
 
+import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtend.lib.macro.declaration.MethodDeclaration
 
 /**
