@@ -556,7 +556,7 @@
 				<plugin>
 					<groupId>com.github.github</groupId>
 					<artifactId>site-maven-plugin</artifactId>
-					<version>0.9</version>
+					<version>0.10</version>
 					<!-- Deploying the p2 repository to a GitHub repository branch as described in
 						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
 					<configuration>
