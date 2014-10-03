@@ -91,13 +91,8 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 	private def validate(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		val extendedClass = annotatedClass.extendedClass
 
-		// A missing superclass is already validated by the Xtend compiler 
-		if (extendedClass == null) {
-			return false
-		}
-
 		// Check if annotated class does extend another class
-		if (extendedClass.name == 'java.lang.Object') {
+		if (extendedClass == null || extendedClass.name == 'java.lang.Object') {
 			annotatedClass.addError('Annotated class must extend a class')
 			return false
 		}
