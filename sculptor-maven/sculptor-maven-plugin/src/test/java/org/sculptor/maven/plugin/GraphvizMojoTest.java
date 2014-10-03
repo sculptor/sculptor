@@ -21,7 +21,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import junit.framework.AssertionFailedError;
@@ -64,7 +64,7 @@ public class GraphvizMojoTest extends
 		GraphvizMojo mojo = createMojo(createProject("test1"));
 		setVariableValueToObject(mojo, "verbose", false);
 
-		Set<String> changedDotFiles = new HashSet<String>();
+		Set<String> changedDotFiles = new LinkedHashSet<String>();
 		changedDotFiles.add("file1.dot");
 		changedDotFiles.add("file2.dot");
 		changedDotFiles.add("file3.dot");
@@ -84,7 +84,7 @@ public class GraphvizMojoTest extends
 		GraphvizMojo mojo = createMojo(createProject("test1"));
 		setVariableValueToObject(mojo, "verbose", true);
 
-		Set<String> changedDotFiles = new HashSet<String>();
+		Set<String> changedDotFiles = new LinkedHashSet<String>();
 		changedDotFiles.add("file1.dot");
 		changedDotFiles.add("file2.dot");
 		changedDotFiles.add("file3.dot");
