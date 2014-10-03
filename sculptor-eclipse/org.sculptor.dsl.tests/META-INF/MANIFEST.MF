@@ -20,5 +20,5 @@ Import-Package: org.apache.log4j,
  org.junit.runners;version="4.5.0",
  org.junit.runners.model;version="4.5.0",
  org.hamcrest.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.sculptor.dsl

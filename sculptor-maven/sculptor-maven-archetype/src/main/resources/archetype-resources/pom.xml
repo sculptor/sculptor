@@ -312,8 +312,8 @@
 			supporting container (jboss etc) -->
 		<dependency>
 			<groupId>javax.transaction</groupId>
-			<artifactId>jta</artifactId>
-			<version>1.1</version>
+			<artifactId>javax.transaction-api</artifactId>
+			<version>1.2</version>
 		</dependency>
 #end
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")

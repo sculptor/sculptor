@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.sculptor.dsl,
  org.sculptor.dsl.formatting,
  org.sculptor.dsl.parser.antlr,
