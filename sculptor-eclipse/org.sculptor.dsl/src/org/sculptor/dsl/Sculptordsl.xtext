@@ -110,7 +110,7 @@ DslServiceOperation :
 	  ("hint" "=" hint=STRING)? &
 	  (publish=DslPublish)?
     )
-    (delegateHolder=DslServiceOperationDelegate)? ";"
+    (delegateHolder=DslServiceOperationDelegate)? (";")?
 ;
 
 DslServiceOperationDelegate :
@@ -134,7 +134,7 @@ DslResourceOperation :
 	  ("path" "=" path=STRING)? &
 	  ("return" "=" returnString=STRING)?
     )
-    (delegateHolder=DslResourceOperationDelegate)? ";"
+    (delegateHolder=DslResourceOperationDelegate)? (";")?
 ;
 
 DslResourceOperationDelegate :
@@ -163,7 +163,7 @@ DslRepositoryOperation :
       (map?="map")? &
       (publish=DslPublish)?
     )
-    (delegateToAccessObject?=DELEGATE (("AccessObject") | (accessObjectName=ID)))? ";"
+    (delegateToAccessObject?=DELEGATE (("AccessObject") | (accessObjectName=ID)))? (";")?
 ;
 
 DslParameter :
@@ -310,7 +310,7 @@ DslDomainObjectOperation :
       ("throws" throws=DslThrowsIdentifier)? &
 	  ("hint" "=" hint=STRING)?
     )
-    ";";
+    (";")?;
 
 DslDataTransferObject :
   (doc=STRING)?
