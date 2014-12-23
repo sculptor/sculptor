@@ -502,7 +502,7 @@ enum DslDiscriminatorType :
 
 DslType :
   ("String"|"int"|"Integer"|"long"|"Long"|"boolean"|"Boolean"|"Date"|"DateTime"|"Timestamp"|"BigDecimal"|"BigInteger"|
-  	"double"|"Double"|"float"|"Float"|"Key"|"PagingPagarameter"|"PagedResult"|"Blob"|"Clob"|"Object[]"|
+  	"double"|"Double"|"float"|"Float"|"Key"|"PagingParameter"|"PagedResult"|"Blob"|"Clob"|"Object[]"|
   	DslJavaIdentifier);
 
 enum DslCollectionType :
