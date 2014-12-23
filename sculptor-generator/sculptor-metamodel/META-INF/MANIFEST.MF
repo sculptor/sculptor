@@ -6,12 +6,10 @@ Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: sculptormetamodel,sculptormetamodel.impl,sculptormetam
- odel.util
-Require-Bundle: org.eclipse.emf.codegen.ecore;bundle-version="2.6.0",
- org.eclipse.emf.mwe2.launch;bundle-version="2.3.0",
- org.eclipse.emf.mwe2.lib,
- org.apache.commons.logging;resolution:=optional
-Import-Package: org.apache.log4j
+Export-Package: sculptormetamodel,
+ sculptormetamodel.impl,
+ sculptormetamodel.util
+Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.6.0",
+ org.eclipse.emf.ecore.xcore.lib
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
