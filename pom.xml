@@ -296,7 +296,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
+					<version>3.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -470,14 +470,14 @@
 					<version>1.8</version>
 				</plugin>
 				<plugin>
-					<!-- make sure our code only has 1.6 dependencies -->
+					<!-- make sure our code only has 1.7 dependencies -->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
-					<version>1.11</version>
+					<version>1.13</version>
 					<configuration>
 						<signature>
 							<groupId>org.codehaus.mojo.signature</groupId>
-							<artifactId>java16</artifactId>
+							<artifactId>java17</artifactId>
 							<version>1.0</version>
 						</signature>
 					</configuration>
