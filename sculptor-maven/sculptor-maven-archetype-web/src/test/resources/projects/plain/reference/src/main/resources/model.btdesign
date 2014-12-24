@@ -1,0 +1,8 @@
+Application MyWebApp {
+    basePackage=archetype.it
+
+    Module mywebmodule {
+
+	}
+
+}

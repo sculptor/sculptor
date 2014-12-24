@@ -1,0 +1,11 @@
+Application MyWebApp {
+    basePackage=archetype.it
+
+    Module mywebmodule {
+
+ 	    Resource FrontResource {
+			String front return="front/overview";
+	    }
+	}
+
+}
