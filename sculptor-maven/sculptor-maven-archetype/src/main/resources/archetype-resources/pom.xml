@@ -37,6 +37,7 @@
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
+		<joda-time-version>${joda-time-version}</joda-time-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
@@ -378,7 +379,7 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.2</version>
+			<version>\${symbol_dollar}{joda-time-version}</version>
 		</dependency>
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>

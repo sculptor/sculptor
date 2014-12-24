@@ -19,6 +19,7 @@
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
+		<joda-time-version>${joda-time-version}</joda-time-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")

@@ -151,12 +151,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>\${symbol_dollar}{jackson-version}</version>
+			<version>${jackson-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>\${symbol_dollar}{xstream-version}</version>
+		    <version>${xstream-version}</version>
 		</dependency>
 #end
 	</dependencies>
