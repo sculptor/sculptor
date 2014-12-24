@@ -176,6 +176,31 @@
 		</plugins>
 	</build>
 
+#if( $standalone == "true" || $standalone == "y" || $standalone == "yes" || $ejb == "false" || $ejb == "n" || $ejb == "no")
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>\${symbol_dollar}{spring-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<!-- Despite of the BOM POM do we have to keep spring-core from using commons-logging -->
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>\${symbol_dollar}{spring-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+#end
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
@@ -235,12 +260,10 @@
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-webmvc</artifactId>
-		    <version>\${symbol_dollar}{spring-version}</version>
 		</dependency>
 		<dependency>
 		   <groupId>org.springframework</groupId>
 		   <artifactId>spring-oxm</artifactId>
-		   <version>\${symbol_dollar}{spring-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -321,39 +344,13 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
-		</dependency>
+#if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
-		</dependency>
+#end
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
@@ -417,7 +414,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>\${symbol_dollar}{spring-version}</version>
 			<scope>test</scope>
 		</dependency>
 #end

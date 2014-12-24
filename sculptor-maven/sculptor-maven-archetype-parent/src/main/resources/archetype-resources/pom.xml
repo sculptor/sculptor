@@ -1,5 +1,6 @@
 #set( $artifactIdBaseLength = $artifactId.length() - 7 )
 #set( $artifactIdBase = $artifactId.substring(0, $artifactIdBaseLength) )
+#set( $symbol_dollar = '$' )
 <?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -59,6 +60,31 @@
 		</pluginManagement>
 	</build>
 
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>\${symbol_dollar}{spring-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<!-- Despite of the BOM POM do we have to keep spring-core from using commons-logging -->
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>\${symbol_dollar}{spring-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+#end
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

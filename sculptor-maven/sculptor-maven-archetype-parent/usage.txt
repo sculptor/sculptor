@@ -1,1 +1,1 @@
-mvn archetype:generate -DarchetypeGroupId=org.sculptorgenerator -DarchetypeArtifactId=sculptor-maven-archetype-parent -DarchetypeVersion=3.0.0-SNAPSHOT -DarchetypeRepository=https://raw.github.com/sculptor/snapshot-repository/maven/ -Dweb=false -Dear=false -Dmongodb=false
+mvn archetype:generate -DarchetypeGroupId=org.sculptorgenerator -DarchetypeArtifactId=sculptor-maven-archetype-parent -DarchetypeVersion=3.0.0 -ejb=false -Dweb=false -Dear=false -Dmongodb=false
