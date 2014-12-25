@@ -785,24 +785,6 @@
 				<version>${hsqldb-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>xerces</groupId>
-				<artifactId>xmlParserAPIs</artifactId>
-				<version>2.6.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>xerces</groupId>
-				<artifactId>xercesImpl</artifactId>
-				<version>2.6.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>dom4j</groupId>
-				<artifactId>dom4j</artifactId>
-				<version>1.6.1</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j-version}</version>
@@ -841,6 +823,12 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>1.6.1</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
