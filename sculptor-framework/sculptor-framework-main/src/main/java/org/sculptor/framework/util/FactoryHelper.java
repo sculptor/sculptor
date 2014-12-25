@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for creating Objects from properies (Strings).
+ * Utility class for creating Objects from properties (Strings).
  * 
  * @author Patrik Nordwall
  */

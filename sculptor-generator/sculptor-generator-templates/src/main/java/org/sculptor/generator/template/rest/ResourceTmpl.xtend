@@ -160,8 +160,8 @@ def String gaeKeyIdPropertyEditor(DomainObject it) {
 
 def String serviceContext(Resource it) {
 	'''
-		protected «fw("errorhandling.ServiceContext")» serviceContext() {
-			return «fw("errorhandling.ServiceContextStore")».get();
+		protected «fw("context.ServiceContext")» serviceContext() {
+			return «fw("context.ServiceContextStore")».get();
 		}
 	'''
 }

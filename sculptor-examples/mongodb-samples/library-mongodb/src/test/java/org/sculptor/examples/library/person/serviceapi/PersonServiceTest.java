@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.sculptor.examples.library.person.domain.PersonName.personName;
 import static org.sculptor.examples.library.person.domain.Ssn.ssn;
-import static org.sculptor.framework.errorhandling.SimpleJUnitServiceContextFactory.getServiceContext;
+import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.Calendar;
 import java.util.List;

@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
-import org.sculptor.framework.errorhandling.SimpleJUnitServiceContextFactory;
+import org.sculptor.framework.context.SimpleJUnitServiceContextFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;

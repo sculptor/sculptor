@@ -22,7 +22,7 @@ import java.sql.Timestamp;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-import org.sculptor.framework.errorhandling.ServiceContextStore;
+import org.sculptor.framework.context.ServiceContextStore;
 
 
 /**
@@ -32,8 +32,8 @@ import org.sculptor.framework.errorhandling.ServiceContextStore;
  * {@link org.sculptor.framework.domain.Auditable}.
  * <p>
  * It will grab the user from
- * {@link org.sculptor.framework.errorhandling.ServiceContext} provided by
- * {@link org.sculptor.framework.errorhandling.ServiceContextStore}.
+ * {@link org.sculptor.framework.context.ServiceContext} provided by
+ * {@link org.sculptor.framework.context.ServiceContextStore}.
  *
  */
 public class AuditListener  {

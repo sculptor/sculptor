@@ -60,23 +60,23 @@ class Properties {
 	}
 
 	def serviceContextClass() {
-		fw("errorhandling.ServiceContext")
+		fw("context.ServiceContext")
 	}
 
 	def serviceContextStoreAdviceClass() {
-		fw("errorhandling.ServiceContextStoreAdvice")
+		fw("context.ServiceContextStoreAdvice")
 	}
 
 	def serviceContextStoreClass() {
-		fw("errorhandling.ServiceContextStore")
+		fw("context.ServiceContextStore")
 	}
 
 	def serviceContextServletFilterClass() {
-		fw("errorhandling.ServiceContextServletFilter")
+		fw("context.ServiceContextServletFilter")
 	}
 
 	def servletContainerServiceContextFactoryClass() {
-		fw("errorhandling.ServletContainerServiceContextFactory")
+		fw("context.ServletContainerServiceContextFactory")
 	}
 
 	def auditInterceptorClass() {

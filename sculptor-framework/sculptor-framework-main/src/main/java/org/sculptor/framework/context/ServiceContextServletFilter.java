@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.sculptor.framework.errorhandling;
+package org.sculptor.framework.context;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,12 +32,12 @@ import org.sculptor.framework.util.FactoryConfiguration;
 
 /**
  * This Servlet Filter should be placed in front of Servlets to create a new
- * {@link org.sculptor.framework.errorhandling.ServiceContext} instance for each
+ * {@link org.sculptor.framework.context.ServiceContext} instance for each
  * reqest. The ServiceContext instance is stored in the thread local
- * {@link org.sculptor.framework.errorhandling.ServiceContextStore}.
+ * {@link org.sculptor.framework.context.ServiceContextStore}.
  * <p>
  * The ServiceContext is created by 
- * {@link org.sculptor.framework.errorhandling.ServiceContextFactory}
+ * {@link org.sculptor.framework.context.ServiceContextFactory}
  * and the concrete factory implementation is configurable by init-param 
  * 'ServiceContextFactoryImplementationClassName'. 
  * <p>
@@ -48,8 +47,7 @@ import org.sculptor.framework.util.FactoryConfiguration;
  * attribute names.
  * 
  * @author Patrik Nordwall
- * @see org.sculptor.framework.errorhandling.ServiceContextFactory#createServiceContext(HttpServletRequest)
- * 
+ * @see org.sculptor.framework.context.ServiceContextFactory#createServiceContext(HttpServletRequest)
  */
 public class ServiceContextServletFilter implements Filter {
 

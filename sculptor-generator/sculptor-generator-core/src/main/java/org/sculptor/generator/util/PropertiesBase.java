@@ -318,7 +318,7 @@ public class PropertiesBase {
 	}
 
 	public String getServiceContextClass() {
-		return fw("errorhandling.ServiceContext");
+		return fw("context.ServiceContext");
 	}
 
 	public String getDbProduct() {

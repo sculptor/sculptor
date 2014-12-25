@@ -21,7 +21,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import org.joda.time.DateTime;
-import org.sculptor.framework.errorhandling.ServiceContextStore;
+import org.sculptor.framework.context.ServiceContextStore;
 
 /**
  * This Listener will be invoked when objects are saved and it will
@@ -30,9 +30,9 @@ import org.sculptor.framework.errorhandling.ServiceContextStore;
  * {@link org.sculptor.framework.domain.JodaAuditable}.
  * <p>
  * It will grab the user from
- * {@link org.sculptor.framework.errorhandling.ServiceContext}
+ * {@link org.sculptor.framework.context.ServiceContext}
  * provided by
- * {@link org.sculptor.framework.errorhandling.ServiceContextStore}.
+ * {@link org.sculptor.framework.context.ServiceContextStore}.
  *
  */
 public class JodaAuditListener  {

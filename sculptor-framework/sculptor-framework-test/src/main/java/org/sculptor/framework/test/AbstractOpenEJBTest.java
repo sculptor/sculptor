@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.test;
 
 import java.io.IOException;
@@ -33,8 +32,8 @@ import javax.naming.NamingException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.sculptor.framework.errorhandling.ServiceContext;
-import org.sculptor.framework.errorhandling.ServiceContextFactory;
+import org.sculptor.framework.context.ServiceContext;
+import org.sculptor.framework.context.ServiceContextFactory;
 import org.sculptor.framework.test.ejbtestbean.messaging.MessagingTestLocal;
 import org.sculptor.framework.util.FactoryConfiguration;
 import org.slf4j.Logger;
@@ -59,7 +58,6 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * 
  * @author Patrik Nordwall
- * 
  */
 public abstract class AbstractOpenEJBTest {
 
@@ -72,7 +70,7 @@ public abstract class AbstractOpenEJBTest {
         ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
             @Override
             public String getFactoryImplementationClassName() {
-                return "org.sculptor.framework.errorhandling.JUnitServiceContextFactory";
+                return "org.sculptor.framework.context.JUnitServiceContextFactory";
             }
         });
     }

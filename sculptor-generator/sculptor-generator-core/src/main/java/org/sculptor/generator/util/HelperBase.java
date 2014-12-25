@@ -834,7 +834,7 @@ public class HelperBase {
 	private void copyFromDelegate(Operation operation, Operation delegate, boolean inclServiceContext) {
 		if (operation.getParameters().isEmpty()) {
 			SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
-			String serviceContextClass = serviceContextClass();
+			String serviceContextClass = propBase.getServiceContextClass();
 			for (Parameter delegateParam : (List<Parameter>) delegate.getParameters()) {
 				if (!inclServiceContext && serviceContextClass.equals(delegateParam.getType())) {
 					continue;
@@ -869,15 +869,6 @@ public class HelperBase {
 				// class names
 				operation.setThrows(fullyQualifiedThrows(delegate));
 			}
-		}
-	}
-
-	protected String serviceContextClass() {
-		String propName = "framework.errorhandling.ServiceContext";
-		if (propBase.hasProperty(propName)) {
-			return propBase.getProperty(propName);
-		} else {
-			return "org.sculptor." + propName;
 		}
 	}
 

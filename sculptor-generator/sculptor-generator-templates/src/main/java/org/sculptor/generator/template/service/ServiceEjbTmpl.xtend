@@ -139,7 +139,7 @@ def String ejbBeanImplSubclass(Service it) {
 
 def String ejbInterceptors(Service it) {
 	'''
-	@javax.interceptor.Interceptors({«IF isServiceContextToBeGenerated()»«fw("errorhandling.ServiceContextStoreInterceptor")».class, «ENDIF»
+	@javax.interceptor.Interceptors({«IF isServiceContextToBeGenerated()»«fw("context.ServiceContextStoreInterceptor")».class, «ENDIF»
 		«fw("errorhandling.ErrorHandlingInterceptor")».class})
 	'''
 }

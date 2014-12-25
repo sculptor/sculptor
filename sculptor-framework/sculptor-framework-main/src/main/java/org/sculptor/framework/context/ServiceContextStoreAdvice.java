@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.sculptor.framework.errorhandling;
+package org.sculptor.framework.context;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * This advice stores the ServiceContext, which is passed in one of the method
- * parameters, in {@link org.sculptor.framework.errorhandling.ServiceContextStore}.
+ * parameters, in {@link org.sculptor.framework.context.ServiceContextStore}.
  * After proceed, both when returning and when exception, the
  * ServiceContextStore will be cleared.
  * 
  * @author Patrik Nordwall
- * 
  */
 public class ServiceContextStoreAdvice implements MethodInterceptor {
 

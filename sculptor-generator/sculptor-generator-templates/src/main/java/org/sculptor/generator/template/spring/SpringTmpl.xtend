@@ -438,7 +438,7 @@ def String interceptor(Application it) {
 		«aspectjAutoproxy(it)»
 	
 		«IF jpa()»
-			<bean id="jpaFlushEagerAdvice" class="org.sculptor.framework.errorhandling.JpaFlushEagerAdvice" />
+			<bean id="jpaFlushEagerAdvice" class="«fw("persistence.JpaFlushEagerAdvice")»" />
 		«ENDIF»
 		«IF nosql()»
 			<bean id="errorHandlingAdvice" class="«fw("errorhandling.BasicErrorHandlingAdvice")»" />
@@ -449,7 +449,7 @@ def String interceptor(Application it) {
 			<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
 		«ENDIF»
 		«IF isInjectDrools()»
-			<bean id="droolsAdvice" class="«fw('drools.DroolsAdvice')»">
+			<bean id="droolsAdvice" class="«fw("drools.DroolsAdvice")»">
 				<property name="droolsRuleSet" value="${drools.rule-source}"/>
 				<property name="updateInterval" value="${drools.rule-refresh}"/>
 				<property name="catchAllExceptions" value="${drools.catch-all-exceptions}"/>

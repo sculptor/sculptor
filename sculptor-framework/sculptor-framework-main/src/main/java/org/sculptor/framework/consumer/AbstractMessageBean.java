@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.consumer;
 
 import javax.annotation.Resource;
@@ -25,13 +24,13 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import org.sculptor.framework.context.ServiceContext;
+import org.sculptor.framework.context.ServiceContextFactory;
+import org.sculptor.framework.context.ServiceContextStore;
 import org.sculptor.framework.errorhandling.ApplicationException;
 import org.sculptor.framework.errorhandling.InvalidMessageException;
 import org.sculptor.framework.errorhandling.LogMessage;
 import org.sculptor.framework.errorhandling.MessageException;
-import org.sculptor.framework.errorhandling.ServiceContext;
-import org.sculptor.framework.errorhandling.ServiceContextFactory;
-import org.sculptor.framework.errorhandling.ServiceContextStore;
 import org.sculptor.framework.errorhandling.SystemException;
 import org.sculptor.framework.errorhandling.UnexpectedRuntimeException;
 import org.sculptor.framework.errorhandling.ValidationException;

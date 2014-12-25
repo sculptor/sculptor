@@ -1160,7 +1160,7 @@ class Helper {
 		if (hasProperty("jpa.JpaFlushEagerInterceptor." + module.persistenceUnit))
 			getProperty("jpa.JpaFlushEagerInterceptor." + module.persistenceUnit)
 		else
-			fw("errorhandling.JpaFlushEagerInterceptor")
+			fw("persistence.JpaFlushEagerInterceptor")
 	}
 
 	def dispatch boolean validateNotNullInConstructor(NamedElement any) {

@@ -1,21 +1,20 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.sculptor.framework.errorhandling;
+package org.sculptor.framework.context;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -43,13 +42,13 @@ public abstract class ServiceContextFactory {
     public static final String GUEST_USER = "guest";
     public static final String UNKNOWN_USER = "unknown";
 
-    private static Random randomGenerator = new Random(System.currentTimeMillis());
+    private static final Random RANDOM_GENERATOR = new Random(System.currentTimeMillis());
 
     private static ServiceContextFactory singletonInstance;
 
     private static FactoryConfiguration config = new FactoryConfiguration() {
         public String getFactoryImplementationClassName() {
-            return "org.sculptor.framework.errorhandling.JBossServiceContextFactory";
+            return "org.sculptor.framework.context.JBossServiceContextFactory";
         }
     };
 
@@ -162,7 +161,7 @@ public abstract class ServiceContextFactory {
         if (context != null) {
             return context;
         }
-        String sessionId = String.valueOf(randomGenerator.nextInt(MAX_GENERATED_SESSION_ID));
+        String sessionId = String.valueOf(RANDOM_GENERATOR.nextInt(MAX_GENERATED_SESSION_ID));
         Subject caller = activeSubject();
         String userId = null;
         Set<String> roles = Collections.emptySet();

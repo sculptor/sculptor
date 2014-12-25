@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.sculptor.framework.errorhandling;
+package org.sculptor.framework.context;
 
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -30,10 +29,9 @@ import org.jboss.security.SimplePrincipal;
 
 /**
  * JBoss specific implementation of
- * {@link org.sculptor.framework.errorhandling.ServiceContextFactory}.
+ * {@link org.sculptor.framework.context.ServiceContextFactory}.
  * 
  * @author Patrik Nordwall
- * 
  */
 public class JBossServiceContextFactory extends ServiceContextFactory {
     

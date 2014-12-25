@@ -2,7 +2,7 @@ package org.sculptor.example.helloworld.milkyway.serviceimpl;
 
 import org.sculptor.example.helloworld.milkyway.domain.Planet;
 import org.sculptor.example.helloworld.milkyway.exception.PlanetNotFoundException;
-import org.sculptor.framework.errorhandling.ServiceContext;
+import org.sculptor.framework.context.ServiceContext;
 import org.springframework.stereotype.Service;
 
 /**
