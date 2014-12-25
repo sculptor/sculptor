@@ -309,17 +309,6 @@
             </attribute>
         </markerResolutionGenerator>
     </extension>
-
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="org.eclipse.xtext.projectwiz"
-            class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.sculptor.dsl.ui.wizard.SculptordslNewProjectWizard"
-            id="org.sculptor.dsl.ui.wizard.SculptordslNewProjectWizard"
-            name="%wizard.name"
-            project="true">
-      </wizard>
-   </extension>
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
@@ -372,12 +361,6 @@
             class="org.sculptor.dsl.ui.SculptordslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
             extensions="btdesign">
     </provider>
-  </extension>
-  <extension
-        point="org.eclipse.xtext.ui.shared.sharedStateContributingModule">
-     <module
-           class="org.sculptor.dsl.ui.SculptordslSharedContribution">
-     </module>
   </extension>
 
 </plugin>
