@@ -26,7 +26,7 @@
 					<skinnyWars>true</skinnyWars>
 					<modules>
 						<ejbModule>
-							<groupId>${project.groupId}</groupId>
+							<groupId>\${project.groupId}</groupId>
 							<artifactId>basic</artifactId>
 						</ejbModule>
 					</modules>
@@ -42,10 +42,10 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>\${project.groupId}</groupId>
 			<artifactId>basic</artifactId>
 			<type>ejb</type>
-			<version>${project.version}</version>
+			<version>\${project.version}</version>
 		</dependency>
 	</dependencies>
 

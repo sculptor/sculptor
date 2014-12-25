@@ -26,11 +26,11 @@
 					<skinnyWars>true</skinnyWars>
 					<modules>
 						<jarModule>
-							<groupId>${project.groupId}</groupId>
+							<groupId>\${project.groupId}</groupId>
 							<artifactId>basic</artifactId>
 						</jarModule>
 						<webModule>
-							<groupId>${project.groupId}</groupId>
+							<groupId>\${project.groupId}</groupId>
 							<artifactId>basic-web</artifactId>
 							<!-- TODO change context root (using the same name as the EJB module is not supported in JBoss 7) -->
 							<contextRoot>myapp</contextRoot>
@@ -48,15 +48,15 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>\${project.groupId}</groupId>
 			<artifactId>basic</artifactId>
-			<version>${project.version}</version>
+			<version>\${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>\${project.groupId}</groupId>
 			<artifactId>basic-web</artifactId>
 			<type>war</type>
-			<version>${project.version}</version>
+			<version>\${project.version}</version>
 		</dependency>
 	</dependencies>
 

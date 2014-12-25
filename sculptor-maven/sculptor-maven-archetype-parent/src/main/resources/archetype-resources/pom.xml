@@ -1,6 +1,5 @@
 #set( $artifactIdBaseLength = $artifactId.length() - 7 )
 #set( $artifactIdBase = $artifactId.substring(0, $artifactIdBaseLength) )
-#set( $symbol_dollar = '$' )
 <?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -23,6 +22,7 @@
 		<joda-time-version>${joda-time-version}</joda-time-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
+		<junit-version>${junit-version}</junit-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 #end
@@ -66,7 +66,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-framework-bom</artifactId>
-				<version>\${symbol_dollar}{spring-version}</version>
+				<version>\${spring-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -74,7 +74,7 @@
 				<!-- Despite of the BOM POM do we have to keep spring-core from using commons-logging -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
-				<version>\${symbol_dollar}{spring-version}</version>
+				<version>\${spring-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>\${junit-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

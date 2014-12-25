@@ -17,7 +17,7 @@
 			<plugin>
 				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
-				<version>${sculptor-version}</version>
+				<version>\${sculptor-version}</version>
 				<configuration>
 					<verbose>false</verbose>
 				</configuration>
@@ -48,7 +48,7 @@
 				<version>2.4</version>
 				<executions>
 					<execution>
-						<id>${project.artifactId}-client</id>
+						<id>\${project.artifactId}-client</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
@@ -74,7 +74,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-framework-bom</artifactId>
-				<version>${spring-version}</version>
+				<version>\${spring-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -82,7 +82,7 @@
 				<!-- Despite of the BOM POM do we have to keep spring-core from using commons-logging -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
-				<version>${spring-version}</version>
+				<version>\${spring-version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -97,40 +97,40 @@
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-main</artifactId>
 			<classifier>without-ejb</classifier>
-			<version>${sculptor-version}</version>
+			<version>\${sculptor-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate-validator-version}</version>
+			<version>\${hibernate-validator-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-version}</version>
+			<version>\${slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j-version}</version>
+			<version>\${slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
-			<version>${slf4j-version}</version>
+			<version>\${slf4j-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback-version}</version>
+			<version>\${logback-version}</version>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
 		</dependency>
@@ -173,22 +173,22 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>${joda-time-version}</version>
+			<version>\${joda-time-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj-version}</version>
+			<version>\${aspectj-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj-version}</version>
+			<version>\${aspectj-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-test</artifactId>
-			<version>${sculptor-version}</version>
+			<version>\${sculptor-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -213,7 +213,7 @@
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>${hsqldb-version}</version>
+			<version>\${hsqldb-version}</version>
 			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
 			<!-- <scope>test</scope> -->
@@ -244,14 +244,14 @@
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-entitymanager</artifactId>
-					<version>${hibernate-version}</version>
+					<version>\${hibernate-version}</version>
 					<!-- Add scope provided when deployed in jboss -->
 					<!-- <scope>provided</scope> -->
 				</dependency>
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-ehcache</artifactId>
-					<version>${hibernate-version}</version>
+					<version>\${hibernate-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>
@@ -298,40 +298,40 @@
 					<plugin>
 						<groupId>org.datanucleus</groupId>
 						<artifactId>maven-datanucleus-plugin</artifactId>
-						<version>${datanucleus-plugin-version}</version>
+						<version>\${datanucleus-plugin-version}</version>
 						<configuration>
 							<metadataIncludes>**/domain/*.class</metadataIncludes>
 							<metadataExcludes>**/domain/*Propert*.class,**/domain/*Repository.class</metadataExcludes>
 							<api>JPA</api>
 							<verbose>false</verbose>
-							<ddlFile>${basedir}/src/test/generated/resources/dbunit/ddl.sql</ddlFile>
+							<ddlFile>\${basedir}/src/test/generated/resources/dbunit/ddl.sql</ddlFile>
 							<completeDdl>true</completeDdl>
 						</configuration>
 						<dependencies>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-core</artifactId>
-								<version>${datanucleus-version}</version>
+								<version>\${datanucleus-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-enhancer</artifactId>
-								<version>${datanucleus-enhancer-version}</version>
+								<version>\${datanucleus-enhancer-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-rdbms</artifactId>
-								<version>${datanucleus-rdbms-version}</version>
+								<version>\${datanucleus-rdbms-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.datanucleus</groupId>
 								<artifactId>datanucleus-api-jpa</artifactId>
-								<version>${datanucleus-jpa-version}</version>
+								<version>\${datanucleus-jpa-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
-								<version>${hsqldb-version}</version>
+								<version>\${hsqldb-version}</version>
 							</dependency>
 						</dependencies>
 						<executions>
@@ -349,7 +349,7 @@
 									<goal>schema-create</goal>
 								</goals>
 								<configuration>
-									<props>${basedir}/src/test/generated/resources/datanucleus-test.properties</props>
+									<props>\${basedir}/src/test/generated/resources/datanucleus-test.properties</props>
 								</configuration>
 							</execution>
 						</executions>
@@ -360,22 +360,22 @@
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-core</artifactId>
-					<version>${datanucleus-version}</version>
+					<version>\${datanucleus-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-api-jpa</artifactId>
-					<version>${datanucleus-jpa-version}</version>
+					<version>\${datanucleus-jpa-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-rdbms</artifactId>
-					<version>${datanucleus-rdbms-version}</version>
+					<version>\${datanucleus-rdbms-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.datanucleus</groupId>
 					<artifactId>datanucleus-jodatime</artifactId>
-					<version>${datanucleus-jodatime-version}</version>
+					<version>\${datanucleus-jodatime-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>javax.jdo</groupId>
@@ -426,7 +426,7 @@
 				            <dependency>
 				                <groupId>org.eclipse.persistence</groupId>
 				                <artifactId>eclipselink</artifactId>
-				                <version>${eclipselink-version}</version>
+				                <version>\${eclipselink-version}</version>
 				            </dependency>
 				        </dependencies>
 					</plugin>
@@ -436,12 +436,12 @@
 				<dependency>
 					<groupId>org.eclipse.persistence</groupId>
 					<artifactId>javax.persistence</artifactId>
-					<version>${eclipselink-api-version}</version>
+					<version>\${eclipselink-api-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.eclipse.persistence</groupId>
 					<artifactId>eclipselink</artifactId>
-					<version>${eclipselink-version}</version>
+					<version>\${eclipselink-version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -464,7 +464,7 @@
 					<plugin>
 						<groupId>org.apache.openjpa</groupId>
 						<artifactId>openjpa-maven-plugin</artifactId>
-						<version>${openjpa-version}</version>
+						<version>\${openjpa-version}</version>
 						<configuration>
 							<includes>**/domain/*.class</includes>
 							<excludes>**/domain/*Propert*.class,**/domain/*Repository.class</excludes>
@@ -482,12 +482,12 @@
 							<dependency>
 								<groupId>org.apache.openjpa</groupId>
 								<artifactId>openjpa</artifactId>
-								<version>${openjpa-version}</version>
+								<version>\${openjpa-version}</version>
 							</dependency>
 							<dependency>
 								<groupId>ch.qos.logback</groupId>
 								<artifactId>logback-classic</artifactId>
-								<version>${logback-version}</version>
+								<version>\${logback-version}</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -498,7 +498,7 @@
 				<dependency>
 					<groupId>org.apache.openjpa</groupId>
 					<artifactId>openjpa</artifactId>
-					<version>${openjpa-version}</version>
+					<version>\${openjpa-version}</version>
 				</dependency>
 			</dependencies>
 		</profile>

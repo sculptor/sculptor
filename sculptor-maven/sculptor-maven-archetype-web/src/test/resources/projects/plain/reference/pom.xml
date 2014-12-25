@@ -17,7 +17,7 @@
 			<plugin>
 				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
-				<version>${sculptor-version}</version>
+				<version>\${sculptor-version}</version>
 				<configuration>
 					<verbose>false</verbose>
 				</configuration>
@@ -93,9 +93,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>\${project.groupId}</groupId>
 			<artifactId>basic</artifactId>
-			<version>${project.version}</version>
+			<version>\${project.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>javax.servlet</groupId>
