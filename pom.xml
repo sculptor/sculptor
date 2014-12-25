@@ -100,6 +100,7 @@
 		<mongodb-version>2.11.4</mongodb-version>
 		<drools-version>6.1.0.Final</drools-version>
 		<camel-version>2.14.1</camel-version>
+		<activemq-version>5.10.0</activemq-version>
 		<joda-time-version>2.6</joda-time-version>
 		<jackson-version>2.4.4</jackson-version>
 		<xstream-version>1.4.7</xstream-version>

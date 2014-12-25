@@ -162,6 +162,22 @@
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jms</artifactId>
+			<version>${camel-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-camel</artifactId>
+			<version>${activemq-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+  					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-framework-test</artifactId>
 			<version>${project.version}</version>
@@ -177,56 +193,6 @@
 			<artifactId>dbunit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Camel BEGIN -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-			<version>${camel-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-  					<artifactId>commons-logging-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jms</artifactId>
-			<version>${camel-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-			<version>${camel-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-camel</artifactId>
-			<version>5.9.0</version>
-		</dependency>
-		<!--
-			xbean is required for ActiveMQ broker configuration in the spring xml
-			file
-		-->
-		<dependency>
-			<groupId>org.apache.xbean</groupId>
-			<artifactId>xbean-spring</artifactId>
-			<version>3.16</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-  					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.2.11</version>
-		</dependency>
-		<!-- Camel END -->
-
 	</dependencies>
 
 </project>
