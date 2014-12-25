@@ -10,43 +10,8 @@
 	<packaging>eclipse-plugin</packaging>
 	<name>Sculptor :: Eclipse :: Textual DSL</name>
 
-	<properties>
-		<xtext-resources>${project.build.directory}/xtext</xtext-resources>
-	</properties>
-
 	<build>
-		<resources>
-			<resource>
-				<directory>${xtext-resources}</directory>
-			</resource>
-		</resources>
 		<plugins>
-			<!-- The Xtext related sources files are referenced as classpath resources. 
-				So we copy them to a separate folder that is registered as resource folder. -->
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${xtext-resources}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src</directory>
-									<includes>
-										<include>**/*.xtext</include>
-										<include>**/*.mwe2</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -60,6 +25,12 @@
 						</fileset>
 						<fileset>
 							<directory>xtend-gen</directory>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+						</fileset>
+						<fileset>
+							<directory>model/generated</directory>
 							<excludes>
 								<exclude>.gitignore</exclude>
 							</excludes>
