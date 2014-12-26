@@ -1,13 +1,13 @@
 /*
- * Copyright 2010 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,16 +30,22 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
 
+/**
+ * For all subscriber beans (implementations of the {@link EventSubscriber}
+ * interface marked with the {@link Subscribe} annotation) the specified topic
+ * is subscribed from the selected event bus.
+ */
 public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProcessor, ApplicationContextAware,
         InitializingBean, Ordered {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(SubscribeBeanPostProcessor.class);
 
     private ApplicationContext applicationContext;
     private int order = 1000;
 
     private final Map<String, EventSubscriber> managedSubscribers = new HashMap<String, EventSubscriber>();
 
+    @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof EventSubscriber && isAnnotationPresent(bean)) {
             EventSubscriber subscriber = (EventSubscriber) bean;
@@ -49,6 +55,7 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
         return bean;
     }
 
+    @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         EventSubscriber subscriber = managedSubscribers.get(beanName);
         if (subscriber != null) {
@@ -58,6 +65,7 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
         return bean;
     }
 
+    @Override
     public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
         if (managedSubscribers.containsKey(beanName)) {
             try {
@@ -65,7 +73,7 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
                 EventBus eventBus = getEventBus(eventBusName(subscriber));
                 eventBus.unsubscribe(topic(subscriber), subscriber);
             } catch (Exception e) {
-                log.error("An exception occurred while unsubscribing an event listener", e);
+                LOG.error("An exception occurred while unsubscribing an event listener", e);
             } finally {
                 managedSubscribers.remove(beanName);
             }
@@ -119,6 +127,7 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
         return (EventBus) bean;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
     }
 
@@ -129,10 +138,12 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public int getOrder() {
         return order;
     }

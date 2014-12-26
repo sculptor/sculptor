@@ -32,11 +32,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * Advice that publish event to the topic and eventBus specified by the @Publish
- * annotation. If eventType is not specified by the annotation one of the return
- * value or method parameters must be an Event, which is published. When
- * eventType is specified in the annotation a new event is created using a
- * constructor matching the method return value or method parameters.
+ * Advice that publish event to the topic and eventBus specified by the
+ * {@link Publish} annotation. If eventType is not specified by the annotation
+ * one of the return value or method parameters must be an {@link Event}, which
+ * is published. When eventType is specified in the annotation then a new event
+ * of this type is created using a constructor matching the method return value
+ * or method parameters.
  */
 @Aspect
 public class PublishAdvice implements ApplicationContextAware {
@@ -45,6 +46,9 @@ public class PublishAdvice implements ApplicationContextAware {
 
     @Around("@annotation(publish)")
     public Object publish(ProceedingJoinPoint joinPoint, Publish publish) throws Throwable {
+		if (applicationContext == null) {
+			throw new IllegalArgumentException("No ApplicationContext autowired - advice must be configured by Spring");
+		}
 
         Object retVal = joinPoint.proceed();
 
@@ -158,6 +162,7 @@ public class PublishAdvice implements ApplicationContextAware {
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
