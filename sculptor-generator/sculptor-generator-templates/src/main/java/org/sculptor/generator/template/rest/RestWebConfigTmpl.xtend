@@ -88,11 +88,10 @@ def String webXml(Application it) {
 	
 	<filter>
 		<filter-name>ServiceContextFilter</filter-name>
-		<filter-class>
-			org.sculptor.framework.errorhandling.ServiceContextServletFilter</filter-class>
+		<filter-class>org.sculptor.framework.context.ServiceContextServletFilter</filter-class>
 		<init-param>
 			<param-name>ServiceContextFactoryImplementationClassName</param-name>
-			<param-value>org.sculptor.framework.errorhandling.ServletContainerServiceContextFactory</param-value>
+			<param-value>org.sculptor.framework.context.ServletContainerServiceContextFactory</param-value>
 		</init-param>
 	</filter>
 
