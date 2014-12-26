@@ -20,10 +20,10 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
 /**
- * This advice stores the ServiceContext, which is passed in one of the method
- * parameters, in {@link org.sculptor.framework.context.ServiceContextStore} .
- * After proceed, both when returning and when exception, the
- * ServiceContextStore will be cleared.
+ * This interceptor stores the {@link ServiceContext}, which is passed in one of
+ * the method parameters, in {@link ServiceContextStore}. After proceed, both
+ * when returning and when exception, the {@link ServiceContextStore} will be
+ * cleared.
  * 
  * @author Patrik Nordwall
  */

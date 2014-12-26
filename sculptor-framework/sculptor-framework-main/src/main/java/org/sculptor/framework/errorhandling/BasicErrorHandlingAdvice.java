@@ -1,20 +1,19 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.errorhandling;
 
 import static org.sculptor.framework.errorhandling.ExceptionHelper.excMessage;
@@ -26,15 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.ThrowsAdvice;
 
 /**
- * This advice logs exceptions. RuntimeExceptions are caught and new
- * SystemException (subclasses) are thrown.
- * {@link org.sculptor.framework.errorhandling.SystemException}
- * and RuntimeException are logged at error or fatal level.
- * {@link org.sculptor.framework.errorhandling.ApplicationException}
- * is logged at debug level.
+ * This advice logs exceptions (the basic ones - excluding the JPA ones).
+ * <p>
+ * RuntimeExceptions are caught and new {@link SystemException} (subclasses) are
+ * thrown. {@link SystemException} and RuntimeException are logged at error or
+ * fatal level. {@link ApplicationException} is logged at debug level.
  * 
  * @author Patrik Nordwall
- * 
  */
 public class BasicErrorHandlingAdvice implements ThrowsAdvice {
 

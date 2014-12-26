@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.accessimpl.mongodb;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
- * This advice injects the dbManager in the ThreadLocal storage of
- * {@link DbManager#getThreadInstance()}. The thread instance is typically used
- * from DomainObjects when lazy loading associations.
+ * This advice injects the configured {@link DbManager} instance in the
+ * {@link ThreadLocal} storage of {@link DbManager#getThreadInstance()}. The
+ * thread instance is typically used from DomainObjects when lazy loading
+ * associations.
  * 
  * @author Patrik Nordwall
- * 
  */
 public class DbManagerAdvice implements MethodInterceptor {
 
@@ -36,7 +35,7 @@ public class DbManagerAdvice implements MethodInterceptor {
         if (DbManager.getThreadInstance() != null || dbManager == null) {
             // this is not the first advice and it should therefore be ignored
             // it is the first advice that is responsible for setting/clearing
-            // the service context
+            // the DbManager
             return invocation.proceed();
         }
         try {

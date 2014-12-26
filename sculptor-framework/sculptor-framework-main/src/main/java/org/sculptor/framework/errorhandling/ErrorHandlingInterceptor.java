@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The Sculptor Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This advice logs exceptions. RuntimeExceptions are caught and new
- * SystemException (subclasses) are thrown.
- * {@link org.sculptor.framework.errorhandling.SystemException}
- * and RuntimeException are logged at error or fatal level.
- * {@link org.sculptor.framework.errorhandling.ApplicationException}
- * is logged at debug level.
- *
+ * This interceptor logs exceptions.
+ * <p>
+ * RuntimeExceptions are caught and new {@link SystemException} (subclasses) are
+ * thrown. {@link SystemException} and RuntimeException are logged at error or
+ * fatal level. {@link ApplicationException} is logged at debug level.
+ * 
  * @author Patrik Nordwall
  */
 public class ErrorHandlingInterceptor {

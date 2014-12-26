@@ -24,7 +24,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TransactionRequiredException;
 
 /**
- * Interceptor that flush the EntityManager.
+ * This interceptor flushes the {@link EntityManager} after normal return.
+ * <p>
+ * We have to flush eagerly in order to detect OptimisticLockingException and do
+ * proper rollback.
+ * 
  * @author Patrik Nordwall
  */
 public class JpaFlushEagerInterceptor  {
