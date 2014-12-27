@@ -294,13 +294,13 @@ def String serviceMethodAnnotation(ServiceOperation it) {
 	'''
 	«/*spring transaction support */
 	»«IF isSpringAnnotationTxToBeGenerated()»
-		«IF name.startsWith("get") || name.startsWith("find")»
+		«IF it.isReadOnly()»
 			@org.springframework.transaction.annotation.Transactional(readOnly=true)
 		«ELSE»
 			@org.springframework.transaction.annotation.Transactional(readOnly=false, rollbackFor=org.sculptor.framework.errorhandling.ApplicationException.class)
 		«ENDIF»
 	«ENDIF»
-	«IF pureEjb3() && jpa() && !name.startsWith("get") && !name.startsWith("find")»
+	«IF pureEjb3() && jpa() && !it.isReadOnly()»
 		@javax.interceptor.Interceptors({«service.module.getJpaFlushEagerInterceptorClass()».class})
 	«ENDIF»
 	«IF service.webService»

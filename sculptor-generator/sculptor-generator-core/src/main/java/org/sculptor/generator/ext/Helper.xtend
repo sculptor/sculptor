@@ -549,6 +549,10 @@ class Helper {
 		domainObject.immutable
 	}
 
+	def boolean isReadOnly(Operation op) {
+		(op.hasHint("readOnly") || op.name.startsWith("get") || op.name.startsWith("find"))
+	}
+
 	def Collection<Repository> getDelegateRepositories(Service service) {
 		val reps = service.operations.filter[op | op.delegate != null].map[op | op.delegate.repository].toList
 		reps.addAll(service.repositoryDependencies)
