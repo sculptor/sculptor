@@ -581,7 +581,7 @@ def String aopConfigTest(Application it) {
 			-->
 		«ENDIF»
 
-		<!-- Need this when JUnit directly to Repository -->
+		<!-- Error handling is needed for repository methods as well because they're used from within unit tests -->
 		<aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
 
 		«aopConfigAdditions(it, true)»
@@ -909,7 +909,7 @@ def String entityManagerFactoryTx(Application it, boolean test) {
 
 	«IF isSpringAnnotationTxToBeGenerated()»
 		<!-- enables @Transactional support -->
-		<tx:annotation-driven transaction-manager="txManager"/>
+		<tx:annotation-driven transaction-manager="txManager" order="1"/>
 	«ENDIF»
 	«persistenceExceptionTranslationPostProcessor(it)»
 	'''

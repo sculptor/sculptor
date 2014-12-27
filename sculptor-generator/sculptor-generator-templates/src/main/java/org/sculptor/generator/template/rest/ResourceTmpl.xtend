@@ -427,9 +427,8 @@ def String handleSystemException(String it) {
 	'''
 }
 
-
-/* Extension point to generate more stuff in service implementation.
- * User AROUND resourceTmpl.resourceHook FOR Resource in SpecialCases.xpt
+/**
+ * Extension point to generate more stuff in resource base class implementation.
  */
 def String resourceHook(Resource it) {
 	'''

@@ -426,7 +426,7 @@ class Properties {
 	}
 
 	def isSpringTxAdviceToBeGenerated() {
-		jpa() && (isWar() || !isSpringAnnotationTxToBeGenerated())
+		isWar() && jpa() && !isSpringAnnotationTxToBeGenerated()
 	}
 
 	def isSpringDataSourceSupportToBeGenerated() {
