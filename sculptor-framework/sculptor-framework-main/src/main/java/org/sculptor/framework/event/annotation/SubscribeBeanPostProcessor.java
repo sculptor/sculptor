@@ -16,8 +16,7 @@
  */
 package org.sculptor.framework.event.annotation;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.sculptor.framework.event.EventBus;
@@ -38,7 +37,7 @@ import org.springframework.util.StringUtils;
 /**
  * For all subscriber beans (implementations of the {@link EventSubscriber}
  * interface marked with the {@link Subscribe} annotation) the specified topic
- * is subscribed from the selected event bus.
+ * is subscribed from the selected {@link EventBus}.
  */
 public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProcessor, Ordered, BeanFactoryAware {
 
@@ -46,32 +45,46 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
 
 	private ListableBeanFactory beanFactory;
 	private int order = Ordered.LOWEST_PRECEDENCE - 1;
-	private final Set<String> subscriberBeanNames = Collections
-			.newSetFromMap(new ConcurrentHashMap<String, Boolean>(64));
+	private final Map<String, Subscribe> subscribers = new ConcurrentHashMap<>(64);
 
+	/**
+	 * Creates a map of subscriber bean names with the corresponding
+	 * {@link Subscribe} annotations which is retrived from the <b>unproxied</b>
+	 * bean.
+	 */
 	@Override
 	public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
-		return bean;
-	}
-
-	@Override
-	public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
 		if (bean instanceof EventSubscriber) {
 			Subscribe annotation = getAnnotation(bean.getClass(), beanName);
 			if (annotation != null) {
-				LOG.debug("Subscribing the event listener '{}' to event bus '{}' with topic '{}", beanName,
-						annotation.eventBus(), annotation.topic());
-				EventBus eventBus = getEventBus(annotation.eventBus(), beanName);
-				eventBus.subscribe(annotation.topic(), (EventSubscriber) bean);
-				subscriberBeanNames.add(beanName);
+				subscribers.put(beanName, annotation);
 			}
 		}
 		return bean;
 	}
 
+	/**
+	 * Subscribes the <b>proxied</b> subscriber bean to the corresponding
+	 * {@link EventBus}.
+	 */
+	@Override
+	public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
+		if (subscribers.containsKey(beanName)) {
+			Subscribe annotation = subscribers.get(beanName);
+			EventBus eventBus = getEventBus(annotation.eventBus(), beanName);
+			LOG.debug("Subscribing the event listener '{}' to event bus '{}' with topic '{}", beanName,
+					annotation.eventBus(), annotation.topic());
+			eventBus.subscribe(annotation.topic(), (EventSubscriber) bean);
+		}
+		return bean;
+	}
+
+	/**
+	 * Unsubscribes the subscriber bean from the corresponding {@link EventBus}.
+	 */
 	@Override
 	public void postProcessBeforeDestruction(final Object bean, final String beanName) throws BeansException {
-		if (subscriberBeanNames.contains(beanName)) {
+		if (subscribers.containsKey(beanName)) {
 			Subscribe annotation = getAnnotation(bean.getClass(), beanName);
 			LOG.debug("Unsubscribing the event listener '{}' from event bus '{}' with topic '{}", beanName,
 					annotation.eventBus(), annotation.topic());
@@ -81,7 +94,7 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
 			} catch (Exception e) {
 				LOG.error("Unsubscribing the event listener '{}' failed", beanName, e);
 			} finally {
-				subscriberBeanNames.remove(beanName);
+				subscribers.remove(beanName);
 			}
 		}
 	}
@@ -93,8 +106,7 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
 				throw new RuntimeException("No topic specified in event subscriber '" + beanName + "'");
 			}
 			if (StringUtils.isEmpty(annotation.eventBus())) {
-				throw new RuntimeException("No event bus specified in event subscriber '" + beanName
-						+ "'");
+				throw new RuntimeException("No event bus specified in event subscriber '" + beanName + "'");
 			}
 		}
 		return annotation;
@@ -104,12 +116,11 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
 		try {
 			return beanFactory.getBean(eventBusName, EventBus.class);
 		} catch (NoSuchBeanDefinitionException e) {
-			throw new RuntimeException("Event bus '" + eventBusName
-					+ "' specified in event subscriber '" + subscriberName + "' is not available");
+			throw new RuntimeException("Event bus '" + eventBusName + "' specified in event subscriber '"
+					+ subscriberName + "' is not available");
 		} catch (BeanNotOfRequiredTypeException e) {
-			throw new RuntimeException("Event bus '" + eventBusName
-					+ "' specified in event subscriber '" + subscriberName + "' is not of type '" + EventBus.class
-					+ "''");
+			throw new RuntimeException("Event bus '" + eventBusName + "' specified in event subscriber '"
+					+ subscriberName + "' is not of type '" + EventBus.class + "''");
 		}
 	}
 
