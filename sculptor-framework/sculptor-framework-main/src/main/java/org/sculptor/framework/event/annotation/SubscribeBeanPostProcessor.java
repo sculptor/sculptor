@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2014 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,143 +16,123 @@
  */
 package org.sculptor.framework.event.annotation;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.sculptor.framework.event.EventBus;
 import org.sculptor.framework.event.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * For all subscriber beans (implementations of the {@link EventSubscriber}
  * interface marked with the {@link Subscribe} annotation) the specified topic
  * is subscribed from the selected event bus.
  */
-public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProcessor, ApplicationContextAware,
-        InitializingBean, Ordered {
+public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProcessor, Ordered, BeanFactoryAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SubscribeBeanPostProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SubscribeBeanPostProcessor.class);
 
-    private ApplicationContext applicationContext;
-    private int order = 1000;
+	private ListableBeanFactory beanFactory;
+	private int order = Ordered.LOWEST_PRECEDENCE - 1;
+	private final Set<String> subscriberBeanNames = Collections
+			.newSetFromMap(new ConcurrentHashMap<String, Boolean>(64));
 
-    private final Map<String, EventSubscriber> managedSubscribers = new HashMap<String, EventSubscriber>();
+	@Override
+	public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
+		return bean;
+	}
 
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof EventSubscriber && isAnnotationPresent(bean)) {
-            EventSubscriber subscriber = (EventSubscriber) bean;
+	@Override
+	public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
+		if (bean instanceof EventSubscriber) {
+			Subscribe annotation = getAnnotation(bean.getClass(), beanName);
+			if (annotation != null) {
+				LOG.debug("Subscribing the event listener '{}' to event bus '{}' with topic '{}", beanName,
+						annotation.eventBus(), annotation.topic());
+				EventBus eventBus = getEventBus(annotation.eventBus(), beanName);
+				eventBus.subscribe(annotation.topic(), (EventSubscriber) bean);
+				subscriberBeanNames.add(beanName);
+			}
+		}
+		return bean;
+	}
 
-            managedSubscribers.put(beanName, subscriber);
-        }
-        return bean;
-    }
+	@Override
+	public void postProcessBeforeDestruction(final Object bean, final String beanName) throws BeansException {
+		if (subscriberBeanNames.contains(beanName)) {
+			Subscribe annotation = getAnnotation(bean.getClass(), beanName);
+			LOG.debug("Unsubscribing the event listener '{}' from event bus '{}' with topic '{}", beanName,
+					annotation.eventBus(), annotation.topic());
+			try {
+				EventBus eventBus = getEventBus(annotation.eventBus(), beanName);
+				eventBus.unsubscribe(annotation.topic(), (EventSubscriber) bean);
+			} catch (Exception e) {
+				LOG.error("Unsubscribing the event listener '{}' failed", beanName, e);
+			} finally {
+				subscriberBeanNames.remove(beanName);
+			}
+		}
+	}
 
-    @Override
-    public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
-        EventSubscriber subscriber = managedSubscribers.get(beanName);
-        if (subscriber != null) {
-            EventBus eventBus = getEventBus(eventBusName(subscriber));
-            eventBus.subscribe(topic(subscriber), subscriber);
-        }
-        return bean;
-    }
+	protected Subscribe getAnnotation(Class<?> beanClass, String beanName) {
+		Subscribe annotation = AnnotationUtils.findAnnotation(beanClass, Subscribe.class);
+		if (annotation != null) {
+			if (StringUtils.isEmpty(annotation.topic())) {
+				throw new RuntimeException("No topic specified in event subscriber '" + beanName + "'");
+			}
+			if (StringUtils.isEmpty(annotation.eventBus())) {
+				throw new RuntimeException("No event bus specified in event subscriber '" + beanName
+						+ "'");
+			}
+		}
+		return annotation;
+	}
 
-    @Override
-    public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
-        if (managedSubscribers.containsKey(beanName)) {
-            try {
-                EventSubscriber subscriber = managedSubscribers.get(beanName);
-                EventBus eventBus = getEventBus(eventBusName(subscriber));
-                eventBus.unsubscribe(topic(subscriber), subscriber);
-            } catch (Exception e) {
-                LOG.error("An exception occurred while unsubscribing an event listener", e);
-            } finally {
-                managedSubscribers.remove(beanName);
-            }
-        }
-    }
+	protected EventBus getEventBus(String eventBusName, String subscriberName) {
+		try {
+			return beanFactory.getBean(eventBusName, EventBus.class);
+		} catch (NoSuchBeanDefinitionException e) {
+			throw new RuntimeException("Event bus '" + eventBusName
+					+ "' specified in event subscriber '" + subscriberName + "' is not available");
+		} catch (BeanNotOfRequiredTypeException e) {
+			throw new RuntimeException("Event bus '" + eventBusName
+					+ "' specified in event subscriber '" + subscriberName + "' is not of type '" + EventBus.class
+					+ "''");
+		}
+	}
 
-    private boolean isAnnotationPresent(Object bean) {
-        return getAnnotation(bean) != null;
-    }
+	@Override
+	public int getOrder() {
+		return order;
+	}
 
-    Subscribe getAnnotation(Object bean) {
-        return getAnnotation(bean.getClass());
-    }
+	/**
+	 * Processing order of this BeanPostProcessor, use last. Default is
+	 * <code>Ordered.LOWEST_PRECEDENCE - 1</code>.
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
 
-    Subscribe getAnnotation(Class<?> clazz) {
-        if (clazz == null || clazz == Object.class) {
-            return null;
-        }
-        boolean foundIt = clazz.isAnnotationPresent(Subscribe.class);
-        if (foundIt) {
-            return clazz.getAnnotation(Subscribe.class);
-        }
-        // recursive call with super class
-        return getAnnotation(clazz.getSuperclass());
-
-    }
-
-    private String eventBusName(Object bean) {
-        Subscribe annotation = getAnnotation(bean);
-        if (annotation != null) {
-            return annotation.eventBus();
-        } else {
-            throw new IllegalArgumentException("Missing annotation");
-        }
-    }
-
-    private String topic(Object bean) {
-        Subscribe annotation = getAnnotation(bean);
-        if (annotation != null) {
-            return annotation.topic();
-        } else {
-            throw new IllegalArgumentException("Missing annotation");
-        }
-    }
-
-    protected EventBus getEventBus(String name) {
-        Object bean = getApplicationContext().getBean(name);
-        if (!(bean instanceof EventBus)) {
-            throw new IllegalStateException("Wrong EventBus type, got: " + bean.getClass().getName());
-        }
-        return (EventBus) bean;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-    }
-
-    /**
-     * @return the ApplicationContext this Bean Post Processor is registered in
-     */
-    protected ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    /**
-     * Processing order of this BeanPostProcessor, use last. Default is 1000.
-     */
-    public void setOrder(int order) {
-        this.order = order;
-    }
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		if (!(beanFactory instanceof ListableBeanFactory)) {
+			throw new IllegalArgumentException("Expected instance of 'ListableBeanFactory' but got '"
+					+ beanFactory.getClass() + "'");
+		}
+		this.beanFactory = (ListableBeanFactory) beanFactory;
+	}
 
 }
