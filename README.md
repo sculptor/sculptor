@@ -1,5 +1,7 @@
 # [![Sculptor](https://raw.github.com/sculptor/sculptor.github.io/master/images/sculptor-banner.png)](http://sculptorgenerator.org)  [![Build Status](https://travis-ci.org/sculptor/sculptor.png?branch=develop)](https://travis-ci.org/sculptor/sculptor) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sculptorgenerator/sculptor-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.sculptorgenerator/sculptor-maven-plugin/) #
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sculptor/sculptor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 [Sculptor](http://sculptorgenerator.org) is an open source productivity tool that applies the concepts from [Domain-Driven Design](http://domaindrivendesign.org/books/) and [Domain Specific Languages](http://en.wikipedia.org/wiki/Domain-specific_language).
 
