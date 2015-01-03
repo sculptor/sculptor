@@ -17,5 +17,6 @@
 		<module>DDDSample</module>
 		<module>mongodb-samples</module>
 		<module>eda-samples</module>
+		<module>springboot-example</module>
 	</modules>
 </project>

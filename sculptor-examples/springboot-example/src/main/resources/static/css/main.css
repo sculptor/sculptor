@@ -1,0 +1,9 @@
+body {
+	font-family: helvetica;
+	font-size: 12pt;
+}
+
+div .box {
+	display: block;
+	margin-left: 10px;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: headTag"></head>
+
+<body class="container">
+	<div th:replace="header :: navigation">Navigation</div>
+
+	<h2 th:text="|Planet ${result.id}|">Planet 1</h2>
+	<div class="container" th:if="${result}">
+		<div class="row">
+			<div class="col-sm-1">
+				<strong>Name:</strong>
+			</div>
+			<div class="col-sm-1 box" th:text="${result.name}">Earth</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-1">
+				<strong>Diameter:</strong>
+			</div>
+			<div class="col-sm-1 box" th:text="${result.diameter}">1234</div>
+		</div>
+	</div>
+	<p th:unless="${result}">No Planet found with this id.</p>
+	<br />
+	<a class="btn btn-default" href="/"
+		th:href="@{|/rest/planet/${result.id}|}">Delete</a>
+
+	<div th:replace="footer :: footer"></div>
+
+</body>
+</html>

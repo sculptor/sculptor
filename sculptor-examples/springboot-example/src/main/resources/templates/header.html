@@ -1,0 +1,40 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headTag">
+<title>Sculptor REST Example</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+	media="screen" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="../public/css/main.css"
+	th:href="@{/css/main.css}" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+	<nav th:fragment="navigation" class="navbar navbar-default">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="http://sculptorgenerator.org"><img
+				alt="Sculptor" title="Sculptor" height="20"
+				src="https://raw.github.com/sculptor/sculptor.github.io/master/images/sculptor-banner.png" />
+			</a>
+		</div>
+		<ul class="nav navbar-nav">
+			<li><a href="/" th:href="@{/rest/front}">Home</a></li>
+			<li class="dropdown"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown" aria-expanded="false">Resources <span
+					class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="/" th:href="@{/rest/planet}">Planet</a></li>
+				</ul></li>
+		</ul>
+	</nav>
+</body>
+</html>
