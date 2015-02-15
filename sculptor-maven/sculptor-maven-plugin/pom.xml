@@ -115,6 +115,11 @@
 			<artifactId>sculptor-cartridge-mongodb</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.sculptorgenerator</groupId>
+			<artifactId>sculptor-cartridge-springdatajpa</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 	    <!-- Maven -->
  		<dependency>
