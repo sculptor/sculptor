@@ -170,7 +170,7 @@ def String persistenceUnitDataSource(Application it, String unitName) {
 def String persistenceUnitProvider(Application it) {
 	'''
 	«IF isJpaProviderHibernate()»
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 	«ELSEIF isJpaProviderEclipseLink()»
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 	«ELSEIF isJpaProviderDataNucleus() || isJpaProviderAppEngine()»

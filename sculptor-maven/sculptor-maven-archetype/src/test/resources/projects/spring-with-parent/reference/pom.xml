@@ -236,7 +236,7 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate-version>4.3.7.Final</hibernate-version>
+				<hibernate-version>${hibernate-version}</hibernate-version>
 			</properties>
 			<build>
 			</build>
