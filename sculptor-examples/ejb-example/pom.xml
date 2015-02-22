@@ -3,21 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
-		<artifactId>sculptor-parent</artifactId>
+		<artifactId>sculptor-examples</artifactId>
 		<version>3.1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>sculptor-examples</artifactId>
+	<groupId>org.sculptorgenerator.examples</groupId>
+	<artifactId>ejb-example</artifactId>
 	<packaging>pom</packaging>
-	<name>Sculptor :: Examples</name>
-	<description>Aggregator project for all Sculptor examples</description>
+	<name>Sculptor :: Examples :: Pure EJB3</name>
+	<url>http://sculptorgenerator.org/documentation/pure-ejb3-tutorial</url>
 
 	<modules>
-		<module>helloworld-example</module>
-		<module>library-example</module>
-		<module>DDDSample</module>
-		<module>mongodb-samples</module>
-		<module>eda-samples</module>
-		<module>ejb-example</module>
-		<module>springboot-example</module>
+		<module>helloworld-parent</module>
 	</modules>
 </project>
