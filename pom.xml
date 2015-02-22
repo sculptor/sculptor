@@ -100,10 +100,11 @@
 		<aspectj-version>1.8.5</aspectj-version>
 		<slf4j-version>1.7.10</slf4j-version>
 		<logback-version>1.1.2</logback-version>
-		<!-- We have to stay with Hibernate 4.2 due to JPA 2.1 API dependency of newer versions -->
+		<!-- We are using the Java EE 6 API provided by JBoss due to the missing implementation classes in Sun/Oracle JARs -->
+		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
+		<!-- We have to stay with Hibernate 4.2 due to JPA 2.1 API dependency of newer version -->
 		<hibernate-version>4.2.17.Final</hibernate-version>
 		<hibernate-validator-version>4.3.2.Final</hibernate-validator-version>
-		<validation-version>1.0.0.GA</validation-version>
 		<appengine-version>1.9.17</appengine-version>
 		<mongodb-version>2.11.4</mongodb-version>
 		<drools-version>6.1.0.Final</drools-version>
@@ -840,14 +841,11 @@
 				<version>${logback-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.transaction</groupId>
-				<artifactId>javax.transaction-api</artifactId>
-				<version>1.2</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>2.5</version>
+				<groupId>org.jboss.spec</groupId>
+				<artifactId>jboss-javaee-6.0</artifactId>
+				<version>${jboss-javaee6-version}</version>
+				<scope>import</scope>
+				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>

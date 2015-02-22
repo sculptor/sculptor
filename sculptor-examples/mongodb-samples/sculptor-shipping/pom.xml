@@ -133,8 +133,8 @@
 		<!-- Remove dependency to javax.transaction when running in a transaction 
 			supporting container (jboss etc) -->
 		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>javax.transaction-api</artifactId>
+			<groupId>org.jboss.spec.javax.transaction</groupId>
+			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
