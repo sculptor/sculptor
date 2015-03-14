@@ -92,10 +92,10 @@
 		<guava-version>14.0</guava-version>
 		<guice-version>3.0</guice-version>
 
-		<spring-version>4.1.4.RELEASE</spring-version>
+		<spring-version>4.1.5.RELEASE</spring-version>
 		<spring-integration-version>4.1.1.RELEASE</spring-integration-version>
 		<spring-data-jpa-version>1.7.2.RELEASE</spring-data-jpa-version>
-		<spring-boot-version>1.2.1.RELEASE</spring-boot-version>
+		<spring-boot-version>1.2.2.RELEASE</spring-boot-version>
 
 		<aspectj-version>1.8.5</aspectj-version>
 		<slf4j-version>1.7.10</slf4j-version>
