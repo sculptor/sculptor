@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.resource.IResourceServiceProvider.Registry
 import org.eclipse.xtext.util.Pair
 import org.eclipse.xtext.util.Tuples
@@ -58,23 +59,23 @@ class GeneratorModelTestFixtures {
 
 	protected var FluentIssueCollection issues
 
-	@Property
+	@Accessors(PUBLIC_GETTER)
 	var Class<? extends EObject> rootObjectType = typeof(DslModel)
 
-	@Property
+	@Accessors
 	var Boolean failOnParserWarnings = false
 
-	@Property
+	@Accessors(PUBLIC_GETTER)
 	var Injector injector
 
-	@Property
+	@Accessors(PUBLIC_GETTER)
 	var Application app
 
 	var DslApplication model
 	var Provider<DslTransformation> dslTransformProvider
 	var Provider<Transformation> transformationProvider
 
-	@Property
+	@Accessors(PUBLIC_GETTER)
 	protected EObject rootElement;
 
 	public new() {

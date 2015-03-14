@@ -22,6 +22,7 @@ import java.util.Set
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.util.CamelCaseConverter
+import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -38,7 +39,7 @@ import sculptormetamodel.SculptormetamodelFactory
 public class DbHelper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
-	@Inject extension org.sculptor.generator.util.DbHelperBase dbHelperBase
+	@Inject extension DbHelperBase dbHelperBase
 	@Inject extension Helper helper
 
 	def String getCascade(Reference ref) {
@@ -54,7 +55,7 @@ public class DbHelper {
 
 	def String getFetch(Reference ref) {
 		if (ref.fetch == "none")
-			null
+			""
 		else if (ref.fetch == null || ref.fetch == "")
 			ref.getDerivedFetch()
 		else
@@ -63,11 +64,11 @@ public class DbHelper {
 
 	def private String getDerivedFetch(Reference ref) {
 		if (isManyToMany(ref))
-			null // no default fetch for manyToMany
+			"" // no default fetch for manyToMany
 		else if (ref.to.isEntityOrPersistentValueObject() && !ref.to.aggregateRoot)
 			"join"  // join fetch within same aggregate boundary
 		else
-			getProperty("default.fetchStrategy", null)
+			getProperty("default.fetchStrategy", "")
 	}
 
 	def String getHibernateCacheUsage(Object obj) {

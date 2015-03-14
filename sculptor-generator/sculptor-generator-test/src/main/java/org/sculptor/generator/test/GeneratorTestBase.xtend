@@ -20,14 +20,12 @@ import java.io.File
 import java.io.IOException
 import java.util.List
 import java.util.Properties
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.sculptor.generator.SculptorGeneratorException
-import org.sculptor.generator.SculptorGeneratorIssue
 import org.sculptor.generator.SculptorGeneratorResult.Status
 import org.sculptor.generator.SculptorGeneratorRunner
 import org.sculptor.generator.configuration.Configuration
 import org.slf4j.LoggerFactory
-
-import static org.sculptor.generator.SculptorGeneratorIssue.Severity.*
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
@@ -55,7 +53,7 @@ abstract class GeneratorTestBase {
 	/**
       * This is the directory where xtend template output will be generated to
       */
-	@Property
+    @Accessors(PUBLIC_GETTER)
 	private var File outputDir
 
 	new(String testName) {
@@ -93,7 +91,7 @@ abstract class GeneratorTestBase {
 			new File("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign"), generatorProperties)
 
 		// Log all issues occured during workflow execution
-		for (SculptorGeneratorIssue issue : result.getIssues()) {
+		for (issue : result.getIssues()) {
 			switch (issue.getSeverity()) {
 				case ERROR :
 					if (issue.getThrowable() != null) {
