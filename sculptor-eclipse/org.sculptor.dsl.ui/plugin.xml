@@ -362,6 +362,12 @@
             extensions="btdesign">
     </provider>
   </extension>
+  <extension point="org.eclipse.team.core.fileTypes">
+    <fileTypes
+            extension="btdesign"
+            type="text">
+    </fileTypes>
+  </extension>
 
   <extension point="org.eclipse.xtext.ui.shared.sharedStateContributingModule">
     <module class="org.sculptor.dsl.ui.SculptordslSharedContribution">
