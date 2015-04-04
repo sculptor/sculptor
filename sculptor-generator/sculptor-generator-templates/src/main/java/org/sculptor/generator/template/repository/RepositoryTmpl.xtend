@@ -206,7 +206,7 @@ def String fetchEagerFields(Repository it) {
 
 def String repositoryDependencies(Repository it) {
 	'''
-	«FOR dependency  : repositoryDependencies»
+	«FOR dependency : repositoryDependencies»
 		«IF isSpringToBeGenerated()»
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
@@ -223,7 +223,7 @@ def String repositoryDependencies(Repository it) {
 }
 
 def String repositorySubclass(Repository it) {
-	val baseName  = it.getRepositoryBaseName()
+	val baseName = it.getRepositoryBaseName()
 
 	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
 	«javaHeader()»
@@ -256,7 +256,7 @@ def String repositorySubclass(Repository it) {
 
 def String otherDependencies(Repository it) {
 	'''
-	«FOR dependency  : otherDependencies»
+	«FOR dependency : otherDependencies»
 	/**
 	 * Dependency injection
 	 */
@@ -275,7 +275,7 @@ def String otherDependencies(Repository it) {
 }
 
 def String baseRepositoryMethod(RepositoryOperation it) {
-	val pagingParameter  = it.getPagingParameter()
+	val pagingParameter = it.getPagingParameter()
 
 	'''
 	/**

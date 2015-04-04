@@ -172,7 +172,7 @@ def String springServiceAnnotation(Service it) {
 
 def String delegateRepositories(Service it) {
 	'''
-	«FOR delegateRepository  : it.getDelegateRepositories()»
+	«FOR delegateRepository : it.getDelegateRepositories()»
 		«IF isSpringToBeGenerated()»
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
@@ -190,19 +190,19 @@ def String delegateRepositories(Service it) {
 
 def String delegateServices(Service it) {
 	'''
-	«FOR delegateService  : it.getDelegateServices()»
+	«FOR delegateService : it.getDelegateServices()»
 		«IF isSpringToBeGenerated()»
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
 			@javax.ejb.EJB
 		«ENDIF»
-			private «getServiceapiPackage(delegateService)».«delegateService.name»«IF pureEjb3()»Local«ENDIF» «delegateService.name.toFirstLower()»;
+		private «getServiceapiPackage(delegateService)».«delegateService.name»«IF pureEjb3()»Local«ENDIF» «delegateService.name.toFirstLower()»;
 
-			protected «getServiceapiPackage(delegateService)».«delegateService.name» get«delegateService.name»() {
-				return «delegateService.name.toFirstLower()»;
-			}
-		«ENDFOR»
+		protected «getServiceapiPackage(delegateService)».«delegateService.name» get«delegateService.name»() {
+			return «delegateService.name.toFirstLower()»;
+		}
+	«ENDFOR»
 	'''
 }
 
@@ -238,7 +238,7 @@ def String serviceImplSubclass(Service it) {
 
 def String otherDependencies(Service it) {
 	'''
-	«FOR dependency  : otherDependencies»
+	«FOR dependency : otherDependencies»
 		/**
 		 * Dependency injection
 		 */
