@@ -53,7 +53,6 @@ class Transformation {
 	@Inject extension TransformationHelper transformationHelper
 
 	def Application modify(Application app) {
-		initPropertiesHook()
 		app.modules.map[domainObjects].flatten.filter[it instanceof Trait].forEach[modifyChangeable((it as Trait))]
 		app.modules.map[domainObjects].flatten.forEach[mixin()]
 		app.modules.map[domainObjects].flatten.forEach[modifyExtends()]

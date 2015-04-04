@@ -560,8 +560,4 @@ class Properties {
 		getBooleanProperty("db.useIdSuffixInForeigKey")
 	}
 
-	// hook to be overwritten to make additional programatic configuration of properties
-	def initPropertiesHook() {
-		null
-	}
 }

@@ -93,7 +93,6 @@ class DslTransformation {
 	def create FACTORY.createApplication transform(DslApplication app) {
 		globalApp = it
 		val List<DslModule> allDslModules = EcoreUtil2::eAllOfType(app, typeof(DslModule))
-		initPropertiesHook()
 		allDslModules.forEach[checkCrossLink()]
 		setDoc(app.doc)
 		setName(app.name)
