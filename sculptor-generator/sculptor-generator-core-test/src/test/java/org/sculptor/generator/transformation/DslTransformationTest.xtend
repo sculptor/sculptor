@@ -31,6 +31,7 @@ import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.transform.DslTransformation
 import sculptormetamodel.Entity
 import sculptormetamodel.InheritanceType
+import sculptormetamodel.Service
 import sculptormetamodel.ValueObject
 
 import static org.junit.Assert.*
@@ -78,16 +79,18 @@ class DslTransformationTest {
 			assertEquals("module" + i + "Doc", module.doc)
 			assertEquals("module" + i + "Value2", getHint(module, "key2"))
 
-			assertEquals(1, module.services.size)
-			val service = module.services.get(0)
-			assertEquals("service" + i + "Name", service.name)
-			assertEquals("service" + i + "Doc", service.doc)
-			assertEquals("service" + i + "Value2", getHint(service, "key2"))
-			assertFalse(service.localInterface)
-			assertFalse(service.remoteInterface)
+			assertEquals(2, module.services.size)
+			for (j : 1 .. 2) {
+				val service = module.services.get(j - 1)
+				assertEquals("service" + i + j + "Name", service.name)
+				assertEquals("service" + i + j + "Doc", service.doc)
+				assertEquals("service" + i + j + "Value2", getHint(service, "key2"))
+				assertFalse(service.localInterface)
+				assertFalse(service.remoteInterface)
+			}
 		}
 	}
-	
+
 	def getTransformedApp() {
 		val transformation = dslTransformProvider.get
 		transformation.transform(model)
@@ -118,7 +121,8 @@ class DslTransformationTest {
 			assertEquals(0, references.size)
 			assertEquals(0, operations.size)
 			assertEquals(0, traits.size)
-			assertNull(repository)
+			assertNotNull(repository)
+			assertEquals("repository1Name", repository.name)
 			
 			// TODO: Verify references, attributes, etc
 		]
@@ -137,10 +141,23 @@ class DslTransformationTest {
 	}
 
 	def createDslModel() {
-		val service1 = FACTORY.createDslService
-		service1.setName("service1Name")
-		service1.setDoc("service1Doc")
-		service1.setHint("key1 = service1Value1 , notRemote, notLocal , key2 = service1Value2 , key3")
+		val service11 = FACTORY.createDslService
+		service11.name = "service11Name"
+		service11.doc = "service11Doc"
+		service11.hint = "key1 = service11Value1 , notRemote, notLocal , key2 = service11Value2 , key3"
+
+		val dependency1 = FACTORY.createDslDependency
+		dependency1.dependency = service11
+
+		val service12 = FACTORY.createDslService
+		service12.name = "service12Name"
+		service12.doc = "service12Doc"
+		service12.hint = "key1 = service12Value1 , notRemote, notLocal , key2 = service12Value2 , key3"
+		service12.dependencies.addAll(dependency1)
+
+		val repository1 = FACTORY.createDslRepository
+		repository1.setName("repository1Name")
+		repository1.setDoc("repository1Doc")
 
 		val entity1 = FACTORY.createDslEntity => [
 			name = "Entity1"
@@ -158,6 +175,7 @@ class DslTransformationTest {
 			gapClass = true
 			discriminatorValue = "disc1"
 			inheritanceType = DslInheritanceType::JOINED
+			repository = repository1
 		]
 
 		val vo1 = FACTORY.createDslValueObject => [
@@ -174,20 +192,30 @@ class DslTransformationTest {
 		module1.setName("module1Name")
 		module1.setDoc("module1Doc")
 		module1.setHint("key1 = module1Value1 , key2 = module1Value2 , key3")
-		module1.services.add(service1)
+		module1.services.addAll(service11, service12)
 		module1.domainObjects.addAll(entity1, vo1)
 
-		val service2 = FACTORY.createDslService
-		service2.setName("service2Name")
-		service2.setDoc("service2Doc")
-		service2.setHint("key1 = service2Value1 , notRemote, notLocal , key2 = service2Value2 , key3")
+
+		val service21 = FACTORY.createDslService
+		service21.name = "service21Name"
+		service21.doc = "service21Doc"
+		service21.hint = "key1 = service21Value1 , notRemote, notLocal , key2 = service21Value2 , key3"
+
+		val dependency2 = FACTORY.createDslDependency
+		dependency2.dependency = service11	// from module 1
+
+		val service22 = FACTORY.createDslService
+		service22.name = "service22Name"
+		service22.doc = "service22Doc"
+		service22.hint = "key1 = service22Value1 , notRemote, notLocal , key2 = service22Value2 , key3"
+		service22.dependencies.addAll(dependency2)
 
 		val module2 = FACTORY.createDslModule
 		module2.setBasePackage("com.acme.module2")
 		module2.setName("module2Name")
 		module2.setDoc("module2Doc")
 		module2.setHint("key1 = module2Value1 , key2 = module2Value2 , key3")
-		module2.services.add(service2)
+		module2.services.addAll(service21, service22)
 		
 		val app = FACTORY.createDslApplication
 		app.setBasePackage("com.acme")
@@ -196,6 +224,28 @@ class DslTransformationTest {
 		app.modules.addAll(module1, module2)
 
 		app
+	}
+
+	@Test
+	def void testServiceDependency() {
+		val module = transformedApp.modules.namedElement("module1Name")
+		val Service service = module.services.findFirst[name == "service12Name"] as Service
+		assertNotNull(service)
+		service => [
+			assertEquals(1, serviceDependencies.size)
+			assertEquals("service11Name", serviceDependencies.get(0).name)
+		]
+	}
+
+	@Test
+	def void testCrossModuleServiceDependency() {
+		val module = transformedApp.modules.namedElement("module2Name")
+		val Service service = module.services.findFirst[name == "service22Name"] as Service
+		assertNotNull(service)
+		service => [
+			assertEquals(1, serviceDependencies.size)
+			assertEquals("service11Name", serviceDependencies.get(0).name)
+		]
 	}
 
 }

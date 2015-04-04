@@ -14,12 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sculptor.generator.cartridge.test
+package org.sculptor.generator.cartridge.springdatajpa
 
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.transform.Transformation
+import org.sculptor.generator.transform.TransformationHelper
 
 @ChainOverride
-class TransformationExtension extends Transformation {
+class TransformationHelperExtension extends TransformationHelper {
+
+	override boolean isModifyDynamicFindersEnabled() {
+		false
+	}
+
+	override boolean isModifyPagingOperationsEnabled() {
+		false
+	}
 
 }

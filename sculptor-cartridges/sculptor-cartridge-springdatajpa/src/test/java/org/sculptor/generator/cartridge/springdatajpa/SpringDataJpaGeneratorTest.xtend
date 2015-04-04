@@ -39,32 +39,55 @@ class SpringDataJpaGeneratorTest extends GeneratorTestBase {
 	}
 
 	@Test
-	def void assertMediaRepositoryCustomInterface() {
+	def void assertRepositoryCustomInterface() {
 		val code = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/domain/MediaRepositoryCustom.java");
-		assertContainsConsecutiveFragments(code,
-			#[
-				"public interface MediaRepositoryCustom {",
-				"public List<Media> findMediaByCharacter(Long libraryId, String characterName);",
-				"public List<Media> findMediaByName(Long libraryId, String name);",
-				"public Map<String, Movie> findMovieByUrlIMDB(Set<String> keys);",
-				"}"
-			])
+		assertContainsConsecutiveFragments(code, #[
+			"public interface MediaRepositoryCustom {",
+			"public List<Media> findMediaByCharacter(Long libraryId, String characterName);",
+			"public List<Media> findMediaByName(Long libraryId, String name);",
+			"public Map<String, Movie> findMovieByUrlIMDB(Set<String> keys);",
+			"}"
+		])
 	}
 
 	@Test
-	def void assertMediaRepositoryCustomClass() {
+	def void assertRepositoryCustomClass() {
 		val code = getFileText(
 			TO_SRC + "/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryCustomImpl.java");
-		assertContainsConsecutiveFragments(code,
-			#[
-				"public class MediaRepositoryCustomImpl implements MediaRepositoryCustom {",
-				"public MediaRepositoryCustomImpl() {",
-				"}",
-				"public List<Media> findMediaByCharacter(Long libraryId, String characterName) {",
-				"// TODO Auto-generated method stub",
-				"throw new UnsupportedOperationException(\"findMediaByCharacter not implemented\");",
-				"}"
-			])
+		assertContainsConsecutiveFragments(code, #[
+			"public class MediaRepositoryCustomImpl implements MediaRepositoryCustom {",
+			"public MediaRepositoryCustomImpl() {",
+			"}",
+			"public List<Media> findMediaByCharacter(Long libraryId, String characterName) {",
+			"// TODO Auto-generated method stub",
+			"throw new UnsupportedOperationException(\"findMediaByCharacter not implemented\");",
+			"}"
+		])
+	}
+
+	@Test
+	def void assertServiceBaseClass() {
+		val code = getFileText(
+			TO_GEN_SRC + "/org/sculptor/example/library/media/serviceimpl/MediaCharacterServiceImplBase.java");
+		assertContainsConsecutiveFragments(code, #[
+			"public MediaCharacterServiceImplBase() {",
+			"}",
+			"@Autowired",
+			"private MediaCharacterRepository mediaCharacterRepository;",
+			"protected MediaCharacterRepository getMediaCharacterRepository() {",
+			"return mediaCharacterRepository;",
+			"}",
+			"@Autowired",
+			"private LibraryRepository libraryRepository;",
+			"protected LibraryRepository getLibraryRepository() {",
+			"return libraryRepository;",
+			"}",
+			"@Autowired",
+			"private LibraryService libraryService;",
+			"protected LibraryService getLibraryService() {",
+			"return libraryService;",
+			"}"
+		])
 	}
 
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.transform
 
 import java.util.List
@@ -26,11 +25,9 @@ import org.sculptor.dsl.sculptordsl.DslAttribute
 import org.sculptor.dsl.sculptordsl.DslBasicType
 import org.sculptor.dsl.sculptordsl.DslCollectionType
 import org.sculptor.dsl.sculptordsl.DslCommandEvent
-import org.sculptor.dsl.sculptordsl.DslComplexType
 import org.sculptor.dsl.sculptordsl.DslConsumer
 import org.sculptor.dsl.sculptordsl.DslDataTransferObject
 import org.sculptor.dsl.sculptordsl.DslDependency
-import org.sculptor.dsl.sculptordsl.DslDiscriminatorType
 import org.sculptor.dsl.sculptordsl.DslDomainEvent
 import org.sculptor.dsl.sculptordsl.DslDomainObject
 import org.sculptor.dsl.sculptordsl.DslDomainObjectOperation
@@ -59,17 +56,13 @@ import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
 import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
-import org.sculptor.dsl.sculptordsl.DslVisibility
-import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.check.CheckCrossLink
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
-import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.CommandEvent
 import sculptormetamodel.DataTransferObject
-import sculptormetamodel.DiscriminatorType
 import sculptormetamodel.DomainEvent
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Event
@@ -84,15 +77,14 @@ import sculptormetamodel.Trait
 /**
  * Transforms DSL meta model to generator meta model.
  */
-@ChainOverridable
 class DslTransformation {
 
 	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
-	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
+	@Inject extension DslTransformationHelper transformationHelper
 
 	@Inject extension CheckCrossLink checkCrossLink
 
@@ -269,29 +261,6 @@ class DslTransformation {
 		setHint(operation.hint)
 	}
 
-	def String convertVisibility(DslVisibility dslVisibility) {
-		if (dslVisibility == null)
-			"public"
-		else
-			dslVisibility.toString()
-	}
-
-	def String convertCollectionType(DslComplexType dslComplexType) {
-		if (dslComplexType == null)
-			null
-		else if (dslComplexType.mapCollectionType != null)
-			dslComplexType.mapCollectionType
-		else
-			convertCollectionTypeEnum(dslComplexType.collectionType)
-	}
-
-	def String convertCollectionTypeEnum(DslCollectionType collectionType) {
-		if (collectionType == null || collectionType == DslCollectionType::NONE)
-			null
-		else
-			collectionType.toString()
-	}
-
 	def create FACTORY.createRepositoryOperation transform(DslRepositoryOperation operation) {
 		setRepository((operation.eContainer as DslRepository).transform)
 		setDoc(operation.doc)
@@ -344,10 +313,6 @@ class DslTransformation {
 			parameter.parameterType.domainObjectType.transformSimpleDomainObject)
 	}
 
-//	def DomainObject createDomainObject() {
-//		null
-//	}
-	
 	private def DomainObject dummyCreateDomainObject() {
 		null
 	}
@@ -355,7 +320,6 @@ class DslTransformation {
 	// this "method" is not used, it is kind of "abstract"
 	def dispatch create dummyCreateDomainObject transformSimpleDomainObject(DslSimpleDomainObject domainObject) {
 		error("Wrong type of domainObject "+domainObject.name+"["+ (domainObject.^class.simpleName) +"] passed into transformSimpleDomainObject")
-//		(null as DomainObject)
 	}
 
 	def dispatch create FACTORY.createEntity transformSimpleDomainObject(DslEntity domainObject) {
@@ -489,17 +453,6 @@ class DslTransformation {
 		setDiscriminatorColumnName(domainObject.discriminatorColumn)
 		setDiscriminatorColumnLength(domainObject.discriminatorLength)
 		setDiscriminatorType(mapDiscriminatorType(domainObject.discriminatorType))
-	}
-
-	def DiscriminatorType mapDiscriminatorType(DslDiscriminatorType dslDiscriminatorType) {
-		switch (dslDiscriminatorType) {
-			case DslDiscriminatorType::CHAR :
-				DiscriminatorType::CHAR
-			case DslDiscriminatorType::INTEGER :
-				DiscriminatorType::INTEGER
-			default :
-				DiscriminatorType::STRING
-		}
 	}
 
 	def transformExtends(DslEntity dslDomainObject, DomainObject domainObject) {
@@ -652,10 +605,6 @@ class DslTransformation {
 		
 	}
 
-	def String buildOrderColumnHint(DslReference reference) {
-		if (reference.orderColumnName != null) "orderColumn="+reference.orderColumnName else "orderColumn"
-	}
-
 	def create FACTORY.createAttribute transform(DslDtoAttribute attribute) {
 		setDoc(attribute.doc)
 		setName(attribute.name)
@@ -702,25 +651,25 @@ class DslTransformation {
 
 	def void transformDependencies(DslService service) {
 		service.transform.serviceDependencies.addAll(
-			(service.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
+			service.dependencies.map[e | transformServiceDependency(e)].filter[e | e != null])
 		service.transform.repositoryDependencies.addAll(
-			service.dependencies.map[e | transformRepositoryDependency(e)].filter(r | r != null))
+			service.dependencies.map[e | transformRepositoryDependency(e)].filter[e | e != null])
 		service.transform.otherDependencies.addAll(
-			service.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
+			service.dependencies.map[e | transformOtherDependency(e)].filter[e | e != null])
 	}
 
 	def void transformDependencies(DslResource resource) {
 		resource.transform.serviceDependencies.addAll(
-			(resource.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
+			resource.dependencies.map[e | transformServiceDependency(e)].filter[e | e != null])
 	}
 
 	def void transformDependencies(DslConsumer consumer) {
 		consumer.transform.serviceDependencies.addAll(
-			(consumer.dependencies.map[e | transformServiceDependency(e)]).filter(s | s != null))
+			consumer.dependencies.map[e | transformServiceDependency(e)].filter[e | e != null])
 		consumer.transform.repositoryDependencies.addAll(
-			consumer.dependencies.map[e | transformRepositoryDependency(e)].filter(r | r != null))
+			consumer.dependencies.map[e | transformRepositoryDependency(e)].filter[e | e != null])
 		consumer.transform.otherDependencies.addAll(
-			consumer.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
+			consumer.dependencies.map[e | transformOtherDependency(e)].filter[e | e != null])
 	}
 
 	def Repository transformRepositoryDependency(DslDependency dependency) {
@@ -789,105 +738,6 @@ class DslTransformation {
 		val serviceName = resource.getDomainResourceName() + "Service"
 		val delegateService = resource.module.application.modules.map[services].flatten.findFirst(e|e.name == serviceName)
 		resource.addResourceScaffoldOperations(delegateService)
-	}
-
-	def boolean isGapClassToBeGenerated(DslService dslService) {
-		if (hasGapOperations(dslService))
-			true
-		else
-			isGapClassToBeGenerated(dslService.gapClass, dslService.noGapClass)
-	}
-
-	def boolean isGapClassToBeGenerated(DslResource dslResource) {
-		if (hasGapOperations(dslResource))
-			true
-		else
-			isGapClassToBeGenerated(dslResource.gapClass, dslResource.noGapClass)
-	}
-
-	def boolean isGapClassToBeGenerated(DslRepository dslRepository) {
-		if (hasGapOperations(dslRepository))
-			true
-		else
-			isGapClassToBeGenerated(dslRepository.gapClass, dslRepository.noGapClass)
-	}
-
-	def boolean hasGapOperations(DslService dslService) {
-		dslService.operations.exists(op | !scaffoldOperations().contains(op.name) && op.delegateHolder == null)
-	}
-
-	def boolean hasGapOperations(DslResource dslResource) {
-		dslResource.operations.exists(op | op.delegateHolder == null)
-	}
-
-	def boolean hasGapOperations(DslRepository dslRepository) {
-		dslRepository.operations.exists(op |
-			!scaffoldOperations().contains(op.name) &&
-			!op.delegateToAccessObject && op.accessObjectName == null &&
-			!op.transform.isGenericAccessObject())
-	}
-
-	def String handleValidation(DslAttribute attribute) {
-		(if (attribute.validate != null) attribute.validate else "") +
-		handleParameterizedAnnotation("digits", "integer,fraction,message", attribute.digits, attribute.validate) +
-		handleParameterizedAnnotation("size", "min,max,message", attribute.size, attribute.validate) +
-		handleBooleanAnnotation("assertTrue", attribute.assertTrue, attribute.assertTrueMessage, attribute.validate) +
-		handleBooleanAnnotation("assertFalse", attribute.assertFalse, attribute.assertFalseMessage, attribute.validate) +
-		handleBooleanAnnotation("notNull", !attribute.nullable && !attribute.type.isPrimitiveType(), attribute.nullableMessage, attribute.validate) +
-		handleBooleanAnnotation("future", attribute.future, attribute.futureMessage, attribute.validate) +
-		handleBooleanAnnotation("past", attribute.past, attribute.pastMessage, attribute.validate) +
-		handleSimpleAnnotation("min", attribute.min, attribute.validate) +
-		handleSimpleAnnotation("max", attribute.max, attribute.validate) +
-		handleSimpleAnnotation("decimalMin", attribute.decimalMin, attribute.validate) +
-		handleSimpleAnnotation("decimalMax", attribute.decimalMax, attribute.validate) +
-		handleParameterizedAnnotation("pattern", "regexp,message", attribute.pattern, attribute.validate) +
-		handleBooleanAnnotation("creditCardNumber", attribute.creditCardNumber, attribute.creditCardNumberMessage, attribute.validate) +
-		handleBooleanAnnotation("email", attribute.email, attribute.emailMessage, attribute.validate) +
-		handleBooleanAnnotation("notEmpty", attribute.notEmpty, attribute.notEmptyMessage, attribute.validate) +
-		handleBooleanAnnotation("notBlank", attribute.notBlank, attribute.notBlankMessage, attribute.validate) +
-		handleParameterizedAnnotation("scriptAssert", "lang,script,alias,message", attribute.scriptAssert, attribute.validate) +
-		handleParameterizedAnnotation("url", "protocol,host,port,message", attribute.url, attribute.validate) +
-		handleParameterizedAnnotation("range", "min,max,message", attribute.range, attribute.validate) +
-		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
-	}
-
-	def String handleValidation(DslDtoAttribute attribute) {
-		(if (attribute.validate != null) attribute.validate else "") +
-		handleParameterizedAnnotation("digits", "integer,fraction,message", attribute.digits, attribute.validate) +
-		handleParameterizedAnnotation("size", "min,max,message", attribute.size, attribute.validate) +
-		handleBooleanAnnotation("assertTrue", attribute.assertTrue, attribute.assertTrueMessage, attribute.validate) +
-		handleBooleanAnnotation("assertFalse", attribute.assertFalse, attribute.assertFalseMessage, attribute.validate) +
-		handleBooleanAnnotation("notNull", !attribute.nullable && !attribute.type.isPrimitiveType(), attribute.nullableMessage, attribute.validate) +
-		handleBooleanAnnotation("future", attribute.future, attribute.futureMessage, attribute.validate) +
-		handleBooleanAnnotation("past", attribute.past, attribute.pastMessage, attribute.validate) +
-		handleSimpleAnnotation("min", attribute.min, attribute.validate) +
-		handleSimpleAnnotation("max", attribute.max, attribute.validate) +
-		handleSimpleAnnotation("decimalMin", attribute.decimalMin, attribute.validate) +
-		handleSimpleAnnotation("decimalMax", attribute.decimalMax, attribute.validate) +
-		handleParameterizedAnnotation("pattern", "regexp,message", attribute.pattern, attribute.validate) +
-		handleBooleanAnnotation("creditCardNumber", attribute.creditCardNumber, attribute.creditCardNumberMessage, attribute.validate) +
-		handleBooleanAnnotation("email", attribute.email, attribute.emailMessage, attribute.validate) +
-		handleBooleanAnnotation("notEmpty", attribute.notEmpty, attribute.notEmptyMessage, attribute.validate) +
-		handleBooleanAnnotation("notBlank", attribute.notBlank, attribute.notBlankMessage, attribute.validate) +
-		handleParameterizedAnnotation("scriptAssert", "lang,script,alias,message", attribute.scriptAssert, attribute.validate) +
-		handleParameterizedAnnotation("url", "protocol,host,port,message", attribute.url, attribute.validate) +
-		handleParameterizedAnnotation("range", "min,max,message", attribute.range, attribute.validate) +
-		handleParameterizedAnnotation("length", "max,min,message", attribute.length, attribute.validate)
-	}
-
-	def String handleValidation(DslReference reference) {
-		(if (reference.validate != null) reference.validate else "") +
-		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
-		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
-		handleBooleanAnnotation("notEmpty", reference.notEmpty, reference.notEmptyMessage, reference.validate) +
-		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
-	}
-
-	def String handleValidation(DslDtoReference reference) {
-		(if (reference.validate != null) reference.validate else "") +
-		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
-		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
-		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
 	}
 
 }

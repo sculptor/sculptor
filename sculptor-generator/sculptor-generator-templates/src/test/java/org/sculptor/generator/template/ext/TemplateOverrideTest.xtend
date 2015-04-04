@@ -41,7 +41,13 @@ class TemplateOverrideTest extends GeneratorTestBase {
 	@Test
 	def void assertOverriddenTemplateInMediaBase() {
 		val mediaCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/domain/MediaBase.java");
-		assertContains(mediaCode, 'public void addToEngagements(Engagement engagementElement) {');
+		assertContains(mediaCode, "public void addToEngagements(Engagement engagementElement) {");
+	}
+
+	@Test
+	def void assertRepositoryDependency() {
+		val repoCode = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryImpl.java");
+		assertContainsConsecutiveFragments(repoCode, #[ "@Autowired", "private MediaCharacterRepository mediaCharacterRepository;" ]);
 	}
 
 	@Test

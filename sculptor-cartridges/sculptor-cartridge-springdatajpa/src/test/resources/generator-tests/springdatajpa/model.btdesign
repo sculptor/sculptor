@@ -52,10 +52,9 @@ Application Library {
 			- Set<@Engagement> engagements <-> media
 			- Set<@MediaCharacter> mediaCharacters <-> existsInMedia
 
-			Repository MediaRepository {> @MediaCharacterRepository
+			Repository MediaRepository {
 				int getNumberOfMovies(Long libraryId);
-				List<@Media> findMediaByCharacter(Long libraryId, String characterName)
-				gap;
+				List<@Media> findMediaByCharacter(Long libraryId, String characterName)	gap;
 
 				findByTitle(String title);
 
@@ -64,10 +63,8 @@ Application Library {
 				findAll;
 				findByQuery;
 				findByKeys(Set<String> keys, String keyPropertyName, Class<@Media> persistentClass);
-				List<@Media> findMediaByName(Long libraryId, String name)
-				gap;
-				Map<String, @Movie> findMovieByUrlIMDB(Set<String> keys)
-				gap;
+				List<@Media> findMediaByName(Long libraryId, String name) gap;
+				Map<String, @Movie> findMovieByUrlIMDB(Set<String> keys) gap;
 			}
 
 		}
@@ -97,6 +94,9 @@ Application Library {
 		}
 
 		Service MediaCharacterService {
+			gap
+			> @LibraryService
+			> @LibraryRepository
 			findAll => MediaCharacterRepository.findAll;
 		}
 

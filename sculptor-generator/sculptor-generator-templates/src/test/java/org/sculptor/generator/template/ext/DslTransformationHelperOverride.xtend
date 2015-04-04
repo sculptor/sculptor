@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The Sculptor Project Team, including the original 
+ * Copyright 2015 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sculptor.generator.cartridge.springdatajpa
+package org.sculptor.generator.template.ext
 
+import org.sculptor.dsl.sculptordsl.DslRepository
 import org.sculptor.generator.chain.ChainOverride
-import org.sculptor.generator.transform.Transformation
-import sculptormetamodel.Repository
-import sculptormetamodel.RepositoryOperation
+import org.sculptor.generator.transform.DslTransformationHelper
 
 @ChainOverride
-class TransformationExtension extends Transformation {
+class DslTransformationHelperOverride extends DslTransformationHelper {
 
-	override void modifyPagingOperations(Repository repository) {
-	}
-
-	override void modifyDynamicFinderOperations(RepositoryOperation op) {
+	override boolean hasGapOperations(DslRepository dslRepository) {
+		false
 	}
 
 }
