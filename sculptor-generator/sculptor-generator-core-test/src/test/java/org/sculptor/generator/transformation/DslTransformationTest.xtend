@@ -229,7 +229,7 @@ class DslTransformationTest {
 	@Test
 	def void testServiceDependency() {
 		val module = transformedApp.modules.namedElement("module1Name")
-		val Service service = module.services.findFirst[name == "service12Name"] as Service
+		val Service service = module.services.findFirst[name == "service12Name"]
 		assertNotNull(service)
 		service => [
 			assertEquals(1, serviceDependencies.size)
@@ -240,7 +240,7 @@ class DslTransformationTest {
 	@Test
 	def void testCrossModuleServiceDependency() {
 		val module = transformedApp.modules.namedElement("module2Name")
-		val Service service = module.services.findFirst[name == "service22Name"] as Service
+		val Service service = module.services.findFirst[name == "service22Name"]
 		assertNotNull(service)
 		service => [
 			assertEquals(1, serviceDependencies.size)
