@@ -53,10 +53,10 @@ class SpringDataJpaGeneratorTest extends GeneratorTestBase {
 	@Test
 	def void assertRepositoryCustomClass() {
 		val code = getFileText(
-			TO_SRC + "/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryCustomImpl.java");
+			TO_SRC + "/org/sculptor/example/library/media/repositoryimpl/MediaRepositoryImpl.java");
 		assertContainsConsecutiveFragments(code, #[
-			"public class MediaRepositoryCustomImpl implements MediaRepositoryCustom {",
-			"public MediaRepositoryCustomImpl() {",
+			"public class MediaRepositoryImpl implements MediaRepositoryCustom {",
+			"public MediaRepositoryImpl() {",
 			"}",
 			"public List<Media> findMediaByCharacter(Long libraryId, String characterName) {",
 			"// TODO Auto-generated method stub",

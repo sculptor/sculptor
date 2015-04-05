@@ -86,7 +86,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 					«it.formatJavaDoc»
 				«ENDIF»
 				public interface «name» extends org.springframework.data.jpa.repository.JpaRepository<«baseName», «getJavaType("IDTYPE")»>«IF custom»,
-					«javaFileName(aggregateRoot.module.getRepositoryapiPackage)».«name»Custom«ENDIF»«IF subscribe != null»,
+					«aggregateRoot.module.getRepositoryapiPackage».«name»Custom«ENDIF»«IF subscribe != null»,
 					«fw("event.EventSubscriber")»«ENDIF» {
 					
 						«it.operations.filter[isPublicVisibility && !hasHint("gap")].map[interfaceRepositoryMethod(it)].join»
@@ -125,7 +125,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 
 	private def String repositoryCustomImpl(Repository it) {
 		val baseName = it.getRepositoryBaseName
-		val className = name + "Custom" + getSuffix("Impl")
+		val className = name + getSuffix("Impl")
 
 		fileOutput(
 			javaFileName(aggregateRoot.module.getRepositoryimplPackage + "." + className),
@@ -139,7 +139,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 				/**
 				 * Repository custom implementation for «baseName»
 				 */
-				public class «className» implements «name»Custom {
+				public class «className» implements «aggregateRoot.module.getRepositoryapiPackage».«name»Custom {
 				
 					public «className»() {
 					}
