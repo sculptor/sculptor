@@ -44,7 +44,7 @@ Application Library {
         }
 
         Service MediaService {
-            findAll => MediaRepository.findAll;
+        	findAll => MediaRepository.findAll;
         }
 
         abstract Entity Media {
@@ -104,6 +104,8 @@ Application Library {
         }
 
         Service MediaCharacterService {
+            > @LibraryService
+            > @LibraryRepository
             findAll => MediaCharacterRepository.findAll;
         }
 

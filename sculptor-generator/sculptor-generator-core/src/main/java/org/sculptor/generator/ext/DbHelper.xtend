@@ -22,6 +22,7 @@ import java.util.Set
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.util.CamelCaseConverter
+import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
@@ -38,7 +39,7 @@ import sculptormetamodel.SculptormetamodelFactory
 public class DbHelper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
-	@Inject extension org.sculptor.generator.util.DbHelperBase dbHelperBase
+	@Inject extension DbHelperBase dbHelperBase
 	@Inject extension Helper helper
 
 	def String getCascade(Reference ref) {
@@ -54,7 +55,7 @@ public class DbHelper {
 
 	def String getFetch(Reference ref) {
 		if (ref.fetch == "none")
-			null
+			""
 		else if (ref.fetch == null || ref.fetch == "")
 			ref.getDerivedFetch()
 		else
@@ -63,11 +64,11 @@ public class DbHelper {
 
 	def private String getDerivedFetch(Reference ref) {
 		if (isManyToMany(ref))
-			null // no default fetch for manyToMany
+			"" // no default fetch for manyToMany
 		else if (ref.to.isEntityOrPersistentValueObject() && !ref.to.aggregateRoot)
 			"join"  // join fetch within same aggregate boundary
 		else
-			getProperty("default.fetchStrategy", null)
+			getProperty("default.fetchStrategy", "")
 	}
 
 	def String getHibernateCacheUsage(Object obj) {
@@ -229,11 +230,11 @@ public class DbHelper {
 	}
 
 	def boolean isOrphanRemoval(String cascade) {
-		isJpa2() && cascade != null && cascade.contains("all-delete-orphan")
+		jpa && cascade != null && cascade.contains("all-delete-orphan")
 	}
 
 	def boolean isOrphanRemoval(String cascade, Reference ref) {
-		isJpa2() && (isOrphanRemoval(cascade) || !isAggregateRoot(ref.to))
+		jpa && (isOrphanRemoval(cascade) || !isAggregateRoot(ref.to))
 	}
 
 	def String getHibernateCascadeType(Reference ref) {
@@ -246,11 +247,11 @@ public class DbHelper {
 
 	def String mapHibernateCascadeType(String cascade) {
 		switch (cascade.trim()) {
-			case "all-delete-orphan" : (if (isJpa2()) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
-			case "delete-orphan" : (if (isJpa2()) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
+			case "all-delete-orphan" : (if (jpa) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
+			case "delete-orphan" : (if (jpa) null else "org.hibernate.annotations.CascadeType.DELETE_ORPHAN")
 			case "delete" : "org.hibernate.annotations.CascadeType.DELETE"
 			case "save-update" : "org.hibernate.annotations.CascadeType.SAVE_UPDATE"
-			case "evict" : (if(isJpa2()) null else "org.hibernate.annotations.CascadeType.EVICT")
+			case "evict" : (if(jpa) null else "org.hibernate.annotations.CascadeType.EVICT")
 			case "replicate" : "org.hibernate.annotations.CascadeType.REPLICATE"
 			case "lock" : "org.hibernate.annotations.CascadeType.LOCK"
 			default : null

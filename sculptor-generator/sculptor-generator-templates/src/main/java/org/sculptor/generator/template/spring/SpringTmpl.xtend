@@ -438,24 +438,18 @@ def String interceptor(Application it) {
 		«aspectjAutoproxy(it)»
 	
 		«IF jpa()»
-			«jpaInterceptor(it) »
+			<bean id="jpaFlushEagerAdvice" class="«fw("persistence.JpaFlushEagerAdvice")»" />
 		«ENDIF»
-	
 		«IF nosql()»
 			<bean id="errorHandlingAdvice" class="«fw("errorhandling.BasicErrorHandlingAdvice")»" />
 		«ELSE»
 			<bean id="errorHandlingAdvice" class="«fw("errorhandling.ErrorHandlingAdvice")»" />
 		«ENDIF»
-		«IF isJpaProviderHibernate()»
-			<bean id="hibernateErrorHandlingAdvice" class="«fw("errorhandling.HibernateErrorHandlingAdvice")»" />
-		«ELSEIF isValidationAnnotationToBeGenerated()»
-			<bean id="hibernateValidatorErrorHandlingAdvice" class="«fw("errorhandling.HibernateValidatorErrorHandlingAdvice")»" />
-		«ENDIF»
 		«IF isServiceContextToBeGenerated()»
 			<bean id="serviceContextStoreAdvice" class="«serviceContextStoreAdviceClass()»" />
 		«ENDIF»
 		«IF isInjectDrools()»
-			<bean id="droolsAdvice" class="«fw('drools.DroolsAdvice')»">
+			<bean id="droolsAdvice" class="«fw("drools.DroolsAdvice")»">
 				<property name="droolsRuleSet" value="${drools.rule-source}"/>
 				<property name="updateInterval" value="${drools.rule-refresh}"/>
 				<property name="catchAllExceptions" value="${drools.catch-all-exceptions}"/>
@@ -485,16 +479,6 @@ def String interceptorAdditions(Application it) {
 def String aspectjAutoproxy(Application it) {
 	'''
 	<aop:aspectj-autoproxy/>
-	'''
-}
-
-def String jpaInterceptor(Application it) {
-	'''
-	<bean id="jpaInterceptorFlushEager" class="org.springframework.orm.jpa.JpaInterceptor">
-		<property name="entityManagerFactory" ref="entityManagerFactory"/>
-		<!-- Need to flush to detect OptimisticLockingException and do proper rollback. -->
-		<property name="flushEager" value="true"/>
-	</bean>
 	'''
 }
 
@@ -529,7 +513,7 @@ def String aopConfig(Application it) {
 	<aop:config>
 
 		«aopConfigServicePointcuts»
-		
+
 		«IF it.hasConsumers()»
 			<aop:pointcut id="messageConsumer"
 				expression="execution(public * «basePackage»..«subPackage("consumer")».*.*(..))"/>
@@ -542,17 +526,12 @@ def String aopConfig(Application it) {
 			<aop:advisor pointcut-ref="businessService" advice-ref="serviceContextStoreAdvice" order="2" />
 		«ENDIF»
 		<aop:advisor pointcut-ref="businessService" advice-ref="errorHandlingAdvice" order="3" />
-		«IF isJpaProviderHibernate()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-		«ELSEIF isValidationAnnotationToBeGenerated()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-		«ENDIF»
 		«IF jpa()»
-			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaInterceptorFlushEager" order="5" />
+			<aop:advisor pointcut-ref="updatingBusinessService" advice-ref="jpaFlushEagerAdvice" order="4" />
 		«ENDIF»
 
 		«IF isInjectDrools()»
-			<aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="6" />
+			<aop:advisor pointcut-ref="businessService" advice-ref="droolsAdvice" order="5" />
 		«ENDIF»
 
 		«IF it.hasConsumers()»
@@ -563,11 +542,6 @@ def String aopConfig(Application it) {
 				<aop:advisor pointcut-ref="messageConsumer" advice-ref="serviceContextStoreAdvice" order="2" />
 			«ENDIF»
 			<aop:advisor pointcut-ref="messageConsumer" advice-ref="errorHandlingAdvice" order="3" />
-			«IF isJpaProviderHibernate()»
-				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-			«ELSEIF isValidationAnnotationToBeGenerated()»
-				<aop:advisor pointcut-ref="messageConsumer" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-			«ENDIF»
 		«ENDIF»
 
 		«aopConfigAdditions(it, false)»
@@ -607,13 +581,8 @@ def String aopConfigTest(Application it) {
 			-->
 		«ENDIF»
 
-		<!-- Need this when JUnit directly to Repository -->
+		<!-- Error handling is needed for repository methods as well because they're used from within unit tests -->
 		<aop:advisor pointcut-ref="repository" advice-ref="errorHandlingAdvice" order="3" />
-		«IF isJpaProviderHibernate()»
-			<aop:advisor pointcut-ref="repository" advice-ref="hibernateErrorHandlingAdvice" order="4" />
-		«ELSEIF isValidationAnnotationToBeGenerated()»
-			<aop:advisor pointcut-ref="repository" advice-ref="hibernateValidatorErrorHandlingAdvice" order="4" />
-		«ENDIF»
 
 		«aopConfigAdditions(it, true)»
 	</aop:config>
@@ -940,7 +909,7 @@ def String entityManagerFactoryTx(Application it, boolean test) {
 
 	«IF isSpringAnnotationTxToBeGenerated()»
 		<!-- enables @Transactional support -->
-		<tx:annotation-driven transaction-manager="txManager"/>
+		<tx:annotation-driven transaction-manager="txManager" order="1"/>
 	«ENDIF»
 	«persistenceExceptionTranslationPostProcessor(it)»
 	'''

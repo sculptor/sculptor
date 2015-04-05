@@ -326,4 +326,15 @@ class LibraryTransformationTest extends XtextTest {
 			op.typeName)
 	}
 
+	@Test
+	def void assertMediaCharacterServiceDependencies() {
+		val mediaCharacterService = mediaModule.services.namedElement("MediaCharacterService")
+		assertEquals(1, mediaCharacterService.serviceDependencies.size)
+		val serviceDependency = mediaCharacterService.serviceDependencies.get(0)
+		assertEquals("LibraryService", serviceDependency.name)
+
+		assertEquals(1, mediaCharacterService.repositoryDependencies.size)
+		val repositoryDependency = mediaCharacterService.repositoryDependencies.get(0)
+		assertEquals("LibraryRepository", repositoryDependency.name)
+	}
 }

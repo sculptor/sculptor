@@ -35,7 +35,9 @@ import org.sculptor.framework.accessapi.FindByConditionStatAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByConditionStatAccessImpl<T> extends JpaAccessBase<T> implements FindByConditionStatAccess<T> {
+public class JpaFindByConditionStatAccessImpl<T>
+    extends JpaAccessBase<T>
+    implements FindByConditionStatAccess<T> {
 
 	public JpaFindByConditionStatAccessImpl(Class<T> persistentClass) {
 		// Do nothing
@@ -49,8 +51,10 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaAccessBase<T> implem
 		// Do nothing
 	}
 
+	@Override
 	public void setColumnStat(List<ColumnStatRequest<T>> columnStat) {
-		// Do nothing
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void setUseSingleResult(boolean useSingleResult) {
@@ -58,15 +62,16 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaAccessBase<T> implem
 	}
 
 	@Override
-	public void performExecute() throws PersistenceException {
-		// JPA 2.0 will contain criteria API similar to Hibernate criteria API
-		// Till then we can't support this
-		throw new UnsupportedOperationException("FindByConditionStat is not supported with JPA binding.");
-	}
-
 	public List<List<ColumnStatResult>> getSingleResult() {
 		// JPA 2.0 will contain criteria API similar to Hibernate criteria API
 		// Till then we can't support this
-		throw new UnsupportedOperationException("FindByConditionStat is not supported with JPA binding.");
+		throw new UnsupportedOperationException("FindByConditionStat is not supported with JPA2 binding. Use FindByCondition.");
+	}
+
+	@Override
+	public void performExecute() throws PersistenceException {
+		// JPA 2.0 will contain criteria API similar to Hibernate criteria API
+		// Till then we can't support this
+		throw new UnsupportedOperationException("FindByConditionStat is not supported with JPA2 binding. Use FindByCondition.");
 	}
 }

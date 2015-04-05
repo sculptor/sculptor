@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <PLANET id="1" name="Earth" diameter="400" uuid="1"
+    LASTUPDATED="2006-12-08" LASTUPDATEDBY="dbunit" version="1" />
+  <PLANET id="2" name="Mars" diameter="500" uuid="2"
+    LASTUPDATED="2006-12-08" LASTUPDATEDBY="dbunit" version="1" />
+</dataset>

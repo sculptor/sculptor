@@ -22,7 +22,7 @@ import java.io.Serializable;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.joda.time.DateTime;
-import org.sculptor.framework.errorhandling.ServiceContextStore;
+import org.sculptor.framework.context.ServiceContextStore;
 
 /**
  * This Hibernate interceptor will be invoked when objects are saved and it will
@@ -31,9 +31,9 @@ import org.sculptor.framework.errorhandling.ServiceContextStore;
  * {@link org.sculptor.framework.domain.JodaAuditable}.
  * <p>
  * It will grab the user from
- * {@link org.sculptor.framework.errorhandling.ServiceContext}
+ * {@link org.sculptor.framework.context.ServiceContext}
  * provided by
- * {@link org.sculptor.framework.errorhandling.ServiceContextStore}.
+ * {@link org.sculptor.framework.context.ServiceContextStore}.
  * 
  */
 public class JodaAuditInterceptor extends EmptyInterceptor {

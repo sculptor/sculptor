@@ -68,7 +68,7 @@ class DroolsTmpl {
 		import «fw("drools.RequestDescription")»;
 		import «fw("domain.AuditHandler")»;
 		import «fw("domain.FullAuditLog")»;
-		import «fw("errorhandling.ServiceContext")»;
+		import «fw("context.ServiceContext")»;
 		import «fw("errorhandling.ApplicationException")»;
 		import org.springframework.context.ApplicationContext;
 

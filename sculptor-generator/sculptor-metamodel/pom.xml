@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
-		<version>3.0.6</version>
+		<version>3.1.0</version>
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-metamodel</artifactId>
@@ -25,74 +25,58 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<!-- The MWE2 workflow 'GenerateMetaModel.mwe2' modifies the MANIFEST.MF 
-						file - so we're making a backup before the workflow starts and restoring it 
-						after the workflow finished -->
-					<execution>
-						<id>backup-manifest</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>META-INF/</directory>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
-							<outputDirectory>${project.build.directory}/META-INF-backup/</outputDirectory>
-							<overwrite>true</overwrite>
-						</configuration>
-					</execution>
-					<execution>
-						<id>restore-manifest</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>${project.build.directory}/META-INF-backup/</directory>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
-							<outputDirectory>META-INF/</outputDirectory>
-							<overwrite>true</overwrite>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
+				<groupId>org.eclipse.xtext</groupId>
+				<artifactId>xtext-maven-plugin</artifactId>
+				<version>${xtext-version}</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>java</goal>
+							<goal>generate</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-					<includeProjectDependencies>false</includeProjectDependencies>
-					<includePluginDependencies>true</includePluginDependencies>
-					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
-					<arguments>
-						<argument>file://${project.basedir}/model/GenerateMetaModel.mwe2</argument>
-						<argument>-p</argument>
-						<argument>runtimeProject=/${project.basedir}</argument>
-					</arguments>
+					<languages>
+						<language>
+							<setup>org.eclipse.xtext.ecore.EcoreSupport</setup>
+						</language>
+						<language>
+							<setup>org.eclipse.emf.codegen.ecore.xtext.GenModelSupport</setup>
+						</language>
+						<language>
+							<setup>org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup</setup>
+						</language>
+					</languages>
+					<sourceRoots>
+						<root>${basedir}/model</root>
+					</sourceRoots>
 				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xtext</artifactId>
-						<version>${xtext-version}</version>
+						<groupId>org.eclipse.core</groupId>
+						<artifactId>org.eclipse.core.resources</artifactId>
+						<version>3.7.100</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.text</groupId>
+						<artifactId>org.eclipse.text</artifactId>
+						<version>3.5.101</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.emf</groupId>
+						<artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
+						<version>${ecore-xtext-version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.emf</groupId>
+						<artifactId>org.eclipse.emf.ecore.xcore</artifactId>
+						<version>${ecore-xcore-version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.emf</groupId>
+						<artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
+						<version>${ecore-xcore-lib-version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -100,6 +84,6 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-source-plugin</artifactId>
 			</plugin>
-  		</plugins>
+		</plugins>
 	</build>
 </project>

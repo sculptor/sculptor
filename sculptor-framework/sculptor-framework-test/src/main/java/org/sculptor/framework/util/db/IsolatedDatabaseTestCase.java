@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original 
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.util.db;
-
 
 import org.dbunit.DatabaseTestCase;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.sculptor.framework.errorhandling.ServiceContext;
-import org.sculptor.framework.errorhandling.ServiceContextFactory;
-import org.sculptor.framework.errorhandling.ServiceContextStore;
+import org.sculptor.framework.context.ServiceContext;
+import org.sculptor.framework.context.ServiceContextFactory;
+import org.sculptor.framework.context.ServiceContextStore;
 import org.sculptor.framework.util.FactoryConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -47,7 +46,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * test data.
  * 
  * @author Patrik Nordwall
- * 
  */
 public class IsolatedDatabaseTestCase extends DatabaseTestCase {
 
@@ -56,7 +54,7 @@ public class IsolatedDatabaseTestCase extends DatabaseTestCase {
     static {
         ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
             public String getFactoryImplementationClassName() {
-                return "org.sculptor.framework.errorhandling.JUnitServiceContextFactory";
+                return "org.sculptor.framework.context.JUnitServiceContextFactory";
             }
         });
     }
@@ -115,12 +113,13 @@ public class IsolatedDatabaseTestCase extends DatabaseTestCase {
         return "hsqldbDataSource";
     }
 
-    protected IDataSet getDataSet() throws Exception {
-        ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(this.getClass().getClassLoader()
-                .getResourceAsStream(getDataSetFile())));
-        dataSet.addReplacementObject("[NULL]", null);
-        return dataSet;
-    }
+	protected IDataSet getDataSet() throws Exception {
+		FlatXmlDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(this.getClass().getClassLoader()
+				.getResourceAsStream(getDataSetFile()));
+		ReplacementDataSet dataSet = new ReplacementDataSet(xmlDataSet);
+		dataSet.addReplacementObject("[NULL]", null);
+		return dataSet;
+	}
 
     /**
      * Override this method to specify the XML file with DBUnit test data.
@@ -139,11 +138,5 @@ public class IsolatedDatabaseTestCase extends DatabaseTestCase {
     protected ServiceContext getServiceContext() {
         return serviceContext;
     }
-
-    /**
-     * Need an empty test method to fool JUnit.
-     */
-    // public void testNothing() {
-    // }
 
 }

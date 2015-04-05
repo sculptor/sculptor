@@ -17,9 +17,11 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.criteria.Predicate;
 
 import org.sculptor.framework.accessapi.FindByKeyAccess;
 
@@ -32,18 +34,20 @@ import org.sculptor.framework.accessapi.FindByKeyAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByKeyAccessImpl<T> extends JpaAccessBase<T> implements FindByKeyAccess<T> {
+public class JpaFindByKeyAccessImpl<T>
+    extends JpaCriteriaQueryAccessBase<T,T>
+    implements FindByKeyAccess<T> {
 
-    private T result;
     private String[] keyPropertyNames;
     private Object[] keyValues;
 
     public JpaFindByKeyAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+        super(persistentClass);
     }
 
-    public T getResult() {
-        return result;
+    @Override
+    public void setPersistentClass(Class<? extends T> persistentClass) {
+        super.setPersistentClass(persistentClass);
     }
 
     public void setKeyPropertyNames(String... keyPropertyNames) {
@@ -62,12 +66,12 @@ public class JpaFindByKeyAccessImpl<T> extends JpaAccessBase<T> implements FindB
         return keyValues;
     }
 
-    @Override
-    public void setPersistentClass(Class<? extends T> persistentClass) {
-        super.setPersistentClass(persistentClass);
+    public T getResult() {
+        return (T) getSingleResult();
     }
 
-    private void checkKeyPropertyNamesValues() {
+    @Override
+    protected void validate() {
         if (keyValues == null) {
             throw new IllegalArgumentException("keyPropertyValues not defined");
         }
@@ -81,42 +85,24 @@ public class JpaFindByKeyAccessImpl<T> extends JpaAccessBase<T> implements FindB
     }
 
     @Override
-    public void performExecute() throws PersistenceException {
-        checkKeyPropertyNamesValues();
+    protected void prepareConfig(QueryConfig config) {
+    	// datanucleus bug. datanucleus is not handling enums correctly.
+    	// user type mapping is not called
+    	// TODO: report to datanucleus issue tracker
+    	if (!JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
+            config.setSingleResult(true);
+    	}
+        config.setEnableLike(false);
+        config.setIgnoreCase(false);
+    }
 
-        StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select e from ").append(getPersistentClass().getSimpleName()).append(" e");
-        queryStr.append(" where ");
+    @Override
+    protected List<Predicate> preparePredicates() {
+        // map key to restrictions
+        Map<String, Object> restrictions = new HashMap<String, Object>();
         for (int i = 0; i < keyPropertyNames.length; i++) {
-            if (i != 0) {
-                queryStr.append(" and ");
-            }
-
-            queryStr.append("e." + keyPropertyNames[i]);
-            queryStr.append(" = ");
-            queryStr.append(":").append(keyPropertyNames[i]);
+            restrictions.put(keyPropertyNames[i], keyValues[i]);
         }
-
-        result = executeQuery(queryStr.toString());
+        return preparePredicates(restrictions);
     }
-
-    @SuppressWarnings("unchecked")
-    protected T executeQuery(String queryStr) {
-        try {
-            Query query = getEntityManager().createQuery(queryStr);
-            prepareHints(query);
-
-            for (int i = 0; i < keyPropertyNames.length; i++) {
-                query.setParameter(keyPropertyNames[i], keyValues[i]);
-            }
-
-            return (T) query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    protected void prepareHints(Query query) {
-    }
-
 }

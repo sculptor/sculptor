@@ -1,0 +1,40 @@
+Application BootExample {
+	basePackage=org.sculptor.examples.boot
+
+	Module milkyway {
+
+		Resource FrontResource {
+			String front return="front/overview";
+		}
+
+		Resource PlanetResource {
+			show => PlanetService.findById;
+			String createForm;
+			create => PlanetService.save;
+			delete => PlanetService.delete;
+			showAll => PlanetService.findAll;
+		}
+
+		Service PlanetService {
+			findById => PlanetRepository.findById;
+			findAll => PlanetRepository.findAll;
+			save => PlanetRepository.save;
+			delete => PlanetRepository.delete;
+		}
+
+		Entity Planet {
+			String name notBlank
+			int diameter min="1"
+
+			Repository PlanetRepository {
+				findById;
+				save;
+				delete;
+				findAll;
+			}
+
+		}
+
+	}
+
+}

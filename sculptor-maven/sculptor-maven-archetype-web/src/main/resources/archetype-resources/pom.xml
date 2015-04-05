@@ -1,17 +1,16 @@
 #set( $artifactIdBaseLength = $artifactId.length() - 4 )
 #set( $artifactIdBase = $artifactId.substring(0, $artifactIdBaseLength) )
-#set( $symbol_dollar = '$' )
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>${groupId}</groupId>
-		<artifactId>${artifactIdBase}-parent</artifactId>
-		<version>${version}</version>
+		<groupId>\${groupId}</groupId>
+		<artifactId>\${artifactIdBase}-parent</artifactId>
+		<version>\${version}</version>
 		<relativePath>../${artifactIdBase}-parent/</relativePath>
 	</parent>
-	<artifactId>${artifactId}</artifactId>
+	<artifactId>\${artifactId}</artifactId>
 	<packaging>war</packaging>
 	<name>New Sculptor Project :: Presentation Tier</name>
 
@@ -20,7 +19,7 @@
 			<plugin>
 				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
-				<version>${symbol_dollar}{sculptor-version}</version>
+				<version>\${sculptor-version}</version>
 				<configuration>
 					<verbose>false</verbose>
 				</configuration>
@@ -46,9 +45,9 @@
 				</executions>
 				<dependencies>
 					<dependency>
-						<groupId>${groupId}</groupId>
-						<artifactId>${artifactIdBase}</artifactId>
-						<version>${version}</version>
+						<groupId>\${groupId}</groupId>
+						<artifactId>\${artifactIdBase}</artifactId>
+						<version>\${version}</version>
 						<classifier>client</classifier>
 					</dependency>
 				</dependencies>
@@ -104,12 +103,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${symbol_dollar}{project.groupId}</groupId>
+			<groupId>\${project.groupId}</groupId>
 			<artifactId>${artifactIdBase}</artifactId>
 #if( $ejb == "true" || $ejb == "y" || $ejb == "yes")
 			<type>ejb</type>
 #end
-			<version>${symbol_dollar}{project.version}</version>
+			<version>\${project.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>javax.servlet</groupId>
@@ -128,35 +127,23 @@
 			<version>1.1.2</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-webmvc</artifactId>
-		    <version>${spring-version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 #if( $rest == "true" || $rest == "y" || $rest == "yes")
 		<dependency>
-		   <groupId>org.springframework</groupId>
-		   <artifactId>spring-oxm</artifactId>
-		   <version>${spring-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.core</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>\${symbol_dollar}{jackson-version}</version>
+			<version>\${jackson-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.thoughtworks.xstream</groupId>
 		    <artifactId>xstream</artifactId>
-		    <version>\${symbol_dollar}{xstream-version}</version>
+		    <version>\${xstream-version}</version>
 		</dependency>
 #end
 	</dependencies>

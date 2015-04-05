@@ -38,7 +38,7 @@ class ConsumerEjbTmpl {
 	def String messageBeanInterceptors(Consumer it) {
 		'''
 		@javax.interceptor.Interceptors({
-		«fw("errorhandling.ServiceContextStoreInterceptor")».class,
+		«fw("context.ServiceContextStoreInterceptor")».class,
 			«fw("errorhandling.ErrorHandlingInterceptor")».class«IF jpa()»,
 			«module.getJpaFlushEagerInterceptorClass()».class}«ENDIF»)
 		'''

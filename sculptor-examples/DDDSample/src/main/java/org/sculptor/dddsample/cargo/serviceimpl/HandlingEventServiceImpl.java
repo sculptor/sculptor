@@ -13,7 +13,7 @@ import org.sculptor.dddsample.carrier.exception.CarrierMovementNotFoundException
 import org.sculptor.dddsample.location.domain.Location;
 import org.sculptor.dddsample.location.domain.UnLocode;
 import org.sculptor.dddsample.location.exception.LocationNotFoundException;
-import org.sculptor.framework.errorhandling.ServiceContext;
+import org.sculptor.framework.context.ServiceContext;
 import org.springframework.stereotype.Service;
 
 /**

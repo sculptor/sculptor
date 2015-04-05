@@ -21,11 +21,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.drools.agent.KnowledgeAgent;
-import org.drools.agent.KnowledgeAgentFactory;
 import org.drools.core.util.DroolsStreamUtils;
-import org.drools.definition.KnowledgePackage;
-import org.drools.io.ResourceFactory;
+import org.kie.internal.agent.KnowledgeAgent;
+import org.kie.internal.agent.KnowledgeAgentFactory;
+import org.kie.internal.definition.KnowledgePackage;
+import org.kie.internal.io.ResourceFactory;
 
 public class DroolsCompiler {
 

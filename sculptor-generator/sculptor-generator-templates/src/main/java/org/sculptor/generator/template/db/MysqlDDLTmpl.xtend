@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.db
 
 import java.util.Set
@@ -77,7 +76,7 @@ def String ddl(Application it) {
 
 def String dropSequence(Application it) {
 	'''
-	«IF (applicationServer() == "jboss" && isJpaProviderHibernate()) || isJpaProviderHibernate4()»
+	«IF applicationServer == "jboss" || jpaProviderHibernate»
 		DROP TABLE IF EXISTS hibernate_sequence;
 	«ENDIF»
 	'''
@@ -85,7 +84,7 @@ def String dropSequence(Application it) {
 
 def String createSequence(Application it) {
 	'''
-	«IF (applicationServer() == "jboss" && isJpaProviderHibernate()) || isJpaProviderHibernate4()»
+	«IF applicationServer == "jboss" || jpaProviderHibernate»
 		CREATE TABLE hibernate_sequence(next_val BIGINT);
 	«ENDIF»
 	'''

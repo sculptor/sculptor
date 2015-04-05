@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL Tests
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.0.6
+Bundle-Version: 3.1.0
 Bundle-SymbolicName: org.sculptor.dsl.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.sculptor.dsl,
@@ -11,7 +11,8 @@ Require-Bundle: org.sculptor.dsl,
  org.eclipse.xtext.junit4,
  org.eclipse.ui.workbench;resolution:=optional,
  org.eclipse.xtend2.lib,
- org.eclipselabs.xtext.utils.unittesting
+ org.eclipselabs.xtext.utils.unittesting,
+ org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j,
  org.junit;version="4.5.0",
  org.junit.runner;version="4.5.0",
@@ -20,5 +21,5 @@ Import-Package: org.apache.log4j,
  org.junit.runners;version="4.5.0",
  org.junit.runners.model;version="4.5.0",
  org.hamcrest.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.sculptor.dsl

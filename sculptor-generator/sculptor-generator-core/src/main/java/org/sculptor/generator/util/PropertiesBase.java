@@ -150,7 +150,6 @@ public class PropertiesBase {
 			if (!getProperty("jpa.provider").equals("hibernate")) {
 				defaultConfiguration.setBoolean("generate.hibernate", false);
 				defaultConfiguration.setString("datetime.library", "java");
-				errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 			}
 		}
 	}
@@ -164,15 +163,7 @@ public class PropertiesBase {
 		defaultConfiguration.setString("javaType.IDTYPE", "String");
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("jpa.provider", "none");
-		defaultConfiguration.setString("jpa.version", "none");
 		defaultConfiguration.setBoolean("generate.ddl", false);
-		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
-	}
-
-	private void errorHandlingInterceptorWithoutHibernateDependency(MutableConfigurationProvider defaultConfiguration) {
-		// for ejb3
-		defaultConfiguration.setString("framework.errorhandling.ErrorHandlingInterceptor",
-				"org.sculptor.framework.errorhandling.ErrorHandlingInterceptor2");
 	}
 
 	private void initDerivedDefaultsWithoutPersistence(MutableConfigurationProvider defaultConfiguration) {
@@ -193,7 +184,6 @@ public class PropertiesBase {
 				"org.sculptor.framework.accessimpl.todo.AccessBase");
 		defaultConfiguration.setString("framework.accessimpl.AccessBaseWithException",
 				"org.sculptor.framework.accessimpl.todo.BaseWithException");
-		errorHandlingInterceptorWithoutHibernateDependency(defaultConfiguration);
 	}
 
 	private void initDerivedDefaultsForPureEjb3(MutableConfigurationProvider defaultConfiguration) {
@@ -208,7 +198,6 @@ public class PropertiesBase {
 	private void initDerivedDefaultsForAppengine(MutableConfigurationProvider defaultConfiguration) {
 		defaultConfiguration.setString("deployment.type", "war");
 		defaultConfiguration.setString("jpa.provider", "appengine");
-		defaultConfiguration.setString("jpa.version", "2.0");
 		defaultConfiguration.setBoolean("generate.ddl", false);
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("javaType.IDTYPE", "com.google.appengine.api.datastore.Key");
@@ -222,15 +211,10 @@ public class PropertiesBase {
 		defaultConfiguration.setString("javaType.DateTime", "org.joda.time.DateTime");
 		defaultConfiguration.setString("javaType.Timestamp", "org.joda.time.DateTime");
 
-		if ("hibernate3".equalsIgnoreCase(getProperty("jpa.provider"))) {
-			defaultConfiguration.setString("hibernateType.Date", "org.joda.time.contrib.hibernate.PersistentLocalDate");
-			defaultConfiguration.setString("hibernateType.DateTime", "org.joda.time.contrib.hibernate.PersistentDateTime");
-			defaultConfiguration.setString("hibernateType.Timestamp", "org.joda.time.contrib.hibernate.PersistentDateTime");
-		} else {
-			defaultConfiguration.setString("hibernateType.Date", "org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
-			defaultConfiguration.setString("hibernateType.DateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
-			defaultConfiguration.setString("hibernateType.Timestamp", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
-		}
+		defaultConfiguration.setString("hibernateType.Date", "org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
+		defaultConfiguration.setString("hibernateType.DateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+		defaultConfiguration.setString("hibernateType.Timestamp", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+
 		defaultConfiguration
 				.setString(
 						"propertyEditor.Date",
@@ -334,7 +318,7 @@ public class PropertiesBase {
 	}
 
 	public String getServiceContextClass() {
-		return fw("errorhandling.ServiceContext");
+		return fw("context.ServiceContext");
 	}
 
 	public String getDbProduct() {

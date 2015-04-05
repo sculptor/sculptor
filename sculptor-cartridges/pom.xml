@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.6</version>
+		<version>3.1.0</version>
 	</parent>
 	<artifactId>sculptor-cartridges</artifactId>
 	<packaging>pom</packaging>
@@ -14,6 +14,7 @@
 	<modules>
 		<module>sculptor-cartridge-builder</module>
 		<module>sculptor-cartridge-mongodb</module>
+		<module>sculptor-cartridge-springdatajpa</module>
 	</modules>
 
 	<build>

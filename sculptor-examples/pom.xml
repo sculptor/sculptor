@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
-		<version>3.0.6</version>
+		<version>3.1.0</version>
 	</parent>
 	<artifactId>sculptor-examples</artifactId>
 	<packaging>pom</packaging>
@@ -17,5 +17,8 @@
 		<module>DDDSample</module>
 		<module>mongodb-samples</module>
 		<module>eda-samples</module>
+		<module>ejb-example</module>
+		<module>springboot-example</module>
+		<module>springdatajpa-example</module>
 	</modules>
 </project>

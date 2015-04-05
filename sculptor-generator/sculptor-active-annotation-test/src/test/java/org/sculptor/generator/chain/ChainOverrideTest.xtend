@@ -18,6 +18,7 @@ package org.sculptor.generator.chain
 
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import org.eclipse.xtend.lib.macro.services.Problem.Severity
 import org.junit.Ignore
 import org.junit.Test
 
@@ -81,9 +82,7 @@ class ChainOverrideTest {
 			assertNotNull(tmplClazz)
 			assertMethodInfo('Dispatch method renamed', tmplClazz, ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
 			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
-			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
-			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Integer)))
-			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Integer)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(int)))
 			assertMethodInfo('Dispatch method renamed', tmplClazz, 'doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Object)))
 			
 			val overrideClazz = findClass('ChainOverrideTestTemplateOverride')
@@ -96,7 +95,7 @@ class ChainOverrideTest {
 			assertMethodInfo("", overrideClazz, "_getOverridesDispatchArray", Visibility::PUBLIC)
 		]
 	}
-	
+
 	@Test
 	def void testNoOverrideKeyword() {
 		'''
@@ -154,22 +153,40 @@ class ChainOverrideTest {
 		'''.compile[]
 	}
 
-	@Test(expected=typeof(RuntimeException))
+	@Test
 	def void testNoExtendedClass() {
 		'''
 			@org.sculptor.generator.chain.ChainOverride
 			class ChainOverrideTestTemplateOverride {
 			}
-		'''.compile[]
+		'''.compile[
+				val extension ctx = transformationContext
+
+				 // Check the AST if the annotated class has the error problem
+				val clazz = findClass('ChainOverrideTestTemplateOverride')
+				assertNotNull(clazz)
+				assertEquals(1, clazz.problems.size)
+				val problem = clazz.problems.get(0)
+				assertEquals(Severity.ERROR, problem.severity)
+			]
 	}
 
-	@Test(expected=typeof(RuntimeException))
+	@Test
 	def void testUndeclaredExtendedClass() {
 		'''
 			@org.sculptor.generator.chain.ChainOverride
 			class ChainOverrideTestTemplateOverride extends Undeclared {
 			}
-		'''.compile[]
+		'''.compile[
+				val extension ctx = transformationContext
+
+				 // Check the AST if the annotated class has the error problem
+				val clazz = findClass('ChainOverrideTestTemplateOverride')
+				assertNotNull(clazz)
+				assertEquals(1, clazz.problems.size)
+				val problem = clazz.problems.get(0)
+				assertEquals(Severity.ERROR, problem.severity)
+			]
 	}
 
 	@Test

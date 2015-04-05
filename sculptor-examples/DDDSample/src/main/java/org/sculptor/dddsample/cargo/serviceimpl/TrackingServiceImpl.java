@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.sculptor.dddsample.cargo.domain.Cargo;
 import org.sculptor.dddsample.cargo.domain.TrackingId;
 import org.sculptor.dddsample.cargo.exception.CargoNotFoundException;
-import org.sculptor.framework.errorhandling.ServiceContext;
+import org.sculptor.framework.context.ServiceContext;
 import org.springframework.stereotype.Service;
 
 /**

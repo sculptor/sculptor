@@ -24,6 +24,11 @@ import com.google.apphosting.api.ApiProxy;
 public class SimpleAppEngineTestEnvironment implements ApiProxy.Environment {
 
 	@Override
+	public String getModuleId() {
+		return "test";
+	}
+
+	@Override
 	public String getAppId() {
         return "test";
     }

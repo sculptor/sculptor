@@ -13,14 +13,22 @@
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+
+		<java-version>1.7</java-version>
+		<maven.compiler.source>${java-version}</maven.compiler.source>
+		<maven.compiler.target>${java-version}</maven.compiler.target>
+
 		<sculptor-version>${project.version}</sculptor-version>
+		<jboss-javaee6-version>${jboss-javaee6-version}</jboss-javaee6-version>
 	    <hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
 		<slf4j-version>${slf4j-version}</slf4j-version>
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
 		<aspectj-version>${aspectj-version}</aspectj-version>
+		<joda-time-version>${joda-time-version}</joda-time-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
+		<junit-version>${junit-version}</junit-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 #end
@@ -42,27 +50,43 @@
 #end
 	</modules>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
-					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-
+#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>\${spring-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<!-- Despite of the BOM POM do we have to keep spring-core from using commons-logging -->
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>\${spring-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.spec</groupId>
+				<artifactId>jboss-javaee-6.0</artifactId>
+				<version>\${jboss-javaee6-version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+#end
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>\${junit-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

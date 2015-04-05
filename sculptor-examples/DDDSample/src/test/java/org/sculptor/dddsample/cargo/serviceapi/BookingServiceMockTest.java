@@ -17,8 +17,8 @@ import org.sculptor.dddsample.cargo.serviceimpl.BookingServiceImpl;
 import org.sculptor.dddsample.location.domain.LocationRepository;
 import org.sculptor.dddsample.location.domain.UnLocode;
 import org.sculptor.dddsample.location.serviceimpl.LocationServiceImpl;
-import org.sculptor.framework.errorhandling.JUnitServiceContextFactory;
-import org.sculptor.framework.errorhandling.ServiceContext;
+import org.sculptor.framework.context.JUnitServiceContextFactory;
+import org.sculptor.framework.context.ServiceContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class BookingServiceMockTest extends TestCase {

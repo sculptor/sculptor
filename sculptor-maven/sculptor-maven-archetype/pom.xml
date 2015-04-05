@@ -4,16 +4,12 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-maven</artifactId>
-		<version>3.0.6</version>
+		<version>3.1.0</version>
 	</parent>
 	<artifactId>sculptor-maven-archetype</artifactId>
 	<packaging>maven-archetype</packaging>
 	<name>Sculptor :: Maven :: Archetype for business tier</name>
 	<description>Maven archetype for a business tier project using the Sculptor code generator</description>
-
-	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-	</properties>
 
 	<build>
 		<extensions>
@@ -28,17 +24,33 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>archetype-resources/pom.xml</include>
+					<include>**/pom.xml</include>
 				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 				<excludes>
-					<exclude>archetype-resources/pom.xml</exclude>
+					<exclude>**/pom.xml</exclude>
 				</excludes>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/pom.xml</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/pom.xml</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
 		<pluginManagement>
 			<plugins>
 				<plugin>

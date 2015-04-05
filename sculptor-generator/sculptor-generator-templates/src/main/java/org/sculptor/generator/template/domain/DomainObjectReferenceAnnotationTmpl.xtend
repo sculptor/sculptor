@@ -84,8 +84,8 @@ def String oneReferenceGetterAnnotations(Reference it) {
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
 			«oneReferenceValidationAnnotations(it)»
 		«ENDIF»
-		«ENDIF»
-		«IF it.isXmlElementToBeGenerated()»
+	«ENDIF»
+	«IF it.isXmlElementToBeGenerated()»
 		«xmlElementAnnotation(it)»
 	«ENDIF»
 	'''
@@ -93,7 +93,7 @@ def String oneReferenceGetterAnnotations(Reference it) {
 
 def String oneReferenceJpaAnnotations(Reference it) {
 	'''
-	«IF isJpaAnnotationToBeGenerated() && (from.isPersistent() || (isJpa2() && from.isEmbeddable()))»
+	«IF isJpaAnnotationToBeGenerated() && (from.isPersistent() || (jpa && from.isEmbeddable()))»
 		«IF transient»
 			@javax.persistence.Transient
 		«ELSE»
@@ -102,7 +102,7 @@ def String oneReferenceJpaAnnotations(Reference it) {
 			«ELSEIF it.isEnumReference()»
 				«enumJpaAnnotation(it)»
 			«ELSE»
-				«IF isJpa2() || (hasOwnDatabaseRepresentation(from) && hasOwnDatabaseRepresentation(to))»
+				«IF hasOwnDatabaseRepresentation(from) && hasOwnDatabaseRepresentation(to)»
 					«IF it.isOneToOne()»
 						«oneToOneJpaAnnotation(it)»
 					«ELSE»
@@ -127,9 +127,6 @@ def String oneReferenceJpaAnnotations(Reference it) {
 def String oneReferenceOnDeleteJpaAnnotation(Reference it) {
 	'''
 		«/* use orphanRemoval in JPA2 */»
-		«IF isJpa1() && isJpaProviderHibernate() && it.hasOpposite() && isDbOnDeleteCascade(opposite)»
-			@org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-		«ENDIF»
 	'''
 }
 
@@ -148,7 +145,7 @@ def String basicTypeJpaAnnotation(Reference it) {
 					elem.map[e | attributeOverride(e, it.getDatabaseName(), "", nullable)].join(",")
 				}»
 			})
-				«IF isJpa2() && it.isAssociationOverrideNeeded()»
+				«IF it.isAssociationOverrideNeeded()»
 					/* TODO: not sufficient if embeddable is used in more than one entity */
 					@javax.persistence.AssociationOverrides({
 						    «it.to.references.filter(e | !e.isBasicTypeReference() && !e.isEnumReference()).map[e | associationOverride(e, from.getDatabaseName(), nullable)].join(",")»
@@ -194,19 +191,15 @@ def String nonOrdinaryEnumTypeAnnotation(Reference it) {
 def String hibernateEnumTypeAnnotation(Reference it) {
 	'''
 		«val ^enum = it.getEnum()»
-		«IF isJpa1()»
-			@org.hibernate.annotations.Type(type="«enum.name»")
-		«ELSE»
-			«val INTEGER = 4»
-			@org.hibernate.annotations.Type(
-			type="«it.getApplicationBasePackage()».util.EnumUserType",
-			parameters = {
-				@org.hibernate.annotations.Parameter(name = "enumClass", value = "«enum.getDomainObjectTypeName()»")
-				«IF (!enum.isOfTypeString())»
-				, @org.hibernate.annotations.Parameter(name = "type", value = "«INTEGER»")
-				«ENDIF»
-				})
-		«ENDIF»
+		«val INTEGER = 4»
+		@org.hibernate.annotations.Type(
+		type="«it.getApplicationBasePackage()».util.EnumUserType",
+		parameters = {
+			@org.hibernate.annotations.Parameter(name = "enumClass", value = "«enum.getDomainObjectTypeName()»")
+			«IF (!enum.isOfTypeString())»
+			, @org.hibernate.annotations.Parameter(name = "type", value = "«INTEGER»")
+			«ENDIF»
+			})
 	'''
 }
 
@@ -223,7 +216,7 @@ def String oneToOneJpaAnnotation(Reference it) {
 			@javax.persistence.JoinColumn(
 			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 				!isJpaProviderOpenJpa() && !nullable, "nullable", false,
-				it.isSimpleNaturalKey() && (isJpa2() || isJpaProviderHibernate()), "unique", "true"
+				it.isSimpleNaturalKey(), "unique", "true"
 			))»)
 			«IF isJpaProviderHibernate()»
 				@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.getDatabaseName(), it.getDatabaseName())»")
@@ -245,11 +238,11 @@ def String manyToOneJpaAnnotation(Reference it) {
 		«IF !it.hasOpposite() || !opposite.isList()»
 			@javax.persistence.JoinColumn(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 				!isJpaProviderOpenJpa() && !nullable, "nullable", false,
-				it.isSimpleNaturalKey() && (isJpa2() || isJpaProviderHibernate()), "unique", "true"
+				it.isSimpleNaturalKey(), "unique", "true"
 			))»)
 			«IF isJpaProviderHibernate()»
 				«/* TODO: set databasename for embeddables (basictype) to avoid this case handling ? */»
-				«IF isJpa2() && from.isEmbeddable()»
+				«IF from.isEmbeddable()»
 					@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.name.toUpperCase(), it.getDatabaseName())»")
 				«ELSE»
 					@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.getDatabaseName(), it.getDatabaseName())»")
@@ -260,7 +253,7 @@ def String manyToOneJpaAnnotation(Reference it) {
 			«ELSEIF isJpaProviderOpenJpa()»
 				«/* OpenJPA delete parent/child in an incorrect order */»
 				«/* TODO: watch issue OPENJPA-1936 */»
-				«IF isJpa2() && from.isEmbeddable()»
+				«IF from.isEmbeddable()»
 					@org.apache.openjpa.persistence.jdbc.ForeignKey(
 						name = "FK_«truncateLongDatabaseName(from.name.toUpperCase(), it.getDatabaseName())»",
 						deleteAction=org.apache.openjpa.persistence.jdbc.ForeignKeyAction.NULL)
@@ -385,14 +378,14 @@ def String manyReferenceJpaAnnotations(Reference it) {
 	'''
 	«IF isJpaAnnotationToBeGenerated() && from.isPersistent()»
 		«IF !transient»
-			«IF (hasOwnDatabaseRepresentation(from) && hasOwnDatabaseRepresentation(to)) || (isJpa2() && hasOwnDatabaseRepresentation(to) && from.isEmbeddable())»
+			«IF (hasOwnDatabaseRepresentation(from) && hasOwnDatabaseRepresentation(to)) || (jpa && hasOwnDatabaseRepresentation(to) && from.isEmbeddable())»
 				«IF it.isOneToMany()»
 					«oneToManyJpaAnnotation(it)»
 				«ENDIF»
 				«IF it.isManyToMany()»
 					«manyToManyJpaAnnotation(it)»
 				«ENDIF»
-				«IF isJpa2() && it.isList() && it.hasHint("orderColumn")»
+				«IF it.isList() && it.hasHint("orderColumn")»
 					@javax.persistence.OrderColumn(name="«it.getListIndexColumnName()»")
 				«ENDIF»
 				«IF orderBy != null»
@@ -407,7 +400,7 @@ def String manyReferenceJpaAnnotations(Reference it) {
 				«IF isJpaProviderHibernate() && it.getHibernateCascadeType() != null»
 					@org.hibernate.annotations.Cascade(«it.getHibernateCascadeType()»)
 				«ENDIF»
-			«ELSEIF isJpa2() && ((hasOwnDatabaseRepresentation(from) && to.isEmbeddable()) ||
+			«ELSEIF ((hasOwnDatabaseRepresentation(from) && to.isEmbeddable()) ||
 				(from.isEmbeddable() && to.isEmbeddable()))»
 				«elementCollectionJpaAnnotation(it)»
 			«ENDIF»
@@ -445,12 +438,6 @@ def String oneToManyJpaAnnotation(Reference it) {
 				«IF isJpaProviderHibernate()»
 					@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.getDatabaseName(), to.getDatabaseName())»")
 				«ENDIF »
-		«ENDIF»
-		«IF isJpa1() && it.isList() && isJpaProviderHibernate()»
-			@org.hibernate.annotations.IndexColumn(name="«it.getListIndexColumnName()»")
-		«ENDIF»
-		«IF isJpa1() && isJpaProviderEclipseLink() && !to.isAggregateRoot()»
-			@org.eclipse.persistence.annotations.PrivateOwned
 		«ENDIF»
 	'''
 }

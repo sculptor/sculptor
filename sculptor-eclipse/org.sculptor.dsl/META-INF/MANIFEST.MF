@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.0.6
+Bundle-Version: 3.1.0
 Bundle-SymbolicName: org.sculptor.dsl;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
@@ -16,12 +16,19 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.antlr.runtime,
  org.eclipse.xtext.common.types,
  org.eclipse.emf.ecore;bundle-version="2.6.0",
- org.eclipse.emf.common
+ org.eclipse.emf.common,
+ org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.sculptor.dsl,org.sculptor.dsl.formatting,org.sculp
- tor.dsl.parser.antlr,org.sculptor.dsl.parser.antlr.internal,org.sculp
- tor.dsl.scoping,org.sculptor.dsl.sculptordsl,org.sculptor.dsl.sculpto
- rdsl.impl,org.sculptor.dsl.sculptordsl.util,org.sculptor.dsl.serializ
- er,org.sculptor.dsl.services,org.sculptor.dsl.validation
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.sculptor.dsl,
+ org.sculptor.dsl.formatting,
+ org.sculptor.dsl.parser.antlr,
+ org.sculptor.dsl.parser.antlr.internal,
+ org.sculptor.dsl.scoping,
+ org.sculptor.dsl.sculptordsl,
+ org.sculptor.dsl.sculptordsl.impl,
+ org.sculptor.dsl.sculptordsl.util,
+ org.sculptor.dsl.serializer,
+ org.sculptor.dsl.services,
+ org.sculptor.dsl.validation

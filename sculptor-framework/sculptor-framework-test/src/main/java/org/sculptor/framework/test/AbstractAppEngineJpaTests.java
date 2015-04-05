@@ -1,13 +1,13 @@
 /*
- * Copyright 2009 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,8 @@ import javax.persistence.Query;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.sculptor.framework.errorhandling.ServiceContext;
-import org.sculptor.framework.errorhandling.ServiceContextStore;
+import org.sculptor.framework.context.ServiceContext;
+import org.sculptor.framework.context.ServiceContextStore;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,7 +35,6 @@ import com.google.apphosting.api.ApiProxy.Environment;
  * Base class for spring-based tests in a Google App Engine environment.
  * 
  * @author Patrik Nordwall
- * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })

@@ -1,0 +1,39 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: headTag"></head>
+
+<body class="container">
+	<div th:replace="header :: navigation">Navigation</div>
+
+	<h2>New Planet</h2>
+	<form class="form-horizontal" action="#" th:action="@{/rest/planet}"
+		th:object="${entity}" method="post">
+		<div class="form-group">
+			<label class="col-sm-1 control-label" for="planet_name">Name</label>
+			<div class="col-sm-1">
+				<input type="text" class="form-control" id="planet_name"
+					placeholder="Planet Name" th:field="*{name}"
+					th:class="${#fields.hasErrors('name')}? fieldError" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-1 control-label" for="planet_diameter">Diameter</label>
+			<div class="col-sm-1">
+				<input type="text" class="form-control" id="planet_diameter"
+					th:field="*{diameter}"
+					th:class="${#fields.hasErrors('diameter')}? fieldError" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-1 col-sm-1">
+				<button class="btn btn-default" type="submit">Save</button>
+			</div>
+		</div>
+	</form>
+
+	<div th:replace="footer :: footer"></div>
+
+</body>
+</html>

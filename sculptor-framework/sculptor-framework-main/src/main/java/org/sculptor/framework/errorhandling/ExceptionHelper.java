@@ -3,6 +3,9 @@ package org.sculptor.framework.errorhandling;
 import java.io.Serializable;
 import java.sql.SQLException;
 
+import org.sculptor.framework.context.ServiceContext;
+import org.sculptor.framework.context.ServiceContextStore;
+
 public class ExceptionHelper {
 
     private ExceptionHelper() {

@@ -78,7 +78,7 @@ def String domainObjectAnnotations(DomainObject it) {
 				@javax.persistence.Table(name = "«it.getDatabaseName()»"«IF it.hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
 			«ENDIF»
 			«domainObjectInheritanceAnnotations(it)»
-			«IF isJpa2() && cache»
+			«IF cache»
 				@javax.persistence.Cacheable
 			«ENDIF»
 			«IF isJpaProviderHibernate() && cache»
@@ -104,17 +104,17 @@ def dispatch String domainObjectBaseAnnotations(DataTransferObject it) {
 
 def dispatch String domainObjectBaseAnnotations(DomainObject it) {
 	'''
-		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && (it.getValidationEntityListener() != null || it.getAuditEntityListener() != null)»
-		«jpaEntityListenersAnnotation(it)»
+		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && it.getAuditEntityListener() != null»
+			«jpaEntityListenersAnnotation(it)»
 		«ENDIF»
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
-		«it.getValidationAnnotations()»
+			«it.getValidationAnnotations()»
 		«ENDIF»
 		«IF !gapClass && it.isXmlRootToBeGenerated()»
-		«xmlRootAnnotation(it)»
+			«xmlRootAnnotation(it)»
 		«ENDIF»
 		«IF !gapClass && isXstreamAnnotationToBeGenerated()»
-		«xstreamAliasAnnotation(it)»
+			«xstreamAliasAnnotation(it)»
 		«ENDIF»
 	'''
 }
@@ -127,13 +127,12 @@ def String xstreamAliasAnnotation(DomainObject it) {
 	'''@com.thoughtworks.xstream.annotations.XStreamAlias("«it.getXStreamAliasName()»")'''
 }
 
-/* set EntityListerners for Validation and Audit */
+/* set EntityListeners for Audit */
 /* TODO: optimize this quick solution */
 def String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
 		@javax.persistence.EntityListeners({
-		«formatAnnotationParameters(<Object>newArrayList(it.getValidationEntityListener() != null && !isJpa2(), "", it.getValidationEntityListener() + ".class",
-			it.getAuditEntityListener() != null, "", it.getAuditEntityListener() + ".class"))»})
+		«formatAnnotationParameters(<Object>newArrayList(it.getAuditEntityListener() != null, "", it.getAuditEntityListener() + ".class"))»})
 	'''
 }
 
@@ -153,13 +152,6 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 			«ENDIF»
 		«ELSEIF it.isInheritanceTypeJoined()»
 			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.JOINED)
-			«IF !isJpa2() && isJpaProviderEclipseLink()»
-				«/* EclipseLink needs discriminator */»
-				@javax.persistence.DiscriminatorColumn(name="DTYPE", discriminatorType=DiscriminatorType.STRING, length=21)
-				«IF !^abstract»
-				@javax.persistence.DiscriminatorValue("«name»")
-				«ENDIF»
-			«ENDIF»
 		«ENDIF»
 	«ENDIF»
 	«IF it.hasSuperClass()»
@@ -172,9 +164,6 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 			«IF isJpaProviderHibernate()»
 				@org.hibernate.annotations.ForeignKey(
 					name = "FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»")
-			«ELSEIF !isJpa2() && isJpaProviderEclipseLink()»
-				«/* EclipseLink needs discriminator */»
-				@javax.persistence.DiscriminatorValue("«name»")
 			«ENDIF»
 		«ENDIF»
 	«ENDIF»

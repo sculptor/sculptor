@@ -17,6 +17,9 @@
 
 package org.sculptor.framework.errorhandling;
 
+import org.sculptor.framework.context.ServiceContext;
+import org.sculptor.framework.context.ServiceContextStore;
+
 /**
  * This class is intended to be used as parameter when logging. The purpose is
  * to format (toString) the log message, which consists of error code and free

@@ -11,9 +11,9 @@ import org.sculptor.dddsample.cargo.domain.Itinerary;
 public class DeleteOrphanItineraryAccessImpl extends DeleteOrphanItineraryAccessImplBase {
     @SuppressWarnings("unchecked")
     public void performExecute() {
-    	List<Itinerary> orphans = getJpaTemplate().find("from Itinerary where cargo = null");
+    	List<Itinerary> orphans = getEntityManager().createQuery("from Itinerary where cargo = null").getResultList();
         for (Itinerary orphan : orphans) {
-        	getJpaTemplate().remove(orphan);
+        	getEntityManager().remove(orphan);
         }
     }
 }

@@ -27,7 +27,7 @@ import org.sculptor.examples.library.person.exception.PersonNotFoundException;
 import org.junit.Test;
 import org.sculptor.examples.library.person.domain.Person;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
-import org.sculptor.framework.accessimpl.jpa2.JpaHelper;
+import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.domain.PagedResult;
 import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;

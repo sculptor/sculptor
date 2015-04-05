@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-
-<!--
- <copyright>
- </copyright>
-
- $Id: plugin.xml,v 1.1 2007/01/11 20:42:01 patrik_nordwall Exp $
--->
-
 <plugin>
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://sculptor.org/sculptor" 
        class = "sculptormetamodel.SculptormetamodelPackage"
-       genModel = "model/sculptormetamodel.genmodel" /> 
+       genModel = "model/sculptormetamodel.xcore" /> 
   </extension>
 
 </plugin>

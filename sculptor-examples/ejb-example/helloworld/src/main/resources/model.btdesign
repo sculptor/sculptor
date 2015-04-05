@@ -1,0 +1,43 @@
+Application Universe {
+	basePackage=org.sculptor.example.ejb.helloworld
+
+	Module milkyway {
+
+		Entity Planet {
+			scaffold
+			String name key;
+			String message;
+
+			Repository PlanetRepository {
+			}
+
+		}
+
+		Consumer PlanetConsumer {
+			inject @PlanetRepository
+			queueName=queue/addPlanet
+		}
+
+		Service PlanetFacade {
+			hint="notLocal"
+			sayHello => InternalPlanetService.sayHello;
+		}
+
+		Service InternalPlanetService {
+			hint="notRemote"
+			String sayHello;
+		}
+
+		Service PlanetWebService {
+			webservice
+			inject @PlanetRepository
+			List<@PlanetDto> getAllPlanets;
+		}
+
+		DataTransferObject PlanetDto {
+			String name required
+		}
+
+	}
+
+}

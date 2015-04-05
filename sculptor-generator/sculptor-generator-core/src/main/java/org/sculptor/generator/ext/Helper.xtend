@@ -549,6 +549,10 @@ class Helper {
 		domainObject.immutable
 	}
 
+	def boolean isReadOnly(Operation op) {
+		(op.hasHint("readOnly") || op.name.startsWith("get") || op.name.startsWith("find"))
+	}
+
 	def Collection<Repository> getDelegateRepositories(Service service) {
 		val reps = service.operations.filter[op | op.delegate != null].map[op | op.delegate.repository].toList
 		reps.addAll(service.repositoryDependencies)
@@ -937,23 +941,6 @@ class Helper {
 		!ref.many && ref.to instanceof ValueObject
 	}
 
-	def List<String> getEntityListeners(DomainObject domainObject) {
-		var List<String> list = newArrayList()
-		if (domainObject instanceof Entity || domainObject instanceof ValueObject)
-			list.add(validationEntityListener())
-		else
-			list = null
-
-		list
-	}
-
-	def String getValidationEntityListener(DomainObject domainObject) {
-		if (isValidationAnnotationToBeGenerated() && (domainObject instanceof Entity) || (domainObject instanceof ValueObject))
-			validationEntityListener()
-		else
-			null
-	}
-
 	def dispatch String getAuditEntityListener(DomainObject domainObject) {
 		null
 	}
@@ -1108,14 +1095,9 @@ class Helper {
 	def dispatch String extendsLitteral(Repository repository) {
 		val prop = defaultExtendsClass(repository.simpleMetaTypeName())
 		if (prop != '')
-			("extends " + prop)
+			"extends " + prop
 		else
-			if (!isSpringToBeGenerated())
-				""
-			else if (jpa())
-				"extends org.springframework.orm.jpa.support.JpaDaoSupport"
-			else
-				""
+			""
 	}
 
 	def dispatch String extendsLitteral(Service service) {
@@ -1182,7 +1164,7 @@ class Helper {
 		if (hasProperty("jpa.JpaFlushEagerInterceptor." + module.persistenceUnit))
 			getProperty("jpa.JpaFlushEagerInterceptor." + module.persistenceUnit)
 		else
-			fw("errorhandling.JpaFlushEagerInterceptor")
+			fw("persistence.JpaFlushEagerInterceptor")
 	}
 
 	def dispatch boolean validateNotNullInConstructor(NamedElement any) {
@@ -1423,7 +1405,7 @@ class Helper {
 	}
 
 	def boolean isQueryBased(RepositoryOperation op) {
-		isJpa2() && op.hasHint("query")
+		jpa && op.hasHint("query")
 	}
 
 	def boolean isConditionBased(RepositoryOperation op) {
@@ -1432,7 +1414,7 @@ class Helper {
 
 	// TODO: quick solution, it would be better to implement a new access strategy
 	def boolean useGenericAccessStrategy(RepositoryOperation op) {
-		isJpa2() &&
+		jpa &&
 				(op.name == "findAll" ||
 				 op.name == "findByQuery" ||
 				 op.name == "findByExample" ||
@@ -1443,7 +1425,7 @@ class Helper {
 	}
 
 	def boolean useTupleToObjectMapping(RepositoryOperation op) {
-		isJpa2() && (!op.hasHint("construct") && (op.hasHint("map") || op.isReturningDataTranferObject()))
+		jpa && (!op.hasHint("construct") && (op.hasHint("map") || op.isReturningDataTranferObject()))
 	}
 
 	def private boolean isReturningDataTranferObject(RepositoryOperation op) {

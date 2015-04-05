@@ -4,7 +4,7 @@
 
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
-	<version>3.0.6</version>
+	<version>3.1.0</version>
 	<packaging>pom</packaging>
 	<name>Sculptor</name>
 	<description>Sculptor is an open source productivity tool that applies the concepts
@@ -77,33 +77,44 @@
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 
-        <maven-version>3.0</maven-version>
-		<java-version>1.6</java-version>
+		<java-version>1.7</java-version>
+		<maven-version>3.0</maven-version>
+		<maven.compiler.source>${java-version}</maven.compiler.source>
+		<maven.compiler.target>${java-version}</maven.compiler.target>
 
-		<eclipse-release>kepler</eclipse-release>
-		<tycho-version>0.21.0</tycho-version>
-		<xtext-version>2.6.2</xtext-version>
+		<eclipse-release>luna</eclipse-release>
+		<tycho-version>0.22.0</tycho-version>
+
+		<xtext-version>2.8.1</xtext-version>
+		<ecore-xtext-version>1.1.1</ecore-xtext-version>
+		<ecore-xcore-version>1.2.2</ecore-xcore-version>
+		<ecore-xcore-lib-version>1.1.0</ecore-xcore-lib-version>
 		<guava-version>14.0</guava-version>
 		<guice-version>3.0</guice-version>
-		<slf4j-version>1.7.7</slf4j-version>
-		<logback-version>1.1.2</logback-version>
 
-		<aspectj-version>1.7.4</aspectj-version>
-		<spring-version>3.2.10.RELEASE</spring-version>
-		<spring-integration-version>2.2.6.RELEASE</spring-integration-version>
-		<hibernate-version>4.2.15.Final</hibernate-version>
-	    <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
-		<validation-version>1.0.0.GA</validation-version>
-		<!-- We have to stay with GAE version 1.8.1 here because this is the last version which supports Java 6 -->
-		<appengine-version>1.8.1</appengine-version>
-		<drools-version>5.5.0.Final</drools-version>
-		<camel-version>2.12.2</camel-version>
-		<mongodb-version>2.11.3</mongodb-version>
-		<joda-time-version>2.3</joda-time-version>
-		<jackson-version>2.3.4</jackson-version>
+		<spring-version>4.1.6.RELEASE</spring-version>
+		<spring-integration-version>4.1.2.RELEASE</spring-integration-version>
+		<spring-data-jpa-version>1.7.2.RELEASE</spring-data-jpa-version>
+		<spring-boot-version>1.2.3.RELEASE</spring-boot-version>
+
+		<aspectj-version>1.8.5</aspectj-version>
+		<slf4j-version>1.7.12</slf4j-version>
+		<logback-version>1.1.3</logback-version>
+		<!-- We are using the Java EE 6 API provided by JBoss due to the missing implementation classes in Sun/Oracle JARs -->
+		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
+		<!-- We have to stay with Hibernate 4.2 due to JPA 2.1 API dependency of newer version -->
+		<hibernate-version>4.2.18.Final</hibernate-version>
+		<hibernate-validator-version>4.3.2.Final</hibernate-validator-version>
+		<appengine-version>1.9.18</appengine-version>
+		<mongodb-version>2.11.4</mongodb-version>
+		<drools-version>6.1.0.Final</drools-version>
+		<camel-version>2.14.1</camel-version>
+		<activemq-version>5.10.0</activemq-version>
+		<joda-time-version>2.7</joda-time-version>
+		<jackson-version>2.4.4</jackson-version>
 		<xstream-version>1.4.7</xstream-version>
 
-		<junit-version>4.11</junit-version>
+		<junit-version>4.12</junit-version>
 		<hsqldb-version>2.3.2</hsqldb-version>
 
 		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse>
@@ -285,31 +296,27 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.6</version>
+					<version>2.7</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.6.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
-					<configuration>
-						<source>${java-version}</source>
-						<target>${java-version}</target>
-					</configuration>
+					<version>3.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>1.3.1</version>
+					<version>1.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.17</version>
+					<version>2.18.1</version>
 					<configuration>
 						<argLine>-Xms32m -Xmx1024m</argLine>
 					</configuration>
@@ -317,22 +324,22 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.17</version>
+					<version>2.18.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.1</version>
+					<version>2.5.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.8</version>
+					<version>2.10</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.5.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -349,8 +356,31 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.6</version>
+					<configuration>
+						<failOnMissingWebXml>false</failOnMissingWebXml>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-ear-plugin</artifactId>
+					<version>2.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-ejb-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jboss.as.plugins</groupId>
+					<artifactId>jboss-as-maven-plugin</artifactId>
+					<version>7.6.Final</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.3</version>
+					<version>2.4</version>
 					<executions>
 						<!--
 						 ~ This workaround prevents Maven from executing the 'generate-sources' phase twice.
@@ -377,7 +407,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9.1</version>
+					<version>2.10.1</version>
 					<configuration>
 						<debug>false</debug>
 						<minmemory>128m</minmemory>
@@ -410,7 +440,7 @@
 				<plugin>
 					<groupId>external.atlassian.jgitflow</groupId>
 					<artifactId>jgitflow-maven-plugin</artifactId>
-					<version>1.0-m4</version>
+					<version>1.0-m4.3</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
@@ -428,7 +458,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.1</version>
+					<version>2.8.2</version>
 					<configuration>
 						<!-- Deployment is disabled because it's activated for certain projects only  -->
 						<skip>true</skip>
@@ -437,7 +467,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.5.1</version>
 					<configuration>
 						<mavenExecutorId>forked-path</mavenExecutorId>
 					</configuration>
@@ -445,7 +475,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.5</version>
+					<version>1.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -455,7 +485,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.3</version>
+					<version>3.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -465,22 +495,30 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.2.1</version>
+					<version>1.3.2</version>
+					<configuration>
+						<!--
+							to get rid of the warning: [WARNING] Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.
+							see: method execute() in https://github.com/ispringer/exec-maven-plugin/blob/master/src/main/java/org/codehaus/mojo/exec/ExecJavaMojo.java
+						-->
+						<killAfter>-1</killAfter>
+						<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.8</version>
+					<version>1.9.1</version>
 				</plugin>
 				<plugin>
-					<!-- make sure our code only has 1.6 dependencies -->
+					<!-- make sure our code only has 1.7 dependencies -->
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
-					<version>1.11</version>
+					<version>1.13</version>
 					<configuration>
 						<signature>
 							<groupId>org.codehaus.mojo.signature</groupId>
-							<artifactId>java16</artifactId>
+							<artifactId>java17</artifactId>
 							<version>1.0</version>
 						</signature>
 					</configuration>
@@ -497,8 +535,6 @@
 					<configuration>
 						<meminitial>128m</meminitial>
 						<maxmem>1g</maxmem>
-						<source>${java-version}</source>
-						<target>${java-version}</target>
 						<verbose>true</verbose>
 						<excludeResources>
 							<excludeResource>**/*.xtend</excludeResource>
@@ -556,7 +592,7 @@
 				<plugin>
 					<groupId>com.github.github</groupId>
 					<artifactId>site-maven-plugin</artifactId>
-					<version>0.9</version>
+					<version>0.11</version>
 					<!-- Deploying the p2 repository to a GitHub repository branch as described in
 						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
 					<configuration>
@@ -579,6 +615,58 @@
 					<groupId>org.eclipse.xtend</groupId>
 					<artifactId>xtend-maven-plugin</artifactId>
 					<version>${xtext-version}</version>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.eclipse.xtext</groupId>
+										<artifactId>xtext-maven-plugin</artifactId>
+										<versionRange>[2.6.0,)</versionRange>
+										<goals>
+											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>exec-maven-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>java</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.google.appengine</groupId>
+										<artifactId>appengine-maven-plugin</artifactId>
+										<versionRange>[1.9.0,)</versionRange>
+										<goals>
+											<goal>enhance</goal>
+											<goal>endpoints_get_discovery_doc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -645,10 +733,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
+				<artifactId>spring-framework-bom</artifactId>
 				<version>${spring-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<!-- Despite of the BOM POM do we have to keep spring-core from using commons-logging -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
 				<version>${spring-version}</version>
@@ -658,52 +749,6 @@
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-orm</artifactId>
-				<version>${spring-version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>javax.transaction</groupId>
-						<artifactId>jta</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-jdbc</artifactId>
-				<version>${spring-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-tx</artifactId>
-				<version>${spring-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context-support</artifactId>
-				<version>${spring-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-webmvc</artifactId>
-				<version>${spring-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-				<version>${spring-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${spring-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-oxm</artifactId>
-				<version>${spring-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.aspectj</groupId>
@@ -751,7 +796,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
-				<version>1.1</version>
+				<version>1.3</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -761,7 +806,7 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.6</version>
+				<version>1.10</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>
@@ -795,22 +840,9 @@
 				<version>${hsqldb-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>xerces</groupId>
-				<artifactId>xmlParserAPIs</artifactId>
-				<version>2.6.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>xerces</groupId>
-				<artifactId>xercesImpl</artifactId>
-				<version>2.6.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
 				<version>1.6.1</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -838,30 +870,16 @@
 				<version>${logback-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.transaction</groupId>
-				<artifactId>javax.transaction-api</artifactId>
-				<version>1.2</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.transaction</groupId>
-				<artifactId>jta</artifactId>
-				<version>1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>2.5</version>
+				<groupId>org.jboss.spec</groupId>
+				<artifactId>jboss-javaee-6.0</artifactId>
+				<version>${jboss-javaee6-version}</version>
+				<scope>import</scope>
+				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit-version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<version>${spring-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -873,13 +891,13 @@
 			<dependency>
 				<groupId>org.powermock</groupId>
 				<artifactId>powermock-module-junit4</artifactId>
-				<version>1.5.5</version>
+				<version>1.5.6</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
-				<version>1.9.5</version>
+				<version>1.10.17</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

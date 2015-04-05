@@ -160,8 +160,8 @@ def String gaeKeyIdPropertyEditor(DomainObject it) {
 
 def String serviceContext(Resource it) {
 	'''
-		protected «fw("errorhandling.ServiceContext")» serviceContext() {
-			return «fw("errorhandling.ServiceContextStore")».get();
+		protected «fw("context.ServiceContext")» serviceContext() {
+			return «fw("context.ServiceContextStore")».get();
 		}
 	'''
 }
@@ -427,9 +427,8 @@ def String handleSystemException(String it) {
 	'''
 }
 
-
-/* Extension point to generate more stuff in service implementation.
- * User AROUND resourceTmpl.resourceHook FOR Resource in SpecialCases.xpt
+/**
+ * Extension point to generate more stuff in resource base class implementation.
  */
 def String resourceHook(Resource it) {
 	'''

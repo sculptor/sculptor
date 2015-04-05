@@ -1,0 +1,265 @@
+/*
+ * Copyright 2014 The Sculptor Project Team, including the original 
+ * author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@Ecore(nsPrefix="sc", nsURI="http://sculptor.org/sculptor")
+@GenModel(modelDirectory="./src-gen", importerID="org.eclipse.emf.importer.ecore", complianceLevel="5.0")
+
+package sculptormetamodel
+
+abstract class NamedElement {
+	String name
+	String doc
+	String hint
+}
+
+class Application extends NamedElement {
+	String basePackage
+	contains Module[] modules opposite application
+}
+
+class Module extends NamedElement {
+	String basePackage
+	boolean external
+	String persistenceUnit
+	container Application application opposite modules
+	contains DomainObject[] domainObjects opposite module
+	contains Service[] services opposite module
+	contains Consumer[] consumers opposite module
+	contains Resource[] resources opposite module
+}
+
+abstract class DomainObject extends NamedElement {
+	contains Reference[] references opposite from
+	refers DomainObject ^extends
+	contains Attribute[] attributes
+	boolean ^abstract
+	contains Repository repository opposite aggregateRoot
+	container Module module opposite domainObjects
+	boolean optimisticLocking = "true"
+	boolean cache
+	String ^package
+	String databaseTable
+	String extendsName
+	String validate
+	boolean gapClass
+	refers Inheritance inheritance
+	String discriminatorColumnValue
+	boolean aggregateRoot = "true"
+	refers DomainObject belongsToAggregate
+	contains DomainObjectOperation[] operations opposite domainObject
+	refers Trait[] traits
+}
+
+class DomainObjectOperation extends Operation {
+	container DomainObject domainObject opposite operations
+	boolean ^abstract
+}
+
+class Service extends NamedElement {
+	contains ServiceOperation[] operations opposite service
+	refers Repository[] repositoryDependencies
+	container Module module opposite services
+	unique String[] otherDependencies
+	refers Service[] serviceDependencies
+	boolean gapClass
+	boolean webService
+	boolean remoteInterface = "true"
+	boolean localInterface = "true"
+	refers Subscribe subscribe
+}
+
+class ServiceOperation extends Operation {
+	container Service[1] service opposite operations
+	refers ServiceOperation serviceDelegate
+	refers RepositoryOperation delegate
+}
+
+class Repository extends NamedElement {
+	boolean gapClass
+	container DomainObject aggregateRoot opposite repository
+	contains RepositoryOperation[] operations opposite repository
+	refers Repository[] repositoryDependencies
+	unique String[] otherDependencies
+	refers Subscribe subscribe
+}
+
+class RepositoryOperation extends Operation {
+	boolean delegateToAccessObject = "false"
+	String accessObjectName
+	container Repository[1] repository opposite operations
+}
+
+class Reference extends NamedElement {
+	boolean many
+	String collectionType
+	refers Reference ^opposite
+	refers DomainObject[1] to
+	String cascade
+	String orderBy
+	String visibility
+	boolean changeable = "true"
+	container DomainObject from opposite references
+	boolean required
+	String fetch
+	boolean cache
+	boolean naturalKey
+	boolean inverse
+	boolean nullable
+	String databaseColumn
+	String validate
+	boolean ^transient
+	String databaseJoinTable
+	String databaseJoinColumn
+}
+
+class TypedElement extends NamedElement {
+	String ^type
+	String collectionType
+	String mapKeyType
+}
+
+class Attribute extends TypedElement {
+	boolean changeable = "true"
+	String databaseType
+	boolean nullable
+	boolean naturalKey
+	String visibility
+	boolean required
+	String length
+	boolean index
+	String databaseColumn
+	String validate
+	boolean ^transient
+}
+
+class DomainObjectTypedElement extends TypedElement {
+	refers DomainObject domainObjectType
+	refers DomainObject mapKeyDomainObjectType
+}
+
+class Operation extends DomainObjectTypedElement {
+	String ^throws
+	String visibility
+	contains Parameter[] parameters
+	refers Publish publish
+}
+
+class Parameter extends DomainObjectTypedElement {
+}
+
+class Entity extends DomainObject {
+	boolean auditable = "true"
+}
+
+class ValueObject extends DomainObject {
+	boolean immutable = "true"
+	boolean persistent = "true"
+}
+
+class BasicType extends ValueObject {
+}
+
+class Enum extends DomainObject {
+	contains EnumValue[] values
+	boolean ordinal
+}
+
+class EnumValue extends NamedElement {
+	contains EnumConstructorParameter[] parameters
+}
+
+class EnumConstructorParameter {
+	String value
+}
+
+class Inheritance {
+	String discriminatorColumnName
+	String discriminatorColumnLength
+	InheritanceType ^type
+	DiscriminatorType discriminatorType
+}
+
+enum InheritanceType {
+	SINGLE_TABLE
+	JOINED
+}
+
+enum DiscriminatorType {
+	STRING
+	CHAR
+	INTEGER
+}
+
+class DataTransferObject extends ValueObject {
+}
+
+class Trait extends DomainObject {
+}
+
+abstract class Event extends ValueObject {
+}
+
+class CommandEvent extends Event {
+}
+
+class DomainEvent extends Event {
+}
+
+class Consumer extends NamedElement {
+	container Module module opposite consumers
+	refers Repository[] repositoryDependencies
+	refers Service[] serviceDependencies
+	String channel
+	refers DomainObject messageRoot
+	unique String[] otherDependencies
+	refers Subscribe subscribe
+}
+
+class Publish {
+	String eventBus
+	String topic
+	refers Event eventType
+}
+
+class Subscribe {
+	String eventBus
+	String topic
+}
+
+class Resource extends NamedElement {
+	refers Service[] serviceDependencies
+	boolean gapClass
+	String path
+	contains ResourceOperation[] operations opposite resource
+	container Module module opposite resources
+}
+
+class ResourceOperation extends Operation {
+	container Resource resource opposite operations
+	String path
+	HttpMethod httpMethod
+	refers ServiceOperation delegate
+	String returnString
+}
+
+enum HttpMethod {
+	UNDEFINED
+	GET
+	POST
+	PUT
+	DELETE
+}

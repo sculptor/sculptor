@@ -1,0 +1,8 @@
+Application MyApp {
+    basePackage=archetype.it
+
+    Module mymodule {
+
+	}
+
+}

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import org.sculptor.dddsample.routing.domain.TransitEdge;
 import org.sculptor.dddsample.routing.domain.TransitPath;
-import org.sculptor.framework.errorhandling.ServiceContext;
+import org.sculptor.framework.context.ServiceContext;
 import org.springframework.stereotype.Service;
 
 /**

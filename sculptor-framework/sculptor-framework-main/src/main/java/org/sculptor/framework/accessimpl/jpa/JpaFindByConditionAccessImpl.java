@@ -17,16 +17,9 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.PersistenceException;
-
-import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.FindByConditionAccess;
-import org.sculptor.framework.domain.Property;
 
 
 /**
@@ -37,84 +30,24 @@ import org.sculptor.framework.domain.Property;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByConditionAccessImpl<T> extends JpaAccessBase<T> implements FindByConditionAccess<T> {
+public class JpaFindByConditionAccessImpl<T>
+    extends JpaFindByConditionAccessImplGeneric<T,T>
+    implements FindByConditionAccess<T> {
 
-    private List<ConditionalCriteria> cndCriterias=new ArrayList<ConditionalCriteria>();
-    private Set<String> fetchAssociations = new HashSet<String>();
-    private int firstResult = -1;
-    private int maxResult = 0;
-    private List<T> result;
-	private Property<?>[] fetchEager;
-
-    public JpaFindByConditionAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+    public JpaFindByConditionAccessImpl() {
+        super();
     }
 
-    public void setCondition(List<ConditionalCriteria> criteria) {
-		cndCriterias=criteria;
-	}
-
-	public void addCondition(ConditionalCriteria criteria) {
-		cndCriterias.add(criteria);
-	}
-
-    public void setFetchAssociations(Set<String> associationPaths) {
-        this.fetchAssociations = associationPaths;
+    public JpaFindByConditionAccessImpl(Class<T> type) {
+        super(type);
     }
-
-    public void addFetchAssociation(String associationPath) {
-        this.fetchAssociations.add(associationPath);
-    }
-
-    protected Set<String> getFetchAssociations() {
-        return fetchAssociations;
-    }
-
-    protected int getFirstResult() {
-        return firstResult;
-    }
-
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
-
-    protected int getMaxResult() {
-        return maxResult;
-    }
-
-    public void setMaxResult(int maxResult) {
-        this.maxResult = maxResult;
-    }
-
-	public void setFetchEager(Property<?>[] fetchEager) {
-		this.fetchEager = fetchEager;
-	}
-
-	public Property<?>[] getFetchEager() {
-		return fetchEager;
-	}
 
     public List<T> getResult() {
-        return this.result;
+        return getListResult();
     }
-
-    @Override
-    public void performExecute() throws PersistenceException {
-    	// JPA 2.0 will contain criteria API similar to Hibernate criteria API
-    	// Till then we can't support this
-        throw new UnsupportedOperationException("FindByCondition is not supported.");
-    }
-
-	public Long getResultCount() {
-    	// JPA 2.0 will contain criteria API similar to Hibernate criteria API
-    	// Till then we can't support this
-        throw new UnsupportedOperationException("FindByCondition is not supported.");
-	}
 
 	@Override
 	public void executeCount() {
-    	// JPA 2.0 will contain criteria API similar to Hibernate criteria API
-    	// Till then we can't support this
-        throw new UnsupportedOperationException("FindByCondition is not supported.");
+		executeResultCount();
 	}
 }

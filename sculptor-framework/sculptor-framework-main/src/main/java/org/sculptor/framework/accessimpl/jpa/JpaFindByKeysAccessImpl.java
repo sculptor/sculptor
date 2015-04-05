@@ -17,15 +17,6 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.PersistenceException;
-
-import org.apache.commons.beanutils.PropertyUtils;
 import org.sculptor.framework.accessapi.FindByKeysAccess;
 
 
@@ -38,101 +29,19 @@ import org.sculptor.framework.accessapi.FindByKeysAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByKeysAccessImpl<T> extends JpaAccessBase<T> implements FindByKeysAccess<T> {
+public class JpaFindByKeysAccessImpl<T>
+    extends JpaFindByKeysAccessImplGeneric<T,T>
+    implements FindByKeysAccess<T> {
 
-
-    private String keyPropertyName;
-    private String restrictionPropertyName;
-    private Set<?> keys;
-    private Map<Object, T> result;
-
-    public JpaFindByKeysAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
+    public JpaFindByKeysAccessImpl() {
+        super();
     }
 
-    protected String getKeyPropertyName() {
-        return keyPropertyName;
+    public JpaFindByKeysAccessImpl(Class<T> type) {
+        super(type);
     }
 
-    public void setKeyPropertyName(String keyPropertyName) {
-        this.keyPropertyName = keyPropertyName;
-    }
-
-    protected String getRestrictionPropertyName() {
-        if (restrictionPropertyName == null) {
-            return getKeyPropertyName();
-        } else {
-            return restrictionPropertyName;
-        }
-    }
-
-    public void setRestrictionPropertyName(String restrictionPropertyName) {
-        this.restrictionPropertyName = restrictionPropertyName;
-    }
-
-    protected String getRestrictionValuePropertyName() {
-        if (restrictionPropertyName == null) {
-            return null;
-        } else if (restrictionPropertyName.startsWith(getKeyPropertyName() + ".")) {
-            return restrictionPropertyName.substring(getKeyPropertyName().length() + 1);
-        } else {
-            return restrictionPropertyName;
-        }
-    }
-
-    public void setKeys(Set<?> keys) {
-        this.keys = keys;
-    }
-
-    @Override
     public void setPersistentClass(Class<? extends T> persistentClass) {
-        super.setPersistentClass(persistentClass);
+    	super.setPersistentClass(persistentClass);
     }
-
-    public Map<Object, T> getResult() {
-        return this.result;
-    }
-
-    @Override
-    public void performExecute() throws PersistenceException {
-        String propertyName = "e." + getRestrictionPropertyName();
-        JpaChunkFetcher<T, Object> chunkFetcher = new JpaChunkFetcher<T, Object>(
-            getEntityManager(), propertyName) {
-
-            @Override
-            protected Object key(T obj) {
-                try {
-                    return PropertyUtils.getProperty(obj, getKeyPropertyName());
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Invalid property: " + getKeyPropertyName());
-                }
-            }
-
-            @Override
-            protected String createBaseQuery() {
-                return "select e from " + getPersistentClass().getSimpleName() + " e";
-            }
-
-            @Override
-            protected Collection<Object> restrictionPropertyValues(Collection<Object> keys) {
-                if (getRestrictionValuePropertyName() == null) {
-                    return super.restrictionPropertyValues(keys);
-                } else {
-                    try {
-                        List<Object> values = new ArrayList<Object>();
-                        for (Object k : keys) {
-                            Object restrictionValue = PropertyUtils.getProperty(k, getRestrictionValuePropertyName());
-                            values.add(restrictionValue);
-                        }
-                        return values;
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException("Invalid property: " + getRestrictionValuePropertyName());
-                    }
-                }
-            }
-        };
-
-        this.result = chunkFetcher.getDomainObjects(keys);
-    }
-
 }

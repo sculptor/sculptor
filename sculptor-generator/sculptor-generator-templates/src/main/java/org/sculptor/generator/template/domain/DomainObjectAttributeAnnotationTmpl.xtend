@@ -90,11 +90,7 @@ def String jpaAnnotations(Attribute it) {
 			@javax.persistence.Transient
 		«ELSE»
 			«IF it.isCollection()»
-				«IF isJpa2()»
-					«elementCollectionAnnotations(it)»
-				«ELSE»
-					@javax.persistence.Transient
-				«ENDIF»
+				«elementCollectionAnnotations(it)»
 			«ELSE»
 				«IF name == "id"»
 					«idAnnotations(it)»
@@ -124,11 +120,6 @@ def String idAnnotations(Attribute it) {
 		@javax.persistence.Id
 		«IF isJpaProviderAppEngine()»
 			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
-		«ELSEIF isJpa1() && isJpaProviderEclipseLink()»
-			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
-			//    possible bug in eclipselink produces incorrect ddl for hsqldb (IDENTITY)
-			//    @javax.persistence.GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "«it.getDomainObject().name»Sequence")
-			@javax.persistence.SequenceGenerator(name = "«it.getDomainObject().name»Sequence", initialValue = 10)
 		«ELSE»
 			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
 		«ENDIF»
@@ -173,7 +164,7 @@ def String columnAnnotations(Attribute it) {
 		«formatAnnotationParameters(<Object>newArrayList( true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
 			it.getDatabaseLength() != null, "length", it.getDatabaseLength(),
-			(it.isUuid() || it.isSimpleNaturalKey()) && (isJpa2() || isJpaProviderHibernate()) && !isJpaProviderAppEngine(), "unique", "true",
+			(it.isUuid() || it.isSimpleNaturalKey()) && !isJpaProviderAppEngine(), "unique", "true",
 			dbType != null, "columnDefinition", '"' + dbType + '"'
 		))»)
 		«columnDateAnnotations(it)»

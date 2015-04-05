@@ -44,11 +44,11 @@ def String consumer(Consumer it) {
 	'''
 	«IF pureEjb3()»
 		«consumerEjbTmpl.messageBeanImplBase(it)»
-			«consumerEjbTmpl.messageBeanImplSubclass(it)»
+		«consumerEjbTmpl.messageBeanImplSubclass(it)»
 	«ELSE»
 		«consumerInterface(it)»
 		«eventConsumerImplBase(it)»
-			«eventConsumerImplSubclass(it)»
+		«eventConsumerImplSubclass(it)»
 	«ENDIF»
 
 	«IF isTestToBeGenerated()»
@@ -57,7 +57,6 @@ def String consumer(Consumer it) {
 			«consumerTestDbUnitData(it)»
 		«ENDIF»
 	«ENDIF»
-	
 	'''
 }
 
@@ -169,7 +168,7 @@ def String receiveMethodSubclass(Consumer it) {
 
 def String serviceDependencies(Consumer it) {
 	'''
-	«FOR serviceDependency  : serviceDependencies»
+	«FOR serviceDependency : serviceDependencies»
 		«IF isSpringToBeGenerated()»
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
@@ -187,7 +186,7 @@ def String serviceDependencies(Consumer it) {
 
 def String repositoryDependencies(Consumer it) {
 	'''
-	«FOR repositoryDependency  : repositoryDependencies»
+	«FOR repositoryDependency : repositoryDependencies»
 		«IF isSpringToBeGenerated()»
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
@@ -205,7 +204,7 @@ def String repositoryDependencies(Consumer it) {
 
 def String otherDependencies(Consumer it) {
 	'''
-	«FOR dependency  : otherDependencies»
+	«FOR dependency : otherDependencies»
 		/**
 		 * Dependency injection
 		 */

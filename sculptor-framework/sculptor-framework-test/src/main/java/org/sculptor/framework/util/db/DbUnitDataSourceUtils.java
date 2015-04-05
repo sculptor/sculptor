@@ -1,20 +1,19 @@
 /*
- * Copyright 2007 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.framework.util.db;
 
 import java.io.StringWriter;
@@ -34,6 +33,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  * Utility Class for handling DbUnit DataSets
  * 
  * @author Oliver Ringel
- * 
  */
 public class DbUnitDataSourceUtils {
 
@@ -88,19 +87,20 @@ public class DbUnitDataSourceUtils {
     public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, String[] dataSetFileNames)
             throws Exception {
 
-        // create dataset
-    	IDataSet dataSet;
-    	if(dataSetFileNames.length == 1) {
-            dataSet = new FlatXmlDataSet(clazz.getClassLoader().getResource(
-                    dataSetFileNames[0]), false, true);
-    	} else {
-    		IDataSet[] dataSets = new IDataSet[dataSetFileNames.length];
-    		for (int i = 0; i < dataSetFileNames.length; i++) {
-				dataSets[i] = new FlatXmlDataSet(clazz.getClassLoader().getResource(
-	                    dataSetFileNames[i]), false, true);
-    		}
-        	dataSet = new CompositeDataSet(dataSets);
-    	}
+        // create dataset from XML file with "column-sensing"
+		IDataSet dataSet;
+		final FlatXmlDataSetBuilder xmlDataSetBuilder = new FlatXmlDataSetBuilder();
+		xmlDataSetBuilder.setDtdMetadata(false);
+		xmlDataSetBuilder.setColumnSensing(true);
+		if (dataSetFileNames.length == 1) {
+			dataSet = xmlDataSetBuilder.build(clazz.getClassLoader().getResource(dataSetFileNames[0]));
+		} else {
+			IDataSet[] dataSets = new IDataSet[dataSetFileNames.length];
+			for (int i = 0; i < dataSetFileNames.length; i++) {
+				dataSets[i] = xmlDataSetBuilder.build(clazz.getClassLoader().getResource(dataSetFileNames[i]));
+			}
+			dataSet = new CompositeDataSet(dataSets);
+		}
     		
         ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataSet);
         replacementDataSet.addReplacementObject("[NULL]", null);

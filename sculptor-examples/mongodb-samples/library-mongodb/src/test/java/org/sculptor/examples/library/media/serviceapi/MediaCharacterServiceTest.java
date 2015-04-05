@@ -1,7 +1,7 @@
 package org.sculptor.examples.library.media.serviceapi;
 
 import static org.junit.Assert.assertEquals;
-import static org.sculptor.framework.errorhandling.SimpleJUnitServiceContextFactory.getServiceContext;
+import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.List;
 import java.util.Set;

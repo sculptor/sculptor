@@ -1,13 +1,13 @@
 /*
- * Copyright 2010 The Fornax Project Team, including the original
+ * Copyright 2013 The Sculptor Project Team, including the original 
  * author or authors.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ import org.apache.commons.beanutils.ConstructorUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.sculptor.framework.errorhandling.ServiceContext;
+import org.sculptor.framework.context.ServiceContext;
 import org.sculptor.framework.event.Event;
 import org.sculptor.framework.event.EventBus;
 import org.sculptor.framework.util.FactoryHelper;
@@ -32,12 +32,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * Advice that publish event to the topic and eventBus specified by the @Publish
- * annotation. If eventType is not specified by the annotation one of the return
- * value or method parameters must be an Event, which is published. When
- * eventType is specified in the annotation a new event is created using a
- * constructor matching the method return value or method parameters.
- * 
+ * Advice that publish event to the topic and eventBus specified by the
+ * {@link Publish} annotation. If eventType is not specified by the annotation
+ * one of the return value or method parameters must be an {@link Event}, which
+ * is published. When eventType is specified in the annotation then a new event
+ * of this type is created using a constructor matching the method return value
+ * or method parameters.
  */
 @Aspect
 public class PublishAdvice implements ApplicationContextAware {
@@ -46,6 +46,9 @@ public class PublishAdvice implements ApplicationContextAware {
 
     @Around("@annotation(publish)")
     public Object publish(ProceedingJoinPoint joinPoint, Publish publish) throws Throwable {
+		if (applicationContext == null) {
+			throw new IllegalArgumentException("No ApplicationContext autowired - advice must be configured by Spring");
+		}
 
         Object retVal = joinPoint.proceed();
 
@@ -159,6 +162,7 @@ public class PublishAdvice implements ApplicationContextAware {
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

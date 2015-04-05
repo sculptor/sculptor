@@ -1,0 +1,46 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: headTag"></head>
+
+<body class="container">
+	<div th:replace="header :: navigation">Navigation</div>
+
+	<h2>Planets</h2>
+	<a href="/" th:href="@{/rest/planet/form}">New Planet</a>
+	<div th:if="${not #lists.isEmpty(result)}">
+		<table class="table .table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Name</th>
+					<th>Diameter</th>
+					<th />
+					<th />
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="each : ${result}">
+					<td th:text="${each.id}">1</td>
+					<td th:text="${each.name}">Earth</td>
+					<td th:text="${each.diameter}">10000</td>
+					<td><a href="/" th:href="@{|/rest/planet/${each.id}|}">Show</a></td>
+					<td>
+						<form action="#" th:object="${action}"
+							th:action="@{|/rest/planet/${each.id}|}" th:method="delete">
+							<input class="btn btn-default" id="delete" type="submit" value="Delete" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div th:if="${#lists.isEmpty(result)}">
+		<p>There are no Planets yet.</p>
+	</div>
+
+	<div th:replace="footer :: footer"></div>
+
+</body>
+</html>

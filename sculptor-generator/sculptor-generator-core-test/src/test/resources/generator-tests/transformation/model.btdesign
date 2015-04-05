@@ -90,6 +90,8 @@ Application Library {
         }
         
         Service MediaCharacterService {
+          > @LibraryService
+          > @LibraryRepository
           findAll => MediaCharacterRepository.findAll;
         }
         
