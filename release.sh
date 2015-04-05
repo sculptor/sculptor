@@ -12,7 +12,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-mvn tycho-versions:set-version -P!all -DnewVersion=$1
+mvn -Dtycho.mode=maven tycho-versions:set-version -P!all -DnewVersion=$1
 git commit -a -m "updates POMs and MANIFST.MFs for release of version $1"
 
 mvn jgitflow:release-finish -DdevelopmentVersion=$2-SNAPSHOT
@@ -20,6 +20,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-mvn tycho-versions:set-version -P!all -DnewVersion=$1
-mvn tycho-versions:set-version -P!all -DnewVersion=$2-SNAPSHOT
+mvn -Dtycho.mode=maven tycho-versions:set-version -P!all -DnewVersion=$1-SNAPSHOT
+mvn -Dtycho.mode=maven tycho-versions:set-version -P!all -DnewVersion=$1
+mvn -Dtycho.mode=maven tycho-versions:set-version -P!all -DnewVersion=$2-SNAPSHOT
 git commit -a -m "updates POMs and MANIFST.MFs for development of version $2-SNAPSHOT"
