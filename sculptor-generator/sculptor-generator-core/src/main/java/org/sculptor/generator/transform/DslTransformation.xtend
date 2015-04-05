@@ -69,7 +69,6 @@ import sculptormetamodel.Event
 import sculptormetamodel.InheritanceType
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Repository
-import sculptormetamodel.Resource
 import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
@@ -712,31 +711,11 @@ class DslTransformation {
 	}
 
 	def void scaffold(DslDomainObject domainObject) {
-		domainObject.transformSimpleDomainObject.scaffold()
-	}
-
-	def void scaffold(DomainObject domainObject) {
-
-		// Scaffold repository
-		if (domainObject.repository == null)
-			domainObject.addRepository()
-		domainObject.repository.addRepositoryScaffoldOperations()
-
-		// Scaffold service
-		val serviceName = domainObject.name + "Service"
-		if (!domainObject.module.services.exists(s | s.name == serviceName))
-			domainObject.module.addService(serviceName)
-		domainObject.module.services.filter(s | s.name == serviceName).forEach[addServiceScaffoldOperations(domainObject.repository)]
+		domainObject.transformSimpleDomainObject.scaffold
 	}
 
 	def void scaffold(DslResource resource) {
-		resource.transform.scaffold()
-	}
-
-	def void scaffold(Resource resource) {
-		val serviceName = resource.getDomainResourceName() + "Service"
-		val delegateService = resource.module.application.modules.map[services].flatten.findFirst(e|e.name == serviceName)
-		resource.addResourceScaffoldOperations(delegateService)
+		resource.transform.scaffold
 	}
 
 }

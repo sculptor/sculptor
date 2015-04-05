@@ -30,11 +30,14 @@ import org.sculptor.dsl.sculptordsl.DslResource
 import org.sculptor.dsl.sculptordsl.DslService
 import org.sculptor.dsl.sculptordsl.DslVisibility
 import org.sculptor.generator.chain.ChainOverridable
+import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.GenericAccessObjectManager
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.DiscriminatorType
+import sculptormetamodel.DomainObject
+import sculptormetamodel.Resource
 
 /**
  * Overridable helper methods for transforming DSL meta model to generator meta model.
@@ -45,6 +48,7 @@ class DslTransformationHelper {
 	@Inject var GenericAccessObjectManager genericAccessObjectManager
 
 	@Inject extension HelperBase helperBase
+	@Inject extension Helper helper
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 
@@ -187,6 +191,30 @@ class DslTransformationHelper {
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
+	}
+
+	def void scaffold(DomainObject domainObject) {
+		domainObject.scaffoldRepository
+		domainObject.scaffoldService
+	}
+
+	def void scaffoldRepository(DomainObject domainObject) {
+		if (domainObject.repository == null)
+			domainObject.addRepository
+		domainObject.repository.addRepositoryScaffoldOperations
+	}
+
+	def void scaffoldService(DomainObject domainObject) {
+		val serviceName = domainObject.name + "Service"
+		if (!domainObject.module.services.exists[s | s.name == serviceName])
+			domainObject.module.addService(serviceName)
+		domainObject.module.services.filter[s | s.name == serviceName].forEach[addServiceScaffoldOperations(domainObject.repository)]
+	}
+
+	def void scaffold(Resource resource) {
+		val serviceName = resource.domainResourceName + "Service"
+		val delegateService = resource.module.application.modules.map[services].flatten.findFirst(e|e.name == serviceName)
+		resource.addResourceScaffoldOperations(delegateService)
 	}
 
 }
