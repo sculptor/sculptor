@@ -1,0 +1,31 @@
+Application MyApp {
+	basePackage=org.helloworld
+
+	Module milkyway {
+
+		Service PlanetService {
+			@Planet findByName(String name) => PlanetRepository.findByName;
+			@Planet findByDiameter(int diameter) => PlanetRepository.findByDiameter;
+			@Planet findLargest => PlanetRepository.findLargest;
+			@Planet findSmallest => PlanetRepository.findSmallest;
+			String getLongestName => PlanetRepository.getLongestName;
+		}
+
+		Entity Planet {
+			scaffold
+
+			gap
+			String name
+			int diameter
+
+			Repository PlanetRepository {
+				@Planet findByName(String name);
+				@Planet findByDiameter(int diameter);
+				@Planet findLargest;
+				@Planet findSmallest;
+				String getLongestName gap;
+			}
+		}
+	}
+
+}
