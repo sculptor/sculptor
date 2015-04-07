@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl.ui.resource;
 
 import static org.eclipse.xtext.util.Strings.isEmpty;
@@ -90,9 +89,15 @@ public class MavenClasspathUriResolver extends JdtClasspathUriResolver {
 	protected boolean isMavenResourceDirectory(IPackageFragment packageFragment) throws JavaModelException {
 		if (packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
 			// check whether this pkg can be opened
-			IResource underlyingResource = packageFragment.getUnderlyingResource();
-			if (underlyingResource != null && underlyingResource.isAccessible()) {
-				return Util.isExcluded(packageFragment);
+			try {
+				IResource underlyingResource = packageFragment
+						.getUnderlyingResource();
+				if (underlyingResource != null
+						&& underlyingResource.isAccessible()) {
+					return Util.isExcluded(packageFragment);
+				}
+			} catch (JavaModelException e) {
+				// resource not available
 			}
 		}
 		return false;
