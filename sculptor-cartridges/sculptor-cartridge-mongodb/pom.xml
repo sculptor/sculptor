@@ -65,14 +65,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>org.eclipse.xtext.xtext</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.xtend</groupId>
-			<artifactId>org.eclipse.xtend.lib</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-test-library</artifactId>
 			<version>${project.version}</version>
