@@ -38,6 +38,14 @@ ApplicationPart PersonPart {
 			String city nullable;
 			String zip nullable;
 			String state nullable;
+			-Set<@DeliveryAddress> addresses;
+		}
+
+		Entity DeliveryAddress {
+			String adress nullable;
+			String city nullable;
+			String zip nullable;
+			String state nullable;
 		}
 
         BasicType Ssn {

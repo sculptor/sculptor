@@ -79,7 +79,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         for (ConditionalCriteria criteria : conditionalCriterias) {
             Predicate predicate = preparePredicate(criteria);
             if (predicate != null) {
-                predicates.add(preparePredicate(criteria));
+                predicates.add(predicate);
             }
         }
         return predicates;
@@ -126,17 +126,6 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         		criteriaQuery.select((Selection<? extends R>) selections.get(0));
         	else
         		criteriaQuery.multiselect(selections);
-        }
-    }
-
-    @Override
-    protected void prepareDistinct(QueryConfig config) {
-        for (ConditionalCriteria criteria : conditionalCriterias) {
-            ConditionalCriteria.Operator operator = criteria.getOperator();
-        	if (Operator.DistinctRoot.equals(operator)) {
-        		config.setDistinct(true);
-        		break;
-        	}
         }
     }
 
@@ -275,6 +264,9 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             if (getConfig().throwExceptionOnConfigurationError()) {
                 throw new QueryConfigException("Operator 'ProjectionRoot' is not supported");
             }
+            return null;
+        } else if (Operator.DistinctRoot.equals(operator)) {
+            getConfig().setDistinct(true);
             return null;
         } else {
             return null;

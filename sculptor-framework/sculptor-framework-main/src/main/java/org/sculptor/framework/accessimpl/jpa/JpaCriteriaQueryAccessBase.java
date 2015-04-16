@@ -152,10 +152,10 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		}
 		root = criteriaQuery.from(getType());
 		prepareSelect(criteriaQuery, root, config);
-		prepareDistinct(config);
 		prepareGroupBy(criteriaQuery, root, config);
 		prepareFetch(root, config);
 		List<Predicate> predicates = preparePredicates();
+		prepareDistinct(config);
 		if (predicates != null && predicates.size() > 0) {
 			criteriaQuery.where((config.isDisjunction()) ? orPredicates(predicates) : andPredicates(predicates));
 		}
@@ -471,11 +471,13 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	private Path<?> getPathForNestedProperty(Path<?> fromPath, String nestedProperties) {
 		Path<?> path = fromPath;
 		List<String> properties = Arrays.asList(nestedProperties.split("\\."));
+		List<String> investPath = new ArrayList<String>();
 		for (Iterator<String> iterator = properties.iterator(); iterator.hasNext();) {
 			String property = iterator.next();
+			investPath.add(property);
 			path = getPathForSimpleProperty(path, property);
 			if (isExplicitJoinNeeded(path) && iterator.hasNext()) {
-				path = getExplicitJoinForPath(path, property);
+				path = getExplicitJoinForPath(fromPath, investPath);
 			}
 		}
 		return path;
@@ -509,12 +511,35 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		return false;
 	}
 
-	private Join<?, ?> getExplicitJoinForPath(Path<?> path, String property) {
-		Path<?> parentPath = path.getParentPath();
-		if (From.class.isAssignableFrom(parentPath.getClass())) {
-			return ((From<?, ?>) parentPath).join(property);
+	private From<?, ?> getExplicitJoinForPath(Path<?> fromPath, List<String> pathElems) {
+		if (From.class.isAssignableFrom(fromPath.getClass())) {
+			From<?, ?> curPath = (From<?, ?>) fromPath;
+			for (String pathElem : pathElems) {
+				Set<?> joins = curPath.getJoins();
+				boolean found=false;
+				for (Object join : joins) {
+					Join<?,?> j = (Join<?,?>) join;
+					if (j.getAttribute().getName().equals(pathElem)) {
+						curPath = j;
+						found=true;
+						break;
+					}
+				}
+				if (!found) {
+					curPath = curPath.join(pathElem);
+				}
+			}
+			return curPath;
 		}
-		throw new QueryConfigException("Can't create a explicit join for property " + property);
+
+		// Concat path with dots
+		StringBuilder dotPath=new StringBuilder();
+		String delim="";
+		for (String pathElem : pathElems) {
+			dotPath.append(delim).append(pathElem);
+			delim=".";
+		}
+		throw new QueryConfigException("Can't create a explicit join for property path " + dotPath + " from " + fromPath);
 	}
 
 	/**

@@ -63,6 +63,7 @@ public class DroolsCompiler {
 		Long start=System.currentTimeMillis();
 		KnowledgeAgent kAgent = KnowledgeAgentFactory.newKnowledgeAgent( "CompilerAgent" );
 		kAgent.applyChangeSet(ResourceFactory.newFileResource(changeSet));
+		@SuppressWarnings("deprecation")
 		Collection<KnowledgePackage> kPackages = kAgent.getKnowledgeBase().getKnowledgePackages();
 
 		for (KnowledgePackage kPackage : kPackages) {

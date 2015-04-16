@@ -56,8 +56,8 @@ public class ConditionalCriteriaBuilder<T> {
         /**
          * End the expression with this build
          */
-      @SuppressWarnings("unchecked")
-      public List<ConditionalCriteria> build() {
+        @SuppressWarnings("unchecked")
+        public List<ConditionalCriteria> build() {
             assertBraceCount();
             assertOperatorStack();
 
@@ -70,9 +70,9 @@ public class ConditionalCriteriaBuilder<T> {
                       critList.add( (ConditionalCriteria) singleCrit.getFirstOperant() );
                       critList.add( (ConditionalCriteria) singleCrit.getSecondOperant() );
                    }
-               } else {
-                  critList.add(singleCrit);
-               }
+                } else {
+                   critList.add(singleCrit);
+                }
             }
             return critList;
         }
