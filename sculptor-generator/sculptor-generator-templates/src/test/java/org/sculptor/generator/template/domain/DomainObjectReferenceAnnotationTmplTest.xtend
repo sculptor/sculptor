@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
+import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.test.GeneratorModelTestFixtures
 
 import static org.junit.Assert.*
@@ -41,6 +42,8 @@ class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
 
 	@Before
 	def void setup() {
+		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
+			"generator-tests/helloworld/sculptor-generator.properties")
 		generatorModelTestFixtures.setupInjector(typeof(DomainObjectReferenceAnnotationTmpl))
 		generatorModelTestFixtures.setupModel("generator-tests/helloworld/model.btdesign")
 
@@ -57,7 +60,7 @@ class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
 	}
 
 	@Test
-	def void assertOneToManyWithCascadeTypeAllInPlanetBaseForReferenceMoons() {
+	def void assertOneToManyWithCascadeTypeRemoveInPlanetBaseForReferenceMoons() {
 		val app = generatorModelTestFixtures.app
 		assertNotNull(app)
 
@@ -71,7 +74,7 @@ class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
 		val code = domainObjectReferenceAnnotationTmpl.oneToManyJpaAnnotation(moons)
 		assertNotNull(code)
 		assertContains(code, '@javax.persistence.OneToMany')
-		assertContains(code, 'cascade=javax.persistence.CascadeType.ALL')
+		assertContains(code, 'cascade=javax.persistence.CascadeType.REMOVE')
 		assertContains(code, 'orphanRemoval=true')
 		assertContains(code, 'mappedBy="planet"')
 		assertContains(code, 'fetch=javax.persistence.FetchType.EAGER')
