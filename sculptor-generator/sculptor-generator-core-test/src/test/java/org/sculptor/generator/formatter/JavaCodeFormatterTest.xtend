@@ -156,4 +156,34 @@ class JavaCodeFormatterTest {
 			'''.toString, source)
 	}
 
+	@Test
+	def testFormatJavaHeader() {
+		val source = codeFormatter.format("Test.java",
+			'''
+				/*
+				 * Copyright line 1
+				 * line 2
+				 * line 3
+				 */
+				package      com.acme;
+				     
+				«JavaCodeFormatter.IMPORT_MARKER_PATTERN»
+				    
+				class Test {
+				}
+			''', true)
+		assertEquals(
+			'''
+				/*
+				 * Copyright line 1
+				 * line 2
+				 * line 3
+				 */
+				package com.acme;
+
+				class Test {
+				}
+			'''.toString, source)
+	}
+
 }
