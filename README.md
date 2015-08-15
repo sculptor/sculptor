@@ -11,6 +11,18 @@ The generated code is based on well-known frameworks, such as [JPA](http://java.
 [Hibernate](http://www.hibernate.org/), [Spring Framework](http://www.springframework.org/) or [Java EE](http://java.sun.com/javaee/).
 Sculptor takes care of the technical details, the tedious repetitive work, and let you focus on delivering more business value - and have more fun.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [System Requirements](#system-requirements)
+- [Installation](#installation)
+- [Getting started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## System Requirements
 
