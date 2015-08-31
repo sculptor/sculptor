@@ -17,12 +17,12 @@
 package org.sculptor.generator.formatter
 
 import com.google.inject.Guice
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.sculptor.generator.configuration.ConfigurationProviderModule
 
 import static org.junit.Assert.*
-import org.junit.After
 
 class JavaCodeFormatterTest {
 

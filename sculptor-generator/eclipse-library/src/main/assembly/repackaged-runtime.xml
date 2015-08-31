@@ -10,7 +10,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${project.build.directory}/dependency/</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 
@@ -54,7 +54,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/src/main/resources/</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<includes>
 				<include>**/*</include>
 			</includes>

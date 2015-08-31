@@ -10,7 +10,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${project.build.directory}/dependency/</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 				<include>org/eclipselabs/xtext/utils/unittesting/**</include>

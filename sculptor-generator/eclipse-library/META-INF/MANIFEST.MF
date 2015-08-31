@@ -3,15 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse library JAR
 Bundle-SymbolicName: eclipse-library
 Bundle-Version: 3.1.1.qualifier
-Require-Bundle: org.eclipse.jdt.core;bundle-version="3.9.1",
- org.eclipse.jface.text;bundle-version="3.8.101",
+Require-Bundle: org.eclipse.jdt.core;bundle-version="3.10.2",
+ org.eclipse.jface.text;bundle-version="3.9.2",
  org.eclipselabs.xtext.utils.unittesting;bundle-version="0.9.3",
- org.eclipse.osgi.source;bundle-version="3.8.2",
- org.eclipse.core.runtime.source;bundle-version="3.8.0",
- org.eclipse.core.resources.source;bundle-version="3.8.1",
- org.eclipse.text.source;bundle-version="3.5.200",
- org.eclipse.jface.text.source;bundle-version="3.8.101",
- org.eclipse.jdt.core.source;bundle-version="3.8.3",
- org.eclipselabs.xtext.utils.unittesting.source;bundle-version="0.9.3"
+ org.eclipse.jdt.core.source;bundle-version="3.10.2",
+ org.eclipse.jface.text.source;bundle-version="3.9.2",
+ org.eclipselabs.xtext.utils.unittesting.source;bundle-version="0.9.3",
+ org.eclipse.osgi.source,
+ org.eclipse.core.runtime.source,
+ org.eclipse.core.resources.source,
+ org.eclipse.text.source
 Bundle-Vendor: Eclipse Foundation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

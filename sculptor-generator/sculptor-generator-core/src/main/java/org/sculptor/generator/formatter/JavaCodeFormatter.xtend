@@ -22,8 +22,6 @@ import java.util.regex.Pattern
 import org.eclipse.jdt.core.ToolFactory
 import org.eclipse.jdt.core.formatter.CodeFormatter
 import org.eclipse.jface.text.Document
-import org.eclipse.jface.text.IDocument
-import org.eclipse.text.edits.TextEdit
 import org.sculptor.generator.configuration.ConfigurationProvider
 import org.slf4j.LoggerFactory
 
@@ -39,7 +37,7 @@ class JavaCodeFormatter {
 
 	static val LOG = LoggerFactory::getLogger(typeof(JavaCodeFormatter))
 
-	public static String IMPORT_MARKER_PATTERN = "/// Sculptor code formatter imports ///"
+	public static val IMPORT_MARKER_PATTERN = "/// Sculptor code formatter imports ///"
 
 	@Inject var ConfigurationProvider configuration
 	@Inject var JavaCodeAutoImporter javaCodeAutoImporter
@@ -47,20 +45,27 @@ class JavaCodeFormatter {
 	def format(String path, String code, boolean abortOnError) {
 
 		// As fall-back return the original code
-		var String formattedCode = code
+		var formattedCode = code
 
 		// Auto-importing full qualified Java types
 		val autoImportedCode = javaCodeAutoImporter.replaceQualifiedTypes(code, Pattern.quote(IMPORT_MARKER_PATTERN))
 
 		// Use Eclipse JDTs code formatter
-		val TextEdit textEdit = getCodeFormatter().format(
-			CodeFormatter::K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), autoImportedCode, 0,
+		val textEdit = getCodeFormatter().format(
+			CodeFormatter.K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), autoImportedCode, 0,
 			autoImportedCode.length(), 0, null)
-		val IDocument doc = new Document(autoImportedCode)
-		try {
-			textEdit.apply(doc)
-			formattedCode = doc.get()
-		} catch (Exception e) {
+		if (textEdit != null) {
+			val doc = new Document(autoImportedCode)
+			try {
+				textEdit.apply(doc)
+				formattedCode = doc.get()
+			} catch (Exception e) {
+				LOG.error("Error formating code for '{}'. Using original code from generator", path)
+				if (abortOnError) {
+					throw new RuntimeException("Invalid generated Java code in '" + path + "'")
+				}
+			}
+		} else {
 			LOG.error("Error formating code for '{}'. Using original code from generator", path)
 			if (abortOnError) {
 				throw new RuntimeException("Invalid generated Java code in '" + path + "'")
@@ -73,7 +78,7 @@ class JavaCodeFormatter {
 
 	private def getCodeFormatter() {
 		if (codeFormatter == null) {
-			val classLoader = Thread::currentThread().getContextClassLoader() ?: this.^class.getClassLoader()
+			val classLoader = Thread.currentThread().getContextClassLoader() ?: this.^class.getClassLoader()
 
 			// Read default properties
 			val props = new Properties()
@@ -95,7 +100,7 @@ class JavaCodeFormatter {
 					]
 				}
 			}
-			codeFormatter = ToolFactory::createCodeFormatter(props)
+			codeFormatter = ToolFactory.createCodeFormatter(props)
 		}
 		codeFormatter
 	}

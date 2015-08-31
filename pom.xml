@@ -82,13 +82,13 @@
 		<maven.compiler.source>${java-version}</maven.compiler.source>
 		<maven.compiler.target>${java-version}</maven.compiler.target>
 
-		<eclipse-release>luna</eclipse-release>
-		<tycho-version>0.22.0</tycho-version>
+		<eclipse-release>luna/201502271000</eclipse-release>
+		<tycho-version>0.23.1</tycho-version>
 
-		<xtext-version>2.8.1</xtext-version>
-		<ecore-xtext-version>1.1.1</ecore-xtext-version>
-		<ecore-xcore-version>1.2.2</ecore-xcore-version>
-		<ecore-xcore-lib-version>1.1.0</ecore-xcore-lib-version>
+		<xtext-version>2.8.4</xtext-version>
+		<ecore-xtext-version>1.2.0</ecore-xtext-version>
+		<ecore-xcore-version>1.3.1</ecore-xcore-version>
+		<ecore-xcore-lib-version>1.1.100</ecore-xcore-lib-version>
 		<guava-version>14.0</guava-version>
 		<guice-version>3.0</guice-version>
 
@@ -117,8 +117,8 @@
 		<junit-version>4.12</junit-version>
 		<hsqldb-version>2.3.2</hsqldb-version>
 
-		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}/</p2-repository-eclipse>
-		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</p2-repository-eclipse-xtext>
+		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}</p2-repository-eclipse>
+		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/${xtext-version}</p2-repository-eclipse-xtext>
 		<p2-repository-xtext-utils>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</p2-repository-xtext-utils>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
