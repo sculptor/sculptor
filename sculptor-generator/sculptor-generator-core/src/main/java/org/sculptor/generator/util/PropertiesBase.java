@@ -62,7 +62,6 @@ public class PropertiesBase {
 
 		if (getProperty("deployment.applicationServer").equalsIgnoreCase("appengine")) {
 			initDerivedDefaultsForAppengine(defaultConfiguration);
-
 		}
 
 		// generate directives
