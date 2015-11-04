@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl.validation
 
 import com.google.common.collect.Sets
@@ -55,6 +54,7 @@ import static org.sculptor.dsl.sculptordsl.SculptordslPackage$Literals.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 import static extension org.sculptor.dsl.SculptordslExtensions.*
+import org.eclipse.emf.ecore.EAttribute
 
 /**
  * Custom validation rules. 
@@ -63,7 +63,7 @@ import static extension org.sculptor.dsl.SculptordslExtensions.*
  */
 class SculptordslValidator extends AbstractSculptordslValidator implements IssueCodes {
 
-	private val DIGITS_PATTERN = Pattern::compile("[0-9]+[0-9]*")
+	private val DIGITS_PATTERN = Pattern.compile("[0-9]+[0-9]*")
 	private val SUPPORTED_PRIMITIVE_TYPES = new HashSet<String>(asList("int", "long", "float", "double", "boolean"))
 	private val SUPPORTED_TEMPORAL_TYPES = new HashSet<String>(asList("Date", "DateTime", "Timestamp"))
 	private val SUPPORTED_NUMERIC_TYPES = new HashSet<String>(
@@ -75,7 +75,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (module.name == null) {
 			return
 		}
-		if (!Character::isLowerCase(module.name.charAt(0))) {
+		if (!Character.isLowerCase(module.name.charAt(0))) {
 			warning("The module name should begin with a lower case letter", DSL_MODULE__NAME, UNCAPITALIZED_NAME,
 					module.name)
 		}
@@ -86,7 +86,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (service.name == null) {
 			return
 		}
-		if (!Character::isUpperCase(service.name.charAt(0))) {
+		if (!Character.isUpperCase(service.name.charAt(0))) {
 			warning("The service name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME,
 					CAPITALIZED_NAME, service.name)
 		}
@@ -97,7 +97,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (repository.name == null) {
 			return
 		}
-		if (!Character::isUpperCase(repository.name.charAt(0))) {
+		if (!Character.isUpperCase(repository.name.charAt(0))) {
 			warning("The repository name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME,
 					CAPITALIZED_NAME, repository.name)
 		}
@@ -108,7 +108,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (domainObject.name== null) {
 			return
 		}
-		if (!Character::isUpperCase(domainObject.name.charAt(0))) {
+		if (!Character.isUpperCase(domainObject.name.charAt(0))) {
 			warning("The domain object name should begin with an upper case letter", DSL_SIMPLE_DOMAIN_OBJECT__NAME,
 					CAPITALIZED_NAME, domainObject.name)
 		}
@@ -116,24 +116,23 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkExtendsName(DslDataTransferObject domainObject) {
-		checkExtendsName(domainObject, domainObject.getExtendsName())
+		checkExtendsName(domainObject, domainObject.getExtendsName(), DSL_DATA_TRANSFER_OBJECT__EXTENDS_NAME)
 	}
 
 	@Check
 	def checkExtendsName(DslDomainObject domainObject) {
-		checkExtendsName(domainObject, domainObject.getExtendsName())
+		checkExtendsName(domainObject, domainObject.getExtendsName(), DSL_DOMAIN_OBJECT__EXTENDS_NAME)
 	}
 
-	def private checkExtendsName(DslSimpleDomainObject domainObject, String extendsName) {
+	def private checkExtendsName(DslSimpleDomainObject domainObject, String extendsName, EAttribute attributeFeature) {
 		if (extendsName == null) {
 			return
 		}
 		if (extendsName.indexOf('.') != -1) {
 			return
 		}
-
-		if (DslHelper::getExtends(domainObject) == null) {
-			error("Couldn't resolve reference to '" + extendsName + "'", DSL_DOMAIN_OBJECT__EXTENDS_NAME)
+		if (DslHelper.getExtends(domainObject) == null) {
+			error("Couldn't resolve reference to '" + extendsName + "'", attributeFeature)
 		}
 	}
 
@@ -148,14 +147,14 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	def private boolean isInheritanceCycle(DslSimpleDomainObject domainObject) {
-		val visited = Sets::newHashSet
+		val visited = Sets.newHashSet
 		var current = domainObject
 		while (current != null) {
 			if (visited.contains(current)) {
 				return true
 			}
 			visited.add(current)
-			current = DslHelper::getExtends(current)
+			current = DslHelper.getExtends(current)
 		}
 		return false
 	}
@@ -177,7 +176,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	def private void abstractOperations(DslDomainObject domainObject, Set<String> result) {
 		if (!isInheritanceCycle(domainObject)) {
-			val domainObjectExtends = DslHelper::getExtends(domainObject) as DslDomainObject
+			val domainObjectExtends = DslHelper.getExtends(domainObject) as DslDomainObject
 			if (domainObjectExtends != null) {
 				abstractOperations(domainObjectExtends, result)
 			}
@@ -197,7 +196,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (prop.name == null) {
 			return
 		}
-		if (!Character::isLowerCase(prop.name.charAt(0))) {
+		if (!Character.isLowerCase(prop.name.charAt(0))) {
 			warning("Attribute/reference should begin with a lower case letter", DSL_ANY_PROPERTY__NAME,
 					UNCAPITALIZED_NAME, prop.name)
 		}
@@ -208,7 +207,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (param.name == null) {
 			return
 		}
-		if (!Character::isLowerCase(param.name.charAt(0))) {
+		if (!Character.isLowerCase(param.name.charAt(0))) {
 			warning("Parameter should begin with a lower case letter", DSL_PARAMETER__NAME, UNCAPITALIZED_NAME,
 					param.name)
 		}
@@ -238,7 +237,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkCollectionCache(DslReference ref) {
-		if (ref.isCache() && ref.collectionType == DslCollectionType::NONE) {
+		if (ref.isCache() && ref.collectionType == DslCollectionType.NONE) {
 			error("Cache is only applicable for collections", DSL_REFERENCE__CACHE)
 		}
 	}
@@ -248,9 +247,9 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (!ref.isInverse()) {
 			return
 		}
-		if (!(ref.collectionType != DslCollectionType::NONE || (ref.getOppositeHolder() != null
+		if (!(ref.collectionType != DslCollectionType.NONE || (ref.getOppositeHolder() != null
 				&& ref.getOppositeHolder().getOpposite() != null && ref.getOppositeHolder().getOpposite()
-				.collectionType == DslCollectionType::NONE))) {
+				.collectionType == DslCollectionType.NONE))) {
 			error("Inverse is only applicable for references with cardinality many, or one-to-one",
 					DSL_REFERENCE__INVERSE)
 		}
@@ -286,18 +285,18 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	def private boolean isUnidirectionalToMany(DslReference ref) {
-		ref.collectionType != DslCollectionType::NONE && ref.getOppositeHolder() == null
+		ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() == null
 	}
 
 	def private boolean isBidirectionalManyToMany(DslReference ref) {
-		(ref.collectionType != DslCollectionType::NONE && ref.getOppositeHolder() != null
+		(ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() != null
 				&& ref.getOppositeHolder().getOpposite() != null && ref.getOppositeHolder().getOpposite()
-				.collectionType != DslCollectionType::NONE)
+				.collectionType != DslCollectionType.NONE)
 	}
 
 	@Check
 	def checkNullable(DslReference ref) {
-		if (ref.nullable && ref.collectionType != DslCollectionType::NONE) {
+		if (ref.nullable && ref.collectionType != DslCollectionType.NONE) {
 			error("Nullable isn't applicable for references with cardinality many (" + ref.collectionType + ")",
 					DSL_ANY_PROPERTY__NULLABLE)
 		}
@@ -312,9 +311,9 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (ref.getDatabaseColumn() == null) {
 			return
 		}
-		if (ref.collectionType != DslCollectionType::NONE && ref.getOppositeHolder() != null
+		if (ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() != null
 				&& ref.getOppositeHolder().getOpposite() != null
-				&& ref.getOppositeHolder().getOpposite().collectionType == DslCollectionType::NONE) {
+				&& ref.getOppositeHolder().getOpposite().collectionType == DslCollectionType.NONE) {
 			error("databaseColumn should be defined at the opposite side", DSL_PROPERTY__DATABASE_COLUMN)
 		}
 	}
@@ -334,7 +333,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkChangeableCollection(DslReference ref) {
-		if (ref.isNotChangeable() && ref.collectionType != DslCollectionType::NONE) {
+		if (ref.isNotChangeable() && ref.collectionType != DslCollectionType.NONE) {
 			warning("x-to-many references are never changeable, the content of the collection is always changeable",
 					DSL_ANY_PROPERTY__NOT_CHANGEABLE)
 		}
@@ -362,11 +361,11 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	def private boolean isBag(DslReference ref) {
-		return ref.collectionType == DslCollectionType::BAG
+		return ref.collectionType == DslCollectionType.BAG
 	}
 
 	def private boolean isList(DslReference ref) {
-		return ref.collectionType == DslCollectionType::LIST
+		return ref.collectionType == DslCollectionType.LIST
 	}
 
 	@Check
@@ -420,7 +419,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkKeyNotManyRefererence(DslReference ref) {
-		if (ref.key && ref.collectionType != DslCollectionType::NONE) {
+		if (ref.key && ref.collectionType != DslCollectionType.NONE) {
 			error("Natural key can't be a many refererence.", DSL_ANY_PROPERTY__KEY)
 		}
 	}
@@ -454,7 +453,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkEnumReference(DslReference ref) {
-		if (ref.getDomainObjectType() instanceof DslEnum && ref.collectionType != DslCollectionType::NONE) {
+		if (ref.getDomainObjectType() instanceof DslEnum && ref.collectionType != DslCollectionType.NONE) {
 			val notPersistentVO = ((ref.eContainer() instanceof DslValueObject)
 					&& (ref.eContainer as DslValueObject).notPersistent)
 			if (!notPersistentVO) {
@@ -791,11 +790,11 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	def private boolean isCollection(DslAttribute attribute) {
-		return attribute.collectionType != null && attribute.collectionType != DslCollectionType::NONE
+		return attribute.collectionType != null && attribute.collectionType != DslCollectionType.NONE
 	}
 
 	def private boolean isCollection(DslReference ref) {
-		return ref.collectionType != null && ref.collectionType != DslCollectionType::NONE
+		return ref.collectionType != null && ref.collectionType != DslCollectionType.NONE
 	}
 
 	def private boolean isPrimitive(DslAttribute attribute) {
@@ -864,7 +863,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	 */
 	@Check
 	def checkMissingReferenceNotationWithNoCollection(DslAttribute attr) {
-		if(attr.type != null && attr.collectionType == DslCollectionType::NONE &&
+		if(attr.type != null && attr.collectionType == DslCollectionType.NONE &&
 			attr.domainObjectsForAttributeType.empty == false) {
 			warning("Use - " + attr.type, DSL_ATTRIBUTE__TYPE, attr.type)
 		}
@@ -875,7 +874,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	 */
 	@Check
 	def checkMissingReferenceNotationWithCollection(DslAttribute attr) {
-		if(attr.type != null && attr.collectionType != DslCollectionType::NONE &&
+		if(attr.type != null && attr.collectionType != DslCollectionType.NONE &&
 			attr.domainObjectsForAttributeType.empty == false) {
 			warning("Use - " + attr.collectionType + "<" + attr.type + ">", DSL_ATTRIBUTE__TYPE, attr.type)
 		}
@@ -928,7 +927,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	def private boolean isAllLowerCase(String name) {
-		!name.toCharArray.exists[char|Character::isUpperCase(char)]
+		!name.toCharArray.exists[char|Character.isUpperCase(char)]
 	}
 
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl.validation
 
 import org.eclipse.xtext.junit4.InjectWith
@@ -26,6 +25,7 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslAttribute
+import org.sculptor.dsl.sculptordsl.DslDataTransferObject
 import org.sculptor.dsl.sculptordsl.DslEntity
 import org.sculptor.dsl.sculptordsl.DslModule
 import org.sculptor.dsl.sculptordsl.DslParameter
@@ -111,6 +111,15 @@ class SculptordslValidatorITest extends XtextTest {
 		val issues = testFile("operation_parameter_type_bad.btdesign")
 		assertEquals(1, issues.warningsOnly.size)
 		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslParameter), "toMatch").named("toMatch").oneOfThemContains("Use @SomeType"))
+	}
+
+	@Test
+	def void testUnresolvedExtendsNames() {
+		val issues = testFile("unresolved_extends_names.btdesign")
+		assertEquals(3, issues.size)
+		assertConstraints(issues.errorsOnly().inLine(4).under(typeof(DslEntity), "TestEntity").named("TestEntity").oneOfThemContains("resolve reference to 'NonExistentEntity'"))
+		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslValueObject), "TestVO").named("TestVO").oneOfThemContains("resolve reference to 'NonExistentVO'"))
+		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslDataTransferObject), "TestDTO").named("TestDTO").oneOfThemContains("resolve reference to 'NonExistentDTO'"))
 	}
 
 }
