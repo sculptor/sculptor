@@ -32,6 +32,7 @@ class MySQLDDLTest extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
+		System.setProperty("db.product", "mysql")
 		runGenerator(TEST_NAME)
 	}
 

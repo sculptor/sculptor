@@ -189,9 +189,9 @@ def String enumColumn(Reference it, String prefix, boolean parentIsNullable) {
 
 def String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
 	val rows = new StringBuilder()
-	rows.append(it.to.attributes.filter[e | !e.transient].map[a | ",\n\t" + column(a, getDatabaseName(prefix, a), parentIsNullable || nullable)].join)
-	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof Enum].map[r | ",\n\t" + enumColumn(r, getDatabaseName(prefix, r), parentIsNullable || nullable)].join)
-	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof BasicType].map[b | containedColumns(b, getDatabaseName(b), parentIsNullable || nullable)].join)
+	rows.append(it.to.attributes.filter[a | !a.transient].map[a | ",\n\t" + column(a, getDatabaseName(prefix, it), parentIsNullable || nullable)].join)
+	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof Enum].map[r | ",\n\t" + enumColumn(r, getDatabaseName(prefix, it), parentIsNullable || nullable)].join)
+	rows.append(it.to.references.filter[r | !r.transient && r.to instanceof BasicType].map[b | containedColumns(b, getDatabaseName(it), parentIsNullable || nullable)].join)
 	if (rows.length < 3)
 		""
 	else
