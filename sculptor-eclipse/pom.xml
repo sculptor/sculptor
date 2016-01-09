@@ -11,6 +11,7 @@
 	<name>Sculptor :: Eclipse</name>
 
 	<modules>
+		<module>org.sculptor.dsl.target</module>
 		<module>org.sculptor.dsl</module>
 		<module>org.sculptor.dsl.ui</module>
 		<module>org.sculptor.dsl.tests</module>
@@ -64,27 +65,6 @@
 		</profile>
 	</profiles>
 
-	<repositories>
-		<!-- Repository to resolve the Eclipse release train dependencies -->
-		<repository>
-			<id>p2.eclipse</id>
-			<url>${p2-repository-eclipse}</url>
-			<layout>p2</layout>
-		</repository>
-		<!-- Repository to resolve the XText dependencies -->
-		<repository>
-			<id>p2.eclipse.xtext</id>
-			<url>${p2-repository-eclipse-xtext}</url>
-			<layout>p2</layout>
-		</repository>
-		<!-- Repository to resolve the xtext-utils dependencies -->
-		<repository>
-			<id>p2.xtext-utils</id>
-			<url>${p2-repository-xtext-utils}</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -108,8 +88,8 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<!-- Sculptors p2 repository must contain only Sculptors Eclipse plugins -->
 				<configuration>
+					<!-- Sculptors p2 repository must contain only Sculptors Eclipse plugins -->
 					<filters>
 						<filter>
 							<type>java-package</type>
