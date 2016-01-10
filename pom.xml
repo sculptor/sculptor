@@ -572,6 +572,7 @@
 					<artifactId>target-platform-configuration</artifactId>
 					<version>${tycho-version}</version>
 					<configuration>
+						<targetDefinitionIncludeSource>honor</targetDefinitionIncludeSource>
 						<target>
 							<artifact>
 								<groupId>org.sculptorgenerator.eclipse</groupId>
@@ -579,6 +580,17 @@
 								<version>${project.version}</version>
 							</artifact>
 						</target>
+						<!-- Sculptors p2 repository must contain only Sculptors Eclipse plugins -->
+						<filters>
+							<filter>
+								<type>java-package</type>
+								<id>org</id>
+								<restrictTo>
+									<type>p2-installable-unit</type>
+									<id>org.sculptor.dsl.feature.feature.group</id>
+								</restrictTo>
+							</filter>
+						</filters>
 						<environments>
 							<environment>
 								<os>macosx</os>

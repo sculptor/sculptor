@@ -25,27 +25,6 @@
 		<module>sculptor-generator-test-library</module>
 	</modules>
 
-	<repositories>
-		<!-- Repository to resolve the Eclipse release train dependencies -->
-		<repository>
-			<id>p2.eclipse</id>
-			<url>${p2-repository-eclipse}</url>
-			<layout>p2</layout>
-		</repository>
-		<!-- Repository to resolve the XText dependencies -->
-		<repository>
-			<id>p2.eclipse.xtext</id>
-			<url>${p2-repository-eclipse-xtext}</url>
-			<layout>p2</layout>
-		</repository>
-		<!-- Repository to resolve the xtext-utils dependencies -->
-		<repository>
-			<id>p2.xtext-utils</id>
-			<url>${p2-repository-xtext-utils}</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 			<!-- Activate Tycho -->
