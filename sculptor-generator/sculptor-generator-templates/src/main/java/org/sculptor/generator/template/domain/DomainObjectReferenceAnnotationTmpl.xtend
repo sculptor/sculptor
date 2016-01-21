@@ -207,12 +207,12 @@ def String oneToOneJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.OneToOne(
 			«formatAnnotationParameters(<Object>newArrayList(!nullable, "optional", false,
-				isInverse(), "mappedBy", '"' + opposite.name + '"',
+				isRefInverse(), "mappedBy", '"' + opposite.name + '"',
 				it.getCascadeType() != null, "cascade", it.getCascadeType(),
 				isOrphanRemoval(it.getCascadeType()), "orphanRemoval", true,
 				it.getFetchType() != null, "fetch", it.getFetchType()
 			))»)
-		«IF !isInverse()»
+		«IF !isRefInverse()»
 			@javax.persistence.JoinColumn(
 			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 				!isJpaProviderOpenJpa() && !nullable, "nullable", false,
@@ -316,7 +316,7 @@ def String associationOverride(Reference it, String prefix, boolean referenceIsN
 				joinTable = @javax.persistence.JoinTable(
 					name="«getDatabaseName(prefix + "_" + from.getDatabaseName(), to)»",
 					joinColumns= @javax.persistence.JoinColumn(name = "«prefix»")
-					«IF isInverse()»
+					«IF isRefInverse()»
 						, inverseJoinColumns= @javax.persistence.JoinColumn(name = "«to.getDatabaseName()»")
 					«ENDIF»
 			))
@@ -419,7 +419,7 @@ def String oneToManyJpaAnnotation(Reference it) {
 				it.hasOpposite() && (getCollectionType() != "list"), "mappedBy", '"' + opposite?.name + '"',
 				it.getFetchType() != null, "fetch", it.getFetchType()
 			))»)
-		«IF isJpaProviderHibernate() && !isInverse()»
+		«IF isJpaProviderHibernate() && !isRefInverse()»
 			@org.hibernate.annotations.ForeignKey(
 				name = "FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getOppositeForeignKeyName())»"
 				, inverseName = "FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getForeignKeyName())»")
@@ -433,7 +433,7 @@ def String oneToManyJpaAnnotation(Reference it) {
 				inverseJoinColumns = @javax.persistence.JoinColumn(name = "«it.getForeignKeyName()»"))
 		«ENDIF»
 		 */»
-		«IF isInverse() && (!it.hasOpposite() || it.isList())»
+		«IF isRefInverse() && (!it.hasOpposite() || it.isList())»
 			@javax.persistence.JoinColumn(name = "«it.getOppositeForeignKeyName()»")
 				«IF isJpaProviderHibernate()»
 					@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.getDatabaseName(), to.getDatabaseName())»")
@@ -466,10 +466,10 @@ def String manyToManyJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.ManyToMany(
 			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
-				isInverse(), "mappedBy", '"' + opposite?.name + '"',
+				isRefInverse(), "mappedBy", '"' + opposite?.name + '"',
 				it.getFetchType() != null, "fetch", it.getFetchType()
 			))»)
-		«IF !isInverse()»
+		«IF !isRefInverse()»
 			@javax.persistence.JoinTable(
 				name = "«it.getManyToManyJoinTableName()»",
 				joinColumns = @javax.persistence.JoinColumn(name = "«it.getOppositeForeignKeyName()»"),

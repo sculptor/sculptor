@@ -616,7 +616,7 @@ public class DbHelperBase {
 	/**
 	 * Inverse attribute for many-to-many associations.
 	 */
-	public boolean isInverse(Reference ref) {
+	public boolean isRefInverse(Reference ref) {
 		if (ref.isInverse()) {
 			return true;
 		}
@@ -685,7 +685,7 @@ public class DbHelperBase {
 		}
 
 		if (manyToMany) {
-			return isInverse(ref) ? null : propBase.getDefaultCascade("manyToMany");
+			return isRefInverse(ref) ? null : propBase.getDefaultCascade("manyToMany");
 		}
 
 		if (oneToMany) {
