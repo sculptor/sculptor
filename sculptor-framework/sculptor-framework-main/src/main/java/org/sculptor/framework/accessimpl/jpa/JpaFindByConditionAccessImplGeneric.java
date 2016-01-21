@@ -198,7 +198,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         } else if (Operator.Like.equals(operator)) {
             return builder.like((Expression<String>) path, (String) criteria.getFirstOperant());
         } else if (Operator.IgnoreCaseLike.equals(operator)) {
-            return builder.like(builder.upper((Expression<String>) path), ((String) criteria.getFirstOperant()).toUpperCase());
+            return builder.like(builder.upper(path.as(String.class)), ((String) criteria.getFirstOperant()).toUpperCase());
         } else if (Operator.IsNull.equals(operator)) {
             return builder.isNull(path);
         } else if (Operator.IsNotNull.equals(operator)) {

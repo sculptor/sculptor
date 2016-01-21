@@ -195,13 +195,22 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	protected void prepareResultCount(QueryConfig config) {
 		CriteriaQuery<Long> resultCountCriteriaQuery = criteriaBuilder.createQuery(Long.class);
 		// TODO: works only T = R
+		Root<?> countRoot = resultCountCriteriaQuery.from(getType());
 		if (config.isDistinct()) {
-			resultCountCriteriaQuery.select(criteriaBuilder.countDistinct(resultCountCriteriaQuery.from(getType())));
+			resultCountCriteriaQuery.select(criteriaBuilder.countDistinct(countRoot));
 		} else {
-			resultCountCriteriaQuery.select(criteriaBuilder.count(resultCountCriteriaQuery.from(getType())));
+			resultCountCriteriaQuery.select(criteriaBuilder.count(countRoot));
 		}
 		if (criteriaQuery.getRestriction() != null) {
 			resultCountCriteriaQuery.where(criteriaQuery.getRestriction());
+		}
+
+		// copy explicit joins
+		if (getRoot().getJoins() != null) {
+			Set<Join<T,?>> joins = getRoot().getJoins();
+			for (Join<T, ?> join : joins) {
+				countRoot.join(join.getAttribute().getName());
+			}
 		}
 		resultCountQuery = getEntityManager().createQuery(resultCountCriteriaQuery);
 	};
