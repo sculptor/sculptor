@@ -428,7 +428,7 @@ public class HelperBase {
 	 * @see #getCollectionType(sculptormetamodel.Reference)
 	 */
 	public String getCollectionInterfaceType(Reference ref) {
-		String collectionType = getCollectionType(ref);
+		String collectionType = getRefCollectionType(ref);
 		return getCollectionInterfaceType(collectionType);
 	}
 
@@ -446,7 +446,7 @@ public class HelperBase {
 	 * @see #getCollectionType(sculptormetamodel.Reference)
 	 */
 	public String getCollectionImplType(Reference ref) {
-		String collectionType = getCollectionType(ref);
+		String collectionType = getRefCollectionType(ref);
 		return getCollectionImplType(collectionType);
 	}
 
@@ -462,7 +462,7 @@ public class HelperBase {
 	 * Collection type can be set, list, bag or map. It corresponds to the
 	 * Hibernate collection types.
 	 */
-	public String getCollectionType(Reference ref) {
+	public String getRefCollectionType(Reference ref) {
 		String type = ref.getCollectionType();
 		return (type == null ? "set" : type.toLowerCase());
 	}

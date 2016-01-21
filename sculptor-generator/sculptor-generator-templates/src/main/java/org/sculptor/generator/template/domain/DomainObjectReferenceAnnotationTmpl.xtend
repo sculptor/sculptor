@@ -416,7 +416,7 @@ def String oneToManyJpaAnnotation(Reference it) {
 		@javax.persistence.OneToMany(
 			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
 				isOrphanRemoval(it.getCascadeType(), it), "orphanRemoval", true,
-				it.hasOpposite() && (getCollectionType() != "list"), "mappedBy", '"' + opposite?.name + '"',
+				it.hasOpposite() && (getRefCollectionType() != "list"), "mappedBy", '"' + opposite?.name + '"',
 				it.getFetchType() != null, "fetch", it.getFetchType()
 			))»)
 		«IF isJpaProviderHibernate() && !isRefInverse()»
