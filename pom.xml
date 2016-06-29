@@ -119,7 +119,6 @@
 
 		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}</p2-repository-eclipse>
 		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/${xtext-version}</p2-repository-eclipse-xtext>
-		<p2-repository-xtext-utils>http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/</p2-repository-xtext-utils>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
