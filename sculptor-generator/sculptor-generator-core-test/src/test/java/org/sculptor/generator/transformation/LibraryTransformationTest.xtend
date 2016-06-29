@@ -150,7 +150,7 @@ class LibraryTransformationTest extends XtextTest {
 	def void assertReferenceToPhysicalMediaFromLibrary() {
 		val library = mediaModule.domainObjects.namedElement("Library")
 		val mediaRef = library.references.namedElement("media")
-		assertFalse(dbHelperBase.isInverse(mediaRef))
+		assertFalse(dbHelperBase.isRefInverse(mediaRef))
 		assertEquals("LIB_REF", mediaRef.oppositeForeignKeyName)
 	}
 
@@ -161,7 +161,7 @@ class LibraryTransformationTest extends XtextTest {
 	def void assertReferenceToLibraryFromPhysicalMedia() {
 		val physicalMedia = mediaModule.domainObjects.namedElement("PhysicalMedia")
 		val libraryRef = physicalMedia.references.namedElement("library")
-		assertTrue(dbHelperBase.isInverse(libraryRef))
+		assertTrue(dbHelperBase.isRefInverse(libraryRef))
 
 		assertEquals("LIB_REF", libraryRef.databaseColumn)
 		assertEquals("LIB_REF", libraryRef.foreignKeyName)
@@ -176,7 +176,7 @@ class LibraryTransformationTest extends XtextTest {
 		val physicalMedia = mediaModule.domainObjects.namedElement("PhysicalMedia") as Entity
 
 		val mediaRef = physicalMedia.references.namedElement("media")
-		assertFalse(dbHelperBase.isInverse(mediaRef))
+		assertFalse(dbHelperBase.isRefInverse(mediaRef))
 
 		assertEquals("PHMED_MED", mediaRef.manyToManyJoinTableName)
 		assertEquals("MEDIA_REF", mediaRef.databaseColumn)
@@ -199,7 +199,7 @@ class LibraryTransformationTest extends XtextTest {
 	def void assertReferenceToPhysicalMediaFromMedia() {
 		val media = mediaModule.domainObjects.namedElement("Media") as Entity
 		val physicalMediaRef = media.references.namedElement("physicalMedia")
-		assertTrue(dbHelperBase.isInverse(physicalMediaRef))
+		assertTrue(dbHelperBase.isRefInverse(physicalMediaRef))
 		assertEquals("PHMED_MED", physicalMediaRef.getManyToManyJoinTableName())
 		assertEquals("PHYSICALMEDIA", physicalMediaRef.databaseColumn)
 		assertEquals("PHYSICALMEDIA", physicalMediaRef.foreignKeyName)
@@ -221,7 +221,7 @@ class LibraryTransformationTest extends XtextTest {
 	def void assertReferenceToPersonFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
 		val personRef = mediaCharacter.references.namedElement("playedBy")
-		assertFalse(dbHelperBase.isInverse(personRef))
+		assertFalse(dbHelperBase.isRefInverse(personRef))
 		assertEquals("MEDIA_CHR_PLAYEDBY", personRef.manyToManyJoinTableName)
 		assertEquals("PLAYEDBY", personRef.databaseColumn)
 		assertEquals("PLAYEDBY", personRef.foreignKeyName)
@@ -243,7 +243,7 @@ class LibraryTransformationTest extends XtextTest {
 	def void assertReferenceToReviewFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
 		val reviewsRef = mediaCharacter.references.namedElement("reviews")
-		assertTrue(dbHelperBase.isInverse(reviewsRef))
+		assertTrue(dbHelperBase.isRefInverse(reviewsRef))
 		assertEquals("MEDIA_CHR", reviewsRef.databaseColumn)
 		assertEquals("MEDIA_CHR", reviewsRef.oppositeForeignKeyName)
 	}
@@ -256,7 +256,7 @@ class LibraryTransformationTest extends XtextTest {
 	def void assertReferenceToCommentFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter") as ValueObject
 		val commentsRef = mediaCharacter.references.namedElement("comments")
-		assertTrue(dbHelperBase.isInverse(commentsRef))
+		assertTrue(dbHelperBase.isRefInverse(commentsRef))
 		assertEquals("COMMENT_OF_CHARACTER", commentsRef.databaseColumn)
 		assertEquals("COMMENT_OF_CHARACTER", commentsRef.oppositeForeignKeyName)
 		assertEquals("COMMENT_OF_CHARACTER", commentsRef.databaseName)
