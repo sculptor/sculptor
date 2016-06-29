@@ -53,16 +53,15 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.sculptorgenerator.eclipse</groupId>
+			<artifactId>org.sculptor.dsl.tests</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>sculptor-generator-core</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<classifier>test</classifier>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

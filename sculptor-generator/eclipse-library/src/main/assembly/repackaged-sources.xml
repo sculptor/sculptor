@@ -27,7 +27,6 @@
 				<!-- Test Support -->
 				<include>org/eclipse/xtext/junit4/**</include>
 				<include>org/eclipse/xtext/xbase/junit/**</include>
-				<include>org/eclipselabs/xtext/utils/unittesting/**</include>
 				<include>org/eclipse/core/runtime/**</include>
 			</includes>
 			<excludes>
