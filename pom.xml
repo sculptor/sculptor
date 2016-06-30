@@ -740,6 +740,9 @@
 						</goals>
 						<configuration>
 							<rules>
+								<requireJavaVersion>
+									<version>[1.8,)</version>
+								</requireJavaVersion>
 								<bannedDependencies>
 									<searchTransitive>true</searchTransitive>
 									<excludes>
