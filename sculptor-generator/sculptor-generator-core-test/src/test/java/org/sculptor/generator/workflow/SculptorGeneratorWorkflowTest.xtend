@@ -17,15 +17,16 @@
 package org.sculptor.generator.workflow
 
 import java.util.List
+import org.junit.Test
 import org.sculptor.generator.SculptorGeneratorContext
 import org.sculptor.generator.SculptorGeneratorIssue
+import org.sculptor.generator.SculptorGeneratorIssue.Severity
 import org.sculptor.generator.SculptorGeneratorSetup
+import org.sculptor.generator.SculptorGeneratorWorkflow
 import org.sculptor.generator.configuration.Configuration
 import sculptormetamodel.Application
-import org.junit.Test
 
-import static org.junit. Assert.*
-import org.sculptor.generator.SculptorGeneratorIssue.Severity
+import static org.junit.Assert.*
 
 class SculptorGeneratorWorkflowTest {
 

@@ -18,6 +18,7 @@ package org.sculptor.generator.chain
 
 import com.google.inject.Guice
 import com.google.inject.Injector
+import org.sculptor.generator.configuration.ConfigurationProvider
 import org.sculptor.generator.configuration.ConfigurationProviderModule
 
 /**
@@ -31,7 +32,8 @@ class ChainOverrideAwareInjector {
 
 	static def Injector createInjector(Class<?>... startClasses) {
 		val bootstrapInjector = Guice.createInjector(new ConfigurationProviderModule)
-		bootstrapInjector.createChildInjector(new ChainOverrideAwareModule(bootstrapInjector, startClasses))
+		val configurationProvider = bootstrapInjector.getInstance(typeof(ConfigurationProvider))
+		bootstrapInjector.createChildInjector(new ChainOverrideAwareModule(configurationProvider, startClasses))
 	}
 
 }

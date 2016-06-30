@@ -24,7 +24,7 @@ import java.util.List;
  * This class uses a {@link ThreadLocal} to hold a list of file created by the
  * code generator and a list of issues which came up during code generation.
  * 
- * <strong>After finshings with the file list call {@link #close()} to remove
+ * <strong>After finishing with the file list call {@link #close()} to remove
  * the file list from the current thread. Otherwise this class is leaking
  * memory!!!</strong>
  */

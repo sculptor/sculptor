@@ -19,6 +19,7 @@ package org.sculptor.generator;
 import org.sculptor.dsl.SculptordslRuntimeModule;
 import org.sculptor.dsl.SculptordslStandaloneSetup;
 import org.sculptor.generator.chain.ChainOverrideAwareModule;
+import org.sculptor.generator.configuration.ConfigurationProvider;
 import org.sculptor.generator.configuration.ConfigurationProviderModule;
 import org.sculptor.generator.transform.DslTransformation;
 import org.sculptor.generator.transform.Transformation;
@@ -35,12 +36,19 @@ import com.google.inject.Injector;
  */
 public class SculptorGeneratorSetup extends SculptordslStandaloneSetup {
 
+	@Override
 	public Injector createInjector() {
-		Injector bootstrapInjector = Guice.createInjector(new ConfigurationProviderModule());
+		Injector configurationInjector = Guice.createInjector(new ConfigurationProviderModule());
+		ConfigurationProvider configurationProvider = configurationInjector.getInstance(ConfigurationProvider.class);
 		try {
-			return bootstrapInjector.createChildInjector(
-					new ChainOverrideAwareModule(bootstrapInjector, DslTransformation.class, Transformation.class,
-							Class.forName("org.sculptor.generator.template.RootTmpl")), new SculptordslRuntimeModule());
+			/*
+			 * Starting with Xtext 2.9+ we can't use a child injector here
+			 * anymore - details available in Xtext forum
+			 * https://www.eclipse.org/forums/index.php/t/1078751/
+			 */
+			return Guice.createInjector(new ConfigurationProviderModule(), new SculptordslRuntimeModule(),
+					new ChainOverrideAwareModule(configurationProvider, DslTransformation.class, Transformation.class,
+							Class.forName("org.sculptor.generator.template.RootTmpl")));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Emergency - 'RootTmpl' not available on classpath");
 		}

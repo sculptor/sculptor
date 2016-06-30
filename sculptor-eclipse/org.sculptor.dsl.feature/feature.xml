@@ -32,6 +32,11 @@ and limitations under the License.
       <update label="Sculptor" url="http://sculptorgenerator.org/updates/"/>
    </url>
 
+   <requires>
+      <import feature="org.eclipse.xtext.runtime" version="2.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="org.sculptor.dsl"
          download-size="0"

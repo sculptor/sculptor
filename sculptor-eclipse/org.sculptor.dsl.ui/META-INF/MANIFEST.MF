@@ -28,5 +28,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.sculptor.dsl.ui.contentassist,
  org.sculptor.dsl.ui.contentassist.antlr,
  org.sculptor.dsl.ui.internal,
- org.sculptor.dsl.ui.quickfix
+ org.sculptor.dsl.ui.quickfix,
+ org.sculptor.dsl.ui.contentassist.antlr.internal
 Bundle-Activator: org.sculptor.dsl.ui.internal.SculptordslActivator

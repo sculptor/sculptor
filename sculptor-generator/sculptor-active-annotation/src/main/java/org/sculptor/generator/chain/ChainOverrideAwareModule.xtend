@@ -17,7 +17,6 @@
 package org.sculptor.generator.chain
 
 import com.google.inject.AbstractModule
-import com.google.inject.Injector
 import java.lang.reflect.Array
 import java.util.HashSet
 import java.util.List
@@ -35,15 +34,15 @@ class ChainOverrideAwareModule extends AbstractModule {
 	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverrideAwareModule))
 
 	private val List<? extends Class<?>> startClasses
-	private Injector bootstrapInjector
+	private ConfigurationProvider configurationProvider
 
-	public new(Injector bootstrapInjector, Class<?> startClass) {
-		this.bootstrapInjector = bootstrapInjector
+	public new(ConfigurationProvider configurationProvider, Class<?> startClass) {
+		this.configurationProvider = configurationProvider
 		this.startClasses = #[startClass]
 	}
 
-	public new(Injector bootstrapInjector, Class<?>... startClasses) {
-		this.bootstrapInjector = bootstrapInjector
+	public new(ConfigurationProvider configurationProvider, Class<?>... startClasses) {
+		this.configurationProvider = configurationProvider
 		this.startClasses = startClasses
 	}
 
@@ -127,7 +126,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 * Returns the value for the given configuration key .  
 	 */
 	private def getConfigurationString(String key) {
-		bootstrapInjector.getInstance(typeof(ConfigurationProvider)).getString(key)
+		configurationProvider.getString(key)
 	}
 
 	/**

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sculptor.generator.workflow
+package org.sculptor.generator
 
 import com.google.inject.Injector
 import java.lang.reflect.Method
@@ -53,7 +53,7 @@ import sculptormetamodel.Application
  * <li>generate the code from the generator model
  * </ol>
  * 
- * Any problems occuring during workflow execution are stored as SculptorGeneratorIssue in
+ * Any problems occurring during workflow execution are stored as SculptorGeneratorIssue in
  * the SculptorGeneratorContext.
  *  
  * @see #run(String)
@@ -110,17 +110,17 @@ class SculptorGeneratorWorkflow {
 		}
 	}
 
-	protected def boolean readModel(String modelURI) {
-		LOG.debug("Reading model from '{}'", modelURI)
+	protected def boolean readModel(String modelUri) {
+		LOG.debug("Reading model from '{}'", modelUri)
 
 		// Read all the models from given URI and check for imports 
 		var newUris = newArrayList
-		newUris.add(modelURI)
-		var int numberResources
+		newUris.add(modelUri)
+		var int resourceSetSize
 		do {
 
 			// Remember the current number of resources in the resource set 
-			numberResources = resourceSet.resources.size
+			resourceSetSize = resourceSet.resources.size
 
 			// Convert given text into URIs
 			var realUris = newArrayList
@@ -134,14 +134,14 @@ class SculptorGeneratorWorkflow {
 				}
 			}
 
-			// Check the exising URIs for new URIs from imports
+			// Check the existing URIs for new URIs from imports
 			newUris = newArrayList
 			for (uri : realUris) {
 				val resource = resourceSet.getResource(uri, true)
-				for (obj : resource.contents) {
-					if (obj instanceof DslModel) {
-						for (import : obj.imports) {
-							val app = obj.app
+				for (contents : resource.contents) {
+					if (contents instanceof DslModel) {
+						for (import : contents.imports) {
+							val app = contents.app
 							LOG.debug(
 								"Application" + if (app.basePackage != null && !app.basePackage.empty)
 									" '{}'"
@@ -152,7 +152,7 @@ class SculptorGeneratorWorkflow {
 					}
 				}
 			}
-		} while (!newUris.empty && numberResources != resourceSet.resources.size)
+		} while (!newUris.empty && resourceSetSize != resourceSet.resources.size)
 		true
 	}
 

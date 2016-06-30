@@ -27,7 +27,7 @@ import static org.sculptor.generator.chain.ChainOverrideTestHelper.*
 
 class ChainOverrideTest {
 
-	extension XtendCompilerTester compilerTester = XtendCompilerTester::newXtendCompilerTester(typeof(ChainOverride))
+	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(ChainOverride.classLoader)
 
 	@Test
 	def void testGeneratedCode() {

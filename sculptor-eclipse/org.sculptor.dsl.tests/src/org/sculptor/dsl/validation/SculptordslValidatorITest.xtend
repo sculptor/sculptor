@@ -52,7 +52,7 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testCheckDomainObjectDuplicateName() {
-		val issues = testFile("domain_object_duplicate_name.btdesign")
+		val issues = testFileNoSerializer("domain_object_duplicate_name.btdesign")
 		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(4).under(typeof(DslEntity), "Test").named("Test").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslValueObject), "Test").named("Test").oneOfThemContains("Duplicate name"))
@@ -60,7 +60,7 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testCheckServiceDuplicateName() {
-		val issues = testFile("service_duplicate_name.btdesign")
+		val issues = testFileNoSerializer("service_duplicate_name.btdesign")
 		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(4).under(typeof(DslService), "Test").named("Test").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslService), "Test").named("Test").oneOfThemContains("Duplicate name"))
@@ -68,7 +68,7 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testCheckRepositoryDuplicateName() {
-		val issues = testFile("repository_duplicate_name.btdesign")
+		val issues = testFileNoSerializer("repository_duplicate_name.btdesign")
 		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(8).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
@@ -76,7 +76,7 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testCheckModuleDuplicateName() {
-		val issues = testFile("module_duplicate_name.btdesign")
+		val issues = testFileNoSerializer("module_duplicate_name.btdesign")
 		assertEquals(2, issues.errorsOnly.size)
 		assertConstraints(issues.errorsOnly().inLine(3).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
 		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
@@ -92,7 +92,7 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testBadReferenceMissingDash() {
-		val issues = testFile("attributes.btdesign")
+		val issues = testFileNoSerializer("attributes.btdesign")
 		assertEquals(2, issues.warningsOnly.size)
 		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslAttribute), "badReference").named("badReference").oneOfThemContains("Use - Another"))
 		assertConstraints(issues.warningsOnly().inLine(7).under(typeof(DslAttribute), "badReference2").named("badReference2").oneOfThemContains("Use - List<Another>"))
@@ -100,7 +100,7 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testBadServiceAndRepositoryOperationReturnTypeOfDomainObject() {
-		val issues = testFile("operation_return_type_bad.btdesign")
+		val issues = testFileNoSerializer("operation_return_type_bad.btdesign")
 		assertEquals(2, issues.warningsOnly.size)
 		assertConstraints(issues.warningsOnly().inLine(5).under(typeof(DslServiceOperation), "anOperation").named("anOperation").oneOfThemContains("Use @SomeType"))
 		assertConstraints(issues.warningsOnly().inLine(9).under(typeof(DslRepositoryOperation), "findIt").named("findIt").oneOfThemContains("Use @SomeType"))
@@ -108,14 +108,14 @@ class SculptordslValidatorITest extends XtextTest {
 
 	@Test
 	def void testBadParameterTypeOfDomainObject() {
-		val issues = testFile("operation_parameter_type_bad.btdesign")
+		val issues = testFileNoSerializer("operation_parameter_type_bad.btdesign")
 		assertEquals(1, issues.warningsOnly.size)
 		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslParameter), "toMatch").named("toMatch").oneOfThemContains("Use @SomeType"))
 	}
 
 	@Test
 	def void testUnresolvedExtendsNames() {
-		val issues = testFile("unresolved_extends_names.btdesign")
+		val issues = testFileNoSerializer("unresolved_extends_names.btdesign")
 		assertEquals(3, issues.size)
 		assertConstraints(issues.errorsOnly().inLine(4).under(typeof(DslEntity), "TestEntity").named("TestEntity").oneOfThemContains("resolve reference to 'NonExistentEntity'"))
 		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslValueObject), "TestVO").named("TestVO").oneOfThemContains("resolve reference to 'NonExistentVO'"))

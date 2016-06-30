@@ -24,7 +24,7 @@ import static org.junit.Assert.*
 
 class ChainOverridableTest {
 
-	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(typeof(ChainOverridable))
+	extension XtendCompilerTester compilerTester = XtendCompilerTester.newXtendCompilerTester(ChainOverridable.classLoader)
 
 	@Test
 	def void testGeneratedCode() {

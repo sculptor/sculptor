@@ -24,7 +24,6 @@ import java.util.Properties;
 import org.eclipse.emf.common.util.URI;
 import org.sculptor.generator.SculptorGeneratorResult.Status;
 import org.sculptor.generator.util.FileHelper;
-import org.sculptor.generator.workflow.SculptorGeneratorWorkflow;
 
 import com.google.inject.Injector;
 
@@ -50,7 +49,7 @@ public class SculptorGeneratorRunner {
 			boolean success = workflow.run(URI.createFileURI(modelFile.toString()).toString(), generatorProperties);
 
 			// Create a result object holding a list of generated files and
-			// issues occured during code generation
+			// issues occurred during code generation
 			List<SculptorGeneratorIssue> issues = SculptorGeneratorContext.getIssues();
 			List<File> generatedFiles = SculptorGeneratorContext.getGeneratedFiles();
 			SculptorGeneratorResult result = new SculptorGeneratorResult((success ? Status.SUCCESS : Status.FAILED),
