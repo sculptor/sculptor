@@ -7,6 +7,8 @@ services:
  - mongodb
 
 before_install:
+ # Workaround for travis-ci/travis-ci#4629
+ - sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g' ~/.m2/settings.xml
  # We need GraphViz to generate images
  - "sudo apt-get install graphviz 2>&1 | tail -n 2"
 
