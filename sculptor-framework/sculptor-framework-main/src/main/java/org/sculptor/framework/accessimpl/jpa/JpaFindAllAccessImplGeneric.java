@@ -58,7 +58,7 @@ public class JpaFindAllAccessImplGeneric<T,R>
 
     // TODO: remove all overrides if using criteria query
 
-    String orderBy = null;
+    private String orderBy = null;
 
     @Override
     protected void prepareQuery(QueryConfig config) {
@@ -81,8 +81,10 @@ public class JpaFindAllAccessImplGeneric<T,R>
 
     @Override
     protected void prepareOrderBy(String query, QueryConfig config) {
-        if (orderBy != null)
+        if (orderBy != null) {
             query += " order by " + JpaHelper.toSeparatedString(Arrays.asList(orderBy.split(",")), ",", "e.");
+            setQuery(query);
+        }
     }
 
     @Override
