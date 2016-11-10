@@ -42,7 +42,7 @@ class JavaCodeAutoImporter {
 	def String replaceQualifiedTypes(String source, String importMarkerPattern) {
 
 		// First check if given marker can be found in source  
-		val importMarkerMatcher = Pattern::compile(importMarkerPattern).matcher(source)
+		val importMarkerMatcher = Pattern.compile(importMarkerPattern).matcher(source)
 		if (importMarkerMatcher.find) {
 			val parser = new CodeSnippetParsingUtil
 			val compilationUnit = parser.parseCompilationUnit(source.toCharArray(), compilerOptions, true)

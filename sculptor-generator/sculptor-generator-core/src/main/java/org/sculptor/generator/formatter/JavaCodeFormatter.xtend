@@ -52,7 +52,7 @@ class JavaCodeFormatter {
 
 		// Use Eclipse JDTs code formatter
 		val textEdit = getCodeFormatter().format(
-			CodeFormatter.K_COMPILATION_UNIT.bitwiseOr(CodeFormatter::F_INCLUDE_COMMENTS), autoImportedCode, 0,
+			CodeFormatter.K_COMPILATION_UNIT.bitwiseOr(CodeFormatter.F_INCLUDE_COMMENTS), autoImportedCode, 0,
 			autoImportedCode.length(), 0, null)
 		if (textEdit != null) {
 			val doc = new Document(autoImportedCode)
