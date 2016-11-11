@@ -55,6 +55,10 @@
 			<artifactId>sculptor-generator-test</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.junit4</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
