@@ -166,43 +166,28 @@ public abstract class JpaQueryAccessBase<T,R>
         prepareOrderBy(config);
         // there is no support for Tuple in JPQL, need an untyped query for jpql queries with more than one result expression
         // TODO: refactoring
+        Query query;
         if (resultType.isArray()) {
-            Query query = prepareUntypedQuery(config);
-            prepareParameters(query, getParameters(), config);
-            preparePagination(query, config);
-            prepareHints(query, config);
-            if (config.isSingleResult()) {
-            	try {
-            		singleResult = (R) query.getSingleResult();
-            	}
-            	catch (NoResultException e) {
-            		singleResult = null;
-            	}
-                prepareSingleResult(singleResult);
-            }
-            else {
-                listResult = (List<R>) query.getResultList();
-            }
+            query = prepareUntypedQuery(config);
+        } else {
+            query = prepareTypedQuery(config);
         }
-        else {
-	        TypedQuery<R> typedQuery = prepareTypedQuery(config);
-	        prepareParameters(typedQuery, getParameters(), config);
-	        preparePagination(typedQuery, config);
-	        prepareHints(typedQuery, config);
-	        if (config.isSingleResult()) {
-	        	try {
-	        		singleResult = typedQuery.getSingleResult();
-	        	}
-	        	catch (NoResultException e) {
-	        		singleResult = null;
-	        	}
-	            prepareSingleResult(singleResult);
-	        }
-	        else {
-	            listResult = typedQuery.getResultList();
-	            prepareResult(listResult);
-	        }
-        }
+
+		prepareParameters(query, getParameters(), config);
+		preparePagination(query, config);
+		prepareHints(query, config);
+		if (config.isSingleResult()) {
+			try {
+				singleResult = (R) query.getSingleResult();
+			} catch (NoResultException e) {
+				singleResult = null;
+			}
+			prepareSingleResult(singleResult);
+		} else {
+			listResult = query.getResultList();
+			prepareResult(listResult);
+		}
+
         if (config.isResultCountNeeded()) {
 //          TypedQuery<Long> typedResultCountQuery = prepareResultCount(config);
             prepareResultCount(config);

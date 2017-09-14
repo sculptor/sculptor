@@ -20,26 +20,27 @@ package org.sculptor.framework.accessapi;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.Tuple;
 
 /**
- * <p>Access command for finding objects by condition. The specified
- * {@link #setRestrictions restrictions} are used to build the restrictions with
+ * <p>Access command for calculating statistics by condition. The specified
+ * {@link #setCondition restrictions} are used to build the restrictions with
  * simple equals conditions.</p>
  * <p>Command design pattern.</p>
  */
-public interface FindByConditionStatAccess<T> extends Cacheable {
+public interface FindByConditionStatAccess<T> extends FindByConditionAccess<Tuple>, Cacheable {
 
 	/**
 	 * These criteria are used to build complex restrictions which depends on
 	 * provided criteria. This criteria are used in conjuction with Restriction.<br>
-	 * {@link #addCriteria} - add additional condition<br> {@link #setRestriction} -
-	 * set simple restriction<br> {@link #addRestriction} - add additional simple
+	 * {@link #addCondition} - add additional condition<br> {@link #setCondition} -
+	 * set simple restriction<br> {@link #addCondition} - add additional simple
 	 * restriction
 	 */
 	void setCondition(List<ConditionalCriteria> criteria);
 
 	/**
-	 * Add additional complex criteria. For details look to {@link #setCriteria}
+	 * Add additional complex criteria. For details look to {@link #setCondition}
 	 * documentation
 	 */
 	void addCondition(ConditionalCriteria criteria);
@@ -57,10 +58,5 @@ public interface FindByConditionStatAccess<T> extends Cacheable {
 	/**
 	 * Get result after executeStat
 	 */
-	List<List<ColumnStatResult>> getSingleResult();
-
-	/**
-	 * Get result after executeStat
-	 */
-	void setUseSingleResult(boolean useSingleResult);
+	List<List<ColumnStatResult>> getColumnStatResult();
 }

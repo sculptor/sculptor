@@ -30,5 +30,6 @@ public interface FindByConditionAccess2<R> extends FindByConditionAccess<R>, Cou
 	void setHint(String hint, Object value);
 
     void setUseSingleResult(boolean singleResult);
+
     R getSingleResult();
 }

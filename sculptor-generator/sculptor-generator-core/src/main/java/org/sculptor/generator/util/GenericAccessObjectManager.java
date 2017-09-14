@@ -625,14 +625,16 @@ public class GenericAccessObjectManager {
 				} else {
 					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
 				}
-				addParameterFirst(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
+				addParameter(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
 
 				String colStatParamType = "java.util.List<" + COLUMN_STAT_REQUEST + "<" + aggregateRootClassName(operation) + ">>";
 				addParameter(operation, colStatParamType, "columnStat");
-				helperBase.addHint(operation, "useSingleResult");
 
-				String colStatResultType = "java.util.List<java.util.List<" + COLUMN_STAT_RESULT + ">>";
-				operation.setType(colStatResultType);
+				if (propBase.getBooleanProperty("findByConditionStat.paging")) {
+					addParameter(operation, "PagingParameter", "pagingParameter");
+				}
+
+				operation.setType("java.util.List<java.util.List<" + COLUMN_STAT_RESULT + ">>");
 			}
 
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
@@ -656,6 +658,47 @@ public class GenericAccessObjectManager {
 		}
 
 	}
+
+	public class FindByConditionTupleStrategy extends AbstractGenericAccessObjectStrategy {
+
+		@Override
+		public void addDefaultValues(RepositoryOperation operation) {
+			if (operation.getParameters().isEmpty()) {
+				if (propBase.getBooleanProperty("findByConditionTuple.paging")) {
+					addParameter(operation, "PagingParameter", "pagingParameter");
+				}
+
+				String conditionalCriteriaClass;
+				if (propBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
+					conditionalCriteriaClass = propBase.getProperty("framework.accessapi.ConditionalCriteria");
+				} else {
+					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
+				}
+				addParameterFirst(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
+			}
+			operation.setHint("map");
+
+			if (operation.getType() == null && operation.getDomainObjectType() == null) {
+				operation.setType("List<javax.persistence.Tuple>");
+			}
+		}
+
+		@Override
+		public String getGenericType(RepositoryOperation operation) {
+			if (operation.getDomainObjectType() == null || "PagedResult".equals(operation.getType())) {
+				return "<" + aggregateRootClassName(operation) + ">";
+			} else {
+				return "<" + helperBase.getTypeName(operation, false) + ">";
+			}
+		}
+
+		@Override
+		public boolean isPersistentClassConstructor() {
+			return true;
+		}
+
+	}
+
 
 	public class MergeStrategy extends AbstractGenericAccessObjectStrategy {
 

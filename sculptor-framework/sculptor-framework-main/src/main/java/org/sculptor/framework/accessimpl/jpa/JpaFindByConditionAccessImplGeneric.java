@@ -17,22 +17,27 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.sculptor.framework.accessapi.ConditionalCriteria;
+import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
+import org.sculptor.framework.accessapi.FindByConditionAccess2;
+import org.sculptor.framework.domain.LeafProperty;
+import org.sculptor.framework.domain.Property;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.FetchParent;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
-
-import org.sculptor.framework.accessapi.ConditionalCriteria;
-import org.sculptor.framework.accessapi.FindByConditionAccess2;
-import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -44,8 +49,7 @@ import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
  * </p>
  */
 public class JpaFindByConditionAccessImplGeneric<T,R>
-    extends JpaCriteriaQueryAccessBase<T,R>
-    implements FindByConditionAccess2<R> {
+    extends JpaCriteriaQueryAccessBase<T,R> implements FindByConditionAccess2<R> {
 
     private List<ConditionalCriteria> conditionalCriterias = new ArrayList<ConditionalCriteria>();
 
@@ -69,9 +73,9 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 		conditionalCriterias.add(criteria);
 	}
 
-    public List<R> getResult() {
-        return getListResult();
-    }
+	public List<R> getResult() {
+		return getListResult();
+	}
 
     @Override
     protected List<Predicate> preparePredicates() {
@@ -96,23 +100,23 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         for (ConditionalCriteria criteria : conditionalCriterias) {
         	Selection<?> selection = null;
             if (Operator.Select.equals(criteria.getOperator())) {
-               	selection = getPath(root, criteria.getPropertyFullName());
+            	selection = getExpression(criteria, root);
             } else if (Operator.Max.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().max((Expression<? extends Number>)getPath(root, criteria.getPropertyFullName()));
+            	selection = getCriteriaBuilder().max(getExpression(criteria, root));
             } else if (Operator.Min.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().min((Expression<? extends Number>)getPath(root, criteria.getPropertyFullName()));
+            	selection = getCriteriaBuilder().min(getExpression(criteria, root));
             } else if (Operator.Avg.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().avg((Expression<? extends Number>)getPath(root, criteria.getPropertyFullName()));
+            	selection = getCriteriaBuilder().avg(getExpression(criteria,root));
             } else if (Operator.Sum.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().sum((Expression<? extends Number>)getPath(root, criteria.getPropertyFullName()));
+            	selection = getCriteriaBuilder().sum(getExpression(criteria, root));
             } else if (Operator.SumAsLong.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().sumAsLong(getPath(root, criteria.getPropertyFullName()).as(Integer.class));
+            	selection = getCriteriaBuilder().sumAsLong(getExpression(criteria, root).as(Integer.class));
             } else if (Operator.SumAsDouble.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().sumAsDouble(getPath(root, criteria.getPropertyFullName()).as(Float.class));
+            	selection = getCriteriaBuilder().sumAsDouble(getExpression(criteria, root).as(Float.class));
             } else if (Operator.Count.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().count(getPath(root, criteria.getPropertyFullName()).as(Long.class));
+            	selection = getCriteriaBuilder().count(getExpression(criteria, root)).as(Long.class);
             } else if (Operator.CountDistinct.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().countDistinct(getPath(root, criteria.getPropertyFullName()).as(Long.class));
+            	selection = getCriteriaBuilder().countDistinct(getExpression(criteria, root)).as(Long.class);
             }
             if (selection != null) {
 	            if (criteria.getPropertyAlias() != null) {
@@ -122,6 +126,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             }
         }
         if (!selections.isEmpty()) {
+        	setFetchEager(null);
         	if (selections.size() == 1)
         		criteriaQuery.select((Selection<? extends R>) selections.get(0));
         	else
@@ -129,14 +134,66 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
     }
 
+    private Expression<? extends Number> getExpression(ConditionalCriteria criteria, Root<T> root) {
+        CriteriaBuilder criteriaBuilder = getCriteriaBuilder();
+        Expression<? extends Number> result = (Expression<? extends Number>) getPath(root, criteria.getPropertyFullName());
+        if (criteria.getFirstOperant() instanceof ConditionalCriteria.Function) {
+            ConditionalCriteria.Function function = (ConditionalCriteria.Function) criteria.getFirstOperant();
+            if (ConditionalCriteria.Function.hour.equals(function)) {
+                result = criteriaBuilder.function("hour", Integer.class, result);
+            } else if (ConditionalCriteria.Function.day.equals(function)) {
+                result = criteriaBuilder.function("day", Integer.class, result);
+            } else if (ConditionalCriteria.Function.month.equals(function)) {
+                result = criteriaBuilder.function("month", Integer.class, result);
+            } else if (ConditionalCriteria.Function.year.equals(function)) {
+                result = criteriaBuilder.function("year", Integer.class, result);
+            } else if (ConditionalCriteria.Function.week.equals(function)) {
+                result = criteriaBuilder.function("week", Integer.class, result);
+            } else if (ConditionalCriteria.Function.quarter.equals(function)) {
+                result = criteriaBuilder.function("quarter", Integer.class, result);
+            } else if (ConditionalCriteria.Function.dayOfWeek.equals(function)) {
+                result = criteriaBuilder.function("dow", Integer.class, result);
+            } else if (ConditionalCriteria.Function.dayOfYear.equals(function)) {
+                result = criteriaBuilder.function("doy", Integer.class, result);
+            }
+        }
+        return result;
+    }
+
     @Override
     protected void prepareFetch(Root<T> root, QueryConfig config) {
+        // Extract eager field names
+        List<String> eagerProperties = new ArrayList<>();
+        Property<?>[] fetchEager = getFetchEager();
+        if (fetchEager != null) {
+            for (Property p : getFetchEager()) {
+                String propFullName = p instanceof LeafProperty<?> ? ((LeafProperty<?>) p).getEmbeddedName() : p.getName();
+                eagerProperties.add(propFullName);
+            }
+        }
+
+        // Apply eager from criteria
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.FetchEager.equals(criteria.getOperator())) {
                 // TODO: this is not tested
-                root.fetch(criteria.getPropertyFullName());
+                String[] split = criteria.getPropertyFullName().split("\\.");
+                FetchParent parent = root;
+                for (String s : split) {
+                    parent = parent.fetch(s, JoinType.LEFT);
+                }
+                // Remove fields which are overridden in criteria
+                eagerProperties.remove(criteria.getPropertyFullName());
             } else if (Operator.FetchLazy.equals(criteria.getOperator())) {
                 // TODO: fetchLazy is not supported actually
+            }
+        }
+
+        // Apply eager unspecified in criteria
+        for (String eager : eagerProperties) {
+            String[] split = eager.split("\\.");
+            FetchParent parent = root;
+            for (String s : split) {
+                parent = parent.fetch(s, JoinType.LEFT);
             }
         }
     }
@@ -146,9 +203,19 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         List<Order> orderByList = new ArrayList<Order>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.OrderAsc.equals(criteria.getOperator())) {
-                orderByList.add(getCriteriaBuilder().asc(getPath(root, criteria.getPropertyFullName())));
+                if (config.isDistinct()) {
+                    // for distinct select, sort column have to be in fetch columns - otherwise DB error
+                    orderByList.add(getCriteriaBuilder().asc(getFetchPath(root, criteria)));
+                } else {
+                    orderByList.add(getCriteriaBuilder().asc(getPath(root, criteria.getPropertyFullName())));
+                }
             } else if (Operator.OrderDesc.equals(criteria.getOperator())) {
-                orderByList.add(getCriteriaBuilder().desc(getPath(root, criteria.getPropertyFullName())));
+                if (config.isDistinct()) {
+                    // for distinct select, sort column have to be in fetch columns - otherwise DB error
+                    orderByList.add(getCriteriaBuilder().desc(getFetchPath(root, criteria)));
+                } else {
+                    orderByList.add(getCriteriaBuilder().desc(getPath(root, criteria.getPropertyFullName())));
+                }
             }
         }
         if (!orderByList.isEmpty()) {
@@ -156,12 +223,32 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
     }
 
+    private Path getFetchPath(Root<T> root, ConditionalCriteria criteria) {
+        FetchParent from = root;
+        for (int i = 0; i < criteria.getPropertyPath().length; i++) {
+            String stringPath = criteria.getPropertyPath()[i];
+            Set<Fetch<?, ?>> fetches = from.getFetches();
+            boolean found = false;
+            for (Fetch<?, ?> fetch : fetches) {
+                if (fetch.getAttribute().getName().equals(stringPath)) {
+                    from = (FetchParent) fetch;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                from = from.fetch(stringPath, JoinType.LEFT);
+            }
+        }
+        return ((Path) from).get(criteria.getPropertyName());
+    }
+
     @Override
     protected void prepareGroupBy(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
 		List<Expression<?>> groups = new ArrayList<Expression<?>>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.GroupBy.equals(criteria.getOperator())) {
-            	groups.add(getPath(root, criteria.getPropertyFullName()));
+            	groups.add(getExpression(criteria, root));
             }
         }
         if (!groups.isEmpty()) {
@@ -273,7 +360,6 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
     }
 
-	@Override
 	public void executeCount() {
 		executeResultCount();
 	}

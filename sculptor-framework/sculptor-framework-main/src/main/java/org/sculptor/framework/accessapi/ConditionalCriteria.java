@@ -220,8 +220,16 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.GroupBy, property);
 	}
 
+	public static ConditionalCriteria groupBy(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.GroupBy, property, function);
+	}
+
 	public static ConditionalCriteria select(Property<?> property) {
 		return new ConditionalCriteria(Operator.Select, property);
+	}
+
+	public static ConditionalCriteria select(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.Select, property, function);
 	}
 
 	public enum Operator {
@@ -234,5 +242,9 @@ public class ConditionalCriteria {
 		, FetchLazy, FetchEager
 		, GroupBy
 		, Select, Min, Max, Avg, Sum, SumAsLong, SumAsDouble, Count, CountDistinct
+	}
+
+	public enum Function {
+		hour, day, week, month, quarter, year, dayOfWeek, dayOfYear
 	}
 }

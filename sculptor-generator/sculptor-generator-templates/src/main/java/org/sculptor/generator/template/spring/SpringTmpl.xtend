@@ -848,7 +848,7 @@ def String entityManagerFactory(Application it) {
 						<property name="dataSource" ref="dataSource"/>
 					«ENDIF»
 					«IF persistenceXml() != "META-INF/persistence.xml"»
-						<property name="persistenceXmlLocation" value="«persistenceXml()»"/>
+						<property name="persistenceXmlLocation" value="classpath:«persistenceXml()»"/>
 					«ENDIF»
 				</bean>
 			«ENDIF»
@@ -869,7 +869,7 @@ def String entityManagerFactoryTest(Application it) {
 		<!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider -->
 		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 			<property name="dataSource" ref="hsqldbDataSource"/>
-			<property name="persistenceXmlLocation" value="META-INF/persistence-test.xml"/>
+			<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-test.xml"/>
 			«IF isJpaProviderEclipseLink()»
 				<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
 			«ENDIF»

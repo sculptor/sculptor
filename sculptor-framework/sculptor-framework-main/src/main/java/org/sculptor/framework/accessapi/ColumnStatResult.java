@@ -4,12 +4,13 @@ public class ColumnStatResult {
 
 	String fieldName;
 
-	Long countNotNull=null;
-	Long countWithNull=null;
+	Long count=null;
 	Double min=null;
 	Double max=null;
 	Double average=null;
 	Double sum=null;
+
+
 	String minString=null;
 	String maxString=null;
 	String groupByVal=null;
@@ -22,26 +23,8 @@ public class ColumnStatResult {
 	Integer groupByDow=null;
 	Integer groupByDoy=null;
 
-	public ColumnStatResult(ColumnStatRequest<?> statRequest, Long countWithNull, Long countNotNull, String minString, String maxString, Double average, Double sum, String groupBy) {
+	public ColumnStatResult(ColumnStatRequest<?> statRequest) {
 		this.fieldName=statRequest.getColumn().getName();
-		this.countWithNull=countWithNull;
-		this.countNotNull=countNotNull;
-		this.average=average;
-		this.sum=sum;
-		this.minString=minString;
-		this.maxString=maxString;
-		this.groupByVal=groupBy;
-	}
-
-	public ColumnStatResult(ColumnStatRequest<?> statRequest, Long countWithNull, Long countNotNull, Double min, Double max, Double average, Double sum, String groupBy) {
-		this.fieldName=statRequest.getColumn().getName();
-		this.countWithNull=countWithNull;
-		this.countNotNull=countNotNull;
-		this.min=min;
-		this.max=max;
-		this.average=average;
-		this.sum=sum;
-		this.groupByVal=groupBy;
 	}
 
 	// getters
@@ -73,21 +56,116 @@ public class ColumnStatResult {
 		return max != null ? max.toString() : maxString;
 	}
 
-	public Long getCountNotNull() {
-		return countNotNull;
+	public Long getCount() {
+		return count;
 	}
 
-	public Long getCountWithNull() {
-		return countWithNull;
+	public String getGroupByValue() {
+		return groupByVal;
+	}
+
+	public Integer getGroupByHour() {
+		return groupByHour;
+	}
+
+	public Integer getGroupByDay() {
+		return groupByDay;
+	}
+
+	public Integer getGroupByWeek() {
+		return groupByWeek;
+	}
+
+	public Integer getGroupByMonth() {
+		return groupByMonth;
+	}
+
+	public Integer getGroupByQuarter() {
+		return groupByQuarter;
+	}
+
+	public Integer getGroupByYear() {
+		return groupByYear;
+	}
+
+	public Integer getGroupByDow() {
+		return groupByDow;
+	}
+
+	public Integer getGroupByDoy() {
+		return groupByDoy;
+	}
+
+	public void setCount(Long count) {
+		this.count = count;
+	}
+
+	public void setMin(Double min) {
+		this.min = min;
+	}
+
+	public void setMax(Double max) {
+		this.max = max;
+	}
+
+	public void setAverage(Double average) {
+		this.average = average;
+	}
+
+	public void setSum(Double sum) {
+		this.sum = sum;
+	}
+
+	public void setMinString(String minString) {
+		this.minString = minString;
+	}
+
+	public void setMaxString(String maxString) {
+		this.maxString = maxString;
+	}
+
+	public void setGroupByValue(String groupByVal) {
+		this.groupByVal = groupByVal;
+	}
+
+	public void setGroupByHour(Integer groupByHour) {
+		this.groupByHour = groupByHour;
+	}
+
+	public void setGroupByDay(Integer groupByDay) {
+		this.groupByDay = groupByDay;
+	}
+
+	public void setGroupByWeek(Integer groupByWeek) {
+		this.groupByWeek = groupByWeek;
+	}
+
+	public void setGroupByMonth(Integer groupByMonth) {
+		this.groupByMonth = groupByMonth;
+	}
+
+	public void setGroupByQuarter(Integer groupByQuarter) {
+		this.groupByQuarter = groupByQuarter;
+	}
+
+	public void setGroupByYear(Integer groupByYear) {
+		this.groupByYear = groupByYear;
+	}
+
+	public void setGroupByDow(Integer groupByDow) {
+		this.groupByDow = groupByDow;
+	}
+
+	public void setGroupByDoy(Integer groupByDoy) {
+		this.groupByDoy = groupByDoy;
 	}
 
 	public String toString() {
 		StringBuilder sb=new StringBuilder("ColumnStat for ");
 		sb.append("'").append(getName()).append("'").append(" [");
 
-		if (getCountNotNull() != null || getCountWithNull() != null) {
-			sb.append(", countWithNull=").append(getCountWithNull());
-			sb.append(", countNotNull=").append(getCountNotNull());
+		if (getCount() != null) {
+			sb.append(", count=").append(getCount());
 		}
 		if (getMin() != null) {
 			sb.append(", minD=").append(getMin());
@@ -136,77 +214,5 @@ public class ColumnStatResult {
 		}
 
 		return sb.append("]").toString();
-	}
-
-	public String getGroupByValue() {
-		return groupByVal;
-	}
-
-	public Integer getGroupByHour() {
-		return groupByHour;
-	}
-
-	public Integer getGroupByDay() {
-		return groupByDay;
-	}
-
-	public Integer getGroupByWeek() {
-		return groupByWeek;
-	}
-
-	public Integer getGroupByMonth() {
-		return groupByMonth;
-	}
-
-	public Integer getGroupByQuarter() {
-		return groupByQuarter;
-	}
-
-	public Integer getGroupByYear() {
-		return groupByYear;
-	}
-
-	public Integer getGroupByDow() {
-		return groupByDow;
-	}
-
-	public Integer getGroupByDoy() {
-		return groupByDoy;
-	}
-
-	public void setGroupByValue(String groupByVal) {
-		this.groupByVal = groupByVal;
-	}
-
-	public void setGroupByHour(Integer groupByHour) {
-		this.groupByHour = groupByHour;
-	}
-
-	public void setGroupByDay(Integer groupByDay) {
-		this.groupByDay = groupByDay;
-	}
-
-	public void setGroupByWeek(Integer groupByWeek) {
-		this.groupByWeek = groupByWeek;
-	}
-
-	public void setGroupByMonth(Integer groupByMonth) {
-		this.groupByMonth = groupByMonth;
-	}
-
-	public void setGroupByQuarter(Integer groupByQuarter) {
-		this.groupByQuarter = groupByQuarter;
-	}
-
-	public void setGroupByYear(Integer groupByYear) {
-		this.groupByYear = groupByYear;
-	}
-
-	public void setGroupByDow(Integer groupByDow) {
-		this.groupByDow = groupByDow;
-	}
-
-	public void setGroupByDoy(Integer groupByDoy) {
-		this.groupByDoy = groupByDoy;
 	}
 }

@@ -161,14 +161,34 @@ public class ConditionalCriteriaBuilder<T> {
 
 
 		@Override
-        public GroupBy<T> groupBy(Property<T> property) {
-            pushCriteria(ConditionalCriteria.groupBy(property));
-            return this;
-        }
+		public GroupBy<T> groupBy(Property<T> property) {
+			pushCriteria(ConditionalCriteria.groupBy(property));
+			return this;
+		}
+
+		@Override
+		public GroupBy<T> groupBy(Property<T> property, ConditionalCriteria.Function function) {
+			pushCriteria(ConditionalCriteria.groupBy(property, function));
+			return this;
+		}
 
 		@Override
 		public Selection<T> select(Property<T> property) {
-            pushCriteria(ConditionalCriteria.select(property));
+			pushCriteria(ConditionalCriteria.select(property));
+			return this;
+		}
+
+		@Override
+		public Selection<T> select(Property<T> property, ConditionalCriteria.Function function) {
+			pushCriteria(ConditionalCriteria.select(property, function));
+			return this;
+		}
+
+		@Override
+		public Selection<T> select(Property<T> property, ConditionalCriteria.Function function, String alias) {
+			ConditionalCriteria criteria = ConditionalCriteria.select(property, function);
+			criteria.propertyAlias = alias;
+			pushCriteria(criteria);
 			return this;
 		}
 
@@ -176,18 +196,18 @@ public class ConditionalCriteriaBuilder<T> {
 		public Selection<T> select(Property<T> property, String alias) {
 			ConditionalCriteria criteria = ConditionalCriteria.select(property);
 			criteria.propertyAlias = alias;
-            pushCriteria(criteria);
+			pushCriteria(criteria);
 			return this;
 		}
 
 		@Override
 		public Selection<T> alias(String alias) {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("alias can only be used after select");
-            }
-            last.propertyAlias = alias;
-            pushCriteria(last);
+			ConditionalCriteria last = popCriteria();
+			if (last.getOperator() != Operator.Select) {
+				throw new IllegalStateException("alias can only be used after select");
+			}
+			last.propertyAlias = alias;
+			pushCriteria(last);
 			return this;
 		}
 
@@ -476,9 +496,12 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRoot<T> or();
         ConditionRoot<T> not();
         Selection<T> select(Property<T> property);
+        Selection<T> select(Property<T> property, ConditionalCriteria.Function function);
+        Selection<T> select(Property<T> property, ConditionalCriteria.Function function, String alias);
         Selection<T> select(Property<T> property, String alias);
         OrderBy<T> orderBy(Property<T> property);
         GroupBy<T> groupBy(Property<T> property);
+        GroupBy<T> groupBy(Property<T> property, ConditionalCriteria.Function function);
         ConditionRoot<T> distinctRoot();
         ConditionRoot<T> projectionRoot();
         ConditionRoot<T> lbrace();

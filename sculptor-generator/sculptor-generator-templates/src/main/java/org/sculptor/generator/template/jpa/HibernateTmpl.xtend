@@ -48,7 +48,7 @@ def String enumType(Application it) {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Object nullSafeGet(java.sql.ResultSet rs, String[] names«IF jpaProviderHibernate», org.hibernate.engine.spi.SessionImplementor session«ENDIF», Object owner)
+		public Object nullSafeGet(java.sql.ResultSet rs, String[] names«IF jpaProviderHibernate», org.hibernate.engine.spi.SharedSessionContractImplementor session«ENDIF», Object owner)
 			throws org.hibernate.HibernateException, java.sql.SQLException {
 			Object object = rs.getObject(names[0]);
 			if (rs.wasNull()) {
@@ -59,12 +59,12 @@ def String enumType(Application it) {
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public void nullSafeSet(java.sql.PreparedStatement st, Object value, int index«IF jpaProviderHibernate», org.hibernate.engine.spi.SessionImplementor session«ENDIF»)
+		public void nullSafeSet(java.sql.PreparedStatement st, Object value, int index«IF jpaProviderHibernate», org.hibernate.engine.spi.SharedSessionContractImplementor session«ENDIF»)
 			throws org.hibernate.HibernateException, java.sql.SQLException {
 			if (value == null) {
-				st.setNull(index, sqlTypes()[0]);
+				st.setNull(index, java.sql.Types.VARCHAR);
 			} else {
-				st.setObject(index, org.sculptor.framework.util.EnumHelper.toData((Enum) value), sqlTypes()[0]);
+				st.setObject(index, org.sculptor.framework.util.EnumHelper.toData((Enum) value), java.sql.Types.VARCHAR);
 			}
 		}
 

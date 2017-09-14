@@ -17,6 +17,7 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,17 +31,21 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.sculptor.framework.domain.AbstractDomainObject;
 import org.sculptor.framework.domain.Property;
 
 /**
@@ -193,32 +198,37 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 
 	@Override
 	protected void prepareResultCount(QueryConfig config) {
-		CriteriaQuery<Long> resultCountCriteriaQuery = criteriaBuilder.createQuery(Long.class);
-		// TODO: works only T = R
-		Root<?> countRoot = resultCountCriteriaQuery.from(getType());
-		if (config.isDistinct()) {
-			resultCountCriteriaQuery.select(criteriaBuilder.countDistinct(countRoot));
-		} else {
-			resultCountCriteriaQuery.select(criteriaBuilder.count(countRoot));
-		}
-		if (criteriaQuery.getRestriction() != null) {
-			resultCountCriteriaQuery.where(criteriaQuery.getRestriction());
-		}
-
-		// copy explicit joins
-		if (getRoot().getJoins() != null) {
-			Set<Join<T,?>> joins = getRoot().getJoins();
-			for (Join<T, ?> join : joins) {
-				countRoot.join(join.getAttribute().getName());
-			}
-		}
-		resultCountQuery = getEntityManager().createQuery(resultCountCriteriaQuery);
 	};
 
 	@Override
 	public void executeResultCount() {
-		if (resultCountQuery != null) {
-			setResultCount(resultCountQuery.getSingleResult());
+		if (resultCountQuery == null) {
+			CriteriaQuery<Long> resultCountCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+			// TODO: works only T = R
+			Root<?> countRoot = resultCountCriteriaQuery.from(getType());
+			if (getConfig().isDistinct()) {
+				resultCountCriteriaQuery.select(criteriaBuilder.countDistinct(countRoot));
+			} else {
+				resultCountCriteriaQuery.select(criteriaBuilder.count(countRoot));
+			}
+			if (criteriaQuery.getRestriction() != null) {
+				resultCountCriteriaQuery.where(criteriaQuery.getRestriction());
+			}
+			copyJoinRecursive(getRoot(), countRoot);
+			// copy explicit joins
+			resultCountQuery = getEntityManager().createQuery(resultCountCriteriaQuery);
+		}
+		setResultCount(resultCountQuery.getSingleResult());
+	}
+
+	private void copyJoinRecursive(From from, From to) {
+		if (from.getJoins() != null && from.getJoins().size() > 0) {
+			Set<Join<T, ?>> joins = from.getJoins();
+			for (Join<T, ?> join : joins) {
+				Join toJoin = to.join(join.getAttribute().getName(), join.getJoinType());
+				toJoin.alias(join.getAlias());
+				copyJoinRecursive(join, toJoin);
+			}
 		}
 	}
 
@@ -484,22 +494,31 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		for (Iterator<String> iterator = properties.iterator(); iterator.hasNext();) {
 			String property = iterator.next();
 			investPath.add(property);
-			path = getPathForSimpleProperty(path, property);
-			if (isExplicitJoinNeeded(path) && iterator.hasNext()) {
+			if (isExplicitJoinNeeded(path, property) && iterator.hasNext()) {
 				path = getExplicitJoinForPath(fromPath, investPath);
+			} else {
+				path = getPathForSimpleProperty(path, property);
 			}
 		}
 		return path;
 	}
 
-	private boolean isExplicitJoinNeeded(Path<?> path) {
+	private boolean isExplicitJoinNeeded(Path<?> path, String property) {
 		// eclipselink and openjpa do not need an explicit join
 		if (!JpaHelper.isJpaProviderHibernate(getEntityManager())
 				&& !JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
 			return false;
 		}
-		if (isCollection(path) || isMap(path)) {
-			return true;
+
+		for (Class<?> c = path.getJavaType(); !c.equals(Object.class); c = c.getSuperclass()) {
+			try {
+				Field declaredField = c.getDeclaredField(property);
+				Class<?> type = declaredField.getType();
+				if (Collection.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) {
+					return true;
+				}
+			} catch (NoSuchFieldException e) {
+			}
 		}
 		return false;
 	}
@@ -520,22 +539,21 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		return false;
 	}
 
-	private From<?, ?> getExplicitJoinForPath(Path<?> fromPath, List<String> pathElems) {
+	protected <F> From<?, ?> getExplicitJoinForPath(Path<F> fromPath, List<String> pathElems) {
 		if (From.class.isAssignableFrom(fromPath.getClass())) {
-			From<?, ?> curPath = (From<?, ?>) fromPath;
+			From<?, F> curPath = (From<?, F>) fromPath;
 			for (String pathElem : pathElems) {
-				Set<?> joins = curPath.getJoins();
+				Set<Join<F,?>> joins = curPath.getJoins();
 				boolean found=false;
-				for (Object join : joins) {
-					Join<?,?> j = (Join<?,?>) join;
-					if (j.getAttribute().getName().equals(pathElem)) {
-						curPath = j;
+				for (Join<F, ?> join : joins) {
+					if (join.getAttribute().getName().equals(pathElem)) {
+						curPath = (From) join;
 						found=true;
 						break;
 					}
 				}
 				if (!found) {
-					curPath = curPath.join(pathElem);
+					curPath = curPath.join(pathElem, JoinType.LEFT);
 				}
 			}
 			return curPath;

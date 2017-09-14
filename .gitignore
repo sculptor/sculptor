@@ -4,6 +4,7 @@ target/
 .settings/
 .classpath
 .project
+*.iml
 src-gen/
 xtend-gen/
 plugin.xml_gen

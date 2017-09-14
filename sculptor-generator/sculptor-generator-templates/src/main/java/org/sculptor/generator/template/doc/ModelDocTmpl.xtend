@@ -108,7 +108,7 @@ def String header(Object it, String title) {
 	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	<html>
 	<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<style type="text/css" media="screen,print">   
 			@import url("DomainModelDoc.css");
 			</style> 
@@ -493,25 +493,22 @@ def dispatch String fieldDoc(Attribute it) {
 }
 
 def String description(Attribute it) {
-	'''
-	«IF name == "id" && doc === null »
-		Generated unique id (GID pk)
-	«ELSEIF name == "createdBy" && doc === null »
-		Information about who created the object
-	«ELSEIF name == "lastUpdatedBy" && doc === null »
-		Information about who last updated the object
-	«ELSEIF name == "createdDate" && doc === null »
-		Creation timestamp of the object
-	«ELSEIF name == "lastUpdated" && doc === null »
-		Last updated timestamp of the object
-	«ELSEIF name == "version" && doc === null »
-		Update counter used for optimistic locking
-	«ELSEIF name == "uuid" && doc === null »
-		Unique id needed for equals and hashCode, since there is no natural key
-	«ELSE »
-		«doc»
-	«ENDIF »
-	'''
+	if (name == "id" && doc == null)
+		properties.getProperty("doc.id", "Generated unique id (GID pk)")
+	else if (name == "createdBy" && doc == null)
+		properties.getProperty("doc.createdBy", "Information about who created the object")
+	else if (name == "lastUpdatedBy" && doc == null)
+		properties.getProperty("doc.lastUpdatedBy", "Information about who last updated the object")
+	else if (name == "createdDate" && doc == null)
+		properties.getProperty("doc.createdDate", "Creation timestamp of the object")
+	else if (name == "lastUpdated" && doc == null)
+		properties.getProperty("doc.lastUpdated", "Last updated timestamp of the object")
+	else if (name == "version" && doc == null)
+		properties.getProperty("doc.version", "Update counter used for optimistic locking")
+	else if (name == "uuid" && doc == null)
+		properties.getProperty("doc.uuid", "Unique id needed for equals and hashCode, since there is no natural key")
+	else
+		doc
 }
 
 def dispatch String fieldDoc(Reference it) {

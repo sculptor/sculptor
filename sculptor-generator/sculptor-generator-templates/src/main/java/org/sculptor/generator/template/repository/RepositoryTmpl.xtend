@@ -417,6 +417,8 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 				«nullThrowsNotFoundExcpetion(it)»
 				«IF (parameters.exists(e|e.name == "useSingleResult") || it.hasHint("useSingleResult")) && it.collectionType === null»
 					return «IF !jpa() && it.getTypeName() != "Object"»(«it.getTypeName().getObjectTypeName()») «ENDIF»ao.getSingleResult();
+				«ELSEIF name == "findByConditionStat" »
+					return ao.getColumnStatResult();
 				«ELSE»
 					return ao.getResult();
 				«ENDIF»
@@ -462,6 +464,8 @@ def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 					, rowCount
 					, additionalRows);
 			return pagedResult;
+		«ELSEIF name == "findByConditionStat" »
+			return ao.getColumnStatResult();
 		«ELSEIF it.getTypeName() != "void" »
 			return ao.getResult();
 		«ENDIF»

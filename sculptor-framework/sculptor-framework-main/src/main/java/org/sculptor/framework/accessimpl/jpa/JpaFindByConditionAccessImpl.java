@@ -20,6 +20,7 @@ package org.sculptor.framework.accessimpl.jpa;
 import java.util.List;
 
 import org.sculptor.framework.accessapi.FindByConditionAccess;
+import org.sculptor.framework.accessapi.FindByConditionAccess2;
 
 
 /**
@@ -32,7 +33,7 @@ import org.sculptor.framework.accessapi.FindByConditionAccess;
  */
 public class JpaFindByConditionAccessImpl<T>
     extends JpaFindByConditionAccessImplGeneric<T,T>
-    implements FindByConditionAccess<T> {
+    implements FindByConditionAccess2<T> {
 
     public JpaFindByConditionAccessImpl() {
         super();
@@ -42,6 +43,7 @@ public class JpaFindByConditionAccessImpl<T>
         super(type);
     }
 
+	@Override
     public List<T> getResult() {
         return getListResult();
     }

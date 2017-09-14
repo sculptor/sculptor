@@ -17,6 +17,7 @@
 package org.sculptor.generator.configuration
 
 import java.io.IOException
+import java.io.InputStreamReader
 import java.util.MissingResourceException
 import java.util.Properties
 import org.slf4j.Logger
@@ -68,7 +69,7 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 		} else {
 			LOG.debug("Loading properties from '{}'", resourceURL)
 			try {
-				properties.load(resourceURL.openStream())
+				properties.load(new InputStreamReader(resourceURL.openStream(), "UTF-8"))
 			} catch (IOException e) {
 				throw new MissingResourceException("Can't load properties from: " + propertiesResourceName,
 					typeof(PropertiesConfigurationProvider).name, "")
