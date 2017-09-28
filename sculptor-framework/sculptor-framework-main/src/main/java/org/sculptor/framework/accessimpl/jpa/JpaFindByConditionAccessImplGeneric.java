@@ -127,10 +127,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
         if (!selections.isEmpty()) {
         	setFetchEager(null);
-        	if (selections.size() == 1)
-        		criteriaQuery.select((Selection<? extends R>) selections.get(0));
-        	else
-        		criteriaQuery.multiselect(selections);
+			criteriaQuery.multiselect(selections);
         }
     }
 
