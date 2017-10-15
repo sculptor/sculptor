@@ -26,6 +26,7 @@ import org.sculptor.generator.transform.Transformation;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * This class provides the initialization support for Sculptors Xtext-based
@@ -46,7 +47,7 @@ public class SculptorGeneratorSetup extends SculptordslStandaloneSetup {
 			 * anymore - details available in Xtext forum
 			 * https://www.eclipse.org/forums/index.php/t/1078751/
 			 */
-			return Guice.createInjector(new ConfigurationProviderModule(), new SculptordslRuntimeModule(),
+			return Guice.createInjector(new ConfigurationProviderModule(), (Module) new SculptordslRuntimeModule(),
 					new ChainOverrideAwareModule(configurationProvider, DslTransformation.class, Transformation.class,
 							Class.forName("org.sculptor.generator.template.RootTmpl")));
 		} catch (ClassNotFoundException e) {

@@ -44,7 +44,7 @@ class SpringTmplExtension extends SpringTmpl {
 	}
 
 	private def String mongodb(Application it) {
-		fileOutput(it.getResourceDir("spring") + "mongodb.xml", OutputSlot::TO_GEN_RESOURCES, '''
+		fileOutput(it.getResourceDir("spring") + "mongodb.xml", OutputSlot.TO_GEN_RESOURCES, '''
 		«header(it)»
 			«mongodbManager(it)»
 			«mongodbOptions(it)»
@@ -77,7 +77,7 @@ class SpringTmplExtension extends SpringTmpl {
 	}
 
 	private def String mongodbTest(Application it) {
-		fileOutput(it.getResourceDir("spring") + "mongodb-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+		fileOutput(it.getResourceDir("spring") + "mongodb-test.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 		«header(it)»
 			«mongodbManagerTest(it)»
 			«mongodbOptions(it)»

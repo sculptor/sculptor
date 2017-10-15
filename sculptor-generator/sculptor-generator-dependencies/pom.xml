@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>org.eclipse.xtext.xtext</artifactId>
+			<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.transformation
 
 import javax.inject.Provider
@@ -41,7 +40,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @RunWith(typeof(JUnit4))
 class DslTransformationTest {
 
-	private static val SculptordslFactory FACTORY = SculptordslFactory::eINSTANCE
+	private static val SculptordslFactory FACTORY = SculptordslFactory.eINSTANCE
 
 	extension Helper helper
 
@@ -115,7 +114,7 @@ class DslTransformationTest {
 			assertEquals("validator1", validate)
 			assertEquals(true, gapClass)
 			assertEquals("disc1", discriminatorColumnValue)
-			assertEquals(InheritanceType::JOINED, inheritance.type)
+			assertEquals(InheritanceType.JOINED, inheritance.type)
 			assertNull(extendsName)
 			assertEquals(0, attributes.size)
 			assertEquals(0, references.size)
@@ -174,7 +173,7 @@ class DslTransformationTest {
 			validate = "validator1"
 			gapClass = true
 			discriminatorValue = "disc1"
-			inheritanceType = DslInheritanceType::JOINED
+			inheritanceType = DslInheritanceType.JOINED
 			repository = repository1
 		]
 

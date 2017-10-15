@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.springint
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class SpringIntegrationTmpl {
@@ -31,7 +30,7 @@ class SpringIntegrationTmpl {
 	@Inject extension Properties properties
 
 def String springIntegrationConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", OutputSlot::TO_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + "spring-integration.xml", OutputSlot.TO_RESOURCES, '''
 	«header(it)»
 
 		«springIntegrationEventBus(it)»
@@ -44,7 +43,7 @@ def String springIntegrationConfig(Application it) {
 }
 
 def String springIntegrationTestConfig(Application it) {
-	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
+	fileOutput(it.getResourceDir("spring") + "spring-integration-test.xml", OutputSlot.TO_RESOURCES_TEST, '''
 	«header(it)»
 
 		<beans:import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-integration.xml")»"/>

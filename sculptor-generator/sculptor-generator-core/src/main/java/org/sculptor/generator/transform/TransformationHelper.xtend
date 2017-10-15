@@ -175,7 +175,7 @@ class TransformationHelper {
 		if (!isAuditableToBeGenerated())
 			entity.setAuditable(false)
 
-		if (entity.auditable && (entity.^extends == null || !((entity.^extends as Entity).auditable)))
+		if (entity.auditable && (entity.^extends === null || !((entity.^extends as Entity).auditable)))
 			addAuditable(entity)
 	}
 
@@ -183,12 +183,12 @@ class TransformationHelper {
 	}
 
 	def dispatch void modifyOptimisticLocking(DomainObject domainObject) {
-		if (isOptimisticLockingToBeGenerated() && domainObject.optimisticLocking && (domainObject.^extends == null || !domainObject.^extends.optimisticLocking))
+		if (isOptimisticLockingToBeGenerated() && domainObject.optimisticLocking && (domainObject.^extends === null || !domainObject.^extends.optimisticLocking))
 			addVersionAttribute(domainObject)
 	}
 
 	def dispatch void modifyOptimisticLocking(ValueObject valueObject) {
-		if (isOptimisticLockingToBeGenerated() && valueObject.persistent && !valueObject.immutable && valueObject.optimisticLocking && (valueObject.^extends == null || !valueObject.^extends.optimisticLocking))
+		if (isOptimisticLockingToBeGenerated() && valueObject.persistent && !valueObject.immutable && valueObject.optimisticLocking && (valueObject.^extends === null || !valueObject.^extends.optimisticLocking))
 			addVersionAttribute(valueObject)
 	}
 
@@ -199,14 +199,14 @@ class TransformationHelper {
 	}
 
 	def dispatch void modifyDatabaseNames(DomainObject domainObject) {
-		if (domainObject.databaseTable == null)
+		if (domainObject.databaseTable === null)
 			domainObject.setDatabaseTable(domainObject.getDefaultDatabaseName())
 		domainObject.attributes.forEach[it.modifyDatabaseColumn()]
 	}
 
 	def dispatch void modifyDatabaseNames(ValueObject valueObject) {
 		if (valueObject.persistent) {
-			if (valueObject.databaseTable == null)
+			if (valueObject.databaseTable === null)
 				valueObject.setDatabaseTable(valueObject.getDefaultDatabaseName())
 			valueObject.attributes.forEach[modifyDatabaseColumn()]
 		}
@@ -222,7 +222,7 @@ class TransformationHelper {
 	}
 
 	def dispatch void modifyDatabaseColumn(Attribute attribute) {
-		if (attribute.databaseColumn == null)
+		if (attribute.databaseColumn === null)
 			(if (attribute.name == "id" && getBooleanProperty("db.useTablePrefixedIdColumn"))
 				attribute.setDatabaseColumn(attribute.getDomainObject().getDatabaseName() + "_" + attribute.getDefaultDatabaseName())
 			else
@@ -230,7 +230,7 @@ class TransformationHelper {
 	}
 
 	def dispatch void modifyDatabaseColumn(Reference reference) {
-		if (reference.databaseColumn == null)
+		if (reference.databaseColumn === null)
 			reference.setDatabaseColumn(reference.getDefaultForeignKeyName())
 	}
 
@@ -258,9 +258,9 @@ class TransformationHelper {
 	}
 
 	def void modifyExtends(DomainObject domainObject) {
-		if (domainObject.extendsName != null) {
+		if (domainObject.extendsName !== null) {
 			val matchingDomainObject = findDomainObjectByName(domainObject.module.application, domainObject.extendsName)
-			if (matchingDomainObject != null) {
+			if (matchingDomainObject !== null) {
 				domainObject.setExtends(matchingDomainObject)
 				domainObject.setExtendsName(null)
 			}
@@ -268,7 +268,7 @@ class TransformationHelper {
 	}
 
 	def void modifyBelongsToAggregate(DomainObject domainObject) {
-		if (domainObject.belongsToAggregate == null)
+		if (domainObject.belongsToAggregate === null)
 			domainObject.setBelongsToAggregate(domainObject.getAggregateRootObject())
 	}
 
@@ -297,7 +297,7 @@ class TransformationHelper {
 	}
 
 	def void modifyUuid(DomainObject domainObject) {
-		if (domainObject.^extends != null)
+		if (domainObject.^extends !== null)
 			domainObject.^extends.modifyUuid()
 		if (domainObject.hasOwnDatabaseRepresentation() &&
 				!domainObject.hasUuidAttribute() &&
@@ -320,12 +320,12 @@ class TransformationHelper {
 	}
 
 	def void addCountAllHint(RepositoryOperation pagedFindAll) {
-		val base = if (pagedFindAll.hint == null) "" else (pagedFindAll.hint + ", ")
+		val base = if (pagedFindAll.hint === null) "" else (pagedFindAll.hint + ", ")
 		pagedFindAll.setHint(base + "countOperation=countAll")
 	}
 
 	def void modifyPagingOperation(RepositoryOperation op) {
-		if ((op.type == "PagedResult" || op.type == null) && op.domainObjectType == null) {
+		if ((op.type == "PagedResult" || op.type === null) && op.domainObjectType === null) {
 			op.setType("PagedResult")
 			op.setDomainObjectType(op.repository.aggregateRoot)
 		}

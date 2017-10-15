@@ -33,7 +33,7 @@ class SystemPropertiesConfigurationProvider implements ConfigurationProvider {
 
 	override getString(String key) {
 		val value = System.properties.getProperty(key)
-		if (value == null) {
+		if (value === null) {
 			throw new MissingResourceException("Missing string configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}
@@ -42,7 +42,7 @@ class SystemPropertiesConfigurationProvider implements ConfigurationProvider {
 
 	override getBoolean(String key) {
 		val value = System.properties.getProperty(key)
-		if (value == null) {
+		if (value === null) {
 			throw new MissingResourceException("Missing boolean configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}
@@ -51,7 +51,7 @@ class SystemPropertiesConfigurationProvider implements ConfigurationProvider {
 
 	override getInt(String key) {
 		val value = System.properties.getProperty(key)
-		if (value == null) {
+		if (value === null) {
 			throw new MissingResourceException("Missing int configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}

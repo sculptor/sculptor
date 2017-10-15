@@ -94,7 +94,7 @@ abstract class GeneratorTestBase {
 		for (issue : result.getIssues()) {
 			switch (issue.getSeverity()) {
 				case ERROR :
-					if (issue.getThrowable() != null) {
+					if (issue.getThrowable() !== null) {
 						LOG.error(issue.getMessage(), issue.getThrowable())
 					} else {
 						LOG.error(issue.getMessage())

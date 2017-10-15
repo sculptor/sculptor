@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl.scoping
 
 import java.util.ArrayList
@@ -46,8 +45,8 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val elements = new ArrayList<IEObjectDescription>()
 		val DslDomainObject domainObject = (ctx.eContainer as DslReference).domainObjectType as DslDomainObject
 		domainObject.references.forEach[
-			if (it.eContainer != null) {
-				elements.add(new EObjectDescription(QualifiedName::create(it.name), it, null))
+			if (it.eContainer !== null) {
+				elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 			}
 		]
 		scope.elements = elements
@@ -58,14 +57,14 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val Scope scope = new Scope();
 		val elements = new ArrayList<IEObjectDescription>()
 		val option = ctx.delegate
-		if (option != null) {
+		if (option !== null) {
 			if (option instanceof DslRepository) {
 				option.operations.forEach[
-					elements.add(new EObjectDescription(QualifiedName::create(it.name), it, null))
+					elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 				]
 			} else {
 				(option as DslService).operations.forEach[
-					elements.add(new EObjectDescription(QualifiedName::create(it.name), it, null))
+					elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 				]
 			}
 		}
@@ -77,9 +76,9 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val Scope scope = new Scope()
 		val elements = new ArrayList<IEObjectDescription>()
 		val option = ctx.delegate
-		if (option != null) {
+		if (option !== null) {
 			option.operations.forEach[
-				elements.add(new EObjectDescription(QualifiedName::create(it.name), it, null))
+				elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 			]
 		}
 		scope.elements = elements

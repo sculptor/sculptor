@@ -3,19 +3,19 @@
 <locations>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
-		<repository location="http://download.eclipse.org/releases/luna/201502271000/"/>
+		<repository location="http://download.eclipse.org/releases/oxygen/201710111001/"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
-		<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0/"/>
+		<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="org.eclipse.emf.ecore.xcore.feature.group" version="0.0.0"/>
-		<repository location="http://download.eclipse.org/modeling/emf/emf/updates/2.11.x/"/>
+		<repository location="http://download.eclipse.org/modeling/emf/emf/updates/2.12/"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 		<unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
-		<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.3/"/>
+		<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.1/"/>
 	</location>
 </locations>
 </target>

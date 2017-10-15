@@ -80,19 +80,19 @@ class ChainOverrideTest {
 
 			val tmplClazz = findClass('ChainOverrideTestTemplate')
 			assertNotNull(tmplClazz)
-			assertMethodInfo('Dispatch method renamed', tmplClazz, ChainOverrideHelper::RENAMED_METHOD_NAME_PREFIX + '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
-			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(String)))
-			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility::PUBLIC, newTypeReference(typeof(int)))
-			assertMethodInfo('Dispatch method renamed', tmplClazz, 'doDispatch', Visibility::PUBLIC, newTypeReference(typeof(Object)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + '_doDispatch', Visibility.PUBLIC, newTypeReference(typeof(String)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility.PUBLIC, newTypeReference(typeof(String)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, '_doDispatch', Visibility.PUBLIC, newTypeReference(typeof(int)))
+			assertMethodInfo('Dispatch method renamed', tmplClazz, 'doDispatch', Visibility.PUBLIC, newTypeReference(typeof(Object)))
 			
 			val overrideClazz = findClass('ChainOverrideTestTemplateOverride')
 			assertNotNull(overrideClazz)
 
 			val ovMethods = overrideClazz.declaredMethods
 			assertEquals(4, ovMethods.size)
-			assertMethodInfo("", overrideClazz, "_dispatchCreateMethod", Visibility::PROTECTED, newTypeReference(typeof(String)))
-			assertMethodInfo("", overrideClazz, "dispatchCreateMethod", Visibility::PUBLIC, newTypeReference(typeof(Object)))
-			assertMethodInfo("", overrideClazz, "_getOverridesDispatchArray", Visibility::PUBLIC)
+			assertMethodInfo("", overrideClazz, "_dispatchCreateMethod", Visibility.PROTECTED, newTypeReference(typeof(String)))
+			assertMethodInfo("", overrideClazz, "dispatchCreateMethod", Visibility.PUBLIC, newTypeReference(typeof(Object)))
+			assertMethodInfo("", overrideClazz, "_getOverridesDispatchArray", Visibility.PUBLIC)
 		]
 	}
 

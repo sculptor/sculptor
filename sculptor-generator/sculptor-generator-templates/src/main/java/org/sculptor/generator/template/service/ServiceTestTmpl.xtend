@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.service
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Service
-
-import org.sculptor.generator.chain.ChainOverridable
-
 
 @ChainOverridable
 class ServiceTestTmpl {
@@ -38,7 +35,7 @@ class ServiceTestTmpl {
 	@Inject extension Properties properties
 
 def String serviceJUnitBase(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "TestBase"), OutputSlot::TO_GEN_SRC_TEST, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "TestBase"), OutputSlot.TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -65,7 +62,7 @@ def String testInterfaceMethod(String it) {
 }
 
 def String serviceJUnitSubclassWithAnnotations(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -96,7 +93,7 @@ def String serviceJUnitDependencyInjection(Service it) {
 }
 
 def String serviceJUnitSubclassAppEngine(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -133,7 +130,7 @@ def String serviceJUnitSubclassAppEnginePopulateDataStore(Service it) {
 
 def String serviceJUnitGetDataSetFile(Service it) {
 	'''
-	«IF getDbUnitDataSetFile() != null»
+	«IF getDbUnitDataSetFile() !== null»
 		@Override
 		protected String getDataSetFile() {
 			return "«getDbUnitDataSetFile()»";
@@ -154,14 +151,14 @@ def String testMethod(String it) {
 }
 
 def String dbunitTestData(Service it) {
-	fileOutput("dbunit/" + name + "Test.xml", OutputSlot::TO_RESOURCES_TEST, '''
+	fileOutput("dbunit/" + name + "Test.xml", OutputSlot.TO_RESOURCES_TEST, '''
 		«dbUnitTmpl.dbunitTestDataContent(it.module.application)»
 	'''
 	)
 }
 
 def String serviceDependencyInjectionJUnit(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot.TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 

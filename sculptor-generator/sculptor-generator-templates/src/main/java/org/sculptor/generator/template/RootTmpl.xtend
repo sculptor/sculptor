@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template
 
 import javax.inject.Inject
@@ -94,7 +93,7 @@ class RootTmpl {
 			«IF isEmptyDbUnitTestDataToBeGenerated()»
 				«dbUnitTmpl.emptyDbunitTestData(it)»
 			«ENDIF»
-			«IF getDbUnitDataSetFile() != null»
+			«IF getDbUnitDataSetFile() !== null»
 				«dbUnitTmpl.singleDbunitTestData(it)»
 			«ENDIF»
 			«IF pureEjb3() && isTestToBeGenerated()»

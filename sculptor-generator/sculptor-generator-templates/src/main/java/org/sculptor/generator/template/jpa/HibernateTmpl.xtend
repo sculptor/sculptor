@@ -38,7 +38,7 @@ def String hibernate(Application it) {
 }
 
 def String enumType(Application it) {
-	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(basePackage + ".util.EnumUserType"), OutputSlot.TO_GEN_SRC, '''
 	package «basePackage».util;
 
 /// Sculptor code formatter imports ///

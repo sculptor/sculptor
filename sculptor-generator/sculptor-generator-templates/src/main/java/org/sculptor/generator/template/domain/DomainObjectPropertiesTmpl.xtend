@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -28,7 +28,6 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Trait
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DomainObjectPropertiesTmpl {
@@ -43,7 +42,7 @@ def dispatch String domainObjectProperties(Trait it) {
 }
 
 def dispatch String domainObjectProperties(DomainObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "Properties"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 

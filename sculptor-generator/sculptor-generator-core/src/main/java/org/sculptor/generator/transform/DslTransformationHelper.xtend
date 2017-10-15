@@ -53,23 +53,23 @@ class DslTransformationHelper {
 	@Inject extension Properties properties
 
 	def String convertVisibility(DslVisibility dslVisibility) {
-		if (dslVisibility == null)
+		if (dslVisibility === null)
 			"public"
 		else
 			dslVisibility.toString()
 	}
 
 	def String convertCollectionType(DslComplexType dslComplexType) {
-		if (dslComplexType == null)
+		if (dslComplexType === null)
 			null
-		else if (dslComplexType.mapCollectionType != null)
+		else if (dslComplexType.mapCollectionType !== null)
 			dslComplexType.mapCollectionType
 		else
 			convertCollectionTypeEnum(dslComplexType.collectionType)
 	}
 
 	def String convertCollectionTypeEnum(DslCollectionType collectionType) {
-		if (collectionType == null || collectionType == DslCollectionType::NONE)
+		if (collectionType === null || collectionType == DslCollectionType.NONE)
 			null
 		else
 			collectionType.toString()
@@ -77,17 +77,17 @@ class DslTransformationHelper {
 
 	def DiscriminatorType mapDiscriminatorType(DslDiscriminatorType dslDiscriminatorType) {
 		switch (dslDiscriminatorType) {
-			case DslDiscriminatorType::CHAR :
-				DiscriminatorType::CHAR
-			case DslDiscriminatorType::INTEGER :
-				DiscriminatorType::INTEGER
+			case DslDiscriminatorType.CHAR :
+				DiscriminatorType.CHAR
+			case DslDiscriminatorType.INTEGER :
+				DiscriminatorType.INTEGER
 			default :
-				DiscriminatorType::STRING
+				DiscriminatorType.STRING
 		}
 	}
 
 	def String buildOrderColumnHint(DslReference reference) {
-		if (reference.orderColumnName != null) "orderColumn="+reference.orderColumnName else "orderColumn"
+		if (reference.orderColumnName !== null) "orderColumn="+reference.orderColumnName else "orderColumn"
 	}
 
 	def boolean isGapClassToBeGenerated(DslService dslService) {
@@ -112,26 +112,26 @@ class DslTransformationHelper {
 	}
 
 	def boolean hasGapOperations(DslService dslService) {
-		dslService.operations.exists(op | !scaffoldOperations().contains(op.name) && op.delegateHolder == null)
+		dslService.operations.exists(op | !scaffoldOperations().contains(op.name) && op.delegateHolder === null)
 	}
 
 	def boolean hasGapOperations(DslResource dslResource) {
-		dslResource.operations.exists(op | op.delegateHolder == null)
+		dslResource.operations.exists(op | op.delegateHolder === null)
 	}
 
 	def boolean hasGapOperations(DslRepository dslRepository) {
 		dslRepository.operations.exists(op |
 			!scaffoldOperations().contains(op.name) &&
-			!op.delegateToAccessObject && op.accessObjectName == null &&
+			!op.delegateToAccessObject && op.accessObjectName === null &&
 			!op.isGenericAccessObject)
 	}
 
 	def private boolean isGenericAccessObject(DslRepositoryOperation operation) {
-		genericAccessObjectManager.getStrategy(operation.name) != null
+		genericAccessObjectManager.getStrategy(operation.name) !== null
 	}
 
 	def String handleValidation(DslAttribute attribute) {
-		(if (attribute.validate != null) attribute.validate else "") +
+		(if (attribute.validate !== null) attribute.validate else "") +
 		handleParameterizedAnnotation("digits", "integer,fraction,message", attribute.digits, attribute.validate) +
 		handleParameterizedAnnotation("size", "min,max,message", attribute.size, attribute.validate) +
 		handleBooleanAnnotation("assertTrue", attribute.assertTrue, attribute.assertTrueMessage, attribute.validate) +
@@ -155,7 +155,7 @@ class DslTransformationHelper {
 	}
 
 	def String handleValidation(DslDtoAttribute attribute) {
-		(if (attribute.validate != null) attribute.validate else "") +
+		(if (attribute.validate !== null) attribute.validate else "") +
 		handleParameterizedAnnotation("digits", "integer,fraction,message", attribute.digits, attribute.validate) +
 		handleParameterizedAnnotation("size", "min,max,message", attribute.size, attribute.validate) +
 		handleBooleanAnnotation("assertTrue", attribute.assertTrue, attribute.assertTrueMessage, attribute.validate) +
@@ -179,7 +179,7 @@ class DslTransformationHelper {
 	}
 
 	def String handleValidation(DslReference reference) {
-		(if (reference.validate != null) reference.validate else "") +
+		(if (reference.validate !== null) reference.validate else "") +
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("notEmpty", reference.notEmpty, reference.notEmptyMessage, reference.validate) +
@@ -187,7 +187,7 @@ class DslTransformationHelper {
 	}
 
 	def String handleValidation(DslDtoReference reference) {
-		(if (reference.validate != null) reference.validate else "") +
+		(if (reference.validate !== null) reference.validate else "") +
 		handleParameterizedAnnotation("size", "min,max,message", reference.size, reference.validate) +
 		handleBooleanAnnotation("notNull", !reference.nullable, reference.nullableMessage, reference.validate) +
 		handleBooleanAnnotation("valid", reference.valid, reference.validMessage, reference.validate)
@@ -199,7 +199,7 @@ class DslTransformationHelper {
 	}
 
 	def void scaffoldRepository(DomainObject domainObject) {
-		if (domainObject.repository == null)
+		if (domainObject.repository === null)
 			domainObject.addRepository
 		domainObject.repository.addRepositoryScaffoldOperations
 	}

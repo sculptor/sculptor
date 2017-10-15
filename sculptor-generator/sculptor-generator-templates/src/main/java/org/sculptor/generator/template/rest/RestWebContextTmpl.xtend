@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.rest
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class RestWebContextTmpl {
@@ -44,7 +43,7 @@ def String contextXml(Application it) {
 }
 
 def String tomcatContextXml(Application it) {
-	fileOutput("META-INF/context.xml", OutputSlot::TO_WEBROOT, '''
+	fileOutput("META-INF/context.xml", OutputSlot.TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<Context path="/«dataSourceName(it)»" docBase="«dataSourceName(it)»"
 			debug="5" reloadable="true" crossContext="true">
@@ -78,7 +77,7 @@ def String tomcatContextXml(Application it) {
 }
 
 def String jettyContextXml(Application it) {
-	fileOutput("WEB-INF/jetty-env.xml", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jetty-env.xml", OutputSlot.TO_WEBROOT, '''
 	<?xml version="1.0"?>
 	<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
 	<Configure class="org.eclipse.jetty.webapp.WebAppContext">

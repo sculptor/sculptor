@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.rest
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
-import org.sculptor.generator.ext.Properties
 
 @ChainOverridable
 class RestWebConfigTmpl {
@@ -41,7 +40,7 @@ def String config(Application it) {
 }
 
 def String webXml(Application it) {
-	fileOutput("WEB-INF/web.xml", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/web.xml", OutputSlot.TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
@@ -129,7 +128,7 @@ def String webXml(Application it) {
 }
 
 def String restServletXml(Application it) {
-	fileOutput("WEB-INF/rest-servlet.xml", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/rest-servlet.xml", OutputSlot.TO_WEBROOT, '''
 	<?xml version="1.0" encoding="UTF-8"?>
 	<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"

@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.camel
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class CamelTmpl {
@@ -31,7 +30,7 @@ class CamelTmpl {
 	@Inject extension Helper helper
 
 	def String camelConfig(Application it) {
-		fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot::TO_RESOURCES, '''
+		fileOutput(it.getResourceDir("spring") + "camel.xml", OutputSlot.TO_RESOURCES, '''
 		«header(it)»
 
 		«camelEventBus(it)»
@@ -44,7 +43,7 @@ class CamelTmpl {
 	}
 	
 	def String camelTestConfig(Application it) {
-		fileOutput(it.getResourceDir("spring") + "camel-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
+		fileOutput(it.getResourceDir("spring") + "camel-test.xml", OutputSlot.TO_RESOURCES_TEST, '''
 		«header(it)»
 		<import resource="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("camel.xml")»"/>
 

@@ -50,7 +50,7 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 
 		// Find class loader
 		var classLoader = Thread.currentThread().getContextClassLoader()
-		if (classLoader != null) {
+		if (classLoader !== null) {
 			LOG.debug("Loading '{}' from current threads context classloader: {}", propertiesResourceName, classLoader)
 		} else {
 			classLoader = PropertiesConfigurationProvider.classLoader
@@ -60,7 +60,7 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 
 		// Find resource and load properties from resource
 		val resourceURL = classLoader.getResource(propertiesResourceName)
-		if (resourceURL == null) {
+		if (resourceURL === null) {
 			if (!optional) {
 				throw new MissingResourceException("Properties resource not available: " + propertiesResourceName,
 					typeof(PropertiesConfigurationProvider).name, "")
@@ -86,7 +86,7 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 
 	override getString(String key) {
 		val value = properties.getProperty(key)
-		if (value == null) {
+		if (value === null) {
 			throw new MissingResourceException("Missing string configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}
@@ -95,7 +95,7 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 
 	override getBoolean(String key) {
 		val value = properties.getProperty(key)
-		if (value == null) {
+		if (value === null) {
 			throw new MissingResourceException("Missing boolean configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}
@@ -104,7 +104,7 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 
 	override getInt(String key) {
 		val value = properties.getProperty(key)
-		if (value == null) {
+		if (value === null) {
 			throw new MissingResourceException("Missing int configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}

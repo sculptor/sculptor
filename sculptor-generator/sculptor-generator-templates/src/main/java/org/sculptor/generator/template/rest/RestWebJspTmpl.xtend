@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.rest
 
 import javax.inject.Inject
@@ -46,14 +45,14 @@ def dispatch String jsp(Application it) {
 }
 
 def String index(Application it) {
-	fileOutput("index.jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("index.jsp", OutputSlot.TO_WEBROOT, '''
 		<META http-equiv="refresh" content="0;URL=rest/front">
 	'''
 	)
 }
 
 def String header(Application it) {
-	fileOutput("WEB-INF/jsp/header.jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/header.jsp", OutputSlot.TO_WEBROOT, '''
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 	<head>
@@ -71,7 +70,7 @@ def String header(Application it) {
 }
 
 def String footer(Application it) {
-	fileOutput("WEB-INF/jsp/footer.jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/footer.jsp", OutputSlot.TO_WEBROOT, '''
 	<br/>
 	  <table class="footer">
 	    <tr>
@@ -91,7 +90,7 @@ def String footer(Application it) {
 }
 
 def String includes(Application it) {
-	fileOutput("WEB-INF/jsp/includes.jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/includes.jsp", OutputSlot.TO_WEBROOT, '''
 	<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -102,7 +101,7 @@ def String includes(Application it) {
 }
 
 def String uncaughtException(Application it) {
-	fileOutput("WEB-INF/jsp/uncaughtException.jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/uncaughtException.jsp", OutputSlot.TO_WEBROOT, '''
 	<h2/>Internal error</h2>
 	<p/>
 
@@ -151,34 +150,34 @@ def String uncaughtException(Application it) {
 }
 
 def dispatch String jsp(Resource it) {
-	val postOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
-	val putOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
-	val deleteOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::DELETE)
-	val createFormOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::GET && e.name == "createForm" && e.returnString != null)
-	val updateFormOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod::GET && e.name == "updateForm" && e.returnString != null)
-	val getOperation = operations.filter[e | !(e == createFormOperation || e == updateFormOperation)].findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.collectionType == null && e.returnString != null)
-	val listOperation = operations.filter[e | !(e == createFormOperation || e == updateFormOperation)].findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.collectionType != null && e.returnString != null)
+	val postOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod.POST)
+	val putOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod.PUT)
+	val deleteOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod.DELETE)
+	val createFormOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod.GET && e.name == "createForm" && e.returnString !== null)
+	val updateFormOperation = it.operations.findFirst(e | e.httpMethod == HttpMethod.GET && e.name == "updateForm" && e.returnString !== null)
+	val getOperation = operations.filter[e | !(e == createFormOperation || e == updateFormOperation)].findFirst(e | e.httpMethod == HttpMethod.GET && e.domainObjectType !== null && e.collectionType === null && e.returnString !== null)
+	val listOperation = operations.filter[e | !(e == createFormOperation || e == updateFormOperation)].findFirst(e | e.httpMethod == HttpMethod.GET && e.domainObjectType !== null && e.collectionType !== null && e.returnString !== null)
 
 	'''	
-		«IF createFormOperation != null && postOperation != null»
+		«IF createFormOperation !== null && postOperation !== null»
 			«createForm(createFormOperation, postOperation)»
 		«ENDIF»
-		«IF updateFormOperation != null && putOperation != null»
+		«IF updateFormOperation !== null && putOperation !== null»
 			«updateForm(updateFormOperation, putOperation)»
 		«ENDIF»
-		«IF getOperation != null»
+		«IF getOperation !== null»
 			«show(getOperation)»
 		«ENDIF»
-		«IF listOperation != null»
+		«IF listOperation !== null»
 			«list(listOperation, getOperation, updateFormOperation, deleteOperation, createFormOperation)»
 		«ENDIF»
 		«operations.filter[e | !(e == createFormOperation || e == updateFormOperation || e == getOperation || e == listOperation)]
-					.filter(e | e.httpMethod == HttpMethod::GET && e.returnString != null && !e.returnString.startsWith("redirect:")).map[r | emptyPage(r)].join()»
+					.filter(e | e.httpMethod == HttpMethod.GET && e.returnString !== null && !e.returnString.startsWith("redirect:")).map[r | emptyPage(r)].join()»
 	'''
 }
 
 def String emptyPage(ResourceOperation it) {
-	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot.TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
@@ -200,15 +199,15 @@ def String emptyPage(ResourceOperation it) {
 }
 
 def String createForm(ResourceOperation it, ResourceOperation postOperation) {
-	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot.TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 		<h2>New «resource.getDomainResourceName()»</h2>
 		<c:url value="/rest«postOperation.path»" var="action"/>
 		<form:form action="${action}" method="POST" modelAttribute="«postOperation.parameters.head.name»">
-		«val formClass = postOperation.parameters.filter(e | e.domainObjectType != null).map(e|e.domainObjectType).head»
-		«IF formClass != null»
+		«val formClass = postOperation.parameters.filter(e | e.domainObjectType !== null).map(e|e.domainObjectType).head»
+		«IF formClass !== null»
 			«FOR att : formClass.attributes.filter(e | !e.isSystemAttribute())»
 				<div id="«att.getDomainObject().name.toFirstLower()»_«att.name»">
 					<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
@@ -229,13 +228,13 @@ def String createForm(ResourceOperation it, ResourceOperation postOperation) {
 }
 
 def String updateForm(ResourceOperation it, ResourceOperation putOperation) {
-	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot.TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 	<h2>Edit «resource.getDomainResourceName()»</h2>
-	«val formClass = putOperation.parameters.filter(e | e.domainObjectType != null).map(e|e.domainObjectType).head»
-	«IF formClass != null»
+	«val formClass = putOperation.parameters.filter(e | e.domainObjectType !== null).map(e|e.domainObjectType).head»
+	«IF formClass !== null»
 		<c:url value="/rest«putOperation.path.replacePlaceholder('{id}', '${' + putOperation.parameters.head.name + '}')»" var="action"/>
 		<form:form action="${action}" method="PUT" modelAttribute="«putOperation.parameters.head.name»">
 			«FOR att : formClass.attributes»
@@ -263,12 +262,12 @@ def String updateForm(ResourceOperation it, ResourceOperation putOperation) {
 }
 
 def String show(ResourceOperation it) {
-	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot.TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
 	<div>
 		<c:if test="${not empty result}">
-			«IF domainObjectType != null»
+			«IF domainObjectType !== null»
 				«FOR att : domainObjectType.attributes.filter(e | !e.isSystemAttribute())»
 					<div id="«resource.getDomainResourceName().toFirstLower()»_«att.name»">
 						<label for="_«att.name»">«att.name.toFirstUpper()»:</label>
@@ -286,41 +285,41 @@ def String show(ResourceOperation it) {
 }
 
 def String list(ResourceOperation it, ResourceOperation getOperation, ResourceOperation updateFormOperation, ResourceOperation deleteOperation, ResourceOperation createFormOperation) {
-	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot::TO_WEBROOT, '''
+	fileOutput("WEB-INF/jsp/" + returnString + ".jsp", OutputSlot.TO_WEBROOT, '''
 	<jsp:directive.include file="/WEB-INF/jsp/includes.jsp"/>
 	<jsp:directive.include file="/WEB-INF/jsp/header.jsp"/>
-	«IF createFormOperation != null»
+	«IF createFormOperation !== null»
 	<div>
 	<a href="<c:url value="/rest«createFormOperation.path»" />">New «resource.getDomainResourceName()»</a>
 	</div>
 	«ENDIF»
 	<div>
 		<c:if test="${not empty result}">
-		«IF domainObjectType != null»
+		«IF domainObjectType !== null»
 		«val idAttribute = it.domainObjectType.getIdAttribute()»
 		<table>
 			<thead>
-			«IF idAttribute != null»
+			«IF idAttribute !== null»
 				<th>«idAttribute.name.toFirstUpper()»</th>
 			«ENDIF»
 			«FOR att : domainObjectType.attributes.filter(e | !e.isSystemAttribute())»
 				<th>«att.name.toFirstUpper()»</th>
 			«ENDFOR»
-			«IF getOperation != null»
+			«IF getOperation !== null»
 				<th/>
 			«ENDIF»
-			«IF updateFormOperation != null»	
+			«IF updateFormOperation !== null»	
 				<th/>
 			«ENDIF»
-			«IF deleteOperation != null»
+			«IF deleteOperation !== null»
 				<th/>
 			«ENDIF»
 			</thead>
 			<c:forEach items="${result}" var="each" >
 				<tr>
-					«IF idAttribute != null»
+					«IF idAttribute !== null»
 					<td>
-						«IF getOperation != null»
+						«IF getOperation !== null»
 						<a href="<c:url value="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" />">${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}</a>
 						«ELSE»
 						${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}
@@ -332,17 +331,17 @@ def String list(ResourceOperation it, ResourceOperation getOperation, ResourceOp
 						${each.«att.name»}
 					</td>
 					«ENDFOR»
-					«IF getOperation != null»
+					«IF getOperation !== null»
 					<td>
 						<a href="<c:url value="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" />">Show</a>
 					</td>
 					«ENDIF»
-					«IF updateFormOperation != null»
+					«IF updateFormOperation !== null»
 					<td>
 						<a href="<c:url value="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}/form" />">Edit</a>
 					</td>
 					«ENDIF»
-					«IF deleteOperation != null»
+					«IF deleteOperation !== null»
 					<td>
 						<c:url value="/rest«path»/${each.id«IF isJpaProviderAppEngine()».id«ENDIF»}" var="action"/>
 						<form:form action="${action}" method="DELETE">

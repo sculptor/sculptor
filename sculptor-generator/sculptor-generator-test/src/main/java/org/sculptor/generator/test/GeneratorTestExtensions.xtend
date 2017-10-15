@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.test
 
 import java.io.BufferedReader
@@ -48,7 +47,7 @@ class GeneratorTestExtensions {
       * Assert that the given text contains the regular expression, using multiline matching
       */
 	def static void assertMatchesRegexp(String text, String regexp) {
-		val p = Pattern::compile(regexp, Pattern::MULTILINE);
+		val p = Pattern.compile(regexp, Pattern.MULTILINE);
 		assertTrue("Text did not contain pattern \"" + regexp + "\"", p.matcher(text).find());
 	}
 
@@ -75,7 +74,7 @@ class GeneratorTestExtensions {
 		val sb = new StringBuffer();
 		val in = new BufferedReader(new FileReader(textFile));
 		var String str;
-		while ((str = in.readLine()) != null) {
+		while ((str = in.readLine()) !== null) {
 			sb.append(str);
 			sb.append("\n");
 		}

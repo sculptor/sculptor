@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sculptor DSL UI Tests
+Bundle-Vendor: Sculptor Team
+Bundle-Version: 3.1.1.qualifier
+Bundle-SymbolicName: org.sculptor.dsl.ui.tests;singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.sculptor.dsl.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.workbench;resolution:=optional,
+ org.eclipse.xtext.junit4,
+ org.eclipse.xtext.testing,
+ org.eclipse.xtext.xbase.junit,
+ org.eclipse.xtext.xbase.testing
+Import-Package: org.hamcrest.core,
+ org.junit.runner.manipulation;version="4.5.0",
+ org.junit.runner.notification;version="4.5.0",
+ org.junit.runner;version="4.5.0",
+ org.junit.runners.model;version="4.5.0",
+ org.junit.runners;version="4.5.0",
+ org.junit;version="4.5.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.sculptor.dsl.ui.tests;x-internal=true

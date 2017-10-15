@@ -1,11 +1,24 @@
 /*
-	Generates summary documentation of the domain model.
+ * Copyright 2007 The Fornax Project Team, including the original
+ * author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.sculptor.generator.template.doc
 
 import java.util.List
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.ext.UmlGraphHelper
@@ -30,8 +43,10 @@ import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
-import org.sculptor.generator.chain.ChainOverridable
 
+/**
+ * Generates summary documentation of the domain model.
+ */
 @ChainOverridable
 class ModelDocTmpl {
 
@@ -50,7 +65,7 @@ def void start(Application it) {
 
 def String docHtml(Application it) {
 	val title = "Summary Documentation of " + name + " Domain Model"
-	fileOutput("DomainModelDoc.html", OutputSlot::TO_DOC, '''
+	fileOutput("DomainModelDoc.html", OutputSlot.TO_DOC, '''
 	«header(it, title)»
 
 	<div id="wrap">
@@ -72,7 +87,7 @@ def String docHtml(Application it) {
 
 def String moduleDocHtml(Module it) {
 	val title = "Summary Documentation of " + name + " module"
-	fileOutput("DomainModelDoc-" + name + ".html", OutputSlot::TO_DOC, '''
+	fileOutput("DomainModelDoc-" + name + ".html", OutputSlot.TO_DOC, '''
 	«header(it, title + "(" + application.name + ")")»
 	<div id="wrap">
 			<a name="module_«name»"></a>
@@ -147,9 +162,9 @@ def String moduleDocContent(Module it) {
 	«it.consumers.sortBy(e|e.name).map[e | consumerDoc(e)].join()»
 	</div>
 	<div id="domainObjects">
-	«it.domainObjects.filter[d | ! (d instanceof sculptormetamodel.Enum)]
+	«it.domainObjects.filter[d | ! (d instanceof Enum)]
 		.sortBy(e|e.name).map[e | domainObjectDoc(e)].join()»
-	«it.domainObjects.filter[d | d instanceof sculptormetamodel.Enum]
+	«it.domainObjects.filter[d | d instanceof Enum]
 		.sortBy(e|e.name).map[e | enumDoc(e as Enum)].join()»
 	</div>
 	'''
@@ -282,7 +297,7 @@ def String operationDoc(Operation it) {
 		</ul>
 		</div>
 	«ENDIF»
-	«IF type != null || domainObjectType != null»
+	«IF type !== null || domainObjectType !== null»
 		<div id="operation_returns">
 		<p>Returns:</p>
 		<ul><li>«operationTypeDoc(it)» </li></ul>
@@ -294,16 +309,16 @@ def String operationDoc(Operation it) {
 
 def String operationParameterDoc(Parameter it) {
 	'''
-	<li>«operationTypeDoc(it)» «name»«IF doc != null»<br/>«doc»«ENDIF»</li>
+	<li>«operationTypeDoc(it)» «name»«IF doc !== null»<br/>«doc»«ENDIF»</li>
 	'''
 }
 
 def String operationTypeDoc(DomainObjectTypedElement it) {
 	'''
-	«IF domainObjectType != null»
-		«IF collectionType != null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«domainObjectType.module.name».html#«domainObjectType.name»">«domainObjectType.name»</a>«IF collectionType != null»&gt;«ENDIF»
-	«ELSEIF type != null»
-		«IF collectionType != null»«collectionType»&lt;«ENDIF»«type»«IF collectionType != null»&gt;«ENDIF»
+	«IF domainObjectType !== null»
+		«IF collectionType !== null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«domainObjectType.module.name».html#«domainObjectType.name»">«domainObjectType.name»</a>«IF collectionType !== null»&gt;«ENDIF»
+	«ELSEIF type !== null»
+		«IF collectionType !== null»«collectionType»&lt;«ENDIF»«type»«IF collectionType !== null»&gt;«ENDIF»
 	«ENDIF»
 	'''
 }
@@ -373,7 +388,7 @@ def String enumDoc(Enum it) {
 
 def String extendsCharacteristics (DomainObject it) {
 	'''
-	«IF ^extends != null»<p><i>^extends <a href="DomainModelDoc-«^extends.getModule().name».html#«^extends.name»">«^extends.name»</a></i></p>«ENDIF»
+	«IF ^extends !== null»<p><i>^extends <a href="DomainModelDoc-«^extends.getModule().name».html#«^extends.name»">«^extends.name»</a></i></p>«ENDIF»
 	'''
 }
 
@@ -396,7 +411,7 @@ def dispatch String domainObjectCharacteristics(Entity it) {
 
 def String notAggregateRootInfo(DomainObject it) {
 	val aggregateRootObject  = it.getAggregateRootObject()
-	if (aggregateRootObject != null) '''
+	if (aggregateRootObject !== null) '''
 			not aggregate root, belongs to 
 				<a href="DomainModelDoc-«aggregateRootObject?.getModule().name».html#«aggregateRootObject.name»">«aggregateRootObject.name»</a>
 	''' else ""
@@ -468,8 +483,8 @@ def dispatch String fieldDoc(Attribute it) {
 	«val isDto = it.getDomainObject() instanceof DataTransferObject»
 	<tr>
 		<td>«IF naturalKey»<b>«ENDIF»«name»«IF naturalKey»</b>«ENDIF»</td>
-		<td>«IF collectionType != null»«collectionType»&lt;«ENDIF»«type»«IF collectionType != null»&gt;«ENDIF»</td>
-		<td>«IF isDto || collectionType != null || it.getDatabaseLength() == null»&nbsp;«ELSE»«it.getDatabaseLength()»«ENDIF»</td>
+		<td>«IF collectionType !== null»«collectionType»&lt;«ENDIF»«type»«IF collectionType !== null»&gt;«ENDIF»</td>
+		<td>«IF isDto || collectionType !== null || it.getDatabaseLength() === null»&nbsp;«ELSE»«it.getDatabaseLength()»«ENDIF»</td>
 		<td>«IF (isDto && !required) || (!isDto && nullable)»&nbsp;«ELSE»X«ENDIF»</td>
 		<td>«IF changeable»X«ELSE»&nbsp;«ENDIF»</td>
 		<td>«description(it)»</td>
@@ -479,19 +494,19 @@ def dispatch String fieldDoc(Attribute it) {
 
 def String description(Attribute it) {
 	'''
-	«IF name == "id" && doc == null »
+	«IF name == "id" && doc === null »
 		Generated unique id (GID pk)
-	«ELSEIF name == "createdBy" && doc == null »
+	«ELSEIF name == "createdBy" && doc === null »
 		Information about who created the object
-	«ELSEIF name == "lastUpdatedBy" && doc == null »
+	«ELSEIF name == "lastUpdatedBy" && doc === null »
 		Information about who last updated the object
-	«ELSEIF name == "createdDate" && doc == null »
+	«ELSEIF name == "createdDate" && doc === null »
 		Creation timestamp of the object
-	«ELSEIF name == "lastUpdated" && doc == null »
+	«ELSEIF name == "lastUpdated" && doc === null »
 		Last updated timestamp of the object
-	«ELSEIF name == "version" && doc == null »
+	«ELSEIF name == "version" && doc === null »
 		Update counter used for optimistic locking
-	«ELSEIF name == "uuid" && doc == null »
+	«ELSEIF name == "uuid" && doc === null »
 		Unique id needed for equals and hashCode, since there is no natural key
 	«ELSE »
 		«doc»
@@ -504,7 +519,7 @@ def dispatch String fieldDoc(Reference it) {
 	«val isDto = it.from instanceof DataTransferObject»
 	<tr>
 		<td>«IF naturalKey»<b>«ENDIF»«name»«IF naturalKey»</b>«ENDIF»</td>
-		<td>«IF collectionType != null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«to.module.name».html#«to.name»">«to.name»</a>«IF collectionType != null»&gt;«ENDIF»</td>
+		<td>«IF collectionType !== null»«collectionType»&lt;«ENDIF»<a href="DomainModelDoc-«to.module.name».html#«to.name»">«to.name»</a>«IF collectionType !== null»&gt;«ENDIF»</td>
 		<td>&nbsp;</td>
 		<td>«IF (isDto && !required) || (!isDto && nullable)»&nbsp;«ELSE»X«ENDIF»</td>
 		<td>«IF changeable»X«ELSE»&nbsp;«ENDIF»</td>

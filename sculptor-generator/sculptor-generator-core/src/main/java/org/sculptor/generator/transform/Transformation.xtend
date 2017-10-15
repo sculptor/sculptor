@@ -44,7 +44,7 @@ import sculptormetamodel.ValueObject
  */
 class Transformation {
 
-	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
+	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
@@ -188,7 +188,7 @@ class Transformation {
 		module.services.forEach[modifyGapClass()]
 		module.resources.forEach[modifyGapClass()]
 		module.domainObjects.forEach[modifyGapClass()]
-		module.getNonEnumDomainObjects().filter(d | d.^extends == null).forEach[modifyIdAttribute()]
+		module.getNonEnumDomainObjects().filter(d | d.^extends === null).forEach[modifyIdAttribute()]
 		module.getNonEnumDomainObjects().forEach[modifyAuditable()]
 		module.getNonEnumDomainObjects().forEach[modifyChangeable()]
 		module.getNonEnumDomainObjects().forEach[modifyTransient()]
@@ -201,7 +201,7 @@ class Transformation {
 	}
 
 	def void modifyDomainEvent(DomainEvent event) {
-		if (event.^extends != null)
+		if (event.^extends !== null)
 			(event.^extends as DomainEvent).modifyDomainEvent()
 		if (!event.getAllAttributes().exists(e|e.name == "recorded"))
 			event.attributes.add(0, createEventTimestamp(event, "recorded"))
@@ -212,7 +212,7 @@ class Transformation {
 	def void modifyCommandEvent(CommandEvent event) {
 		val newOccurred = createEventTimestamp(event, "occurred")
 		newOccurred.setIndex(true)
-		if (event.^extends != null)
+		if (event.^extends !== null)
 			(event.^extends as CommandEvent).modifyCommandEvent()
 		if (!event.getAllAttributes().exists(e|e.name == "recorded"))
 			event.attributes.add(0, createEventTimestamp(event, "recorded"))
@@ -227,7 +227,7 @@ class Transformation {
 	}
 
 	def dispatch void modifySubscriber(Service service) {
-		if (service.subscribe != null && !service.operations.exists(e|e.name == "receive"))
+		if (service.subscribe !== null && !service.operations.exists(e|e.name == "receive"))
 			service.operations.add(createSubscriberReceive(service))
 	}
 
@@ -237,7 +237,7 @@ class Transformation {
 	}
 
 	def dispatch void modifySubscriber(Repository repository) {
-		if (repository.subscribe != null && !repository.operations.exists(e|e.name == "receive"))
+		if (repository.subscribe !== null && !repository.operations.exists(e|e.name == "receive"))
 			repository.operations.add(createSubscriberReceive(repository))
 	}
 
@@ -329,12 +329,12 @@ class Transformation {
 		val pagedFindAll = pagingOperations.findFirst(e|e.name == "findAll")
 		val pagedFindByQuery = pagingOperations.findFirst(e|e.name == "findByQuery")
 		pagingOperations.forEach[modifyPagingOperation()]
-		if (!jpa() && pagedFindAll != null && !pagedFindAll.hasHint("countQuery") && !pagedFindAll.hasHint("countOperation")) {
+		if (!jpa() && pagedFindAll !== null && !pagedFindAll.hasHint("countQuery") && !pagedFindAll.hasHint("countOperation")) {
 			pagedFindAll.addCountAllHint()
 			if (!repository.operations.exists(e|e.name == "countAll"))
 				repository.operations.add(createCountAll(repository))
 		}
-		if (!jpa() && (pagedFindByQuery != null || pagingOperations.exists(e|e.hasHint("countQuery"))) &&
+		if (!jpa() && (pagedFindByQuery !== null || pagingOperations.exists(e|e.hasHint("countQuery"))) &&
 			!repository.operations.exists(e|e.name == "findByQuery" && e.parameters.exists(p|p.name == "useSingleResult")))
 			repository.operations.add(createFindByQuerySingleResult(repository, true))
 	}
@@ -359,7 +359,7 @@ class Transformation {
 	}
 
 	def void modifyDynamicFinderOperations(RepositoryOperation op) {
-		if (op.type == null && op.domainObjectType == null) {
+		if (op.type === null && op.domainObjectType === null) {
 			op.setDomainObjectType(op.repository.aggregateRoot)
 			op.setCollectionType("List")
 		}
@@ -376,16 +376,16 @@ class Transformation {
 	}
 
 	def void modifyQueryOperations(RepositoryOperation op) {
-		if (op.collectionType == null && !op.repository.operations.exists(e|e.name == "findByQuery" && e.parameters.exists(p|p.name == "useSingleResult")))
+		if (op.collectionType === null && !op.repository.operations.exists(e|e.name == "findByQuery" && e.parameters.exists(p|p.name == "useSingleResult")))
 			op.repository.operations.add(createFindByQuerySingleResult(op.repository, true))
-		if (op.collectionType != null && !op.repository.operations.exists(e|e.name == "findByQuery"))
+		if (op.collectionType !== null && !op.repository.operations.exists(e|e.name == "findByQuery"))
 			op.repository.operations.add(createFindByQuerySingleResult(op.repository, false))
 	}
 
 	def void modifyConditionOperations(RepositoryOperation op) {
-		if (op.collectionType == null && !op.repository.operations.exists(e|e.name == "findByCondition" && e.parameters.exists(p|p.name == "useSingleResult")))
+		if (op.collectionType === null && !op.repository.operations.exists(e|e.name == "findByCondition" && e.parameters.exists(p|p.name == "useSingleResult")))
 			op.repository.operations.add(createFindByCondition(op.repository, true))
-		if (op.collectionType != null && !op.repository.operations.exists(e|e.name == "findByCondition"))
+		if (op.collectionType !== null && !op.repository.operations.exists(e|e.name == "findByCondition"))
 			op.repository.operations.add(createFindByCondition(op.repository, false))
 	}
 

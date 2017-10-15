@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.repository
 
 import javax.inject.Inject
@@ -58,7 +57,7 @@ def String repository(Repository it) {
 def String repositoryInterface(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryapiPackage() + "." + name), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryapiPackage()»;
 
@@ -74,7 +73,7 @@ def String repositoryInterface(Repository it) {
 	«IF pureEjb3()»
 	@javax.ejb.Local
 	«ENDIF »
-	public interface «name» «IF subscribe != null»extends «fw("event.EventSubscriber")» «ENDIF» {
+	public interface «name» «IF subscribe !== null»extends «fw("event.EventSubscriber")» «ENDIF» {
 
 		«IF isSpringToBeGenerated()»
 			public final static String BEAN_ID = "«name.toFirstLower()»";
@@ -91,7 +90,7 @@ def String repositoryInterface(Repository it) {
 def String repositoryBase(Repository it) {
 	val baseName  = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + (if (gapClass) "Base" else getSuffix("Impl"))), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 
@@ -128,7 +127,7 @@ def String repositoryBase(Repository it) {
 			@javax.ejb.Stateless(name="«name.toFirstLower()»")
 		«ENDIF»
 	«ENDIF»
-	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe !== null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public «IF gapClass»abstract «ENDIF»class «name»«if (gapClass) "Base" else getSuffix("Impl")» «it.extendsLitteral()»
 		implements «aggregateRoot.module.getRepositoryapiPackage()».«name» {
 
@@ -225,7 +224,7 @@ def String repositoryDependencies(Repository it) {
 def String repositorySubclass(Repository it) {
 	val baseName = it.getRepositoryBaseName()
 
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + getSuffix("Impl")), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 
@@ -305,7 +304,7 @@ def String baseRepositoryMethod(RepositoryOperation it) {
 		«FOR parameter : parameters.filter(e | e != pagingParameter)»
 			ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
 		«ENDFOR»
-		«IF pagingParameter != null»
+		«IF pagingParameter !== null»
 			if («pagingParameter.name».getStartRow() != «fw("domain.PagedResult")».UNKNOWN
 					&& «pagingParameter.name».getRealFetchCount() != «fw("domain.PagedResult")».UNKNOWN) {
 				ao.setFirstResult(«pagingParameter.name».getStartRow());
@@ -416,7 +415,7 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 			ao.execute();
 			«IF it.getTypeName() != "void" »
 				«nullThrowsNotFoundExcpetion(it)»
-				«IF (parameters.exists(e|e.name == "useSingleResult") || it.hasHint("useSingleResult")) && it.collectionType == null»
+				«IF (parameters.exists(e|e.name == "useSingleResult") || it.hasHint("useSingleResult")) && it.collectionType === null»
 					return «IF !jpa() && it.getTypeName() != "Object"»(«it.getTypeName().getObjectTypeName()») «ENDIF»ao.getSingleResult();
 				«ELSE»
 					return ao.getResult();
@@ -490,18 +489,18 @@ def String calculateMaxPages(RepositoryOperation it) {
 				additionalRows=additionalRows < 0 ? 0 : additionalRows;
 			} else {
 				if («pagingParameter.name».isCountTotal()) {
-				«IF countOperationHint != null»
+				«IF countOperationHint !== null»
 					«val countOperation = it.repository.operations.findFirst(e | e != it && e.name == countOperationHint)»
-						«IF countOperation == null»
+						«IF countOperation === null»
 							Long countNumber = «countOperationHint»«IF !countOperationHint.endsWith(")")»()«ENDIF»;
 						«ELSE»
 							Long countNumber = «countOperation.name»(«FOR param : countOperation.parameters SEPARATOR ", "»«IF parameters.exists(e|e.name == param.name)»«param.name»«ELSE»null«ENDIF»«ENDFOR»);
 						«ENDIF»
-				«ELSEIF countQueryHint != null»
+				«ELSEIF countQueryHint !== null»
 					«val countOperation1 = it.repository.operations.findFirst(e | e != it && e.name == "findByQuery" && e.parameters.exists(p | p.name == "useSingleResult"))»
 					«val countOperation2 = it.repository.operations.findFirst(e | e != it && e.name == "findByQuery")»
-					«val countOperation = if (countOperation1 != null) countOperation1 else countOperation2»
-					«IF countOperation == null»
+					«val countOperation = if (countOperation1 !== null) countOperation1 else countOperation2»
+					«IF countOperation === null»
 						// TODO define findByQuery
 						Long countNumber = null;
 					«ELSE»
@@ -512,9 +511,9 @@ def String calculateMaxPages(RepositoryOperation it) {
 						«ENDFOR»
 						«ENDIF»
 						Long countNumber = «IF countOperation.getTypeName() == "Object"»(Long) «ENDIF»
-							«countOperation.name»(«FOR param : countOperation.parameters SEPARATOR ", "»«IF param.name == "query" || param.name == "namedQuery"»«IF countQueryHint == null»«param.name».replaceFirst("find", "count")«ELSE»"«countQueryHint»"«ENDIF»«
+							«countOperation.name»(«FOR param : countOperation.parameters SEPARATOR ", "»«IF param.name == "query" || param.name == "namedQuery"»«IF countQueryHint === null»«param.name».replaceFirst("find", "count")«ELSE»"«countQueryHint»"«ENDIF»«
 							ELSEIF param.name == "useSingleResult"»true« ELSEIF param.name == "parameters"»parameters«
-							ELSEIF parameters.exists(e|e.name == param.name)»«param.name»« ELSE»null«ENDIF»«ENDFOR»)«IF countOperation1 == null».size()«ENDIF»;
+							ELSEIF parameters.exists(e|e.name == param.name)»«param.name»« ELSE»null«ENDIF»«ENDFOR»)«IF countOperation1 === null».size()«ENDIF»;
 					«ENDIF»
 					«ELSEIF (it.useGenericAccessStrategy())»
 						// If you need an alternative way to calculate max pages you could define hint="countOperation=..." or hint="countQuery=..."
@@ -609,7 +608,7 @@ def String findByKeySpecialCase(RepositoryOperation it) {
 			«IF repository.aggregateRoot.hasNaturalKey() »
 				ao.setKeyPropertyNames(«FOR e : repository.aggregateRoot.getAllNaturalKeys() SEPARATOR ", "»"«e.name»"«ENDFOR»);
 				ao.setKeyPropertyValues(«FOR e : repository.aggregateRoot.getAllNaturalKeys() SEPARATOR ", "»«e.name»«ENDFOR»);
-			«ELSEIF repository.aggregateRoot.getUuid() != null »
+			«ELSEIF repository.aggregateRoot.getUuid() !== null »
 				ao.setKeyPropertyNames("«repository.aggregateRoot.getUuid().name»");
 				ao.setKeyPropertyValues(«repository.aggregateRoot.getUuid().name»);
 			«ENDIF »
@@ -689,12 +688,12 @@ def String queryBasedFinderMethod(RepositoryOperation it) {
 				parameters.put("«param.name»", «param.name»);
 				«ENDFOR»
 			«ENDIF»
-			«IF collectionType != null»
+			«IF collectionType !== null»
 				java.util.List<«it.getResultTypeName()»> result =
 			«ELSE »
 				«it.getResultTypeName()» result =
 			«ENDIF»
-				findByQuery("«it.buildQuery()»",«IF it.hasParameters()»parameters«ELSE»null«ENDIF»«IF collectionType == null»,true«ENDIF»,«it.getResultTypeName()».class);
+				findByQuery("«it.buildQuery()»",«IF it.hasParameters()»parameters«ELSE»null«ENDIF»«IF collectionType === null»,true«ENDIF»,«it.getResultTypeName()».class);
 			«throwNotFoundException(it)»
 			«IF collectionType == "Set"»
 				java.util.Set<«it.getResultTypeName()»> set = new java.util.HashSet<«it.getResultTypeName()»>();
@@ -717,13 +716,13 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 				    «toConditionalCriteria(it.buildConditionalCriteria(), it.getAggregateRootTypeName())»
 				    .build();
 
-			«IF collectionType != null»
+			«IF collectionType !== null»
 				java.util.List<«it.getResultTypeName()»> result =
 				«IF !it.useTupleToObjectMapping()»
 					findByCondition(condition«
-						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter == null
+						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter === null
 							», PagingParameter.noLimits()).getValues();«
-						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter != null
+						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter !== null
 							», «pagingParameter.name»).getValues();«
 						ELSE»«
 							IF jpa()», «it.getResultTypeName()».class«ENDIF»);«
@@ -738,9 +737,9 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 				«it.getResultTypeName()» result =
 				«IF !it.useTupleToObjectMapping()»
 						findByCondition(condition, true«
-						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter == null
+						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter === null
 							», new PagingParameter.rowAccess(0,1));«
-						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter != null
+						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter !== null
 							», «pagingParameter.name»);«
 						ELSE»«
 							IF jpa()», «it.getResultTypeName()».class«ENDIF»);
@@ -765,7 +764,7 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 def String throwNotFoundException(RepositoryOperation it) {
 	'''
 		«IF it.throwsNotFoundException()»
-			if (result == null «IF collectionType != null» || result.isEmpty()«ENDIF») {
+			if (result == null «IF collectionType !== null» || result.isEmpty()«ENDIF») {
 				throw new «it.getNotFoundExceptionName(true)»("");
 			}
 		«ENDIF»
@@ -795,13 +794,13 @@ def String subclassRepositoryMethod(RepositoryOperation it) {
 
 def String repositoryMethodAnnotation(RepositoryOperation it) {
 	'''
-		«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
+		«IF publish !== null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
 		«repositoryMethodAnnotationHook(it)»
 	'''
 }
 
 def String repositoryDependencyInjectionJUnit(Repository it) {
-	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
+	fileOutput(javaFileName(aggregateRoot.module.getRepositoryimplPackage() + "." + name + "DependencyInjectionTest"), OutputSlot.TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «aggregateRoot.module.getRepositoryimplPackage()»;
 

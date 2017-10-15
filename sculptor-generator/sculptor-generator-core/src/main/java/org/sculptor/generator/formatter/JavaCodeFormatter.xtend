@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory
  */
 class JavaCodeFormatter {
 
-	static val LOG = LoggerFactory::getLogger(typeof(JavaCodeFormatter))
+	static val LOG = LoggerFactory.getLogger(typeof(JavaCodeFormatter))
 
 	public static val IMPORT_MARKER_PATTERN = "/// Sculptor code formatter imports ///"
 
@@ -54,7 +54,7 @@ class JavaCodeFormatter {
 		val textEdit = getCodeFormatter().format(
 			CodeFormatter.K_COMPILATION_UNIT.bitwiseOr(CodeFormatter.F_INCLUDE_COMMENTS), autoImportedCode, 0,
 			autoImportedCode.length(), 0, null)
-		if (textEdit != null) {
+		if (textEdit !== null) {
 			val doc = new Document(autoImportedCode)
 			try {
 				textEdit.apply(doc)
@@ -77,7 +77,7 @@ class JavaCodeFormatter {
 	private var CodeFormatter codeFormatter
 
 	private def getCodeFormatter() {
-		if (codeFormatter == null) {
+		if (codeFormatter === null) {
 			val classLoader = Thread.currentThread().getContextClassLoader() ?: this.^class.getClassLoader()
 
 			// Read default properties
@@ -91,7 +91,7 @@ class JavaCodeFormatter {
 				if (!additionalProps.nullOrEmpty) {
 					additionalProps.split("[,; ]").forEach [
 						val stream = classLoader.getResourceAsStream(it)
-						if (stream != null) {
+						if (stream !== null) {
 							LOG.debug("Loading additional properties for Java code formatter from file '{}'", it)
 							props.load(classLoader.getResourceAsStream(it))
 						} else {

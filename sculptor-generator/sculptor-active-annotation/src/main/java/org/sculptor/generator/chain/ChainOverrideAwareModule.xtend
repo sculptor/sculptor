@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory
  */
 class ChainOverrideAwareModule extends AbstractModule {
 
-	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverrideAwareModule))
+	private static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverrideAwareModule))
 
 	private val List<? extends Class<?>> startClasses
 	private ConfigurationProvider configurationProvider
@@ -115,7 +115,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 */
 	private def getCartridgeNames() {
 		val cartridgeNames = getConfigurationString("cartridges")
-		if (cartridgeNames != null && cartridgeNames.length > 0) {
+		if (cartridgeNames !== null && cartridgeNames.length > 0) {
 			cartridgeNames.split("[,; ]").map[it.trim].toList
 		} else {
 			<String>newArrayList()
@@ -134,7 +134,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 */
 	private def <T> updateChainWithMethodsDispatchHead(T chain, T[] methodsDispatchHead) {
 		var chainLink = chain as ChainLink<?>
-		while (chainLink != null) {
+		while (chainLink !== null) {
 			chainLink.setMethodsDispatchHead(methodsDispatchHead)
 			chainLink = chainLink.next
 		}
@@ -157,7 +157,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 		var result = object
 		val className = needsToBeChained.pop
 		try {
-			val chainedClass = Class::forName(className)
+			val chainedClass = Class.forName(className)
 			if (typeof(ChainLink).isAssignableFrom(chainedClass)) {
 				LOG.debug("    chaining with class '{}'", chainedClass)
 
@@ -196,7 +196,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	private def <T> createNextDispatchObjFromHead(T[] methodsDispatchHead, Class<?> templateClass, T object) {
 		val methodsDispatchNext = methodsDispatchHead.copyMethodsDispatchHead(templateClass)
 
-		val methodDispatchClass = Class::forName(templateClass.dispatchClassName)
+		val methodDispatchClass = Class.forName(templateClass.dispatchClassName)
 		val methodDispatchConst = methodDispatchClass.getConstructor(templateClass, methodsDispatchNext.class)
 		methodDispatchConst.newInstance(object, methodsDispatchNext as Object) as T
 	}
@@ -205,7 +205,7 @@ class ChainOverrideAwareModule extends AbstractModule {
 	 * Returns a copy of the given methodsDispatchHead for the given overrideableClass.
 	 */
 	private def <T> T[] copyMethodsDispatchHead(T[] methodsDispatchHead, Class<?> overrideableClass) {
-		val T[] methodsDispatchNext = Array::newInstance(overrideableClass, methodsDispatchHead.size) as T[]
+		val T[] methodsDispatchNext = Array.newInstance(overrideableClass, methodsDispatchHead.size) as T[]
 		System.arraycopy(methodsDispatchHead, 0, methodsDispatchNext, 0, methodsDispatchHead.length)
 		methodsDispatchNext
 	}
@@ -217,9 +217,9 @@ class ChainOverrideAwareModule extends AbstractModule {
 		val cl = chainLink as ChainLink<?>
 
 		val dispatchArray = cl._getOverridesDispatchArray
-		if (dispatchArray != null) {
+		if (dispatchArray !== null) {
 			dispatchArray.forEach [ dispatchObj, i |
-				if (dispatchObj != null) {
+				if (dispatchObj !== null) {
 					methodsDispatchHead.set(i, dispatchObj as T)
 				}
 			]
@@ -234,8 +234,8 @@ class ChainOverrideAwareModule extends AbstractModule {
 		do {
 			discovered.addAll(
 				cls.declaredFields.filter[f|
-					(f.getAnnotation(typeof(Inject)) != null ||
-						f.getAnnotation(typeof(com.google.inject.Inject)) != null) && !f.type.interface].map[f|f.type].toList)
+					(f.getAnnotation(typeof(Inject)) !== null ||
+						f.getAnnotation(typeof(com.google.inject.Inject)) !== null) && !f.type.interface].map[f|f.type].toList)
 			cls = cls.superclass
 		} while (cls != typeof(Object))
 	}

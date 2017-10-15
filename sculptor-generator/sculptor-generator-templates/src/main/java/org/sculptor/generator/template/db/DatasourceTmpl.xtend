@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.db
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DatasourceTmpl {
@@ -49,7 +48,7 @@ def String datasource(Application it) {
 }
 
 def String mysqlDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot.TO_GEN_RESOURCES, '''
 		«dataSourceHeader(it)»
 		        <connection-url>«getProperty("db.connectionUrl", "jdbc:mysql://localhost/" + name.toLowerCase() + "?autoReconnect=true")»</connection-url> 
 		        <!-- Add valid reference to an already deployed / defined MySQL driver --> 
@@ -65,7 +64,7 @@ def String mysqlDS(Application it) {
 }
 
 def String oracleDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot.TO_GEN_RESOURCES, '''
 		«dataSourceHeader(it)»
 				<connection-url>«getProperty("db.connectionUrl", "jdbc:oracle:thin:@localhost:1521:" + name.toLowerCase())»</connection-url>
 		        <!-- Add valid reference to an already deployed / defined Oracle driver --> 
@@ -92,7 +91,7 @@ def String oracleDS(Application it) {
 }
 
 def String postgresqlDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot.TO_GEN_RESOURCES, '''
 		«dataSourceHeader(it)»
 		        <connection-url>«getProperty("db.connectionUrl", "jdbc:postgresql://localhost/" + name.toLowerCase())»</connection-url> 
 		        <!-- Add valid reference to an already deployed / defined PostgresSQL driver --> 
@@ -108,7 +107,7 @@ def String postgresqlDS(Application it) {
 }
 
 def String hsqldbInmemoryDS(Application it) {
-	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("dbschema/" + name + "-ds.xml", OutputSlot.TO_GEN_RESOURCES, '''
 		«dataSourceHeader(it)»
 		        <connection-url>«getProperty("db.connectionUrl", "jdbc.url=jdbc:hsqldb:mem:" + name.toFirstLower())»</connection-url>
 		        <!-- Add valid reference to an already deployed / defined HSQLDB driver --> 

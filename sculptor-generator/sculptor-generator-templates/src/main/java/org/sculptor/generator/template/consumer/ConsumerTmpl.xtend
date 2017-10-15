@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.consumer
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.PubSubTmpl
@@ -25,7 +25,6 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Consumer
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ConsumerTmpl {
@@ -75,7 +74,7 @@ def void consumerTestDbUnitData(Consumer it) {
 }
 
 def String consumerInterface(Consumer it) {
-	fileOutput(javaFileName(it.getConsumerPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getConsumerPackage() + "." + name), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getConsumerPackage()»;
 
@@ -90,7 +89,7 @@ def String consumerInterface(Consumer it) {
 
 
 def String eventConsumerImplBase(Consumer it) {
-	fileOutput(javaFileName(it.getConsumerPackage() + "." + name + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getConsumerPackage() + "." + name + "ImplBase"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getConsumerPackage()»;
 
@@ -111,7 +110,7 @@ def String eventConsumerImplBase(Consumer it) {
 	«ELSE »
 		«it.formatJavaDoc()»
 	«ENDIF »
-	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe !== null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public abstract class «name»ImplBase implements «name» {
 
 		public final static String BEAN_ID = "«name.toFirstLower()»";
@@ -131,7 +130,7 @@ def String eventConsumerImplBase(Consumer it) {
 
 
 def String eventConsumerImplSubclass(Consumer it) {
-	fileOutput(javaFileName(it.getConsumerPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(it.getConsumerPackage() + "." + name + "Impl"), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «it.getConsumerPackage()»;
 
@@ -225,7 +224,7 @@ def String otherDependencies(Consumer it) {
 
 def String consumeMethodBase(Consumer it) {
 	'''
-	«IF messageRoot != null»
+	«IF messageRoot !== null»
 		public String consume(String textMessage)
 			throws «applicationExceptionClass()» {
 
@@ -241,7 +240,7 @@ def String consumeMethodBase(Consumer it) {
 
 def String consumeMethodSubclass(Consumer it) {
 	'''
-	«IF messageRoot == null»
+	«IF messageRoot === null»
 		public String consume(String textMessage) throws «applicationExceptionClass()» {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("«name».consume not implemented");

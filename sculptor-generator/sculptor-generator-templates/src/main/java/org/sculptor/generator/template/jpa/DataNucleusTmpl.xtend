@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.jpa
 
 import javax.inject.Inject
@@ -53,7 +52,7 @@ def String dataNucleus(Application it) {
 }
 
 def String dataNucleusTestProperties(Application it) {
-	fileOutput("datanucleus-test.properties", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput("datanucleus-test.properties", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	datanucleus.ConnectionDriverName=org.hsqldb.jdbcDriver
 	datanucleus.ConnectionURL=jdbc:hsqldb:mem:«name.toLowerCase()»
 	datanucleus.ConnectionUserName=sa
@@ -63,7 +62,7 @@ def String dataNucleusTestProperties(Application it) {
 }
 
 def String enumPlugin(Application it) {
-	fileOutput("plugin.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("plugin.xml", OutputSlot.TO_GEN_RESOURCES, '''
 	<?xml version="1.0"?>
 	<plugin>
 		<extension point="org.datanucleus.store_mapping">
@@ -89,7 +88,7 @@ def String enumPluginMapping(Enum it) {
 }
 
 def String manifest(Application it) {
-	fileOutput("META-INF/MANIFEST.MF", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("META-INF/MANIFEST.MF", OutputSlot.TO_GEN_RESOURCES, '''
 	Manifest-Version: 1.0
 	Bundle-ManifestVersion: 2
 	Bundle-Name: enumplugin
@@ -100,7 +99,7 @@ def String manifest(Application it) {
 }
 
 def String enumMappingClass(Application it) {
-	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(basePackage + ".util.EnumMapping"), OutputSlot.TO_GEN_SRC, '''
 	package «basePackage».util;
 
 /// Sculptor code formatter imports ///
@@ -199,7 +198,7 @@ def String enumMappingClass(Application it) {
 }
 
 def String enumLiteralClass(Application it) {
-	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName("org.datanucleus.store.rdbms.sql.expression.ParameterEnumLiteral"), OutputSlot.TO_GEN_SRC, '''
 	package org.datanucleus.store.rdbms.sql.expression;
 
 /// Sculptor code formatter imports ///
@@ -249,7 +248,7 @@ def String enumLiteralClass(Application it) {
  */
 def String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
-	fileOutput("dbunit/ddl_additional.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput("dbunit/ddl_additional.sql", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 		«manyToManyRelations.map[oracleDDLTmpl.manyToManyPrimaryKey(it)].join()»
 	'''
 	)

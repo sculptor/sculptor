@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.jpa
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class EclipseLinkTmpl {
@@ -59,7 +58,7 @@ def String footer(Application it) {
 }
 
 def String mapping(Application it) {
-	fileOutput("/META-INF/orm.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("/META-INF/orm.xml", OutputSlot.TO_GEN_RESOURCES, '''
 	«header(it)»
 	«enumConverter(it)»
 		«IF isJodaDateTimeLibrary()»
@@ -83,7 +82,7 @@ def String jodaConverter(Application it) {
 }
 
 def String jodaConverterClass(Application it) {
-	fileOutput(javaFileName(basePackage +".util.JodaConverter"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(basePackage +".util.JodaConverter"), OutputSlot.TO_GEN_SRC, '''
 	package «basePackage».util;
 
 /// Sculptor code formatter imports ///
@@ -135,7 +134,7 @@ def String jodaConverterClass(Application it) {
 }
 
 def String enumConverterClass(Application it) {
-	fileOutput(javaFileName(basePackage +".util.EnumConverter"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(basePackage +".util.EnumConverter"), OutputSlot.TO_GEN_SRC, '''
 	package «basePackage».util;
 
 /// Sculptor code formatter imports ///

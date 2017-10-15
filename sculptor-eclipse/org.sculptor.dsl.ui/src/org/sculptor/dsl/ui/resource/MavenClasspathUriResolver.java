@@ -48,7 +48,6 @@ import org.eclipse.xtext.ui.util.JdtClasspathUriResolver;
  * 
  * @since 3.0.1
  */
-@SuppressWarnings("restriction")
 public class MavenClasspathUriResolver extends JdtClasspathUriResolver {
 
 	/**

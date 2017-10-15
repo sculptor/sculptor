@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.jpa
 
 import org.junit.BeforeClass
@@ -33,7 +32,7 @@ class HibernateTest extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
-		System::setProperty("jpa.provider", "hibernate")
+		System.setProperty("jpa.provider", "hibernate")
 		runGenerator(TEST_NAME)
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2013 The Fornax Project Team, including the original 
+ * Copyright 2007 The Fornax Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.ext
 
 import java.util.List
 import java.util.Set
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.util.PropertiesBase
 import org.sculptor.generator.util.SingularPluralConverter
 import sculptormetamodel.Application
@@ -27,12 +27,12 @@ import sculptormetamodel.BasicType
 import sculptormetamodel.Consumer
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Entity
+import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.ValueObject
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 public class UmlGraphHelper {
@@ -46,7 +46,7 @@ public class UmlGraphHelper {
 	}
 
 	def String referenceTailLabel(Reference ref) {
-		if (ref.opposite == null)
+		if (ref.opposite === null)
 			""
 		else
 			(if (ref.opposite.many) "0..n " else "") + ref.opposite.referenceLabelText()
@@ -85,8 +85,8 @@ public class UmlGraphHelper {
 	def Set<DomainObject> serviceOperationDependencies(Service from) {
 		val Set<DomainObject> retVal = newHashSet()
 
-		retVal.addAll(from.operations.map[parameters].flatten.filter[e|e.domainObjectType != null].map[domainObjectType].toSet)
-		retVal.addAll(from.operations.filter[e|e.domainObjectType != null].map[domainObjectType].toSet)
+		retVal.addAll(from.operations.map[parameters].flatten.filter[e|e.domainObjectType !== null].map[domainObjectType].toSet)
+		retVal.addAll(from.operations.filter[e|e.domainObjectType !== null].map[domainObjectType].toSet)
 
 		retVal
 	}
@@ -111,7 +111,7 @@ public class UmlGraphHelper {
 	def Set<Module> moduleDependencies(Module from) {
 		val List<Module> retVal=newArrayList
 		retVal.addAll(from.domainObjects.map[references].flatten.map[e|e.to.module])
-		retVal.addAll(from.domainObjects.filter[e|e.getExtends != null].map[e|e.getExtends.module])
+		retVal.addAll(from.domainObjects.filter[e|e.getExtends !== null].map[e|e.getExtends.module])
 		retVal.addAll(from.services.map[s | s.serviceDependencies as List<Service>].flatten.map[module])
 		retVal.addAll(from.services.map[s | s.serviceOperationDependencies].flatten.map[module])
 		retVal.addAll(from.consumers.map[serviceDependencies as List<Service>].flatten.map[module])
@@ -150,8 +150,8 @@ public class UmlGraphHelper {
 	def boolean isShownInView(DomainObject domainObject, Set<Module> focus, int detail, String subjectArea) {
 		detail < 4 && domainObject.visible() && focus.contains(domainObject.module)
 			&& (detail != 0 || domainObject.isInSubjectArea(subjectArea))
-			&& (!(domainObject instanceof sculptormetamodel.Enum) && !(domainObject instanceof BasicType) 
-				|| (domainObject instanceof sculptormetamodel.Enum && getBooleanProperty("generate.umlgraph.enum"))
+			&& (!(domainObject instanceof Enum) && !(domainObject instanceof BasicType) 
+				|| (domainObject instanceof Enum && getBooleanProperty("generate.umlgraph.enum"))
 				|| (domainObject instanceof BasicType && getBooleanProperty("generate.umlgraph.basicType"))
 				|| (focus.size != domainObject.module.application.visibleModules().size))
 	}

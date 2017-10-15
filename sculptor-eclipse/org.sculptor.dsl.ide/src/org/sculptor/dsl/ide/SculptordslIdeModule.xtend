@@ -14,19 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.sculptor.dsl;
-
-import org.sculptor.dsl.SculptordslStandaloneSetupGenerated;
+package org.sculptor.dsl.ide
 
 /**
- * Initialization support for running Xtext languages 
- * without equinox extension registry
+ * Use this class to register ide components.
  */
-public class SculptordslStandaloneSetup extends SculptordslStandaloneSetupGenerated {
-
-	public static void doSetup() {
-		new SculptordslStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
+class SculptordslIdeModule extends AbstractSculptordslIdeModule {
 }
-

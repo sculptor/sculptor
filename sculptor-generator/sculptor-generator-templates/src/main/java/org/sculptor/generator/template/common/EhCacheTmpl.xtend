@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.common
 
-import com.google.inject.Inject
+import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class EhCacheTmpl {
@@ -34,7 +33,7 @@ class EhCacheTmpl {
 	}
 
 	def String ehcacheXml(Application it) {
-		fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES, '''
+		fileOutput("ehcache.xml", OutputSlot.TO_RESOURCES, '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<ehcache updateCheck="false">
 			<diskStore path="java.io.tmpdir"/>
@@ -52,7 +51,7 @@ class EhCacheTmpl {
 	}
 
 	def String ehcacheTestXml(Application it) {
-		fileOutput("ehcache.xml", OutputSlot::TO_RESOURCES_TEST, '''
+		fileOutput("ehcache.xml", OutputSlot.TO_RESOURCES_TEST, '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<ehcache updateCheck="false">
 			<diskStore path="java.io.tmpdir"/>

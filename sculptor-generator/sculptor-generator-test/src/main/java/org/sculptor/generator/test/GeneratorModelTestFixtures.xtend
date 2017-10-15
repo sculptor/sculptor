@@ -102,14 +102,14 @@ class GeneratorModelTestFixtures {
 	}
 
 	def Pair<String, FluentIssueCollection> loadAndSaveModule(String rootPath, String filename) {
-		val uri = URI::createURI(resourceRoot + "/" + filename);
+		val uri = URI.createURI(resourceRoot + "/" + filename);
 		rootElement = loadModel(resourceSet, uri, getRootObjectType);
 
 		val r = resourceSet.getResource(uri, false);
 		val provider = serviceProviderRegistry.getResourceServiceProvider(r.getURI());
-		val result = provider.getResourceValidator().validate(r, CheckMode::ALL, null);
+		val result = provider.getResourceValidator().validate(r, CheckMode.ALL, null);
 
-		return Tuples::create("-not serialized-", new FluentIssueCollection(r, result, new ArrayList<String>()));
+		return Tuples.create("-not serialized-", new FluentIssueCollection(r, result, new ArrayList<String>()));
 
 	}
 
@@ -151,16 +151,16 @@ class GeneratorModelTestFixtures {
 		val o = resource.getContents().get(0);
 
 		// assure that the root element is of the expected type
-		if (clazz != null) {
+		if (clazz !== null) {
 			assertTrue(clazz.isInstance(o));
 		}
-		EcoreUtil::resolveAll(resource);
+		EcoreUtil.resolveAll(resource);
 		return o as T;
 	}
 
 	def protected DslModel getDomainModel(String resource, String... referencedResources) {
 		for (String referencedResource : referencedResources) {
-			val uri = URI::createURI(resourceRoot + "/" + referencedResource);
+			val uri = URI.createURI(resourceRoot + "/" + referencedResource);
 			loadModel(resourceSet, uri, rootObjectType);
 		}
 
@@ -175,7 +175,7 @@ class GeneratorModelTestFixtures {
 	}
 
 	def void setupModel(String resource, String... referencedResources) {
-		if (injector == null) {
+		if (injector === null) {
 			throw new IllegalStateException("Injector not initialized - 'setupInjector()' must be called first")
 		}
 
@@ -192,7 +192,7 @@ class GeneratorModelTestFixtures {
 	}
 
 	def <T> getProvidedObject(Class<T> clazz) {
-		if (injector == null) {
+		if (injector === null) {
 			throw new IllegalStateException("Injector not initialized - 'setupInjector()' must be called first")
 		}
 

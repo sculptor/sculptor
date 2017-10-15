@@ -48,7 +48,7 @@ def String resource(Resource it) {
 }
 
 def String resourceBase(Resource it) {
-	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getRestPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getRestPackage()»;
 
@@ -85,7 +85,7 @@ def String resourceBase(Resource it) {
 		
 		«it.operations.filter(op | op.isImplementedInGapClass()) .map[resourceAbstractMethod(it)].join()»
 		
-		«it.operations.filter(e|e.httpMethod == HttpMethod::POST || e.httpMethod == HttpMethod::PUT).map[resourceMethodFromForm(it)].join()»
+		«it.operations.filter(e|e.httpMethod == HttpMethod.POST || e.httpMethod == HttpMethod.PUT).map[resourceMethodFromForm(it)].join()»
 		
 		«handleExceptions(it)»
 		
@@ -96,7 +96,7 @@ def String resourceBase(Resource it) {
 }
 
 def String resourceSubclass(Resource it) {
-	fileOutput(javaFileName(it.getRestPackage() + "." + name), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(it.getRestPackage() + "." + name), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «it.getRestPackage()»;
 
@@ -119,17 +119,17 @@ def String resourceSubclass(Resource it) {
 }
 
 def String initBinder(Resource it) {
-	val primaryDomainObject = it.operations.filter(e|e.httpMethod == HttpMethod::GET && e.domainObjectType != null).map(e|e.domainObjectType).head
+	val primaryDomainObject = it.operations.filter(e|e.httpMethod == HttpMethod.GET && e.domainObjectType !== null).map(e|e.domainObjectType).head
 	'''
 	@org.springframework.web.bind.annotation.InitBinder
 		protected void initBinder(org.springframework.web.bind.WebDataBinder binder) throws Exception {
 			binder.registerCustomEditor(String.class, new org.springframework.beans.propertyeditors.StringTrimmerEditor(false));
-			«IF isJpaProviderAppEngine() && primaryDomainObject != null»
+			«IF isJpaProviderAppEngine() && primaryDomainObject !== null»
 				binder.registerCustomEditor(com.google.appengine.api.datastore.Key.class, new «primaryDomainObject.name»IdKeyEditor());
 			«ENDIF»
 		}
 		
-		«IF isJpaProviderAppEngine() && primaryDomainObject != null»
+		«IF isJpaProviderAppEngine() && primaryDomainObject !== null»
 			«gaeKeyIdPropertyEditor(primaryDomainObject)»
 		«ENDIF»
 	'''
@@ -189,7 +189,7 @@ def String resourceMethod(ResourceOperation it) {
 	'''
 		«IF it.formatJavaDoc() == "" »
 			«it.formatJavaDoc()»
-		«ELSEIF delegate != null »
+		«ELSEIF delegate !== null »
 			/**
 			 * Delegates to {@link «getServiceapiPackage(delegate.service)».«delegate.service.name»#«delegate.name»}
 			 */
@@ -198,7 +198,7 @@ def String resourceMethod(ResourceOperation it) {
 		«resourceMethodSignature(it)» {
 		«IF it.isImplementedInGapClass() »
 			«resourceMethodHandWritten(it)»
-		«ELSEIF delegate == null»
+		«ELSEIF delegate === null»
 			«resourceMethodReturn(it)»
 		«ELSE»
 			«resourceMethodValidation(it)»
@@ -212,7 +212,7 @@ def String resourceMethod(ResourceOperation it) {
 
 def String resourceMethodSignature(ResourceOperation it) {
 	'''
-	«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[p | annotatedParamTypeAndName(p, it, false)].join(", ")») «exceptionTmpl.throwsDecl(it)»
+	«it.getVisibilityLitteral()» «IF returnString !== null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[p | annotatedParamTypeAndName(p, it, false)].join(", ")») «exceptionTmpl.throwsDecl(it)»
 	'''
 }
 
@@ -223,29 +223,29 @@ def String resourceMethodFromForm(ResourceOperation it) {
 		 * This method is needed for form data «httpMethod.toString()». Delegates to {@link #«name»}
 		 */
 		«resourceMethodAnnotation(it, true)»
-		«it.getVisibilityLitteral()» «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»FromForm(«it.parameters.map[p | annotatedParamTypeAndName(p, it, true)].join(",")») «exceptionTmpl.throwsDecl(it)» {
-			«IF returnString != null || it.getTypeName() != "void"»return «ENDIF»«name»(«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
+		«it.getVisibilityLitteral()» «IF returnString !== null»String«ELSE»«it.getTypeName()»«ENDIF» «name»FromForm(«it.parameters.map[p | annotatedParamTypeAndName(p, it, true)].join(",")») «exceptionTmpl.throwsDecl(it)» {
+			«IF returnString !== null || it.getTypeName() != "void"»return «ENDIF»«name»(«FOR p : parameters SEPARATOR ", "»«p.name»«ENDFOR»);
 		}
 	«ENDIF»
 	'''
 }
 
 def String resourceMethodHandWritten(ResourceOperation it) {
-	val postOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod::POST)
-	val putOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod::PUT)
+	val postOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod.POST)
+	val putOperation = it.resource.operations.findFirst(e | e.httpMethod == HttpMethod.PUT)
 	val modelMapParam = it.parameters.findFirst(e | e.type == "ModelMap")
 	'''
-	«IF name == "createForm" && returnString != null && modelMapParam != null && postOperation != null»
+	«IF name == "createForm" && returnString !== null && modelMapParam !== null && postOperation !== null»
 		«resourceCreateFormMethodHandWritten(it, modelMapParam, postOperation)»
-	«ELSEIF name == "updateForm" && returnString != null && modelMapParam != null && putOperation != null»
+	«ELSEIF name == "updateForm" && returnString !== null && modelMapParam !== null && putOperation !== null»
 		«resourceUpdateFormMethodHandWritten(it, modelMapParam, putOperation)»
 	«ELSE»
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("«name» not implemented");
-		«IF modelMapParam != null »
+		«IF modelMapParam !== null »
 			// «modelMapParam.name».addAttribute("result", result);
 		«ENDIF »
-		«IF returnString != null»// return "«returnString»";«ENDIF»
+		«IF returnString !== null»// return "«returnString»";«ENDIF»
 	«ENDIF»
 	'''
 }
@@ -253,7 +253,7 @@ def String resourceMethodHandWritten(ResourceOperation it) {
 def String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation postOperation) {
 	'''
 		«val firstParam = postOperation.parameters.head»
-		«IF firstParam.domainObjectType != null »
+		«IF firstParam.domainObjectType !== null »
 			«firstParam.domainObjectType.getDomainPackage()».«firstParam.domainObjectType.name» «firstParam.name» = new «firstParam.domainObjectType.getDomainPackage()».«firstParam.domainObjectType.name»(); 
 			«modelMapParam.name».addAttribute("«firstParam.name»", «firstParam.name»);
 		«ENDIF»
@@ -264,9 +264,9 @@ def String resourceCreateFormMethodHandWritten(ResourceOperation it, Parameter m
 def String resourceUpdateFormMethodHandWritten(ResourceOperation it, Parameter modelMapParam, ResourceOperation putOperation) {
 	'''
 		«val firstParam  = putOperation.parameters.head»
-		«val getOperation = resource.operations.findFirst(e | e.httpMethod == HttpMethod::GET && e.domainObjectType != null && e.domainObjectType == firstParam.domainObjectType && e.type == null && e.collectionType == null)»
+		«val getOperation = resource.operations.findFirst(e | e.httpMethod == HttpMethod.GET && e.domainObjectType !== null && e.domainObjectType == firstParam.domainObjectType && e.type === null && e.collectionType === null)»
 		«val findByIdOperation  = getOperation.delegate»
-		«IF findByIdOperation == null»
+		«IF findByIdOperation === null»
 			// TODO: can't update due to no matching findById method in service
 		«ELSE »
 			«findByIdOperation.getTypeName()» «firstParam.name» =
@@ -285,7 +285,7 @@ def String resourceMethodValidation(ResourceOperation it) {
 
 def String resourceMethodDelegation(ResourceOperation it) {
 	'''
-	«IF httpMethod == HttpMethod::DELETE && path.contains("{id}") && !parameters.exists(e|e.name == "id") && parameters.exists(e | e.domainObjectType != null) »
+	«IF httpMethod == HttpMethod.DELETE && path.contains("{id}") && !parameters.exists(e|e.name == "id") && parameters.exists(e | e.domainObjectType !== null) »
 		«resourceMethodDeleteDelegation(it)»
 	«ELSE »
 		«IF delegate.getTypeName() != "void"»«delegate.getTypeName()» result = «ENDIF»
@@ -297,8 +297,8 @@ def String resourceMethodDelegation(ResourceOperation it) {
 
 def String resourceMethodDeleteDelegation(ResourceOperation it) {
 	'''
-		«val findByIdOperation = it.delegate.service.operations.filter(e|e.domainObjectType != null && e.collectionType == null && e.parameters.exists(p|p.type == e.domainObjectType.getIdAttributeType())).head »
-		«IF findByIdOperation == null »
+		«val findByIdOperation = it.delegate.service.operations.filter(e|e.domainObjectType !== null && e.collectionType === null && e.parameters.exists(p|p.type == e.domainObjectType.getIdAttributeType())).head »
+		«IF findByIdOperation === null »
 			// TODO: can't delete due to no matching findById method in service
 		«ELSE »
 			«findByIdOperation.getTypeName()» deleteObj =
@@ -312,9 +312,9 @@ def String resourceMethodDeleteDelegation(ResourceOperation it) {
 
 def String resourceMethodReturn(ResourceOperation it) {
 	'''
-		«IF returnString != null && returnString.contains("{id}")»
+		«IF returnString !== null && returnString.contains("{id}")»
 			return String.format("«returnString.replacePlaceholder("{id}", "%s") »", result.getId()«IF isJpaProviderAppEngine()».getId()«ENDIF»);
-		«ELSEIF returnString != null»
+		«ELSEIF returnString !== null»
 			return "«returnString»";
 		«ELSEIF it.getTypeName() != "void"»
 			return result;
@@ -325,7 +325,7 @@ def String resourceMethodReturn(ResourceOperation it) {
 def String resourceMethodModelMapResult(ResourceOperation it) {
 	'''
 		«val modelMapParam = it.parameters.findFirst(e|e.type == "ModelMap")»
-		«IF modelMapParam != null && it.delegate.getTypeName() != "void"»
+		«IF modelMapParam !== null && it.delegate.getTypeName() != "void"»
 			«modelMapParam.name».addAttribute("result", result);
 		«ENDIF»
 	'''
@@ -336,7 +336,7 @@ def String resourceAbstractMethod(ResourceOperation it) {
 		/* 
 		«resourceMethodAnnotation(it, false)»
 		«resourceMethodSignature(it)» */
-		«it.getVisibilityLitteral()» abstract «IF returnString != null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
+		«it.getVisibilityLitteral()» abstract «IF returnString !== null»String«ELSE»«it.getTypeName()»«ENDIF» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 	'''
 }
 
@@ -349,7 +349,7 @@ def String resourceMethodAnnotation(ResourceOperation it, boolean formDataHeader
 
 def String generatedName(ResourceOperation it) {
 	'''
-	«IF returnString != null»"«it.getHint('return')»"«ELSE»""«ENDIF»
+	«IF returnString !== null»"«it.getHint('return')»"«ELSE»""«ENDIF»
 	'''
 }
 
@@ -361,14 +361,14 @@ def String paramTypeAndName(Parameter it) {
 
 def String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean formData) {
 	'''
-	«IF op.httpMethod == HttpMethod::DELETE && domainObjectType != null && domainObjectType.getIdAttribute() != null && op.path.contains("{id}")
+	«IF op.httpMethod == HttpMethod.DELETE && domainObjectType !== null && domainObjectType.getIdAttribute() !== null && op.path.contains("{id}")
 		»@org.springframework.web.bind.annotation.PathVariable("id") «domainObjectType.getIdAttributeType()» id
 	«ELSE»
 		«IF op.path.contains("{" + name + "}")»
 			@org.springframework.web.bind.annotation.PathVariable("«name»") 
-		«ELSEIF formData && domainObjectType != null»
+		«ELSEIF formData && domainObjectType !== null»
 			@org.springframework.web.bind.annotation.ModelAttribute("«name»") 
-		«ELSEIF domainObjectType != null»
+		«ELSEIF domainObjectType !== null»
 			@org.springframework.web.bind.annotation.RequestBody 
 		«ELSEIF it.isRestRequestParameter()»
 			@org.springframework.web.bind.annotation.RequestParam("«name»") 
@@ -380,12 +380,12 @@ def String annotatedParamTypeAndName(Parameter it, ResourceOperation op, boolean
 
 def String handleExceptions(Resource it) {
 	'''
-	«val allExceptions = it.operations.filter(e | e.^throws != null).map(e | e.exceptions()).flatten.toSet()»
+	«val allExceptions = it.operations.filter(e | e.^throws !== null).map(e | e.exceptions()).flatten.toSet()»
 	«allExceptions.filter(e|e.endsWith("NotFoundException")).map[handleNotFoundException(it)].join()»
 	«handleIllegalArgumentException("java.lang.IllegalArgumentException")»
 	«handleIllegalArgumentException(fw("errorhandling.ValidationException"))»
 	«handleSystemException(fw("errorhandling.SystemException"))»
-	«IF operations.exists(e | e.httpMethod == HttpMethod::POST || e.httpMethod == HttpMethod::PUT || e.httpMethod == HttpMethod::DELETE)»
+	«IF operations.exists(e | e.httpMethod == HttpMethod.POST || e.httpMethod == HttpMethod.PUT || e.httpMethod == HttpMethod.DELETE)»
 		«handleOptimisticLockingException(fw("errorhandling.OptimisticLockingException"))»
 	«ENDIF»
 	'''

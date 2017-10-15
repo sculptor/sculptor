@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sculptor DSL IDE
+Bundle-Vendor: Sculptor Team
+Bundle-SymbolicName: org.sculptor.dsl.ide;singleton:=true
+Bundle-Version: 3.1.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.sculptor.dsl,
+ org.antlr.runtime,
+ com.google.guava,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide
+Export-Package: org.sculptor.dsl.ide.contentassist.antlr,
+ org.sculptor.dsl.ide.contentassist.antlr.internal

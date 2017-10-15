@@ -54,9 +54,8 @@ class JavaCodeFormatterTest {
 				    
 				@org.junit.Test(expected
 				=
-				java.lang.IllegalArgumentException.class)
+				java.lang.IllegalArgumentException.class) class Test {
 				
-				class Test {
 				
 				
 				     private 
@@ -100,15 +99,11 @@ class JavaCodeFormatterTest {
 			'''
 				@javax.xml.bind.annotation.XmlSchema(    
 				   namespace     =     "http://serviceapi.milkyway.helloworld.example.sculptor.org/",
-				     elementFormDefault      =       javax.xml.bind.annotation.XmlNsForm.QUALIFIED          )
-				 
-				 
-				    package             org.sculptor.example.helloworld.milkyway.serviceapi       ;
+				     elementFormDefault      =       javax.xml.bind.annotation.XmlNsForm.QUALIFIED          )				    package             org.sculptor.example.helloworld.milkyway.serviceapi       ;
 				
 				
 				
 				«JavaCodeFormatter.IMPORT_MARKER_PATTERN»
-				
 			''', true)
 		assertEquals(
 			'''
@@ -116,7 +111,6 @@ class JavaCodeFormatterTest {
 				package org.sculptor.example.helloworld.milkyway.serviceapi;
 
 				import javax.xml.bind.annotation.XmlSchema;
-				
 			'''.toString, source)
 	}
 

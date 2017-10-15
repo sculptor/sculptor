@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.spring
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.camel.CamelTmpl
@@ -32,7 +32,6 @@ import sculptormetamodel.CommandEvent
 import sculptormetamodel.Enum
 import sculptormetamodel.Module
 import sculptormetamodel.Service
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class SpringTmpl {
@@ -158,7 +157,7 @@ def String headerSchemaLocationAdditions(Object it) {
 }
 
 def String applicationContext(Application it) {
-	fileOutput(it.getResourceDir("spring") + "applicationContext.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + "applicationContext.xml", OutputSlot.TO_GEN_RESOURCES, '''
 	«headerWithMoreNamespaces(it)»
 		«serviceContext(it)»
 
@@ -201,7 +200,7 @@ def String applicationContextAdditions(Application it) {
 
 
 def String applicationContextTest(Application it) {
-	fileOutput("applicationContext-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput("applicationContext-test.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		«serviceContext(it)»
 	
@@ -274,7 +273,7 @@ def String springPropertyConfigTest(Application it) {
 }
 
 def String springProperties(Application it) {
-	fileOutput(it.getResourceDir("spring") + "spring.properties", OutputSlot::TO_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + "spring.properties", OutputSlot.TO_RESOURCES, '''
 	«IF applicationServer() == "jboss"»
 		jndi.port=4447
 	«ENDIF»
@@ -283,14 +282,14 @@ def String springProperties(Application it) {
 }
 
 def String springPropertiesTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), OutputSlot::TO_RESOURCES_TEST, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), OutputSlot.TO_RESOURCES_TEST, '''
 	# Spring properties for test
 	'''
 	)
 }
 
 def String generatedSpringProperties(Application it) {
-	fileOutput(it.getResourceDir("spring") + "generated-spring.properties", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + "generated-spring.properties", OutputSlot.TO_GEN_RESOURCES, '''
 	# Default configuration properties, possible to override in spring.properties
 	«IF applicationServer() == "jboss"»
 		jndi.port=4447
@@ -392,7 +391,7 @@ def String loadTimeWeaving(Application it) {
 }
 
 def String more(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more.xml"), OutputSlot::TO_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more.xml"), OutputSlot.TO_RESOURCES, '''
 	«headerWithMoreNamespaces(it)»
 		<!-- Import more custom beans
 			<import resource="classpath:/«it.getResourceDir("spring")»moreBeans.xml"/>
@@ -403,7 +402,7 @@ def String more(Application it) {
 }
 
 def String moreTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml"), OutputSlot::TO_RESOURCES_TEST, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("more-test.xml"), OutputSlot.TO_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		<!-- Import more custom beans for test
 			<import resource="classpath:/«it.getResourceDir("spring")»moreTestBeans.xml"/>
@@ -414,7 +413,7 @@ def String moreTest(Application it) {
 }
 
 def String beanRefContext(Application it) {
-	fileOutput("beanRefContext.xml", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("beanRefContext.xml", OutputSlot.TO_GEN_RESOURCES, '''
 	«header(it)»
 		<bean id="«basePackage»" lazy-init="true"
 			class="org.springframework.context.support.ClassPathXmlApplicationContext">
@@ -428,7 +427,7 @@ def String beanRefContext(Application it) {
 }
 
 def String interceptor(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor.xml"), OutputSlot.TO_GEN_RESOURCES, '''
 	«IF isWar()»
 		«headerWithMoreNamespaces(it)»
 	«ELSE »
@@ -550,7 +549,7 @@ def String aopConfig(Application it) {
 }
 
 def String interceptorTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml"), OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Interceptor-test.xml"), OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		<import resource="classpath:/«it.getResourceDir("spring")»Interceptor.xml"/>
 
@@ -598,7 +597,7 @@ def String aopConfigAdditions(Application it, boolean test) {
 }
 
 def String sessionFactory(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("SessionFactory.xml"), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("SessionFactory.xml"), OutputSlot.TO_GEN_RESOURCES, '''
 	«IF dbProduct == "hsqldb-inmemory" && !isSpringDataSourceSupportToBeGenerated()»
 		«sessionFactoryInMemory(it, false)»
 	«ELSE»
@@ -621,7 +620,7 @@ def String sessionFactory(Application it) {
 			«IF isSpringDataSourceSupportToBeGenerated()»
 				<property name="dataSource" ref="dataSource"/>
 			«ENDIF»
-			<!-- add additional configurations by extending SpringTmpl::sessionFactoryAdditions -->
+			<!-- add additional configurations by extending SpringTmpl.sessionFactoryAdditions -->
 			«sessionFactoryAdditions(it)»
 		</bean>
 		«IF isAuditableToBeGenerated()»
@@ -649,7 +648,7 @@ def String txManager(Application it) {
 }
 
 def String sessionFactoryTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + "SessionFactory-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput(it.getResourceDir("spring") + "SessionFactory-test.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«sessionFactoryInMemory(it, true)»
 	'''
 	)
@@ -713,7 +712,7 @@ def String dataSource(Application it) {
 		<property name="url" value="${jdbc.url}"/>
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
-		<!-- add additional properties by extending SpringTmpl::dataSourceAdditions -->
+		<!-- add additional properties by extending SpringTmpl.dataSourceAdditions -->
 		«dataSourceAdditions(it)»
 	</bean>
 	'''
@@ -742,7 +741,7 @@ def String hibernateEnumTypedefResource(Module it) {
 }
 
 def String jms(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml"), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("Jms.xml"), OutputSlot.TO_GEN_RESOURCES, '''
 	«header(it)»
 		«IF isEar() »
 			«jndiTemplate(it)»
@@ -830,7 +829,7 @@ def String invalidMessageDestination(Application it) {
 }
 
 def String entityManagerFactory(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml") , OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory.xml") , OutputSlot.TO_GEN_RESOURCES, '''
 	«headerWithMoreNamespaces(it)»
 
 		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»
@@ -855,7 +854,7 @@ def String entityManagerFactory(Application it) {
 			«ENDIF»
 		«ENDIF»
 		«entityManagerFactoryTx(it, false)»
-		<!-- add additional beans by extending SpringTmpl::entityManagerFactoryAdditions -->
+		<!-- add additional beans by extending SpringTmpl.entityManagerFactoryAdditions -->
 		«entityManagerFactoryAdditions(it, false)»
 	</beans>
 	'''
@@ -863,7 +862,7 @@ def String entityManagerFactory(Application it) {
 }
 
 def String entityManagerFactoryTest(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml") , OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml") , OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		«hsqldbDataSource(it)»
 
@@ -884,7 +883,7 @@ def String entityManagerFactoryTest(Application it) {
 		</bean>
 		«ENDIF»
 		«entityManagerFactoryTx(it, true)»
-		<!-- add additional beans by extending SpringTmpl::entityManagerFactoryAdditions -->
+		<!-- add additional beans by extending SpringTmpl.entityManagerFactoryAdditions -->
 		«entityManagerFactoryAdditions(it, true)»
 	</beans>
 	'''
@@ -945,7 +944,7 @@ def String jtaTxManager(Application it) {
 }
 
 def String pubSub(Application it) {
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml"), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("pub-sub.xml"), OutputSlot.TO_GEN_RESOURCES, '''
 	«header(it)»
 		<bean id="publishAdvice" class="«fw("event.annotation.PublishAdvice")»" />
 
@@ -978,7 +977,7 @@ def String simpleCommandBus(Application it) {
 
 def String springRemoting(Application it) {
 	val remoteServices = it.getAllServices().filter(e|e.remoteInterface)
-	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml"), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("remote-services.xml"), OutputSlot.TO_GEN_RESOURCES, '''
 	«header(it)»
 		«IF getSpringRemotingType() == "rmi"»
 			«remoteServices .map[rmiServiceExporter(it)]»

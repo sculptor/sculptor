@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.drools
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DroolsTmpl {
@@ -39,7 +38,7 @@ class DroolsTmpl {
 	}
 	
 	def String droolsChangeSet(Application it) {
-		fileOutput("CompanyPolicy.xml", OutputSlot::TO_RESOURCES, '''
+		fileOutput("CompanyPolicy.xml", OutputSlot.TO_RESOURCES, '''
 		<?xml version = '1.0' encoding = 'UTF-8'?>
 		<change-set xmlns='http://drools.org/drools-5.0/change-set'
 			xmlns:xs='http://www.w3.org/2001/XMLSchema-instance'
@@ -54,7 +53,7 @@ class DroolsTmpl {
 	}
 			
 	def String droolsRules(Application it) {
-		fileOutput("CompanyPolicy.dslr", OutputSlot::TO_RESOURCES, '''
+		fileOutput("CompanyPolicy.dslr", OutputSlot.TO_RESOURCES, '''
 		package CompanyPolicy
 
 		/* ################################################################################
@@ -102,7 +101,7 @@ class DroolsTmpl {
 	}
 	
 	def String droolsDsl(Application it) {
-		fileOutput("CompanyPolicy.dsl", OutputSlot::TO_RESOURCES, '''
+		fileOutput("CompanyPolicy.dsl", OutputSlot.TO_RESOURCES, '''
 		[condition][]Exist request on=$req : RequestDescription()
 		[condition][]- service "{service}"=serviceName=="{service}"
 		[condition][]- method "{method}"=methodName=="{method}"

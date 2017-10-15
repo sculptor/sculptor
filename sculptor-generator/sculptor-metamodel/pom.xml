@@ -54,16 +54,6 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>org.eclipse.core</groupId>
-						<artifactId>org.eclipse.core.resources</artifactId>
-						<version>3.7.100</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.text</groupId>
-						<artifactId>org.eclipse.text</artifactId>
-						<version>3.5.101</version>
-					</dependency>
-					<dependency>
 						<groupId>org.eclipse.emf</groupId>
 						<artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
 						<version>${ecore-xtext-version}</version>

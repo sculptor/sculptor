@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl.ui.labeling
 
 import com.google.inject.Inject
@@ -54,9 +53,9 @@ class SculptordslLabelProvider extends DefaultEObjectLabelProvider {
 
 	def text(EObject modelElement) {
 		val feature = modelElement.eClass.getEStructuralFeature("name")
-		if (feature != null) {
+		if (feature !== null) {
 			val property = modelElement.eGet(feature)
-			if (property != null && typeof(String).^class.isAssignableFrom(property.^class)) {
+			if (property !== null && typeof(String).^class.isAssignableFrom(property.^class)) {
 				return property
 			}
 		}
@@ -80,25 +79,25 @@ class SculptordslLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	def text(DslAttribute attribute) {
-		if (attribute.name == null) {
+		if (attribute.name === null) {
 			return null
 		}
 		(if (attribute.key) "* " else "") + attribute.name 
 	}
 
 	def text(DslServiceOperation op) {
-		if (op.name == null) {
+		if (op.name === null) {
 			return null
 		}
-		op.name + (if (op.delegateHolder != null && op.delegateHolder.delegate != null) " => " else "")
+		op.name + (if (op.delegateHolder !== null && op.delegateHolder.delegate !== null) " => " else "")
 	}
 
 	def text(DslReference ref) {
-		if (ref.name == null) {
+		if (ref.name === null) {
 			return null
 		}
 		(if (ref.key) "* " else "") + ref.name
-				+ (if (ref.collectionType == DslCollectionType::NONE || ref.collectionType == null)  "" else " []")
+				+ (if (ref.collectionType == DslCollectionType.NONE || ref.collectionType === null)  "" else " []")
 	}
 
 	override image(Object obj) {

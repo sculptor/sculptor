@@ -41,11 +41,11 @@ class SculptordslSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		if ((context.recognitionException instanceof MissingTokenException) ||
 			(context.recognitionException instanceof MismatchedTokenException)) {
 			val missingTokenText = context.recognitionException.token.text
-			if (GrammarUtil::getAllKeywords(grammarAccess.getGrammar()).contains(missingTokenText)) {
+			if (GrammarUtil.getAllKeywords(grammarAccess.getGrammar()).contains(missingTokenText)) {
 				return new SyntaxErrorMessage(
 					"'" + missingTokenText + "' is a reserved keyword which is not allowed as Identifier. " +
 						"Please choose another word or alternatively escape it with the caret (^) character, e.g. '^" +
-						missingTokenText + "'", IssueCodes::USED_RESERVED_KEYWORD, #[missingTokenText])
+						missingTokenText + "'", IssueCodes.USED_RESERVED_KEYWORD, #[missingTokenText])
 			}
 		}
 		super.getSyntaxErrorMessage(context)

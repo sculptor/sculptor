@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.chain
 
 import java.lang.annotation.ElementType
@@ -39,14 +38,14 @@ import static extension org.sculptor.generator.chain.ChainOverrideHelper.*
  * @see ChainOverridable
  * @see ChainLink
  */
-@Target(ElementType::TYPE)
+@Target(ElementType.TYPE)
 @Active(typeof(ChainOverrideProcessor))
 annotation ChainOverride {
 }
 
 class ChainOverrideProcessor extends AbstractClassProcessor {
 
-	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverrideProcessor))
+	private static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverrideProcessor))
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")
@@ -92,7 +91,7 @@ class ChainOverrideProcessor extends AbstractClassProcessor {
 		val extendedClass = annotatedClass.extendedClass
 
 		// Check if annotated class does extend another class
-		if (extendedClass == null || extendedClass.name == 'java.lang.Object') {
+		if (extendedClass === null || extendedClass.name == 'java.lang.Object') {
 			annotatedClass.addError('Annotated class must extend a class')
 			return false
 		}

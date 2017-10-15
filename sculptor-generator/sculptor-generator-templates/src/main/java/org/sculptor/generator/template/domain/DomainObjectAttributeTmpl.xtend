@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
@@ -44,7 +43,7 @@ def String attribute(Attribute it, boolean annotations) {
 		«IF annotations»
 			«domainObjectAttributeAnnotationTmpl.attributeAnnotations(it)»
 		«ENDIF»
-		private «IF transient»transient «ENDIF»«it.getTypeName()» «name»«IF collectionType != null» = new «it.getImplTypeName()»()«ENDIF»«attributeDefaultValue(it)»;
+		private «IF transient»transient «ENDIF»«it.getTypeName()» «name»«IF collectionType !== null» = new «it.getImplTypeName()»()«ENDIF»«attributeDefaultValue(it)»;
 	'''
 }
 
@@ -84,7 +83,7 @@ def String propertyGetter(Attribute it, boolean annotations) {
 			«domainObjectAttributeAnnotationTmpl.propertyGetterAnnotations(it)»
 		«ENDIF»
 		«it.getVisibilityLitteralGetter()»«it.getTypeName()» «it.getGetAccessor()»() {
-			«IF isJpaProviderAppEngine() && collectionType != null && it.getDomainObject().isPersistent() »
+			«IF isJpaProviderAppEngine() && collectionType !== null && it.getDomainObject().isPersistent() »
 				// appengine sometimes stores the collection as null
 				if («name» == null) {
 				    «name» = new «it.getImplTypeName()»();

@@ -17,15 +17,15 @@
 package org.sculptor.generator.transformation
 
 import com.google.inject.Provider
-import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.testing.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.sculptor.dsl.SculptordslInjectorProvider
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
+import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.chain.ChainOverrideAwareInjector
 import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.DbHelper

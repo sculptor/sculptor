@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl.ui.quickfix
 
 import com.google.inject.Inject
@@ -36,7 +35,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 
 	@Inject IGrammarAccess grammarAccess
 
-	@Fix(IssueCodes::CAPITALIZED_NAME)
+	@Fix(IssueCodes.CAPITALIZED_NAME)
 	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Capitalize name", "Capitalize the name.", "uppercase.gif") [
 			context |
@@ -46,7 +45,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		]
 	}
 
-	@Fix(IssueCodes::UNCAPITALIZED_NAME)
+	@Fix(IssueCodes.UNCAPITALIZED_NAME)
 	def uncapitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Uncapitalize name", "Uncapitalize the name.", "lowercase.gif") [
 			context |
@@ -56,7 +55,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		]
 	}
 
-	@Fix(IssueCodes::USED_RESERVED_KEYWORD)
+	@Fix(IssueCodes.USED_RESERVED_KEYWORD)
 	def reservedKeywordWithPrefix(Issue issue, IssueResolutionAcceptor acceptor) {
 		val keyword = issue.data.get(0)
 		val keywordReplacement = keyword.generateUniqueIdentifier(false)
@@ -69,7 +68,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 			])
 	}
 
-	@Fix(IssueCodes::USED_RESERVED_KEYWORD)
+	@Fix(IssueCodes.USED_RESERVED_KEYWORD)
 	def reservedKeywordWithCamelCasePrefix(Issue issue, IssueResolutionAcceptor acceptor) {
 		val keyword = issue.data.get(0)
 		val keywordReplacement = keyword.generateUniqueIdentifier(true)
@@ -85,7 +84,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 	def String generateUniqueIdentifier(String it, boolean camelCase) {
 		val candidate = 'my' + if(camelCase) it.toFirstUpper else it
 		var count = 1
-		val reserved = GrammarUtil::getAllKeywords(grammarAccess.getGrammar())
+		val reserved = GrammarUtil.getAllKeywords(grammarAccess.getGrammar())
 		if (reserved.contains(candidate)) {
 			while (reserved.contains(candidate + count)) {
 				count = count + 1
@@ -95,7 +94,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		return candidate
 	}
 
-	@Fix(IssueCodes::USED_RESERVED_KEYWORD)
+	@Fix(IssueCodes.USED_RESERVED_KEYWORD)
 	def reservedKeywordWithEscape(Issue issue, IssueResolutionAcceptor acceptor) {
 		val keyword = issue.data.get(0)
 		val keywordReplacement = '^' + keyword
@@ -107,7 +106,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 			])
 	}
 
-	@Fix(IssueCodes::ALL_LOWERCASE_NAME)
+	@Fix(IssueCodes.ALL_LOWERCASE_NAME)
 	def lowercaseName(Issue issue, IssueResolutionAcceptor acceptor) {
 		val name = issue.data.get(0)
 		acceptor.accept(issue, "Lowercase name", "Lowercase the name.", "lowercase.gif") [
@@ -117,7 +116,7 @@ class SculptordslQuickfixProvider extends DefaultQuickfixProvider {
 		]
 	}
 
-	@Fix(IssueCodes::NON_PERSISTENT_EVENT)
+	@Fix(IssueCodes.NON_PERSISTENT_EVENT)
 	def persistentEvent(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Make persistent", "Make the event persistent by adding the keyword 'persistent'.", null) [
 			element, context | (element as DslEvent).persistent = true

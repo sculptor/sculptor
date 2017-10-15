@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.consumer
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ConsumerTestTmpl {
@@ -36,7 +35,7 @@ class ConsumerTestTmpl {
 	@Inject extension Properties properties
 
 def String consumerJUnitWithAnnotations(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+	fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage(it)»;
 
@@ -63,7 +62,7 @@ def String consumerJUnitWithAnnotations(Consumer it) {
 
 def String consumerJUnitGetDataSetFile(Consumer it) {
 	'''
-	«IF getDbUnitDataSetFile() != null»
+	«IF getDbUnitDataSetFile() !== null»
 		@Override
 		protected String getDataSetFile() {
 			return "«getDbUnitDataSetFile()»";
@@ -84,14 +83,14 @@ def String receiveTestMethod(Consumer it) {
 }
 
 def String dbunitTestData(Consumer it) {
-	fileOutput("dbunit/" + name + "Test.xml", OutputSlot::TO_RESOURCES_TEST, '''
+	fileOutput("dbunit/" + name + "Test.xml", OutputSlot.TO_RESOURCES_TEST, '''
 		«dbUnitTmpl.dbunitTestDataContent(it.module.application)»
 	'''
 	)
 }
 
 def String consumerDependencyInjectionJUnit(Consumer it) {
-	fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "DependencyInjectionTest"), OutputSlot::TO_GEN_SRC_TEST, '''
+	fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "DependencyInjectionTest"), OutputSlot.TO_GEN_SRC_TEST, '''
 	«javaHeader()»
 	package «getConsumerPackage(it)»;
 

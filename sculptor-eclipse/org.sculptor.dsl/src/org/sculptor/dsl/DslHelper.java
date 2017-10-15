@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.dsl;
 
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class DslHelper {
                     DslDomainObject domainObj = (DslDomainObject) simpleDomainObj;
                     if (domainObj.getExtendsName() != null && domainObj.getExtendsName().equals(domainObject.getName())) {
                         subclasses.add(domainObj);
-                    } else if (getExtends(domainObj) != null && getExtends(domainObj).equals(domainObject)) {
+                    } else if (getSuperclass(domainObj) != null && getSuperclass(domainObj).equals(domainObject)) {
                         subclasses.add(domainObj);
                     }
                 }
@@ -81,7 +80,7 @@ public class DslHelper {
         return subclasses;
     }
 
-    public static DslSimpleDomainObject getExtends(DslSimpleDomainObject domainObject) {
+    public static DslSimpleDomainObject getSuperclass(DslSimpleDomainObject domainObject) {
         DslSimpleDomainObject result = null;
         String extendsName = null;
         if (domainObject instanceof DslEntity) {

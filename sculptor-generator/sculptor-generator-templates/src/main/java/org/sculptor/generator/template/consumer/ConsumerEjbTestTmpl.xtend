@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.consumer
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.XmlHelperBase
 import sculptormetamodel.Consumer
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ConsumerEjbTestTmpl {
@@ -37,7 +36,7 @@ class ConsumerEjbTestTmpl {
 	@Inject extension XmlHelperBase xmlHelperBase
 
 	def String consumerJUnitOpenEjb(Consumer it) {
-		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''
 		«javaHeader()»
 		package «getConsumerPackage(it)»;
 
@@ -79,7 +78,7 @@ class ConsumerEjbTestTmpl {
 	
 	def String junitCreateMessage(Consumer it) {
 		'''
-		«IF messageRoot == null»
+		«IF messageRoot === null»
 		private String createMessage() {
 			String msg =
 				"<?xml version='1.0' encoding='UTF-8'?>\n" +

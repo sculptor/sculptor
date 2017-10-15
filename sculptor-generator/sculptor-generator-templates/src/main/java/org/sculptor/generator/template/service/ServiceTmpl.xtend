@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.service
 
 import javax.inject.Inject
@@ -81,7 +80,7 @@ def String service(Service it) {
 }
 
 def String serviceInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -94,7 +93,7 @@ def String serviceInterface(Service it) {
 	«ELSE »
 		«it.formatJavaDoc()»
 	«ENDIF »
-	public interface «name» «IF subscribe != null» extends «fw("event.EventSubscriber")» «ENDIF»{
+	public interface «name» «IF subscribe !== null» extends «fw("event.EventSubscriber")» «ENDIF»{
 
 	«IF isSpringToBeGenerated()»
 		public final static String BEAN_ID = "«name.toFirstLower()»";
@@ -119,7 +118,7 @@ def String interfaceMethod(ServiceOperation it) {
 
 
 def String serviceImplBase(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl" + (if (gapClass) "Base" else "")), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -147,7 +146,7 @@ def String serviceImplBase(Service it) {
 			«serviceEjbTmpl.webServiceAnnotations(it)»
 		«ENDIF»
 	«ENDIF»
-	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe !== null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public «IF gapClass»abstract «ENDIF»class «name»Impl«IF gapClass»Base«ENDIF» «it.extendsLitteral()» implements «it.getServiceapiPackage()».«name» {
 
 		public «name»Impl«IF gapClass»Base«ENDIF»() {
@@ -207,7 +206,7 @@ def String delegateServices(Service it) {
 }
 
 def String serviceImplSubclass(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + "Impl"), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -259,18 +258,18 @@ def String otherDependencies(Service it) {
 
 def String implMethod(ServiceOperation it) {
 	'''
-	«IF delegate != null »
+	«IF delegate !== null »
 		/**
 		 * Delegates to {@link «getRepositoryapiPackage(delegate.repository.aggregateRoot.module)».«delegate.repository.name»#«delegate.name»}
 		 */
-	«ELSEIF serviceDelegate != null »
+	«ELSEIF serviceDelegate !== null »
 		/**
 		 * Delegates to {@link «getServiceapiPackage(serviceDelegate.service)».«serviceDelegate.service.name»#«serviceDelegate.name»}
 		 */
 	«ENDIF »
 	«serviceMethodAnnotation(it)»
 	«it.getVisibilityLitteral()» «it.getTypeName()» «name»(«it.parameters.map[p | paramTypeAndName(p)].join(",")») «exceptionTmpl.throwsDecl(it)» {
-	«IF delegate != null »
+	«IF delegate !== null »
 		«IF it.delegate.getTypeName() == "void" && it.getTypeName() != "void"»
 			/*This is a special case which is used for save operations, when rcp nature */
 			«it.delegate.repository.name.toFirstLower()».«delegate.name»(«FOR parameter : parameters.filter(p | p.type != serviceContextClass()) SEPARATOR ", "»«parameter.name»«ENDFOR»);
@@ -279,7 +278,7 @@ def String implMethod(ServiceOperation it) {
 			«IF it.getTypeName() != "void" »return «ENDIF»
 				«delegate.repository.name.toFirstLower()».«delegate.name»(«FOR parameter  : parameters.filter(p | p.type != serviceContextClass()) SEPARATOR ", "»«parameter.name»«ENDFOR»);
 		«ENDIF»
-	«ELSEIF serviceDelegate != null »
+	«ELSEIF serviceDelegate !== null »
 			«IF serviceDelegate.getTypeName() != "void" && it.getTypeName() != "void" »return «ENDIF»
 				«it.serviceDelegate.service.name.toFirstLower()».«it.serviceDelegate.name»(«FOR parameter : parameters SEPARATOR ", "»«parameter.name»«ENDFOR»);
 	«ELSE»
@@ -306,7 +305,7 @@ def String serviceMethodAnnotation(ServiceOperation it) {
 	«IF service.webService»
 		@javax.jws.WebMethod
 	«ENDIF»
-	«IF publish != null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
+	«IF publish !== null»«pubSubTmpl.publishAnnotation(it.publish)»«ENDIF»
 	'''
 }
 

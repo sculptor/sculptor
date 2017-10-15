@@ -11,7 +11,6 @@
 	<name>Sculptor :: Generator</name>
 
 	<modules>
-		<module>eclipse-library</module>
 		<module>sculptor-metamodel</module>
 		<module>sculptor-generator-configuration</module>
 		<module>sculptor-active-annotation</module>

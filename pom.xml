@@ -82,13 +82,14 @@
 		<maven.compiler.source>${java-version}</maven.compiler.source>
 		<maven.compiler.target>${java-version}</maven.compiler.target>
 
-		<eclipse-release>luna/201502271000</eclipse-release>
-		<tycho-version>0.26.0</tycho-version>
+		<eclipse-release>oxygen/201710111001</eclipse-release>
+		<tycho-version>1.0.0</tycho-version>
 
-		<xtext-version>2.10.0</xtext-version>
-		<ecore-xtext-version>1.2.0</ecore-xtext-version>
-		<ecore-xcore-version>1.3.1</ecore-xcore-version>
-		<ecore-xcore-lib-version>1.1.100</ecore-xcore-lib-version>
+		<xtext-version>2.12.0</xtext-version>
+		<ecore-xtext-version>[1.2.0,)</ecore-xtext-version>
+		<ecore-xcore-version>[1.3.0,)</ecore-xcore-version>
+		<ecore-xcore-lib-version>[1.1.0,)</ecore-xcore-lib-version>
+		<jdt-version>3.12.3</jdt-version>
 		<guava-version>15.0</guava-version>
 		<guice-version>3.0</guice-version>
 
@@ -322,7 +323,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.0.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -332,7 +333,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.7.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -342,7 +343,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.19.1</version>
+					<version>2.20.1</version>
 					<configuration>
 						<argLine>-Xms32m -Xmx1024m</argLine>
 					</configuration>
@@ -350,7 +351,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.19.1</version>
+					<version>2.20.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -360,12 +361,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.10</version>
+					<version>3.0.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.6</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -474,7 +475,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>2.4.3</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -521,7 +522,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.5.0</version>
+					<version>1.6.0</version>
 					<configuration>
 						<!--
 							to get rid of the warning: [WARNING] Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.
@@ -613,6 +614,16 @@
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-plugin</artifactId>
 					<version>${tycho-version}</version>
 				</plugin>
 				<plugin>
@@ -764,7 +775,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>org.eclipse.xtext.xtext</artifactId>
+				<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
 				<version>${xtext-version}</version>
 				<exclusions>
 					<exclusion>
@@ -779,7 +790,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>org.eclipse.xtext.junit4</artifactId>
+				<artifactId>org.eclipse.xtext.testing</artifactId>
+				<version>${xtext-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.xtext</groupId>
+				<artifactId>org.eclipse.xtext.xbase.testing</artifactId>
 				<version>${xtext-version}</version>
 				<exclusions>
 					<exclusion>
@@ -807,6 +833,11 @@
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>org.eclipse.xtend.lib</artifactId>
 				<version>${xtext-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jdt</groupId>
+				<artifactId>org.eclipse.jdt.core</artifactId>
+				<version>${jdt-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>

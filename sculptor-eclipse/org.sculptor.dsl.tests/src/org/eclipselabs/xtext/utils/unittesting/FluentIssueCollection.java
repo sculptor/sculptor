@@ -340,7 +340,7 @@ public class FluentIssueCollection implements Iterable<Issue>{
 	}
 
 	public void dumpIssues() {
-		LOGGER.debug("--- Issues ---");
+		LOGGER.warn("--- Issues ---");
 		for (Issue i: issues) {
 			dumpIssue(resource, i);
 		}

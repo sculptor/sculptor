@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.repository
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -25,7 +25,6 @@ import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Parameter
 import sculptormetamodel.RepositoryOperation
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class AccessObjectTmpl {
@@ -45,7 +44,7 @@ def String command(RepositoryOperation it) {
 
 
 def String commandInterface(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName()), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getAccessapiPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName()), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessapiPackage(repository.aggregateRoot.module)»;
 
@@ -99,7 +98,7 @@ def String commandImpl(RepositoryOperation it) {
 }
 
 def String commandImplBase(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName() + "ImplBase"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName() + "ImplBase"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 
@@ -186,7 +185,7 @@ def String pageableProperties(RepositoryOperation it) {
 }
 
 def String commandImplSubclass(RepositoryOperation it) {
-	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName() + "Impl"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(getAccessimplPackage(repository.aggregateRoot.module) + "." + getAccessNormalizedName() + "Impl"), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «getAccessimplPackage(repository.aggregateRoot.module)»;
 

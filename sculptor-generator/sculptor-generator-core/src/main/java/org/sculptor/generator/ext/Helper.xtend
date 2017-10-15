@@ -62,7 +62,7 @@ import sculptormetamodel.ValueObject
 @ChainOverridable
 class Helper {
 
-	static val LOG = LoggerFactory::getLogger(typeof(Helper))
+	static val LOG = LoggerFactory.getLogger(typeof(Helper))
 
 	@Inject var JavaCodeFormatter javaCodeFormatter
 	@Inject var SingularPluralConverter singularPluralConverter
@@ -83,7 +83,7 @@ class Helper {
 		}
 
 
-		val fName = if (supportedLangExt != null)
+		val fName = if (supportedLangExt !== null)
 				// convert package name to directory hierarchy
 				fileName.substring(0, fileName.length - supportedLangExt.length).replaceAll("\\.", "/") + supportedLangExt
 			else
@@ -131,7 +131,7 @@ class Helper {
 	}
 
 	def dispatch Collection<Repository> getAllRepositories(Module module) {
-		module.domainObjects.filter[repository?.name != null].map[repository].sortBy[name]
+		module.domainObjects.filter[repository?.name !== null].map[repository].sortBy[name]
 	}
 
 	def Collection<Repository> getAllRepositories(Application app, boolean includeExternal) {
@@ -243,15 +243,15 @@ class Helper {
 	}
 
 	def String getExtendsClassNameIfExists(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			domainObject.getDomainPackage() + "." + domainObject.name
 		else
 			domainObject.getExtends().getDomainPackage() + "." + domainObject.getExtends().name
 	}
 
 	def String getExtendsClassName(DomainObject domainObject) {
-		if ( (domainObject.getExtends() as Object) == null)
-			if (domainObject.extendsName == null) domainObject.defaultExtendsClassName() else domainObject.extendsName
+		if ( (domainObject.getExtends() as Object) === null)
+			if (domainObject.extendsName === null) domainObject.defaultExtendsClassName() else domainObject.extendsName
 		else 
 			domainObject.getExtends().getDomainPackage() + "." + domainObject.getExtends().name
 	}
@@ -276,9 +276,9 @@ class Helper {
 	def String getImplementsLitteral(DomainObject domainObject) {
 		if (domainObject.getImplementsInterfaceNames() == "")
 			""
-		else if (domainObject.getExtends != null && !domainObject.traitInterfaceNames().isEmpty )
+		else if (domainObject.getExtends !== null && !domainObject.traitInterfaceNames().isEmpty )
 			" implements " + domainObject.traitInterfaceNames().toCommaSeparatedString()
-		else if (domainObject.getExtends != null)
+		else if (domainObject.getExtends !== null)
 			""
 		else
 			" implements " + domainObject.getImplementsInterfaceNames()
@@ -450,7 +450,7 @@ class Helper {
 	}
 
 	def private Collection<Attribute> getSuperAllAttributes(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			newArrayList
 		else
 			domainObject.getExtends.getAllAttributes()
@@ -463,7 +463,7 @@ class Helper {
 	}
 
 	def private Collection<Reference> getSuperAllReferences(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			newArrayList
 		else
 			domainObject.getExtends.getAllReferences()
@@ -476,7 +476,7 @@ class Helper {
 	}
 
 	def List<NamedElement> getSuperConstructorParameters(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			newArrayList()
 		else
 			domainObject.getExtends.getConstructorParameters()
@@ -555,19 +555,19 @@ class Helper {
 	}
 
 	def Collection<Repository> getDelegateRepositories(Service service) {
-		val reps = service.operations.filter[op | op.delegate != null].map[op | op.delegate.repository].toList
+		val reps = service.operations.filter[op | op.delegate !== null].map[op | op.delegate.repository].toList
 		reps.addAll(service.repositoryDependencies)
 		reps.toSet
 	}
 
 	def dispatch Collection<Service> getDelegateServices(Service service) {
-		val srvc = service.operations.filter[op | op.serviceDelegate != null].map[op | op.serviceDelegate.service].toList
+		val srvc = service.operations.filter[op | op.serviceDelegate !== null].map[op | op.serviceDelegate.service].toList
 		srvc.addAll(service.serviceDependencies)
 		srvc.toSet
 	}
 
 	def dispatch Collection<Service> getDelegateServices(Resource resource) {
-		val srvc = resource.operations.filter[op | op.delegate != null].map[op | op.delegate.service].toList
+		val srvc = resource.operations.filter[op | op.delegate !== null].map[op | op.delegate.service].toList
 		srvc.addAll(resource.serviceDependencies)
 		srvc.toSet
 	}
@@ -585,14 +585,14 @@ class Helper {
 	}
 
 	def String getAccessNormalizedName(RepositoryOperation op) {
-		if (op.accessObjectName == null || op.accessObjectName == "")
+		if (op.accessObjectName === null || op.accessObjectName == "")
 			op.name.toFirstUpper() + "Access" 
 		else
 			op.accessObjectName.toFirstUpper()
 	}
 
 	def String getAccessBase(RepositoryOperation op) {
-		val className = ( if (op.getThrows == null || op.getThrows == "")
+		val className = ( if (op.getThrows === null || op.getThrows == "")
 				accessBaseClass()
 			else
 				accessBaseWithExceptionClass())
@@ -604,7 +604,7 @@ class Helper {
 	}
 
 	def dispatch boolean hasPagingParameter(RepositoryOperation op) {
-		op.getPagingParameter() != null
+		op.getPagingParameter() !== null
 	}
 
 	def dispatch Parameter getPagingParameter(RepositoryOperation op) {
@@ -612,7 +612,7 @@ class Helper {
 	}
 
 	def dispatch boolean hasPagingParameter(ServiceOperation op) {
-		op.getPagingParameter() != null
+		op.getPagingParameter() !== null
 	}
 
 	def dispatch Parameter getPagingParameter(ServiceOperation op) {
@@ -633,7 +633,7 @@ class Helper {
 
 	def String getIdAttributeType(DomainObject domainObject) {
 		val idAttribute = domainObject.getIdAttribute()
-		if (idAttribute == null) null else idAttribute.getTypeName()
+		if (idAttribute === null) null else idAttribute.getTypeName()
 	}
 
 	def Collection<DomainObject> getSubclasses(DomainObject domainObject) {
@@ -677,15 +677,15 @@ class Helper {
 	}
 
 	def boolean isOneToOne(Reference ref) {
-		!ref.many && ref.opposite != null && !ref.opposite.many
+		!ref.many && ref.opposite !== null && !ref.opposite.many
 	}
 
 	def boolean isOneToMany(Reference ref) {
-		ref.many && ((ref.opposite != null && !ref.opposite.many) || (ref.opposite == null && ref.isInverse()))
+		ref.many && ((ref.opposite !== null && !ref.opposite.many) || (ref.opposite === null && ref.isInverse()))
 	}
 
 	def boolean isManyToMany(Reference ref) {
-		ref.many && ((ref.opposite != null && ref.opposite.many) || (ref.opposite == null && !ref.isInverse()))
+		ref.many && ((ref.opposite !== null && ref.opposite.many) || (ref.opposite === null && !ref.isInverse()))
 	}
 
 	//
@@ -696,7 +696,7 @@ class Helper {
 	}
 
 	def boolean hasHint(NamedElement element, String parameterName, String separator) {
-		getHintImpl(element.hint, parameterName, separator) != null
+		getHintImpl(element.hint, parameterName, separator) !== null
 	}
 
 	def String getHint(NamedElement element, String parameterName) {
@@ -712,15 +712,15 @@ class Helper {
 	}
 
 	def String ifNull(String value, String defaultValue) {
-		if (value == null) defaultValue else value
+		if (value === null) defaultValue else value
 	}
 
 	def String ifEmpty(String value, String defaultValue) {
-		if (value != null && value.length == 0) defaultValue else value
+		if (value !== null && value.length == 0) defaultValue else value
 	}
 
 	def String ifNullOrEmpty(String value, String defaultValue) {
-		if (value == null || value.length == 0) defaultValue else value
+		if (value === null || value.length == 0) defaultValue else value
 	}
 
 	def String getHint(NamedElement element, String parameterName, String separator) {
@@ -765,7 +765,7 @@ class Helper {
 	}
 
 	def DomainObject getRootExtends(DomainObject domainObject) {
-		if (domainObject?.getExtends == null)
+		if (domainObject?.getExtends === null)
 			domainObject
 		else
 			domainObject.getExtends.getRootExtends()
@@ -776,7 +776,7 @@ class Helper {
 	}
 
 	def List<Reference> getAllNaturalKeyReferences(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			domainObject.getNaturalKeyReferences()
 		else {
 			val refs = domainObject.getExtends.getAllNaturalKeyReferences()
@@ -794,7 +794,7 @@ class Helper {
 	}
 
 	def List<Attribute> getAllNaturalKeyAttributes(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			domainObject.getNaturalKeyAttributes()
 		else {
 			val exts = domainObject.getExtends.getAllNaturalKeyAttributes()
@@ -845,7 +845,7 @@ class Helper {
 	}
 
 	def private Collection<Reference> getSuperAllEnumReferences(DomainObject domainObject) {
-		if (domainObject.getExtends == null)
+		if (domainObject.getExtends === null)
 			newArrayList
 		else
 			domainObject.getExtends.getAllEnumReferences()
@@ -868,11 +868,11 @@ class Helper {
 	}
 
 	def boolean hasSubClass(DomainObject domainObject) {
-		((getSubclasses(domainObject) != null) && (!getSubclasses(domainObject).isEmpty))
+		((getSubclasses(domainObject) !== null) && (!getSubclasses(domainObject).isEmpty))
 	}
 
 	def boolean hasSuperClass(DomainObject domainObject) {
-		(domainObject.getExtends != null)
+		(domainObject.getExtends !== null)
 	}
 
 	def dispatch DomainObject getDomainObject(NamedElement elem) {
@@ -1051,11 +1051,11 @@ class Helper {
 	}
 
 	def boolean hasOwnedHint(Reference ref) {
-		ref.hasHint("owned") || (ref.opposite != null && ref.opposite.hasHint("owned"))
+		ref.hasHint("owned") || (ref.opposite !== null && ref.opposite.hasHint("owned"))
 	}
 
 	def boolean hasUnownedHint(Reference ref) {
-		ref.hasHint("unowned") || (ref.opposite != null && ref.opposite.hasHint("unowned"))
+		ref.hasHint("unowned") || (ref.opposite !== null && ref.opposite.hasHint("unowned"))
 	}
 
 	def dispatch String unownedReferenceSuffix(NamedElement elem) {
@@ -1070,11 +1070,11 @@ class Helper {
 	}
 
 	def dispatch boolean isCollection(Attribute attribute) {
-		attribute.collectionType != null && supportedCollectionTypes().contains(attribute.collectionType)
+		attribute.collectionType !== null && supportedCollectionTypes().contains(attribute.collectionType)
 	}
 
 	def dispatch boolean isCollection(Reference reference) {
-		reference.collectionType != null && supportedCollectionTypes().contains(reference.collectionType)
+		reference.collectionType !== null && supportedCollectionTypes().contains(reference.collectionType)
 	}
 
 	def boolean isList(Reference ref) {
@@ -1116,7 +1116,7 @@ class Helper {
 
 	// The root of the aggregate that the domainObject belongs to
 	def DomainObject getAggregateRootObject(DomainObject domainObject) {
-		if (domainObject.belongsToAggregate != null)
+		if (domainObject.belongsToAggregate !== null)
 			domainObject.belongsToAggregate
 		else if (domainObject.aggregateRoot)
 			domainObject
@@ -1144,7 +1144,7 @@ class Helper {
 			domainObject.collectAggregateObjects()
 		} else {
 			val root = domainObject.getAggregateRootObject()
-			if (root == null || root == domainObject) newArrayList(domainObject) else root.getAggregate()
+			if (root === null || root == domainObject) newArrayList(domainObject) else root.getAggregate()
 		}
 	}
 
@@ -1178,7 +1178,7 @@ class Helper {
 	}
 
 	def Module getModule(NamedElement elem) {
-		if (elem == null || elem instanceof Module)
+		if (elem === null || elem instanceof Module)
 			(elem as Module)
 		else
 			(elem.eContainer as NamedElement).getModule()
@@ -1201,7 +1201,7 @@ class Helper {
 		if (hasProperty("exception.code.enum")) {
 			val enumName = getProperty("exception.code.enum")
 			val enumType = module.application.modules.map[domainObjects].flatten.findFirst[e | e.name == enumName]
-			if (enumType == null)
+			if (enumType === null)
 				error("You need to define enum " + enumName + " in model for the error codes")
 			enumType.getDomainPackage + "." + enumType.name
 		} else {
@@ -1214,23 +1214,23 @@ class Helper {
 	}
 
 	def dispatch boolean isImplementedInGapClass(ServiceOperation op) {
-		(op.delegate == null && op.serviceDelegate == null)
+		(op.delegate === null && op.serviceDelegate === null)
 	}
 
 	def dispatch boolean isImplementedInGapClass(ResourceOperation op) {
-		(op.delegate == null && !(op.parameters.isEmpty && op.returnString != null && op.httpMethod == HttpMethod::GET))
+		(op.delegate === null && !(op.parameters.isEmpty && op.returnString !== null && op.httpMethod == HttpMethod.GET))
 	}
 
 	def HttpMethod mapHttpMethod(String methodName) {
 		switch (methodName) {
 			case "GET" :
-				HttpMethod::GET
+				HttpMethod.GET
 			case "POST" :
-				HttpMethod::POST
+				HttpMethod.POST
 			case "PUT" :
-				HttpMethod::PUT
+				HttpMethod.PUT
 			case "DELETE" :
-				HttpMethod::DELETE
+				HttpMethod.DELETE
 			default :
 				null
 		}
@@ -1288,7 +1288,7 @@ class Helper {
 	}
 
 	def boolean isOrdinaryEnum(Enum enumVal) {
-		enumVal.getIdentifierAttribute() == null
+		enumVal.getIdentifierAttribute() === null
 	}
 
 	def Enum getEnum(Reference ref) {
@@ -1305,7 +1305,7 @@ class Helper {
 	}
 
 	def boolean hasParameters(RepositoryOperation op) {
-		op.parameters != null && !op.parameters.isEmpty
+		op.parameters !== null && !op.parameters.isEmpty
 	}
 
 	def boolean hasAttribute(DomainObject domainObject, String name) {
@@ -1336,19 +1336,19 @@ class Helper {
 	}
 
 	def String getGenericResultTypeName(RepositoryOperation op) {
-		if (op.collectionType != null || op.isPagedResult())
+		if (op.collectionType !== null || op.isPagedResult())
 			op.getTypeName().replaceAll(getDomainObjectTypeName(op.domainObjectType),"R")
 		else
 			"R"
 	}
 
 	def String getResultTypeName(RepositoryOperation op) {
-		if (op.type != null && !op.isPagedResult())
+		if (op.type !== null && !op.isPagedResult())
 			if (op.isReturningPrimitiveType())
 				op.getTypeName.getObjectTypeName
 			else
 				op.type
-		else if (op.domainObjectType != null)
+		else if (op.domainObjectType !== null)
 			getDomainObjectTypeName(op.domainObjectType)
 		else
 			null
@@ -1357,7 +1357,7 @@ class Helper {
 	def String getAccessObjectResultTypeName2(RepositoryOperation op) {
 		if (op.isPagedResult())
 			"PagedResult<" + op.getResultTypeName() + ">"
-		else if (op.collectionType != null)
+		else if (op.collectionType !== null)
 			"List<" + op.getResultTypeName() + ">"
 		else
 			op.getResultTypeName()
@@ -1375,14 +1375,14 @@ class Helper {
 			getExceptionPackage(op.module) + "."
 		else
 			"") +
-		(if (op.domainObjectType != null)
+		(if (op.domainObjectType !== null)
 			op.domainObjectType.name
 		else
 			"") + "NotFoundException"
 	}
 
 	def boolean throwsNotFoundException(RepositoryOperation op) {
-		op.getThrows != null && op.getThrows.contains(op.getNotFoundExceptionName(false))
+		op.getThrows !== null && op.getThrows.contains(op.getNotFoundExceptionName(false))
 	}
 
 	def String removeSurrounding(String s, String charVal) {
@@ -1427,7 +1427,7 @@ class Helper {
 	}
 
 	def private boolean isReturningDataTranferObject(RepositoryOperation op) {
-		(op.domainObjectType != null && op.domainObjectType.isDataTranferObject())
+		(op.domainObjectType !== null && op.domainObjectType.isDataTranferObject())
 	}
 
 	def String buildConditionalCriteria(RepositoryOperation op) {
@@ -1459,7 +1459,7 @@ class Helper {
 	}
 
 	def private String buildSelect(RepositoryOperation op) {
-		if (op.domainObjectType == null || op.isReturningAggregateRoot())
+		if (op.domainObjectType === null || op.isReturningAggregateRoot())
 			""
 		else
 			op.buildSelectFromReturnType()
@@ -1470,13 +1470,13 @@ class Helper {
 	}
 
 	def private boolean isReturningPrimitiveType(RepositoryOperation op) {
-		(op.type != null && isPrimitiveType(op.getTypeName()))
+		(op.type !== null && isPrimitiveType(op.getTypeName()))
 	}
 
 	def private String buildSelectFromReturnType(RepositoryOperation op) {
-		if (op.buildSelectForReference() != null)
+		if (op.buildSelectForReference() !== null)
 			op.buildSelectForReference()
-		else if (op.buildSelectUsingAttributes() != null)
+		else if (op.buildSelectUsingAttributes() !== null)
 			op.buildSelectUsingAttributes()
 		else
 			error(
@@ -1487,7 +1487,7 @@ class Helper {
 
 	def private String buildSelectForReference(RepositoryOperation op) {
 		val path = op.getReferencePathFromReturnType()
-		if (path != null)
+		if (path !== null)
 			"select " + path
 		else
 			null
@@ -1504,7 +1504,7 @@ class Helper {
 	}
 
 	def private List<String> getMatchingPropertyNamesToSelect(DomainObject returnType, DomainObject aggregateRoot) {
-		returnType.getAllAttributes().filter[attr|getPropertyPath(attr.name, aggregateRoot) != null].map[name].toList
+		returnType.getAllAttributes().filter[attr|getPropertyPath(attr.name, aggregateRoot) !== null].map[name].toList
 	}
 
 	def private String buildWhere(RepositoryOperation op) {
@@ -1526,7 +1526,7 @@ class Helper {
 		val operation = parameter.getRepositoryOperation()
 		val aggregateRoot = operation.getAggregateRoot()
 		val propertyPath = getPropertyPath(parameter.name, aggregateRoot)
-		if (propertyPath != null)
+		if (propertyPath !== null)
 			propertyPath + " = :" + parameter.name
 		else {
 			error(
@@ -1584,7 +1584,7 @@ class Helper {
 
 	def dispatch void addDefaultValues(RepositoryOperation operation) {
 		val strategy = genericAccessObjectManager.getStrategy(operation.getName())
-		if (strategy != null) {
+		if (strategy !== null) {
 			strategy.addDefaultValues(operation)
 		}
 	}

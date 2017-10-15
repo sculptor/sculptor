@@ -68,7 +68,7 @@
 			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>sculptor-generator-templates</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.cartridge.mongodb
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.service.ServiceTestTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Service
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class MongoDbServiceTestTmpl {
@@ -35,7 +34,7 @@ class MongoDbServiceTestTmpl {
 	@Inject private var ServiceTestTmpl serviceTestTmpl
 
 def String serviceJUnitSubclassMongoDb(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 

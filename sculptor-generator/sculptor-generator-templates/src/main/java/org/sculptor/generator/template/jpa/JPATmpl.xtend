@@ -14,19 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.jpa
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
+import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application
 import sculptormetamodel.DomainObject
-import org.sculptor.generator.util.HelperBase
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class JPATmpl {
@@ -70,7 +69,7 @@ def String jpa(Application it) {
 /* ###################################################################### */
 
 def String persistenceUnitXmlFile(Application it) {
-	fileOutput(persistenceXml(), OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput(persistenceXml(), OutputSlot.TO_GEN_RESOURCES, '''
 	«persistenceUnitHeader(it)»
 		«FOR unitName : modules.filter(e|!e.external).map(e|e.persistenceUnit).toSet()»
 			«persistenceUnitContent(it, unitName)»
@@ -405,7 +404,7 @@ def String persistenceUnitAdditions(Application it, String unitName) {
 }
 
 def String persistenceUnitXmlFileTest(Application it) {
-	fileOutput("META-INF/persistence-test.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput("META-INF/persistence-test.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«persistenceUnitHeader(it)»
 		«FOR unitName : modules.filter(e| !e.external).map(e|e.persistenceUnit).toSet()»
 			«persistenceUnitContentTest(it, unitName)»

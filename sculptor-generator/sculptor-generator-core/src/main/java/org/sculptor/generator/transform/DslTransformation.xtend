@@ -78,7 +78,7 @@ import sculptormetamodel.Trait
  */
 class DslTransformation {
 
-	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
+	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
@@ -91,7 +91,7 @@ class DslTransformation {
 	
 	def create FACTORY.createApplication transform(DslApplication app) {
 		globalApp = it
-		val List<DslModule> allDslModules = EcoreUtil2::eAllOfType(app, typeof(DslModule))
+		val List<DslModule> allDslModules = EcoreUtil2.eAllOfType(app, typeof(DslModule))
 		allDslModules.forEach[checkCrossLink()]
 		setDoc(app.doc)
 		setName(app.name)
@@ -134,7 +134,7 @@ class DslTransformation {
 		// these hints will probably be replaced by real keywords in DSL
 		setRemoteInterface(if (hasHint("notRemote")) false else true)
 		setLocalInterface(if (hasHint("notLocal")) false else true)
-		if (service.subscribe != null)
+		if (service.subscribe !== null)
 			setSubscribe(service.subscribe.transform)
 		operations.addAll(service.operations.map[op | op.transform])
 	}
@@ -154,12 +154,12 @@ class DslTransformation {
 		setDoc(consumer.doc)
 		setName(consumer.name)
 		setHint(consumer.hint)
-		if (consumer.messageRoot != null)
+		if (consumer.messageRoot !== null)
 			setMessageRoot(consumer.messageRoot.transformSimpleDomainObject)
-		if (consumer.subscribe != null)
+		if (consumer.subscribe !== null)
 			setSubscribe(consumer.subscribe.transform)
-		setChannel(if (consumer.channel == null && subscribe != null) subscribe.topic else consumer.channel)
-		if (subscribe == null && channel != null)
+		setChannel(if (consumer.channel === null && subscribe !== null) subscribe.topic else consumer.channel)
+		if (subscribe === null && channel !== null)
 			setSubscribe(createSubscribe(consumer, channel))
 	}
 
@@ -175,8 +175,8 @@ class DslTransformation {
 	def create FACTORY.createPublish transform(DslPublish publish) {
 		setEventBus(publish.eventBus)
 		setTopic(publish.topic)
-		setEventType(if (publish.eventType == null) null else publish.eventType.transformSimpleDomainObject as Event)
-		if (eventBus == null && eventType != null && eventType instanceof CommandEvent)
+		setEventType(if (publish.eventType === null) null else publish.eventType.transformSimpleDomainObject as Event)
+		if (eventBus === null && eventType !== null && eventType instanceof CommandEvent)
 			setEventBus("commandBus")
 	}
 
@@ -187,25 +187,25 @@ class DslTransformation {
 		setVisibility(convertVisibility(operation.visibility))
 		parameters.addAll(operation.parameters.map[e | transform(e)])
 		setCollectionType(convertCollectionType(operation.returnType))
-		setMapKeyType(if (operation.returnType == null) null else operation.returnType.mapKeyType)
-		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
+		setMapKeyType(if (operation.returnType === null) null else operation.returnType.mapKeyType)
+		setMapKeyDomainObjectType(if (operation.returnType === null || operation.returnType.mapKeyDomainObjectType === null)
 			null
 		else
 			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
-		setType(if (operation.returnType == null) null else operation.returnType.type)
-		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
+		setType(if (operation.returnType === null) null else operation.returnType.type)
+		setDomainObjectType(if (operation.returnType === null || operation.returnType.domainObjectType === null)
 			null
 		else
 			operation.returnType.domainObjectType.transformSimpleDomainObject)
 		setThrows(operation.^throws)
 		setHint(operation.hint)
-		if (operation.publish != null)
+		if (operation.publish !== null)
 			setPublish(operation.publish.transform)
 
-		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null) && (operation.delegateHolder.delegate instanceof DslRepository))
+		if ((operation.delegateHolder !== null) && (operation.delegateHolder.delegate !== null) && (operation.delegateHolder.delegate instanceof DslRepository))
 			setDelegate((operation.delegateHolder.delegateOperation as DslRepositoryOperation).transform)
 
-		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null) && (operation.delegateHolder.delegate instanceof DslService))
+		if ((operation.delegateHolder !== null) && (operation.delegateHolder.delegate !== null) && (operation.delegateHolder.delegate instanceof DslService))
 			setServiceDelegate(((operation.delegateHolder.delegateOperation as DslServiceOperation)).transform)
 	}
 
@@ -216,13 +216,13 @@ class DslTransformation {
 		setVisibility(convertVisibility(operation.visibility))
 		parameters.addAll(operation.parameters.map[e | transform(e)])
 		setCollectionType(convertCollectionType(operation.returnType))
-		setMapKeyType(if (operation.returnType == null) null else operation.returnType.mapKeyType)
-		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
+		setMapKeyType(if (operation.returnType === null) null else operation.returnType.mapKeyType)
+		setMapKeyDomainObjectType(if (operation.returnType === null || operation.returnType.mapKeyDomainObjectType === null)
 			null
 		else
 			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
-		setType(if (operation.returnType == null) null else operation.returnType.type)
-		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
+		setType(if (operation.returnType === null) null else operation.returnType.type)
+		setDomainObjectType(if (operation.returnType === null || operation.returnType.domainObjectType === null)
 			null
 		else
 			operation.returnType.domainObjectType.transformSimpleDomainObject)
@@ -230,10 +230,10 @@ class DslTransformation {
 		setHint(operation.hint)
 		setPath(operation.path)
 		setReturnString(operation.returnString)
-		if (operation.httpMethod != null && operation.httpMethod != DslHttpMethod::NONE)
+		if (operation.httpMethod !== null && operation.httpMethod != DslHttpMethod.NONE)
 			setHttpMethod(operation.httpMethod.toString().mapHttpMethod())
 
-		if ((operation.delegateHolder != null) && (operation.delegateHolder.delegate != null))
+		if ((operation.delegateHolder !== null) && (operation.delegateHolder.delegate !== null))
 			setDelegate((operation.delegateHolder.delegateOperation).transform)
 	}
 
@@ -245,13 +245,13 @@ class DslTransformation {
 		setVisibility(convertVisibility(operation.visibility))
 		parameters.addAll(operation.parameters.map[e | transform(e)])
 		setCollectionType(convertCollectionType(operation.returnType))
-		setMapKeyType(if (operation.returnType == null) null else operation.returnType.mapKeyType)
-		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
+		setMapKeyType(if (operation.returnType === null) null else operation.returnType.mapKeyType)
+		setMapKeyDomainObjectType(if (operation.returnType === null || operation.returnType.mapKeyDomainObjectType === null)
 			null
 		else
 			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
-		setType(if (operation.returnType == null) null else operation.returnType.type)
-		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
+		setType(if (operation.returnType === null) null else operation.returnType.type)
+		setDomainObjectType(if (operation.returnType === null || operation.returnType.domainObjectType === null)
 			null
 		else
 			operation.returnType.domainObjectType.transformSimpleDomainObject)
@@ -266,13 +266,13 @@ class DslTransformation {
 		setVisibility(convertVisibility(operation.visibility))
 		parameters.addAll(operation.parameters.map[e | transform(e)])
 		setCollectionType(convertCollectionType(operation.returnType))
-		setMapKeyType(if (operation.returnType == null) null else operation.returnType.mapKeyType)
-		setMapKeyDomainObjectType(if (operation.returnType == null || operation.returnType.mapKeyDomainObjectType == null)
+		setMapKeyType(if (operation.returnType === null) null else operation.returnType.mapKeyType)
+		setMapKeyDomainObjectType(if (operation.returnType === null || operation.returnType.mapKeyDomainObjectType === null)
 			null
 		else
 			operation.returnType.mapKeyDomainObjectType.transformSimpleDomainObject)
-		setType(if (operation.returnType == null) null else operation.returnType.type)
-		setDomainObjectType(if (operation.returnType == null || operation.returnType.domainObjectType == null)
+		setType(if (operation.returnType === null) null else operation.returnType.type)
+		setDomainObjectType(if (operation.returnType === null || operation.returnType.domainObjectType === null)
 			null
 		else
 			operation.returnType.domainObjectType.transformSimpleDomainObject)
@@ -280,7 +280,7 @@ class DslTransformation {
 		setHint(operation.hint)
 		setDelegateToAccessObject(operation.delegateToAccessObject)
 		setAccessObjectName(operation.accessObjectName)
-		if (operation.publish != null)
+		if (operation.publish !== null)
 			setPublish(operation.publish.transform)
 		if (operation.cache)
 			addHint("cache")
@@ -288,24 +288,24 @@ class DslTransformation {
 		if (operation.construct) addHint("construct")
 		if (operation.build) addHint("build")
 		if (operation.gapOperation) addHint("gap")
-		if (operation.query != null) addHint("query=" + operation.query, ";")
-		if (operation.^select != null) addHint("select=" + operation.^select, ";")
-		if (operation.condition != null) addHint("condition=" + operation.condition, ";")
-		if (operation.groupBy != null) addHint("groupBy=" + operation.groupBy, ";")
-		if (operation.orderBy != null) addHint("orderBy=" + operation.orderBy, ";")
+		if (operation.query !== null) addHint("query=" + operation.query, ";")
+		if (operation.^select !== null) addHint("select=" + operation.^select, ";")
+		if (operation.condition !== null) addHint("condition=" + operation.condition, ";")
+		if (operation.groupBy !== null) addHint("groupBy=" + operation.groupBy, ";")
+		if (operation.orderBy !== null) addHint("orderBy=" + operation.orderBy, ";")
 	}
 
 	def create FACTORY.createParameter transform(DslParameter parameter) {
 		setName(parameter.name)
 		setDoc(parameter.doc)
 		setCollectionType(convertCollectionType(parameter.parameterType))
-		setMapKeyType(if (parameter.parameterType == null) null else parameter.parameterType.mapKeyType)
-		setMapKeyDomainObjectType(if (parameter.parameterType == null || parameter.parameterType.mapKeyDomainObjectType == null)
+		setMapKeyType(if (parameter.parameterType === null) null else parameter.parameterType.mapKeyType)
+		setMapKeyDomainObjectType(if (parameter.parameterType === null || parameter.parameterType.mapKeyDomainObjectType === null)
 			null
 		else
 			parameter.parameterType.mapKeyDomainObjectType.transformSimpleDomainObject)
-		setType(if(parameter.parameterType == null) null else parameter.parameterType.type)
-		setDomainObjectType(if (parameter.parameterType == null || parameter.parameterType.domainObjectType == null)
+		setType(if(parameter.parameterType === null) null else parameter.parameterType.type)
+		setDomainObjectType(if (parameter.parameterType === null || parameter.parameterType.domainObjectType === null)
 			null
 		else
 			parameter.parameterType.domainObjectType.transformSimpleDomainObject)
@@ -330,8 +330,8 @@ class DslTransformation {
 		setAuditable(!domainObject.notAuditable)
 		setCache(domainObject.cache)
 		setDatabaseTable(domainObject.databaseTable)
-		setBelongsToAggregate(if (domainObject.belongsTo == null) null else domainObject.belongsTo.transformSimpleDomainObject)
-		setAggregateRoot(!domainObject.notAggregateRoot && (domainObject.belongsTo == null || domainObject.belongsTo == domainObject))
+		setBelongsToAggregate(if (domainObject.belongsTo === null) null else domainObject.belongsTo.transformSimpleDomainObject)
+		setAggregateRoot(!domainObject.notAggregateRoot && (domainObject.belongsTo === null || domainObject.belongsTo == domainObject))
 		setValidate(domainObject.validate)
 		setGapClass(isGapClassToBeGenerated(domainObject.gapClass, domainObject.noGapClass))
 		setHint(domainObject.hint)
@@ -342,7 +342,7 @@ class DslTransformation {
 		operations.addAll(domainObject.operations.map[e | transform(e)])
 		domainObject.transformExtends(it)
 		traits.addAll(domainObject.traits.map[e | transformSimpleDomainObject(e) as Trait])
-		if (domainObject.repository != null)
+		if (domainObject.repository !== null)
 			setRepository(domainObject.repository.transform)
 	}
 
@@ -356,8 +356,8 @@ class DslTransformation {
 		setImmutable(!domainObject.notImmutable)
 		setCache(domainObject.cache)
 		setDatabaseTable(domainObject.databaseTable)
-		setBelongsToAggregate(if (domainObject.belongsTo == null) null else domainObject.belongsTo.transformSimpleDomainObject)
-		setAggregateRoot(!domainObject.notAggregateRoot && !domainObject.notPersistent && (domainObject.belongsTo == null || domainObject.belongsTo == domainObject))
+		setBelongsToAggregate(if (domainObject.belongsTo === null) null else domainObject.belongsTo.transformSimpleDomainObject)
+		setAggregateRoot(!domainObject.notAggregateRoot && !domainObject.notPersistent && (domainObject.belongsTo === null || domainObject.belongsTo == domainObject))
 		setPersistent(!domainObject.notPersistent)
 		setValidate(domainObject.validate)
 		setHint(domainObject.hint)
@@ -369,7 +369,7 @@ class DslTransformation {
 		operations.addAll(domainObject.operations.map[e | transform(e)])
 		domainObject.transformExtends(it)
 		traits.addAll(domainObject.traits.map[e | transformSimpleDomainObject(e) as Trait])
-		if (domainObject.repository != null)
+		if (domainObject.repository !== null)
 			setRepository(domainObject.repository.transform)
 	}
 
@@ -395,8 +395,8 @@ class DslTransformation {
 		event.setOptimisticLocking(false)
 		event.setCache(dslEvent.cache)
 		event.setDatabaseTable(dslEvent.databaseTable)
-		event.setBelongsToAggregate(if (dslEvent.belongsTo == null) null else dslEvent.belongsTo.transformSimpleDomainObject)
-		event.setAggregateRoot(!dslEvent.notAggregateRoot && dslEvent.persistent && (dslEvent.belongsTo == null || dslEvent.belongsTo == dslEvent))
+		event.setBelongsToAggregate(if (dslEvent.belongsTo === null) null else dslEvent.belongsTo.transformSimpleDomainObject)
+		event.setAggregateRoot(!dslEvent.notAggregateRoot && dslEvent.persistent && (dslEvent.belongsTo === null || dslEvent.belongsTo == dslEvent))
 		event.setPersistent(dslEvent.persistent)
 		event.setValidate(dslEvent.validate)
 		event.setHint(dslEvent.hint)
@@ -408,7 +408,7 @@ class DslTransformation {
 		event.operations.addAll(dslEvent.operations.map[e | transform(e)])
 		dslEvent.transformExtendsEvent(event)
 		event.traits.addAll(dslEvent.traits.map[e | transformSimpleDomainObject(e) as Trait])
-		if (dslEvent.repository != null)
+		if (dslEvent.repository !== null)
 			event.setRepository(dslEvent.repository.transform)
 	}
 
@@ -444,10 +444,10 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createInheritance createInheritance(DslDomainObject domainObject) {
-		setType(if (domainObject.inheritanceType == DslInheritanceType::SINGLE_TABLE)
-			InheritanceType::SINGLE_TABLE
+		setType(if (domainObject.inheritanceType == DslInheritanceType.SINGLE_TABLE)
+			InheritanceType.SINGLE_TABLE
 		else
-			InheritanceType::JOINED)
+			InheritanceType.JOINED)
 		setDiscriminatorColumnName(domainObject.discriminatorColumn)
 		setDiscriminatorColumnLength(domainObject.discriminatorLength)
 		setDiscriminatorType(mapDiscriminatorType(domainObject.discriminatorType))
@@ -475,26 +475,26 @@ class DslTransformation {
 	}
 
 	def dispatch transformExtendsEvent(DslDomainEvent dslEvent, DomainEvent event) {
-		if (dslEvent.^extends != null)
+		if (dslEvent.^extends !== null)
 			event.setExtends(dslEvent.^extends.transformSimpleDomainObject)
 
-		if (dslEvent.extendsName != null)
+		if (dslEvent.extendsName !== null)
 			event.setExtendsName(dslEvent.extendsName)
 	}
 
 	def transformExtendsImpl(DslDomainObject dslDomainObject, DslDomainObject dslExtendsDomainObject, DomainObject domainObject) {
-		if (dslExtendsDomainObject != null)
+		if (dslExtendsDomainObject !== null)
 			domainObject.setExtends(dslExtendsDomainObject.transformSimpleDomainObject)
 
-		if (dslDomainObject.extendsName != null)
+		if (dslDomainObject.extendsName !== null)
 			domainObject.setExtendsName(dslDomainObject.extendsName)
 	}
 
 	def transformExtends(DslDataTransferObject dslDto, DataTransferObject dto) {
-		if (dslDto.^extends != null)
+		if (dslDto.^extends !== null)
 			dto.setExtends(dslDto.^extends.transformSimpleDomainObject)
 
-		if (dslDto.extendsName != null)
+		if (dslDto.extendsName !== null)
 			dto.setExtendsName(dslDto.extendsName)
 	}
 
@@ -532,7 +532,7 @@ class DslTransformation {
 	}
 
 	def create FACTORY.createEnumConstructorParameter transform(DslEnumParameter parameter) {
-		if (parameter.value == null)
+		if (parameter.value === null)
 			setValue("" + parameter.integerValue)
 		else
 			setValue(parameter.value)
@@ -575,7 +575,7 @@ class DslTransformation {
 		setDoc(reference.doc)
 		setName(reference.name)
 		setCollectionType(convertCollectionTypeEnum(reference.collectionType))
-		setMany(reference.collectionType != null && reference.collectionType != DslCollectionType::NONE)
+		setMany(reference.collectionType !== null && reference.collectionType != DslCollectionType.NONE)
 		setNaturalKey(reference.key)
 		setChangeable(!reference.notChangeable)
 		setRequired(reference.required)
@@ -593,7 +593,7 @@ class DslTransformation {
 		setHint(reference.hint)
 		setTransient(reference.transient)
 		setVisibility(convertVisibility(reference.visibility))
-		if (reference.oppositeHolder != null && reference.oppositeHolder.opposite != null)
+		if (reference.oppositeHolder !== null && reference.oppositeHolder.opposite !== null)
 			setOpposite(reference.oppositeHolder.opposite.transform)
 
 		if (reference.orderColumn) addHint(buildOrderColumnHint(reference))
@@ -623,7 +623,7 @@ class DslTransformation {
 		setDoc(reference.doc)
 		setName(reference.name)
 		setCollectionType(convertCollectionTypeEnum(reference.collectionType))
-		setMany(reference.collectionType != null && reference.collectionType != DslCollectionType::NONE)
+		setMany(reference.collectionType !== null && reference.collectionType != DslCollectionType.NONE)
 		setNaturalKey(reference.key)
 		setChangeable(!reference.notChangeable)
 		setRequired(reference.required)
@@ -641,7 +641,7 @@ class DslTransformation {
 		setName(repository.name)
 		setGapClass(repository.isGapClassToBeGenerated())
 		setHint(repository.hint)
-		if (repository.subscribe != null)
+		if (repository.subscribe !== null)
 			setSubscribe(repository.subscribe.transform)
 
 		operations.addAll(repository.operations.map[e | transform(e)])
@@ -649,65 +649,65 @@ class DslTransformation {
 
 	def void transformDependencies(DslService service) {
 		service.transform.serviceDependencies.addAll(
-			service.dependencies.map[e | transformServiceDependency(e)].filter[e | e != null])
+			service.dependencies.map[e | transformServiceDependency(e)].filter[e | e !== null])
 		service.transform.repositoryDependencies.addAll(
-			service.dependencies.map[e | transformRepositoryDependency(e)].filter[e | e != null])
+			service.dependencies.map[e | transformRepositoryDependency(e)].filter[e | e !== null])
 		service.transform.otherDependencies.addAll(
-			service.dependencies.map[e | transformOtherDependency(e)].filter[e | e != null])
+			service.dependencies.map[e | transformOtherDependency(e)].filter[e | e !== null])
 	}
 
 	def void transformDependencies(DslResource resource) {
 		resource.transform.serviceDependencies.addAll(
-			resource.dependencies.map[e | transformServiceDependency(e)].filter[e | e != null])
+			resource.dependencies.map[e | transformServiceDependency(e)].filter[e | e !== null])
 	}
 
 	def void transformDependencies(DslConsumer consumer) {
 		consumer.transform.serviceDependencies.addAll(
-			consumer.dependencies.map[e | transformServiceDependency(e)].filter[e | e != null])
+			consumer.dependencies.map[e | transformServiceDependency(e)].filter[e | e !== null])
 		consumer.transform.repositoryDependencies.addAll(
-			consumer.dependencies.map[e | transformRepositoryDependency(e)].filter[e | e != null])
+			consumer.dependencies.map[e | transformRepositoryDependency(e)].filter[e | e !== null])
 		consumer.transform.otherDependencies.addAll(
-			consumer.dependencies.map[e | transformOtherDependency(e)].filter[e | e != null])
+			consumer.dependencies.map[e | transformOtherDependency(e)].filter[e | e !== null])
 	}
 
 	def Repository transformRepositoryDependency(DslDependency dependency) {
-		if (dependency.dependency != null && dependency.dependency instanceof DslRepository)
+		if (dependency.dependency !== null && dependency.dependency instanceof DslRepository)
 			(dependency.dependency as DslRepository).transform
 		else
 			null
 	}
 
 	def Service transformServiceDependency(DslServiceDependency dependency) {
-		if (dependency.dependency != null)
+		if (dependency.dependency !== null)
 			dependency.dependency.transform
 		else
 			null
 	}
 
 	def Service transformServiceDependency(DslDependency dependency) {
-		if (dependency.dependency != null && dependency.dependency instanceof DslService)
+		if (dependency.dependency !== null && dependency.dependency instanceof DslService)
 			(dependency.dependency as DslService).transform
 		else
 			null
 	}
 
 	def String transformOtherDependency(DslDependency dependency) {
-		if (dependency.name == null)
+		if (dependency.name === null)
 			null
 		else
 			dependency.name
 	}
 
 	def void transformDependencies(DslDomainObject domainObject) {
-		if (domainObject.repository != null)
+		if (domainObject.repository !== null)
 			domainObject.repository.transformDependencies
 	}
 
 	def void transformDependencies(DslRepository repository) {
 		repository.transform.repositoryDependencies.addAll(
-			repository.dependencies.map[e | transformRepositoryDependency(e)].filter(r | r != null))
+			repository.dependencies.map[e | transformRepositoryDependency(e)].filter(r | r !== null))
 		repository.transform.otherDependencies.addAll(
-			repository.dependencies.map[e | transformOtherDependency(e)].filter(r | r != null))
+			repository.dependencies.map[e | transformOtherDependency(e)].filter(r | r !== null))
 	}
 
 	def void scaffold(DslDomainObject domainObject) {

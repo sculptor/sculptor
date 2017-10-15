@@ -32,8 +32,8 @@ class DataNucleusTest extends GeneratorTestBase {
 
 	@BeforeClass
 	def static void setup() {
-		System::setProperty("jpa.provider", "datanucleus")
-		System::setProperty("generate.test", "true")
+		System.setProperty("jpa.provider", "datanucleus")
+		System.setProperty("generate.test", "true")
 		runGenerator(TEST_NAME)
 	}
 

@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.service
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Service
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ServiceEjbTestTmpl {
@@ -37,7 +36,7 @@ class ServiceEjbTestTmpl {
 
 /*Used for pure-ejb3, i.e. without spring */
 def String serviceJUnitSubclassOpenEjb(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot::TO_SRC_TEST, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -64,7 +63,7 @@ def String serviceJUnitSubclassOpenEjb(Service it) {
 }
 
 def String ejbJarXml(Application it) {
-	fileOutput("META-INF/ejb-jar.xml", OutputSlot::TO_RESOURCES, '''
+	fileOutput("META-INF/ejb-jar.xml", OutputSlot.TO_RESOURCES, '''
 	<?xml version="1.0" encoding="UTF-8"?>  
 	<!-- need this for OpenEJB testing -->
 

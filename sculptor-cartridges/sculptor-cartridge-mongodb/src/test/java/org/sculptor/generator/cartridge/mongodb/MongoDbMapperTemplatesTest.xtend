@@ -17,13 +17,13 @@
 package org.sculptor.generator.cartridge.mongodb
 
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.testing.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.sculptor.dsl.SculptordslInjectorProvider
+import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.test.GeneratorModelTestFixtures
 
 import static org.junit.Assert.*

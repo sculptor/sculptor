@@ -14,26 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.sculptor.dsl
 
-package org.sculptor.dsl;
-
-import org.eclipse.xtext.conversion.IValueConverterService;
-import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
-import org.sculptor.dsl.conversion.SculptordslValueConverters;
-import org.sculptor.dsl.validation.SculptordslSyntaxErrorMessageProvider;
+import org.eclipse.xtext.conversion.IValueConverterService
+import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider
+import org.sculptor.dsl.validation.SculptordslSyntaxErrorMessageProvider
+import org.sculptor.dsl.conversion.SculptordslValueConverters
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-public class SculptordslRuntimeModule extends AbstractSculptordslRuntimeModule {
+class SculptordslRuntimeModule extends AbstractSculptordslRuntimeModule {
 
-    public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
-        return SculptordslSyntaxErrorMessageProvider.class;
-    }
+	def Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
+		typeof(SculptordslSyntaxErrorMessageProvider)
+	}
 
-    @Override
-	public Class<? extends IValueConverterService> bindIValueConverterService() {
-		return SculptordslValueConverters.class;
+	override Class<? extends IValueConverterService> bindIValueConverterService() {
+		typeof(SculptordslValueConverters)
 	}
 
 }

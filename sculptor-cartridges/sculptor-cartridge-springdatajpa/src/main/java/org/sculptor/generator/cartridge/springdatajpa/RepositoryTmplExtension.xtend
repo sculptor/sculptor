@@ -19,11 +19,11 @@ package org.sculptor.generator.cartridge.springdatajpa
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.repository.RepositoryTmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Repository
+import org.sculptor.generator.ext.Properties
 
 @ChainOverride
 class RepositoryTmplExtension extends RepositoryTmpl {
@@ -71,7 +71,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 
 		fileOutput(
 			javaFileName(aggregateRoot.module.getRepositoryapiPackage + "." + name),
-			OutputSlot::TO_GEN_SRC,
+			OutputSlot.TO_GEN_SRC,
 			'''
 				«javaHeader»
 				package «aggregateRoot.module.getRepositoryapiPackage»;
@@ -86,7 +86,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 					«it.formatJavaDoc»
 				«ENDIF»
 				public interface «name» extends org.springframework.data.jpa.repository.JpaRepository<«baseName», «getJavaType("IDTYPE")»>«IF custom»,
-					«aggregateRoot.module.getRepositoryapiPackage».«name»Custom«ENDIF»«IF subscribe != null»,
+					«aggregateRoot.module.getRepositoryapiPackage».«name»Custom«ENDIF»«IF subscribe !== null»,
 					«fw("event.EventSubscriber")»«ENDIF» {
 					
 						«it.operations.filter[isPublicVisibility && !hasHint("gap")].map[interfaceRepositoryMethod(it)].join»
@@ -101,7 +101,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 
 		fileOutput(
 			javaFileName(aggregateRoot.module.getRepositoryapiPackage + "." + className),
-			OutputSlot::TO_GEN_SRC,
+			OutputSlot.TO_GEN_SRC,
 			'''
 				«javaHeader»
 				package «aggregateRoot.module.getRepositoryapiPackage»;
@@ -129,7 +129,7 @@ class RepositoryTmplExtension extends RepositoryTmpl {
 
 		fileOutput(
 			javaFileName(aggregateRoot.module.getRepositoryimplPackage + "." + className),
-			OutputSlot::TO_SRC,
+			OutputSlot.TO_SRC,
 			'''
 				«javaHeader»
 				package «aggregateRoot.module.getRepositoryimplPackage»;

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.jpa
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -25,7 +25,6 @@ import org.sculptor.generator.template.db.OracleDDLTmpl
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class OpenJpaTmpl {
@@ -52,7 +51,7 @@ def String openJpa(Application it) {
 }
 
 def String jodaStrategy(Application it) {
-	fileOutput(javaFileName(basePackage +".util.JodaHandler"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(basePackage +".util.JodaHandler"), OutputSlot.TO_GEN_SRC, '''
 	package «basePackage».util;
 
 /// Sculptor code formatter imports ///
@@ -129,7 +128,7 @@ def String jodaStrategy(Application it) {
 }
 
 def String enumStrategy(Application it) {
-	fileOutput(javaFileName(basePackage +".util.EnumHandler"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(basePackage +".util.EnumHandler"), OutputSlot.TO_GEN_SRC, '''
 	package «basePackage».util;
 
 /// Sculptor code formatter imports ///
@@ -181,7 +180,7 @@ def String enumStrategy(Application it) {
  */
 def String testDdl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
-	fileOutput("dbunit/ddl.sql", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput("dbunit/ddl.sql", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 		«manyToManyRelations.map[oracleDDLTmpl.manyToManyPrimaryKey(it)].join()»
 	'''
 	)

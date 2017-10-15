@@ -19,6 +19,7 @@ package org.sculptor.generator.util;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sculptor.generator.chain.ChainOverrideAwareInjector;
@@ -33,7 +34,7 @@ public class PropertiesBaseTest {
 		System.setProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY, "properties/common-generator.properties");
 	}
 
-	@Before
+	@After
 	public void clearSystemProperties() {
 		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY);
 		System.clearProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY);

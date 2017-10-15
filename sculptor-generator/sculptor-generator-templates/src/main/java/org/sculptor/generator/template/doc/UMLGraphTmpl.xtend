@@ -1,7 +1,24 @@
+/*
+ * Copyright 2007 The Fornax Project Team, including the original
+ * author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.sculptor.generator.template.doc
 
 import java.util.Set
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.ext.UmlGraphHelper
@@ -20,7 +37,6 @@ import sculptormetamodel.Operation
 import sculptormetamodel.Reference
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class UMLGraphTmpl {
@@ -71,7 +87,7 @@ def String start(Application it, Set<Module> focus, int detail) {
 }
 
 def String start(Application it, Set<Module> focus, int detail, String subjectArea) {
-	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot::TO_DOC,
+	fileOutput(it.dotFileName(focus, detail, subjectArea), OutputSlot.TO_DOC,
 		startContent(it, focus, detail, subjectArea))
 }
 
@@ -81,7 +97,7 @@ def String startContent(Application it, Set<Module> focus, int detail, String su
 	«focus.sortBy(e|e.name).map[m | subGraphForModule(m, focus, detail, subjectArea)].join()»
 	«IF detail < 4»
 		«InheritanceGraphProperties(it)»
-		«it.getAllDomainObjects().filter(d|d.^extends != null && d.includeInDiagram(detail, subjectArea)).map[InheritanceToUML(it, focus, detail, subjectArea)].join()»
+		«it.getAllDomainObjects().filter(d|d.^extends !== null && d.includeInDiagram(detail, subjectArea)).map[InheritanceToUML(it, focus, detail, subjectArea)].join()»
 		«RelationGraphProperties(it)»
 		
 		«it.getAllReferences()
@@ -225,7 +241,7 @@ def String ObjectToUML(DomainObject it, Set<Module> focus, int detail, String su
 		<tr><td>«IF it.^abstract»<font face="arialbi"  point-size="12.0"> «name» </font>
 				«ELSE»<font face="arialbd"  point-size="12.0"> «name» </font>«ENDIF»</td></tr>
 	</table></td></tr>
-	«IF it instanceof sculptormetamodel.Enum && it.showCompartment(detail)»
+	«IF it instanceof Enum && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
 			«(it as Enum).values.map[EnumValueToUML(it)].join()»
@@ -233,15 +249,15 @@ def String ObjectToUML(DomainObject it, Set<Module> focus, int detail, String su
 		</td></tr> 
 	«ENDIF »
 	«val existsAttributesCompartment = attributes.exists(e | !e.isSystemAttribute() && e.visible()) || references.exists(e | e.to instanceof BasicType && e.visible())
-			|| references.exists(e | e.to instanceof sculptormetamodel.Enum && e.visible())
+			|| references.exists(e | e.to instanceof Enum && e.visible())
 			|| references.exists(e | !focus.contains(e.to.module) && e.visible())»
 	«IF existsAttributesCompartment && it.showCompartment(detail)»
 		<tr><td>
 			<table border="0" cellspacing="0" cellpadding="1">	
 		«it.attributes.filter[e|!(e.isSystemAttribute() || e.hide())].map[AttributeToUML(it)].join»
 		«it.references.filter(e | e.to instanceof BasicType && e.visible()).map[BasicTypeAttributeToUML(it)].join»
-		«it.references.filter(e | e.to instanceof sculptormetamodel.Enum && e.visible()).map[EnumAttributeToUML(it)].join»
-		«it.references.filter( e | !(e.to instanceof sculptormetamodel.Enum) && !(e.to instanceof BasicType) && !focus.contains(e.to.module) && e.visible()).map[NonFocusReferenceToUML(it)].join()»
+		«it.references.filter(e | e.to instanceof Enum && e.visible()).map[EnumAttributeToUML(it)].join»
+		«it.references.filter( e | !(e.to instanceof Enum) && !(e.to instanceof BasicType) && !focus.contains(e.to.module) && e.visible()).map[NonFocusReferenceToUML(it)].join()»
 			</table>		
 		</td></tr>
 	«ENDIF»
@@ -296,7 +312,7 @@ def String EnumAttributeToUML(Reference it) {
 }
 
 def String NonFocusReferenceToUML(Reference it) {
-	val typeStr = (if (collectionType != null) collectionType + "&lt;" else "") + to.name + (if (collectionType != null) "&gt;" else "")
+	val typeStr = (if (collectionType !== null) collectionType + "&lt;" else "") + to.name + (if (collectionType !== null) "&gt;" else "")
 	'''
 		«IF naturalKey» 
 			<tr><td align="left"><font face="arialbd"> * «name» : «typeStr» </font> </td></tr>			
@@ -331,7 +347,7 @@ def String RelationToUML(Reference it, Set<Module> focus, int detail, String sub
 	«IF from.isShownInView(focus, detail, subjectArea) && to.isShownInView(focus, detail, subjectArea)»
 
 		«IF it.isAggregate() »
-			edge [arrowtail="diamond" arrowhead = "none" «ELSEIF opposite == null»
+			edge [arrowtail="diamond" arrowhead = "none" «ELSEIF opposite === null»
 			edge [arrowtail="none" arrowhead = "open" «ELSE»
 			edge [arrowtail="none" arrowhead = "none" «ENDIF»headlabel="«if (detail > 1) "" else it.referenceHeadLabel()»" taillabel="«if (detail > 1) "" else it.referenceTailLabel()»" labeldistance="«it.labeldistance()»" labelangle="«it.labelangle()»"]
 

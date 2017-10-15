@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
@@ -37,7 +36,7 @@ import sculptormetamodel.Trait
 @ChainOverridable
 class DomainObjectTmpl {
 
-	private static final Logger LOG = LoggerFactory::getLogger(typeof(DomainObjectTmpl))
+	private static final Logger LOG = LoggerFactory.getLogger(typeof(DomainObjectTmpl))
 
 	@Inject private var ExceptionTmpl exceptionTmpl
 	@Inject private var DomainObjectPropertiesTmpl domainObjectPropertiesTmpl
@@ -72,7 +71,7 @@ def dispatch String domainObject(DomainObject it) {
 }
 
 def dispatch String domainObjectSubclass(DataTransferObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -106,7 +105,7 @@ def dispatch String domainObjectSubclass(DataTransferObject it) {
 
 
 def dispatch String domainObjectSubclass(DomainObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -162,7 +161,7 @@ def String domainObjectSubclassJavaDoc(DomainObject it) {
 def dispatch String domainObjectBase(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 
-	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -269,7 +268,7 @@ def String domainObjectBaseJavaDoc(DomainObject it) {
 }
 
 def dispatch String domainObjectBase(DataTransferObject it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + (if (gapClass) "Base" else "")), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -314,7 +313,7 @@ def dispatch String domainObjectBase(DataTransferObject it) {
 		«it.references.filter(r | !r.many).map[r | domainObjectReferenceTmpl.oneReferenceAccessors(r)].join()»
 		«it.references.filter(r | r.many).map[r | domainObjectReferenceTmpl.manyReferenceAccessors(r)].join()»
 
-	«IF ^extends == null»
+	«IF ^extends === null»
 		«clone(it)»
 	«ENDIF»
 
@@ -391,7 +390,7 @@ def String acceptToString(DomainObject it) {
 
 def String toStringStyleMethod(DomainObject it) {
 	'''
-	«IF it.toStringStyle() != null»
+	«IF it.toStringStyle() !== null»
 		protected org.apache.commons.lang.builder.ToStringStyle toStringStyle() {
 			return org.apache.commons.lang.builder.ToStringStyle.«it.toStringStyle()»;
 		}
@@ -400,7 +399,7 @@ def String toStringStyleMethod(DomainObject it) {
 }
 
 def dispatch String domainObject(Enum it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getDomainPackage()»;
 
@@ -438,7 +437,7 @@ def String enumValue(EnumValue it) {
 def String enumIdentifierMap(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-	«IF identifierAttribute != null »
+	«IF identifierAttribute !== null »
 		/**
 		 */
 		private static java.util.Map<«identifierAttribute.getTypeName().getObjectTypeName()», «name»> identifierMap = new java.util.HashMap<«identifierAttribute.getTypeName().getObjectTypeName()», «name»>();
@@ -454,7 +453,7 @@ def String enumIdentifierMap(Enum it) {
 def String enumFromIdentifierMethod(Enum it) {
 	val identifierAttribute  = it.getIdentifierAttribute()
 	'''
-	«IF identifierAttribute != null »
+	«IF identifierAttribute !== null »
 		public static «name» from«identifierAttribute.name.toFirstUpper()»(«identifierAttribute.getTypeName()» «identifierAttribute.name») {
 			«name» result = identifierMap.get(«identifierAttribute.name»);
 			if (result == null) {

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.db
 
 import java.util.Set
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -31,7 +31,6 @@ import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
 import sculptormetamodel.Enum
 import sculptormetamodel.Reference
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class OracleDDLTmpl {
@@ -44,7 +43,7 @@ class OracleDDLTmpl {
 
 def String ddl(Application it) {
 	val manyToManyRelations = it.resolveManyToManyRelations(true)
-	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot.TO_GEN_RESOURCES, '''
 	«IF isDdlDropToBeGenerated()»
 		-- ###########################################
 		-- # Drop
@@ -82,7 +81,7 @@ def String ddl(Application it) {
 	«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))) .map[uniqueConstraint(it)].join()»
 
 	-- Foreign key constraints
-	«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[extendsForeignKeyConstraint(it)].join()»
+	«it.getDomainObjectsInCreateOrder(true).filter(d | d.^extends !== null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[extendsForeignKeyConstraint(it)].join()»
 
 	«it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))).map[foreignKeyConstraint(it)].join()»
 	«manyToManyRelations.map[foreignKeyConstraint(it)].join()»
@@ -118,7 +117,7 @@ def String createTable(DomainObject it) {
 	CREATE TABLE «getDatabaseName(it)» (
 	«columns(it, false, alreadyUsedColumns)»«
 	IF isInheritanceTypeSingleTable(it)»«inheritanceSingleTable(it, alreadyUsedColumns)»«ENDIF»«
-	IF ^extends != null»«extendsForeignKeyColumn(it, !alreadyUsedColumns.isEmpty)»«ENDIF»
+	IF ^extends !== null»«extendsForeignKeyColumn(it, !alreadyUsedColumns.isEmpty)»«ENDIF»
 	)«afterCreateTable(it)»;
 	
 	'''
@@ -149,9 +148,9 @@ def String columns(DomainObject it, boolean initialComma, Set<String> alreadyDon
 		.join
 	)
 
-	strColumns.append(if (it.module == null) "" else it.module.application.modules
+	strColumns.append(if (it.module === null) "" else it.module.application.modules
 		.map[domainObjects].flatten.map[references].flatten
-		.filter[e | !e.transient && e.to == it && e.many && e.opposite == null && e.isInverse()]
+		.filter[e | !e.transient && e.to == it && e.many && e.opposite === null && e.isInverse()]
 		.filter[e | !(alreadyDone.contains(e.getDatabaseName()))]
 		.map[e | alreadyDone.add(e.getDatabaseName()); ",\n\t" + uniManyForeignKeyColumn(e)]
 		.join
@@ -267,7 +266,7 @@ def String extendsForeignKeyColumn(DomainObject it, boolean initialComma) {
 def dispatch String foreignKeyConstraint(DomainObject it) {
 	'''
 		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyConstraint(it)].join()»
-		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyConstraint(it)].join()»
+		«it.references.filter(r | !r.transient && r.many && r.opposite === null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyConstraint(it)].join()»
 	'''
 }
 
@@ -276,7 +275,7 @@ def dispatch String foreignKeyConstraint(Reference it) {
 	
 	-- Reference from «from.name».«name» to «to.name»
 	ALTER TABLE «from.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(from.getDatabaseName(), getDatabaseName(it))»
-		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()» («to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»;
+		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()» («to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite !== null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»;
 	«foreignKeyIndex(it)»
 	'''
 }
@@ -361,7 +360,7 @@ def String containedColumnIndex(Reference it) {
 }
 
 def String index(Attribute it, String prefix, DomainObject domainObject) {
-	var actualDomainObject = if (domainObject.^extends != null && isInheritanceTypeSingleTable(domainObject.getRootExtends())) domainObject.getRootExtends() else domainObject
+	var actualDomainObject = if (domainObject.^extends !== null && isInheritanceTypeSingleTable(domainObject.getRootExtends())) domainObject.getRootExtends() else domainObject
 	'''
 	CREATE INDEX IX_«truncateLongDatabaseName(actualDomainObject.getDatabaseName(), getDatabaseName(prefix, it))»
 		ON «actualDomainObject.getDatabaseName()» («getDatabaseName(prefix, it)» ASC)
@@ -399,7 +398,7 @@ def String dropContainedColumnIndex(Reference it) {
 }
 
 def String dropIndex(Attribute it, String prefix, DomainObject domainObject) {
-	var actualDomainObject = if (domainObject.^extends != null && isInheritanceTypeSingleTable(domainObject.getRootExtends())) domainObject.getRootExtends() else domainObject
+	var actualDomainObject = if (domainObject.^extends !== null && isInheritanceTypeSingleTable(domainObject.getRootExtends())) domainObject.getRootExtends() else domainObject
 	'''
 	DROP INDEX IX_«truncateLongDatabaseName(actualDomainObject.getDatabaseName(), getDatabaseName(prefix, it))»;
 	'''

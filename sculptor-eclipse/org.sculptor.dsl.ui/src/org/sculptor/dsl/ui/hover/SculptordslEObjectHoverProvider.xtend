@@ -30,7 +30,7 @@ class SculptordslEObjectHoverProvider extends DefaultEObjectHoverProvider {
 		(if (className.startsWith("Dsl"))
 			className.substring(3)
 		else
-			className) + if(label != null) " <b>" + label + "</b>" else ""
+			className) + if(label !== null) " <b>" + label + "</b>" else ""
 	}
 
 }

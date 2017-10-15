@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -28,7 +28,6 @@ import sculptormetamodel.DomainObject
 import sculptormetamodel.NamedElement
 import sculptormetamodel.Reference
 import sculptormetamodel.Trait
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DomainObjectAnnotationTmpl {
@@ -104,7 +103,7 @@ def dispatch String domainObjectBaseAnnotations(DataTransferObject it) {
 
 def dispatch String domainObjectBaseAnnotations(DomainObject it) {
 	'''
-		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && it.getAuditEntityListener() != null»
+		«IF isJpaAnnotationToBeGenerated() && it.hasOwnDatabaseRepresentation() && it.getAuditEntityListener() !== null»
 			«jpaEntityListenersAnnotation(it)»
 		«ENDIF»
 		«IF it.isValidationAnnotationToBeGeneratedForObject()»
@@ -132,7 +131,7 @@ def String xstreamAliasAnnotation(DomainObject it) {
 def String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
 		@javax.persistence.EntityListeners({
-		«formatAnnotationParameters(<Object>newArrayList(it.getAuditEntityListener() != null, "", it.getAuditEntityListener() + ".class"))»})
+		«formatAnnotationParameters(<Object>newArrayList(it.getAuditEntityListener() !== null, "", it.getAuditEntityListener() + ".class"))»})
 	'''
 }
 
@@ -142,12 +141,12 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 	«IF it.hasSubClass()»
 		«IF it.isInheritanceTypeSingleTable()»
 			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.SINGLE_TABLE)
-			«formatAnnotationParameters("@javax.persistence.DiscriminatorColumn", <Object>newArrayList( inheritance.discriminatorColumnName != null, "name", '"' + inheritance.discriminatorColumnName + '"',
+			«formatAnnotationParameters("@javax.persistence.DiscriminatorColumn", <Object>newArrayList( inheritance.discriminatorColumnName !== null, "name", '"' + inheritance.discriminatorColumnName + '"',
 				it.getDiscriminatorType() != "javax.persistence.DiscriminatorType.STRING", "discriminatorType", it.getDiscriminatorType(),
-				inheritance.discriminatorColumnLength != null, "length", inheritance.discriminatorColumnLength,
+				inheritance.discriminatorColumnLength !== null, "length", inheritance.discriminatorColumnLength,
 				isJpaAnnotationColumnDefinitionToBeGenerated(), "columnDefinition", '"' + inheritance.getDiscriminatorColumnDatabaseType() + '"'
 			)) »
-			«IF !^abstract && discriminatorColumnValue != null»
+			«IF !^abstract && discriminatorColumnValue !== null»
 				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
 		«ELSEIF it.isInheritanceTypeJoined()»
@@ -156,7 +155,7 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 	«ENDIF»
 	«IF it.hasSuperClass()»
 		«IF isInheritanceTypeSingleTable(it.getRootExtends())»
-			«IF discriminatorColumnValue != null»
+			«IF discriminatorColumnValue !== null»
 				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
 		«ELSEIF isInheritanceTypeJoined(it.getRootExtends())»

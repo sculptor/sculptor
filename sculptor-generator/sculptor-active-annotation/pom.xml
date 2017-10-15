@@ -46,12 +46,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-			<artifactId>eclipse-library</artifactId>
-			<classifier>runtime</classifier>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sculptorgenerator.generator</groupId>
 			<artifactId>sculptor-generator-configuration</artifactId>
 			<version>${project.version}</version>
 		</dependency>

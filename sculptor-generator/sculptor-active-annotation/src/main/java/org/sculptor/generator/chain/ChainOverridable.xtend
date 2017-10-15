@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.chain
 
 import java.lang.annotation.ElementType
@@ -35,13 +34,13 @@ import static extension org.sculptor.generator.chain.ChainOverrideHelper.*
 /**
  * Adds chain interface and delegate methods for all public methods.
  */
-@Target(ElementType::TYPE)
+@Target(ElementType.TYPE)
 @Active(typeof(ChainOverridableProcessor))
 public annotation ChainOverridable {}
 
 class ChainOverridableProcessor extends AbstractClassProcessor {
 
-	private static final Logger LOG = LoggerFactory::getLogger(typeof(ChainOverridableProcessor))
+	private static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverridableProcessor))
 
 	override doRegisterGlobals(ClassDeclaration annotatedClass, RegisterGlobalsContext context) {
 		context.registerInterface(annotatedClass.methodIndexesName)
@@ -73,7 +72,7 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 		overridableMethodsInfo.forEach [ methodInfo, methodIx |
 			methodIndexesInterface.addField(methodInfo.methodIndexName) [
 				static = true
-				visibility = Visibility::PUBLIC
+				visibility = Visibility.PUBLIC
 				final = true
 				type = primitiveInt
 				initializer = ['''«methodIx»''']
@@ -82,7 +81,7 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 
 		methodIndexesInterface.addField("NUM_METHODS") [
 			static = true
-			visibility = Visibility::PUBLIC
+			visibility = Visibility.PUBLIC
 			final = true
 			type = primitiveInt
 			initializer = ['''«overridableMethodsInfo.size»''']
@@ -103,14 +102,14 @@ class ChainOverridableProcessor extends AbstractClassProcessor {
 				
 		dispatchClass.addField("methodsDispatchTable")  [
 			static = false
-			visibility = Visibility::PRIVATE
+			visibility = Visibility.PRIVATE
 			final = true
 			type = annotatedClass.newTypeReference().newArrayTypeReference()
 		]
 		
 		dispatchClass.addMethod("getMethodsDispatchTable") [
 			static = false
-			visibility = Visibility::PUBLIC
+			visibility = Visibility.PUBLIC
 			final = true
 			returnType = annotatedClass.newTypeReference().newArrayTypeReference()
 			body = [

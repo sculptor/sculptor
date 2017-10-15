@@ -43,20 +43,20 @@ public class DbHelper {
 	@Inject extension Helper helper
 
 	def String getCascade(Reference ref) {
-		if (ref.cascade == null || ref.cascade == "")
+		if (ref.cascade === null || ref.cascade == "")
 			ref.getDerivedCascade()
 		else
 			ref.cascade
 	}
 
 	def boolean isDbOnDeleteCascade(Reference ref) {
-		isDbResponsibleForOnDeleteCascade() && (getCascade(ref) != null) && (getCascade(ref).contains("delete") || getCascade(ref).contains("all"))
+		isDbResponsibleForOnDeleteCascade() && (getCascade(ref) !== null) && (getCascade(ref).contains("delete") || getCascade(ref).contains("all"))
 	}
 
 	def String getFetch(Reference ref) {
 		if (ref.fetch == "none")
 			""
-		else if (ref.fetch == null || ref.fetch == "")
+		else if (ref.fetch === null || ref.fetch == "")
 			ref.getDerivedFetch()
 		else
 			ref.fetch
@@ -135,7 +135,7 @@ public class DbHelper {
 	}
 
 	def private Attribute createListIndexAttribute() {
-		val attr = SculptormetamodelFactory::eINSTANCE.createAttribute
+		val attr = SculptormetamodelFactory.eINSTANCE.createAttribute
 		attr.setName("index")
 		attr.setType("Integer")
 		attr
@@ -165,7 +165,7 @@ public class DbHelper {
 	}
 
 	def String getOppositeForeignKeyName(Reference ref) {
-		if (ref.opposite != null)
+		if (ref.opposite !== null)
 			ref.opposite.getForeignKeyName()
 		else if (ref.isUnidirectionalToManyWithoutJoinTable())
 			ref.databaseColumn
@@ -201,7 +201,7 @@ public class DbHelper {
 	}
 
 	def String getCascadeType(Reference ref) {
-		val values = if (getCascade(ref) == null)
+		val values = if (getCascade(ref) === null)
 			null
 		else
 			getCascade(ref).split(',').map[e | mapCascadeType(e)].filterNull.toList
@@ -209,7 +209,7 @@ public class DbHelper {
 	}
 
 	def private String toAnnotationFormat(List<String> values) {
-		if (values == null || values.isEmpty)
+		if (values === null || values.isEmpty)
 			null
 		else if (values.size == 1)
 			values.get(0)
@@ -230,7 +230,7 @@ public class DbHelper {
 	}
 
 	def boolean isOrphanRemoval(String cascade) {
-		jpa && cascade != null && cascade.contains("all-delete-orphan")
+		jpa && cascade !== null && cascade.contains("all-delete-orphan")
 	}
 
 	def boolean isOrphanRemoval(String cascade, Reference ref) {
@@ -238,7 +238,7 @@ public class DbHelper {
 	}
 
 	def String getHibernateCascadeType(Reference ref) {
-		val values = if (getCascade(ref) == null)
+		val values = if (getCascade(ref) === null)
 			null
 		else
 			getCascade(ref).split(',').map[e | mapHibernateCascadeType(e)].filterNull.toList
@@ -303,15 +303,15 @@ public class DbHelper {
 	}
 
 	def boolean isInheritanceTypeSingleTable(DomainObject domainObject) {
-		(domainObject != null && domainObject.inheritance != null && domainObject.inheritance.type == InheritanceType::SINGLE_TABLE)
+		(domainObject !== null && domainObject.inheritance !== null && domainObject.inheritance.type == InheritanceType.SINGLE_TABLE)
 	}
 
 	def boolean isInheritanceTypeJoined(DomainObject domainObject) {
-		(domainObject != null && domainObject.inheritance != null && domainObject.inheritance.type == InheritanceType::JOINED)
+		(domainObject !== null && domainObject.inheritance !== null && domainObject.inheritance.type == InheritanceType.JOINED)
 	}
 
 	def String getDiscriminatorType(DomainObject domainObject) {
-		if (domainObject.inheritance.discriminatorType == null)
+		if (domainObject.inheritance.discriminatorType === null)
 			null
 		else
 			"javax.persistence.DiscriminatorType." + domainObject.inheritance.discriminatorType
@@ -319,9 +319,9 @@ public class DbHelper {
 
 	def String getHbmDiscriminatorType(DomainObject domainObject) {
 		switch (domainObject.inheritance.discriminatorType) {
-			case DiscriminatorType::INTEGER :
+			case DiscriminatorType.INTEGER :
 				"int"
-			case DiscriminatorType::CHAR :
+			case DiscriminatorType.CHAR :
 				"char"
 			default :
 				null
@@ -337,7 +337,7 @@ public class DbHelper {
 	}
 
 	def boolean hasOpposite(Reference ref) {
-		ref.opposite != null
+		ref.opposite !== null
 	}
 
 	def boolean isUnidirectionalToManyWithoutJoinTable(Reference ref) {
@@ -366,7 +366,7 @@ public class DbHelper {
 	}
 
 	def String discriminatorColumnName(Inheritance inheritance) {
-		if (inheritance.discriminatorColumnName != null)
+		if (inheritance.discriminatorColumnName !== null)
 			inheritance.discriminatorColumnName
 		else
 			getProperty("db.discriminatorColumnName")
@@ -374,7 +374,7 @@ public class DbHelper {
 
 	def String discriminatorColumnLength(Inheritance inheritance) {
 		val propertyName = getDbProduct + ".length.discriminatorType." + inheritance.discriminatorType
-		if (inheritance.discriminatorColumnLength != null)
+		if (inheritance.discriminatorColumnLength !== null)
 			inheritance.discriminatorColumnLength
 		else if (hasProperty(propertyName))
 			getProperty(propertyName)
@@ -434,7 +434,7 @@ public class DbHelper {
 		var String resName = name
 
 		if (propertiesBase.getBooleanProperty('db.useUnderscoreNaming')) {
-			resName = CamelCaseConverter::camelCaseToUnderscore(name)
+			resName = CamelCaseConverter.camelCaseToUnderscore(name)
 		}
 		truncateLongDatabaseName(resName).toUpperCase
 	}

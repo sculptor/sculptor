@@ -50,7 +50,7 @@ class AutoImportVisitor extends ASTVisitor {
 
 	new(CompilationUnitDeclaration compilationUnit) {
 		this.compilationUnit = compilationUnit
-		if (compilationUnit.imports != null) {
+		if (compilationUnit.imports !== null) {
 			compilationUnit.imports.forEach [ importRef |
 				imports += importRef.qualifiedTypeName
 				importShortNames += importRef.shortTypeName
@@ -126,7 +126,7 @@ class AutoImportVisitor extends ASTVisitor {
 	private def autoImport(ParameterizedQualifiedTypeReference reference) {
 		autoImport(reference as QualifiedTypeReference)
 		reference.typeArguments.forEach [ referenceTypeArguments |
-			if (referenceTypeArguments != null) {
+			if (referenceTypeArguments !== null) {
 				referenceTypeArguments.forEach [ referenceTypeArgument |
 					if (referenceTypeArgument instanceof QualifiedTypeReference) {
 						autoImport(referenceTypeArgument)
@@ -164,7 +164,7 @@ class AutoImportVisitor extends ASTVisitor {
 	}
 
 	private def autoImport(ImportReference reference) {
-		if (reference.annotations != null) {
+		if (reference.annotations !== null) {
 			reference.annotations.forEach [ referenceAnnotation |
 				if (referenceAnnotation.type instanceof QualifiedTypeReference) {
 					autoImport(referenceAnnotation.type as QualifiedTypeReference)

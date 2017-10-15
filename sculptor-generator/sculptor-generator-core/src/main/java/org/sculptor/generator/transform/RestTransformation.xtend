@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.transform
 
 import com.google.inject.Inject
@@ -29,7 +28,7 @@ import sculptormetamodel.SculptormetamodelFactory
 
 @ChainOverridable
 class RestTransformation {
-	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory::eINSTANCE
+	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
@@ -37,29 +36,29 @@ class RestTransformation {
 	
 	def addRestDefaults(ResourceOperation operation) {
 		val defaultReturn = operation.defaultReturn
-		if (operation.returnString == null && defaultReturn != "")
+		if (operation.returnString === null && defaultReturn != "")
 			operation.setReturnString(defaultReturn)
-		if (operation.path == null)
+		if (operation.path === null)
 			operation.setPath(operation.defaultPath())
-		if (operation.httpMethod == null || operation.httpMethod == HttpMethod::UNDEFINED)
+		if (operation.httpMethod === null || operation.httpMethod == HttpMethod.UNDEFINED)
 			operation.setHttpMethod(operation.defaultHttpMethod().mapHttpMethod())
-		if (operation.httpMethod == HttpMethod::GET &&
+		if (operation.httpMethod == HttpMethod.GET &&
 				operation.name == "updateForm" && operation.parameters.isEmpty)
 			operation.addIdParameter()
-		if (operation.httpMethod == HttpMethod::GET &&
-				(operation.delegate != null || operation.name == "createForm" || operation.name == "updateForm") &&
+		if (operation.httpMethod == HttpMethod.GET &&
+				(operation.delegate !== null || operation.name == "createForm" || operation.name == "updateForm") &&
 				!operation.parameters.exists(e | e.type == "ModelMap" || e.type == "Model"))
 			operation.addModelMapParameter()
-		if ((operation.throws == null || operation.throws == "") && (operation.httpMethod == HttpMethod::DELETE || operation.name == "updateForm"))
+		if ((operation.throws === null || operation.throws == "") && (operation.httpMethod == HttpMethod.DELETE || operation.name == "updateForm"))
 			operation.addThrowsException()
-		if (operation.domainObjectType != null)
+		if (operation.domainObjectType !== null)
 			operation.domainObjectType.addXmlRootHint()
-		operation.parameters.filter(e | e.domainObjectType != null).map[e | e.domainObjectType].forEach[addXmlRootHint()]
+		operation.parameters.filter(e | e.domainObjectType !== null).map[e | e.domainObjectType].forEach[addXmlRootHint()]
 	}
 
 	def String defaultReturn(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".return"
-		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".return"
+		val propKey2 = "rest." + (if (operation.delegate === null) "default" else operation.delegate.name) + ".return"
 		val value = 
 			(if (hasProperty(propKey1))
 				getProperty(propKey1)
@@ -72,7 +71,7 @@ class RestTransformation {
 
 	def String defaultHttpMethod(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".httpMethod"
-		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".httpMethod"
+		val propKey2 = "rest." + (if (operation.delegate === null) "default" else operation.delegate.name) + ".httpMethod"
 		if (hasProperty(propKey1))
 			getProperty(propKey1)
 		else if (hasProperty(propKey2))
@@ -83,7 +82,7 @@ class RestTransformation {
 
 	def String defaultPath(ResourceOperation operation) {
 		val propKey1 = "rest." + operation.name + ".path"
-		val propKey2 = "rest." + (if (operation.delegate == null) "default" else operation.delegate.name) + ".path"
+		val propKey2 = "rest." + (if (operation.delegate === null) "default" else operation.delegate.name) + ".path"
 		val value = 
 			(if (hasProperty(propKey1))
 				getProperty(propKey1)

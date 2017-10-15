@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.common
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class LogConfigTmpl {
@@ -34,7 +33,7 @@ class LogConfigTmpl {
 	}
 
 	def String logbackXml(Application it) {
-		fileOutput("logback.xml", OutputSlot::TO_RESOURCES, '''
+		fileOutput("logback.xml", OutputSlot.TO_RESOURCES, '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<configuration>
 
@@ -54,7 +53,7 @@ class LogConfigTmpl {
 	}
 
 	def String logbackTestXml(Application it) {
-		fileOutput("logback-test.xml", OutputSlot::TO_RESOURCES_TEST, '''
+		fileOutput("logback-test.xml", OutputSlot.TO_RESOURCES_TEST, '''
 		<?xml version="1.0" encoding="UTF-8" ?>
 		<configuration>
 

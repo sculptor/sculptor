@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -26,8 +26,6 @@ import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.DomainObject
 import sculptormetamodel.DomainObjectOperation
 import sculptormetamodel.Trait
-
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DomainObjectTraitTmpl {
@@ -41,7 +39,7 @@ class DomainObjectTraitTmpl {
 	@Inject extension Properties properties
 
 def String domainObjectSubclass(Trait it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "Trait"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "Trait"), OutputSlot.TO_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 
@@ -65,7 +63,7 @@ def String domainObjectSubclass(Trait it) {
 
 def String domainObjectBase(Trait it) {
 	traitInterface(it)
-	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name + "TraitBase"), OutputSlot.TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 
@@ -86,7 +84,7 @@ def String domainObjectBase(Trait it) {
 }
 
 def String traitInterface(Trait it) {
-	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getDomainPackage() + "." + name), OutputSlot.TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getDomainPackage()»;
 

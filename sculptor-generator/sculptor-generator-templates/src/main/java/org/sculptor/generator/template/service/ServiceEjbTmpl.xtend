@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.service
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.template.common.ExceptionTmpl
@@ -28,7 +28,6 @@ import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Parameter
 import sculptormetamodel.Service
 import sculptormetamodel.ServiceOperation
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ServiceEjbTmpl {
@@ -62,7 +61,7 @@ def String service(Service it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def String ejbBeanImplBase(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl") + (if (gapClass) "Base" else "")), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -107,7 +106,7 @@ def String ejbBeanImplBase(Service it) {
 
 /*Used for pure-ejb3, i.e. without spring */
 def String ejbBeanImplSubclass(Service it) {
-	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(it.getServiceimplPackage() + "." + name + getSuffix("Impl")), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «it.getServiceimplPackage()»;
 
@@ -121,7 +120,7 @@ def String ejbBeanImplSubclass(Service it) {
 		«webServiceAnnotations(it)»
 	«ENDIF»
 	«ejbInterceptors(it)»
-	«IF subscribe != null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
+	«IF subscribe !== null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
 	public class «name + getSuffix("Impl")» «IF gapClass»extends «name + getSuffix("Impl")»Base«ENDIF» {
 		«serviceTmpl.serialVersionUID(it)»
 		public «name + getSuffix("Impl")»() {
@@ -163,7 +162,7 @@ def String ejbMethod(ServiceOperation it) {
 }
 
 def String ejbRemoteInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Remote"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -180,7 +179,7 @@ def String ejbRemoteInterface(Service it) {
 }
 
 def String ejbLocalInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Local"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -198,7 +197,7 @@ def String ejbLocalInterface(Service it) {
 
 
 def String serviceProxy(Service it) {
-	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceproxyPackage() + "." + name + "Proxy"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceproxyPackage()»;
 
@@ -491,7 +490,7 @@ def String webServiceAnnotations(Service it) {
 }
 
 def String webServiceInterface(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Endpoint"), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «it.getServiceapiPackage()»;
 
@@ -529,7 +528,7 @@ def String webServiceParamTypeAndName(Parameter it) {
 }
 
 def String webServicePackageInfo(Service it) {
-	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot.TO_GEN_SRC, '''
 	@javax.xml.bind.annotation.XmlSchema(
 		namespace = "http://«FOR e : reversePackageName(it.getServiceapiPackage()) SEPARATOR '.'»«e»«ENDFOR»/",
 		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)

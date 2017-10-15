@@ -9,7 +9,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.Issue;
 
@@ -123,7 +122,7 @@ public class XtextUtils {
 	
 	public static EObject resolveProxy( EObject eObject, ResourceSet rs ) {
 		if ( eObject.eIsProxy()) {
-			eObject = EcoreUtil.resolve(eObject, rs);
+			eObject = EcoreUtil2.resolve(eObject, rs);
 		}
 		return eObject;
 	}

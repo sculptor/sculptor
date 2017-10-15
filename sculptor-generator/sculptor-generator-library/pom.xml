@@ -58,11 +58,15 @@
 		<!-- The following runtime-dependencies are not added to the shaded library -->
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>org.eclipse.xtext.xtext</artifactId>
+			<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
 			<artifactId>org.eclipse.xtend.lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>org.eclipse.jdt.core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

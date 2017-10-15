@@ -43,7 +43,7 @@ class BuilderTmpl {
 	@Inject private var DomainObjectConstructorTmpl domainObjectConstructorTmpl
 
 def String builder(DomainObject it) {
-	fileOutput(javaFileName(it.getBuilderFqn()), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(it.getBuilderFqn()), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getBuilderPackage()»;
 

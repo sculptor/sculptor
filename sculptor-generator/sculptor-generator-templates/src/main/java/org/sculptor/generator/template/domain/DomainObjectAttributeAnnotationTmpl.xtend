@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Attribute
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DomainObjectAttributeAnnotationTmpl {
@@ -152,7 +151,7 @@ def String auditAnnotations(Attribute it) {
 		@javax.persistence.Column(
 		«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
-			dbType != null, "columnDefinition", '"' + dbType + '"'
+			dbType !== null, "columnDefinition", '"' + dbType + '"'
 		))»)
 	'''
 }
@@ -163,9 +162,9 @@ def String columnAnnotations(Attribute it) {
 		@javax.persistence.Column(
 		«formatAnnotationParameters(<Object>newArrayList( true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
-			it.getDatabaseLength() != null, "length", it.getDatabaseLength(),
+			it.getDatabaseLength() !== null, "length", it.getDatabaseLength(),
 			(it.isUuid() || it.isSimpleNaturalKey()) && !isJpaProviderAppEngine(), "unique", "true",
-			dbType != null, "columnDefinition", '"' + dbType + '"'
+			dbType !== null, "columnDefinition", '"' + dbType + '"'
 		))»)
 		«columnDateAnnotations(it)»
 	'''
@@ -173,7 +172,7 @@ def String columnAnnotations(Attribute it) {
 
 def String columnDateAnnotations(Attribute it) {
 	'''
-		«IF isJpaProviderHibernate() && it.getHibernateType() != null»
+		«IF isJpaProviderHibernate() && it.getHibernateType() !== null»
 			@org.hibernate.annotations.Type(type="«it.getHibernateType()»")
 		«ELSEIF isJpaProviderEclipseLink() && it.isJodaTemporal()»
 			@org.eclipse.persistence.annotations.Convert("JodaConverter")
@@ -203,7 +202,7 @@ def String elementCollectionAnnotations(Attribute it) {
 	'''
 		«/* TODO: change support for fetchtype, add a keyword */»
 		@javax.persistence.ElementCollection(
-			«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() != null, "fetch", it.getFetchType()))»)
+			«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() !== null, "fetch", it.getFetchType()))»)
 		«IF !useJpaDefaults()»
 				«elementCollectionTableJpaAnnotation(it)»
 		«ENDIF»

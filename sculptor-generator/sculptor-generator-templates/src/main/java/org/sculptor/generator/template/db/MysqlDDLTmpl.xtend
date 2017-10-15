@@ -18,6 +18,7 @@ package org.sculptor.generator.template.db
 
 import java.util.Set
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -27,8 +28,8 @@ import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.BasicType
 import sculptormetamodel.DomainObject
+import sculptormetamodel.Enum
 import sculptormetamodel.Reference
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class MysqlDDLTmpl {
@@ -39,7 +40,7 @@ class MysqlDDLTmpl {
 	@Inject extension Properties properties
 
 def String ddl(Application it) {
-	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot::TO_GEN_RESOURCES, '''
+	fileOutput("dbschema/" + name + "_ddl.sql", OutputSlot.TO_GEN_RESOURCES, '''
 	«IF isDdlDropToBeGenerated()»    
 		-- ###########################################
 		-- # Drop entities
@@ -66,7 +67,7 @@ def String ddl(Application it) {
 	
 	«it.getDomainObjectsInCreateOrder(true).filter[d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))].map[d | createTable(d, false)].join»
 	«it.getDomainObjectsInCreateOrder(true).filter[d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends))].map[d | foreignKeyAlter(d)].join»
-	«it.getDomainObjectsInCreateOrder(true).filter[d | d.^extends != null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))].map[d | extendsForeignKeyAlter(d)].join»
+	«it.getDomainObjectsInCreateOrder(true).filter[d | d.^extends !== null && !isInheritanceTypeSingleTable(getRootExtends(d.^extends))].map[d | extendsForeignKeyAlter(d)].join»
 	
 	-- Many to many relations
 	«it.resolveManyToManyRelations(true).map[r | createTable(r, true)].join»
@@ -104,7 +105,7 @@ def String createTable(DomainObject it, Boolean manyToManyRelationTable) {
 		IF isInheritanceTypeSingleTable(it)»«
 			inheritanceSingleTable(it, alreadyUsedColumns)»«
 		ENDIF»«
-		IF ^extends != null»«
+		IF ^extends !== null»«
 			extendsForeignKey(it, !alreadyUsedColumns.isEmpty)»«
 		ENDIF»«
 		uniqueConstraint(it)»
@@ -127,7 +128,7 @@ def String columns(DomainObject it, Boolean manyToManyRelationTable, boolean ini
 	val currentEnumReferences = it.getEnumReferences().filter[e | !(e.transient || alreadyDone.contains(e.getDatabaseName))].toList
 	alreadyDone.addAll(currentEnumReferences.map[e | e.getDatabaseName])
 
-	val currentUniManyToThisReferences = if (it.module == null) <Reference>newArrayList() else module.application.modules.map[m | m.domainObjects].flatten.map[d | d.references].flatten.filter[r | !r.transient && r.to == it && r.many && r.opposite == null && r.isInverse() && !(alreadyDone.contains(r.databaseName))].toList
+	val currentUniManyToThisReferences = if (it.module === null) <Reference>newArrayList() else module.application.modules.map[m | m.domainObjects].flatten.map[d | d.references].flatten.filter[r | !r.transient && r.to == it && r.many && r.opposite === null && r.isInverse() && !(alreadyDone.contains(r.databaseName))].toList
 	alreadyDone.addAll(currentUniManyToThisReferences.map[e | e.getDatabaseName])
 
 	val currentOneReferences = it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !((e.isOneToOne() && e.isInverse()) || alreadyDone.contains(e.getDatabaseName))].toList
@@ -170,7 +171,7 @@ def String column(Attribute it, String prefix, boolean parentIsNullable) {
 
 def String containedColumns(Reference it, String prefix, boolean parentIsNullable) {
 	val containedAttributes = it.to.attributes.filter[a | !a.transient]
-	val containedEnumReferences = it.to.references.filter(r | !r.transient && r.to instanceof sculptormetamodel.Enum)
+	val containedEnumReferences = it.to.references.filter(r | !r.transient && r.to instanceof Enum)
 	val containedBasicTypeReferences = it.to.references.filter(r | !r.transient && r.to instanceof BasicType)
 	'''«containedAttributes.map[a | column(a, getDatabaseName(prefix, it), parentIsNullable || it.nullable)].join(",\n")»«
 	IF !containedEnumReferences.isEmpty»«IF !containedAttributes.isEmpty»«",\n"»«
@@ -203,13 +204,13 @@ def String foreignKey(Reference it, Boolean manyToManyRelationTable) {
 			«opposite.getListIndexColumnName()» «getListIndexDatabaseType()»,
 		«ENDIF»
 		«it.getForeignKeyName()» «it.getForeignKeyType()»«IF manyToManyRelationTable»,
-			FOREIGN KEY («it.getForeignKeyName()») REFERENCES «to.getRootExtends().getDatabaseName()»(«to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»«ENDIF»'''
+			FOREIGN KEY («it.getForeignKeyName()») REFERENCES «to.getRootExtends().getDatabaseName()»(«to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite !== null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»«ENDIF»'''
 }
 
 def dispatch String foreignKeyAlter(DomainObject it) {
 	'''
 		«it.references.filter(r | !r.transient && !r.many && r.to.hasOwnDatabaseRepresentation()).filter[e | !(e.isOneToOne() && e.isInverse())].map[foreignKeyAlter(it)].join»
-		«it.references.filter(r | !r.transient && r.many && r.opposite == null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyAlter(it)].join»
+		«it.references.filter(r | !r.transient && r.many && r.opposite === null && r.isInverse() && (r.to.hasOwnDatabaseRepresentation())).map[uniManyForeignKeyAlter(it)].join»
 	'''
 }
 
@@ -217,7 +218,7 @@ def dispatch String foreignKeyAlter(Reference it) {
 	'''
 	-- Reference from «from.name».«getForeignKeyName(it)» to «to.name»
 	ALTER TABLE «from.getDatabaseName()» ADD CONSTRAINT FK_«truncateLongDatabaseName(from.getDatabaseName(), getDatabaseName(it))»
-		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()»(«to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite != null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»;
+		FOREIGN KEY («getForeignKeyName(it)») REFERENCES «to.getRootExtends().getDatabaseName()»(«to.getRootExtends().getIdAttribute().getDatabaseName()»)« IF (opposite !== null) && opposite.isDbOnDeleteCascade()» ON DELETE CASCADE«ENDIF»;
 	'''
 }
 

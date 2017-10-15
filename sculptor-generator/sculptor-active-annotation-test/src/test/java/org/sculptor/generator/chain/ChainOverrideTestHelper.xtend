@@ -28,7 +28,7 @@ class ChainOverrideTestHelper {
 		Visibility expectedVisibility, TypeReference... parameterTypes
 	) {
 		val foundMethod = clazz.findDeclaredMethod(methodName, parameterTypes)
-		if (foundMethod == null) {
+		if (foundMethod === null) {
 			val matchingName = clazz.declaredMethods.findFirst[m|m.simpleName == methodName]
 			assertTrue('''«msg»: Could not find method «methodName» matching criteria.  Method matching name only: «matchingName»''', false)
 		}

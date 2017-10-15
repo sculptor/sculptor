@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.db
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class DbUnitTmpl {
@@ -35,15 +34,15 @@ class DbUnitTmpl {
 	@Inject extension Properties properties
 
 def String emptyDbunitTestData(Application it) {
-	fileOutput("dbunit/EmptyDatabase.xml", OutputSlot::TO_GEN_RESOURCES_TEST, '''
+	fileOutput("dbunit/EmptyDatabase.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 		«dbunitTestDataContent(it) »
 	'''
 	)
 }
 
 def String singleDbunitTestData(Application it) {
-	if (getDbUnitDataSetFile != null)
-		fileOutput(getDbUnitDataSetFile(), OutputSlot::TO_RESOURCES_TEST, dbunitTestDataContent(it))
+	if (getDbUnitDataSetFile !== null)
+		fileOutput(getDbUnitDataSetFile(), OutputSlot.TO_RESOURCES_TEST, dbunitTestDataContent(it))
 	else
 		""
 }

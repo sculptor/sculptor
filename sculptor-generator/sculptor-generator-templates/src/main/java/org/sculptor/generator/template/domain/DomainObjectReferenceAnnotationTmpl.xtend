@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.domain
 
 import javax.inject.Inject
@@ -116,7 +115,7 @@ def String oneReferenceJpaAnnotations(Reference it) {
 			«IF isJpaProviderHibernate() && cache»
 				@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
 			«ENDIF»
-			«IF isJpaProviderHibernate() && it.getHibernateCascadeType() != null»
+			«IF isJpaProviderHibernate() && it.getHibernateCascadeType() !== null»
 				@org.hibernate.annotations.Cascade(«it.getHibernateCascadeType()»)
 			«ENDIF»
 		«ENDIF»
@@ -208,9 +207,9 @@ def String oneToOneJpaAnnotation(Reference it) {
 		@javax.persistence.OneToOne(
 			«formatAnnotationParameters(<Object>newArrayList(!nullable, "optional", false,
 				isRefInverse(), "mappedBy", '"' + opposite.name + '"',
-				it.getCascadeType() != null, "cascade", it.getCascadeType(),
+				it.getCascadeType() !== null, "cascade", it.getCascadeType(),
 				isOrphanRemoval(it.getCascadeType()), "orphanRemoval", true,
-				it.getFetchType() != null, "fetch", it.getFetchType()
+				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
 		«IF !isRefInverse()»
 			@javax.persistence.JoinColumn(
@@ -220,7 +219,7 @@ def String oneToOneJpaAnnotation(Reference it) {
 			))»)
 			«IF isJpaProviderHibernate()»
 				@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.getDatabaseName(), it.getDatabaseName())»")
-				«IF it.getHibernateFetchType() != null»
+				«IF it.getHibernateFetchType() !== null»
 					@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
 				«ENDIF»
 			«ENDIF»
@@ -232,8 +231,8 @@ def String manyToOneJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.ManyToOne(
 		«formatAnnotationParameters(<Object>newArrayList(!nullable, "optional", false,
-			it.getCascadeType() != null, "cascade", it.getCascadeType(),
-			it.getFetchType() != null, "fetch", it.getFetchType()
+			it.getCascadeType() !== null, "cascade", it.getCascadeType(),
+			it.getFetchType() !== null, "fetch", it.getFetchType()
 		))»)
 		«IF !it.hasOpposite() || !opposite.isList()»
 			@javax.persistence.JoinColumn(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
@@ -247,7 +246,7 @@ def String manyToOneJpaAnnotation(Reference it) {
 				«ELSE»
 					@org.hibernate.annotations.ForeignKey(name = "FK_«truncateLongDatabaseName(from.getDatabaseName(), it.getDatabaseName())»")
 				«ENDIF»
-				«IF it.getHibernateFetchType() != null»
+				«IF it.getHibernateFetchType() !== null»
 					@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
 				«ENDIF»
 			«ELSEIF isJpaProviderOpenJpa()»
@@ -285,7 +284,7 @@ def dispatch String attributeOverride(Attribute it, String columnPrefix, String 
 			column = @javax.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + getDatabaseName(columnPrefix, it) + '"',
 				!(referenceIsNullable || (!referenceIsNullable && nullable)), "nullable", false,
-				it.getDatabaseLength() != null, "length", it.getDatabaseLength()
+				it.getDatabaseLength() !== null, "length", it.getDatabaseLength()
 			))»))
 	'''
 }
@@ -388,16 +387,16 @@ def String manyReferenceJpaAnnotations(Reference it) {
 				«IF it.isList() && it.hasHint("orderColumn")»
 					@javax.persistence.OrderColumn(name="«it.getListIndexColumnName()»")
 				«ENDIF»
-				«IF orderBy != null»
+				«IF orderBy !== null»
 					@javax.persistence.OrderBy("«orderBy»")
 				«ENDIF»
 				«IF isJpaProviderHibernate() && cache»
 					@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
 				«ENDIF»
-				«IF isJpaProviderHibernate() && it.getHibernateFetchType() != null»
+				«IF isJpaProviderHibernate() && it.getHibernateFetchType() !== null»
 					@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
 				«ENDIF»
-				«IF isJpaProviderHibernate() && it.getHibernateCascadeType() != null»
+				«IF isJpaProviderHibernate() && it.getHibernateCascadeType() !== null»
 					@org.hibernate.annotations.Cascade(«it.getHibernateCascadeType()»)
 				«ENDIF»
 			«ELSEIF ((hasOwnDatabaseRepresentation(from) && to.isEmbeddable()) ||
@@ -414,10 +413,10 @@ def String manyReferenceJpaAnnotations(Reference it) {
 def String oneToManyJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.OneToMany(
-			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
+			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() !== null, "cascade", it.getCascadeType(),
 				isOrphanRemoval(it.getCascadeType(), it), "orphanRemoval", true,
 				it.hasOpposite() && (getRefCollectionType() != "list"), "mappedBy", '"' + opposite?.name + '"',
-				it.getFetchType() != null, "fetch", it.getFetchType()
+				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
 		«IF isJpaProviderHibernate() && !isRefInverse()»
 			@org.hibernate.annotations.ForeignKey(
@@ -447,7 +446,7 @@ def String elementCollectionJpaAnnotation(Reference it) {
 		/* nested element collections are not allowed by jpa, some provider may support this, we not */
 		/* TODO: add a constraint for to avoid nested element collections */
 			@javax.persistence.ElementCollection(
-				«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() != null, "fetch", it.getFetchType()))»)
+				«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() !== null, "fetch", it.getFetchType()))»)
 	'''
 }
 
@@ -465,9 +464,9 @@ def String elementCollectionTableJpaAnnotation(Reference it) {
 def String manyToManyJpaAnnotation(Reference it) {
 	'''
 		@javax.persistence.ManyToMany(
-			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() != null, "cascade", it.getCascadeType(),
+			«formatAnnotationParameters(<Object>newArrayList(it.getCascadeType() !== null, "cascade", it.getCascadeType(),
 				isRefInverse(), "mappedBy", '"' + opposite?.name + '"',
-				it.getFetchType() != null, "fetch", it.getFetchType()
+				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
 		«IF !isRefInverse()»
 			@javax.persistence.JoinTable(

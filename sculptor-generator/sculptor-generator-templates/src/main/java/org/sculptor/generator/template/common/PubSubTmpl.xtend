@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.common
 
 import javax.inject.Inject
@@ -31,12 +30,12 @@ class PubSubTmpl {
 	@Inject extension Properties properties
 
 	def String publishAnnotation(Publish it) {
-		val eventTypeClass = if (it.eventType == null) null else eventType.getDomainPackage() + "." + eventType.name + ".class"
+		val eventTypeClass = if (it.eventType === null) null else eventType.getDomainPackage() + "." + eventType.name + ".class"
 		'''
 		«formatAnnotationParameters("@" + fw("event.annotation.Publish"), <Object>newArrayList(
-				eventTypeClass != null, "eventType", eventTypeClass,
-				topic != null, "topic", '"' + topic + '"',
-				eventBus != null, "eventBus", '"' + eventBus + '"'
+				eventTypeClass !== null, "eventType", eventTypeClass,
+				topic !== null, "topic", '"' + topic + '"',
+				eventBus !== null, "eventBus", '"' + eventBus + '"'
 			))»
 		'''
 	}
@@ -44,8 +43,8 @@ class PubSubTmpl {
 	def String subscribeAnnotation(Subscribe it) {
 		'''
 		«formatAnnotationParameters("@" + fw("event.annotation.Subscribe"), <Object>newArrayList(
-				topic != null, "topic", '"' + topic + '"',
-				eventBus != null, "eventBus", '"' + eventBus + '"'
+				topic !== null, "topic", '"' + topic + '"',
+				eventBus !== null, "eventBus", '"' + eventBus + '"'
 			)) »
 		'''
 	}

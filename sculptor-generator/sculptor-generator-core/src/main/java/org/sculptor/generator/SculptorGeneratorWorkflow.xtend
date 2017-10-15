@@ -34,8 +34,6 @@ import org.eclipse.xtext.validation.AbstractValidationDiagnostic
 import org.eclipse.xtext.validation.CheckMode
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
-import org.sculptor.generator.SculptorGeneratorContext
-import org.sculptor.generator.SculptorGeneratorException
 import org.sculptor.generator.SculptorGeneratorIssue.SculptorGeneratorIssueImpl
 import org.sculptor.generator.SculptorGeneratorIssue.Severity
 import org.sculptor.generator.configuration.MutableConfigurationProvider
@@ -91,8 +89,8 @@ class SculptorGeneratorWorkflow {
 				val dslApp = getApplication()
 				if (validateApplication(dslApp)) {
 					val app = transformAndModifyApplication(dslApp)
-					if (app != null) {
-						if (generateCode(app) != null) {
+					if (app !== null) {
+						if (generateCode(app) !== null) {
 							return true
 						}
 					}
@@ -104,7 +102,7 @@ class SculptorGeneratorWorkflow {
 	}
 
 	protected def updateConfiguration(Properties properties) {
-		if (properties != null) {
+		if (properties !== null) {
 			LOG.debug("Updating configuration with {}", properties)
 			properties.stringPropertyNames.forEach[key|configuration.setString(key, properties.getProperty(key))]
 		}
@@ -143,10 +141,10 @@ class SculptorGeneratorWorkflow {
 						for (import : contents.imports) {
 							val app = contents.app
 							LOG.debug(
-								"Application" + if (app.basePackage != null && !app.basePackage.empty)
+								"Application" + (if (app.basePackage !== null && !app.basePackage.empty)
 									" '{}'"
 								else
-									"Part '{}' imports resource URI '{}'", app.name, import.importURI)
+									"Part '{}'") +" imports resource URI '{}'", app.name, import.importURI)
 							newUris.add(import.importURI)
 						}
 					}
@@ -166,7 +164,7 @@ class SculptorGeneratorWorkflow {
 			val issues = provider.resourceValidator.validate(it, CheckMode.ALL, null)
 			issues.forall [
 				val message = "Resource validation error \"" + it.message + "\" in line " + it.lineNumber +
-					if(it.uriToProblem != null) " of " + it.uriToProblem.trimFragment else ""
+					if(it.uriToProblem !== null) " of " + it.uriToProblem.trimFragment else ""
 				switch it.severity {
 					case ERROR: {
 						SculptorGeneratorContext.addIssue(
@@ -192,7 +190,7 @@ class SculptorGeneratorWorkflow {
 			for (EObject obj : resource.contents) {
 				if (obj instanceof DslModel) {
 					val model = obj
-					if (mainApp == null) {
+					if (mainApp === null) {
 						mainApp = model.app
 					} else {
 						mainApp.modules.addAll(model.app.modules)
@@ -200,7 +198,7 @@ class SculptorGeneratorWorkflow {
 				}
 			}
 		}
-		if (mainApp != null) {
+		if (mainApp !== null) {
 			LOG.debug("Found application '{}'", mainApp.name)
 		} else {
 			SculptorGeneratorContext.addIssue(
@@ -229,12 +227,12 @@ class SculptorGeneratorWorkflow {
 		LOG.debug("Transforming application '{}'", application.name)
 		var transformedApplication = runAction("org.sculptor.generator.transform.DslTransformation.transform",
 			application) as Application
-		if (transformedApplication != null) {
+		if (transformedApplication !== null) {
 			LOG.debug("Modifying transformed application '{}'", transformedApplication.name)
 			transformedApplication = runAction("org.sculptor.generator.transform.Transformation.modify",
 				transformedApplication) as Application
 		}
-		if (transformedApplication == null) {
+		if (transformedApplication === null) {
 			SculptorGeneratorContext.addIssue(
 				new SculptorGeneratorIssueImpl(Severity.ERROR,
 					"Transformation and modification of application '" + application.name + "' failed"))
@@ -274,7 +272,7 @@ class SculptorGeneratorWorkflow {
 				(diagnostic).sourceEObject
 			else
 				null
-		if (eObject != null) {
+		if (eObject !== null) {
 			val message = "Model validation error \"" + diagnostic.getMessage() + "\" at " +
 				EmfFormatter.objPath(eObject)
 			switch diagnostic.severity {
@@ -286,7 +284,7 @@ class SculptorGeneratorWorkflow {
 					SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.INFO, message))
 			}
 		}
-		if (diagnostic.getChildren() != null) {
+		if (diagnostic.getChildren() !== null) {
 			for (Diagnostic childDiagnostic : diagnostic.getChildren()) {
 				logDiagnostic(childDiagnostic)
 			}

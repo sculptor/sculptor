@@ -46,7 +46,7 @@ def String mongoDbMapper(DomainObject it) {
 }
 
 def String mongoDbMapperSubclass(DomainObject it) {
-	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper"), OutputSlot::TO_SRC, '''
+	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper"), OutputSlot.TO_SRC, '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
 
@@ -63,7 +63,7 @@ def String mongoDbMapperSubclass(DomainObject it) {
 }
 
 def String mongoDbMapperBase(DomainObject it) {
-	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), OutputSlot::TO_GEN_SRC, '''
+	fileOutput(javaFileName(getMapperPackage(module) + "." + name + "Mapper" + (if (it.hasHint("gapMapper")) "Base" else "")), OutputSlot.TO_GEN_SRC, '''
 	«javaHeader()»
 	package «getMapperPackage(module)»;
 
@@ -71,7 +71,7 @@ def String mongoDbMapperBase(DomainObject it) {
 
 	public «IF it.hasHint("gapMapper")»abstract «ENDIF»class «name»Mapper«IF it.hasHint("gapMapper")»Base«ENDIF» implements «fw("accessimpl.mongodb.DataMapper")»<«getRootExtends(it).getDomainPackage()».«getRootExtends(it).name», com.mongodb.DBObject> {
 
-	«IF ^extends != null»
+	«IF ^extends !== null»
 		«discriminator(it)»
 	«ENDIF»
 		
@@ -130,7 +130,7 @@ def String getInstance(DomainObject it) {
 
 def String discriminator(DomainObject it) {
 	'''
-		public static final String «it.getRootExtends().inheritance.discriminatorColumnName()» = «IF discriminatorColumnValue == null»«it.getDomainPackage()».«name».class.getSimpleName()«ELSE»"«discriminatorColumnValue»"«ENDIF»;
+		public static final String «it.getRootExtends().inheritance.discriminatorColumnName()» = «IF discriminatorColumnValue === null»«it.getDomainPackage()».«name».class.getSimpleName()«ELSE»"«discriminatorColumnValue»"«ENDIF»;
 	'''
 }
 
@@ -231,7 +231,7 @@ def String toDomain(DomainObject it) {
 		«ENDFOR»
 
 		// Single reference in constructor param, persistent, and should be included in aggregate
-		«FOR p : nonEnumReferenceConstructorParameters .filter(e | !e.many && e.to.isPersistent() && e.opposite == null && (e.isBasicTypeReference() || !e.isUnownedReference()))»
+		«FOR p : nonEnumReferenceConstructorParameters .filter(e | !e.many && e.to.isPersistent() && e.opposite === null && (e.isBasicTypeReference() || !e.isUnownedReference()))»
 			«p.getTypeName()» «p.name» = null;
 			if (from.containsField("«p.getDatabaseName()»")) {
 				«p.name» = 
@@ -259,14 +259,14 @@ def String toDomain(DomainObject it) {
 			}
 		«ENDIF»
 		«val uuid = it.getAllAttributes().findFirst(e|e.isUuid())»
-		«IF uuid != null»
+		«IF uuid !== null»
 			if (from.containsField("«uuid.getDatabaseName()»")) {
 				«fw("accessimpl.mongodb.IdReflectionUtil")».internalSetUuid(result, (String) from.get("«uuid.getDatabaseName()»"));
 			}
 		«ENDIF»
 		«FOR att : it.getAllAttributes().filter[e | !(e.isUuid() || e.name == "id" || constructorParameters.contains(e))]»
 			if (from.containsField("«att.getDatabaseName()»")) {
-				«IF att.collectionType != null »
+				«IF att.collectionType !== null »
 					result.set«att.name.toFirstUpper()»(new «att.getImplTypeName()»((java.util.Collection) from.get("«att.getDatabaseName()»")));
 				«ELSEIF att.isJodaTemporal() »
 					result.set«att.name.toFirstUpper()»(«fw("accessimpl.mongodb." + (if (att.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toDomain((java.util.Date)from.get("«att.getDatabaseName()»")));
@@ -283,7 +283,7 @@ def String toDomain(DomainObject it) {
 		«ENDFOR»
 
 		// Single reference not in constructor param, persistent, and should be included in aggregate
-		«FOR ref : allNonEnumNonConstructorReferences .filter(e | !e.many && e.to.isPersistent() && e.opposite == null && (e.isBasicTypeReference() || !e.isUnownedReference()))»
+		«FOR ref : allNonEnumNonConstructorReferences .filter(e | !e.many && e.to.isPersistent() && e.opposite === null && (e.isBasicTypeReference() || !e.isUnownedReference()))»
 			if (from.containsField("«ref.getDatabaseName()»")) {
 				result.set«ref.name.toFirstUpper()»(
 				«ref.to.module.getMapperPackage()».«ref.to.name»Mapper.getInstance().toDomain(
@@ -380,8 +380,8 @@ def String toData(DomainObject it) {
 
 	'''
 	@Override
-	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» «IF it.^extends == null»from«ELSE»inFrom«ENDIF») {
-		«IF ^extends != null»
+	public com.mongodb.DBObject toData(«it.getRootExtends().getDomainPackage()».«it.getRootExtends().name» «IF it.^extends === null»from«ELSE»inFrom«ENDIF») {
+		«IF ^extends !== null»
 			«it.getDomainPackage()».«name» from = («it.getDomainPackage()».«name») inFrom;
 		«ENDIF»
 		«fromNullCheck(it)»
@@ -394,12 +394,12 @@ def String toData(DomainObject it) {
 			}
 		«ENDIF»
 
-		«IF it.^extends != null»
+		«IF it.^extends !== null»
 			result.put("«it.getRootExtends().inheritance.discriminatorColumnName()»", «it.getRootExtends().inheritance.discriminatorColumnName()»);
 		«ENDIF»
 
 		«FOR att : it.getAllAttributes().filter[e | !(e.name == "id" || e.transient)]»
-			«IF att.collectionType != null»
+			«IF att.collectionType !== null»
 				result.put("«att.getDatabaseName()»", new java.util.ArrayList<Object>(from.«att.getGetAccessor()»()));
 			«ELSEIF att.isJodaTemporal()»
 				result.put("«att.getDatabaseName()»", «fw("accessimpl.mongodb." + (if (att.type == "Date") "JodaLocalDate" else "JodaDateTime")  + "Mapper")».getInstance().toData(from.«att.getGetAccessor()»()));
@@ -412,7 +412,7 @@ def String toData(DomainObject it) {
 			result.put("«enumRef.getDatabaseName()»", from.«enumRef.getGetAccessor()»() == null ? null : from.«enumRef.getGetAccessor()»().name());
 		«ENDFOR»
 
-		«FOR ref : allNonEnumNonTransientReferences .filter(e | e.isBasicTypeReference() || (!e.many && e.bothEndsInSameAggregateRoot() && e.opposite == null))»
+		«FOR ref : allNonEnumNonTransientReferences .filter(e | e.isBasicTypeReference() || (!e.many && e.bothEndsInSameAggregateRoot() && e.opposite === null))»
 			result.put("«ref.getDatabaseName()»", 
 				«ref.to.module.getMapperPackage()».«ref.to.name»Mapper.getInstance().toData(
 					from.get«ref.name.toFirstUpper()»()));

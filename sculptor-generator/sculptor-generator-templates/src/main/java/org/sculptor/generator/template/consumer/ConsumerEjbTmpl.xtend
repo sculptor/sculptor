@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.consumer
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Consumer
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ConsumerEjbTmpl {
@@ -46,7 +45,7 @@ class ConsumerEjbTmpl {
 
 	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanImplBase(Consumer it) {
-		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + getSuffix("Impl") + "Base"), OutputSlot::TO_GEN_SRC, '''
+		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + getSuffix("Impl") + "Base"), OutputSlot.TO_GEN_SRC, '''
 		«javaHeader()»
 		package «getConsumerPackage(it)»;
 
@@ -106,7 +105,7 @@ class ConsumerEjbTmpl {
 			@javax.ejb.ActivationConfigProperty(propertyName="destinationType",
 			propertyValue="javax.jms.Queue"),
 			@javax.ejb.ActivationConfigProperty(propertyName="destination",
-			propertyValue="«IF channel == null || channel == ""»queue/«name»Queue«ELSE»«channel»«ENDIF»")
+			propertyValue="«IF channel === null || channel == ""»queue/«name»Queue«ELSE»«channel»«ENDIF»")
 		})
 		'''
 	}
@@ -163,7 +162,7 @@ class ConsumerEjbTmpl {
 
 	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanImplSubclass(Consumer it) {
-		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + getSuffix("Impl")), OutputSlot::TO_SRC, '''
+		fileOutput(javaFileName(getConsumerPackage(it) + "." + name + getSuffix("Impl")), OutputSlot.TO_SRC, '''
 		«javaHeader()»
 		package «getConsumerPackage(it)»;
 

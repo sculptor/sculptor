@@ -52,7 +52,7 @@ class CompositeConfigurationProvider implements ConfigurationProvider {
 
 	override getString(String key) {
 		val provider = getFirstProviderWithKey(key)
-		if (provider == null) {
+		if (provider === null) {
 			throw new MissingResourceException("Missing string configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}
@@ -61,7 +61,7 @@ class CompositeConfigurationProvider implements ConfigurationProvider {
 
 	override getBoolean(String key) {
 		val provider = getFirstProviderWithKey(key)
-		if (provider == null) {
+		if (provider === null) {
 			throw new MissingResourceException("Missing boolean configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}
@@ -70,7 +70,7 @@ class CompositeConfigurationProvider implements ConfigurationProvider {
 
 	override getInt(String key) {
 		val provider = getFirstProviderWithKey(key)
-		if (provider == null) {
+		if (provider === null) {
 			throw new MissingResourceException("Missing int configuration '" + key + "'",
 				"CompositeConfigurationProvider", key)
 		}

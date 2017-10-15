@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.sculptor.generator.template.common
 
 import javax.inject.Inject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
@@ -25,7 +25,6 @@ import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Module
 import sculptormetamodel.Operation
-import org.sculptor.generator.chain.ChainOverridable
 
 @ChainOverridable
 class ExceptionTmpl {
@@ -48,7 +47,7 @@ class ExceptionTmpl {
 	}
 	
 	def String applicationException(Module it, String exceptionName) {
-		fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot::TO_GEN_SRC, '''
+		fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot.TO_GEN_SRC, '''
 		«javaHeader()»
 		package «it.getExceptionPackage()»;
 
@@ -75,7 +74,7 @@ class ExceptionTmpl {
 	
 	
 	def String webServiceApplicationException(Module it, String exceptionName) {
-		fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot::TO_GEN_SRC, '''
+		fileOutput(javaFileName(it.getExceptionPackage() + "." + exceptionName), OutputSlot.TO_GEN_SRC, '''
 		«javaHeader()»
 		package «it.getExceptionPackage()»;
 
@@ -125,7 +124,7 @@ class ExceptionTmpl {
 	
 	def String throwsDecl(Operation it) {
 		'''
-			«IF (it.getThrows() != null && !it.getThrows().isEmpty)»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
+			«IF (it.getThrows() !== null && !it.getThrows().isEmpty)»throws «FOR exc : it.exceptions SEPARATOR ", "»«exc»«ENDFOR»«ENDIF»
 		'''
 	}
 	
