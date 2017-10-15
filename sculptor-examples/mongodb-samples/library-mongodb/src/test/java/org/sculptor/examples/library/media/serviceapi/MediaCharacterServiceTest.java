@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,13 +37,7 @@ public class MediaCharacterServiceTest extends AbstractJUnit4SpringContextTests 
 
 	@After
 	public void dropDatabase() {
-		Set<String> names = dbManager.getDB().getCollectionNames();
-		for (String each : names) {
-			if (!each.startsWith("system")) {
-				dbManager.getDB().getCollection(each).drop();
-			}
-		}
-		// dbManager.getDB().dropDatabase();
+		dbManager.getDB().dropDatabase();
 	}
 
 	@Override

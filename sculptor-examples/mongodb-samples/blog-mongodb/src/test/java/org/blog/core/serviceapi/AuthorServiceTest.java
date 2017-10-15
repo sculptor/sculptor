@@ -2,8 +2,6 @@ package org.blog.core.serviceapi;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Set;
-
 import org.blog.core.domain.Author;
 import org.junit.After;
 import org.junit.Before;
@@ -46,13 +44,7 @@ public class AuthorServiceTest extends AbstractJUnit4SpringContextTests implemen
 
 	@After
 	public void dropDatabase() {
-		Set<String> names = dbManager.getDB().getCollectionNames();
-		for (String each : names) {
-			if (!each.startsWith("system")) {
-				dbManager.getDB().getCollection(each).drop();
-			}
-		}
-		// dbManager.getDB().dropDatabase();
+		dbManager.getDB().dropDatabase();
 	}
 
 	@Test

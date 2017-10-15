@@ -6,7 +6,6 @@ import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.ge
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.blog.core.domain.Blog;
 import org.blog.core.domain.BlogPost;
@@ -68,13 +67,7 @@ public class BlogPostServiceTest extends AbstractJUnit4SpringContextTests implem
 
 	@After
 	public void dropDatabase() {
-		Set<String> names = dbManager.getDB().getCollectionNames();
-		for (String each : names) {
-			if (!each.startsWith("system")) {
-				dbManager.getDB().getCollection(each).drop();
-			}
-		}
-		// dbManager.getDB().dropDatabase();
+		dbManager.getDB().dropDatabase();
 	}
 
 	private int countRowsInDBCollection(String name) {

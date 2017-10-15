@@ -8,7 +8,6 @@ import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.ge
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
@@ -65,13 +64,7 @@ public class PersonServiceTest extends AbstractJUnit4SpringContextTests implemen
 
 	@After
 	public void dropDatabase() {
-		Set<String> names = dbManager.getDB().getCollectionNames();
-		for (String each : names) {
-			if (!each.startsWith("system")) {
-				dbManager.getDB().getCollection(each).drop();
-			}
-		}
-		// dbManager.getDB().dropDatabase();
+		dbManager.getDB().dropDatabase();
 	}
 
 	private int countRowsInDBCollection(String name) {

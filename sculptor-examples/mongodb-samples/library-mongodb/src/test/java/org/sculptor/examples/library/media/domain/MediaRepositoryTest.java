@@ -50,13 +50,7 @@ public class MediaRepositoryTest extends AbstractJUnit4SpringContextTests {
 
 	@After
 	public void dropDatabase() {
-		Set<String> names = dbManager.getDB().getCollectionNames();
-		for (String each : names) {
-			if (!each.startsWith("system")) {
-				dbManager.getDB().getCollection(each).drop();
-			}
-		}
-		// dbManager.getDB().dropDatabase();
+		dbManager.getDB().dropDatabase();
 	}
 
 	private int countRowsInDBCollection(String name) {

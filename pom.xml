@@ -107,7 +107,7 @@
 		<hibernate-version>4.2.18.Final</hibernate-version>
 		<hibernate-validator-version>4.3.2.Final</hibernate-validator-version>
 		<appengine-version>1.9.18</appengine-version>
-		<mongodb-version>2.11.4</mongodb-version>
+		<mongodb-version>2.14.3</mongodb-version>
 		<drools-version>6.1.0.Final</drools-version>
 		<camel-version>2.14.1</camel-version>
 		<activemq-version>5.10.0</activemq-version>
