@@ -121,7 +121,7 @@ class SpringTmplExtension extends SpringTmpl {
 				mongodb.url2=
 				mongodbOptions.connectionsPerHost=10
 				mongodbOptions.threadsAllowedToBlockForConnectionMultiplier=5
-				mongodbOptions.connectTimeout=0
+				mongodbOptions.connectTimeout=10000
 				mongodbOptions.socketTimeout=0
 				mongodbOptions.autoConnectRetry=false
 			«ENDIF»
