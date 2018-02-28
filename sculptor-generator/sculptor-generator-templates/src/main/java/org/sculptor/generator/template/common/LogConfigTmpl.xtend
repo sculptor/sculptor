@@ -19,6 +19,7 @@ package org.sculptor.generator.template.common
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
+import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 
@@ -26,10 +27,13 @@ import sculptormetamodel.Application
 class LogConfigTmpl {
 
 	@Inject extension Helper helper
+	@Inject extension Properties properties
 
 	def String logbackConfig(Application it) {
 		logbackXml(it)
-		logbackTestXml(it)
+		if (isTestToBeGenerated()) {
+			logbackTestXml(it)
+		}
 	}
 
 	def String logbackXml(Application it) {
