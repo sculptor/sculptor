@@ -12,6 +12,6 @@ public class SculptorPostgreSql82Dialect extends PostgreSQL82Dialect {
 		registerFunction("week", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(week from ?1)"));
 		registerFunction("quarter", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(quarter from ?1)"));
 		registerFunction("dow", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(isodow from ?1)"));
-		registerFunction("doy", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(year from ?1)"));
+		registerFunction("doy", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(doy from ?1)"));
 	}
 }
