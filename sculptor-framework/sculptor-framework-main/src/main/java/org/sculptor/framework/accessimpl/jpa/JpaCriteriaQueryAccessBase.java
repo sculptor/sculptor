@@ -342,7 +342,6 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @return
 	 */
 	private Predicate preparePredicate(Path<?> path, String property, Object value) {
-
 		path = getPath(path, property);
 
 		if (value == null) {
@@ -467,11 +466,15 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	}
 
 	protected Path<?> getPath(Path<?> fromPath, String property) {
+		return getPath(fromPath, property, true);
+	}
+
+	protected Path<?> getPath(Path<?> fromPath, String property, boolean enforceJoin) {
 		if (property == null) {
 			return null;
 		}
 		if (isNestedProperty(property)) {
-			return getPathForNestedProperty(fromPath, property);
+			return getPathForNestedProperty(fromPath, property, enforceJoin);
 		}
 		return getPathForSimpleProperty(fromPath, property);
 	}
@@ -487,14 +490,14 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		return fromPath.get(simpleProperty);
 	}
 
-	private Path<?> getPathForNestedProperty(Path<?> fromPath, String nestedProperties) {
+	private Path<?> getPathForNestedProperty(Path<?> fromPath, String nestedProperties, boolean enforceExplicit) {
 		Path<?> path = fromPath;
 		List<String> properties = Arrays.asList(nestedProperties.split("\\."));
 		List<String> investPath = new ArrayList<String>();
 		for (Iterator<String> iterator = properties.iterator(); iterator.hasNext();) {
 			String property = iterator.next();
 			investPath.add(property);
-			if (isExplicitJoinNeeded(path, property) && iterator.hasNext()) {
+			if ( (enforceExplicit || isExplicitJoinNeeded(path, property)) && iterator.hasNext()) {
 				path = getExplicitJoinForPath(fromPath, investPath);
 			} else {
 				path = getPathForSimpleProperty(path, property);

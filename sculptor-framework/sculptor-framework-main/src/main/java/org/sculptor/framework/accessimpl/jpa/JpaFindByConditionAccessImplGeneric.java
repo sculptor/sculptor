@@ -81,7 +81,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
     protected List<Predicate> preparePredicates() {
         List<Predicate> predicates = new ArrayList<Predicate>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
-            Predicate predicate = preparePredicate(criteria);
+            Predicate predicate = preparePredicate(criteria, false);
             if (predicate != null) {
                 predicates.add(predicate);
             }
@@ -127,7 +127,11 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
         if (!selections.isEmpty()) {
         	setFetchEager(null);
-			criteriaQuery.multiselect(selections);
+            if (selections.size() == 1) {
+                criteriaQuery.select((Selection<? extends R>) selections.get(0));
+            } else {
+                criteriaQuery.multiselect(selections);
+            }
         }
     }
 
@@ -260,11 +264,10 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
      * @return
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Predicate preparePredicate(ConditionalCriteria criteria) {
-
+    private Predicate preparePredicate(ConditionalCriteria criteria, boolean forceJoin) {
         CriteriaBuilder builder = getCriteriaBuilder();
         Root<T> root = getRoot();
-        Path<?> path = getPath(root, criteria.getPropertyFullName());
+        Path<?> path = getPath(root, criteria.getPropertyFullName(), forceJoin);
 
         ConditionalCriteria.Operator operator = criteria.getOperator();
         if (Operator.Equal.equals(operator)) {
@@ -304,29 +307,29 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         } else if (Operator.Between.equals(operator)) {
             return builder.between((Expression<Comparable>) path, (Comparable) criteria.getFirstOperant(), (Comparable) criteria.getSecondOperant());
         } else if (Operator.Not.equals(operator)) {
-            return builder.not(preparePredicate((ConditionalCriteria) criteria.getFirstOperant()));
+            return builder.not(preparePredicate((ConditionalCriteria) criteria.getFirstOperant(), false));
         } else if (Operator.Or.equals(operator) && criteria.getFirstOperant() instanceof List<?>) {
-        	Predicate disjunction = builder.disjunction();
             List<ConditionalCriteria> list = (List<ConditionalCriteria>) criteria.getFirstOperant();
-            for (ConditionalCriteria condition : list) {
-                disjunction = builder.or(disjunction, preparePredicate(condition));
+            List<Predicate> resultPredicates = new ArrayList<>();
+            for (ConditionalCriteria condition : (List<ConditionalCriteria>) criteria.getFirstOperant()) {
+                resultPredicates.add(preparePredicate(condition, true));
             }
-            return disjunction;
+			return builder.or(resultPredicates.toArray(new Predicate[resultPredicates.size()]));
         } else if (Operator.Or.equals(operator)) {
             return builder.or(
-                    preparePredicate((ConditionalCriteria) criteria.getFirstOperant()),
-                    preparePredicate((ConditionalCriteria) criteria.getSecondOperant()));
+                    preparePredicate((ConditionalCriteria) criteria.getFirstOperant(), true),
+                    preparePredicate((ConditionalCriteria) criteria.getSecondOperant(), true));
         } else if (Operator.And.equals(operator) && criteria.getFirstOperant() instanceof List<?>) {
             Predicate conjunction = builder.conjunction();
             List<ConditionalCriteria> list = (List<ConditionalCriteria>) criteria.getFirstOperant();
             for (ConditionalCriteria condition : list) {
-                conjunction = builder.and(conjunction, preparePredicate(condition));
+                conjunction = builder.and(conjunction, preparePredicate(condition, false));
             }
             return conjunction;
         } else if (Operator.And.equals(operator)) {
             return builder.and(
-                    preparePredicate((ConditionalCriteria) criteria.getFirstOperant()),
-                    preparePredicate((ConditionalCriteria) criteria.getSecondOperant()));
+                    preparePredicate((ConditionalCriteria) criteria.getFirstOperant(), false),
+                    preparePredicate((ConditionalCriteria) criteria.getSecondOperant(), false));
         } else if (Operator.In.equals(operator)) {
             if (criteria.getFirstOperant() instanceof Collection<?>) {
                 return path.in((Collection<?>) criteria.getFirstOperant());
