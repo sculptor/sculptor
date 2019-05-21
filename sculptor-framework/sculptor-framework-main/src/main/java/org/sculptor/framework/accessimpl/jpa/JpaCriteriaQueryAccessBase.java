@@ -259,7 +259,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		for (SingularAttribute attribute : singularAttributes) {
 
 			// exclude properties
-			if (getConfig().getExcludeProperties().contains(attribute)) {
+			if (getConfig().getExcludeProperties().contains(attribute.getName())) {
 				continue;
 			}
 
