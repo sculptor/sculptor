@@ -36,7 +36,7 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!-- make sure our code only has 1.7 dependencies -->
+				<!-- make sure our code only has dependencies for the specified target java version -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
 			</plugin>

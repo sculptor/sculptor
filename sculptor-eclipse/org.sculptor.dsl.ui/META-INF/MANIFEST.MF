@@ -25,7 +25,7 @@ Require-Bundle: org.sculptor.dsl;visibility:=reexport,
  org.eclipse.xtend.lib;resolution:=optional
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.sculptor.dsl.ui.contentassist,
  org.sculptor.dsl.ui.internal,
  org.sculptor.dsl.ui.quickfix
