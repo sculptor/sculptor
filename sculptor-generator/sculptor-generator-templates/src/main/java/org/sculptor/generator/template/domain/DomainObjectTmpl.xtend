@@ -36,17 +36,17 @@ import sculptormetamodel.Trait
 @ChainOverridable
 class DomainObjectTmpl {
 
-	private static final Logger LOG = LoggerFactory.getLogger(typeof(DomainObjectTmpl))
+	static final Logger LOG = LoggerFactory.getLogger(typeof(DomainObjectTmpl))
 
-	@Inject private var ExceptionTmpl exceptionTmpl
-	@Inject private var DomainObjectPropertiesTmpl domainObjectPropertiesTmpl
-	@Inject private var DomainObjectNamesTmpl domainObjectNamesTmpl
-	@Inject private var DomainObjectConstructorTmpl domainObjectConstructorTmpl
-	@Inject private var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
-	@Inject private var DomainObjectTraitTmpl domainObjectTraitTmpl
-	@Inject private var DomainObjectAttributeTmpl domainObjectAttributeTmpl
-	@Inject private var DomainObjectReferenceTmpl domainObjectReferenceTmpl
-	@Inject private var DomainObjectKeyTmpl domainObjectKeyTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
+	@Inject var DomainObjectPropertiesTmpl domainObjectPropertiesTmpl
+	@Inject var DomainObjectNamesTmpl domainObjectNamesTmpl
+	@Inject var DomainObjectConstructorTmpl domainObjectConstructorTmpl
+	@Inject var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
+	@Inject var DomainObjectTraitTmpl domainObjectTraitTmpl
+	@Inject var DomainObjectAttributeTmpl domainObjectAttributeTmpl
+	@Inject var DomainObjectReferenceTmpl domainObjectReferenceTmpl
+	@Inject var DomainObjectKeyTmpl domainObjectKeyTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

@@ -35,7 +35,7 @@ import sculptormetamodel.Service
 import sculptormetamodel.ValueObject
 
 @ChainOverridable
-public class UmlGraphHelper {
+class UmlGraphHelper {
 	@Inject var SingularPluralConverter singularPluralConverter
 
 	@Inject extension PropertiesBase propertiesBase

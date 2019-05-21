@@ -36,11 +36,11 @@ import static extension org.sculptor.generator.chain.ChainOverrideHelper.*
  */
 @Target(ElementType.TYPE)
 @Active(typeof(ChainOverridableProcessor))
-public annotation ChainOverridable {}
+annotation ChainOverridable {}
 
 class ChainOverridableProcessor extends AbstractClassProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverridableProcessor))
+	static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverridableProcessor))
 
 	override doRegisterGlobals(ClassDeclaration annotatedClass, RegisterGlobalsContext context) {
 		context.registerInterface(annotatedClass.methodIndexesName)

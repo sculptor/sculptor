@@ -24,7 +24,7 @@ import static org.junit.Assert.*
 
 class ChainOverrideTestHelper {
 	
-	public static def assertMethodInfo(String msg, ClassDeclaration clazz, String methodName,
+	static def assertMethodInfo(String msg, ClassDeclaration clazz, String methodName,
 		Visibility expectedVisibility, TypeReference... parameterTypes
 	) {
 		val foundMethod = clazz.findDeclaredMethod(methodName, parameterTypes)

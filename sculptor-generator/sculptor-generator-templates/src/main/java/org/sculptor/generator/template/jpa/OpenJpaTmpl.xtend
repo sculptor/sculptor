@@ -29,7 +29,7 @@ import sculptormetamodel.Application
 @ChainOverridable
 class OpenJpaTmpl {
 
-	@Inject private var OracleDDLTmpl oracleDDLTmpl
+	@Inject var OracleDDLTmpl oracleDDLTmpl
 
 	@Inject extension DbHelperBase dbHelperBase
 	@Inject extension DbHelper dbHelper

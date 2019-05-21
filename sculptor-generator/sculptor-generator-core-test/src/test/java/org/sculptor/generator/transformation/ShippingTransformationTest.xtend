@@ -28,7 +28,6 @@ import org.sculptor.dsl.sculptordsl.DslModel
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.chain.ChainOverrideAwareInjector
 import org.sculptor.generator.configuration.Configuration
-import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.HelperBase
@@ -47,8 +46,6 @@ class ShippingTransformationTest extends XtextTest {
 
 	static val BASE_PACKAGE = "org.sculptor.example.shipping"
 
-	extension Helper helper
-
 	extension HelperBase helperBase
 	
 	var DslApplication model
@@ -64,7 +61,6 @@ class ShippingTransformationTest extends XtextTest {
 			"generator-tests/shipping/sculptor-generator.properties");
 
 		val injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
-		helper = injector.getInstance(typeof(Helper))
 		helperBase = injector.getInstance(typeof(HelperBase))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
 		transformationProvider = injector.getProvider(typeof(Transformation))

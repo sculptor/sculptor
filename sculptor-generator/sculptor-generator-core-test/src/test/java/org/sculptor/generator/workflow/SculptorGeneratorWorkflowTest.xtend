@@ -30,7 +30,7 @@ import static org.junit.Assert.*
 
 class SculptorGeneratorWorkflowTest {
 
-	private val static CONFIG_DIR = "workflow-tests/"
+	val static CONFIG_DIR = "workflow-tests/"
 
 	@Test
 	def void assertRunWorkflow() {

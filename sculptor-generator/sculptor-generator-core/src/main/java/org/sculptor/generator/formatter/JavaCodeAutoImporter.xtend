@@ -64,7 +64,7 @@ class JavaCodeAutoImporter {
 		return source
 	}
 
-	private var Map<String, String> compilerOptionsMap
+	var Map<String, String> compilerOptionsMap
 
 	def getCompilerOptions() {
 		if (compilerOptionsMap === null) {

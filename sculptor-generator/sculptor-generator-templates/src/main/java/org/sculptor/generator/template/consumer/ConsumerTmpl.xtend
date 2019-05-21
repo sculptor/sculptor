@@ -29,10 +29,10 @@ import sculptormetamodel.Consumer
 @ChainOverridable
 class ConsumerTmpl {
 
-	@Inject private var PubSubTmpl pubSubTmpl
-	@Inject private var ConsumerEjbTmpl consumerEjbTmpl
-	@Inject private var ConsumerEjbTestTmpl consumerEjbTestTmpl
-	@Inject private var ConsumerTestTmpl consumerTestTmpl
+	@Inject var PubSubTmpl pubSubTmpl
+	@Inject var ConsumerEjbTmpl consumerEjbTmpl
+	@Inject var ConsumerEjbTestTmpl consumerEjbTestTmpl
+	@Inject var ConsumerTestTmpl consumerTestTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

@@ -30,11 +30,11 @@ import sculptormetamodel.DomainObject
 @ChainOverridable
 class JPATmpl {
 
-	@Inject private var HibernateTmpl hibernateTmpl
-	@Inject private var EclipseLinkTmpl eclipseLinkTmpl
-	@Inject private var DataNucleusTmpl dataNucleusTmpl
-	@Inject private var OpenJpaTmpl openJpaTmpl
-	@Inject private var PropertiesBase propBase
+	@Inject var HibernateTmpl hibernateTmpl
+	@Inject var EclipseLinkTmpl eclipseLinkTmpl
+	@Inject var DataNucleusTmpl dataNucleusTmpl
+	@Inject var OpenJpaTmpl openJpaTmpl
+	@Inject var PropertiesBase propBase
 
 	@Inject extension DbHelper dbHelper
 	@Inject extension Helper helper

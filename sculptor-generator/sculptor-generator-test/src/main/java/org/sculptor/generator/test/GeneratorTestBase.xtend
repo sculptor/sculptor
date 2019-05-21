@@ -36,8 +36,8 @@ abstract class GeneratorTestBase {
 
 	val static LOG = LoggerFactory.getLogger(GeneratorTestBase)
 
-	private val static CONFIG_DIR = "generator-tests/"
-	private val static OUTPUT_DIR = "target/sculptor-generator-tests/"
+	val static CONFIG_DIR = "generator-tests/"
+	val static OUTPUT_DIR = "target/sculptor-generator-tests/"
 
 	protected val static TO_SRC = "/src/main/java"
 	protected val static TO_RESOURCES = "/src/main/resources"
@@ -54,7 +54,7 @@ abstract class GeneratorTestBase {
       * This is the directory where xtend template output will be generated to
       */
     @Accessors(PUBLIC_GETTER)
-	private var File outputDir
+	var File outputDir
 
 	new(String testName) {
 		outputDir = new File(OUTPUT_DIR, testName)

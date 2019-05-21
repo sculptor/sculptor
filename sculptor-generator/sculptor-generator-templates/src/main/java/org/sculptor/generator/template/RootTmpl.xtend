@@ -43,24 +43,24 @@ import sculptormetamodel.Application
 @ChainOverridable
 class RootTmpl {
 
-	@Inject private var AccessObjectTmpl accessObjectTmpl
-	@Inject private var ConsumerTmpl consumerTmpl
-	@Inject private var DatasourceTmpl datasourceTmpl
-	@Inject private var DbUnitTmpl dbUnitTmpl
-	@Inject private var DDLTmpl dDLTmpl
-	@Inject private var DomainObjectTmpl domainObjectTmpl
-	@Inject private var ExceptionTmpl exceptionTmpl
-	@Inject private var HibernateTmpl hibernateTmpl
-	@Inject private var JPATmpl jPATmpl
-	@Inject private var LogConfigTmpl logConfigTmpl
-	@Inject private var ModelDocTmpl modelDocTmpl
-	@Inject private var RepositoryTmpl repositoryTmpl
-	@Inject private var ResourceTmpl resourceTmpl
-	@Inject private var RestWebTmpl restWebTmpl
-	@Inject private var ServiceEjbTestTmpl serviceEjbTestTmpl
-	@Inject private var SpringTmpl springTmpl
-	@Inject private var UMLGraphTmpl uMLGraphTmpl
-	@Inject private var ServiceTmpl serviceTmpl
+	@Inject var AccessObjectTmpl accessObjectTmpl
+	@Inject var ConsumerTmpl consumerTmpl
+	@Inject var DatasourceTmpl datasourceTmpl
+	@Inject var DbUnitTmpl dbUnitTmpl
+	@Inject var DDLTmpl dDLTmpl
+	@Inject var DomainObjectTmpl domainObjectTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
+	@Inject var HibernateTmpl hibernateTmpl
+	@Inject var JPATmpl jPATmpl
+	@Inject var LogConfigTmpl logConfigTmpl
+	@Inject var ModelDocTmpl modelDocTmpl
+	@Inject var RepositoryTmpl repositoryTmpl
+	@Inject var ResourceTmpl resourceTmpl
+	@Inject var RestWebTmpl restWebTmpl
+	@Inject var ServiceEjbTestTmpl serviceEjbTestTmpl
+	@Inject var SpringTmpl springTmpl
+	@Inject var UMLGraphTmpl uMLGraphTmpl
+	@Inject var ServiceTmpl serviceTmpl
 
 	@Inject extension Properties properties
 	@Inject extension Helper helper

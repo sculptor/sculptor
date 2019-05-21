@@ -53,7 +53,7 @@ class GeneratorModelTestFixtures {
 	protected var ResourceSet resourceSet;
 
 	@Inject
-	private var Registry serviceProviderRegistry;
+	var Registry serviceProviderRegistry;
 
 	val String resourceRoot
 
@@ -78,7 +78,7 @@ class GeneratorModelTestFixtures {
 	@Accessors(PUBLIC_GETTER)
 	protected EObject rootElement;
 
-	public new() {
+	new() {
 		this("/");
 	}
 

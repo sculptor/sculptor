@@ -78,7 +78,7 @@ import sculptormetamodel.Trait
  */
 class DslTransformation {
 
-	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
+	static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

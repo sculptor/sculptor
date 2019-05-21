@@ -32,11 +32,11 @@ class CompositeConfigurationProvider implements ConfigurationProvider {
 
 	val List<ConfigurationProvider> providers
 
-	public new(ConfigurationProvider... providers) {
+	new(ConfigurationProvider... providers) {
 		this(Arrays.asList(providers))
 	}
 
-	public new(Collection<ConfigurationProvider> providers) {
+	new(Collection<ConfigurationProvider> providers) {
 		this.providers = new CopyOnWriteArrayList<ConfigurationProvider>(providers)
 	}
 

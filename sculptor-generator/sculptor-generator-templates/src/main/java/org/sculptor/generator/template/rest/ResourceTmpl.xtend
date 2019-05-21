@@ -32,7 +32,7 @@ import sculptormetamodel.ResourceOperation
 @ChainOverridable
 class ResourceTmpl {
 
-	@Inject private var ExceptionTmpl exceptionTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

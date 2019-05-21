@@ -23,21 +23,21 @@ import java.util.Properties
  */
 class MutablePropertiesConfigurationProvider extends PropertiesConfigurationProvider implements MutableConfigurationProvider {
 
-	public new(Properties properties) {
+	new(Properties properties) {
 		super(properties)
 	}
 
 	/**
 	 * Loads properties as resource from current threads classloader or this class' classloader.  
 	 */
-	public new(String propertiesResourceName) {
+	new(String propertiesResourceName) {
 		super(propertiesResourceName)
 	}
 
 	/**
 	 * Loads properties as resource from current threads classloader or this class' classloader.  
 	 */
-	public new(String propertiesResourceName, boolean optional) {
+	new(String propertiesResourceName, boolean optional) {
 		super(propertiesResourceName, optional)
 	}
 

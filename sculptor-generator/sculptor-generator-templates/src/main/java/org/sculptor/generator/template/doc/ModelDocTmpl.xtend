@@ -50,7 +50,7 @@ import sculptormetamodel.ValueObject
 @ChainOverridable
 class ModelDocTmpl {
 
-	@Inject private var ModelDocCssTmpl modelDocCssTmpl
+	@Inject var ModelDocCssTmpl modelDocCssTmpl
 
 	@Inject extension DbHelperBase dbHelperBase
 	@Inject extension Helper helper

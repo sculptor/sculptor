@@ -31,11 +31,11 @@ import sculptormetamodel.ServiceOperation
 @ChainOverridable
 class ServiceTmpl {
 
-	@Inject private var ExceptionTmpl exceptionTmpl
-	@Inject private var PubSubTmpl pubSubTmpl
-	@Inject private var ServiceEjbTestTmpl serviceEjbTestTmpl
-	@Inject private var ServiceTestTmpl serviceTestTmpl
-	@Inject private var ServiceEjbTmpl serviceEjbTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
+	@Inject var PubSubTmpl pubSubTmpl
+	@Inject var ServiceEjbTestTmpl serviceEjbTestTmpl
+	@Inject var ServiceTestTmpl serviceTestTmpl
+	@Inject var ServiceEjbTmpl serviceEjbTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

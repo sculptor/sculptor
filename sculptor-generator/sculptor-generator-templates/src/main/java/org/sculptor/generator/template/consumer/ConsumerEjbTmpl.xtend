@@ -27,7 +27,7 @@ import sculptormetamodel.Consumer
 @ChainOverridable
 class ConsumerEjbTmpl {
 
-	@Inject private var ConsumerTmpl consumerTmpl
+	@Inject var ConsumerTmpl consumerTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

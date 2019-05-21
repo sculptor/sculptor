@@ -26,7 +26,7 @@ import sculptormetamodel.Application
 @ChainOverridable
 class RestWebConfigTmpl {
 
-	@Inject private var RestWebContextTmpl contextTmpl
+	@Inject var RestWebContextTmpl contextTmpl
 
 	@Inject extension Helper helper
 	@Inject extension Properties properties

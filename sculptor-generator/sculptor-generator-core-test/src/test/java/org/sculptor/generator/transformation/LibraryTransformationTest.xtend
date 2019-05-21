@@ -29,7 +29,6 @@ import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.chain.ChainOverrideAwareInjector
 import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
@@ -47,12 +46,8 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @InjectWith(typeof(SculptordslInjectorProvider))
 class LibraryTransformationTest extends XtextTest {
 	
-	extension Helper helper
-
 	extension HelperBase helperBase
-
 	extension DbHelper dbHelper
-
 	extension DbHelperBase dbHelperBase
 
 	var DslApplication model
@@ -68,7 +63,6 @@ class LibraryTransformationTest extends XtextTest {
 			"generator-tests/transformation/sculptor-generator.properties")
 
 		val injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
-		helper = injector.getInstance(typeof(Helper))
 		helperBase = injector.getInstance(typeof(HelperBase))
 		dbHelper = injector.getInstance(typeof(DbHelper))
 		dbHelperBase = injector.getInstance(typeof(DbHelperBase))

@@ -34,7 +34,7 @@ class DataNucleusTmpl {
 	@Inject extension Helper helper
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
-	@Inject private var OracleDDLTmpl oracleDDLTmpl
+	@Inject var OracleDDLTmpl oracleDDLTmpl
 
 def String dataNucleus(Application it) {
 	'''

@@ -36,7 +36,7 @@ import sculptormetamodel.Reference
 import sculptormetamodel.SculptormetamodelFactory
 
 @ChainOverridable
-public class DbHelper {
+class DbHelper {
 	@Inject extension PropertiesBase propertiesBase
 	@Inject extension Properties properties
 	@Inject extension DbHelperBase dbHelperBase

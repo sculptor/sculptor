@@ -33,9 +33,9 @@ import sculptormetamodel.RepositoryOperation
 @ChainOverridable
 class RepositoryTmpl {
 
-	@Inject private var ExceptionTmpl exceptionTmpl
-	@Inject private var PubSubTmpl pubSubTmpl
-	@Inject private var AccessObjectFactoryTmpl accessObjectFactoryTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
+	@Inject var PubSubTmpl pubSubTmpl
+	@Inject var AccessObjectFactoryTmpl accessObjectFactoryTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

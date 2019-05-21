@@ -45,7 +45,7 @@ annotation ChainOverride {
 
 class ChainOverrideProcessor extends AbstractClassProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverrideProcessor))
+	static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverrideProcessor))
 
 	override doTransform(MutableClassDeclaration annotatedClass, extension TransformationContext context) {
 		LOG.debug("Processing class '" + annotatedClass.qualifiedName + "'")

@@ -31,21 +31,21 @@ class PropertiesConfigurationProvider implements ConfigurationProvider {
 
 	protected val Properties properties
 
-	public new(Properties properties) {
+	new(Properties properties) {
 		this.properties = properties
 	}
 
 	/**
 	 * Loads properties as resource from current threads classloader or this class' classloader.  
 	 */
-	public new(String propertiesResourceName) {
+	new(String propertiesResourceName) {
 		this(propertiesResourceName, false)
 	}
 
 	/**
 	 * Loads properties as resource from current threads classloader or this class' classloader.  
 	 */
-	public new(String propertiesResourceName, boolean optional) {
+	new(String propertiesResourceName, boolean optional) {
 		properties = new Properties
 
 		// Find class loader

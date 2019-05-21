@@ -79,7 +79,7 @@ DslConsumer :
   "Consumer" name=ID "{"
     ("hint" "=" hint=STRING)?
     (dependencies+=DslDependency)*
-    ("unmarshall to" ("@")?messageRoot=[DslDomainObject])?
+    ("unmarshall" "to" ("@")?messageRoot=[DslDomainObject])?
     (
      (("queueName" | "topicName") "=" channel=DslChannelIdentifier )? &
      (subscribe=DslSubscribe)?
