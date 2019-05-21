@@ -12,7 +12,7 @@
 	<description>Maven plugin for the Sculptor code generator</description>
 
 	<properties>
-        <maven-api-version>3.0.3</maven-api-version>
+        <maven-api-version>3.5.0</maven-api-version>
 		<mojo.java.target>${java-version}</mojo.java.target>
 	</properties>
 

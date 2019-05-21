@@ -121,10 +121,6 @@
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
 	</properties>
-
-	<prerequisites>
-		<maven>3.0.3</maven>
-	</prerequisites>
  
 	<profiles>
 		<profile>

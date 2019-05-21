@@ -29,7 +29,7 @@ Sculptor takes care of the technical details, the tedious repetitive work, and l
 To use Sculptor you need local installations of the following tools:
 
 * [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/) (1.8 or newer)
-* [Maven](http://maven.apache.org/download.html) (3.0.5 or newer)
+* [Maven](http://maven.apache.org/download.html) (3.5.0 or newer)
 * [Eclipse](http://eclipse.org/downloads/) (4.2 or newer) with [Xtext](http://www.eclipse.org/Xtext/download.html) (2.5.0 or newer)
 * (optional) [GraphViz](http://www.graphviz.org/) (2.2.8 or newer)
 
