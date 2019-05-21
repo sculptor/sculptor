@@ -118,9 +118,6 @@
 		<junit-version>4.12</junit-version>
 		<hsqldb-version>2.3.2</hsqldb-version>
 
-		<p2-repository-eclipse>http://download.eclipse.org/releases/${eclipse-release}</p2-repository-eclipse>
-		<p2-repository-eclipse-xtext>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/${xtext-version}</p2-repository-eclipse-xtext>
-
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
 	</properties>
@@ -192,18 +189,6 @@
 			<id>examples</id>
 			<modules>
 				<module>sculptor-examples</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>mirror</id>
-			<modules>
-				<module>devtools/eclipse-mirror</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>ide</id>
-			<modules>
-				<module>devtools/eclipse-ide</module>
 			</modules>
 		</profile>
 		<profile>
