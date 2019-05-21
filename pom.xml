@@ -83,7 +83,7 @@
 		<maven.compiler.target>${java-version}</maven.compiler.target>
 
 		<eclipse-release>oxygen/201710111001</eclipse-release>
-		<tycho-version>1.0.0</tycho-version>
+		<tycho-version>1.4.0</tycho-version>
 
 		<xtext-version>2.12.0</xtext-version>
 		<ecore-xtext-version>[1.2.0,)</ecore-xtext-version>
@@ -717,6 +717,51 @@
 									</pluginExecutionFilter>
 									<action>
 										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.eclipse.tycho
+										</groupId>
+										<artifactId>
+											tycho-packaging-plugin
+										</artifactId>
+										<versionRange>
+											[1.4.0,)
+										</versionRange>
+										<goals>
+											<goal>build-qualifier</goal>
+											<goal>
+												validate-version
+											</goal>
+											<goal>validate-id</goal>
+											<goal>
+												build-qualifier-aggregator
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.eclipse.tycho
+										</groupId>
+										<artifactId>
+											tycho-compiler-plugin
+										</artifactId>
+										<versionRange>
+											[1.4.0,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
