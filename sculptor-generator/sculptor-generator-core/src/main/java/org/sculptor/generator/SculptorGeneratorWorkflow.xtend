@@ -51,8 +51,8 @@ import sculptormetamodel.Application
  * <li>generate the code from the generator model
  * </ol>
  * 
- * Any problems occurring during workflow execution are stored as SculptorGeneratorIssue in
- * the SculptorGeneratorContext.
+ * Any problems occurring during workflow execution are stored as {@link SculptorGeneratorIssue} in
+ * the {@link SculptorGeneratorContext}.
  *  
  * @see #run(String)
  */
