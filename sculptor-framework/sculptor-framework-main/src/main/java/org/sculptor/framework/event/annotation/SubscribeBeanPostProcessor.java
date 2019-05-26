@@ -146,4 +146,9 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
 		this.beanFactory = (ListableBeanFactory) beanFactory;
 	}
 
+	@Override
+	public boolean requiresDestruction(Object bean) {
+		return true;
+	}
+
 }
