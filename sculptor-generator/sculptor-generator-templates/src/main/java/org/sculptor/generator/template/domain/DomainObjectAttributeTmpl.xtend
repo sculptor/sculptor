@@ -30,7 +30,7 @@ class DomainObjectAttributeTmpl {
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension Properties properties
-	@Inject private var DomainObjectAttributeAnnotationTmpl domainObjectAttributeAnnotationTmpl
+	@Inject var DomainObjectAttributeAnnotationTmpl domainObjectAttributeAnnotationTmpl
 
 def String attribute(Attribute it) {
 	'''

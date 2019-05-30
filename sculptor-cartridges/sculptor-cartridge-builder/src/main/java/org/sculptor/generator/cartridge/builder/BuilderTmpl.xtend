@@ -38,9 +38,9 @@ class BuilderTmpl {
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension Properties properties
-	@Inject private var DomainObjectAttributeTmpl domainObjectAttributeTmpl
-	@Inject private var DomainObjectReferenceTmpl domainObjectReferenceTmpl
-	@Inject private var DomainObjectConstructorTmpl domainObjectConstructorTmpl
+	@Inject var DomainObjectAttributeTmpl domainObjectAttributeTmpl
+	@Inject var DomainObjectReferenceTmpl domainObjectReferenceTmpl
+	@Inject var DomainObjectConstructorTmpl domainObjectConstructorTmpl
 
 def String builder(DomainObject it) {
 	fileOutput(javaFileName(it.getBuilderFqn()), OutputSlot.TO_GEN_SRC, '''

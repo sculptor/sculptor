@@ -28,7 +28,8 @@ import sculptormetamodel.SculptormetamodelFactory
 
 @ChainOverridable
 class RestTransformation {
-	private static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
+
+	static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

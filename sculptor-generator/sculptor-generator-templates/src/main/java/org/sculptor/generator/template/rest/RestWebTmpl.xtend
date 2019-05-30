@@ -9,9 +9,9 @@ import org.sculptor.generator.chain.ChainOverridable
 @ChainOverridable
 class RestWebTmpl {
 
-	@Inject private var RestWebConfigTmpl restWebConfigTmpl
-	@Inject private var RestWebCssTmpl restWebCssTmpl
-	@Inject private var RestWebJspTmpl restWebJspTmpl
+	@Inject var RestWebConfigTmpl restWebConfigTmpl
+	@Inject var RestWebCssTmpl restWebCssTmpl
+	@Inject var RestWebJspTmpl restWebJspTmpl
 
 	@Inject extension Helper helper
 	@Inject extension Properties properties

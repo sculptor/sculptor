@@ -31,17 +31,17 @@ import org.slf4j.LoggerFactory
  */
 class ChainOverrideAwareModule extends AbstractModule {
 
-	private static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverrideAwareModule))
+	static final Logger LOG = LoggerFactory.getLogger(typeof(ChainOverrideAwareModule))
 
-	private val List<? extends Class<?>> startClasses
-	private ConfigurationProvider configurationProvider
+	val List<? extends Class<?>> startClasses
+	ConfigurationProvider configurationProvider
 
-	public new(ConfigurationProvider configurationProvider, Class<?> startClass) {
+	new(ConfigurationProvider configurationProvider, Class<?> startClass) {
 		this.configurationProvider = configurationProvider
 		this.startClasses = #[startClass]
 	}
 
-	public new(ConfigurationProvider configurationProvider, Class<?>... startClasses) {
+	new(ConfigurationProvider configurationProvider, Class<?>... startClasses) {
 		this.configurationProvider = configurationProvider
 		this.startClasses = startClasses
 	}

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sculptor DSL UI
 Bundle-Vendor: Sculptor Team
-Bundle-Version: 3.1.1.qualifier
+Bundle-Version: 3.2.0.qualifier
 Bundle-SymbolicName: org.sculptor.dsl.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.sculptor.dsl;visibility:=reexport,
@@ -20,13 +20,19 @@ Require-Bundle: org.sculptor.dsl;visibility:=reexport,
  org.eclipse.core.resources,
  org.eclipse.xtend,
  org.eclipse.xpand,
- org.eclipse.ui,
- org.eclipse.xtext.xbase.lib,
- org.eclipse.xtend.lib;resolution:=optional
+ org.eclipse.ui,org.eclipse.xtext.xbase.lib;bundle-version="2.14.0",org.eclipse.xtend.lib;bundle-version="2.14.0";resolution:=optional
 Import-Package: org.apache.log4j,
- org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.sculptor.dsl.ui.contentassist,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.ui.codemining;resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.sculptor.dsl.ui,
+ org.sculptor.dsl.ui.contentassist,
+ org.sculptor.dsl.ui.hover,
  org.sculptor.dsl.ui.internal,
- org.sculptor.dsl.ui.quickfix
+ org.sculptor.dsl.ui.labeling,
+ org.sculptor.dsl.ui.outline,
+ org.sculptor.dsl.ui.quickfix,
+ org.sculptor.dsl.ui.resource,
+ org.sculptor.dsl.ui.wizard
 Bundle-Activator: org.sculptor.dsl.ui.internal.DslActivator
+Automatic-Module-Name: org.sculptor.dsl.ui

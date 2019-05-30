@@ -25,7 +25,7 @@ import sculptormetamodel.Repository
 @ChainOverride
 class RepositoryTmplExtension extends RepositoryTmpl {
 
-	@Inject private var MongoDbAccessObjectFactoryTmpl mongoDbAccessObjectFactoryTmpl
+	@Inject var MongoDbAccessObjectFactoryTmpl mongoDbAccessObjectFactoryTmpl
 
 	@Inject extension Properties properties
 

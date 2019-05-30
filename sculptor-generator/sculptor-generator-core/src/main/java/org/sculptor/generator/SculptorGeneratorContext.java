@@ -21,9 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class uses a {@link ThreadLocal} to hold a list of file created by the
- * code generator and a list of issues which came up during code generation.
- * 
+ * This class uses a {@link ThreadLocal} to hold a list of {@link File}s created
+ * by the code generator and a list of {@link SculptorGeneratorIssue}s which
+ * came up during code generation.
+ * <p>
  * <strong>After finishing with the file list call {@link #close()} to remove
  * the file list from the current thread. Otherwise this class is leaking
  * memory!!!</strong>

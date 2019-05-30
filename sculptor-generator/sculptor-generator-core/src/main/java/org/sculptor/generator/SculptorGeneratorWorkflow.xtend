@@ -51,8 +51,8 @@ import sculptormetamodel.Application
  * <li>generate the code from the generator model
  * </ol>
  * 
- * Any problems occurring during workflow execution are stored as SculptorGeneratorIssue in
- * the SculptorGeneratorContext.
+ * Any problems occurring during workflow execution are stored as {@link SculptorGeneratorIssue} in
+ * the {@link SculptorGeneratorContext}.
  *  
  * @see #run(String)
  */
@@ -140,11 +140,10 @@ class SculptorGeneratorWorkflow {
 					if (contents instanceof DslModel) {
 						for (import : contents.imports) {
 							val app = contents.app
-							LOG.debug(
-								"Application" + (if (app.basePackage !== null && !app.basePackage.empty)
-									" '{}'"
-								else
-									"Part '{}'") +" imports resource URI '{}'", app.name, import.importURI)
+							LOG.debug("Application" + (if (app.basePackage !== null && !app.basePackage.empty)
+								" '{}'"
+							else
+								"Part '{}'") + " imports resource URI '{}'", app.name, import.importURI)
 							newUris.add(import.importURI)
 						}
 					}
@@ -167,16 +166,13 @@ class SculptorGeneratorWorkflow {
 					if(it.uriToProblem !== null) " of " + it.uriToProblem.trimFragment else ""
 				switch it.severity {
 					case ERROR: {
-						SculptorGeneratorContext.addIssue(
-							new SculptorGeneratorIssueImpl(Severity.ERROR, message))
+						SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.ERROR, message))
 						return false
 					}
 					case WARNING:
-						SculptorGeneratorContext.addIssue(
-							new SculptorGeneratorIssueImpl(Severity.WARNING, message))
+						SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.WARNING, message))
 					default:
-						SculptorGeneratorContext.addIssue(
-							new SculptorGeneratorIssueImpl(Severity.INFO, message))
+						SculptorGeneratorContext.addIssue(new SculptorGeneratorIssueImpl(Severity.INFO, message))
 				}
 				true
 			]
@@ -202,8 +198,7 @@ class SculptorGeneratorWorkflow {
 			LOG.debug("Found application '{}'", mainApp.name)
 		} else {
 			SculptorGeneratorContext.addIssue(
-				new SculptorGeneratorIssueImpl(Severity.ERROR,
-					"No application found in resource set: " + resourceSet))
+				new SculptorGeneratorIssueImpl(Severity.ERROR, "No application found in resource set: " + resourceSet))
 		}
 		mainApp
 	}
@@ -260,9 +255,8 @@ class SculptorGeneratorWorkflow {
 			return actionMethod.invoke(actionObj, input)
 		} catch (Throwable t) {
 			SculptorGeneratorContext.addIssue(
-				new SculptorGeneratorIssueImpl(Severity.ERROR,
-					"Error running action '" + actionName + "': " +
-						if(t.cause instanceof SculptorGeneratorException) t.cause.message else t.message, t))
+				new SculptorGeneratorIssueImpl(Severity.ERROR, "Error running action '" + actionName + "': " +
+					if(t.cause instanceof SculptorGeneratorException) t.cause.message else t.message, t))
 		}
 		null
 	}

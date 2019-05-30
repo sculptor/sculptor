@@ -105,6 +105,7 @@ class CamelTmpl {
 		-->
 		<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
 			<property name="brokerURL" value="tcp://localhost:61616" />
+			<property name="trustAllPackages" value="true" />
 		</bean>
 		'''
 	}
@@ -116,6 +117,7 @@ class CamelTmpl {
 		-->
 		<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
 			<property name="brokerURL" value="vm://localhost?broker.persistent=false" />
+			<property name="trustAllPackages" value="true" />
 		</bean>
 		'''
 	}

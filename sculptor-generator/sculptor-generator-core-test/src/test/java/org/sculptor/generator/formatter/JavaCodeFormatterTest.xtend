@@ -26,7 +26,7 @@ import static org.junit.Assert.*
 
 class JavaCodeFormatterTest {
 
-	private var JavaCodeFormatter codeFormatter
+	var JavaCodeFormatter codeFormatter
 
 	@Before
 	def void setup() {

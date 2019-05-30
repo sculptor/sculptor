@@ -31,7 +31,7 @@ import com.google.inject.Injector;
  * Retrieves an instance of the generators internal workflow from the generators
  * guice-configured setup, executes it with the given model + generator
  * properties and returns a {@link SculptorGeneratorResult} instance (holding
- * lists of generated {@link File}s and {@link SculptorGeneratorIssue}
+ * lists of generated {@link File}s and {@link SculptorGeneratorIssue}s
  * instances).
  * 
  * @see SculptorGeneratorSetup#createInjectorAndDoEMFRegistration()

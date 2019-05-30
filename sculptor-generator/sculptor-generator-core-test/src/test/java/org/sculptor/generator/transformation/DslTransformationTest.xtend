@@ -40,7 +40,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @RunWith(typeof(JUnit4))
 class DslTransformationTest {
 
-	private static val SculptordslFactory FACTORY = SculptordslFactory.eINSTANCE
+	static val SculptordslFactory FACTORY = SculptordslFactory.eINSTANCE
 
 	extension Helper helper
 

@@ -29,12 +29,9 @@ import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.chain.ChainOverrideAwareInjector
 import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
-import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.Module
 
@@ -46,14 +43,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @InjectWith(typeof(SculptordslInjectorProvider))
 class CustomDatabaseNamingTest extends XtextTest {
 
-	extension Properties properties
-
-	extension Helper helper
-
-	extension HelperBase helperBase
-
 	extension DbHelper dbHelper
-
 	extension DbHelperBase dbHelperBase
 
 	var DslApplication model
@@ -76,9 +66,6 @@ class CustomDatabaseNamingTest extends XtextTest {
 
 		val injector = ChainOverrideAwareInjector.createInjector(
 			#[typeof(DslTransformation), typeof(Transformation)])
-		properties = injector.getInstance(typeof(Properties))
-		helper = injector.getInstance(typeof(Helper))
-		helperBase = injector.getInstance(typeof(HelperBase))
 		dbHelper = injector.getInstance(typeof(DbHelper))
 		dbHelperBase = injector.getInstance(typeof(DbHelperBase))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))
@@ -106,7 +93,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * Bidirectional one-to-many
      */
 	@Test
-	public def void assertReferenceToPhysicalMediaFromLibrary() {
+	def void assertReferenceToPhysicalMediaFromLibrary() {
 		val library = mediaModule.domainObjects.namedElement("Library")
 		val mediaRef = library.references.namedElement("media")
 		assertFalse(mediaRef.isInverse)
@@ -117,7 +104,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * Bidirectional many-to-one
      */
 	@Test
-	public def void assertReferenceToLibraryFromPhysicalMedia() {
+	def void assertReferenceToLibraryFromPhysicalMedia() {
 		val physicalMedia = mediaModule.domainObjects.namedElement("PhysicalMedia")
 
 		val libraryRef = physicalMedia.references.namedElement("library")
@@ -131,7 +118,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * Bidirectional many-to-many
      */
 	@Test
-	public def void assertReferenceToMediaFromPhysicalMedia() {
+	def void assertReferenceToMediaFromPhysicalMedia() {
 		val physicalMedia = mediaModule.domainObjects.namedElement("PhysicalMedia")
 		val mediaRef = physicalMedia.references.namedElement("media")
 		assertFalse(mediaRef.inverse)
@@ -153,7 +140,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * Bidirectional many-to-many
      */
 	@Test
-	public def void assertReferenceToPhysicalMediaFromMedia() {
+	def void assertReferenceToPhysicalMediaFromMedia() {
 		val media = mediaModule.domainObjects.namedElement("Media")
 		val physicalMediaRef = media.references.namedElement("physicalMedia")
 		assertTrue(physicalMediaRef.inverse)
@@ -176,7 +163,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * databaseTable="MEDIA_CHR"
      */
 	@Test
-	public def void assertReferencePlayedByFromMediaCharacter() {
+	def void assertReferencePlayedByFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter")
 		val playedByRef = mediaCharacter.references.namedElement("playedBy")
 		assertFalse(playedByRef.inverse)
@@ -195,7 +182,7 @@ class CustomDatabaseNamingTest extends XtextTest {
 	}
 
 	@Test
-	public def void assertReferenceToPersonFromMediaCharacter() {
+	def void assertReferenceToPersonFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter")
 		val personsRef = mediaCharacter.references.namedElement("persons")
 		assertFalse(personsRef.inverse)
@@ -217,7 +204,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * Unidirectional to-many without join table
      */
 	@Test
-	public def void assertReferenceToReviewFromMediaCharacter() {
+	def void assertReferenceToReviewFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter")
 		val reviewsRef = mediaCharacter.references.namedElement("reviews")
 		assertTrue(reviewsRef.inverse)
@@ -230,7 +217,7 @@ class CustomDatabaseNamingTest extends XtextTest {
      * List collection.
      */
 	@Test
-	public def void assertReferenceToCommentFromMediaCharacter() {
+	def void assertReferenceToCommentFromMediaCharacter() {
 		val mediaCharacter = mediaModule.domainObjects.namedElement("MediaCharacter")
 		val commentsRef = mediaCharacter.references.namedElement("comments")
 		assertTrue(commentsRef.inverse)

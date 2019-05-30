@@ -29,12 +29,9 @@ import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.chain.ChainOverrideAwareInjector
 import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.ext.DbHelper
-import org.sculptor.generator.ext.Helper
-import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.transform.DslTransformation
 import org.sculptor.generator.transform.Transformation
 import org.sculptor.generator.util.DbHelperBase
-import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Application
 import sculptormetamodel.Enum
 
@@ -46,14 +43,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 @InjectWith(typeof(SculptordslInjectorProvider))
 class EnumTransformationTest extends XtextTest {
 
-	extension Properties properties
-
-	extension Helper helper
-
-	extension HelperBase helperBase
-
 	extension DbHelper dbHelper
-
 	extension DbHelperBase dbHelperBase
 
 	var DslApplication model
@@ -69,9 +59,6 @@ class EnumTransformationTest extends XtextTest {
 			"generator-tests/transformation/sculptor-generator.properties")
 
 		val injector = ChainOverrideAwareInjector.createInjector(#[typeof(DslTransformation), typeof(Transformation)])
-		properties = injector.getInstance(typeof(Properties))
-		helper = injector.getInstance(typeof(Helper))
-		helperBase = injector.getInstance(typeof(HelperBase))
 		dbHelper = injector.getInstance(typeof(DbHelper))
 		dbHelperBase = injector.getInstance(typeof(DbHelperBase))
 		dslTransformProvider = injector.getProvider(typeof(DslTransformation))

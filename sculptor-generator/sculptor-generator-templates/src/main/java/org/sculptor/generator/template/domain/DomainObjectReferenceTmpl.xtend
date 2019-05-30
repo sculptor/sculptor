@@ -26,7 +26,7 @@ import sculptormetamodel.Reference
 @ChainOverridable
 class DomainObjectReferenceTmpl {
 
-	@Inject private var DomainObjectReferenceAnnotationTmpl domainObjectReferenceAnnotationTmpl
+	@Inject var DomainObjectReferenceAnnotationTmpl domainObjectReferenceAnnotationTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

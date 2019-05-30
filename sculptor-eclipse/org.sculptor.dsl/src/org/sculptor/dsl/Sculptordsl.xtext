@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 grammar org.sculptor.dsl.Sculptordsl with org.eclipse.xtext.common.Terminals
 
 generate sculptordsl "http://sculptor.org/dsl/sculptordsl"
-
 
 DslModel :
   (imports+=DslImport)*
   app=DslApplication;
 
 DslImport :
-	'import' importURI=STRING;
+  'import' importURI=STRING;
 
 DslApplication :
   (doc=STRING)?
   (("Application" name=ID "{"
     "basePackage" "=" basePackage=DslJavaIdentifier) |
-  ("ApplicationPart"  name=ID "{"))
-
+  ("ApplicationPart" name=ID "{"))
     (modules+=DslModule)*
   "}";
 
@@ -79,7 +76,7 @@ DslConsumer :
   "Consumer" name=ID "{"
     ("hint" "=" hint=STRING)?
     (dependencies+=DslDependency)*
-    ("unmarshall to" ("@")?messageRoot=[DslDomainObject])?
+    ("unmarshall" "to" ("@")?messageRoot=[DslDomainObject])?
     (
      (("queueName" | "topicName") "=" channel=DslChannelIdentifier )? &
      (subscribe=DslSubscribe)?
@@ -87,15 +84,13 @@ DslConsumer :
   "}";
 
 DslSubscribe :
-	"subscribe" "to" topic=DslChannelIdentifier ("eventBus" "=" eventBus=ID)?
-;
+  "subscribe" "to" topic=DslChannelIdentifier ("eventBus" "=" eventBus=ID)?;
 
 DslPublish :
-	"publish" (("@")?eventType=[DslEvent])? "to" topic=DslChannelIdentifier ("eventBus" "=" eventBus=ID)?
-;
+  "publish" (("@")?eventType=[DslEvent])? "to" topic=DslChannelIdentifier ("eventBus" "=" eventBus=ID)?;
 
 DslEvent :
-	DslDomainEvent | DslCommandEvent;
+  DslDomainEvent | DslCommandEvent;
 
 DslDomainObjectTypedElement :
   DslServiceOperation | DslRepositoryOperation | DslDomainObjectOperation | DslParameter;
@@ -110,17 +105,17 @@ DslServiceOperation :
 	  ("hint" "=" hint=STRING)? &
 	  (publish=DslPublish)?
     )
-    (delegateHolder=DslServiceOperationDelegate)? ";"
-;
+    (delegateHolder=DslServiceOperationDelegate)?
+  ";";
 
 DslServiceOperationDelegate :
-    DELEGATE ("@")? delegate=[DslServiceRepositoryOption]"."delegateOperation=[DslServiceRepositoryOperationOption];
+  DELEGATE ("@")? delegate=[DslServiceRepositoryOption]"."delegateOperation=[DslServiceRepositoryOperationOption];
 
 DslServiceRepositoryOption :
-	DslRepository | DslService;
+  DslRepository | DslService;
 
 DslServiceRepositoryOperationOption :
-	DslRepositoryOperation | DslServiceOperation;
+  DslRepositoryOperation | DslServiceOperation;
 
 DslResourceOperation :
   (doc=STRING)?
@@ -134,14 +129,14 @@ DslResourceOperation :
 	  ("path" "=" path=STRING)? &
 	  ("return" "=" returnString=STRING)?
     )
-    (delegateHolder=DslResourceOperationDelegate)? ";"
-;
+    (delegateHolder=DslResourceOperationDelegate)?
+  ";";
 
 DslResourceOperationDelegate :
-    DELEGATE ("@")? delegate=[DslService]"."delegateOperation=[DslServiceOperation];
+  DELEGATE ("@")? delegate=[DslService]"."delegateOperation=[DslServiceOperation];
 
 enum DslHttpMethod :
-	None | GET="GET" | POST="POST" | PUT="PUT" | DELETE="DELETE";
+  None | GET="GET" | POST="POST" | PUT="PUT" | DELETE="DELETE";
 
 DslRepositoryOperation :
   (doc=STRING)?
@@ -163,8 +158,8 @@ DslRepositoryOperation :
       (map?="map")? &
       (publish=DslPublish)?
     )
-    (delegateToAccessObject?=DELEGATE (("AccessObject") | (accessObjectName=ID)))? ";"
-;
+    (delegateToAccessObject?=DELEGATE (("AccessObject") | (accessObjectName=ID)))?
+  ";";
 
 DslParameter :
   (doc=STRING)?
@@ -298,7 +293,6 @@ DslTrait :
     ((attributes+=DslAttribute) |
      (references+=DslReference) |
      (operations+=DslDomainObjectOperation))*
-
   "}";
 
 DslDomainObjectOperation :
@@ -310,7 +304,7 @@ DslDomainObjectOperation :
       ("throws" throws=DslThrowsIdentifier)? &
 	  ("hint" "=" hint=STRING)?
     )
-    ";";
+  ";";
 
 DslDataTransferObject :
   (doc=STRING)?
@@ -370,7 +364,8 @@ DslAttribute :
      ("validate" "=" validate=STRING)? &
      (transient?="transient")? &
      ("databaseColumn" "=" databaseColumn=STRING)? &
-     ("databaseType" "=" databaseType=STRING)?) (";")?;
+     ("databaseType" "=" databaseType=STRING)?)
+  (";")?;
 
 DslReference :
   (doc=STRING)?
@@ -395,7 +390,7 @@ DslReference :
      ("orderby" "=" orderBy=STRING)? &
      ((orderColumn?="orderColumn") ("=" orderColumnName=STRING)?)? &
      (oppositeHolder=DslOppositeHolder)?)
-    (";")?;
+  (";")?;
 
 DslDtoAttribute :
   (doc=STRING)?
@@ -425,8 +420,8 @@ DslDtoAttribute :
      ("scriptAssert" "=" scriptAssert=STRING)? &
      ("url" "=" url=STRING)? &
      ("validate" "=" validate=STRING)? &
-     ("hint" "=" hint=STRING)?
-	) (";")?;
+     ("hint" "=" hint=STRING)?)
+  (";")?;
 
 DslDtoReference :
   (doc=STRING)?
@@ -440,8 +435,8 @@ DslDtoReference :
      ("size" "=" size=STRING)? &
      ((valid?="valid") ("=" validMessage=STRING)?)? &
      ("validate" "=" validate=STRING)? &
-     ("hint" "=" hint=STRING)?
-	) (";")?;
+     ("hint" "=" hint=STRING)?)
+  (";")?;
 
 DslOppositeHolder :
 	OPPOSITE opposite=[DslReference];
@@ -476,29 +471,30 @@ DslEnum :
 
 DslEnumAttribute :
   (doc=STRING)?
-  type=DslType name=ID (key?="key")? (";")?;
+  type=DslType name=ID (key?="key")?
+  (";")?;
 
 DslEnumValue :
   (doc=STRING)?
   name=ID ("(" parameters+=DslEnumParameter ("," parameters+=DslEnumParameter)* ")")?;
 
 DslEnumParameter :
-	((value=STRING) | (integerValue = INT));
+  ((value=STRING) | (integerValue = INT));
 
 DslAnyProperty :
-	DslProperty | DslDtoProperty;
+  DslProperty | DslDtoProperty;
 
 DslProperty :
-	DslAttribute | DslReference;
+  DslAttribute | DslReference;
 
 DslDtoProperty :
-	DslDtoAttribute | DslDtoReference;
+  DslDtoAttribute | DslDtoReference;
 
 enum DslInheritanceType :
-	JOINED="JOINED" | SINGLE_TABLE="SINGLE_TABLE";
+  JOINED="JOINED" | SINGLE_TABLE="SINGLE_TABLE";
 
 enum DslDiscriminatorType :
-	STRING="STRING" | CHAR="CHAR" | INTEGER="INTEGER";
+  STRING="STRING" | CHAR="CHAR" | INTEGER="INTEGER";
 
 DslType :
   ("String"|"int"|"Integer"|"long"|"Long"|"boolean"|"Boolean"|"Date"|"DateTime"|"Timestamp"|"BigDecimal"|"BigInteger"|
@@ -506,7 +502,7 @@ DslType :
   	DslJavaIdentifier);
 
 enum DslCollectionType :
-	None | Set="Set" | List="List" | Bag="Bag" | Collection="Collection";
+  None | Set="Set" | List="List" | Bag="Bag" | Collection="Collection";
 
 terminal DSL_MAP_COLLECTION_TYPE :
   "Map";

@@ -31,7 +31,7 @@ class MongoDbServiceTestTmpl {
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper
 	@Inject extension Properties properties
-	@Inject private var ServiceTestTmpl serviceTestTmpl
+	@Inject var ServiceTestTmpl serviceTestTmpl
 
 def String serviceJUnitSubclassMongoDb(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + "." + name + "Test"), OutputSlot.TO_SRC_TEST, '''

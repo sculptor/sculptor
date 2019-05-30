@@ -24,9 +24,9 @@ import sculptormetamodel.Application
 @ChainOverridable
 class DDLTmpl {
 
-	@Inject private var MysqlDDLTmpl mysqlDDLTmpl
-	@Inject private var OracleDDLTmpl oracleDDLTmpl
-	@Inject private var CustomDDLTmpl customDDLTmpl
+	@Inject var MysqlDDLTmpl mysqlDDLTmpl
+	@Inject var OracleDDLTmpl oracleDDLTmpl
+	@Inject var CustomDDLTmpl customDDLTmpl
 
 	@Inject extension PropertiesBase propertiesBase
 

@@ -75,9 +75,8 @@ Workflow {
 			fragment = ui.outline.OutlineTreeProviderFragment2 {}
 			fragment = ui.quickfix.QuickfixProviderFragment2 {}
 			fragment = ui.contentAssist.ContentAssistFragment2 {}
-			fragment = junit.Junit4Fragment2 {}
+			fragment = junit.JUnitFragment {}
 			fragment = ui.refactoring.RefactorElementNameFragment2 {}
-//			fragment = types.TypesGeneratorFragment2 {}
 			fragment = ui.templates.CodetemplatesGeneratorFragment2 {}
 			fragment = ui.compare.CompareFragment2 {}
 		}

@@ -41,7 +41,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -56,8 +55,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
-@Transactional
+@Transactional(transactionManager = "txManager")
 public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
         AbstractTransactionalJUnit4SpringContextTests {
 

@@ -15,8 +15,8 @@ import org.sculptor.dsl.sculptordsl.DslModel
 @RunWith(XtextRunner)
 @InjectWith(SculptordslInjectorProvider)
 class SculptordslParsingTest {
-	@Inject
-	ParseHelper<DslModel> parseHelper
+
+	@Inject ParseHelper<DslModel> parseHelper
 	
 	@Test
 	def void loadModel() {

@@ -32,9 +32,9 @@ import sculptormetamodel.ServiceOperation
 @ChainOverridable
 class ServiceEjbTmpl {
 
-	@Inject private var ExceptionTmpl exceptionTmpl
-	@Inject private var PubSubTmpl pubSubTmpl
-	@Inject private var ServiceTmpl serviceTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
+	@Inject var PubSubTmpl pubSubTmpl
+	@Inject var ServiceTmpl serviceTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

@@ -74,7 +74,7 @@ class JavaCodeFormatter {
 		formattedCode
 	}
 
-	private var CodeFormatter codeFormatter
+	var CodeFormatter codeFormatter
 
 	private def getCodeFormatter() {
 		if (codeFormatter === null) {

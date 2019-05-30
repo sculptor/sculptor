@@ -30,9 +30,9 @@ import sculptormetamodel.Trait
 @ChainOverridable
 class DomainObjectTraitTmpl {
 
-	@Inject private var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
-	@Inject private var DomainObjectTmpl domainObjectTmpl
-	@Inject private var ExceptionTmpl exceptionTmpl
+	@Inject var DomainObjectAnnotationTmpl domainObjectAnnotationTmpl
+	@Inject var DomainObjectTmpl domainObjectTmpl
+	@Inject var ExceptionTmpl exceptionTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

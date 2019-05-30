@@ -75,7 +75,7 @@ class Helper {
 	static val JAVA_EXT = ".java"
 	static val XTEND_EXT = ".xtend"
 
-	def public String fileOutput(String fileName, OutputSlot slot, String text) {
+	def String fileOutput(String fileName, OutputSlot slot, String text) {
 		val supportedLangExt = switch(fileName) {
 			case fileName.endsWith(JAVA_EXT) : JAVA_EXT
 			case fileName.endsWith(XTEND_EXT) : XTEND_EXT
@@ -140,7 +140,7 @@ class Helper {
 	}
 
 	// All DomainObjects in the Applications, including those belonging to external modules
-	def public Collection<DomainObject> getAllDomainObjects(Application app) {
+	def Collection<DomainObject> getAllDomainObjects(Application app) {
 		getAllDomainObjects(app, true)
 	}
 

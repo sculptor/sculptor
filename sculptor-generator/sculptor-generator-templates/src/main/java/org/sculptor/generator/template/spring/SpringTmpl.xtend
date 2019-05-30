@@ -36,10 +36,10 @@ import sculptormetamodel.Service
 @ChainOverridable
 class SpringTmpl {
 
-	@Inject private var CamelTmpl camelTmpl
-	@Inject private var DroolsTmpl droolsTmpl
-	@Inject private var SpringIntegrationTmpl springIntegrationTmpl
-	@Inject private var EhCacheTmpl ehcacheTmpl
+	@Inject var CamelTmpl camelTmpl
+	@Inject var DroolsTmpl droolsTmpl
+	@Inject var SpringIntegrationTmpl springIntegrationTmpl
+	@Inject var EhCacheTmpl ehcacheTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

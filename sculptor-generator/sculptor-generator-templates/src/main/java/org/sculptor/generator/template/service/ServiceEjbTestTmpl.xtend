@@ -28,7 +28,7 @@ import sculptormetamodel.Service
 @ChainOverridable
 class ServiceEjbTestTmpl {
 
-	@Inject private var ServiceTestTmpl serviceTestTmpl
+	@Inject var ServiceTestTmpl serviceTestTmpl
 
 	@Inject extension HelperBase helperBase
 	@Inject extension Helper helper

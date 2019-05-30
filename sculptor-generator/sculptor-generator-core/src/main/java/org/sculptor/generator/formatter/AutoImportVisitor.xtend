@@ -42,11 +42,11 @@ import static extension org.sculptor.generator.formatter.ASTNodeHelper.*
  */
 class AutoImportVisitor extends ASTVisitor {
 
-	private val CompilationUnitDeclaration compilationUnit
-	private val Set<String> imports = new HashSet
-	private val Set<String> importShortNames = new HashSet
-	private val Set<String> additionalImports = new HashSet
-	private var TextEdit textEdit = new MultiTextEdit
+	val CompilationUnitDeclaration compilationUnit
+	val Set<String> imports = new HashSet
+	val Set<String> importShortNames = new HashSet
+	val Set<String> additionalImports = new HashSet
+	var TextEdit textEdit = new MultiTextEdit
 
 	new(CompilationUnitDeclaration compilationUnit) {
 		this.compilationUnit = compilationUnit

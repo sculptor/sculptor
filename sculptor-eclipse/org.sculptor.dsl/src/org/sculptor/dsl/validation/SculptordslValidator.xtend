@@ -63,12 +63,12 @@ import org.eclipse.emf.ecore.EAttribute
  */
 class SculptordslValidator extends AbstractSculptordslValidator implements IssueCodes {
 
-	private val DIGITS_PATTERN = Pattern.compile("[0-9]+[0-9]*")
-	private val SUPPORTED_PRIMITIVE_TYPES = new HashSet<String>(asList("int", "long", "float", "double", "boolean"))
-	private val SUPPORTED_TEMPORAL_TYPES = new HashSet<String>(asList("Date", "DateTime", "Timestamp"))
-	private val SUPPORTED_NUMERIC_TYPES = new HashSet<String>(
+	val DIGITS_PATTERN = Pattern.compile("[0-9]+[0-9]*")
+	val SUPPORTED_PRIMITIVE_TYPES = new HashSet<String>(asList("int", "long", "float", "double", "boolean"))
+	val SUPPORTED_TEMPORAL_TYPES = new HashSet<String>(asList("Date", "DateTime", "Timestamp"))
+	val SUPPORTED_NUMERIC_TYPES = new HashSet<String>(
 		asList("int", "long", "float", "double", "Integer", "Long", "Float", "Double", "BigInteger", "BigDecimal"))
-	private val SUPPORTED_BOOLEAN_TYPES = new HashSet<String>(asList("Boolean", "boolean"))
+	val SUPPORTED_BOOLEAN_TYPES = new HashSet<String>(asList("Boolean", "boolean"))
 
 	@Check
 	def checkModuleNameStartsWithLowerCase(DslModule module) {

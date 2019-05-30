@@ -59,7 +59,6 @@ public class SimpleAppEngineTestEnvironment implements ApiProxy.Environment {
     }
 
 	@Override
-	@SuppressWarnings("deprecation")
     public String getRequestNamespace() {
         return "";
     }

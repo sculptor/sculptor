@@ -25,7 +25,7 @@ import sculptormetamodel.Service
 @ChainOverride
 class ServiceTmplExtension extends ServiceTmpl {
 
-	@Inject private var MongoDbServiceTestTmpl mongoDbServiceTestTmpl
+	@Inject var MongoDbServiceTestTmpl mongoDbServiceTestTmpl
 
 	@Inject extension MongoDbProperties mongoDbProperties
 	@Inject extension Properties properties
