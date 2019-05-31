@@ -1,84 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-<template name="module template" description="Snippet of module" id="module"
+<template name="Module template" description="Snippet of module" id="module"
     context="org.sculptor.dsl.Sculptordsl.DslModule" enabled="true">
-    Module ${name}${cursor} {
-    }
+Module ${name} {
+    ${cursor}
+}
 </template>
 
 <template name="Entity template" description="Snippet of Entity" id="Entity"
     context="org.sculptor.dsl.Sculptordsl.DslEntity" enabled="true">
-        Entity ${name}${cursor} {
-        }
+Entity ${name} {
+    ${cursor}
+}
 </template>
 
 <template name="ValueObject template" description="Snippet of ValueObject" id="ValueObject"
     context="org.sculptor.dsl.Sculptordsl.DslValueObject" enabled="true">
-        ValueObject ${name}${cursor} {
-        }
+ValueObject ${name} {
+    ${cursor}
+}
 </template>
 
 <template name="Repository operation template" description="Snippet of repository operation" id="RepositoryOperation"
     context="org.sculptor.dsl.Sculptordsl.DslRepositoryOperation" enabled="true">
-            List&lt;@${type:CrossReference('DslRepositoryOperation.domainObjectType')}&gt; ${name}${cursor}(String parameter); 
+List&lt;@${type:CrossReference('DslRepositoryOperation.domainObjectType')}&gt; ${name}(String parameter);${cursor} 
 </template>
 
 <template name="Service operation template" description="Snippet of service operation" id="ServiceOperation"
     context="org.sculptor.dsl.Sculptordsl.DslServiceOperation" enabled="true">
-            List&lt;@${type:CrossReference('DslServiceOperation.domainObjectType')}&gt; ${name}${cursor}(String parameter); 
+List&lt;@${type:CrossReference('DslServiceOperation.domainObjectType')}&gt; ${name}(String parameter);${cursor} 
 </template>
 
 <template name="Service operation delegation template" description="Snippet of delegating service operation" id="ServiceOperationDelegation"
     context="org.sculptor.dsl.Sculptordsl.DslServiceOperation" enabled="true">
-            ${name} delegates to SomeRepository.${name}${cursor}; 
+${name} delegates to SomeRepository.${name};${cursor}
 </template>
 
 <template name="Set template" description="Snippet of collection reference" id="SetReference"
     context="org.sculptor.dsl.Sculptordsl.DslReference" enabled="true">
-            - Set&lt;@${type:CrossReference('DslReference.domainObjectType')}&gt; ${name}${cursor} 
+- Set&lt;@${type:CrossReference('DslReference.domainObjectType')}&gt; ${name}${cursor}
 </template>
 
 <template name="List template" description="Snippet of collection reference" id="ListReference"
     context="org.sculptor.dsl.Sculptordsl.DslReference" enabled="true">
-            - List&lt;@${type:CrossReference('DslReference.domainObjectType')}&gt; ${name}${cursor} 
+- List&lt;@${type:CrossReference('DslReference.domainObjectType')}&gt; ${name}${cursor}
 </template>
 
 <template name="Bag template" description="Snippet of collection reference" id="BagReference"
     context="org.sculptor.dsl.Sculptordsl.DslReference" enabled="true">
-            - Bag&lt;@${type:CrossReference('DslReference.domainObjectType')}&gt; ${name} orderby="${cursor}" 
+- Bag&lt;@${type:CrossReference('DslReference.domainObjectType')}&gt; ${name} orderby="${cursor}" 
 </template>
 
-<template name="helloworld template" description="Snippet of module with Service and Entities" id="helloworld"
+<template name="Helloworld template" description="Snippet of module with Service and Entities" id="Helloworld"
     context="org.sculptor.dsl.Sculptordsl.DslModule" enabled="true">
-    Module helloworld {
-        Service PlanetService {
-            String sayHello(String planetName) throws PlanetNotFoundException;
-            protected findByKey => PlanetRepository.findByKey;
-            @Planet getPlanet(String planetName) throws PlanetNotFoundException;        
-        }
+Module helloworld {
+    Service PlanetService {
+        String sayHello(String planetName) throws PlanetNotFoundException;
+        protected findByKey => PlanetRepository.findByKey;
+        @Planet getPlanet(String planetName) throws PlanetNotFoundException;        
+    }
+    
+    Entity Planet {
+        gap
+        scaffold
+        String name key;
+        String message;
+        Integer diameter nullable min="1";
+        Integer population nullable min="0";
+        - Set&lt;@Moon&gt; moons opposite planet;            
         
-        Entity Planet {
-            gap
-            scaffold
-            String name key;
-            String message;
-            Integer diameter nullable min="1";
-            Integer population nullable min="0";
-            - Set&lt;@Moon&gt; moons opposite planet;            
-            
-            Repository PlanetRepository {
-                findByKey;
-                save;
-            }
-        }
-        
-        Entity Moon {
-            not aggregateRoot // belongs to Planet Aggregate
-            String name key;
-            Integer diameter nullable;
-            - @Planet planet opposite moons;
+        Repository PlanetRepository {
+            findByKey;
+            save;
         }
     }
+    
+    Entity Moon {
+        not aggregateRoot // belongs to Planet Aggregate
+        String name key;
+        Integer diameter nullable;
+        - @Planet planet opposite moons;
+    }
+}
 </template>
 
 </templates>
