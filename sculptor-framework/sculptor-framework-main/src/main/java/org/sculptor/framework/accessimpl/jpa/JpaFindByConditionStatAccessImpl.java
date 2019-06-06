@@ -89,42 +89,43 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 
 				for (ColumnStatType statType : statFlags) {
 					if (ColumnStatType.COUNT.equals(statType)) {
-						colResult.setCount((Long) row.get(i++));
+						colResult.setCount((Long) row.get(i));
 					} else if (ColumnStatType.MIN.equals(statType) && row.get(i) instanceof String) {
-						colResult.setMinString(row.get(i++).toString());
+						colResult.setMinString(row.get(i).toString());
 					} else if (ColumnStatType.MAX.equals(statType) && row.get(i) instanceof String) {
-						colResult.setMaxString(row.get(i++).toString());
+						colResult.setMaxString(row.get(i).toString());
 					} else if (ColumnStatType.MIN.equals(statType) && row.get(i) instanceof Date) {
-						colResult.setMin(new Double(((Date) row.get(i++)).getTime()));
+						colResult.setMin(new Double(((Date) row.get(i)).getTime()));
 					} else if (ColumnStatType.MAX.equals(statType) && row.get(i) instanceof Date) {
-						colResult.setMax(new Double(((Date) row.get(i++)).getTime()));
+						colResult.setMax(new Double(((Date) row.get(i)).getTime()));
 					} else if (ColumnStatType.MIN.equals(statType) && row.get(i) instanceof Number) {
-						colResult.setMin(((Number) row.get(i++)).doubleValue());
+						colResult.setMin(((Number) row.get(i)).doubleValue());
 					} else if (ColumnStatType.MAX.equals(statType) && row.get(i) instanceof Number) {
-						colResult.setMax(((Number) row.get(i++)).doubleValue());
+						colResult.setMax(((Number) row.get(i)).doubleValue());
 					} else if (ColumnStatType.AVERAGE.equals(statType) && row.get(i) instanceof Number) {
-						colResult.setAverage(((Number) row.get(i++)).doubleValue());
+						colResult.setAverage(((Number) row.get(i)).doubleValue());
 					} else if (ColumnStatType.SUM.equals(statType) && row.get(i) instanceof Number) {
-						colResult.setSum(((Number) row.get(i++)).doubleValue());
+						colResult.setSum(((Number) row.get(i)).doubleValue());
 					} else if (ColumnStatType.GROUP_BY_VAL.equals(statType) && row.get(i) != null) {
-						colResult.setGroupByValue(row.get(i++).toString());
+						colResult.setGroupByValue(row.get(i).toString());
 					} else if (ColumnStatType.GROUP_BY_HOUR.equals(statType)) {
-						colResult.setGroupByHour((Integer) row.get(i++));
+						colResult.setGroupByHour((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_DAY.equals(statType)) {
-						colResult.setGroupByDay((Integer) row.get(i++));
+						colResult.setGroupByDay((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_WEEK.equals(statType)) {
-						colResult.setGroupByWeek((Integer) row.get(i++));
+						colResult.setGroupByWeek((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_MONTH.equals(statType)) {
-						colResult.setGroupByMonth((Integer) row.get(i++));
+						colResult.setGroupByMonth((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_QUARTER.equals(statType)) {
-						colResult.setGroupByQuarter((Integer) row.get(i++));
+						colResult.setGroupByQuarter((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_YEAR.equals(statType)) {
-						colResult.setGroupByYear((Integer) row.get(i++));
+						colResult.setGroupByYear((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_DOW.equals(statType)) {
-						colResult.setGroupByDow((Integer) row.get(i++));
+						colResult.setGroupByDow((Integer) row.get(i));
 					} else if (ColumnStatType.GROUP_BY_DOY.equals(statType)) {
-						colResult.setGroupByDoy((Integer) row.get(i++));
+						colResult.setGroupByDoy((Integer) row.get(i));
 					}
+					i++;
 				}
 				rowResult.add(colResult);
 			}
