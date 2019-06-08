@@ -17,7 +17,7 @@
 package org.sculptor.dsl.validation
 
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
 import org.junit.Test
@@ -37,7 +37,7 @@ import org.sculptor.dsl.tests.SculptordslInjectorProvider
 
 import static org.junit.Assert.*
 
-@RunWith(typeof(XtextRunner2))
+@RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class SculptordslValidatorITest extends XtextTest {
 

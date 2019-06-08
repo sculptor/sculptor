@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="org.xtext.myxtextlanguage.target" sequenceNumber="1">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="org.sculptor.dsl.target" sequenceNumber="1">
 <locations>
   <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
     <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
-    <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.17.1"/>
+    <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.18.0"/>
   </location>
   <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
     <unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
@@ -15,7 +15,7 @@
     <unit id="org.eclipse.xtend" version="0.0.0"/>
     <unit id="org.eclipse.xtend.typesystem.emf" version="0.0.0"/>
     <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
-    <repository location="http://download.eclipse.org/releases/2019-03/201903201000"/>
+    <repository location="http://download.eclipse.org/releases/2019-06/201905311000"/>
   </location>
  </locations>
 </target>

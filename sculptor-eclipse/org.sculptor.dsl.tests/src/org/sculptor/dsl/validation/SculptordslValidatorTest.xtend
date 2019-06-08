@@ -20,7 +20,7 @@ import com.google.inject.Injector
 import javax.inject.Inject
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 
-@RunWith(typeof(XtextRunner2))
+@RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class SculptordslValidatorTest extends XtextTest {
 

@@ -18,7 +18,7 @@ package org.sculptor.generator.template.service
 
 import javax.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +30,7 @@ import static org.junit.Assert.*
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
-@RunWith(typeof(XtextRunner2))
+@RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class ServiceTmplTest extends XtextTest {
 

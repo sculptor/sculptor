@@ -82,10 +82,10 @@
 		<maven.compiler.source>${java-version}</maven.compiler.source>
 		<maven.compiler.target>${java-version}</maven.compiler.target>
 
-		<eclipse-release>2019-03/201903201000</eclipse-release>
+		<eclipse-release>2019-06/201905311000</eclipse-release>
 		<tycho-version>1.4.0</tycho-version>
 
-		<xtext-version>2.17.1</xtext-version>
+		<xtext-version>2.18.0</xtext-version>
 		<emf-version>2.15.0</emf-version>
 		<emf-common-version>2.15.0</emf-common-version>
 		<emf-codegen-ecore-version>2.15.0</emf-codegen-ecore-version>
