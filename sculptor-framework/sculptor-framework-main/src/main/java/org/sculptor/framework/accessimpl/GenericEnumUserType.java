@@ -25,8 +25,11 @@ import java.util.Properties;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.TypeResolver;
+import org.hibernate.type.spi.TypeConfiguration;
+import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -85,7 +88,7 @@ import org.hibernate.usertype.UserType;
  * @author Martin Kersten
  */
 @SuppressWarnings("rawtypes")
-public class GenericEnumUserType implements UserType, ParameterizedType, Serializable {
+public class GenericEnumUserType implements UserType, ParameterizedType, Serializable, TypeConfigurationAware {
 
 	private static final long serialVersionUID = -3519064203142497321L;
 
@@ -96,6 +99,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType, Seriali
 	private Class<?> identifierType;
 	private Method identifierMethod;
 	private Method valueOfMethod;
+	private TypeConfiguration typeConfiguration;
 	private AbstractSingleColumnStandardBasicType type;
 	private int[] sqlTypes;
 
@@ -117,8 +121,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType, Seriali
 			throw new HibernateException("Failed to obtain identifier method", e);
 		}
 
-		final TypeResolver tr = new TypeResolver();
-		type = (AbstractSingleColumnStandardBasicType) tr.basic(identifierType.getName());
+		type = (AbstractSingleColumnStandardBasicType) typeConfiguration.getBasicTypeRegistry().getRegisteredType(identifierType.getName());
 
 		if (type == null) {
 			throw new HibernateException("Unsupported identifier type " + identifierType.getName());
@@ -141,7 +144,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType, Seriali
 	}
 
 	@Override
-	public Object nullSafeGet(final ResultSet rs, final String[] names, final SessionImplementor sessionImplementor, final Object owner) throws HibernateException,
+	public Object nullSafeGet(final ResultSet rs, final String[] names, final SharedSessionContractImplementor sessionImplementor, final Object owner) throws HibernateException,
 			SQLException {
 		final Object identifier = type.nullSafeGet(rs, names[0], sessionImplementor);
 		if (identifier == null) {
@@ -157,7 +160,7 @@ public class GenericEnumUserType implements UserType, ParameterizedType, Seriali
 	}
 
 	@Override
-	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SessionImplementor sessionImplementor) throws HibernateException,
+	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SharedSessionContractImplementor sessionImplementor) throws HibernateException,
 			SQLException {
 		try {
 			if (value == null) {
@@ -212,4 +215,13 @@ public class GenericEnumUserType implements UserType, ParameterizedType, Seriali
 		return original;
 	}
 
+	@Override
+	public TypeConfiguration getTypeConfiguration() {
+		return typeConfiguration;
+	}
+
+	@Override
+	public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
+		this.typeConfiguration = typeConfiguration;
+	}
 }
