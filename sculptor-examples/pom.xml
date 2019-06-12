@@ -18,7 +18,7 @@
 		<module>mongodb-samples</module>
 		<module>eda-samples</module>
 		<module>ejb-example</module>
-		<module>springboot-example</module>
+		 <module>springboot-example</module> 
 		<module>springdatajpa-example</module>
 	</modules>
 </project>

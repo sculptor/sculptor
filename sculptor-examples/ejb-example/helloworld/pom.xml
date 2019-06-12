@@ -203,7 +203,7 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate-version>4.2.17.Final</hibernate-version>
+				<hibernate-version>5.4.3.Final</hibernate-version>
 			</properties>
 			<build>
 			</build>
@@ -225,7 +225,7 @@
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>
 					<artifactId>usertype.core</artifactId>
-					<version>3.0.0.GA</version>
+					<version>6.0.1.GA</version>
 					<exclusions>
 						<exclusion>
 							<groupId>org.joda</groupId>

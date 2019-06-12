@@ -247,7 +247,7 @@
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>
 					<artifactId>usertype.core</artifactId>
-					<version>3.0.0.GA</version>
+					<version>6.0.1.GA</version>
 					<exclusions>
 						<exclusion>
 							<groupId>org.joda</groupId>
