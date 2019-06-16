@@ -10,6 +10,7 @@ import org.sculptor.dddsample.cargo.domain.TrackingId;
 import org.sculptor.dddsample.cargo.domain.Type;
 import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
 import org.sculptor.dddsample.location.domain.UnLocode;
+import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +28,17 @@ public class HandlingEventServiceTest extends AbstractDbUnitJpaTests implements 
     @Override
     protected String getDataSetFile() {
         return "dbunit/TestData.xml";
+    }
+
+    @Override
+    protected String getSequenceName() {
+        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+            return "hibernate_sequence";
+        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+            return "SEQ_GEN";
+        } else {
+            return null;
+        }
     }
 
     @Test
