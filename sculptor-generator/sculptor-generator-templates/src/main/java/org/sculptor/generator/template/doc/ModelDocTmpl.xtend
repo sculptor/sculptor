@@ -493,19 +493,19 @@ def dispatch String fieldDoc(Attribute it) {
 }
 
 def String description(Attribute it) {
-	if (name == "id" && doc == null)
+	if (name == "id" && doc === null)
 		properties.getProperty("doc.id", "Generated unique id (GID pk)")
-	else if (name == "createdBy" && doc == null)
+	else if (name == "createdBy" && doc === null)
 		properties.getProperty("doc.createdBy", "Information about who created the object")
-	else if (name == "lastUpdatedBy" && doc == null)
+	else if (name == "lastUpdatedBy" && doc === null)
 		properties.getProperty("doc.lastUpdatedBy", "Information about who last updated the object")
-	else if (name == "createdDate" && doc == null)
+	else if (name == "createdDate" && doc === null)
 		properties.getProperty("doc.createdDate", "Creation timestamp of the object")
-	else if (name == "lastUpdated" && doc == null)
+	else if (name == "lastUpdated" && doc === null)
 		properties.getProperty("doc.lastUpdated", "Last updated timestamp of the object")
-	else if (name == "version" && doc == null)
+	else if (name == "version" && doc === null)
 		properties.getProperty("doc.version", "Update counter used for optimistic locking")
-	else if (name == "uuid" && doc == null)
+	else if (name == "uuid" && doc === null)
 		properties.getProperty("doc.uuid", "Unique id needed for equals and hashCode, since there is no natural key")
 	else
 		doc
