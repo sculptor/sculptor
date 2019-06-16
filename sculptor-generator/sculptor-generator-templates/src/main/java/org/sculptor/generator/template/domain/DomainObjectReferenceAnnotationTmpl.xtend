@@ -169,36 +169,8 @@ def String enumJpaAnnotation(Reference it) {
 				@javax.persistence.Enumerated
 			«ENDIF»
 		«ELSE»
-				«nonOrdinaryEnumTypeAnnotation(it)»
+			@javax.persistence.Convert(converter = «it.enum.domainObjectTypeName»Converter.class)
 		«ENDIF»
-	'''
-}
-
-def String nonOrdinaryEnumTypeAnnotation(Reference it) {
-	// val enum = it.getEnum()
-	'''
-		«IF isJpaProviderHibernate()»
-			«hibernateEnumTypeAnnotation(it)»
-		«ELSEIF isJpaProviderEclipseLink()»
-			@org.eclipse.persistence.annotations.Convert("EnumConverter")
-		«ELSEIF isJpaProviderOpenJpa()»
-			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.EnumHandler")
-		«ENDIF»
-	'''
-}
-
-def String hibernateEnumTypeAnnotation(Reference it) {
-	'''
-		«val ^enum = it.getEnum()»
-		«val INTEGER = 4»
-		@org.hibernate.annotations.Type(
-		type="«it.getApplicationBasePackage()».util.EnumUserType",
-		parameters = {
-			@org.hibernate.annotations.Parameter(name = "enumClass", value = "«enum.getDomainObjectTypeName()»")
-			«IF (!enum.isOfTypeString())»
-			, @org.hibernate.annotations.Parameter(name = "type", value = "«INTEGER»")
-			«ENDIF»
-			})
 	'''
 }
 

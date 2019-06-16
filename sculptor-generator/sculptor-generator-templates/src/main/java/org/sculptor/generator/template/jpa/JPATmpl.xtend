@@ -30,7 +30,6 @@ import sculptormetamodel.DomainObject
 @ChainOverridable
 class JPATmpl {
 
-	@Inject var HibernateTmpl hibernateTmpl
 	@Inject var EclipseLinkTmpl eclipseLinkTmpl
 	@Inject var DataNucleusTmpl dataNucleusTmpl
 	@Inject var OpenJpaTmpl openJpaTmpl
@@ -45,9 +44,6 @@ class JPATmpl {
 def String jpa(Application it) {
 	'''
 	«persistenceUnitXmlFile(it)»
-	«IF isJpaProviderHibernate()»
-		«hibernateTmpl.hibernate(it)»
-	«ENDIF»
 	«IF isJpaProviderEclipseLink()»
 		«eclipseLinkTmpl.eclipseLink(it)»
 	«ENDIF»

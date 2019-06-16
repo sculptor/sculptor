@@ -29,7 +29,7 @@ import org.sculptor.generator.template.db.DbUnitTmpl
 import org.sculptor.generator.template.doc.ModelDocTmpl
 import org.sculptor.generator.template.doc.UMLGraphTmpl
 import org.sculptor.generator.template.domain.DomainObjectTmpl
-import org.sculptor.generator.template.jpa.HibernateTmpl
+import org.sculptor.generator.template.domain.DomainObjectAttributeConverterTmpl
 import org.sculptor.generator.template.jpa.JPATmpl
 import org.sculptor.generator.template.repository.AccessObjectTmpl
 import org.sculptor.generator.template.repository.RepositoryTmpl
@@ -39,6 +39,7 @@ import org.sculptor.generator.template.service.ServiceEjbTestTmpl
 import org.sculptor.generator.template.service.ServiceTmpl
 import org.sculptor.generator.template.spring.SpringTmpl
 import sculptormetamodel.Application
+import sculptormetamodel.Enum
 
 @ChainOverridable
 class RootTmpl {
@@ -49,8 +50,8 @@ class RootTmpl {
 	@Inject var DbUnitTmpl dbUnitTmpl
 	@Inject var DDLTmpl dDLTmpl
 	@Inject var DomainObjectTmpl domainObjectTmpl
+	@Inject var DomainObjectAttributeConverterTmpl domainObjectAttributeConverterTmpl
 	@Inject var ExceptionTmpl exceptionTmpl
-	@Inject var HibernateTmpl hibernateTmpl
 	@Inject var JPATmpl jPATmpl
 	@Inject var LogConfigTmpl logConfigTmpl
 	@Inject var ModelDocTmpl modelDocTmpl
@@ -70,6 +71,9 @@ class RootTmpl {
 		«IF !modules.isEmpty»
 			«IF isDomainObjectToBeGenerated()»
 				«it.getAllDomainObjects(false).forEach[domainObjectTmpl.domainObject(it)]»
+				«IF isJpaAnnotationToBeGenerated()»
+					«it.getAllDomainObjects(false).filter[it instanceof Enum].map[it as Enum].filter[!it.isOrdinaryEnum()].forEach[domainObjectAttributeConverterTmpl.domainObjectAttributeConverter(it)]»
+				«ENDIF»
 			«ENDIF»
 			«IF isExceptionToBeGenerated()»
 				«it.modules.filter[e|!e.external].forEach[exceptionTmpl.applicationExceptions(it)]»
@@ -114,9 +118,6 @@ class RootTmpl {
 			«ENDIF»
 			«IF isLogbackConfigToBeGenerated()»
 				«logConfigTmpl.logbackConfig(it)»
-			«ENDIF»
-			«IF isHibernateToBeGenerated()»
-				«hibernateTmpl.hibernate(it)»
 			«ENDIF»
 			«IF isJpaAnnotationToBeGenerated()»
 				«jPATmpl.jpa(it)»
