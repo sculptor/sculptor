@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * This advice logs exceptions (including the JPA ones).
@@ -53,6 +54,15 @@ public class ErrorHandlingAdvice extends BasicErrorHandlingAdvice {
         ValidationException newException = new ValidationException(e.getMessage());
         newException.setLogged(true);
         newException.setConstraintViolations(e.getConstraintViolations());
+        throw newException;
+    }
+
+    public void afterThrowing(Method m, Object[] args, Object target, DataIntegrityViolationException e) {
+        Logger log = LoggerFactory.getLogger(target.getClass());
+        LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), excMessage(e));
+        log.debug("{}", message);
+        ValidationException newException = new ValidationException(e.getMessage());
+        newException.setLogged(true);
         throw newException;
     }
 
