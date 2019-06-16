@@ -866,15 +866,12 @@ def String entityManagerFactoryTest(Application it) {
 	«headerWithMoreNamespaces(it)»
 		«hsqldbDataSource(it)»
 
-		<!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider -->
-		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-			<property name="dataSource" ref="hsqldbDataSource"/>
-			<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-test.xml"/>
-			«IF isJpaProviderEclipseLink()»
-				<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-			«ENDIF»
+		«IF isJpaProviderHibernate()»
+		<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+			<property name="showSql" value="true" />
+			<property name="generateDdl" value="true" />
 		</bean>
-	
+		«ENDIF»
 		«IF isJpaProviderEclipseLink()»
 		<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
 			<property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
@@ -882,6 +879,16 @@ def String entityManagerFactoryTest(Application it) {
 			<property name="generateDdl" value="true" />
 		</bean>
 		«ENDIF»
+
+		<!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider -->
+		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+			<property name="dataSource" ref="hsqldbDataSource"/>
+			<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-test.xml"/>
+			«IF isJpaProviderHibernate() || isJpaProviderEclipseLink()»
+				<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+			«ENDIF»
+		</bean>
+	
 		«entityManagerFactoryTx(it, true)»
 		<!-- add additional beans by extending SpringTmpl.entityManagerFactoryAdditions -->
 		«entityManagerFactoryAdditions(it, true)»
