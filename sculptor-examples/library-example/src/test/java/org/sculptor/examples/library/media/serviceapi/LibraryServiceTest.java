@@ -70,7 +70,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
     @Override
     protected String getSequenceName() {
         if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_seq";
+            return "hibernate_sequence";
         } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
             return "SEQ_GEN";
         } else {

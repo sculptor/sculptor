@@ -25,8 +25,8 @@ public class PhysicalMediaServiceTest extends AbstractDbUnitJpaTests implements 
 
     @Override
     protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "hibernate_seq";
+        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+            return "hibernate_sequence";
         } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
             return "SEQ_GEN";
         } else {
