@@ -1,0 +1,32 @@
+ApplicationPart LocationPart {
+    
+    Module location {
+        "A location is our model is stops on a journey, such as cargo
+        origin or destination, or carrier movement endpoints."
+        Entity Location {
+        	hint="umlgraph.subject=routingsvc"
+            not optimisticLocking
+            - @UnLocode unLocode key
+            'Actual name of this location, e.g. "Stockholm"'
+            String name not changeable
+            
+            Repository LocationRepository {
+                @Location find(@UnLocode unLocode) throws LocationNotFoundException;
+                findAll;
+                protected findByKeys;
+            }
+        }
+        
+        "United nations location code."
+        BasicType UnLocode {
+            String unlocode key databaseColumn=""
+        }
+        
+        Service LocationService {
+        	hint="umlgraph.subject=routingsvc"
+
+            find => LocationRepository.find;
+        }
+    }
+
+}

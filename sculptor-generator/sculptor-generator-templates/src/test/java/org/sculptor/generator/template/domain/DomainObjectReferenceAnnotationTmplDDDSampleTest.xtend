@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The Sculptor Project Team, including the original 
+ * Copyright 2019 The Sculptor Project Team, including the original 
  * author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(SculptordslInjectorProvider))
-class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
+class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 
 	@Inject
 	var GeneratorModelTestFixtures generatorModelTestFixtures
@@ -45,9 +45,9 @@ class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
 	@Before
 	def void setup() {
 		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
-			"generator-tests/helloworld/sculptor-generator.properties")
+			"generator-tests/dddsample/sculptor-generator.properties")
 		generatorModelTestFixtures.setupInjector(typeof(DomainObjectReferenceAnnotationTmpl))
-		generatorModelTestFixtures.setupModel("generator-tests/helloworld/model.btdesign")
+		generatorModelTestFixtures.setupModel("generator-tests/dddsample/model.btdesign")
 
 		domainObjectReferenceAnnotationTmpl = generatorModelTestFixtures.getProvidedObject(
 			typeof(DomainObjectReferenceAnnotationTmpl))
@@ -63,29 +63,54 @@ class DomainObjectReferenceAnnotationTmplTest extends XtextTest {
 		val app = generatorModelTestFixtures.app
 		assertNotNull(app)
 
-		assertEquals(1, app.modules.size)
+		assertEquals(4, app.modules.size)
 	}
 
 	@Test
-	def void assertOneToManyWithCascadeTypeRemoveInPlanetBaseForReferenceMoons() {
+	def void assertOneToManyInIntineraryBaseForReferenceLeg() {
 		val app = generatorModelTestFixtures.app
 		assertNotNull(app)
 
-		val module = app.modules.namedElement("milkyway")
+		val module = app.modules.namedElement("cargo")
 		assertNotNull(module)
 
-		val planet = module.domainObjects.namedElement("Planet")
-		val moons = planet.references.namedElement("moons")
-		assertNotNull(moons)
+		val itinerary = module.domainObjects.namedElement("Itinerary")
+		val legs = itinerary.references.namedElement("legs")
+		assertNotNull(legs)
 
-		val code = domainObjectReferenceAnnotationTmpl.oneToManyJpaAnnotation(moons)
+		val code = domainObjectReferenceAnnotationTmpl.oneToManyJpaAnnotation(legs)
 		assertNotNull(code)
 		assertContains(code, '@javax.persistence.OneToMany')
-		assertContains(code, 'cascade=javax.persistence.CascadeType.REMOVE')
+		assertContains(code, 'cascade=javax.persistence.CascadeType.ALL')
 		assertContains(code, 'orphanRemoval=true')
-		assertContains(code, 'mappedBy="planet"')
 		assertContains(code, 'fetch=javax.persistence.FetchType.EAGER')
+		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, 'name="ITINERARY"')
+		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey')
+		assertContains(code, 'name="FK_ITINERARY_LEG"')
+	}
+
+	@Test
+	def void assertManyToOneInLegBaseForReferenceCarrierMovement() {
+		val app = generatorModelTestFixtures.app
+		assertNotNull(app)
+
+		val module = app.modules.namedElement("cargo")
+		assertNotNull(module)
+
+		val leg = module.domainObjects.namedElement("Leg")
+		val carrierMovement = leg.references.namedElement("carrierMovement")
+		assertNotNull(carrierMovement)
+
+		val code = domainObjectReferenceAnnotationTmpl.manyToOneJpaAnnotation(carrierMovement)
+		assertNotNull(code)
+		assertContains(code, '@javax.persistence.ManyToOne')
+		assertContains(code, 'optional=false')
+		assertContains(code, 'fetch=javax.persistence.FetchType.EAGER')
+		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, 'name="CARRIERMOVEMENT"')
+		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey')
+		assertContains(code, 'name="FK_LEG_CARRIERMOVEMENT"')
 	}
 
 }
-	

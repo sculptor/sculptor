@@ -159,11 +159,8 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
 		«ELSEIF isInheritanceTypeJoined(it.getRootExtends())»
-			@javax.persistence.PrimaryKeyJoinColumn(name="«^extends.getExtendsForeignKeyName()»")
-			«IF isJpaProviderHibernate()»
-				@org.hibernate.annotations.ForeignKey(
-					name = "FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»")
-			«ENDIF»
+			@javax.persistence.PrimaryKeyJoinColumn(name="«^extends.getExtendsForeignKeyName()»",
+			foreignKey=@javax.persistence.ForeignKey(name="FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»"))
 		«ENDIF»
 	«ENDIF»
 	'''
