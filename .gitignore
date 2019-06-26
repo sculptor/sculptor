@@ -13,3 +13,4 @@ dependency-reduced-pom.xml
 generated
 .sculptor-status
 generated-sources/
+/.metadata/
