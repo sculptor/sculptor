@@ -2,7 +2,6 @@ package org.helloworld.milkyway.repositoryimpl;
 
 import javax.sql.DataSource;
 
-import org.helloworld.milkyway.domain.PlanetRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 

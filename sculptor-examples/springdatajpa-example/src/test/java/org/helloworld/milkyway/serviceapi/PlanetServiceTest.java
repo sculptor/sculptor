@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javassist.NotFoundException;
+
 /**
  * Spring based transactional test with DbUnit support.
  */
@@ -19,7 +21,7 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
 
 	@Test
 	public void testFindById() throws Exception {
-		Planet earth = planetService.findById(getServiceContext(), 1L);
+		Planet earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
 		assertEquals("Earth", earth.getName());
 	}
 
@@ -43,18 +45,18 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
 
 	@Test
 	public void testSave() throws Exception {
-		Planet earth = planetService.findById(getServiceContext(), 1L);
+		Planet earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
 		int diameterBefore = earth.getDiameter();
 		earth.setDiameter(diameterBefore + 100);
 		planetService.save(getServiceContext(), earth);
-		earth = planetService.findById(getServiceContext(), 1L);
+		earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
 		assertEquals(diameterBefore + 100, earth.getDiameter());
 	}
 
 	@Test
 	public void testDelete() throws Exception {
 		int planetsBefore = countRowsInTable(Planet.class);
-		Planet earth = planetService.findById(getServiceContext(), 1L);
+		Planet earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
 		planetService.delete(getServiceContext(), earth);
 		int planetsAfter = countRowsInTable(Planet.class);
 		assertEquals(planetsBefore - 1, planetsAfter);
