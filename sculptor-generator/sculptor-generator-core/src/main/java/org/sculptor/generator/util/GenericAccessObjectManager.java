@@ -181,7 +181,7 @@ public class GenericAccessObjectManager {
 
 		protected void addNotFoundException(RepositoryOperation operation) {
 			if (propBase.getBooleanProperty("generate.NotFoundException")
-					&& (operation.getThrows() == null || operation.getThrows().equals(""))) {
+					&& (operation.getThrows() == null)) {
 				String objectNotFoundExc = operation.getRepository().getAggregateRoot().getName() + "NotFoundException";
 				operation.setThrows(objectNotFoundExc);
 			}

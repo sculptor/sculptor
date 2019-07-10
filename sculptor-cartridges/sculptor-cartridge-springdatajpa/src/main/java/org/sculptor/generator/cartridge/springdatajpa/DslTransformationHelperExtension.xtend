@@ -19,6 +19,7 @@ package org.sculptor.generator.cartridge.springdatajpa
 import org.sculptor.dsl.sculptordsl.DslRepository
 import org.sculptor.generator.chain.ChainOverride
 import org.sculptor.generator.transform.DslTransformationHelper
+import sculptormetamodel.DomainObject
 
 @ChainOverride
 class DslTransformationHelperExtension extends DslTransformationHelper {
@@ -27,4 +28,11 @@ class DslTransformationHelperExtension extends DslTransformationHelper {
 		false
 	}
 
+	override void scaffoldRepository(DomainObject domainObject) {
+		next.scaffoldRepository(domainObject)
+		domainObject.repository.operations.filter[e | e.name == 'findById'].forEach[e | {
+			e.collectionType = 'java.util.Optional'
+			e.setThrows('');
+		}]
+	}
 }
