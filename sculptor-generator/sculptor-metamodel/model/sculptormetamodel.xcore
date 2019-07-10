@@ -16,7 +16,7 @@
  */
 
 @Ecore(nsPrefix="sc", nsURI="http://sculptor.org/sculptor")
-@GenModel(modelDirectory="./src-gen", importerID="org.eclipse.emf.importer.ecore", complianceLevel="5.0")
+@GenModel(modelDirectory="/sculptor-metamodel/src-gen", importerID="org.eclipse.emf.importer.ecore", complianceLevel="5.0")
 
 package sculptormetamodel
 
