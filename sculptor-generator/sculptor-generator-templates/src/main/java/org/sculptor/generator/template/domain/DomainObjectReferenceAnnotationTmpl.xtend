@@ -127,7 +127,7 @@ def String oneReferenceJpaAnnotations(Reference it) {
 
 def String oneReferenceOnDeleteJpaAnnotation(Reference it) {
 	'''
-		«/* use orphanRemoval in JPA2 */»
+		««« use orphanRemoval in JPA2
 	'''
 }
 
@@ -268,7 +268,7 @@ def dispatch String attributeOverride(Reference it, String columnPrefix, String 
 
 def String associationOverride(Reference it, String prefix, boolean referenceIsNullable) {
 	'''
-		«/* TODO: verify the table and column naming */»
+	««« TODO: verify the table and column naming
 		«IF many»
 			@javax.persistence.AssociationOverride(
 				name="«name»",
@@ -388,7 +388,7 @@ def String oneToManyJpaAnnotation(Reference it) {
 					foreignKey=@javax.persistence.ForeignKey(
 						name="FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getOppositeForeignKeyName())»"))
 			«ENDIF»
-			«/* TODO: add support for unidirectional onetomany relationships with and without jointable */»
+			««« TODO: add support for unidirectional onetomany relationships with and without jointable
 			«/*
 			«IF !it.isUnidirectionalToManyWithoutJoinTable()»
 				@javax.persistence.JoinTable(

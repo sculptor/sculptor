@@ -36,6 +36,7 @@ class DomainObjectAttributeAnnotationTmpl {
 
 def String attributeAnnotations(Attribute it) {
 	'''
+
 		«IF isJpaAnnotationOnFieldToBeGenerated()»
 			«IF isJpaAnnotationToBeGenerated() && it.getDomainObject().isPersistent() »
 				«jpaAnnotations(it)»
@@ -227,8 +228,8 @@ def String elementCollectionTableJpaAnnotation(Attribute it) {
 
 def String validationAnnotations(Attribute it) {
 	'''
-		«/* exclude persistence controlled properties */»
 		«IF name != "id" && name != "version" && !it.isUuid()»
+			««« exclude persistence controlled properties
 			«it.getValidationAnnotations()»
 		«ENDIF»
 	'''

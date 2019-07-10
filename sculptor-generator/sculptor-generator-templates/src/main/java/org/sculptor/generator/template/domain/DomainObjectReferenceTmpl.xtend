@@ -227,7 +227,6 @@ def String manyReferenceAttribute(Reference it, boolean annotations) {
 	«IF annotations»
 		«domainObjectReferenceAnnotationTmpl.manyReferenceAttributeAnnotations(it)»
 	«ENDIF»
-	
 	private «IF transient»transient «ENDIF»«it.getCollectionInterfaceType()»<«it.getTypeName()»> «name» = new «it.getCollectionImplType()»<«it.getTypeName()»>();
 
 	'''
