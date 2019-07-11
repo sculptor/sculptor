@@ -82,6 +82,10 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jasper-el</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<!-- Add scope provided when deployed in jboss -->
@@ -163,11 +167,6 @@
 			<!-- Add scope test when deployed in jboss -->
 			<!-- <scope>test</scope> -->
 		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jasper-el</artifactId>
-			<version>9.0.22</version>
-		</dependency>
 	</dependencies>
 
 	<!-- Profiles -->
@@ -247,12 +246,10 @@
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-jcache</artifactId>
-					<version>${hibernate-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.ehcache</groupId>
 					<artifactId>ehcache</artifactId>
-					<version>3.7.1</version>
 				</dependency>
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>

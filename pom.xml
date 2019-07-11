@@ -108,6 +108,8 @@
 		<!-- We have to stay with Hibernate 4.2 due to JPA 2.1 API dependency of newer version -->
 		<hibernate-version>5.4.3.Final</hibernate-version>
 		<hibernate-validator-version>5.4.3.Final</hibernate-validator-version>
+		<tomat-jasper-el>9.0.22</tomat-jasper-el>
+		<ehcache-version>3.7.1</ehcache-version>
 		<appengine-version>1.9.74</appengine-version>
 		<mongodb-version>2.14.3</mongodb-version>
 		<drools-version>6.1.0.Final</drools-version>
@@ -935,6 +937,21 @@
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
 				<version>1.1.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat-jasper-el</artifactId>
+				<version>${tomat-jasper-el}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-jcache</artifactId>
+				<version>${hibernate-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>${ehcache-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>
