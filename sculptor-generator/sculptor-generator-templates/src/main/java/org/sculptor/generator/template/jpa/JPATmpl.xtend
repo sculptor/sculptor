@@ -184,7 +184,7 @@ def String persistenceUnitSharedCacheMode(Application it) {
 
 def String persistenceUnitValidationMode(Application it) {
 	'''
- 	<validation-mode>AUTO</validation-mode>
+ 	<validation-mode>CALLBACK</validation-mode>
 	'''
 }
 
