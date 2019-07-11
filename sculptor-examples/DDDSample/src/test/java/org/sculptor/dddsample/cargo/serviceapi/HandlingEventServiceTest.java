@@ -30,17 +30,6 @@ public class HandlingEventServiceTest extends AbstractDbUnitJpaTests implements 
         return "dbunit/TestData.xml";
     }
 
-    @Override
-    protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_sequence";
-        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "SEQ_GEN";
-        } else {
-            return null;
-        }
-    }
-
     @Test
     public void testRegister() throws Exception {
         final DateTime date = new DateTime();

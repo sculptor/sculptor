@@ -22,6 +22,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 
+import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 /**
@@ -50,6 +51,21 @@ public abstract class AbstractDbUnitJpaTests extends AbstractDbUnitAnnotationAwa
 
     protected EntityManager getEntityManager() {
         return entityManager;
+    }
+
+    /**
+     * In case you don't need to start the id sequence from a high value to
+     * avoid conflicts with test data you should override this method and return
+     * null.
+     */
+    protected String getSequenceName() {
+        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+            return "hibernate_sequence";
+        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+            return "SEQ_GEN";
+        } else {
+            return null;
+        }
     }
 
     @Override

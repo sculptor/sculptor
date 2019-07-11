@@ -23,17 +23,6 @@ public class PhysicalMediaServiceTest extends AbstractDbUnitJpaTests implements 
     private PhysicalMediaService physicalMediaService;
     private LibraryService libraryService;
 
-    @Override
-    protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_sequence";
-        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "SEQ_GEN";
-        } else {
-            return null;
-        }
-    }
-
     @Autowired
     public void setPhysicalMediaService(PhysicalMediaService physicalMediaService) {
         this.physicalMediaService = physicalMediaService;

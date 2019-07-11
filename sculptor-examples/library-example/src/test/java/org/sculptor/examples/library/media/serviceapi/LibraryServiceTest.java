@@ -67,17 +67,6 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
         return "dbunit/LibraryServiceTest.xml";
     }
 
-    @Override
-    protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_sequence";
-        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "SEQ_GEN";
-        } else {
-            return null;
-        }
-    }
-
 	@Test
 	public void testFindLibraryByName() throws Exception {
 		String libraryName = "LibraryServiceTest";

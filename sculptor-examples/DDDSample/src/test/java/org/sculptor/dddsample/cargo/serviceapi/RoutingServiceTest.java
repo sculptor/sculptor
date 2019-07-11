@@ -37,17 +37,6 @@ public class RoutingServiceTest extends AbstractDbUnitJpaTests implements Routin
         return "dbunit/TestData.xml";
     }
 
-    @Override
-    protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_sequence";
-        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "SEQ_GEN";
-        } else {
-            return null;
-        }
-    }
-
     @Test
     public void testFetchRoutesForSpecification() throws Exception {
         TrackingId trackingId = trackingId("ABC");
