@@ -302,8 +302,8 @@ def String persistenceUnitCachePropertiesHibernate(Application it, String unitNa
 		<property name="hibernate.cache.use_query_cache" value="true"/>
 		<property name="hibernate.cache.use_second_level_cache" value="true"/>
 		<property name="hibernate.cache.region_prefix" value=""/>
-		«IF cacheProvider() == "EhCache"»
-			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
+		«IF cacheProvider() == "EhCache" || cacheProvider() == "JCache"»
+			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.internal.JCacheRegionFactory"/>
 		«ELSEIF cacheProvider() == "TreeCache"»
 			<property name="hibernate.cache.provider_class" value="org.hibernate.cache.TreeCacheProvider"/>
 		«ELSEIF cacheProvider() == "JbossTreeCache"»
@@ -465,7 +465,7 @@ def String persistenceUnitPropertiesTestHibernate(Application it, String unitNam
 		<property name="query.substitutions" value="true 1, false 0" />
 		<property name="hibernate.cache.use_query_cache" value="true"/>
 		<property name="hibernate.cache.use_second_level_cache" value="true"/>
-		<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
+		<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.internal.JCacheRegionFactory"/>
 	'''
 }
 
