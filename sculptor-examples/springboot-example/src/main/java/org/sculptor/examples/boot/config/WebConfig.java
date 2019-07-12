@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sculptor.framework.context.ServiceContextServletFilter;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -30,7 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MappingJackson2XmlView;
@@ -38,7 +38,7 @@ import org.springframework.web.servlet.view.xml.MappingJackson2XmlView;
 /* We have to disable this configuration during backend tests */
 @Profile("web")
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig implements WebMvcConfigurer {
 
 	@Bean
 	public View xmlView() {
@@ -67,8 +67,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public FilterRegistrationBean serviceContextFilterRegistration() {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+	public FilterRegistrationBean<ServiceContextServletFilter> serviceContextFilterRegistration() {
+		FilterRegistrationBean<ServiceContextServletFilter> registration = new FilterRegistrationBean<>();
 		registration.setFilter(new ServiceContextServletFilter());
 		Map<String, String> initParams = new HashMap<String, String>(1);
 		initParams.put("ServiceContextFactoryImplementationClassName",
