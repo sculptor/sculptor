@@ -27,7 +27,7 @@ public class GeneratorMojoIT extends AbstractGeneratorMojoTestCase<GeneratorMojo
 	public void testExecute() throws Exception {
 		GeneratorMojo mojo = createMojo(createProject("test1"));
 		mojo.execute();
-		assertEquals(31, mojo.getGeneratedFiles().size());
+		assertEquals(30, mojo.getGeneratedFiles().size());
 
 		Properties statusFileProps = new Properties();
 		statusFileProps.load(new FileReader(mojo.getStatusFile()));
