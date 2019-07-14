@@ -34,6 +34,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.junit.After;
 import org.junit.Before;
+import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.test.ejbtestbean.jpa.JpaTestLocal;
 import org.sculptor.framework.util.db.DbUnitDataSourceUtils;
 import org.sculptor.framework.util.db.HsqlDataTypeFactory;
@@ -157,8 +158,14 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
      * null.
      */
     protected String getSequenceName() {
-        return null;
-    }
+        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+            return "hibernate_sequence";
+        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+            return "SEQ_GEN";
+        } else {
+            return null;
+        }
+     }
 
     @After
     public void tearDownDatabaseTester() throws Exception {
