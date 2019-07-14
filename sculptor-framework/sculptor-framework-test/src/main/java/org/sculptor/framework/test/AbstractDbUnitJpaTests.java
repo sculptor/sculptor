@@ -58,6 +58,7 @@ public abstract class AbstractDbUnitJpaTests extends AbstractDbUnitAnnotationAwa
      * avoid conflicts with test data you should override this method and return
      * null.
      */
+    @Override
     protected String getSequenceName() {
         if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
             return "hibernate_sequence";

@@ -1,6 +1,6 @@
 package org.sculptor.dddsample.cargo.domain;
 
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.fail;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 
 import org.junit.Test;
