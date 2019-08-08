@@ -58,8 +58,7 @@ class CustomDatabaseNamingTest extends XtextTest {
 		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
 			"generator-tests/transformation/sculptor-generator.properties")
 
-		// Need to add rcp nature to add populate method to scaffold operations
-		System.setProperty("project.nature", "business-tier, rcp")
+		System.setProperty("project.nature", "business-tier")
 		System.setProperty("db.useUnderscoreNaming", "true")
 		System.setProperty("db.useIdSuffixInForeigKey", "true")
 		System.setProperty("db.useTablePrefixedIdColumn", "true")
