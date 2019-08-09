@@ -18,7 +18,6 @@ package org.sculptor.framework.util.db;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,8 @@ import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.operation.DatabaseOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DBUnit tear down operation that deletes all tables in the database.
@@ -39,38 +40,40 @@ import org.dbunit.operation.DatabaseOperation;
  * in the database, not only the ones in the data set.
  *
  * @author Patrik Nordwall
- *
  */
 public class OrderedDeleteAllOperation extends DatabaseOperation {
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException,
-            SQLException {
+	private static final Logger LOG = LoggerFactory.getLogger(OrderedDeleteAllOperation.class);
 
-        ITableFilter filter = new DatabaseSequenceFilter(connection);
-        IDataSet dataset = new FilteredDataSet(filter, connection.createDataSet());
-        String[] tableNames = dataset.getTableNames();
-        List<String> reversedTableNames = new ArrayList<String>();
-        reversedTableNames.addAll(Arrays.asList(tableNames));
-        Collections.reverse(reversedTableNames);
+	private static final String ECLIPSE_LINK_SEQUENCE_NAME = "SEQ_GEN";
 
-        Statement stmt = null;
-        try {
-            stmt = connection.getConnection().createStatement();
-            for (String table : reversedTableNames) {
-                // don't delete sequence table, eclipselink will not add new sequences
-                if (!table.equalsIgnoreCase("SEQUENCE")) {
-                    stmt.addBatch("DELETE from " + table);
-                }
-            }
-            stmt.executeBatch();
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException ignore) {
-                }
-            }
-        }
-    }
+	public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
+		LOG.debug("execute(connection={}, dataSet={}) - start", connection, dataSet);
+
+		ITableFilter filter = new DatabaseSequenceFilter(connection);
+		IDataSet dataset = new FilteredDataSet(filter, connection.createDataSet());
+		List<String> reversedTableNames = Arrays.asList(dataset.getTableNames());
+		Collections.reverse(reversedTableNames);
+		LOG.debug("reversedTableNames: {}", reversedTableNames);
+
+		try (Statement stmt = connection.getConnection().createStatement()) {
+			int count = 0;
+			for (String table : reversedTableNames) {
+				// don't delete sequence table, eclipselink will not add new sequences
+				if (!table.equalsIgnoreCase(ECLIPSE_LINK_SEQUENCE_NAME)) {
+					String sql = "DELETE from " + table;
+					stmt.addBatch(sql);
+					count++;
+					LOG.debug("Added SQL: {}", sql);
+				} else {
+					LOG.debug("Skipped sequence table '" + ECLIPSE_LINK_SEQUENCE_NAME + "' used by EclipseLink");
+				}
+			}
+			if (count > 0) {
+				stmt.executeBatch();
+				stmt.clearBatch();
+			}
+		}
+	}
 
 }
