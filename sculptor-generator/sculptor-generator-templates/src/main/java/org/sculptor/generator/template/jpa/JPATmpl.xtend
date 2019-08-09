@@ -248,7 +248,7 @@ def String persistenceUnitPropertiesEclipseLink(Application it, String unitName)
 		«ENDIF»
 		«
 		/* need this to create sequence table «IF dbProduct == "hsqldb-inmemory"» */
-		/* TODO: find better solution, maybe put seequnce table generation to ddl script */
+		/* TODO: find better solution, maybe put sequence table generation to ddl script */
 		»<property name="eclipselink.ddl-generation" value="create-tables"/>
 		<property name="eclipselink.ddl-generation.output-mode" value="database"/>
 		«/* «ENDIF» */»
