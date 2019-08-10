@@ -21,20 +21,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
-import org.sculptor.examples.boot.Application;
 import org.sculptor.examples.boot.milkyway.domain.Planet;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Spring based transactional test with DbUnit support.
  */
 @ActiveProfiles("test")
-@ContextConfiguration(classes = Application.class, inheritLocations = false)
-@DirtiesContext
 public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetServiceTestBase {
 
 	@Autowired

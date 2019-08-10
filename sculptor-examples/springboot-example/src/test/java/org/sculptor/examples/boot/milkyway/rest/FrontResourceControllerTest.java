@@ -22,8 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sculptor.examples.boot.Application;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -34,25 +33,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @ActiveProfiles({ "test", "web" })
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class FrontResourceControllerTest {
 
-	@Value("${local.server.port}")
-	private int port;
+	@Autowired
+	private TestRestTemplate restTemplate;
 
 	@Test
 	public void testHome() throws Exception {
-		ResponseEntity<String> entity = new TestRestTemplate().getForEntity("http://localhost:" + this.port,
-				String.class);
+		ResponseEntity<String> entity = restTemplate.getForEntity("/", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue("Wrong body (reefresh URL doesn't match):\n" + entity.getBody(),
+		assertTrue("Wrong body (refresh URL doesn't match):\n" + entity.getBody(),
 				entity.getBody().contains(";URL=rest/front"));
 	}
 
 	@Test
 	public void testFront() throws Exception {
-		ResponseEntity<String> entity = new TestRestTemplate().getForEntity("http://localhost:" + this.port
-				+ "/rest/front", String.class);
+		ResponseEntity<String> entity = restTemplate.getForEntity("/rest/front", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
 		assertTrue("Wrong body (title doesn't match):\n" + entity.getBody(),
 				entity.getBody().contains("<title>Sculptor REST Example"));
@@ -62,8 +59,7 @@ public class FrontResourceControllerTest {
 
 	@Test
 	public void testCss() throws Exception {
-		ResponseEntity<String> entity = new TestRestTemplate().getForEntity("http://localhost:" + this.port
-				+ "/css/main.css", String.class);
+		ResponseEntity<String> entity = restTemplate.getForEntity("/css/main.css", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
 		assertTrue("Wrong body:\n" + entity.getBody(), entity.getBody().contains("body"));
 	}

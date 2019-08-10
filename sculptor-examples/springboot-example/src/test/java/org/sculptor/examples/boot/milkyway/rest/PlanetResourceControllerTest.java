@@ -21,8 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sculptor.examples.boot.Application;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -33,16 +32,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @ActiveProfiles({ "test", "web" })
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PlanetResourceControllerTest {
 
-	@Value("${local.server.port}")
-	private int port;
+	@Autowired
+	private TestRestTemplate restTemplate;
 
 	@Test
 	public void testPlanets() throws Exception {
-		ResponseEntity<String> entity = new TestRestTemplate().getForEntity("http://localhost:" + this.port
-				+ "/rest/planet", String.class);
+		ResponseEntity<String> entity = restTemplate.getForEntity("/rest/planet", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
 		assertTrue("Wrong body:\n" + entity.getBody(), entity.getBody().contains("There are no Planets yet."));
 	}
