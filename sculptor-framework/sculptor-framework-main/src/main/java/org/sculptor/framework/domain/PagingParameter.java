@@ -76,9 +76,13 @@ public class PagingParameter implements Serializable {
         return new PagingParameter(startRow, endRow, countTotalRows, additionalResultRows, UNKNOWN);
     }
 
+    public static PagingParameter firstRow() {
+        return new PagingParameter(0, 1, false, 0, UNKNOWN);
+    }
+
     public static PagingParameter noLimits() {
-       return new PagingParameter();
-   }
+        return new PagingParameter();
+    }
 
     private PagingParameter() {
        this.startRow = UNKNOWN;

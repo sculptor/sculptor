@@ -232,6 +232,38 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.Select, property, function);
 	}
 
+	public static ConditionalCriteria min(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.Min, property, function);
+	}
+
+	public static ConditionalCriteria max(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.Max, property, function);
+	}
+
+	public static ConditionalCriteria avg(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.Avg, property, function);
+	}
+
+	public static ConditionalCriteria sum(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.Sum, property, function);
+	}
+
+	public static ConditionalCriteria sumAsLong(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.SumAsLong, property, function);
+	}
+
+	public static ConditionalCriteria sumAsDouble(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.SumAsDouble, property, function);
+	}
+
+	public static ConditionalCriteria count(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.Count, property, function);
+	}
+
+	public static ConditionalCriteria countDistinct(Property<?> property, Function function) {
+		return new ConditionalCriteria(Operator.CountDistinct, property, function);
+	}
+
 	public enum Operator {
 		Equal, LessThan, LessThanOrEqual, GreatThan, GreatThanOrEqual, Like, IgnoreCaseLike, IgnoreCaseEqual
 		, IsNull, IsNotNull, IsEmpty, IsNotEmpty
