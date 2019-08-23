@@ -197,7 +197,7 @@ def String fetchEagerFields(Repository it) {
 	'''
 	«IF operations.exists(e | e.hasHint("useFetchEager"))»
 		«fw("domain.Property")»<?>[] eagerFields={
-			«FOR e : aggregateRoot.references.filter[r | !r.many && !r.isBasicTypeReference() && !r.isEnumReference()] SEPARATOR ", "»«getDomainPackage(aggregateRoot)».«aggregateRoot.name»Properties.«e.name»()«ENDFOR»
+			«FOR e : aggregateRoot.references.filter[r | !r.many && !r.transient && !r.isBasicTypeReference() && !r.isEnumReference()] SEPARATOR ", "»«getDomainPackage(aggregateRoot)».«aggregateRoot.name»Properties.«e.name»()«ENDFOR»
 		};
 	«ENDIF»
 	'''
