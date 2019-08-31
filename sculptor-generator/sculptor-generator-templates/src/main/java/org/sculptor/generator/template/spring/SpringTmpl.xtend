@@ -254,7 +254,7 @@ def String springPropertyConfig(Application it) {
 
 def String springPropertyConfigTest(Application it) {
 	'''
-		<context:property-placeholder location="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("»generated-spring.properties")», classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties")»"/>
+		<context:property-placeholder location="classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("generated-spring.properties")», classpath:/«it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties")»"/>
 	'''
 }
 

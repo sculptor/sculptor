@@ -22,7 +22,7 @@ import org.sculptor.generator.test.GeneratorTestBase
 
 import static org.sculptor.generator.test.GeneratorTestExtensions.*
 
-class SpringTest extends GeneratorTestBase {
+class SpringTmplTest extends GeneratorTestBase {
 
 	static val TEST_NAME = "spring"
 
