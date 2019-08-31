@@ -24,12 +24,10 @@ import org.junit.Test;
 import org.sculptor.examples.boot.milkyway.domain.Planet;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Spring based transactional test with DbUnit support.
  */
-@ActiveProfiles("test")
 public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetServiceTestBase {
 
 	@Autowired
