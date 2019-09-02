@@ -1,6 +1,7 @@
 import "classpath:/generator-tests/dddsample/model-carrier.btdesign"
 import "classpath:/generator-tests/dddsample/model-routing.btdesign"
 import "classpath:/generator-tests/dddsample/model-location.btdesign"
+import "classpath:/generator-tests/dddsample/model-relations.btdesign"
 
 Application DDDSample {
     basePackage=org.sculptor.dddsample
@@ -38,6 +39,7 @@ Application DDDSample {
             - @Location destination required fetch="join"
             - @Itinerary itinerary nullable inverse opposite cargo
             - Set<@HandlingEvent> events cascade="none" opposite cargo
+            - @Person person;
 
             Repository CargoRepository {
                  @Cargo find(@TrackingId trackingId) throws CargoNotFoundException => FindCargoAccessObject;

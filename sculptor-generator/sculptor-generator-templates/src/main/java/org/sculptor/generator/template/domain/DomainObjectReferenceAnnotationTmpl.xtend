@@ -372,7 +372,7 @@ def String manyReferenceJpaAnnotations(Reference it) {
 }
 
 def String oneToManyJpaAnnotation(Reference it) {
-	val isMappedBy = it.hasOpposite() && (getRefCollectionType() != "list")
+	val isMappedBy = it.hasOpposite();
 	'''
 		@javax.persistence.OneToMany(
 			«formatAnnotationParameters(<Object>newArrayList(
