@@ -1,0 +1,50 @@
+ApplicationPart RelationPart {
+    
+    Module relation {
+        "Testing entity for different type of relations"
+        Entity Person {
+        	scaffold
+
+        	String first;
+        	String secondName;
+
+        	// 1:N with backref
+            - List<@House> owning <-> owner inverse;
+            - Set<@House> related <-> relation inverse;
+            - Bag<@House> other <-> something inverse;
+
+        	// 1:N without backref
+            - List<@House> owningNoRel inverse;
+            - Set<@House> relatedNoRel inverse;
+            - Bag<@House> otherNoRel inverse;
+
+        	// N:M with backref
+            - List<@House> owningN <-> ownerN;
+            - Set<@House> relatedN <-> relationN;
+            - Bag<@House> otherN <-> somethingN;
+
+        	// N:M without backref
+            - List<@House> owningNoRelN;
+            - Set<@House> relatedNoRelN;
+            - Bag<@House> otherNoRelN;
+        }
+        
+        Entity House {
+        	String street;
+        	String number;
+        	String town;
+        	String state;
+        	String zipCode;
+        	Integer landFieldSize;
+        	Integer houseFootprint;
+        	Integer numberOfFloors;
+        	- @Person owner <-> owning;
+        	- @Person relation <-> related;
+        	- @Person something <-> other;
+
+        	- Set<@Person> ownerN <-> owningN;
+        	- List<@Person> relationN <-> relatedN;
+        	- Bag<@Person> somethingN <-> otherN;
+        }
+    }
+}
