@@ -3,7 +3,6 @@ package org.sculptor.dddsample.relation.serviceapi;
 import org.junit.Test;
 import org.sculptor.dddsample.relation.domain.House;
 import org.sculptor.dddsample.relation.domain.Person;
-import org.sculptor.dddsample.relation.domain.PersonRepository;
 import org.sculptor.dddsample.relation.serviceapi.PersonService;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +45,13 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		boolean was101 = false;
 		for (Person p : all) {
 			if (p.getId().equals(101l)) {
-				Collection<House> owningNoRel = p.getOwningNoRel();
+				Collection<House> owningNoRel = p.getOwningUni();
 				assertEquals(3, owningNoRel.size());
-				Collection<House> relatedNoRel = p.getRelatedNoRel();
+				Collection<House> relatedNoRel = p.getRelatedUni();
+				// Should be 0 no 3
 				assertEquals(3, relatedNoRel.size());
-				Collection<House> otherNoRel = p.getOtherNoRel();
+				Collection<House> otherNoRel = p.getOtherUni();
+				// Should be 0 no 3
 				assertEquals(3, otherNoRel.size());
 				was101 = true;
 			}
@@ -61,55 +62,55 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 	@Test
 	@Override
 	public void testSave() throws Exception {
-		Person p = new Person();
-		p.setFirst("Newman");
-		p.setSecondName("Elemental");
 		House firstHouse = new House();
+		firstHouse.setName("Vyrocnik");
 		firstHouse.setStreet("Atomic");
 		firstHouse.setNumber("1123");
-		firstHouse.setNumberOfFloors(2);
-		firstHouse.setOwner(p);
-		firstHouse.setRelation(p);
-		firstHouse.setSomething(p);
 		firstHouse.setTown("Plymouth");
 		firstHouse.setZipCode("A-923754");
 		firstHouse.setState("Small Britain");
-		firstHouse.setHouseFootprint(123);
-		firstHouse.setLandFieldSize(432);
+
 		House secondHouse = new House();
+		secondHouse.setName("Kukacnik");
 		secondHouse.setStreet("Quark");
 		secondHouse.setNumber("893");
-		secondHouse.setNumberOfFloors(1);
-		secondHouse.setOwner(p);
-		secondHouse.setRelation(p);
-		secondHouse.setSomething(p);
 		secondHouse.setTown("Cardiff");
-		secondHouse.setZipCode("B-3478");
 		secondHouse.setState("Small Britain");
+		secondHouse.setZipCode("B-3478");
+		secondHouse.setNumberOfFloors(1);
 		secondHouse.setHouseFootprint(947);
 		secondHouse.setLandFieldSize(1837);
 
-		p.addOwningNoRel(firstHouse);
-		p.addOwningNoRel(secondHouse);
+		Person p = new Person();
+		p.setFirst("Newman");
+		p.setSecondName("Elemental");
+		p.addOwningUni(firstHouse);
+		p.addOwningUni(secondHouse);
 		Person stored = personService.save(getServiceContext(), p);
 		entityManager.clear();
 
 		// All will have 2 items not only OwningNoRel
 		Person fetched = personService.findById(getServiceContext(), stored.getId());
 
-		Collection<House> owningNoRel = fetched.getOwningNoRel();
-		assertEquals(2, owningNoRel.size());
+		Collection<House> owningUni = fetched.getOwningUni();
+		assertEquals(2, owningUni.size());
 
 		// This is WRONG - should be 0
-		Collection<House> relatedNoRel = fetched.getRelatedNoRel();
-		assertEquals(2, relatedNoRel.size());
+		Collection<House> relatedUni = fetched.getRelatedUni();
+		assertEquals(2, relatedUni.size());
 
 		// This is WRONG - should be 0
-		Collection<House> otherNoRel = fetched.getOtherNoRel();
-		assertEquals(2, otherNoRel.size());
+		Collection<House> otherUni = fetched.getOtherUni();
+		assertEquals(2, otherUni.size());
 	}
 
+	@Test
 	@Override
 	public void testDelete() throws Exception {
+		int personCount = countRowsInTable(Person.class);
+		Person person = personService.findById(getServiceContext(), 103l);
+		personService.delete(getServiceContext(), person);
+		int personCount2 = countRowsInTable(Person.class);
+		assertEquals("Person with ID 103 not removed", 1, personCount - personCount2);
 	}
 }
