@@ -3,7 +3,10 @@ package org.sculptor.dddsample.relation.serviceapi;
 import org.junit.Test;
 import org.sculptor.dddsample.relation.domain.House;
 import org.sculptor.dddsample.relation.domain.Person;
+import org.sculptor.dddsample.relation.domain.PersonProperties;
 import org.sculptor.dddsample.relation.serviceapi.PersonService;
+import org.sculptor.framework.accessapi.ConditionalCriteria;
+import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -112,5 +115,32 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		personService.delete(getServiceContext(), person);
 		int personCount2 = countRowsInTable(Person.class);
 		assertEquals("Person with ID 103 not removed", 1, personCount - personCount2);
+	}
+
+	@Test
+	public void testReadOnly() throws Exception {
+		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.withProperty(PersonProperties.id()).greaterThan(0)
+				.build();
+		List<Person> persons = personService.findByCondition(getServiceContext(), condition);
+		persons.stream().forEach(p -> p.setSecondName("READ_WRITE"));
+		entityManager.flush();
+		entityManager.clear();
+
+		List<ConditionalCriteria> conditionRo = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.withProperty(PersonProperties.id()).greaterThan(0)
+				.readOnly()
+				.build();
+		List<Person> personsRo = personService.findByCondition(getServiceContext(), conditionRo);
+		personsRo.stream().forEach(p -> p.setSecondName("NEW_VALUE"));
+		entityManager.flush();
+		entityManager.clear();
+
+		List<Person> allPersons = personService.findAll(getServiceContext());
+		allPersons.stream().forEach(p -> assertEquals("READ_WRITE", p.getSecondName()));
+	}
+
+	@Override
+	public void testFindByCondition() throws Exception {
 	}
 }

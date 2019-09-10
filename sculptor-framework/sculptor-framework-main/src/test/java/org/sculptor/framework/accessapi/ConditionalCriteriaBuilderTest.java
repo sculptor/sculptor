@@ -486,7 +486,6 @@ public class ConditionalCriteriaBuilderTest {
         criteriaFor(Person.class).lbrace().withProperty(aaa()).eq("A").rbrace().rbrace().buildSingle();
     }
 
-
     // Entity
     public static class Person {
         private String aaa;

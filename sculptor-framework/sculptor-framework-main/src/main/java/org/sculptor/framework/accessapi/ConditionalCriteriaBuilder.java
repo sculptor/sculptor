@@ -135,7 +135,7 @@ public class ConditionalCriteriaBuilder<T> {
             return this;
         }
 
-       public ConditionRoot<T> distinctRoot() {
+        public ConditionRoot<T> distinctRoot() {
             pushCriteria(ConditionalCriteria.distinctRoot());
             return this;
         }
@@ -143,7 +143,13 @@ public class ConditionalCriteriaBuilder<T> {
         public ConditionRoot<T> projectionRoot() {
            pushCriteria(ConditionalCriteria.projectionRoot());
            return this;
-       }
+        }
+
+		@Override
+		public ConditionRoot<T> readOnly() {
+			pushCriteria(ConditionalCriteria.readOnly());
+			return this;
+		}
 
         public ConditionRoot<T> ascending() {
             // syntactic sugar
@@ -158,7 +164,6 @@ public class ConditionalCriteriaBuilder<T> {
             pushCriteria(ConditionalCriteria.orderDesc(last.property));
             return this;
         }
-
 
 		@Override
 		public GroupBy<T> groupBy(Property<T> property) {
@@ -504,6 +509,7 @@ public class ConditionalCriteriaBuilder<T> {
         GroupBy<T> groupBy(Property<T> property, ConditionalCriteria.Function function);
         ConditionRoot<T> distinctRoot();
         ConditionRoot<T> projectionRoot();
+        ConditionRoot<T> readOnly();
         ConditionRoot<T> lbrace();
         ConditionRoot<T> rbrace();
     }

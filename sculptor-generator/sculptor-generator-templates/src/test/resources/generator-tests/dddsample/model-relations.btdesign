@@ -14,9 +14,9 @@ ApplicationPart RelationPart {
             - Bag<@House> other <-> something inverse;
 
         	// 1:N without backref
-            - List<@House> owningNoRel inverse;
-            - Set<@House> relatedNoRel inverse;
-            - Bag<@House> otherNoRel inverse;
+            - List<@House> owningUni inverse;
+            - Set<@House> relatedUni inverse;
+            - Bag<@House> otherUni inverse;
 
         	// N:M with backref
             - List<@House> owningN <-> ownerN;
@@ -24,20 +24,21 @@ ApplicationPart RelationPart {
             - Bag<@House> otherN <-> somethingN;
 
         	// N:M without backref
-            - List<@House> owningNoRelN;
-            - Set<@House> relatedNoRelN;
-            - Bag<@House> otherNoRelN;
+            - List<@House> owningUniN;
+            - Set<@House> relatedUniN;
+            - Bag<@House> otherUniN;
         }
         
         Entity House {
+			String name
         	String street;
         	String number;
         	String town;
         	String state;
         	String zipCode;
-        	Integer landFieldSize;
-        	Integer houseFootprint;
-        	Integer numberOfFloors;
+        	Integer landFieldSize nullable;
+        	Integer houseFootprint nullable;
+        	Integer numberOfFloors nullable;
         	- @Person owner <-> owning;
         	- @Person relation <-> related;
         	- @Person something <-> other;

@@ -28,7 +28,7 @@ ApplicationPart RelationPart {
             - Set<@House> relatedUniN;
             - Bag<@House> otherUniN;
         }
-        
+
         Entity House {
         	String name;
         	String street;

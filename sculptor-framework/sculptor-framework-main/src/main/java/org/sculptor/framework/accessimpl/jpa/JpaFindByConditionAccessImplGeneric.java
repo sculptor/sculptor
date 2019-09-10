@@ -17,6 +17,7 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
+import org.hibernate.annotations.QueryHints;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.accessapi.FindByConditionAccess2;
@@ -354,6 +355,9 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             return null;
         } else if (Operator.DistinctRoot.equals(operator)) {
             getConfig().setDistinct(true);
+            return null;
+        } else if (Operator.ReadOnly.equals(operator)) {
+        	setHint(QueryHints.READ_ONLY, true);
             return null;
         } else {
             return null;
