@@ -151,6 +151,12 @@ public class ConditionalCriteriaBuilder<T> {
 			return this;
 		}
 
+		@Override
+		public ConditionRoot<T> scroll() {
+			pushCriteria(ConditionalCriteria.scroll());
+			return this;
+		}
+
         public ConditionRoot<T> ascending() {
             // syntactic sugar
             return this;
@@ -510,6 +516,7 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRoot<T> distinctRoot();
         ConditionRoot<T> projectionRoot();
         ConditionRoot<T> readOnly();
+        ConditionRoot<T> scroll();
         ConditionRoot<T> lbrace();
         ConditionRoot<T> rbrace();
     }

@@ -482,7 +482,7 @@ def String calculateMaxPages(RepositoryOperation it) {
 	'''
 		int rowCount = «fw("domain.PagedResult")».UNKNOWN;
 		int additionalRows=«fw("domain.PagedResult")».UNKNOWN;
-		if («pagingParameter.name».getStartRow() != «fw("domain.PagedResult")».UNKNOWN && «pagingParameter.name».getRealFetchCount() != 0) {
+		if (!(result instanceof org.sculptor.framework.accessimpl.jpa.StreamOnlyList) && «pagingParameter.name».getStartRow() != «fw("domain.PagedResult")».UNKNOWN && «pagingParameter.name».getRealFetchCount() != 0) {
 			int resultSize=result.size();
 			if (resultSize > 0 && resultSize < pagingParameter.getRealFetchCount()) {
 				// Not enough rows fetched - end of result reached, we should fill row

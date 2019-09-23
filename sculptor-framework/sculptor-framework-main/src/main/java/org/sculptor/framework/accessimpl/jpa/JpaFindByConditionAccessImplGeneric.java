@@ -359,6 +359,9 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         } else if (Operator.ReadOnly.equals(operator)) {
         	setHint(QueryHints.READ_ONLY, true);
             return null;
+        } else if (Operator.Scroll.equals(operator)) {
+        	getConfig().setScroll(true);
+            return null;
         } else {
             return null;
         }

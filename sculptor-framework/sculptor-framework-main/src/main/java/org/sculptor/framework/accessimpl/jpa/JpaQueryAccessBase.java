@@ -183,6 +183,8 @@ public abstract class JpaQueryAccessBase<T,R>
 				singleResult = null;
 			}
 			prepareSingleResult(singleResult);
+		} else if (config.isScroll()) {
+			listResult = new StreamOnlyList<R>(query.getResultStream());
 		} else {
 			listResult = query.getResultList();
 			prepareResult(listResult);

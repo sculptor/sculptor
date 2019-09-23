@@ -27,6 +27,10 @@ ApplicationPart RelationPart {
             - List<@House> owningUniN;
             - Set<@House> relatedUniN;
             - Bag<@House> otherUniN;
+
+            Repository PersonRepository {
+				PagedResult findByCondition(PagingParameter pagingParameter);
+            }
         }
 
         Entity House {

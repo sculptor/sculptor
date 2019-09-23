@@ -7,8 +7,11 @@ import org.sculptor.dddsample.relation.domain.PersonProperties;
 import org.sculptor.dddsample.relation.serviceapi.PersonService;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javassist.expr.Instanceof;
 
 import static org.junit.Assert.*;
 
@@ -122,7 +125,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
 				.withProperty(PersonProperties.id()).greaterThan(0)
 				.build();
-		List<Person> persons = personService.findByCondition(getServiceContext(), condition);
+		List<Person> persons = personService.findByCondition(getServiceContext(), condition, PagingParameter.noLimits()).getValues();
 		persons.stream().forEach(p -> p.setSecondName("READ_WRITE"));
 		entityManager.flush();
 		entityManager.clear();
@@ -131,13 +134,58 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				.withProperty(PersonProperties.id()).greaterThan(0)
 				.readOnly()
 				.build();
-		List<Person> personsRo = personService.findByCondition(getServiceContext(), conditionRo);
+		List<Person> personsRo = personService.findByCondition(getServiceContext(), conditionRo, PagingParameter.noLimits()).getValues();
 		personsRo.stream().forEach(p -> p.setSecondName("NEW_VALUE"));
 		entityManager.flush();
 		entityManager.clear();
 
 		List<Person> allPersons = personService.findAll(getServiceContext());
 		allPersons.stream().forEach(p -> assertEquals("READ_WRITE", p.getSecondName()));
+	}
+
+	@Test
+	public void testScrolleable() throws Exception {
+		// Scroll only
+		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.withProperty(PersonProperties.id()).greaterThan(0)
+				.orderBy(PersonProperties.id())
+				.scroll()
+				.build();
+		List<Person> persons = personService.findByCondition(getServiceContext(), condition, PagingParameter.rowAccess(0, 2)).getValues();
+		try {
+			persons.size();
+			fail("Exception not thrown");
+		} catch (UnsupportedOperationException uoe) {
+			assertTrue(uoe instanceof UnsupportedOperationException);
+		}
+		persons.stream().forEach(p -> p.setSecondName("SCROLL"));
+		entityManager.flush();
+		entityManager.clear();
+
+		// Scroll only with readOnly
+		List<ConditionalCriteria> conditionRo = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.withProperty(PersonProperties.id()).greaterThan(0)
+				.orderBy(PersonProperties.id())
+				.readOnly()
+				.scroll()
+				.build();
+		List<Person> personsRo = personService.findByCondition(getServiceContext(), conditionRo, PagingParameter.rowAccess(0, 2)).getValues();
+		try {
+			persons.size();
+			fail("Exception not thrown");
+		} catch (UnsupportedOperationException uoe) {
+			assertTrue(uoe instanceof UnsupportedOperationException);
+		}
+		personsRo.stream().forEach(p -> p.setSecondName("NEW_VALUE"));
+		entityManager.flush();
+		entityManager.clear();
+
+		List<Person> allPersons = personService.findAll(getServiceContext());
+		long countScroll = allPersons.stream().filter(p -> p.getSecondName().equals("SCROLL")).count();
+		assertEquals(2, countScroll);
+
+		long countNew = allPersons.stream().filter(p -> p.getSecondName().equals("NEW_VALUE")).count();
+		assertEquals(0, countNew);
 	}
 
 	@Override

@@ -220,6 +220,10 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.ReadOnly, null);
 	}
 
+	public static ConditionalCriteria scroll() {
+		return new ConditionalCriteria(Operator.Scroll, null);
+	}
+
 	public static ConditionalCriteria groupBy(Property<?> property) {
 		return new ConditionalCriteria(Operator.GroupBy, property);
 	}
@@ -277,7 +281,7 @@ public class ConditionalCriteria {
 		, OrderAsc, OrderDesc, DistinctRoot, ProjectionRoot
 		, FetchLazy, FetchEager
 		, GroupBy
-		, ReadOnly
+		, ReadOnly, Scroll
 		, Select, Min, Max, Avg, Sum, SumAsLong, SumAsDouble, Count, CountDistinct
 	}
 

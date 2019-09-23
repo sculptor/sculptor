@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sculptor.framework.accessimpl.jpa.StreamOnlyList;
+
 public class PagedResult<T> implements Serializable {
     private static final long serialVersionUID = 4199450784756389139L;
 
@@ -49,6 +51,8 @@ public class PagedResult<T> implements Serializable {
 
         // Store values
         if (startRow == UNKNOWN && rowCount == UNKNOWN && pageSize == UNKNOWN && totalRows==UNKNOWN && additionalResultRows==UNKNOWN) {
+            this.values = values;
+        } else if (values instanceof StreamOnlyList) {
             this.values = values;
         } else if (values.size() > rowCount) {
             // result of subList is not Serializable

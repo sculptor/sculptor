@@ -17,6 +17,8 @@ public interface QueryConfig {
     QueryConfig setExcludeZeroes(boolean excludeZeroes);
     boolean isEnableLike();
     QueryConfig setEnableLike(boolean enableLike);
+    boolean isScroll();
+    QueryConfig setScroll(boolean scroll);
     List<String> getExcludeProperties();
     QueryConfig setExcludeProperties(List<String> excludeProperties);
 
@@ -52,6 +54,7 @@ public interface QueryConfig {
         private boolean ignoreCase = true;
         private boolean excludeZeroes = true;
         private boolean enableLike = true;
+        private boolean scroll = false;
         private List<String> excludeProperties = new ArrayList<String>();
 
         private Class<?> resultType = null;
@@ -85,6 +88,15 @@ public interface QueryConfig {
 
         public QueryConfig setEnableLike(boolean enableLike) {
             this.enableLike = enableLike;
+            return this;
+        }
+
+        public boolean isScroll() {
+            return scroll;
+        }
+
+        public QueryConfig setScroll(boolean scroll) {
+        	this.scroll = scroll;
             return this;
         }
 
