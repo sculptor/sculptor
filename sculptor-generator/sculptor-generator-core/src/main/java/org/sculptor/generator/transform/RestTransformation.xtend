@@ -46,7 +46,7 @@ class RestTransformation {
 		if (operation.httpMethod == HttpMethod.GET &&
 				operation.name == "updateForm" && operation.parameters.isEmpty)
 			operation.addIdParameter()
-		if (operation.httpMethod == HttpMethod.GET &&
+		if (operation.httpMethod == HttpMethod.GET && operation.returnString !== null &&
 				(operation.delegate !== null || operation.name == "createForm" || operation.name == "updateForm") &&
 				!operation.parameters.exists(e | e.type == "ModelMap" || e.type == "Model"))
 			operation.addModelMapParameter()
