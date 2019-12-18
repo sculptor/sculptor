@@ -35,6 +35,8 @@ import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.ext.oracle.OracleDataTypeFactory;
+import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,11 +121,16 @@ public class DbUnitDataSourceUtils {
      */
     public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, IDataSet dataSet)
             throws Exception {
-
-
         // setup database tester
         if (databaseTester == null) {
-            databaseTester = new HsqlDataSourceDatabaseTester(dataSource);
+            String sqlProduct = dataSource.getConnection().getMetaData().getDatabaseProductName();
+            if (sqlProduct.equalsIgnoreCase("PostgreSQL")) {
+                databaseTester = new PostgreSqlDataSourceDatabaseTester(dataSource);
+            } else if (sqlProduct.equalsIgnoreCase("Oracle")) {
+                databaseTester = new OracleDataSourceDatabaseTester(dataSource);
+            } else {
+                databaseTester = new HsqlDataSourceDatabaseTester(dataSource);
+            }
         }
 
         databaseTester.setSetUpOperation(getSetUpDatabaseOperation());
@@ -232,7 +239,6 @@ public class DbUnitDataSourceUtils {
 
     /**
      * DatasourceTester with support for HSQLDB data types.
-     * 
      */
     private static class HsqlDataSourceDatabaseTester extends DataSourceDatabaseTester {
         public HsqlDataSourceDatabaseTester(DataSource dataSource) {
@@ -243,6 +249,38 @@ public class DbUnitDataSourceUtils {
         public IDatabaseConnection getConnection() throws Exception {
             IDatabaseConnection connection = super.getConnection();
             connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+            return connection;
+        }
+    }
+
+    /**
+     * DatasourceTester with support for PostgreSQL data types.
+     */
+    private static class PostgreSqlDataSourceDatabaseTester extends DataSourceDatabaseTester {
+        public PostgreSqlDataSourceDatabaseTester(DataSource dataSource) {
+            super(dataSource);
+        }
+
+        @Override
+        public IDatabaseConnection getConnection() throws Exception {
+            IDatabaseConnection connection = super.getConnection();
+            connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
+            return connection;
+        }
+    }
+
+    /**
+     * DatasourceTester with support for Oracle data types.
+     */
+    private static class OracleDataSourceDatabaseTester extends DataSourceDatabaseTester {
+        public OracleDataSourceDatabaseTester(DataSource dataSource) {
+            super(dataSource);
+        }
+
+        @Override
+        public IDatabaseConnection getConnection() throws Exception {
+            IDatabaseConnection connection = super.getConnection();
+            connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
             return connection;
         }
     }
