@@ -270,28 +270,29 @@ def String springProperties(Application it) {
 def String springPropertiesTest(Application it) {
 	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), OutputSlot.TO_RESOURCES_TEST, '''
 	# Spring properties for test
-	«IF isSpringDataSourceSupportToBeGenerated()»
-		# datasource provider
-		test.jdbc.driverClassName=org.hsqldb.jdbcDriver
-		test.jdbc.url=jdbc:hsqldb:mem:«name.toFirstLower()»
-		test.jdbc.username=sa
-		test.jdbc.password=
-		«IF dbProduct == "mysql"»
-			# datasource properties for MySQL
-			#test.jdbc.driverClassName=com.mysql.jdbc.Driver
-			#test.jdbc.url=jdbc:mysql://localhost/«name.toFirstLower()»
-			#test.jdbc.username=«name.toFirstLower()»
-		«ELSEIF dbProduct == "oracle"»
-			# datasource properties for Oracle
-			#test.jdbc.driverClassName=oracle.jdbc.OracleDriver
-			#test.jdbc.url=jdbc:oracle:thin:@localhost:1521:XE
-			#test.jdbc.username=«name.toFirstLower()»
-		«ELSEIF dbProduct == "postgresql"»
-			# datasource properties for PostgreSQL
-			#test.jdbc.driverClassName=org.postgresql.Driver
-			#test.jdbc.url=jdbc:postgresql://localhost/«name.toFirstLower()»
-			#test.jdbc.username=«name.toFirstLower()»
-		«ENDIF»
+	# datasource provider
+	test.jdbc.driverClassName=org.hsqldb.jdbcDriver
+	test.jdbc.url=jdbc:hsqldb:mem:«name.toFirstLower()»
+	test.jdbc.username=sa
+	test.jdbc.password=
+
+	«IF dbProduct == "mysql"»
+		# datasource properties for MySQL
+		#test.jdbc.driverClassName=com.mysql.jdbc.Driver
+		#test.jdbc.url=jdbc:mysql://localhost/«name.toFirstLower()»
+		#test.jdbc.username=«name.toFirstLower()»
+		#test.jdbc.password=
+	«ELSEIF dbProduct == "oracle"»
+		# datasource properties for Oracle
+		#test.jdbc.driverClassName=oracle.jdbc.OracleDriver
+		#test.jdbc.url=jdbc:oracle:thin:@localhost:1521:XE
+		#test.jdbc.username=«name.toFirstLower()»
+		#test.jdbc.password=
+	«ELSEIF dbProduct == "postgresql"»
+		# datasource properties for PostgreSQL
+		#test.jdbc.driverClassName=org.postgresql.Driver
+		#test.jdbc.url=jdbc:postgresql://localhost/«name.toFirstLower()»
+		#test.jdbc.username=«name.toFirstLower()»
 		#test.jdbc.password=
 	«ENDIF»
 	'''
@@ -609,7 +610,7 @@ def String testDataSource(Application it) {
 	'''
 	<bean id="testDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<property name="driverClassName" value="${test.jdbc.driverClassName}"/>
-		<property name="url" value="${test.jdbc.url}"/>
+		<property name="jdbcUrl" value="${test.jdbc.url}"/>
 		<property name="username" value="${test.jdbc.username}"/>
 		<property name="password" value="${test.jdbc.password}"/>
 		<!-- override following properties by extending SpringTmpl.testDataSourceAdditions -->
@@ -633,7 +634,7 @@ def String dataSource(Application it) {
 	'''
 	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driverClassName}"/>
-		<property name="url" value="${jdbc.url}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
 		<!-- override following properties by extending SpringTmpl.dataSourceAdditions -->
