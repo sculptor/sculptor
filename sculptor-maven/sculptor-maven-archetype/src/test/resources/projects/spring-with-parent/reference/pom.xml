@@ -209,9 +209,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>3.4.1</version>
 			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
 			<!-- <scope>test</scope> -->

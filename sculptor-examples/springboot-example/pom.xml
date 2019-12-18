@@ -177,8 +177,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
 			<!-- Add scope test when running with a persistent database (mysql etc) -->
 			<!-- Add scope test when deployed in jboss -->
 			<!-- <scope>test</scope> -->
