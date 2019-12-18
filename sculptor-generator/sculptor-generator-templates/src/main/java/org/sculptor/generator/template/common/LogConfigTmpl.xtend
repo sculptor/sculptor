@@ -40,18 +40,55 @@ class LogConfigTmpl {
 		fileOutput("logback.xml", OutputSlot.TO_RESOURCES, '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<configuration>
-
+			<!--
+			You can use following MDC expressions when org.sculptor.framework.util.MdcFilter is in web.xml, user is extracted from SpringSecurityContext
+				%mdc{user}
+				%mdc{remoteAddress}
+				%mdc{sessionId}
+				%mdc{requestId} - internal unique request identifier (nanoTime)
+				%mdc{serverName}
+				%mdc{url}
+			You can specify different logback configuration on Java command line like:
+				-Dlogback.configurationFile=logback-color-info.xml
+			-->
 			<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 				<encoder>
-					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+					<pattern>%d{yy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) - [%-15.15thread] %cyan(%-40.40logger{39}) : %msg%n</pattern>
 				</encoder>
+				<withJansi>true</withJansi>
 			</appender>
 
 			<root level="INFO">
 				<appender-ref ref="STDOUT" />
 			</root>
 
-		</configuration>	    
+			<logger name="«basePackage»" level="DEBUG" />
+
+			<!-- Spring security framework -->
+			<!--
+			<logger name="org.springframework.security" level="DEBUG" />
+			-->
+
+			<!-- Spring framework -->
+			<!--
+			<logger name="org.springframework" level="DEBUG" />
+			 -->
+
+			<!-- Hibernate SQL statements -->
+			<logger name="org.hibernate.SQL" level="DEBUG" />
+
+			<!-- Binding SQL parameters -->
+			<!--
+			<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="ALL" />
+			<logger name="org.hibernate.type.EnumType" level="ALL" />
+			-->
+
+			<!-- Binding and extracting SQL parameters -->
+			<!--
+			<logger name="org.hibernate.type" level="ALL" />
+			-->
+
+		</configuration>
 		'''
 		)
 	}
@@ -60,19 +97,53 @@ class LogConfigTmpl {
 		fileOutput("logback-test.xml", OutputSlot.TO_RESOURCES_TEST, '''
 		<?xml version="1.0" encoding="UTF-8" ?>
 		<configuration>
-
+			<!--
+			You can use following MDC expressions when org.sculptor.framework.util.MdcFilter is in web.xml, user is extracted from SpringSecurityContext
+				%mdc{user}
+				%mdc{remoteAddress}
+				%mdc{sessionId}
+				%mdc{requestId} - internal unique request identifier (nanoTime)
+				%mdc{serverName}
+				%mdc{url}
+			-->
 			<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 				<encoder>
-					<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+					<pattern>%d{yy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) - [%-15.15thread] %cyan(%-40.40logger{39}) : %msg%n</pattern>
 				</encoder>
+				<withJansi>true</withJansi>
 			</appender>
-			
-			<logger name="«basePackage»" level="INFO" />
+
 			<root level="INFO">
 				<appender-ref ref="STDOUT" />
 			</root>
 
-		</configuration>	    
+			<logger name="«basePackage»" level="DEBUG" />
+
+			<!-- Spring security framework -->
+			<!--
+			<logger name="org.springframework.security" level="DEBUG" />
+			-->
+
+			<!-- Spring framework -->
+			<!--
+			<logger name="org.springframework" level="DEBUG" />
+			 -->
+
+			<!-- Hibernate SQL statements -->
+			<logger name="org.hibernate.SQL" level="DEBUG" />
+
+			<!-- Binding SQL parameters -->
+			<!--
+			<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="ALL" />
+			<logger name="org.hibernate.type.EnumType" level="ALL" />
+			-->
+
+			<!-- Binding and extracting SQL parameters -->
+			<!--
+			<logger name="org.hibernate.type" level="ALL" />
+			-->
+
+		</configuration>
 		'''
 		)
 	}
