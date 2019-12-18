@@ -46,11 +46,11 @@ public class DatabaseImport extends IsolatedDatabaseTestCase {
     }
 
     /**
-     * Override this to specify another datasource. By default hsqldbDataSource
+     * Override this to specify another datasource. By default testDataSource
      * is used.
      */
     protected String getDataSourceSpringBeanName() {
-        return "hsqldbDataSource";
+        return "testDataSource";
     }
 
     public void testDummy() {

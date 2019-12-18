@@ -270,6 +270,30 @@ def String springProperties(Application it) {
 def String springPropertiesTest(Application it) {
 	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("spring-test.properties"), OutputSlot.TO_RESOURCES_TEST, '''
 	# Spring properties for test
+	«IF isSpringDataSourceSupportToBeGenerated()»
+		# datasource provider
+		test.jdbc.driverClassName=org.hsqldb.jdbcDriver
+		test.jdbc.url=jdbc:hsqldb:mem:«name.toFirstLower()»
+		test.jdbc.username=sa
+		test.jdbc.password=
+		«IF dbProduct == "mysql"»
+			# datasource properties for MySQL
+			#test.jdbc.driverClassName=com.mysql.jdbc.Driver
+			#test.jdbc.url=jdbc:mysql://localhost/«name.toFirstLower()»
+			#test.jdbc.username=«name.toFirstLower()»
+		«ELSEIF dbProduct == "oracle"»
+			# datasource properties for Oracle
+			#test.jdbc.driverClassName=oracle.jdbc.OracleDriver
+			#test.jdbc.url=jdbc:oracle:thin:@localhost:1521:XE
+			#test.jdbc.username=«name.toFirstLower()»
+		«ELSEIF dbProduct == "postgresql"»
+			# datasource properties for PostgreSQL
+			#test.jdbc.driverClassName=org.postgresql.Driver
+			#test.jdbc.url=jdbc:postgresql://localhost/«name.toFirstLower()»
+			#test.jdbc.username=«name.toFirstLower()»
+		«ENDIF»
+		#test.jdbc.password=
+	«ENDIF»
 	'''
 	)
 }
@@ -285,7 +309,6 @@ def String generatedSpringProperties(Application it) {
 	«ENDIF»
 	«IF isSpringDataSourceSupportToBeGenerated()»
 		# datasource provider
-		jdbc.dataSourceClassName=org.apache.commons.dbcp.BasicDataSource
 		«IF dbProduct == "mysql"»
 			# datasource properties for MySQL
 			jdbc.driverClassName=com.mysql.jdbc.Driver
@@ -582,25 +605,38 @@ def String aopConfigAdditions(Application it, boolean test) {
 	'''
 }
 
-def String hsqldbDataSource(Application it) {
+def String testDataSource(Application it) {
 	'''
-	<bean id="hsqldbDataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-		<property name="url" value="jdbc:hsqldb:mem:«name.toFirstLower()»"/>
-		<property name="username" value="sa"/>
-		<property name="password" value=""/>
+	<bean id="testDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<property name="driverClassName" value="${test.jdbc.driverClassName}"/>
+		<property name="url" value="${test.jdbc.url}"/>
+		<property name="username" value="${test.jdbc.username}"/>
+		<property name="password" value="${test.jdbc.password}"/>
+		<!-- override following properties by extending SpringTmpl.testDataSourceAdditions -->
+		«testDataSourceAdditions(it)»
 	</bean>
+	'''
+}
+
+/*
+ * Extension point to generate more properties in test data source bean.
+ */
+def String testDataSourceAdditions(Application it) {
+	'''
+	<property name="maximumPoolSize" value="5" />
+	<property name="connectionTimeout" value="2000" />
+	<property name="leakDetectionThreshold" value="5000" />
 	'''
 }
 
 def String dataSource(Application it) {
 	'''
-	<bean id="dataSource" class="${jdbc.dataSourceClassName}">
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driverClassName}"/>
 		<property name="url" value="${jdbc.url}"/>
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
-		<!-- add additional properties by extending SpringTmpl.dataSourceAdditions -->
+		<!-- override following properties by extending SpringTmpl.dataSourceAdditions -->
 		«dataSourceAdditions(it)»
 	</bean>
 	'''
@@ -611,6 +647,9 @@ def String dataSource(Application it) {
  */
 def String dataSourceAdditions(Application it) {
 	'''
+	<property name="maximumPoolSize" value="40" />
+	<property name="connectionTimeout" value="5000" />
+	<property name="leakDetectionThreshold" value="15000" />
 	'''
 }
 
@@ -738,7 +777,7 @@ def String entityManagerFactory(Application it) {
 def String entityManagerFactoryTest(Application it) {
 	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml"), OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
-		«hsqldbDataSource(it)»
+		«testDataSource(it)»
 
 		«IF isJpaProviderHibernate()»
 			<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
@@ -749,7 +788,7 @@ def String entityManagerFactoryTest(Application it) {
 
 		<!-- Creates a EntityManagerFactory for use with JPA provider -->
 		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-			<property name="dataSource" ref="hsqldbDataSource"/>
+			<property name="dataSource" ref="testDataSource"/>
 			<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-test.xml"/>
 			«IF isJpaProviderHibernate() || isJpaProviderEclipseLink()»
 				<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>

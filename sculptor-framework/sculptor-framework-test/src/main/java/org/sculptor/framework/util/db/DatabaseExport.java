@@ -36,6 +36,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.sculptor.framework.util.ApplicationContextSingleton;
 import org.sculptor.framework.util.FactoryHelper;
 import org.springframework.context.ApplicationContext;
@@ -222,7 +223,7 @@ public class DatabaseExport {
 
         @Override
         protected String getDatasourceName() {
-            return "hsqldbDataSource";
+            return "testDataSource";
         }
 
         @Override
@@ -258,4 +259,24 @@ public class DatabaseExport {
 
     }
 
+    public static class PostgresqlStrategy extends DatabaseExport.DatabaseEnvironmentStrategy {
+
+        private final static String POSTGRESQL_ALL_TABLES = "select * from information_schema.tables where table_schema not in ('pg_catalog', 'information_schema') and table_type='BASE TABLE'";
+
+        @Override
+        protected String getDatasourceName() {
+            return "testDataSource";
+        }
+
+        @Override
+        protected String getSqlAllTables() {
+            return POSTGRESQL_ALL_TABLES;
+        }
+
+        @Override
+        protected IDataTypeFactory getDataTypeFactory() {
+            return new PostgresqlDataTypeFactory();
+        }
+
+    }
 }

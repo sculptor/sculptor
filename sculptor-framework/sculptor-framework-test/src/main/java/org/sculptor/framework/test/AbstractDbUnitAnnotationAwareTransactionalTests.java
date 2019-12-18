@@ -84,7 +84,7 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
      * inject the datasource
      */
     @Override
-    @Resource(name = "hsqldbDataSource")
+    @Resource(name = "testDataSource")
     public void setDataSource(DataSource dataSource) {
         super.setDataSource(dataSource);
         this.jdbcTemplate = new JdbcTemplate(dataSource);

@@ -106,11 +106,11 @@ public class IsolatedDatabaseTestCase extends DatabaseTestCase {
     }
 
     /**
-     * Override this to specify another datasource. By default hsqldbDataSource
+     * Override this to specify another datasource. By default testDataSource
      * is used.
      */
     protected String getDataSourceSpringBeanName() {
-        return "hsqldbDataSource";
+        return "testDataSource";
     }
 
 	protected IDataSet getDataSet() throws Exception {
