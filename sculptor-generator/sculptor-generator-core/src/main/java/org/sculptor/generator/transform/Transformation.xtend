@@ -38,10 +38,13 @@ import sculptormetamodel.SculptormetamodelFactory
 import sculptormetamodel.Service
 import sculptormetamodel.Trait
 import sculptormetamodel.ValueObject
+import org.sculptor.generator.chain.ChainOverridable
 
 /**
  * Enriches generator meta model.
  */
+
+@ChainOverridable
 class Transformation {
 
 	static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
