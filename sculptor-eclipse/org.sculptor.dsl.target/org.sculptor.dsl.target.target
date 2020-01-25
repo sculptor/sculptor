@@ -2,7 +2,7 @@
 <locations>
   <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
     <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
-    <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.18.0"/>
+    <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
   </location>
   <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
     <unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
@@ -15,7 +15,7 @@
     <unit id="org.eclipse.xtend" version="0.0.0"/>
     <unit id="org.eclipse.xtend.typesystem.emf" version="0.0.0"/>
     <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
-    <repository location="http://download.eclipse.org/releases/2019-06/201906191000"/>
+    <repository location="http://download.eclipse.org/releases/2019-12/201912181000"/>
   </location>
  </locations>
 </target>
