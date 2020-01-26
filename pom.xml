@@ -88,7 +88,7 @@
 		<emf-common-version>2.15.0</emf-common-version>
 		<emf-codegen-ecore-version>2.15.0</emf-codegen-ecore-version>
 		<emf-codegen-version>2.14.0</emf-codegen-version>
-		<emf-mwe2-launch-version>2.10.0</emf-mwe2-launch-version>
+		<emf-mwe2-launch-version>2.11.1</emf-mwe2-launch-version>
 		<ecore-xtext-version>1.4.0</ecore-xtext-version>
 		<ecore-xcore-version>1.7.0</ecore-xcore-version>
 		<ecore-xcore-lib-version>1.3.0</ecore-xcore-lib-version>
