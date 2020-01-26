@@ -56,6 +56,7 @@ import org.sculptor.dsl.sculptordsl.DslSimpleDomainObject
 import org.sculptor.dsl.sculptordsl.DslSubscribe
 import org.sculptor.dsl.sculptordsl.DslTrait
 import org.sculptor.dsl.sculptordsl.DslValueObject
+import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.check.CheckCrossLink
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
@@ -76,6 +77,7 @@ import sculptormetamodel.Trait
 /**
  * Transforms DSL meta model to generator meta model.
  */
+@ChainOverridable
 class DslTransformation {
 
 	static val SculptormetamodelFactory FACTORY = SculptormetamodelFactory.eINSTANCE
