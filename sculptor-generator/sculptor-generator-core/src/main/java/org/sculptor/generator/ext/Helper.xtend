@@ -1229,6 +1229,8 @@ class Helper {
 				HttpMethod.POST
 			case "PUT" :
 				HttpMethod.PUT
+			case "PATCH" :
+				HttpMethod.PATCH
 			case "DELETE" :
 				HttpMethod.DELETE
 			default :

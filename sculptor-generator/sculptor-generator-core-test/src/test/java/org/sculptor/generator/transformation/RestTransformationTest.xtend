@@ -217,6 +217,9 @@ class RestTransformationTest extends XtextTest {
         assertEquals(HttpMethod.POST, bar.getHttpMethod())
         assertEquals("/fooBar/baz", bar.getPath())
 
+        val barPatch = foobar.operations.namedElement("barPatch")
+        assertEquals(HttpMethod.PATCH, barPatch.getHttpMethod())
+        assertEquals("/fooPatch/baz", barPatch.getPath())
     }
 
     @Test

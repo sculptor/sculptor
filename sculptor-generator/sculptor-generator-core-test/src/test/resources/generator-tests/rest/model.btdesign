@@ -18,6 +18,7 @@ Application ResourceTest {
     	Resource FooBarResource {
     		String foo;
     		String bar POST path="/fooBar/baz";
+    		String barPatch PATCH path="/fooPatch/baz";
     		String something(@SomeDto some) path="/fooBar/some";
     	}
     	

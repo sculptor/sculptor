@@ -136,7 +136,7 @@ DslResourceOperationDelegate :
   DELEGATE ("@")? delegate=[DslService]"."delegateOperation=[DslServiceOperation];
 
 enum DslHttpMethod :
-  None | GET="GET" | POST="POST" | PUT="PUT" | DELETE="DELETE";
+  None | GET="GET" | POST="POST" | PUT="PUT" | DELETE="DELETE" | PATCH="PATCH";
 
 DslRepositoryOperation :
   (doc=STRING)?
