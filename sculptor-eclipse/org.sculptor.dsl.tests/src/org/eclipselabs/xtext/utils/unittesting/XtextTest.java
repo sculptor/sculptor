@@ -175,7 +175,7 @@ public abstract class XtextTest {
     
     protected FluentIssueCollection testFile(String fileToTest, String... referencedResources) {
     	
-		LOGGER.info("testing " + fileToTest + " in test method " +this.getClass().getSimpleName() + "." + new Throwable().fillInStackTrace().getStackTrace()[1].getMethodName());
+		LOGGER.debug("testing " + fileToTest + " in test method " +this.getClass().getSimpleName() + "." + new Throwable().fillInStackTrace().getStackTrace()[1].getMethodName());
 		
         for (String referencedResource : referencedResources) {
             URI uri = URI.createURI(resourceRoot + "/" + referencedResource);
