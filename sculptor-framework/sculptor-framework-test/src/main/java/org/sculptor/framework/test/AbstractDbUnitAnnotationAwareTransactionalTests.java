@@ -66,15 +66,13 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
 
     static {
         ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
-            public String getFactoryImplementationClassName() {
-                return "org.sculptor.framework.context.JUnitServiceContextFactory";
+			public String getFactoryImplementationClassName() {
+				return "org.sculptor.framework.context.JUnitServiceContextFactory";
             }
         });
     }
 
     private final ServiceContext serviceContext = ServiceContextFactory.createServiceContext("JUnit");
-
-    private JdbcTemplate jdbcTemplate;
 
     protected ServiceContext getServiceContext() {
         return serviceContext;
@@ -86,8 +84,7 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
     @Override
     @Resource(name = "testDataSource")
     public void setDataSource(DataSource dataSource) {
-        super.setDataSource(dataSource);
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    	super.setDataSource(dataSource);
     }
 
     /**
@@ -97,6 +94,9 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
      */
     @Before
     public void setUpDatabaseTester() throws Exception {
+    	if (getJdbcTemplate().getDataSource() == null) {
+    		throw new IllegalStateException("Missing @Resource 'testDataSource'");
+    	}
     	buildSchema();
         
     	IDataSet dataSet = getDataSet();
