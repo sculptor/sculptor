@@ -94,10 +94,19 @@
 			<version>${spring-integration-version}</version>
 		</dependency>
 		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>2.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
