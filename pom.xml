@@ -93,32 +93,31 @@
 		<ecore-xcore-version>1.7.0</ecore-xcore-version>
 		<ecore-xcore-lib-version>1.3.0</ecore-xcore-lib-version>
 
-		<spring-version>5.1.9.RELEASE</spring-version>
-		<spring-security-version>5.1.7.RELEASE</spring-security-version>
-		<spring-integration-version>5.1.7.RELEASE</spring-integration-version>
-		<spring-data-jpa-version>2.1.10.RELEASE</spring-data-jpa-version>
-		<spring-boot-version>2.1.7.RELEASE</spring-boot-version>
+		<spring-version>5.2.4.RELEASE</spring-version>
+		<spring-security-version>5.2.2.RELEASE</spring-security-version>
+		<spring-integration-version>5.2.4.RELEASE</spring-integration-version>
+		<spring-data-jpa-version>2.2.5.RELEASE</spring-data-jpa-version>
+		<spring-boot-version>2.2.5.RELEASE</spring-boot-version>
 
 		<aspectj-version>1.9.4</aspectj-version>
-		<slf4j-version>1.7.27</slf4j-version>
+		<slf4j-version>1.7.30</slf4j-version>
 		<logback-version>1.2.3</logback-version>
 		<!-- We are using the Java EE 6 API provided by JBoss due to the missing implementation classes in Sun/Oracle JARs -->
 		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
-		<!-- We have to stay with Hibernate 4.2 due to JPA 2.1 API dependency of newer version -->
-		<hibernate-version>5.4.3.Final</hibernate-version>
+		<hibernate-version>5.4.12.Final</hibernate-version>
 		<hibernate-validator-version>5.4.3.Final</hibernate-validator-version>
 		<tomat-jasper-el>9.0.22</tomat-jasper-el>
 		<ehcache-version>3.8.1</ehcache-version>
 		<appengine-version>1.9.74</appengine-version>
 		<mongodb-version>2.14.3</mongodb-version>
-		<drools-version>6.1.0.Final</drools-version>
-		<camel-version>2.24.0</camel-version>
-		<activemq-version>5.15.9</activemq-version>
-		<joda-time-version>2.10.2</joda-time-version>
-		<jackson-version>2.9.9</jackson-version>
+		<drools-version>6.4.0.Final</drools-version>
+		<camel-version>2.25.0</camel-version>
+		<activemq-version>5.15.11</activemq-version>
+		<joda-time-version>2.10.5</joda-time-version>
+		<jackson-version>2.10.2</jackson-version>
 		<xstream-version>1.4.11.1</xstream-version>
 
-		<junit-version>4.12</junit-version>
+		<junit-version>4.13</junit-version>
 		<hsqldb-version>2.5.0</hsqldb-version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
@@ -980,7 +979,7 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.10</version>
+				<version>1.13</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>
@@ -1006,7 +1005,7 @@
 			<dependency>
 				<groupId>com.zaxxer</groupId>
 				<artifactId>HikariCP</artifactId>
-				<version>3.4.1</version>
+				<version>3.4.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hsqldb</groupId>
@@ -1050,6 +1049,7 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
+
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
