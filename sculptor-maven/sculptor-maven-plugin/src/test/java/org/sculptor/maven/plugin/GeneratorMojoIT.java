@@ -47,6 +47,9 @@ public class GeneratorMojoIT extends AbstractGeneratorMojoTestCase<GeneratorMojo
 		// Set default values on mojo
 		setVariableValueToObject(mojo, "model", "src/main/resources/model.btdesign");
 		setVariableValueToObject(mojo, "clean", true);
+		// For debugging
+		// setVariableValueToObject(mojo, "verbose", true);
+
 
 		// Set defaults for multi-value parameters in mojo
 		mojo.initMojoMultiValueParameters();
