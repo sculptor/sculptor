@@ -942,6 +942,11 @@
 				<version>2.0.1.Final</version>
 			</dependency>
 			<dependency>
+				<groupId>javax.annotation</groupId>
+				<artifactId>javax.annotation-api</artifactId>
+				<version>1.3.2</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jasper-el</artifactId>
 				<version>${tomat-jasper-el}</version>
