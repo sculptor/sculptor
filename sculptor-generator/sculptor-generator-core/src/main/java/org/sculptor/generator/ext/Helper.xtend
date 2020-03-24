@@ -58,6 +58,7 @@ import sculptormetamodel.ServiceOperation
 import sculptormetamodel.Trait
 import sculptormetamodel.TypedElement
 import sculptormetamodel.ValueObject
+import org.eclipse.xtend.lib.annotations.Data
 
 @ChainOverridable
 class Helper {
@@ -1590,5 +1591,30 @@ class Helper {
 			strategy.addDefaultValues(operation)
 		}
 	}
+ 
+	def <T> indexed(Iterable<T> list) {
+		var List<ListItem<T>> result = newArrayList
+		val lastIndex = list.size - 1
+		var currentIndex = 0
 
+		for (item : list) {
+			result += new ListItem<T>(
+				item,
+				currentIndex,
+				currentIndex == 0,
+				currentIndex == lastIndex
+			)
+			currentIndex++;
+		}
+
+		return result
+	}
+}
+
+@Data
+class ListItem<T> {
+	T value
+	int index
+	boolean isFirst
+	boolean isLast
 }

@@ -100,6 +100,18 @@ public class GenericAccessObjectManager {
 		return strategy.isPersistentClassConstructor();
 	}
 
+	public PropertiesBase getPropBase() {
+		return propBase;
+	}
+
+	public HelperBase getHelperBase() {
+		return helperBase;
+	}
+
+	public Helper getHelper() {
+		return helper;
+	}
+
 	/**
 	 * Get the generic type declaration for generic access objects.
 	 */

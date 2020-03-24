@@ -16,6 +16,8 @@
  */
 package org.sculptor.generator.template.db
 
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
@@ -24,10 +26,14 @@ import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
+import sculptormetamodel.Attribute
+import sculptormetamodel.Enum
+import sculptormetamodel.Reference
+import java.util.Date
+import java.text.SimpleDateFormat
 
 @ChainOverridable
 class DbUnitTmpl {
-
 	@Inject extension DbHelperBase dbHelperBase
 	@Inject extension DbHelper dbHelper
 	@Inject extension Helper helper
@@ -48,17 +54,156 @@ def String singleDbunitTestData(Application it) {
 }
 
 def String dbunitTestDataContent(Application it) {
+	val manyToManyRelations = it.resolveManyToManyRelations(true)
 	'''
 	<?xml version='1.0' encoding='UTF-8'?>
 	<dataset>
 		«val domainObjects  = it.getDomainObjectsInCreateOrder(true).filter(d | !isInheritanceTypeSingleTable(getRootExtends(d.^extends)))» 
 		«FOR domainObject  : domainObjects» 
-		<«domainObject.getDatabaseName()» /> 
+			«var comment = new StringBuilder()»
+			«for (refs : domainObject.references.filter(r | !r.many)) {
+				var String c = genEnumComment(refs);
+				if (c !== null) {
+					comment.append("\n").append(c)
+				}
+			}»
+			«IF comment.length > 0»
+			<!--
+				Enums for entity: «domainObject.name»
+				«comment»
+			-->
+			«ENDIF»
+			«IF dbunitTestDataRows === 0»
+				<«domainObject.getDatabaseName()» />
+			«ELSE»
+				«FOR index : 0..(dbunitTestDataRows - 1)»
+					<«domainObject.getDatabaseName()»
+						«domainObject.attributes.filter(a | index > 0 || !a.isNullable())
+							.map[a | " " + a.getDatabaseName() + "=\"" + genValue(index + dbunitTestDataIdBase, a) + "\"\n"].join()»
+						«domainObject.references.filter(r | (index > 0 || !r.isNullable()) && !r.many)
+							.map[r | " " + r.getDatabaseName() + "=\"" + genRefValue(index + dbunitTestDataIdBase, r) + "\"\n"].join()»
+					/>
+				«ENDFOR»
+			«ENDIF»
 		«ENDFOR» 
-		«FOR joinTableName  : domainObjects.map[d | d.getJoinTableNames()].flatten.toSet» 
-		<«joinTableName» /> 
+		«FOR domainObject  : manyToManyRelations» 
+			«IF dbunitTestDataRows === 0»
+				<«domainObject.getDatabaseName()» />
+			«ELSE»
+				«FOR j : 0..(dbunitTestDataRows - 1)»
+					«FOR k : 0..(dbunitTestDataRows - 1)»
+						«val AtomicInteger offset = new AtomicInteger(0)»
+						<«domainObject.getDatabaseName()»
+							«domainObject.references.map[a | " " + a.getDatabaseName() + "=\"" + ((offset.getAndAdd(1) == 0 ? j : k) + dbunitTestDataIdBase) + "\"\n"].join()»
+						/>
+					«ENDFOR»
+				«ENDFOR»
+			«ENDIF»
 		«ENDFOR» 
 	</dataset>
 	'''
+}
+	
+def String genValue(int id, Attribute attr) {
+	var uType = attr.type.toUpperCase();
+	if (attr.name == "id") {
+		Integer.toString(id)
+	} else if (attr.name == "uuid") {
+		UUID.randomUUID().toString();
+	} else if (attr.name == "version") {
+		Integer.toString((Math.random() * 10) as int)
+	} else if (attr.name == "createdBy") {
+		"test"
+	} else if (attr.name == "lastUpdatedBy") {
+		"test"
+	} else if (uType.indexOf("STRING") != -1 || uType.indexOf("TEXT") != -1) {
+		genString(attr.name, attr.length, id)
+	} else if (uType.indexOf("INT") != -1 || uType.indexOf("LONG") != -1) {
+		genInt();
+	} else if (uType.indexOf("DATE") != -1) {
+		genDate()
+	} else if (uType.indexOf("TIME") != -1) {
+		genTime()
+	} else if (uType.indexOf("BOOL") != -1) {
+		genBoolean()
+	} else {
+		generateValue(attr)
+	}
+}
+
+def String genEnumComment(Reference ref) {
+	if (ref.isEnumReference()) {
+		'''«FOR value : (ref.to as Enum).values BEFORE ref.name + " = " SEPARATOR ' | '»«value.name»«ENDFOR»'''
+	} else {
+		null
+	}
+}
+
+def String genRefValue(int id, Reference ref) {
+	if (ref.isEnumReference()) {
+		var values = (ref.to as Enum).values;
+		values.get((Math.random() * values.size) as int).name
+	} else {
+		Integer.toString(id)
+	}
+}
+	
+def String genString(String name, String length, int id) {
+	var maxLength = length === null ? 100 : Integer.parseInt(length)
+	var key = genUniqKey(id, name)
+	var keyLength = key.length
+	if (maxLength <= keyLength) {
+		return key.substring(0, maxLength)
+	}
+
+	var genLength = maxLength > 10 ? genInt(maxLength - 10) + 10 : maxLength
+	var result = new StringBuilder(maxLength)
+	var int w = 0
+	for (var i = 0; i < genLength; i++) {
+		if (i % 3 == 2 && Math.random() * 3 > 2) {
+			result.append(" ")
+			w = 0
+		} else if (w > 6) {
+			result.append(" ")
+			w = 0
+		} else {
+			w++
+			var Double rVal = Math.random() * 26 + 97
+			var char ch = rVal.intValue() as char
+			result.append(ch)
+		}
+	}
+	var namePos = genInt(genLength - keyLength);
+	namePos = namePos < 0 ? 0 : namePos;
+	result.replace(namePos, namePos, key);
+	if (result.length > maxLength) {
+		result.delete(maxLength, result.length)
+	}
+	result.toString()
+}
+def String genInt() {
+	Integer.toString(genInt(Integer.MAX_VALUE))
+}
+def int genInt(int range) {
+	(Math.random() * range) as int;
+}
+def String genDate() {
+	var date = new Date((System.currentTimeMillis + Math.random * 10_000_000_000d - 5_000_000_000d) as long);
+	var dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	dateFormat.format(date)
+}
+def String genTime() {
+	var date = new Date((System.currentTimeMillis + Math.random * 10_000_000_000d - 5_000_000_000d) as long);
+	var timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	timeFormat.format(date)
+}
+def String genBoolean() {
+	Math.random() < 0.5d ? "true" : "false"
+}
+def String generateValue(Attribute attr) {
+	"Unknown type '" + attr.type + "' - Override DbUnitTmpl.generateValue(Attribute attr)"
+}
+def String genUniqKey(int id, String fieldName) {
+	return "#" + fieldName.toUpperCase + id;
 }
 }

@@ -36,6 +36,8 @@ import org.sculptor.framework.util.db.DbUnitDataSourceUtils;
 import org.sculptor.framework.util.db.HsqlDataTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -82,7 +84,8 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
      * inject the datasource
      */
     @Override
-    @Resource(name = "testDataSource")
+    @Autowired
+    @Qualifier("testDataSource")
     public void setDataSource(DataSource dataSource) {
     	super.setDataSource(dataSource);
     }

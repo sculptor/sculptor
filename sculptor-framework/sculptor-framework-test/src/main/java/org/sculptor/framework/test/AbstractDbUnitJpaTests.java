@@ -23,6 +23,7 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
+import org.sculptor.framework.domain.Property;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 /**
@@ -120,5 +121,13 @@ public abstract class AbstractDbUnitJpaTests extends AbstractDbUnitAnnotationAwa
             return true;
         }
         return false;
+    }
+
+    protected String genUniqFieldKey(Property<?> field) {
+		return "#" + field.getName().toUpperCase();
+    }
+
+    protected String genUniqRowKey(long rowId, Property<?> field) {
+		return "#" + field.getName().toUpperCase() + rowId;
     }
 }

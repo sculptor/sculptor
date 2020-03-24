@@ -302,6 +302,14 @@ class Properties {
 		getBooleanProperty("generate.test.emptyDbunitTestData")
 	}
 
+	def int dbunitTestDataRows() {
+		Integer.parseInt(getProperty("generate.test.dbunitTestDataRows"))
+	}
+
+	def int dbunitTestDataIdBase() {
+		Integer.parseInt(getProperty("generate.test.dbunitTestDataIdBase"))
+	}
+
 	def boolean isModuleToBeGenerated(String moduleName) {
 		val propertyName = "generate.module." + moduleName
 		if (hasProperty(propertyName))
