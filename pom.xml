@@ -101,7 +101,7 @@
 		<spring-data-jpa-version>2.2.5.RELEASE</spring-data-jpa-version>
 		<spring-boot-version>2.2.5.RELEASE</spring-boot-version>
 
-		<aspectj-version>1.9.4</aspectj-version>
+		<aspectj-version>1.9.5</aspectj-version>
 		<slf4j-version>1.7.30</slf4j-version>
 		<logback-version>1.2.3</logback-version>
 		<!-- We are using the Java EE 6 API provided by JBoss due to the missing implementation classes in Sun/Oracle JARs -->
@@ -116,7 +116,7 @@
 		<camel-version>2.25.0</camel-version>
 		<activemq-version>5.15.11</activemq-version>
 		<joda-time-version>2.10.5</joda-time-version>
-		<jackson-version>2.10.2</jackson-version>
+		<jackson-version>2.10.3</jackson-version>
 		<xstream-version>1.4.11.1</xstream-version>
 
 		<junit-version>4.13</junit-version>
