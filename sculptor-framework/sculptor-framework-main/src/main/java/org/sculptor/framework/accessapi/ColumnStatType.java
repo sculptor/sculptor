@@ -2,6 +2,7 @@ package org.sculptor.framework.accessapi;
 
 public enum ColumnStatType {
 	COUNT,
+	COUNT_DISTINCT,
 	MIN,
 	MAX,
 	AVERAGE,

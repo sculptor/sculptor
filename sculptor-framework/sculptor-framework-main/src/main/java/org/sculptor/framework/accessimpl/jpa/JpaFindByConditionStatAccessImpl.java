@@ -32,6 +32,8 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 			for (ColumnStatType statType : statFlags) {
 				if (ColumnStatType.COUNT.equals(statType)) {
 					criteriaBuilder.select(statRequest.getColumn()).count();
+				} else if (ColumnStatType.COUNT_DISTINCT.equals(statType)) {
+					criteriaBuilder.select(statRequest.getColumn()).countDistinct();
 				} else if (ColumnStatType.MIN.equals(statType)) {
 					criteriaBuilder.select(statRequest.getColumn()).min();
 				} else if (ColumnStatType.MAX.equals(statType)) {
@@ -90,6 +92,8 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 				for (ColumnStatType statType : statFlags) {
 					if (ColumnStatType.COUNT.equals(statType)) {
 						colResult.setCount((Long) row.get(i));
+					} else if (ColumnStatType.COUNT_DISTINCT.equals(statType)) {
+						colResult.setCountDistinct((Long) row.get(i));
 					} else if (ColumnStatType.MIN.equals(statType) && row.get(i) instanceof String) {
 						colResult.setMinString(row.get(i).toString());
 					} else if (ColumnStatType.MAX.equals(statType) && row.get(i) instanceof String) {

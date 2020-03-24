@@ -5,6 +5,7 @@ public class ColumnStatResult {
 	String fieldName;
 
 	Long count=null;
+	Long countDistinct=null;
 	Double min=null;
 	Double max=null;
 	Double average=null;
@@ -60,6 +61,10 @@ public class ColumnStatResult {
 		return count;
 	}
 
+	public Long getCountDistinct() {
+		return countDistinct;
+	}
+
 	public String getGroupByValue() {
 		return groupByVal;
 	}
@@ -98,6 +103,10 @@ public class ColumnStatResult {
 
 	public void setCount(Long count) {
 		this.count = count;
+	}
+
+	public void setCountDistinct(Long countDistinct) {
+		this.countDistinct = countDistinct;
 	}
 
 	public void setMin(Double min) {
@@ -161,17 +170,20 @@ public class ColumnStatResult {
 	}
 
 	public String toString() {
-		StringBuilder sb=new StringBuilder("ColumnStat for ");
-		sb.append("'").append(getName()).append("'").append(" [");
+		StringBuilder sb=new StringBuilder("ColumnStat[field=");
+		sb.append("'").append(getName()).append("'");
 
 		if (getCount() != null) {
 			sb.append(", count=").append(getCount());
+		}
+		if (getCountDistinct() != null) {
+			sb.append(", countDistinct=").append(getCountDistinct());
 		}
 		if (getMin() != null) {
 			sb.append(", minD=").append(getMin());
 		}
 		if (getMinString() != null) {
-			sb.append(", minS=").append(getMinString());
+			sb.append(", minS='").append(getMinString()).append("'");
 		}
 		if (getMax() != null) {
 			sb.append(", maxD=").append(getMax());

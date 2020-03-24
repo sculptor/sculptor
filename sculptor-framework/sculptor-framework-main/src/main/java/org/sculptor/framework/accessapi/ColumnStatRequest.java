@@ -8,22 +8,22 @@ import static org.sculptor.framework.accessapi.ColumnStatType.*;
 import org.sculptor.framework.domain.Property;
 
 public class ColumnStatRequest<T> {
-	private static final List<ColumnStatType> ALL;
-	private static final List<ColumnStatType> ALL_EXCEPT_SUM;
-	private static final List<ColumnStatType> STRING_STAT;
+	private static final List<ColumnStatType> ALL_PROPS;
+	private static final List<ColumnStatType> ALL_EXCEPT_SUM_PROPS;
+	private static final List<ColumnStatType> STRING_STAT_PROPS;
 
 	static {
-		ALL=new ArrayList<ColumnStatType>();
-		ALL.addAll(Arrays.asList(new ColumnStatType[]
-				{COUNT, MIN, MAX, AVERAGE, SUM}));
+		ALL_PROPS=new ArrayList<ColumnStatType>();
+		ALL_PROPS.addAll(Arrays.asList(new ColumnStatType[]
+				{COUNT, COUNT_DISTINCT, MIN, MAX, AVERAGE, SUM}));
 
-		ALL_EXCEPT_SUM=new ArrayList<ColumnStatType>();
-		ALL_EXCEPT_SUM.addAll(Arrays.asList(new ColumnStatType[]
-				{COUNT, MIN, MAX, AVERAGE}));
+		ALL_EXCEPT_SUM_PROPS=new ArrayList<ColumnStatType>();
+		ALL_EXCEPT_SUM_PROPS.addAll(Arrays.asList(new ColumnStatType[]
+				{COUNT, COUNT_DISTINCT, MIN, MAX, AVERAGE}));
 
-		STRING_STAT=new ArrayList<ColumnStatType>();
-		STRING_STAT.addAll(Arrays.asList(new ColumnStatType[]
-				{COUNT, MIN, MAX}));
+		STRING_STAT_PROPS=new ArrayList<ColumnStatType>();
+		STRING_STAT_PROPS.addAll(Arrays.asList(new ColumnStatType[]
+				{COUNT, COUNT_DISTINCT, MIN, MAX}));
 	}
 
 	Property<T> column;
@@ -36,17 +36,17 @@ public class ColumnStatRequest<T> {
 	public ColumnStatRequest(Property<T> column, ColumnStatType... flags) {
 		this.column=column;
 		if (flags.length == 0) {
-			statFlags=ALL;
+			statFlags=ALL_PROPS;
 		} else {
 			// expand special values ALL, ALL_EXCEPT_SUM, STRING_STAT
 			statFlags=new ArrayList<ColumnStatType>();
 			for (ColumnStatType fl : flags) {
-				if (fl.equals(ALL)) {
-					statFlags.addAll(ALL);
-				} else if (fl.equals(ALL_EXCEPT_SUM)) {
-					statFlags.addAll(ALL_EXCEPT_SUM);
-				} else if (fl.equals(STRING_STAT)) {
-					statFlags.addAll(STRING_STAT);
+				if (fl.equals(ColumnStatType.ALL)) {
+					statFlags.addAll(ALL_PROPS);
+				} else if (fl.equals(ColumnStatType.ALL_EXCEPT_SUM)) {
+					statFlags.addAll(ALL_EXCEPT_SUM_PROPS);
+				} else if (fl.equals(ColumnStatType.STRING_STAT)) {
+					statFlags.addAll(STRING_STAT_PROPS);
 				} else {
 					statFlags.add(fl);
 				}
