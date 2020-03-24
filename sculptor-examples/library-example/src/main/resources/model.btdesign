@@ -63,6 +63,8 @@ Application Library {
                 findAll;
                 findByQuery;
                 findByCondition;
+                findByConditionTuple;
+                findByConditionStat;
                 protected findByKeys(Set<String> keys, String keyPropertyName, MediaClass persistentClass);
                 long getNumberOfMovies(IDTYPE libraryId) query="Movie.getNumberOfMovies";
                 List<@Media> findMediaByCharacter(IDTYPE libraryId, String characterName) gap;

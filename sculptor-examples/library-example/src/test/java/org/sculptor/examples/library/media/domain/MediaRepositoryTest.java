@@ -1,14 +1,10 @@
 package org.sculptor.examples.library.media.domain;
 
+import static org.junit.Assert.*;
 import static org.sculptor.examples.library.media.domain.MediaProperties.title;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.sculptor.examples.library.media.domain.Book;
 import org.sculptor.examples.library.media.domain.MediaProperties;
@@ -18,10 +14,12 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.sculptor.examples.library.media.domain.Media;
 import org.sculptor.examples.library.media.domain.Movie;
-import org.sculptor.framework.accessapi.ConditionalCriteria;
+import org.sculptor.framework.accessapi.*;
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.Tuple;
 
 /**
  * Spring based transactional test with DbUnit support.
@@ -105,4 +103,60 @@ public class MediaRepositoryTest extends AbstractDbUnitJpaTests {
         assertEquals(1, found.size());
         assertEquals("Pippi Långstrump i Söderhavet", found.get(0).getTitle());
     }
+
+    @Test
+    public void testFindByConditionTuple() throws Exception {
+        List<ConditionalCriteria> condition = criteriaFor(Media.class)
+                .select(MediaProperties.lastUpdated()).countDistinct()
+				.select(MediaProperties.lastUpdatedBy()).countDistinct()
+                .select(MediaProperties.id()).countDistinct()
+                .build();
+        List<Tuple> result = mediaRepository.findByConditionTuple(condition);
+        assertEquals(1, result.size());
+        Tuple tuple = result.get(0);
+        long lastUpdatedCount = tuple.get(0, Long.class);
+        long lastUpdatedByCount = tuple.get(1, Long.class);
+        long idCount = tuple.get(2, Long.class);
+        assertEquals(2, lastUpdatedCount);
+        assertEquals(1, lastUpdatedByCount);
+        assertEquals(3, idCount);
+    }
+
+    @Test
+    public void testFindByConditionStat() throws Exception {
+        List<ConditionalCriteria> condition = criteriaFor(Media.class)
+                .withProperty(MediaProperties.id()).isNotNull()
+                .build();
+        List<ColumnStatRequest<Media>> stat = new ArrayList<>();
+        ColumnStatRequest statA = new ColumnStatRequest(MediaProperties.title(), ColumnStatType.STRING_STAT);
+        ColumnStatRequest statB = new ColumnStatRequest(MediaProperties.lastUpdated(), ColumnStatType.COUNT_DISTINCT);
+        ColumnStatRequest statC = new ColumnStatRequest(MediaProperties.lastUpdatedBy(), ColumnStatType.STRING_STAT);
+        stat.add(statA);
+        stat.add(statB);
+        stat.add(statC);
+        List<List<ColumnStatResult>> result = mediaRepository.findByConditionStat(condition, stat);
+
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).size());
+
+        List<ColumnStatResult> statRow = result.get(0);
+        ColumnStatResult titleStat = statRow.get(0);
+        assertEquals("title", titleStat.getName());
+        assertEquals(3l, titleStat.getCount().longValue());
+        assertEquals(3l, titleStat.getCountDistinct().longValue());
+        assertEquals("Die Another Day", titleStat.getMinString());
+        assertNull(titleStat.getAverage());
+
+        ColumnStatResult lastUpdatedStat = statRow.get(1);
+        assertEquals("lastUpdated", lastUpdatedStat.getName());
+        assertEquals(2l, lastUpdatedStat.getCountDistinct().longValue());
+
+        ColumnStatResult lastUpdatedByStat = statRow.get(2);
+        assertEquals("lastUpdatedBy", lastUpdatedByStat.getName());
+        assertEquals(3l, lastUpdatedByStat.getCount().longValue());
+        assertEquals(1l, lastUpdatedByStat.getCountDistinct().longValue());
+        assertEquals("dbunit", lastUpdatedByStat.getMinString());
+        assertEquals("dbunit", lastUpdatedByStat.getMaxString());
+        assertNull(lastUpdatedByStat.getAverage());
+	}
 }
