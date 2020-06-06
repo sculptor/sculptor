@@ -96,7 +96,7 @@
 		<ecore-xcore-lib-version>1.3.0</ecore-xcore-lib-version>
 
 		<spring-version>5.2.4.RELEASE</spring-version>
-		<spring-security-version>5.2.2.RELEASE</spring-security-version>
+		<spring-security-version>5.2.5.RELEASE</spring-security-version>
 		<spring-integration-version>5.2.4.RELEASE</spring-integration-version>
 		<spring-data-jpa-version>2.2.5.RELEASE</spring-data-jpa-version>
 		<spring-boot-version>2.2.5.RELEASE</spring-boot-version>
