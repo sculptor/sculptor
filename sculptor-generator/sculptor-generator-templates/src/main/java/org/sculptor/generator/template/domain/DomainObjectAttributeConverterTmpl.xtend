@@ -49,7 +49,9 @@ class DomainObjectAttributeConverterTmpl {
 
 				@Override
 				public «name» convertToEntityAttribute(«identifierAttribute.typeName» «identifierAttribute.name») {
-					return «name».from«identifierAttribute.name.toFirstUpper»(«identifierAttribute.name»);
+					return «identifierAttribute.name» == null
+							? null
+							: «name».from«identifierAttribute.name.toFirstUpper»(«identifierAttribute.name»);
 				}
 
 			}
