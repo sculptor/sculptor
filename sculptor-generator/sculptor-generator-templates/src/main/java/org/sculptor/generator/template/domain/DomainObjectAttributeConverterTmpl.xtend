@@ -44,7 +44,9 @@ class DomainObjectAttributeConverterTmpl {
 
 				@Override
 				public «identifierAttribute.typeName» convertToDatabaseColumn(«name» «name.toFirstLower») {
-					return «name.toFirstLower».get«identifierAttribute.name.toFirstUpper»();
+					return «name.toFirstLower» == null
+							? null
+							: «name.toFirstLower».get«identifierAttribute.name.toFirstUpper»();
 				}
 
 				@Override
