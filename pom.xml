@@ -107,7 +107,7 @@
 		<!-- We are using the Java EE 6 API provided by JBoss due to the missing implementation classes in Sun/Oracle JARs -->
 		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
 		<hibernate-version>5.4.12.Final</hibernate-version>
-		<hibernate-validator-version>5.4.3.Final</hibernate-validator-version>
+		<hibernate-validator-version>6.1.6.Final</hibernate-validator-version>
 		<tomat-jasper-el>9.0.22</tomat-jasper-el>
 		<ehcache-version>3.8.1</ehcache-version>
 		<appengine-version>1.9.74</appengine-version>
@@ -934,7 +934,7 @@
 				<version>${aspectj-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.hibernate</groupId>
+				<groupId>org.hibernate.validator</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>${hibernate-validator-version}</version>
 			</dependency>

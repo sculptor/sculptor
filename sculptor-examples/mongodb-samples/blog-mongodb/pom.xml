@@ -70,7 +70,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<!-- Add scope provided when deployed in jboss -->
 			<!-- <scope>provided</scope> -->
