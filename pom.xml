@@ -119,7 +119,7 @@
 		<jackson-version>2.10.3</jackson-version>
 		<xstream-version>1.4.11.1</xstream-version>
 
-		<junit-version>4.13</junit-version>
+		<junit-version>4.13.1</junit-version>
 		<hsqldb-version>2.5.0</hsqldb-version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
