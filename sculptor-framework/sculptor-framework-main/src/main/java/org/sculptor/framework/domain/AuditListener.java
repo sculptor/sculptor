@@ -18,6 +18,7 @@
 package org.sculptor.framework.domain;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -49,7 +50,7 @@ public class AuditListener  {
     @PreUpdate
     @PrePersist
     private void changeAuditInformation(Auditable auditableEntity) {
-        Timestamp lastUpdated = new Timestamp(System.currentTimeMillis());
+        LocalDateTime lastUpdated = LocalDateTime.now();
         auditableEntity.setLastUpdated(lastUpdated);
         String lastUpdatedBy = ServiceContextStore.getCurrentUser();
         auditableEntity.setLastUpdatedBy(lastUpdatedBy);

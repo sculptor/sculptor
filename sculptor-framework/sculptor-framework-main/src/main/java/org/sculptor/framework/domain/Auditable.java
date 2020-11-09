@@ -17,18 +17,18 @@
 
 package org.sculptor.framework.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface Auditable {
 
 	public void setCreatedBy(String createdBy);
 	public String getCreatedBy();
-	public void setCreatedDate(Date createdDate);
-	public Date getCreatedDate();
+	public void setCreatedDate(LocalDateTime createdDate);
+	public LocalDateTime getCreatedDate();
 
     public void setLastUpdatedBy(String updatedBy);
     public String getLastUpdatedBy();
-    public void setLastUpdated(Date updateDate);
-    public Date getLastUpdated();
+    public void setLastUpdated(LocalDateTime updateDate);
+    public LocalDateTime getLastUpdated();
 
 }

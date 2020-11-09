@@ -16,6 +16,7 @@
  */
 package org.sculptor.framework.accessimpl.mongodb;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +27,7 @@ import org.joda.time.DateTime;
 import org.sculptor.framework.accessapi.SaveAccess;
 import org.sculptor.framework.context.ServiceContextStore;
 import org.sculptor.framework.domain.Auditable;
+import org.sculptor.framework.domain.DateAuditable;
 import org.sculptor.framework.domain.JodaAuditable;
 import org.sculptor.framework.errorhandling.OptimisticLockingException;
 
@@ -154,6 +156,8 @@ public class MongoDbSaveAccessImpl<T> extends MongoDbAccessBase<T> implements Sa
     protected void updateAuditInformation(T obj) {
         if (obj instanceof Auditable) {
             changeAuditInformation((Auditable) obj);
+        } else if (obj instanceof DateAuditable) {
+            changeAuditInformation((DateAuditable) obj);
         } else if (obj instanceof JodaAuditable) {
             changeAuditInformation((JodaAuditable) obj);
         }
@@ -161,6 +165,16 @@ public class MongoDbSaveAccessImpl<T> extends MongoDbAccessBase<T> implements Sa
     }
 
     private void changeAuditInformation(Auditable auditableEntity) {
+        auditableEntity.setLastUpdated(LocalDateTime.now());
+        String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+        auditableEntity.setLastUpdatedBy(lastUpdatedBy);
+        if (auditableEntity.getCreatedDate() == null)
+            auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
+        if (auditableEntity.getCreatedBy() == null)
+            auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
+    }
+
+    private void changeAuditInformation(DateAuditable auditableEntity) {
         auditableEntity.setLastUpdated(new Date());
         String lastUpdatedBy = ServiceContextStore.getCurrentUser();
         auditableEntity.setLastUpdatedBy(lastUpdatedBy);

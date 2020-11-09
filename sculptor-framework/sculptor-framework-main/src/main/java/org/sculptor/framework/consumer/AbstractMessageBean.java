@@ -157,7 +157,7 @@ public abstract class AbstractMessageBean {
      * Subclass may override to define invalid message exceptions. Default is
      * {@link org.sculptor.framework.errorhandling.InvalidMessageException}
      * ,
-     * {@link org.sculptor.framework.errorhandling.XmlMappingException}
+     * {@link org.sculptor.framework.xml.XmlMappingException}
      * and
      * {@link org.sculptor.framework.errorhandling.ValidationException}
      */
