@@ -74,7 +74,7 @@ class BuilderTemplateTest extends XtextTest {
 			#[
 				"public class FooBuilder {",
 				"private String name;",
-				"private java.util.Date timestamp;"
+				"private java.time.Instant timestamp;"
 			])
 
 		// factory method
@@ -97,7 +97,7 @@ class BuilderTemplateTest extends XtextTest {
 		// constructor
 		code.assertContainsConsecutiveFragments(
 			#[
-				"public FooBuilder( String name, java.util.Date timestamp) {",
+				"public FooBuilder( String name, java.time.Instant timestamp) {",
 				"this.name = name;",
 				"this.timestamp = timestamp;",
 				"}"
@@ -110,7 +110,7 @@ class BuilderTemplateTest extends XtextTest {
 				"this.name = val;",
 				"return this;",
 				"}",
-				"public FooBuilder timestamp(java.util.Date val) {",
+				"public FooBuilder timestamp(java.time.Instant val) {",
 				"this.timestamp = val;",
 				"return this;",
 				"}"
@@ -122,7 +122,7 @@ class BuilderTemplateTest extends XtextTest {
 				"public String getName() {",
 				"return name;",
 				"}",
-				"public java.util.Date getTimestamp() {",
+				"public java.time.Instant getTimestamp() {",
 				"return timestamp;",
 				"}"
 			])
