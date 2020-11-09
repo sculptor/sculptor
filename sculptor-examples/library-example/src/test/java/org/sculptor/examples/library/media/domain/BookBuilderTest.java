@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.sculptor.examples.library.media.domain.MediaCharacterBuilder.mediaCharacter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.sculptor.examples.library.media.domain.Book;
@@ -13,7 +14,7 @@ public class BookBuilderTest {
 
 	@Test
 	public void assertBuild() {
-		Date now = new Date();
+		LocalDateTime now = LocalDateTime.now();
 		Book book = BookBuilder.book()
 			.createdBy("me")
 			.createdDate(now)

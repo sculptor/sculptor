@@ -33,7 +33,7 @@ Application Blog {
             not aggregateRoot
             String title
             String body
-            Timestamp timestamp
+            DateTime timestamp
         }
         
         Entity Blog {

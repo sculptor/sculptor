@@ -22,6 +22,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.List;
 
@@ -72,9 +76,9 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		PersonName name = new PersonName("New", "Person");
 		person.setName(name);
 
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, -1);
-		person.setBirthDate(cal.getTime());
+		LocalDate now = LocalDate.now();
+		LocalDate bd = now.minusYears(1);
+		person.setBirthDate(bd);
 		personService.save(getServiceContext(), person);
 		assertEquals(before + 1, countRowsInTable(Person.class));
 	}
@@ -85,9 +89,9 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		PersonName name = new PersonName("New", "Person");
 		person.setName(name);
 
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, 1);
-		person.setBirthDate(cal.getTime());
+		LocalDate now = LocalDate.now();
+		LocalDate bd = now.plusYears(1);
+		person.setBirthDate(bd);
 		personService.save(getServiceContext(), person);
 	}
 

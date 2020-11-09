@@ -1,5 +1,7 @@
 package org.sculptor.examples.library.person.domain;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 import junit.framework.TestCase;
@@ -14,11 +16,11 @@ public class PersonTest extends TestCase {
     @Test
     public void testGetAge() {
         Person p = new Person(Gender.FEMALE, new Ssn("12345", Country.SWEDEN));
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -17);
-        cal.add(Calendar.MONTH, 1);
-        p.setBirthDate(cal.getTime());
-        assertEquals(new Integer(16), p.getAge());
+        LocalDate bd = LocalDate.now();
+        bd = bd.minus(17, ChronoUnit.YEARS);
+        bd = bd.plus(1, ChronoUnit.MONTHS);
+        p.setBirthDate(bd);
+        assertEquals(16, p.getAge().intValue());
     }
 
 }

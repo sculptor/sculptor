@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -408,7 +409,9 @@ public class PersonRepositoryTest extends AbstractDbUnitJpaTests {
 	public void shouldSave() throws Exception {
 		int before = countRowsInTable("PERSON");
 		Person person = new Person(Gender.MALE, new Ssn("0815", Country.US));
-		person.setBirthDate(new Date(0));
+		LocalDate bd = LocalDate.now();
+		bd = bd.withYear(0);
+		person.setBirthDate(bd);
 		person.setName(new PersonName("test", "test"));
 		personRepository.save(person);
 		assertEquals(before + 1, countRowsInTable("PERSON"));

@@ -1,6 +1,7 @@
 package org.sculptor.examples.library.person.domain;
 
 import java.util.Calendar;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -12,6 +13,7 @@ import javax.persistence.UniqueConstraint;
 import org.sculptor.examples.library.person.domain.Gender;
 import org.sculptor.examples.library.person.domain.PersonBase;
 import org.sculptor.examples.library.person.domain.Ssn;
+import org.sculptor.framework.errorhandling.ValidationException;
 
 /**
  *
@@ -36,39 +38,36 @@ import org.sculptor.examples.library.person.domain.Ssn;
 // @NamedQuery(name = "Person.findPersonByName", query = "select person from Person person where person.name.first in (:names) or person.name.last in (:names)")
 
 public class Person extends PersonBase {
-    private static final long serialVersionUID = -3936470509835260676L;
+	private static final long serialVersionUID = -3936470509835260676L;
 
-    protected Person() {
+	protected Person() {
 	}
 
 	public Person(Gender sex, Ssn ssn) {
 		super(sex, ssn);
 	}
 
+	@Override
+	public void setBirthDate(LocalDate birthDate) {
+		if (birthDate != null && birthDate.isAfter(LocalDate.now())) {
+			throw new ValidationException("birthDate is in past");
+		}
+		super.setBirthDate(birthDate);
+	}
+
 	public Integer getAge() {
-	    if (getBirthDate() == null) {
-            return null;
-        }
-	    Calendar birth = Calendar.getInstance();
-        birth.setTime(getBirthDate());
+		LocalDate bd = getBirthDate();
+		if (bd == null) {
+			return null;
+		}
 
-		Calendar today = Calendar.getInstance();
-		// I wish we could use joda instead of this ugly
-        int age = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+		LocalDate now = LocalDate.now();
+		int age = now.getYear() - bd.getYear();
 
-        Calendar birthDay = Calendar.getInstance();
-        birthDay.set(Calendar.YEAR, today.get(Calendar.YEAR));
-        birthDay.set(Calendar.MONTH, birth.get(Calendar.MONTH));
-        birthDay.set(Calendar.DAY_OF_MONTH, birth.get(Calendar.DAY_OF_MONTH));
-        birthDay.set(Calendar.HOUR_OF_DAY, 0);
-        birthDay.set(Calendar.MINUTE, 0);
-        birthDay.set(Calendar.SECOND, 0);
-        birthDay.set(Calendar.MILLISECOND, 0);
-        boolean birthDayIsAfter = birthDay.compareTo(today) > 0;
-        if (birthDayIsAfter) {
-            age -= 1;
-        }
+		if (bd.withYear(now.getYear()).isAfter(now)) {
+			age -= 1;
+		}
 
-        return age;
+		return age;
 	}
 }

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
 
     @Test
     public void testSave() throws Exception {
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         String name = "TestCreateLibrary " + now;
         Library library = new Library(name);
         libraryService.save(getServiceContext(), library);
@@ -93,7 +94,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
         assertNotNull(foundLibrary.getLastUpdated());
         assertEquals("system", foundLibrary.getLastUpdatedBy());
         assertTrue("Expected " + foundLibrary.getLastUpdated() + " > " + now,
-                foundLibrary.getLastUpdated().compareTo(now) >= 0);
+        foundLibrary.getLastUpdated().compareTo(now) >= 0);
     }
 
     @Test(expected=OptimisticLockingException.class)
