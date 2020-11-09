@@ -94,6 +94,8 @@ public class PropertiesBase {
 		// joda-time
 		if (getProperty("datetime.library").equals("joda")) {
 			initDerivedDefaultsForJoda(defaultConfiguration);
+		} else if (getProperty("datetime.library").equals("legacy")) {
+			initDerivedDefaultsForLegacyDate(defaultConfiguration);
 		}
 
 		if (!getProperty("nosql.provider").equals("none")) {
@@ -209,10 +211,12 @@ public class PropertiesBase {
 		defaultConfiguration.setString("javaType.Date", "org.joda.time.LocalDate");
 		defaultConfiguration.setString("javaType.DateTime", "org.joda.time.DateTime");
 		defaultConfiguration.setString("javaType.Timestamp", "org.joda.time.DateTime");
+		defaultConfiguration.setString("javaType.AuditableDateTime", "org.joda.time.DateTime");
 
 		defaultConfiguration.setString("hibernateType.Date", "org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
 		defaultConfiguration.setString("hibernateType.DateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
 		defaultConfiguration.setString("hibernateType.Timestamp", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+		defaultConfiguration.setString("hibernateType.AuditableDateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
 
 		defaultConfiguration
 				.setString(
@@ -226,6 +230,10 @@ public class PropertiesBase {
 				.setString(
 						"propertyEditor.Timestamp",
 						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
+		defaultConfiguration
+				.setString(
+						"propertyEditor.AuditableDateTime",
+						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
 
 		defaultConfiguration.setString("framework.xml.DateHandler",
 				"org.sculptor.framework.xml.JodaLocalDateHandler");
@@ -233,6 +241,28 @@ public class PropertiesBase {
 				"org.sculptor.framework.xml.JodaDateTimeHandler");
 
 		defaultConfiguration.setBoolean("generate.auditable.joda", true);
+	}
+
+	private void initDerivedDefaultsForLegacyDate(MutableConfigurationProvider defaultConfiguration) {
+		defaultConfiguration.setString("javaType.Date", "java.util.Date");
+		defaultConfiguration.setString("javaType.DateTime", "java.util.Date");
+		defaultConfiguration.setString("javaType.Timestamp", "java.sql.Timestamp");
+		defaultConfiguration.setString("javaType.AuditableDateTime", "java.util.Date");
+
+		defaultConfiguration.setString("hibernateType.Date", "date");
+		defaultConfiguration.setString("hibernateType.DateTime", "timestamp");
+		defaultConfiguration.setString("hibernateType.Timestamp", "timestamp");
+		defaultConfiguration.setString("hibernateType.AuditableDateTime", "timestamp");
+
+		defaultConfiguration.remove("propertyEditor.Date");
+		defaultConfiguration.remove("propertyEditor.DateTime");
+		defaultConfiguration.remove("propertyEditor.Timestamp");
+		defaultConfiguration.remove("propertyEditor.AuditableDateTime");
+
+		defaultConfiguration.remove("framework.xml.DateHandler");
+		defaultConfiguration.remove("framework.xml.TimeStampHandler");
+
+		defaultConfiguration.setBoolean("generate.auditable.legacy", true);
 	}
 
 	private void initDerivedDefaultsSystemAttributes(MutableConfigurationProvider defaultConfiguration) {

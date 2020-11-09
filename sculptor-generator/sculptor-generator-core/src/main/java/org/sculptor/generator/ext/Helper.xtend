@@ -989,7 +989,7 @@ class Helper {
 	}
 
 	def List<String> supportedTemporalTypes() {
-		newArrayList("Date", "DateTime", "Timestamp")
+		newArrayList("Date", "DateTime", "Timestamp", "AuditableDateTime")
 	}
 
 	def List<String> supportedNumericTypes() {

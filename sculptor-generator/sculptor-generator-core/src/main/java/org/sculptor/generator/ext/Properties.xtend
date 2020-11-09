@@ -83,6 +83,8 @@ class Properties {
 	def String auditInterceptorClass() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditInterceptor")
+		else if (getBooleanProperty("generate.auditable.legacy"))
+			fw("domain.DateAuditInterceptor")
 		else
 			fw("domain.AuditInterceptor")
 	}
@@ -90,6 +92,8 @@ class Properties {
 	def String auditableInterface() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditable")
+		else if (getBooleanProperty("generate.auditable.legacy"))
+			fw("domain.DateAuditable")
 		else
 			fw("domain.Auditable")
 	}
@@ -506,6 +510,8 @@ class Properties {
 	def String auditEntityListener() {
 		if (getBooleanProperty("generate.auditable.joda"))
 			fw("domain.JodaAuditListener")
+		else if (getBooleanProperty("generate.auditable.legacy"))
+			fw("domain.DateAuditListener")
 		else
 			fw("domain.AuditListener")
 	}

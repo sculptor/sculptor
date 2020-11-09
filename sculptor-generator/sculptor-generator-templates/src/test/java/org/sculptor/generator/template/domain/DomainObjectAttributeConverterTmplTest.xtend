@@ -39,8 +39,8 @@ class DomainObjectAttributeConverterTmplTest extends GeneratorTestBase {
 	def void assertConverter() {
 		val code = getFileText(TO_GEN_SRC + "/org/sculptor/example/library/person/domain/CountryConverter.java");
 		assertContainsConsecutiveFragments(code, #['@Converter', 'public class CountryConverter implements AttributeConverter<Country, String> {'])
-		assertContainsConsecutiveFragments(code, #['@Override', 'public String convertToDatabaseColumn(Country country) {', 'return country.getAlpha2();', '}'])
-		assertContainsConsecutiveFragments(code, #['@Override', 'public Country convertToEntityAttribute(String alpha2) {', 'return Country.fromAlpha2(alpha2);', '}'])
+		assertContainsConsecutiveFragments(code, #['@Override', 'public String convertToDatabaseColumn(Country country) {', 'return country == null ? null : country.getAlpha2();', '}'])
+		assertContainsConsecutiveFragments(code, #['@Override', 'public Country convertToEntityAttribute(String alpha2) {', 'return alpha2 == null ? null : Country.fromAlpha2(alpha2);', '}'])
 	}
 
 	@Test

@@ -147,7 +147,11 @@ def String auditAnnotations(Attribute it) {
 		«ELSEIF isJpaProviderAppEngine()»
 			@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
 		«ELSE»
-			@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+			«IF getHibernateType() == 'date'»
+				@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
+			«ELSEIF getHibernateType() == 'timestamp'»
+				@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+			«ENDIF»
 		«ENDIF»
 		@javax.persistence.Column(
 		«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',

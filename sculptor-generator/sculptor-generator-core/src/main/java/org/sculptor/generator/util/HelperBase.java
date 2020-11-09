@@ -602,8 +602,7 @@ public class HelperBase {
 	public Entity addAuditable(Entity entity) {
 		SculptormetamodelFactory factory = SculptormetamodelFactoryImpl.eINSTANCE;
 
-		boolean useJoda = propBase.getBooleanProperty("generate.auditable.joda");
-		String timestampType = useJoda ? "DateTime" : "java.util.Date";
+		String timestampType = "AuditableDateTime";
 
 		if (!hasElement("createdDate", entity.getAttributes())) {
 			Attribute createdDate = factory.createAttribute();
