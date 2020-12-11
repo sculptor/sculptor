@@ -459,7 +459,7 @@ def String persistenceUnitAdditionalPropertiesTest(Application it) {
 
 def String persistenceUnitPropertiesTestHibernate(Application it, String unitName) {
 	'''
-		<property name="hibernate.dialect" value="«fw("persistence.CustomHSQLDialect")»" />
+		<property name="hibernate.dialect" value="«fw("persistence.SculptorHsqlDialect")»" />
 		<property name="hibernate.show_sql" value="true" />
 		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 		<property name="query.substitutions" value="true 1, false 0" />

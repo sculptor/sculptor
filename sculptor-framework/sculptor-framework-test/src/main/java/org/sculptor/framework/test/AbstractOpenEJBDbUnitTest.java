@@ -110,7 +110,7 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
      * Overrides some properties defined for persistent units in "persistence.xml".
      */
     protected void initPersistenceUnitProperties(String unitName, Properties properties) {
-        properties.put(unitName + ".hibernate.dialect", "org.sculptor.framework.persistence.CustomHSQLDialect");
+        properties.put(unitName + ".hibernate.dialect", "org.sculptor.framework.persistence.SculptorHsqlDialect");
         properties.put(unitName + ".hibernate.show_sql", "true");
         properties.put(unitName + ".hibernate.hbm2ddl.auto", "create-drop");
         properties.put(unitName + ".hibernate.cache.use_query_cache", "false");
