@@ -148,6 +148,18 @@
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.18</version>
+		</dependency>
+<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+<dependency>
+    <groupId>org.javassist</groupId>
+    <artifactId>javassist</artifactId>
+    <version>3.27.0-GA</version>
+</dependency>
+
+		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
 			<scope>test</scope>
@@ -401,41 +413,49 @@
 				</property>
 			</activation>
 			<properties>
-				<eclipselink-version>2.5.0</eclipselink-version>
-				<eclipselink-api-version>2.1.0</eclipselink-api-version>
+				<eclipselink-version>2.7.7</eclipselink-version>
+				<eclipselink-api-version>2.7.7</eclipselink-api-version>
 			</properties>
 			<build>
 				<plugins>
-					<plugin>
-						<artifactId>eclipselink-staticweave-maven-plugin</artifactId>
-						<groupId>au.com.alderaan</groupId>
-						<version>1.0.4</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>weave</goal>
-								</goals>
-								<phase>process-classes</phase>
-								<configuration>
-									<logLevel>ALL</logLevel>
-									<includeProjectClasspath>true</includeProjectClasspath>
-								</configuration>
-							</execution>
-						</executions>
-				        <dependencies>
-				            <dependency>
-				                <groupId>org.eclipse.persistence</groupId>
-				                <artifactId>eclipselink</artifactId>
-				                <version>${eclipselink-version}</version>
-				            </dependency>
-				        </dependencies>
-					</plugin>
-    			</plugins>
+<!--					<plugin>-->
+<!--						<artifactId>eclipselink-staticweave-maven-plugin</artifactId>-->
+<!--						<groupId>au.com.alderaan</groupId>-->
+<!--						<version>1.0.4</version>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<goals>-->
+<!--									<goal>weave</goal>-->
+<!--								</goals>-->
+<!--								<phase>process-classes</phase>-->
+<!--								<configuration>-->
+<!--									<logLevel>ALL</logLevel>-->
+<!--									<includeProjectClasspath>true</includeProjectClasspath>-->
+<!--								</configuration>-->
+<!--							</execution>-->
+<!--						</executions>-->
+<!--				        <dependencies>-->
+<!--				            <dependency>-->
+<!--				                <groupId>org.eclipse.persistence</groupId>-->
+<!--				                <artifactId>eclipselink</artifactId>-->
+<!--				                <version>${eclipselink-version}</version>-->
+<!--				            </dependency>-->
+<!--				        </dependencies>-->
+<!--					</plugin>-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+				<configuration>
+					<argLine>-Xms32m -Xmx1024m -javaagent:/home/tavoda/.m2/repository/org/springframework/spring-instrument/5.1.6.RELEASE/spring-instrument-5.1.6.RELEASE.jar</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
 			</build>
 			<dependencies>
 				<dependency>
 					<groupId>org.eclipse.persistence</groupId>
-					<artifactId>javax.persistence</artifactId>
+					<artifactId>org.eclipse.persistence.jpa</artifactId>
 					<version>${eclipselink-api-version}</version>
 				</dependency>
 				<dependency>
@@ -457,41 +477,37 @@
 				</property>
 			</activation>
 			<properties>
-				<openjpa-version>2.2.2</openjpa-version>
+				<openjpa-version>3.1.2</openjpa-version>
 			</properties>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.apache.openjpa</groupId>
-						<artifactId>openjpa-maven-plugin</artifactId>
-						<version>${openjpa-version}</version>
-						<configuration>
-							<includes>**/domain/*.class</includes>
-							<excludes>**/domain/*Propert*.class,**/domain/*Repository.class</excludes>
-						</configuration>
-						<executions>
-							<execution>
-								<id>enhancer</id>
-								<phase>process-classes</phase>
-								<goals>
-									<goal>enhance</goal>
-								</goals>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.openjpa</groupId>
-								<artifactId>openjpa</artifactId>
-								<version>${openjpa-version}</version>
-							</dependency>
-							<dependency>
-								<groupId>ch.qos.logback</groupId>
-								<artifactId>logback-classic</artifactId>
-								<version>${logback-version}</version>
-							</dependency>
-						</dependencies>
-					</plugin>
+<!--					<plugin>-->
+<!--						<groupId>org.apache.openjpa</groupId>-->
+<!--						<artifactId>openjpa-maven-plugin</artifactId>-->
+<!--						<version>${openjpa-version}</version>-->
+<!--						<configuration>-->
+<!--							<includes>**/domain/*.class</includes>-->
+<!--							<excludes>**/domain/*Propert*.class,**/domain/*Repository.class</excludes>-->
+<!--						</configuration>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<id>enhancer</id>-->
+<!--								<phase>process-classes</phase>-->
+<!--								<goals>-->
+<!--									<goal>enhance</goal>-->
+<!--								</goals>-->
+<!--							</execution>-->
+<!--						</executions>-->
+<!--					</plugin>-->
 
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.0</version>
+					<configuration>
+						<argLine>-Xms32m -Xmx1024m</argLine>
+					</configuration>
+				</plugin>
 				</plugins>
 			</build>
 			<dependencies>
