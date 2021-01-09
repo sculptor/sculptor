@@ -45,6 +45,7 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 				} else if (ColumnStatType.GROUP_BY_VAL.equals(statType)) {
 					criteriaBuilder.select(statRequest.getColumn());
 					criteriaBuilder.groupBy(statRequest.getColumn());
+					/*
 				} else if (ColumnStatType.GROUP_BY_HOUR.equals(statType)) {
 					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.hour);
 					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.hour);
@@ -69,6 +70,7 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 				} else if (ColumnStatType.GROUP_BY_DOY.equals(statType)) {
 					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.dayOfYear);
 					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.dayOfYear);
+					 */
 				}
 			}
 		}

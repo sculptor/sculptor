@@ -114,7 +114,7 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 		}
 	}
 
-	protected List<Predicate> preparePredicates() {
+	protected List<Predicate> prepareWhere() {
 		return null;
 	}
 
@@ -207,7 +207,7 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 		if (JpaHelper.isJpaProviderOpenJpa(getEntityManager())) {
 			for (ManagedType<?> embeddableType : getMetaModel().getEmbeddables()) {
 				if (embeddableType.getJavaType().equals(value.getClass())) {
-					return andPredicates(preparePredicates(path, embeddableType, value));
+					return andPredicates(prepareWhere(path, embeddableType, value));
 				}
 			}
 		}

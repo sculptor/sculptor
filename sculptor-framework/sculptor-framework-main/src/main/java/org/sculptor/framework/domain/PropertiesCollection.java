@@ -1,8 +1,12 @@
 package org.sculptor.framework.domain;
 
+import org.sculptor.framework.domain.expression.ComplexExpression;
+import org.sculptor.framework.domain.expression.Expression;
+import org.sculptor.framework.domain.expression.ExpressionNumeric;
+
 import java.io.Serializable;
 
-public class PropertiesCollection implements Serializable {
+public class PropertiesCollection<T> implements Property<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,6 +23,11 @@ public class PropertiesCollection implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ComplexExpression<T> expr() {
+        return null;
     }
 
     protected String getParentPath() {

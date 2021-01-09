@@ -31,21 +31,18 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.sculptor.framework.domain.AbstractDomainObject;
 import org.sculptor.framework.domain.Property;
 
 /**
@@ -158,8 +155,9 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		root = criteriaQuery.from(getType());
 		prepareSelect(criteriaQuery, root, config);
 		prepareGroupBy(criteriaQuery, root, config);
+		prepareHaving(criteriaQuery, root, config);
 		prepareFetch(root, config);
-		List<Predicate> predicates = preparePredicates();
+		List<Predicate> predicates = prepareWhere();
 		prepareDistinct(config);
 		if (predicates != null && predicates.size() > 0) {
 			criteriaQuery.where((config.isDisjunction()) ? orPredicates(predicates) : andPredicates(predicates));
@@ -176,6 +174,9 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	protected void prepareGroupBy(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
 	}
 
+	protected void prepareHaving(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
+	}
+
 	@Override
 	final protected void prepareOrderBy(QueryConfig config) {
 		prepareOrderBy(criteriaQuery, root, config);
@@ -184,7 +185,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	protected void prepareOrderBy(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
 	}
 
-	protected List<Predicate> preparePredicates() {
+	protected List<Predicate> prepareWhere() {
 		return null;
 	}
 
@@ -239,8 +240,8 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @param entity
 	 * @return
 	 */
-	protected List<Predicate> preparePredicates(Object entity) {
-		return preparePredicates(root, metaModel.managedType(getType()), entity);
+	protected List<Predicate> prepareWhere(Object entity) {
+		return prepareWhere(root, metaModel.managedType(getType()), entity);
 	}
 
 	/**
@@ -251,7 +252,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected List<Predicate> preparePredicates(Path<?> path, ManagedType type, Object managedObject) {
+	protected List<Predicate> prepareWhere(Path<?> path, ManagedType type, Object managedObject) {
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -282,7 +283,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 			}
 
 			if (isAttributeSingularManagedType(attribute)) {
-				predicates.addAll(preparePredicates(path.get(attribute), (ManagedType) attribute.getType(), value));
+				predicates.addAll(prepareWhere(path.get(attribute), (ManagedType) attribute.getType(), value));
 			} else {
 				predicates.add(preparePredicate(path.get(attribute), value));
 			}
@@ -296,8 +297,8 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @param restrictions
 	 * @return
 	 */
-	protected List<Predicate> preparePredicates(Map<String, Object> restrictions) {
-		return preparePredicates(root, restrictions);
+	protected List<Predicate> prepareWhere(Map<String, Object> restrictions) {
+		return prepareWhere(root, restrictions);
 	}
 
 	/**
@@ -317,7 +318,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @return
 	 */
 	protected Predicate preparePredicate(Map<String, Object> restrictions, boolean AND) {
-		return (AND) ? andPredicates(preparePredicates(restrictions)) : orPredicates(preparePredicates(restrictions));
+		return (AND) ? andPredicates(prepareWhere(restrictions)) : orPredicates(prepareWhere(restrictions));
 	}
 
 	/**
@@ -326,7 +327,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @param restrictions
 	 * @return
 	 */
-	private List<Predicate> preparePredicates(Path<?> path, Map<String, Object> restrictions) {
+	private List<Predicate> prepareWhere(Path<?> path, Map<String, Object> restrictions) {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		for (String property : restrictions.keySet()) {
 			predicates.add(preparePredicate(path, property, restrictions.get(property)));
@@ -355,7 +356,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 				|| JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
 			for (ManagedType<?> embeddableType : metaModel.getEmbeddables()) {
 				if (embeddableType.getJavaType().equals(value.getClass())) {
-					return andPredicates(preparePredicates(path, embeddableType, value));
+					return andPredicates(prepareWhere(path, embeddableType, value));
 				}
 			}
 		}
@@ -403,47 +404,11 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @param predicates
 	 * @return
 	 */
-	protected Predicate conjunctPredicates(List<Predicate> predicates) {
-		if (predicates == null || predicates.size() == 0)
-			return null;
-		Predicate predicate = criteriaBuilder.conjunction();
-		for (Predicate p : predicates) {
-			predicate = criteriaBuilder.and(predicate, p);
-		}
-		return predicate;
-	}
-
-	/**
-	 * 
-	 * @param predicates
-	 * @return
-	 */
-	protected Predicate disjunctPredicates(List<Predicate> predicates) {
-		if (predicates == null || predicates.size() == 0)
-			return null;
-		Predicate predicate = criteriaBuilder.disjunction();
-		for (Predicate p : predicates) {
-			predicate = criteriaBuilder.or(predicate, p);
-		}
-		return predicate;
-	}
-
-	/**
-	 * 
-	 * @param predicates
-	 * @return
-	 */
 	protected Predicate andPredicates(List<Predicate> predicates) {
-		if (predicates == null || predicates.size() == 0)
+		if (predicates == null || predicates.size() == 0) {
 			return null;
-		Predicate predicate = null;
-		for (Predicate p : predicates) {
-			if (predicate == null)
-				predicate = p;
-			else
-				predicate = criteriaBuilder.and(predicate, p);
 		}
-		return predicate;
+        return getCriteriaBuilder().and(predicates.toArray(new Predicate[predicates.size()]));
 	}
 
 	/**
@@ -452,17 +417,10 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @return
 	 */
 	protected Predicate orPredicates(List<Predicate> predicates) {
-		if (predicates == null || predicates.size() == 0)
+		if (predicates == null || predicates.size() == 0) {
 			return null;
-		Predicate predicate = null;
-		for (Predicate p : predicates) {
-			if (predicate == null)
-				predicate = p;
-			else {
-				predicate = criteriaBuilder.or(predicate, p);
-			}
 		}
-		return predicate;
+		return getCriteriaBuilder().or(predicates.toArray(new Predicate[predicates.size()]));
 	}
 
 	protected Path<?> getPath(Path<?> fromPath, String property) {

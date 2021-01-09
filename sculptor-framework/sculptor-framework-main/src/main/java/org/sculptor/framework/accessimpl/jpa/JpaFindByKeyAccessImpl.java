@@ -97,12 +97,12 @@ public class JpaFindByKeyAccessImpl<T>
     }
 
     @Override
-    protected List<Predicate> preparePredicates() {
+    protected List<Predicate> prepareWhere() {
         // map key to restrictions
         Map<String, Object> restrictions = new HashMap<String, Object>();
         for (int i = 0; i < keyPropertyNames.length; i++) {
             restrictions.put(keyPropertyNames[i], keyValues[i]);
         }
-        return preparePredicates(restrictions);
+        return prepareWhere(restrictions);
     }
 }

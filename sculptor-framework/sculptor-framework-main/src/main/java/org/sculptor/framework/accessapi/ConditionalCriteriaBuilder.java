@@ -20,9 +20,13 @@ package org.sculptor.framework.accessapi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.domain.Property;
+import org.sculptor.framework.domain.expression.ComplexExpression;
+import org.sculptor.framework.domain.expression.Expression;
 
 /**
  * Expression Builder for ConditionalCriteria. A small internal DSL (fluent
@@ -46,12 +50,15 @@ public class ConditionalCriteriaBuilder<T> {
         return new ConditionalCriteriaBuilder<T>().new RootBuilderImpl();
     }
 
-    public class RootBuilderImpl implements ConditionRoot<T>, OrderBy<T>, Selection<T>, GroupBy<T> {
-        private final SimpleStack<ConditionalCriteria> criteriaStack = new SimpleStack<ConditionalCriteria>();
+    public class RootBuilderImpl implements ConditionRootLogic<T>, OrderBy<T>, Selection<T>, GroupBy<T> {
+        private final SimpleStack<ConditionalCriteria> otherCriteriaStack = new SimpleStack<ConditionalCriteria>();
+        private final SimpleStack<ConditionalCriteria> havingCriteriaStack = new SimpleStack<ConditionalCriteria>();
+        private final SimpleStack<ConditionalCriteria> whereCriteriaStack = new SimpleStack<ConditionalCriteria>();
         private final SimpleStack<ExpressionOperator> operatorStack = new SimpleStack<ExpressionOperator>();
 
         // only used to give good error message
-        private int braceCount;
+        private int braceCount = 0;
+        private boolean isHaving = false;
 
         /**
          * End the expression with this build
@@ -62,19 +69,28 @@ public class ConditionalCriteriaBuilder<T> {
             assertOperatorStack();
 
             List<ConditionalCriteria> critList = new ArrayList<ConditionalCriteria>();
+            addCriteriaStack(critList, whereCriteriaStack, false);
+            addCriteriaStack(critList, havingCriteriaStack, true);
+            critList.addAll(otherCriteriaStack.asList());
+            return critList;
+        }
+
+        private void addCriteriaStack(List<ConditionalCriteria> critList, SimpleStack<ConditionalCriteria> criteriaStack, boolean havingStack) {
             for (ConditionalCriteria singleCrit : criteriaStack.asList()) {
+                if (havingStack) {
+                    singleCrit.setHaving();
+                }
                 if (singleCrit.getOperator() == Operator.And) {
-                   if (singleCrit.getFirstOperant() instanceof List) {
-                      critList.addAll( (List<ConditionalCriteria>) singleCrit.getFirstOperant() );
-                   } else {
-                      critList.add( (ConditionalCriteria) singleCrit.getFirstOperant() );
-                      critList.add( (ConditionalCriteria) singleCrit.getSecondOperant() );
-                   }
+                    if (singleCrit.getFirstOperant() instanceof List) {
+                        critList.addAll( (List<ConditionalCriteria>) singleCrit.getFirstOperant() );
+                    } else {
+                        critList.add( (ConditionalCriteria) singleCrit.getFirstOperant() );
+                        critList.add( (ConditionalCriteria) singleCrit.getSecondOperant() );
+                    }
                 } else {
-                   critList.add(singleCrit);
+                    critList.add(singleCrit);
                 }
             }
-            return critList;
         }
 
         /**
@@ -83,14 +99,16 @@ public class ConditionalCriteriaBuilder<T> {
         public ConditionalCriteria buildSingle() {
             assertBraceCount();
             assertOperatorStack();
-            if (criteriaStack.size() > 1) {
-                throw new IllegalStateException("Invalid criteria, too many items in the build stack: "
-                        + criteriaStack.size());
+            int stackSize = whereCriteriaStack.size() + havingCriteriaStack.size() + otherCriteriaStack.size();
+            if (stackSize > 1) {
+                throw new IllegalStateException("Invalid criteria, too many items in the build stack: " + stackSize);
             }
-            if (criteriaStack.isEmpty()) {
+            if (whereCriteriaStack.isEmpty() && havingCriteriaStack.isEmpty() && otherCriteriaStack.isEmpty()) {
                 return null;
             }
-            return criteriaStack.peek();
+            return whereCriteriaStack.size() > 0 ? whereCriteriaStack.peek()
+                    : havingCriteriaStack.size() > 0 ? havingCriteriaStack.peek()
+                    : otherCriteriaStack.peek();
         }
 
         private void assertBraceCount() {
@@ -107,16 +125,33 @@ public class ConditionalCriteriaBuilder<T> {
             }
         }
 
-        public ConditionProperty<T> withProperty(Property<T> property) {
-            if (operatorStack.isEmpty() && !criteriaStack.isEmpty()) {
+        private void assertHaving() {
+            Optional<ExpressionOperator> operator = operatorStack.asList()
+                    .stream().filter(o -> !o.equals(ExpressionOperator.LBrace)).findAny();
+            if (braceCount != 0 && operator.isPresent()) {
+                throw new IllegalStateException("withProperty()/where()/having() mixed inside braces ("
+                        + (braceCount > 0 ? ("missing " + braceCount + " rbrace)") : (braceCount + " too many rbrace)")));
+            }
+        }
+
+        public ConditionProperty<T> withProperty(Expression<T> property) {
+            if (isHaving == true) {
+                assertHaving();
+            }
+            isHaving = false;
+            if (operatorStack.isEmpty() && !whereCriteriaStack.isEmpty()) {
                 // implicit and condition
                 and();
             }
-            return new PropBuilderImpl(property);
+            return new PropBuilderImpl(property, false);
         }
 
-        public ConditionRoot<T> and() {
-            operatorStack.push(ExpressionOperator.And);
+		public ConditionProperty<T> where(Expression<T> property) {
+        	return withProperty(property);
+		}
+
+		public ConditionRoot<T> and() {
+			operatorStack.push(ExpressionOperator.And);
             return this;
         }
 
@@ -130,7 +165,7 @@ public class ConditionalCriteriaBuilder<T> {
             return this;
         }
 
-        public OrderBy<T> orderBy(Property<T> property) {
+        public OrderBy<T> orderBy(Expression<T> property) {
             pushCriteria(ConditionalCriteria.orderAsc(property));
             return this;
         }
@@ -163,48 +198,61 @@ public class ConditionalCriteriaBuilder<T> {
         }
 
         public ConditionRoot<T> descending() {
-            ConditionalCriteria last = popCriteria();
+            ConditionalCriteria last = otherCriteriaStack.pop();
             if (last.getOperator() != Operator.OrderAsc) {
                 throw new IllegalStateException("descending can only be used after orderBy");
             }
-            pushCriteria(ConditionalCriteria.orderDesc(last.property));
+            pushCriteria(ConditionalCriteria.orderDesc(last.expression));
             return this;
         }
 
 		@Override
-		public GroupBy<T> groupBy(Property<T> property) {
+		public GroupBy<T> groupBy(Expression<T> property) {
 			pushCriteria(ConditionalCriteria.groupBy(property));
 			return this;
 		}
 
+//		@Override
+//		public GroupBy<T> groupBy(Expression<T> property, ConditionalCriteria.Function function) {
+//			pushCriteria(ConditionalCriteria.groupBy(property, function));
+//			return this;
+//		}
+
 		@Override
-		public GroupBy<T> groupBy(Property<T> property, ConditionalCriteria.Function function) {
-			pushCriteria(ConditionalCriteria.groupBy(property, function));
-			return this;
+		public ConditionProperty<T> having(Expression<T> property) {
+            if (isHaving == false) {
+                assertHaving();
+            }
+            isHaving = true;
+            if (operatorStack.isEmpty() && !havingCriteriaStack.isEmpty()) {
+                // implicit and condition
+                and();
+            }
+            return new PropBuilderImpl(property, true);
 		}
 
 		@Override
-		public Selection<T> select(Property<T> property) {
+		public Selection<T> select(Expression<T> property) {
 			pushCriteria(ConditionalCriteria.select(property));
 			return this;
 		}
 
-		@Override
-		public Selection<T> select(Property<T> property, ConditionalCriteria.Function function) {
-			pushCriteria(ConditionalCriteria.select(property, function));
-			return this;
-		}
+//		@Override
+//		public Selection<T> select(Expression<T> property, ConditionalCriteria.Function function) {
+//			pushCriteria(ConditionalCriteria.select(property, function));
+//			return this;
+//		}
+
+//		@Override
+//		public Selection<T> select(Expression<T> property, ConditionalCriteria.Function function, String alias) {
+//			ConditionalCriteria criteria = ConditionalCriteria.select(property, function);
+//			criteria.propertyAlias = alias;
+//			pushCriteria(criteria);
+//			return this;
+//		}
 
 		@Override
-		public Selection<T> select(Property<T> property, ConditionalCriteria.Function function, String alias) {
-			ConditionalCriteria criteria = ConditionalCriteria.select(property, function);
-			criteria.propertyAlias = alias;
-			pushCriteria(criteria);
-			return this;
-		}
-
-		@Override
-		public Selection<T> select(Property<T> property, String alias) {
+		public Selection<T> select(Expression<T> property, String alias) {
 			ConditionalCriteria criteria = ConditionalCriteria.select(property);
 			criteria.propertyAlias = alias;
 			pushCriteria(criteria);
@@ -213,7 +261,7 @@ public class ConditionalCriteriaBuilder<T> {
 
 		@Override
 		public Selection<T> alias(String alias) {
-			ConditionalCriteria last = popCriteria();
+			ConditionalCriteria last = otherCriteriaStack.pop();
 			if (last.getOperator() != Operator.Select) {
 				throw new IllegalStateException("alias can only be used after select");
 			}
@@ -222,92 +270,71 @@ public class ConditionalCriteriaBuilder<T> {
 			return this;
 		}
 
-		@Override
-		public ConditionRoot<T> max() {
-            ConditionalCriteria last = popCriteria();
+        private void makeAggregateFunction(String operation, Consumer<ComplexExpression> c) {
+            ConditionalCriteria last = otherCriteriaStack.pop();
             if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("max can only be used after select");
+                throw new IllegalStateException(operation + " can only be used after select");
             }
-            last.operator = Operator.Max;
+
+            ComplexExpression complexExpression;
+            if (last.expression instanceof ComplexExpression) {
+                complexExpression = (ComplexExpression) last.expression;
+            } else if (last.expression instanceof Property) {
+                complexExpression = ((Property) last.expression).expr();
+            } else {
+                throw new IllegalArgumentException("Expression " + last + " can NOT be cast to ComplexExpression");
+            }
+            c.accept(complexExpression);
+            last.expression = complexExpression;
             pushCriteria(last);
+        }
+
+        @Override
+		public ConditionRoot<T> max() {
+            makeAggregateFunction("max", ComplexExpression::max);
 			return this;
 		}
 
-		@Override
+        @Override
 		public ConditionRoot<T> min() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("min can only be used after select");
-            }
-            last.operator = Operator.Min;
-            pushCriteria(last);
-			return this;
+            makeAggregateFunction("min", ComplexExpression::min);
+            return this;
 		}
 
 		@Override
 		public ConditionRoot<T> sum() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("sum can only be used after select");
-            }
-            last.operator = Operator.Sum;
-            pushCriteria(last);
-			return this;
+            makeAggregateFunction("sum", ComplexExpression::sum);
+            return this;
 		}
 
 		@Override
 		public ConditionRoot<T> avg() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("avg can only be used after select");
-            }
-            last.operator = Operator.Avg;
-            pushCriteria(last);
+            makeAggregateFunction("avg", ComplexExpression::avg);
 			return this;
 		}
 
 		@Override
 		public ConditionRoot<T> sumAsLong() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("sumAsLong can only be used after select");
-            }
-            last.operator = Operator.SumAsLong;
-            pushCriteria(last);
-			return this;
+            makeAggregateFunction("sumAsLong", ComplexExpression::sumAsLong);
+            return this;
 		}
 
 		@Override
 		public ConditionRoot<T> sumAsDouble() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("sumAsDouble can only be used after select");
-            }
-            last.operator = Operator.SumAsDouble;
-            pushCriteria(last);
-			return this;
+            makeAggregateFunction("sumAsDouble", ComplexExpression::sumAsDouble);
+            return this;
 		}
 
 		@Override
 		public ConditionRoot<T> count() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("count can only be used after select");
-            }
-            last.operator = Operator.Count;
-            pushCriteria(last);
-			return this;
+            makeAggregateFunction("count", ComplexExpression::count);
+            return this;
 		}
 
 		@Override
 		public ConditionRoot<T> countDistinct() {
-            ConditionalCriteria last = popCriteria();
-            if (last.getOperator() != Operator.Select) {
-                throw new IllegalStateException("countDistinct can only be used after select");
-            }
-            last.operator = Operator.CountDistinct;
-            pushCriteria(last);
-			return this;
+            makeAggregateFunction("countDistinct", ComplexExpression::countDistinct);
+            return this;
 		}
 
 		public ConditionRoot<T> lbrace() {
@@ -316,84 +343,130 @@ public class ConditionalCriteriaBuilder<T> {
             return this;
         }
 
-        public ConditionRoot<T> rbrace() {
+        public ConditionRootLogic<T> rbrace() {
             braceCount--;
-            operatorStack.pop();
-            if (criteriaStack.isEmpty()) {
+            ExpressionOperator pop = operatorStack.pop();
+            if (pop.equals(ExpressionOperator.And)) {
+                operatorStack.pop();
+            }
+            if (isHaving && havingCriteriaStack.isEmpty() || whereCriteriaStack.isEmpty()) {
                 return this;
             }
-            ConditionalCriteria lastCriteria = popCriteria();
+            SimpleStack<ConditionalCriteria> criteriaStack = isHaving ? havingCriteriaStack : whereCriteriaStack;
+            ConditionalCriteria lastCriteria = criteriaStack.pop();
             pushCriteria(lastCriteria);
             return this;
         }
 
-        private ConditionalCriteria popCriteria() {
-            return criteriaStack.pop();
+		@SuppressWarnings("unchecked")
+		private void pushCriteria(ConditionalCriteria criteria) {
+            ConditionalCriteria.OperatorType operatorType = criteria.getOperator().getOperatorType();
+            if (ConditionalCriteria.OperatorType.Sql.equals(operatorType)
+                    || ConditionalCriteria.OperatorType.Config.equals(operatorType)) {
+                otherCriteriaStack.push(criteria);
+            } else {
+                SimpleStack<ConditionalCriteria> criteriaStack = isHaving ? havingCriteriaStack : whereCriteriaStack;
+                ExpressionOperator currentOperator = operatorStack.peek();
+                if (currentOperator == ExpressionOperator.Or || currentOperator == ExpressionOperator.And) {
+                    ConditionalCriteria compositeCriteria;
+                    ConditionalCriteria popCriteria = criteriaStack.pop();
+                    if (popCriteria.getOperator() == Operator.And && currentOperator == ExpressionOperator.And
+                            || popCriteria.getOperator() == Operator.Or && currentOperator == ExpressionOperator.Or) {
+                        compositeCriteria = addSameCriteria(popCriteria, criteria);
+                    } else if (popCriteria.getOperator() == Operator.Or && currentOperator == ExpressionOperator.And) {
+                    	// Add to rightmost branch of OR
+                        ConditionalCriteria rightmost;
+                        if (popCriteria.getFirstOperant() instanceof List) {
+                            List<ConditionalCriteria> criteriaList = (List<ConditionalCriteria>) popCriteria.getFirstOperant();
+                            rightmost = criteriaList.get(criteriaList.size() - 1);
+                            ConditionalCriteria newCriteria = rightmost.getOperator() == Operator.And
+                                    ? addSameCriteria(rightmost, criteria)
+                                    : ConditionalCriteria.and(rightmost, criteria);
+                            criteriaList.set(criteriaList.size() - 1, newCriteria);
+						} else {
+                            rightmost = (ConditionalCriteria) popCriteria.getSecondOperant();
+                            ConditionalCriteria newCriteria = rightmost.getOperator() == Operator.And
+                                    ? addSameCriteria(rightmost, criteria)
+                                    : ConditionalCriteria.and(rightmost, criteria);
+                            popCriteria.secondOperant = newCriteria;
+                        }
+                        compositeCriteria = popCriteria;
+                    } else if (currentOperator == ExpressionOperator.And) {
+                        compositeCriteria = ConditionalCriteria.and(popCriteria, criteria);
+                    } else {
+                        // currentOperator == ExpressionOperator.Or
+                        compositeCriteria = ConditionalCriteria.or(popCriteria, criteria);
+                    }
+                    criteriaStack.push(compositeCriteria);
+                    operatorStack.pop();
+                } else if (currentOperator == ExpressionOperator.Not) {
+                    ConditionalCriteria notCriteria = ConditionalCriteria.not(criteria);
+                    criteriaStack.push(notCriteria);
+                    operatorStack.pop();
+                    if (!operatorStack.isEmpty() && !criteriaStack.isEmpty()) {
+                        pushCriteria(criteriaStack.pop());
+                    }
+                } else if (currentOperator == ExpressionOperator.LBrace) {
+                    criteriaStack.push(criteria);
+                    operatorStack.push(ExpressionOperator.And);
+                } else {
+                    criteriaStack.push(criteria);
+                }
+            }
         }
 
-      @SuppressWarnings("unchecked")
-      private void pushCriteria(ConditionalCriteria criteria) {
-            ExpressionOperator currentOperator = operatorStack.peek();
-            if (currentOperator == ExpressionOperator.Or || currentOperator == ExpressionOperator.And) {
-                ConditionalCriteria compositeCriteria;
-                if (currentOperator == ExpressionOperator.Or) {
-                    compositeCriteria = ConditionalCriteria.or(popCriteria(), criteria);
-                } else {
-                    ConditionalCriteria popCriteria = popCriteria();
-                    if (popCriteria.getOperator() == Operator.And && popCriteria.getFirstOperant() instanceof List) {
-                        ((List<ConditionalCriteria>) popCriteria.getFirstOperant()).add(criteria);
-                        compositeCriteria = popCriteria;
-                    } else if (popCriteria.getOperator() == Operator.And) {
-                       List<ConditionalCriteria> critList=new ArrayList<ConditionalCriteria>();
-                       critList.add((ConditionalCriteria) popCriteria.getFirstOperant());
-                       critList.add((ConditionalCriteria) popCriteria.getSecondOperant());
-                       critList.add(criteria);
-                       compositeCriteria = ConditionalCriteria.and(critList);
-                    } else {
-                       compositeCriteria = ConditionalCriteria.and(popCriteria, criteria);
-                    }
-                }
-                criteriaStack.push(compositeCriteria);
-                operatorStack.pop();
-            } else if (currentOperator == ExpressionOperator.Not) {
-                ConditionalCriteria notCriteria = ConditionalCriteria.not(criteria);
-                criteriaStack.push(notCriteria);
-                operatorStack.pop();
-                if (!operatorStack.isEmpty() && !criteriaStack.isEmpty()) {
-                    pushCriteria(criteriaStack.pop());
-                }
-            } else if (currentOperator == ExpressionOperator.LBrace) {
-                criteriaStack.push(criteria);
+        private ConditionalCriteria addSameCriteria(ConditionalCriteria existingCriteria, ConditionalCriteria newCriteria) {
+            ConditionalCriteria compositeCriteria;
+            if (existingCriteria.getFirstOperant() instanceof List) {
+                ((List<ConditionalCriteria>) existingCriteria.getFirstOperant()).add(newCriteria);
+                compositeCriteria = existingCriteria;
             } else {
-                criteriaStack.push(criteria);
+                List<ConditionalCriteria> critList = new ArrayList<ConditionalCriteria>();
+                critList.add((ConditionalCriteria) existingCriteria.getFirstOperant());
+                critList.add((ConditionalCriteria) existingCriteria.getSecondOperant());
+                critList.add(newCriteria);
+                compositeCriteria = existingCriteria.getOperator() == Operator.And
+                        ? ConditionalCriteria.and(critList)
+                        : ConditionalCriteria.or(critList);
             }
+
+            return compositeCriteria;
         }
 
         private class PropBuilderImpl implements ConditionProperty<T>, Between<T> {
-            Property<?> baseProp;
+            Expression<T> baseProp;
             Object value1;
+            boolean having;
 
-            PropBuilderImpl(Property<?> name) {
+            PropBuilderImpl(Expression<T> name, boolean having) {
                 this.baseProp = name;
+                this.having = having;
             }
 
-            public ConditionRoot<T> eq(Object value) {
-                pushCriteria(ConditionalCriteria.equal(baseProp, value));
+            private void pushConditionalCriteria(ConditionalCriteria criteria) {
+            	if (having) {
+            	    criteria.setHaving();
+                }
+            	pushCriteria(criteria);
+            }
+
+            public ConditionRootLogic<T> eq(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.equal(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> ignoreCaseEq(Object value) {
-               pushCriteria(ConditionalCriteria.ignoreCaseEqual(baseProp, value));
+            public ConditionRootLogic<T> ignoreCaseEq(Object value) {
+               pushConditionalCriteria(ConditionalCriteria.ignoreCaseEqual(baseProp, value));
                return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> eq(Property<T> property) {
-                pushCriteria(ConditionalCriteria.equalProperty(baseProp, property));
+            public ConditionRootLogic<T> eq(Expression<T> property) {
+                pushConditionalCriteria(ConditionalCriteria.equalProperty(baseProp, property));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> between(Object value1, Object value2) {
-                pushCriteria(ConditionalCriteria.between(baseProp, value1, value2));
+            public ConditionRootLogic<T> between(Object value1, Object value2) {
+                pushConditionalCriteria(ConditionalCriteria.between(baseProp, value1, value2));
                 return RootBuilderImpl.this;
             }
 
@@ -402,98 +475,98 @@ public class ConditionalCriteriaBuilder<T> {
                 return this;
             }
 
-            public ConditionRoot<T> to(Object value2) {
-                pushCriteria(ConditionalCriteria.between(baseProp, value1, value2));
+            public ConditionRootLogic<T> to(Object value2) {
+                pushConditionalCriteria(ConditionalCriteria.between(baseProp, value1, value2));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> lessThan(Object value) {
-                pushCriteria(ConditionalCriteria.lessThan(baseProp, value));
+            public ConditionRootLogic<T> lessThan(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.lessThan(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> lessThanOrEqual(Object value) {
-                pushCriteria(ConditionalCriteria.lessThanOrEqual(baseProp, value));
+            public ConditionRootLogic<T> lessThanOrEqual(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.lessThanOrEqual(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> greaterThan(Object value) {
-                pushCriteria(ConditionalCriteria.greatThan(baseProp, value));
+            public ConditionRootLogic<T> greaterThan(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.greatThan(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> greaterThanOrEqual(Object value) {
-                pushCriteria(ConditionalCriteria.greatThanOrEqual(baseProp, value));
+            public ConditionRootLogic<T> greaterThanOrEqual(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.greatThanOrEqual(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> lessThan(Property<T> property) {
-                pushCriteria(ConditionalCriteria.lessThanProperty(baseProp, property));
+            public ConditionRootLogic<T> lessThan(Expression<T> property) {
+                pushConditionalCriteria(ConditionalCriteria.lessThanProperty(baseProp, property));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> lessThanOrEqual(Property<T> property) {
-                pushCriteria(ConditionalCriteria.lessThanOrEqualProperty(baseProp, property));
+            public ConditionRootLogic<T> lessThanOrEqual(Expression<T> property) {
+                pushConditionalCriteria(ConditionalCriteria.lessThanOrEqualProperty(baseProp, property));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> greaterThan(Property<T> property) {
-                pushCriteria(ConditionalCriteria.greatThanProperty(baseProp, property));
+            public ConditionRootLogic<T> greaterThan(Expression<T> property) {
+                pushConditionalCriteria(ConditionalCriteria.greatThanProperty(baseProp, property));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> greaterThanOrEqual(Property<T> property) {
-                pushCriteria(ConditionalCriteria.greatThanOrEqualProperty(baseProp, property));
+            public ConditionRootLogic<T> greaterThanOrEqual(Expression<T> property) {
+                pushConditionalCriteria(ConditionalCriteria.greatThanOrEqualProperty(baseProp, property));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> like(Object value) {
-                pushCriteria(ConditionalCriteria.like(baseProp, value));
+            public ConditionRootLogic<T> like(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.like(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> ignoreCaseLike(Object value) {
-                pushCriteria(ConditionalCriteria.ignoreCaseLike(baseProp, value));
+            public ConditionRootLogic<T> ignoreCaseLike(Object value) {
+                pushConditionalCriteria(ConditionalCriteria.ignoreCaseLike(baseProp, value));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> in(Object... values) {
-                pushCriteria(ConditionalCriteria.in(baseProp, values));
+            public ConditionRootLogic<T> in(Object... values) {
+                pushConditionalCriteria(ConditionalCriteria.in(baseProp, values));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> in(Collection<?> values) {
-                pushCriteria(ConditionalCriteria.in(baseProp, values));
+            public ConditionRootLogic<T> in(Collection<?> values) {
+                pushConditionalCriteria(ConditionalCriteria.in(baseProp, values));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> isNull() {
-                pushCriteria(ConditionalCriteria.isNull(baseProp));
+            public ConditionRootLogic<T> isNull() {
+                pushConditionalCriteria(ConditionalCriteria.isNull(baseProp));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> isNotNull() {
-                pushCriteria(ConditionalCriteria.isNotNull(baseProp));
+            public ConditionRootLogic<T> isNotNull() {
+                pushConditionalCriteria(ConditionalCriteria.isNotNull(baseProp));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> isEmpty() {
-                pushCriteria(ConditionalCriteria.isEmpty(baseProp));
+            public ConditionRootLogic<T> isEmpty() {
+                pushConditionalCriteria(ConditionalCriteria.isEmpty(baseProp));
                 return RootBuilderImpl.this;
             }
 
-            public ConditionRoot<T> isNotEmpty() {
-               pushCriteria(ConditionalCriteria.isNotEmpty(baseProp));
+            public ConditionRootLogic<T> isNotEmpty() {
+               pushConditionalCriteria(ConditionalCriteria.isNotEmpty(baseProp));
                return RootBuilderImpl.this;
            }
 
-            public ConditionRoot<T> fetchEager() {
-               pushCriteria(ConditionalCriteria.fetchEager(baseProp));
+            public ConditionRootLogic<T> fetchEager() {
+               pushConditionalCriteria(ConditionalCriteria.fetchEager(baseProp));
                return RootBuilderImpl.this;
            }
 
-            public ConditionRoot<T> fetchLazy() {
-               pushCriteria(ConditionalCriteria.fetchLazy(baseProp));
+            public ConditionRootLogic<T> fetchLazy() {
+               pushConditionalCriteria(ConditionalCriteria.fetchLazy(baseProp));
                return RootBuilderImpl.this;
            }
         }
@@ -502,65 +575,68 @@ public class ConditionalCriteriaBuilder<T> {
     public interface ConditionRoot<T> {
         List<ConditionalCriteria> build();
 		ConditionalCriteria buildSingle();
-        ConditionProperty<T> withProperty(Property<T> property);
-        ConditionRoot<T> and();
-        ConditionRoot<T> or();
         ConditionRoot<T> not();
-        Selection<T> select(Property<T> property);
-        Selection<T> select(Property<T> property, ConditionalCriteria.Function function);
-        Selection<T> select(Property<T> property, ConditionalCriteria.Function function, String alias);
-        Selection<T> select(Property<T> property, String alias);
-        OrderBy<T> orderBy(Property<T> property);
-        GroupBy<T> groupBy(Property<T> property);
-        GroupBy<T> groupBy(Property<T> property, ConditionalCriteria.Function function);
-        ConditionRoot<T> distinctRoot();
+        ConditionProperty<T> withProperty(Expression<T> property);
+		ConditionProperty<T> where(Expression<T> property);
+        Selection<T> select(Expression<T> property);
+        Selection<T> select(Expression<T> property, String alias);
+        OrderBy<T> orderBy(Expression<T> property);
+        GroupBy<T> groupBy(Expression<T> property);
+		ConditionProperty<T> having(Expression<T> property);
+		ConditionRoot<T> distinctRoot();
         ConditionRoot<T> projectionRoot();
         ConditionRoot<T> readOnly();
         ConditionRoot<T> scroll();
         ConditionRoot<T> lbrace();
-        ConditionRoot<T> rbrace();
+        ConditionRootLogic<T> rbrace();
+    }
+
+    public interface ConditionRootLogic<T> extends ConditionRoot<T> {
+        ConditionRoot<T> and();
+        ConditionRoot<T> or();
     }
 
     public interface ConditionProperty<T> {
-        ConditionRoot<T> eq(Object value);
-        ConditionRoot<T> ignoreCaseEq(Object value);
-        ConditionRoot<T> eq(Property<T> property);
-        ConditionRoot<T> between(Object value1, Object value2);
+        ConditionRootLogic<T> eq(Object value);
+        ConditionRootLogic<T> ignoreCaseEq(Object value);
+        ConditionRootLogic<T> eq(Expression<T> property);
+        ConditionRootLogic<T> between(Object value1, Object value2);
         Between<T> between(Object value1);
-        ConditionRoot<T> lessThan(Object value);
-        ConditionRoot<T> lessThanOrEqual(Object value);
-        ConditionRoot<T> greaterThan(Object value);
-        ConditionRoot<T> greaterThanOrEqual(Object value);
-        ConditionRoot<T> lessThan(Property<T> property);
-        ConditionRoot<T> lessThanOrEqual(Property<T> property);
-        ConditionRoot<T> greaterThan(Property<T> property);
-        ConditionRoot<T> greaterThanOrEqual(Property<T> property);
-        ConditionRoot<T> like(Object value);
-        ConditionRoot<T> ignoreCaseLike(Object value);
-        ConditionRoot<T> in(Object... values);
-        ConditionRoot<T> in(Collection<?> values);
-        ConditionRoot<T> isNull();
-        ConditionRoot<T> isNotNull();
-        ConditionRoot<T> isEmpty();
-        ConditionRoot<T> isNotEmpty();
-        ConditionRoot<T> fetchLazy();
-        ConditionRoot<T> fetchEager();
+        ConditionRootLogic<T> lessThan(Object value);
+        ConditionRootLogic<T> lessThanOrEqual(Object value);
+        ConditionRootLogic<T> greaterThan(Object value);
+        ConditionRootLogic<T> greaterThanOrEqual(Object value);
+        ConditionRootLogic<T> lessThan(Expression<T> property);
+        ConditionRootLogic<T> lessThanOrEqual(Expression<T> property);
+        ConditionRootLogic<T> greaterThan(Expression<T> property);
+        ConditionRootLogic<T> greaterThanOrEqual(Expression<T> property);
+        ConditionRootLogic<T> like(Object value);
+        ConditionRootLogic<T> ignoreCaseLike(Object value);
+        ConditionRootLogic<T> in(Object... values);
+        ConditionRootLogic<T> in(Collection<?> values);
+        ConditionRootLogic<T> isNull();
+        ConditionRootLogic<T> isNotNull();
+        ConditionRootLogic<T> isEmpty();
+        ConditionRootLogic<T> isNotEmpty();
+        ConditionRootLogic<T> fetchLazy();
+        ConditionRootLogic<T> fetchEager();
     }
 
     public interface Between<T> {
-        ConditionRoot<T> to(Object value2);
+        ConditionRootLogic<T> to(Object value2);
     }
 
-    public interface Selection<T> extends ConditionRoot<T> {
-    	Selection<T> alias(String alias);
-    	ConditionRoot<T> max();
-    	ConditionRoot<T> min();
-    	ConditionRoot<T> avg();
-    	ConditionRoot<T> sum();
-    	ConditionRoot<T> sumAsLong();
-    	ConditionRoot<T> sumAsDouble();
-    	ConditionRoot<T> count();
-    	ConditionRoot<T> countDistinct();
+	public interface Selection<T> extends ConditionRoot<T> {
+		Selection<T> alias(String alias);
+
+        ConditionRoot<T> max();
+        ConditionRoot<T> min();
+        ConditionRoot<T> avg();
+        ConditionRoot<T> sum();
+        ConditionRoot<T> sumAsLong();
+        ConditionRoot<T> sumAsDouble();
+        ConditionRoot<T> count();
+        ConditionRoot<T> countDistinct();
     }
 
     public interface OrderBy<T> extends ConditionRoot<T> {
@@ -569,8 +645,6 @@ public class ConditionalCriteriaBuilder<T> {
     }
 
     public interface GroupBy<T> extends ConditionRoot<T> {
-// TODO:
-//    	ConditionRoot<T> having(...);
     }
 
     private static class SimpleStack<T> {

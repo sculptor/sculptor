@@ -17,24 +17,18 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import org.hibernate.annotations.QueryHints;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.accessapi.FindByConditionAccess2;
+import org.sculptor.framework.domain.JpaFunction;
 import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.Property;
+import org.sculptor.framework.domain.PropertyWithExpression;
+import org.sculptor.framework.domain.expression.ExpressionConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Fetch;
-import javax.persistence.criteria.FetchParent;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,7 +44,9 @@ import java.util.Set;
  * </p>
  */
 public class JpaFindByConditionAccessImplGeneric<T,R>
-    extends JpaCriteriaQueryAccessBase<T,R> implements FindByConditionAccess2<R> {
+    extends JpaCriteriaQueryAccessBase<T,R> implements FindByConditionAccess2<R>, ExpressionConverter {
+
+    private static final Logger log = LoggerFactory.getLogger(JpaFindByConditionAccessImplGeneric.class);
 
     private List<ConditionalCriteria> conditionalCriterias = new ArrayList<ConditionalCriteria>();
 
@@ -79,12 +75,14 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 	}
 
     @Override
-    protected List<Predicate> preparePredicates() {
+    protected List<Predicate> prepareWhere() {
         List<Predicate> predicates = new ArrayList<Predicate>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
-            Predicate predicate = preparePredicate(criteria, false);
-            if (predicate != null) {
-                predicates.add(predicate);
+            if (!criteria.isHaving()) {
+                Predicate predicate = preparePredicate(criteria, false);
+                if (predicate != null) {
+                    predicates.add(predicate);
+                }
             }
         }
         return predicates;
@@ -102,28 +100,12 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         	Selection<?> selection = null;
             if (Operator.Select.equals(criteria.getOperator())) {
             	selection = getExpression(criteria, root);
-            } else if (Operator.Max.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().max(getExpression(criteria, root));
-            } else if (Operator.Min.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().min(getExpression(criteria, root));
-            } else if (Operator.Avg.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().avg(getExpression(criteria,root));
-            } else if (Operator.Sum.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().sum(getExpression(criteria, root));
-            } else if (Operator.SumAsLong.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().sumAsLong(getExpression(criteria, root).as(Integer.class));
-            } else if (Operator.SumAsDouble.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().sumAsDouble(getExpression(criteria, root).as(Float.class));
-            } else if (Operator.Count.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().count(getExpression(criteria, root)).as(Long.class);
-            } else if (Operator.CountDistinct.equals(criteria.getOperator())) {
-            	selection = getCriteriaBuilder().countDistinct(getExpression(criteria, root)).as(Long.class);
-            }
-            if (selection != null) {
-	            if (criteria.getPropertyAlias() != null) {
-	            	selection.alias(criteria.getPropertyAlias());
-	            }
-                selections.add(selection);
+                if (selection != null) {
+                    if (criteria.getPropertyAlias() != null) {
+                        selection.alias(criteria.getPropertyAlias());
+                    }
+                    selections.add(selection);
+                }
             }
         }
         if (!selections.isEmpty()) {
@@ -136,28 +118,153 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
     }
 
-    private Expression<? extends Number> getExpression(ConditionalCriteria criteria, Root<T> root) {
-        CriteriaBuilder criteriaBuilder = getCriteriaBuilder();
-        Expression<? extends Number> result = (Expression<? extends Number>) getPath(root, criteria.getPropertyFullName());
-        if (criteria.getFirstOperant() instanceof ConditionalCriteria.Function) {
-            ConditionalCriteria.Function function = (ConditionalCriteria.Function) criteria.getFirstOperant();
-            if (ConditionalCriteria.Function.hour.equals(function)) {
-                result = criteriaBuilder.function("hour", Integer.class, result);
-            } else if (ConditionalCriteria.Function.day.equals(function)) {
-                result = criteriaBuilder.function("day", Integer.class, result);
-            } else if (ConditionalCriteria.Function.month.equals(function)) {
-                result = criteriaBuilder.function("month", Integer.class, result);
-            } else if (ConditionalCriteria.Function.year.equals(function)) {
-                result = criteriaBuilder.function("year", Integer.class, result);
-            } else if (ConditionalCriteria.Function.week.equals(function)) {
-                result = criteriaBuilder.function("week", Integer.class, result);
-            } else if (ConditionalCriteria.Function.quarter.equals(function)) {
-                result = criteriaBuilder.function("quarter", Integer.class, result);
-            } else if (ConditionalCriteria.Function.dayOfWeek.equals(function)) {
-                result = criteriaBuilder.function("dow", Integer.class, result);
-            } else if (ConditionalCriteria.Function.dayOfYear.equals(function)) {
-                result = criteriaBuilder.function("doy", Integer.class, result);
+    @Override
+    public Expression convertObject(Object param) {
+        Expression retVal;
+        if (param instanceof Expression) {
+            retVal = (Expression) param;
+        } else if (param instanceof PropertyWithExpression) {
+            retVal = processExpressions((PropertyWithExpression) param);
+        } else if (param instanceof Property) {
+            Property prop = (Property) param;
+            retVal = (Expression) getPath(getRoot(), prop.getName());
+        } else {
+            retVal = getCriteriaBuilder().literal(param);
+        }
+        return retVal;
+    }
+
+    @Override
+    public Expression[] convertObjectArray(Object... obj) {
+        Expression<?>[] args = new Expression[obj.length];
+        for (int i = 0; i < args.length; i++) {
+        	args[i] = convertObject(obj[i]);
+        }
+        return args;
+    }
+
+    private Expression processExpressions(PropertyWithExpression propertyExpression) {
+        Expression result;
+        if (propertyExpression.getBase().getName().length() != 0) {
+            result=getPath(getRoot(), propertyExpression.getBase().getName());
+        } else {
+            result = null;
+        }
+
+        List<JpaFunction> functions = propertyExpression.getFunctions();
+        if (functions != null && functions.size() > 0) {
+            for (JpaFunction jpaFunction : functions) {
+                result = jpaFunction.prepareFunction(getCriteriaBuilder(), result, this);
+//                ConditionalCriteria.NativeFunction nativeFunction = jpaFunction.makeNativeFunction(null);
+//                if (nativeFunction.getName().equalsIgnoreCase("min")) {
+//                    result = getCriteriaBuilder().min(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("max")) {
+//                    result = getCriteriaBuilder().max(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("least")) {
+//                    result = getCriteriaBuilder().least(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("greatest")) {
+//                    result = getCriteriaBuilder().greatest(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("avg")) {
+//                    result = getCriteriaBuilder().avg(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("sum")) {
+//                    result = getCriteriaBuilder().sum(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("sumAsDouble")) {
+//                    result = getCriteriaBuilder().sumAsDouble(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("sumAsLong")) {
+//                    result = getCriteriaBuilder().sumAsLong(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("count")) {
+//                    result = getCriteriaBuilder().count(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("countDistinct")) {
+//                    result = getCriteriaBuilder().countDistinct(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("abs")) {
+//                    result = getCriteriaBuilder().abs(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("neg")) {
+//                    result = getCriteriaBuilder().neg(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("sqrt")) {
+//                    result = getCriteriaBuilder().sqrt(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("coalesce") || nativeFunction.getName().equalsIgnoreCase("nvl")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().coalesce(args[0], args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("concat")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().concat((Expression<String>) args[0], (Expression<String>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("currentDate")) {
+//                    result = getCriteriaBuilder().currentDate();
+//                } else if (nativeFunction.getName().equalsIgnoreCase("currentTime")) {
+//                    result = getCriteriaBuilder().currentTime();
+//                } else if (nativeFunction.getName().equalsIgnoreCase("currentTimestamp")) {
+//                    result = getCriteriaBuilder().currentTimestamp();
+//                    result = getCriteriaBuilder().diff((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("add")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().sum((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("substract")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("multiply")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().prod((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("divide")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().quot((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("mod")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().mod((Expression<Integer>) args[0], (Expression<Integer>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toInteger")) {
+//                    result = getCriteriaBuilder().toInteger(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toLong")) {
+//                    result = getCriteriaBuilder().toLong(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toFloat")) {
+//                    result = getCriteriaBuilder().toFloat(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toDouble")) {
+//                    result = getCriteriaBuilder().toDouble(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toBigInteger")) {
+//                    result = getCriteriaBuilder().toBigInteger(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toBigDecimal")) {
+//                    result = getCriteriaBuilder().toBigDecimal(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("toString")) {
+//                    result = getCriteriaBuilder().toString(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("append")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().concat((Expression<String>) args[0], (Expression<String>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("prefix")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().concat((Expression<String>) args[0], (Expression<String>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("length")) {
+//                    result = getCriteriaBuilder().length(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("indexOf")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().locate((Expression<String>) args[0], (Expression<String>) args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("lower")) {
+//                    result = getCriteriaBuilder().lower(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("upper")) {
+//                    result = getCriteriaBuilder().upper(result);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("nullif")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().nullif(args[0], args[1]);
+//                } else if (nativeFunction.getName().equalsIgnoreCase("substring")) {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    if (args.length == 2) {
+//                        result = getCriteriaBuilder().substring((Expression<String>) args[0], (Expression<Integer>) args[1]);
+//                    } else {
+//                        result = getCriteriaBuilder().substring((Expression<String>) args[0], (Expression<Integer>) args[1], (Expression<Integer>) args[2]);
+//                    }
+//                } else if (nativeFunction.getName().equalsIgnoreCase("trim")) {
+//                    result = getCriteriaBuilder().trim(result);
+//                } else {
+//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
+//                    result = getCriteriaBuilder().function(nativeFunction.getName(), nativeFunction.getResultType(), args);
+//                }
             }
+        }
+        return result;
+    }
+
+    private Expression<? extends Number> getExpression(ConditionalCriteria criteria, Root<T> root) {
+        Expression<? extends Number> result;
+        if (criteria.getExpression() instanceof PropertyWithExpression) {
+            result = processExpressions((PropertyWithExpression) criteria.getExpression());
+        } else {
+            result = (Expression<? extends Number>) getPath(root, criteria.getPropertyFullName());
         }
         return result;
     }
@@ -206,17 +313,18 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.OrderAsc.equals(criteria.getOperator())) {
                 if (config.isDistinct()) {
+                    // TODO: !!! CHECK THIS OUT with latest versions !!!
                     // for distinct select, sort column have to be in fetch columns - otherwise DB error
                     orderByList.add(getCriteriaBuilder().asc(getFetchPath(root, criteria)));
                 } else {
-                    orderByList.add(getCriteriaBuilder().asc(getPath(root, criteria.getPropertyFullName())));
+                    orderByList.add(getCriteriaBuilder().asc(getExpression(criteria, root)));
                 }
             } else if (Operator.OrderDesc.equals(criteria.getOperator())) {
                 if (config.isDistinct()) {
                     // for distinct select, sort column have to be in fetch columns - otherwise DB error
                     orderByList.add(getCriteriaBuilder().desc(getFetchPath(root, criteria)));
                 } else {
-                    orderByList.add(getCriteriaBuilder().desc(getPath(root, criteria.getPropertyFullName())));
+                    orderByList.add(getCriteriaBuilder().desc(getExpression(criteria, root)));
                 }
             }
         }
@@ -258,6 +366,23 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
     }
 
+    @Override
+    protected void prepareHaving(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
+        List<Predicate> havings = new ArrayList<>();
+        for (ConditionalCriteria criteria : conditionalCriterias) {
+            if (criteria.isHaving()) {
+                Predicate predicate = preparePredicate(criteria, false);
+                if (predicate != null) {
+                    havings.add(preparePredicate(criteria, false));
+                }
+            }
+        }
+        if (!havings.isEmpty()) {
+//            criteriaQuery.having(getCriteriaBuilder().and(havings.toArray(new Predicate[havings.size()])));
+            criteriaQuery.having(andPredicates(havings));
+        }
+    }
+
     /**
      * Map conditional criteria to type safe predicates using unchecked casts.
      *
@@ -266,9 +391,19 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Predicate preparePredicate(ConditionalCriteria criteria, boolean forceJoin) {
+    	// Performance improvement
+        if (Operator.Select.equals(criteria.getOperator())
+                || Operator.GroupBy.equals(criteria.getOperator())
+                || Operator.FetchEager.equals(criteria.getOperator())
+                || Operator.FetchLazy.equals(criteria.getOperator())
+        ) {
+            return null;
+        }
+
         CriteriaBuilder builder = getCriteriaBuilder();
         Root<T> root = getRoot();
-        Path<?> path = getPath(root, criteria.getPropertyFullName(), forceJoin);
+        Expression<?> path = getPath(root, criteria.getPropertyFullName(), forceJoin);
+        path = getExpression(criteria, root);
 
         ConditionalCriteria.Operator operator = criteria.getOperator();
         if (Operator.Equal.equals(operator)) {
@@ -357,7 +492,21 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             getConfig().setDistinct(true);
             return null;
         } else if (Operator.ReadOnly.equals(operator)) {
-        	setHint(QueryHints.READ_ONLY, true);
+			if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+                // org.hibernate.annotations.QueryHints.READ_ONLY
+                setHint("org.hibernate.readOnly", true);
+            } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+				// org.eclipse.persistence.config.QueryHints.READ_ONLY
+                setHint("eclipselink.read-only", true);
+            } else if (JpaHelper.isJpaProviderOpenJpa(getEntityManager())) {
+				// Open JPA doesn't support READ-ONLY query
+                log.warn("Read only query hint ignored - not supported by OpenJPA");
+            } else if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
+                log.warn("Read only query hint ignored - not supported by DataNucleus");
+            } else {
+			    String provider = getEntityManager().getDelegate().getClass().getSimpleName();
+			    log.warn("Read only query hint ignored - unsupported provider " + provider);
+            }
             return null;
         } else if (Operator.Scroll.equals(operator)) {
         	getConfig().setScroll(true);
@@ -370,4 +519,5 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 	public void executeCount() {
 		executeResultCount();
 	}
+
 }

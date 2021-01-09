@@ -1,18 +1,13 @@
 package org.sculptor.framework.accessapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.aaa;
-import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.bbb;
-import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.ccc;
-import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.ddd;
-import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.primaryAddress;
+import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.AddressProperties.AddressProperty;
 import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.PropertiesCollection;
@@ -129,7 +124,7 @@ public class ConditionalCriteriaBuilderTest {
 
         assertEquals("aaa", criteria.getPropertyName());
         assertEquals(ConditionalCriteria.Operator.EqualProperty, criteria.getOperator());
-        assertEquals("bbb", criteria.getFirstOperant());
+        assertEquals("bbb", ((Property) criteria.getFirstOperant()).getName());
     }
 
 
@@ -152,8 +147,8 @@ public class ConditionalCriteriaBuilderTest {
         assertEquals(ConditionalCriteria.Operator.And, criteria.getOperator());
         ConditionalCriteria firstOperant = (ConditionalCriteria) criteria.getFirstOperant();
         ConditionalCriteria secondOperant = (ConditionalCriteria) criteria.getSecondOperant();
-        assertEquals("aaa", firstOperant.property.getName());
-        assertEquals("bbb", secondOperant.property.getName());
+        assertEquals("aaa", ((Property) firstOperant.expression).getName());
+        assertEquals("bbb", ((Property) secondOperant.expression).getName());
     }
 
     @Test
@@ -165,8 +160,8 @@ public class ConditionalCriteriaBuilderTest {
         assertEquals(ConditionalCriteria.Operator.And, criteria.getOperator());
         ConditionalCriteria firstOperant = (ConditionalCriteria) criteria.getFirstOperant();
         ConditionalCriteria secondOperant = (ConditionalCriteria) criteria.getSecondOperant();
-        assertEquals("aaa", firstOperant.property.getName());
-        assertEquals("bbb", secondOperant.property.getName());
+        assertEquals("aaa", ((Property) firstOperant.expression).getName());
+        assertEquals("bbb", ((Property) secondOperant.expression).getName());
     }
 
     @Test
@@ -183,9 +178,9 @@ public class ConditionalCriteriaBuilderTest {
         ConditionalCriteria first=(ConditionalCriteria) criteria.get(0);
         ConditionalCriteria second=(ConditionalCriteria) criteria.get(1);
         ConditionalCriteria third=(ConditionalCriteria) criteria.get(2);
-        assertEquals("aaa", first.property.getName());
-        assertEquals("bbb", second.property.getName());
-        assertEquals("ccc", third.property.getName());
+        assertEquals("aaa", ((Property) first.expression).getName());
+        assertEquals("bbb", ((Property) second.expression).getName());
+        assertEquals("ccc", ((Property) third.expression).getName());
     }
 
     @Test
@@ -199,9 +194,9 @@ public class ConditionalCriteriaBuilderTest {
         ConditionalCriteria first=(ConditionalCriteria) criteria.get(0);
         ConditionalCriteria second=(ConditionalCriteria) criteria.get(1);
         ConditionalCriteria third=(ConditionalCriteria) criteria.get(2);
-        assertEquals("aaa", first.property.getName());
-        assertEquals("bbb", second.property.getName());
-        assertEquals("ccc", third.property.getName());
+        assertEquals("aaa", ((Property) first.expression).getName());
+        assertEquals("bbb", ((Property) second.expression).getName());
+        assertEquals("ccc", ((Property) third.expression).getName());
     }
 
     @Test
@@ -213,9 +208,9 @@ public class ConditionalCriteriaBuilderTest {
         assertNull(criteria.getPropertyName());
         assertEquals(ConditionalCriteria.Operator.Or, criteria.getOperator());
         ConditionalCriteria left = (ConditionalCriteria) criteria.getFirstOperant();
-        assertEquals("aaa", left.property.getName());
+        assertEquals("aaa", ((Property) left.expression).getName());
         ConditionalCriteria right = (ConditionalCriteria) criteria.getSecondOperant();
-        assertEquals("bbb", right.property.getName());
+        assertEquals("bbb", ((Property) right.expression).getName());
     }
 
     @Test
@@ -225,7 +220,7 @@ public class ConditionalCriteriaBuilderTest {
         assertNull(criteria.getPropertyName());
         assertEquals(ConditionalCriteria.Operator.Not, criteria.getOperator());
         ConditionalCriteria op = (ConditionalCriteria) criteria.getFirstOperant();
-        assertEquals("aaa", op.property.getName());
+        assertEquals("aaa", ((Property) op.expression).getName());
     }
 
     @Test
@@ -290,9 +285,9 @@ public class ConditionalCriteriaBuilderTest {
         assertNull(criteria.getPropertyName());
         assertEquals(ConditionalCriteria.Operator.Or, criteria.getOperator());
         ConditionalCriteria left = (ConditionalCriteria) criteria.getFirstOperant();
-        assertEquals("aaa", left.property.getName());
+        assertEquals("aaa", ((Property) left.expression).getName());
         ConditionalCriteria right = (ConditionalCriteria) criteria.getSecondOperant();
-        assertEquals("bbb", right.property.getName());
+        assertEquals("bbb", ((Property) right.expression).getName());
     }
 
     @Test
@@ -333,7 +328,7 @@ public class ConditionalCriteriaBuilderTest {
         assertEquals(ConditionalCriteria.Operator.And, left1.getOperator());
         ConditionalCriteria right1 = (ConditionalCriteria) criteria.getSecondOperant();
         assertEquals(ConditionalCriteria.Operator.Equal, right1.getOperator());
-        assertEquals("ccc", right1.property.getName());
+        assertEquals("ccc", ((Property) right1.expression).getName());
         assertEquals("C", right1.getFirstOperant());
     }
 
@@ -362,7 +357,7 @@ public class ConditionalCriteriaBuilderTest {
         ConditionalCriteria notCriteria = ((ConditionalCriteria) left1.getSecondOperant());
         assertEquals(ConditionalCriteria.Operator.Not, notCriteria.getOperator());
         ConditionalCriteria firstOper=(ConditionalCriteria) notCriteria.getFirstOperant();
-        assertEquals("bbb", firstOper.property.getName());
+        assertEquals("bbb", ((Property) firstOper.expression).getName());
 
         ConditionalCriteria right1 = (ConditionalCriteria) criteria.getSecondOperant();
         assertEquals(ConditionalCriteria.Operator.Equal, right1.getOperator());
@@ -434,6 +429,41 @@ public class ConditionalCriteriaBuilderTest {
     }
 
     /**
+     * A, !(B or C)
+     * <pre>
+     *        A[0], not[1]
+     *               |
+     *               or
+     *              / \
+     *             B   C
+     *
+     * </pre>
+     */
+    @Test
+    public void shouldBuildGroupedAndOr1Implicit() {
+        List<ConditionalCriteria> criteriaList =
+                criteriaFor(Person.class).where(aaa()).greaterThanOrEqual("A")
+                        .not().lbrace() .where(bbb()).eq("B") .or() .where(ccc()).eq("C") .rbrace()
+                        .build();
+
+        ConditionalCriteria criteria0 = criteriaList.get(0);
+        assertEquals(ConditionalCriteria.Operator.GreatThanOrEqual, criteria0.getOperator());
+        assertEquals("aaa", criteria0.getPropertyName());
+        assertEquals("A", criteria0.getFirstOperant());
+
+        ConditionalCriteria criteria1 = criteriaList.get(1);
+        assertEquals(ConditionalCriteria.Operator.Not, criteria1.getOperator());
+        ConditionalCriteria inside = (ConditionalCriteria) criteria1.getFirstOperant();
+        assertEquals(ConditionalCriteria.Operator.Or, inside.getOperator());
+        ConditionalCriteria insideLeft = (ConditionalCriteria) inside.getFirstOperant();
+        assertEquals("bbb", insideLeft.getPropertyName());
+        assertEquals("B", insideLeft.getFirstOperant());
+        ConditionalCriteria insideRight = (ConditionalCriteria) inside.getSecondOperant();
+        assertEquals("ccc", insideRight.getPropertyName());
+        assertEquals("C", insideRight.getFirstOperant());
+    }
+
+    /**
      * (A and B) or (C and D)
      * <pre>
      *           or
@@ -474,6 +504,253 @@ public class ConditionalCriteriaBuilderTest {
         assertEquals("ccc", ((ConditionalCriteria) rightAnd.getFirstOperant()).getPropertyName());
         assertEquals("ddd", ((ConditionalCriteria) rightAnd.getSecondOperant()).getPropertyName());
 
+    }
+
+    /**
+     * A and B or C and D (or has higher priority than and)
+     * <pre>
+     *           or
+     *         /    \
+     *      and      and
+     *     /   \     /  \
+     *    A     B   C    D
+     *
+     * </pre>
+     */
+    @Test
+    public void shouldBuildGroupedAndOr3() {
+        ConditionalCriteria criteria =
+                criteriaFor(Person.class)
+                        .where(aaa()).lessThan("A").and().where(bbb()).greaterThan("B")
+                        .or()
+                        .where(ccc()).ignoreCaseEq("C").and().where(ddd()).ignoreCaseLike("D")
+                        .buildSingle();
+
+        assertEquals(ConditionalCriteria.Operator.Or, criteria.getOperator());
+        ConditionalCriteria leftAnd = (ConditionalCriteria) criteria.getFirstOperant();
+        assertEquals(ConditionalCriteria.Operator.And, leftAnd.getOperator());
+        ConditionalCriteria rightAnd = (ConditionalCriteria) criteria.getSecondOperant();
+        assertEquals(ConditionalCriteria.Operator.And, rightAnd.getOperator());
+
+        assertEquals("aaa", ((ConditionalCriteria) leftAnd.getFirstOperant()).getPropertyName());
+        assertEquals("bbb", ((ConditionalCriteria) leftAnd.getSecondOperant()).getPropertyName());
+        assertEquals(ConditionalCriteria.Operator.LessThan, ((ConditionalCriteria) leftAnd.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.GreatThan, ((ConditionalCriteria) leftAnd.getSecondOperant())
+                .getOperator());
+
+        assertEquals("ccc", ((ConditionalCriteria) rightAnd.getFirstOperant()).getPropertyName());
+        assertEquals("ddd", ((ConditionalCriteria) rightAnd.getSecondOperant()).getPropertyName());
+        assertEquals(ConditionalCriteria.Operator.IgnoreCaseEqual, ((ConditionalCriteria) rightAnd.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.IgnoreCaseLike, ((ConditionalCriteria) rightAnd.getSecondOperant())
+                .getOperator());
+    }
+
+    /**
+     * A and B or C and D and E (OR has higher priority than AND)
+     * <pre>
+     *             or
+     *         /       \
+     *      and         and
+     *     /   \     /  |  \
+     *    A     B   C   D   E
+     *
+     * </pre>
+     */
+    @Test
+    public void shouldBuildGroupedAndOr4() {
+        ConditionalCriteria criteria =
+                criteriaFor(Person.class)
+                        .where(aaa()).lessThan("A").and().where(bbb()).greaterThan("B")
+                        .or()
+                        .where(ccc()).ignoreCaseEq("C").and().where(ddd()).ignoreCaseLike("D").where(eee()).isNotNull()
+                        .buildSingle();
+
+        assertEquals(ConditionalCriteria.Operator.Or, criteria.getOperator());
+        ConditionalCriteria leftAnd = (ConditionalCriteria) criteria.getFirstOperant();
+        assertEquals(ConditionalCriteria.Operator.And, leftAnd.getOperator());
+        ConditionalCriteria rightAnd = (ConditionalCriteria) criteria.getSecondOperant();
+        assertEquals(ConditionalCriteria.Operator.And, rightAnd.getOperator());
+
+        assertEquals("aaa", ((ConditionalCriteria) leftAnd.getFirstOperant()).getPropertyName());
+        assertEquals("bbb", ((ConditionalCriteria) leftAnd.getSecondOperant()).getPropertyName());
+        assertEquals(ConditionalCriteria.Operator.LessThan, ((ConditionalCriteria) leftAnd.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.GreatThan, ((ConditionalCriteria) leftAnd.getSecondOperant())
+                .getOperator());
+
+        List<ConditionalCriteria> criteriaList = (List<ConditionalCriteria>) rightAnd.getFirstOperant();
+        assertEquals("ccc", criteriaList.get(0).getPropertyName());
+        assertEquals("ddd", criteriaList.get(1).getPropertyName());
+        assertEquals("eee", criteriaList.get(2).getPropertyName());
+        assertEquals(ConditionalCriteria.Operator.IgnoreCaseEqual, criteriaList.get(0).getOperator());
+        assertEquals(ConditionalCriteria.Operator.IgnoreCaseLike, criteriaList.get(1).getOperator());
+        assertEquals(ConditionalCriteria.Operator.IsNotNull, criteriaList.get(2).getOperator());
+    }
+
+    /**
+     * A and B or C and D or E (OR has higher priority than AND)
+     * <pre>
+     *                or
+     *         /      |    \
+     *      and      and    E
+     *     /  \     /  \
+     *    A    B   C   D
+     *
+     * </pre>
+     */
+    @Test
+    public void shouldBuildGroupedAndOr5() {
+        ConditionalCriteria criteria =
+                criteriaFor(Person.class)
+                        .where(aaa()).lessThan("A").and().where(bbb()).greaterThan("B")
+                        .or()
+                        .where(ccc()).ignoreCaseEq("C").and().where(ddd()).ignoreCaseLike("D")
+                        .or()
+                        .where(eee()).isNotNull()
+                        .buildSingle();
+
+        assertEquals(ConditionalCriteria.Operator.Or, criteria.getOperator());
+        List<ConditionalCriteria> criteriaList = (List<ConditionalCriteria>) criteria.getFirstOperant();
+        ConditionalCriteria first = criteriaList.get(0);
+        assertEquals(ConditionalCriteria.Operator.And, first.getOperator());
+        ConditionalCriteria second = criteriaList.get(1);
+        assertEquals(ConditionalCriteria.Operator.And, second.getOperator());
+        ConditionalCriteria third = criteriaList.get(2);
+
+        assertEquals("aaa", ((ConditionalCriteria) first.getFirstOperant()).getPropertyName());
+        assertEquals("bbb", ((ConditionalCriteria) first.getSecondOperant()).getPropertyName());
+        assertEquals(ConditionalCriteria.Operator.LessThan, ((ConditionalCriteria) first.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.GreatThan, ((ConditionalCriteria) first.getSecondOperant())
+                .getOperator());
+
+        assertEquals("ccc", ((ConditionalCriteria) second.getFirstOperant()).getPropertyName());
+        assertEquals("ddd", ((ConditionalCriteria) second.getSecondOperant()).getPropertyName());
+        assertEquals(ConditionalCriteria.Operator.IgnoreCaseEqual, ((ConditionalCriteria) second.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.IgnoreCaseLike, ((ConditionalCriteria) second.getSecondOperant())
+                .getOperator());
+
+        assertEquals(ConditionalCriteria.Operator.IsNotNull, third.getOperator());
+    }
+
+    /**
+     * (A and B) or (C and D) - use implicit and() between where()
+     * <pre>
+     *           or
+     *         /    \
+     *      and      and
+     *     /   \     /  \
+     *    A     B   C    D
+     *
+     * </pre>
+     */
+    @Test
+    public void shouldBuildGroupedAndOr6() {
+        ConditionalCriteria criteria =
+                criteriaFor(Person.class).lbrace().where(aaa()).eq("A").where(bbb()).eq("B").rbrace()
+                        .or()
+                        .lbrace().where(ccc()).eq("C").where(ddd()).eq("D").rbrace()
+                        .buildSingle();
+
+        assertEquals(ConditionalCriteria.Operator.Or, criteria.getOperator());
+        ConditionalCriteria leftAnd = (ConditionalCriteria) criteria.getFirstOperant();
+        assertEquals(ConditionalCriteria.Operator.And, leftAnd.getOperator());
+        ConditionalCriteria rightAnd = (ConditionalCriteria) criteria.getSecondOperant();
+        assertEquals(ConditionalCriteria.Operator.And, rightAnd.getOperator());
+
+        assertEquals(ConditionalCriteria.Operator.Equal, ((ConditionalCriteria) leftAnd.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.Equal, ((ConditionalCriteria) leftAnd.getSecondOperant())
+                .getOperator());
+        assertEquals("aaa", ((ConditionalCriteria) leftAnd.getFirstOperant()).getPropertyName());
+        assertEquals("bbb", ((ConditionalCriteria) leftAnd.getSecondOperant()).getPropertyName());
+
+        assertEquals(ConditionalCriteria.Operator.Equal, ((ConditionalCriteria) rightAnd.getFirstOperant())
+                .getOperator());
+        assertEquals(ConditionalCriteria.Operator.Equal, ((ConditionalCriteria) rightAnd.getSecondOperant())
+                .getOperator());
+        assertEquals("ccc", ((ConditionalCriteria) rightAnd.getFirstOperant()).getPropertyName());
+        assertEquals("ddd", ((ConditionalCriteria) rightAnd.getSecondOperant()).getPropertyName());
+
+    }
+
+    /**
+     * Test mixing Where and Having inside braces
+     */
+    @Test
+    public void balancedBraceForWhereAndHaving() {
+    	try {
+            ConditionalCriteria criteria =
+                    criteriaFor(Person.class).lbrace().where(aaa()).eq("A").having(bbb()).eq("B").rbrace()
+                            .buildSingle();
+            fail("Have to fire exception");
+        } catch (IllegalStateException ise) {
+            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
+            assertEquals("Wrong method fired exception", "having", ise.getStackTrace()[1].getMethodName());
+        }
+
+        try {
+            ConditionalCriteria criteria =
+                    criteriaFor(Person.class).lbrace().having(aaa()).eq("A").where(bbb()).eq("B").rbrace()
+                            .buildSingle();
+            fail("Have to fire exception");
+        } catch (IllegalStateException ise) {
+            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
+            assertEquals("Wrong method fired exception", "where", ise.getStackTrace()[2].getMethodName());
+        }
+
+        try {
+            ConditionalCriteria criteria =
+                    criteriaFor(Person.class).lbrace().where(aaa()).eq("A").where(bbb()).eq("B").rbrace()
+                    .lbrace().having(aaa()).eq("A").having(bbb()).eq("B").rbrace()
+                    .lbrace().having(aaa()).eq("A").where(ccc()).eq("B").rbrace() // where(ccc()) should fire exception
+                    .buildSingle();
+            fail("Have to fire exception");
+        } catch (IllegalStateException ise) {
+            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
+            assertEquals("Wrong method fired exception", "where", ise.getStackTrace()[2].getMethodName());
+        }
+
+        try {
+            // This is OK
+            List<ConditionalCriteria> criteria =
+                    criteriaFor(Person.class).lbrace().where(aaa()).eq("A").where(bbb()).eq("B").rbrace()
+                            .lbrace().having(aaa()).eq("A").having(bbb()).eq("B").rbrace()
+                            .lbrace().where(aaa()).eq("A").where(ccc()).eq("B").rbrace()
+                            .lbrace().having(aaa()).eq("A").having(bbb()).eq("B").rbrace()
+                            .build();
+        } catch (IllegalStateException ise) {
+            fail("Exception fired: " + ise.getMessage());
+        }
+
+        try {
+            // This is OK - multiple lbrace().lbrace() test
+            List<ConditionalCriteria> criteria =
+                    criteriaFor(Person.class).lbrace().where(aaa()).eq("A").and().where(bbb()).eq("B").rbrace()
+                            .lbrace().having(aaa()).eq("A").and().having(bbb()).eq("B").rbrace()
+                            .lbrace().lbrace().where(aaa()).eq("A").and().where(ccc()).eq("B").rbrace().rbrace()
+                            .lbrace().lbrace().having(aaa()).eq("A").and().having(bbb()).eq("B").rbrace().rbrace()
+                            .build();
+        } catch (IllegalStateException ise) {
+            fail("Exception fired: " + ise.getMessage());
+        }
+
+        try {
+            // This is NOT OK - ((where AND where) AND having) - ERROR
+            List<ConditionalCriteria> criteria =
+                    criteriaFor(Person.class).lbrace().where(aaa()).eq("A").and().where(bbb()).eq("B").rbrace()
+                            .lbrace().having(aaa()).eq("A").and().having(bbb()).eq("B").rbrace()
+                            .lbrace().lbrace().where(aaa()).eq("A").and().where(ccc()).eq("B").rbrace()
+                                .having(ddd()).isNotNull().rbrace() // having(ddd()) should fire exception
+                            .build();
+            fail("Have to fire exception");
+        } catch (IllegalStateException ise) {
+            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
+            assertEquals("Wrong method fired exception", "having", ise.getStackTrace()[1].getMethodName());
+        }
     }
 
     @Test(expected = IllegalStateException.class)
@@ -568,6 +845,10 @@ public class ConditionalCriteriaBuilderTest {
             return sharedInstance.ddd();
         }
 
+        public static Property<Person> eee() {
+            return sharedInstance.eee();
+        }
+
         public static AddressProperty<Person> primaryAddress() {
             return sharedInstance.primaryAddress();
         }
@@ -583,7 +864,7 @@ public class ConditionalCriteriaBuilderTest {
     }
 
     // this class is used for references to Person, i.e. nested property
-    public static class PersonProperty<T> extends PersonPropertiesImpl<T> implements Property<T> {
+    public static class PersonProperty<T> extends PersonPropertiesImpl<T> {
         private static final long serialVersionUID = 1L;
 
         public PersonProperty(String parentPath, String additionalPath, Class<T> owningClass) {
@@ -592,7 +873,7 @@ public class ConditionalCriteriaBuilderTest {
     }
 
     // note private visibility
-    private static class PersonPropertiesImpl<T> extends PropertiesCollection {
+    private static class PersonPropertiesImpl<T> extends PropertiesCollection<T> {
         private static final long serialVersionUID = 1L;
 
         Class<T> owningClass;
@@ -621,6 +902,10 @@ public class ConditionalCriteriaBuilderTest {
 
         public Property<T> ddd() {
             return new LeafProperty<T>(getParentPath(), "ddd", false, owningClass);
+        }
+
+        public Property<T> eee() {
+            return new LeafProperty<T>(getParentPath(), "eee", false, owningClass);
         }
 
         public AddressProperty<T> primaryAddress() {
@@ -659,14 +944,14 @@ public class ConditionalCriteriaBuilderTest {
 
         // note that static methods are not generated in BasicType, since they can't be root of the criteria
 
-        public static class AddressProperty<T> extends AddressPropertiesImpl<T> implements Property<T> {
+        public static class AddressProperty<T> extends AddressPropertiesImpl<T> {
             private static final long serialVersionUID = 1L;
             public AddressProperty(String parentPath, String additionalPath, Class<T> owningClass) {
                 super(parentPath, additionalPath, owningClass);
             }
         }
 
-        private static class AddressPropertiesImpl<T> extends PropertiesCollection {
+        private static class AddressPropertiesImpl<T> extends PropertiesCollection<T> {
             private static final long serialVersionUID = 1L;
             Class<T> owningClass;
 

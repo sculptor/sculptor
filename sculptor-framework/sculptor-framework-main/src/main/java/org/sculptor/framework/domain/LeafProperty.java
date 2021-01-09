@@ -1,5 +1,9 @@
 package org.sculptor.framework.domain;
 
+import org.sculptor.framework.domain.expression.ComplexExpression;
+import org.sculptor.framework.domain.expression.Expression;
+import org.sculptor.framework.domain.expression.ExpressionNumeric;
+
 public class LeafProperty<Q> implements Property<Q> {
     private static final long serialVersionUID = 1L;
 
@@ -43,5 +47,10 @@ public class LeafProperty<Q> implements Property<Q> {
         String thisString=this.owningClass.getCanonicalName() + name;
         String otherString=((LeafProperty<?>) other).owningClass.getCanonicalName() + ((LeafProperty<?>)other).name;
         return thisString.equals(otherString);
+    }
+
+    @Override
+    public ComplexExpression<Q> expr() {
+        return new PropertyWithExpression(this);
     }
 }

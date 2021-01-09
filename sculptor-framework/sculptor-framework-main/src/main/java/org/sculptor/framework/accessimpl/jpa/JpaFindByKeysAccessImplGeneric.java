@@ -94,7 +94,7 @@ public class JpaFindByKeysAccessImplGeneric<T,R>
     }
 
     @Override
-    protected List<Predicate> preparePredicates() {
+    protected List<Predicate> prepareWhere() {
         List<Predicate> list = new ArrayList<Predicate>();
         for (Object key : keys) {
             Map<String, Object> restrictions = new HashMap<String, Object>();

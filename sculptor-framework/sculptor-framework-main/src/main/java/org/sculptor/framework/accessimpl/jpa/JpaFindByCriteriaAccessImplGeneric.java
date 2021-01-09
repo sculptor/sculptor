@@ -83,8 +83,8 @@ public class JpaFindByCriteriaAccessImplGeneric<T,R>
     }
 
 	@Override
-    protected List<Predicate> preparePredicates() {
-	    return preparePredicates(restrictions);
+    protected List<Predicate> prepareWhere() {
+	    return prepareWhere(restrictions);
     }
 
     @Override

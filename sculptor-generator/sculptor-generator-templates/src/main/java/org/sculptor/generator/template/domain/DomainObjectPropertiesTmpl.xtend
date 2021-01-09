@@ -106,7 +106,7 @@ def String domainObjectProperty(DomainObject it) {
 		 * This class is used for references to {@link «getDomainPackage()».«name»},
 		 * i.e. nested property.
 		 */
-		public static class «name»Property<T> extends «name»PropertiesImpl<T> implements «fw("domain.Property")»<T> {
+		public static class «name»Property<T> extends «name»PropertiesImpl<T> {
 			«serialVersionUID(it)»
 			public «name»Property(String parentPath, String additionalPath, Class<T> owningClass) {
 				super(parentPath, additionalPath, owningClass);
@@ -118,7 +118,7 @@ def String domainObjectProperty(DomainObject it) {
 def String domainObjectPropertiesImpl(DomainObject it) {
 	'''
 
-		protected static class «name»PropertiesImpl<T> extends «fw("domain.PropertiesCollection")» {
+		protected static class «name»PropertiesImpl<T> extends «fw("domain.PropertiesCollection")»<T> {
 			«serialVersionUID(it)»
 			Class<T> owningClass;
 

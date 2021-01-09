@@ -3,8 +3,10 @@ package org.sculptor.framework.accessapi;
 import java.util.Collection;
 import java.util.List;
 
-import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.Property;
+import org.sculptor.framework.domain.PropertyWithExpression;
+import org.sculptor.framework.domain.expression.Expression;
+import org.sculptor.framework.domain.LeafProperty;
 
 public class ConditionalCriteria {
 
@@ -15,30 +17,40 @@ public class ConditionalCriteria {
 	String propertyFullName;
 	Object firstOperant;
 	Object secondOperant;
-	Property<?> property;
+	Expression<?> expression;
+	boolean having=false;
 
-	private ConditionalCriteria(Operator operator, Property<?> property) {
-		this(operator, property, null, null);
+	private ConditionalCriteria(Operator operator, Expression<?> expression) {
+		this(operator, expression, null, null);
 	}
 
-	private ConditionalCriteria(Operator operator, Property<?> property, Object firstOperant) {
-		this(operator, property, firstOperant, null);
+	private ConditionalCriteria(Operator operator, Expression<?> expression, Object firstOperant) {
+		this(operator, expression, firstOperant, null);
 	}
 
-	private ConditionalCriteria(Operator operator, Property<?> property, Object firstOperant, Object secondOperant) {
-		this.property=property;
+	private ConditionalCriteria(Operator operator, Expression<?> expression, Object firstOperant, Object secondOperant) {
+		this.expression = expression;
 		this.operator=operator;
 		this.firstOperant=firstOperant;
 		this.secondOperant=secondOperant;
 
-		if (property == null) {
+		Property p;
+		if (expression instanceof PropertyWithExpression) {
+			p = ((PropertyWithExpression) expression).getBase();
+		} else if (expression instanceof Property) {
+			p = (Property) expression;
+		} else {
+			p = null;
+		}
+
+		if (p == null) {
 			this.propertyFullName=null;
 			this.propertyName=null;
 			this.propertyPath=new String[0];
-		} else {
-			this.propertyFullName=property instanceof LeafProperty<?>
-					? ((LeafProperty<?>)property).getEmbeddedName()
-					: property.getName();
+		} else if (p instanceof Property) {
+			this.propertyFullName=p instanceof LeafProperty<?>
+					? ((LeafProperty<?>)p).getEmbeddedName()
+					: p.getName();
 
 			int lastDotPos = propertyFullName.lastIndexOf('.');
 			if (lastDotPos == -1) {
@@ -87,47 +99,51 @@ public class ConditionalCriteria {
         return type.cast(secondOperant);
     }
 
-	public ConditionalCriteria withProperty(Property<?> property) {
+    public Expression getExpression() {
+		return expression;
+	}
+
+	public ConditionalCriteria withProperty(Expression<?> property) {
 		return new ConditionalCriteria(this.operator, property, firstOperant, secondOperant);
 	}
 
-	public static ConditionalCriteria equal(Property<?> property, Object value) {
+	public static ConditionalCriteria equal(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.Equal, property, value);
 	}
 
-	public static ConditionalCriteria ignoreCaseEqual(Property<?> property, Object value) {
+	public static ConditionalCriteria ignoreCaseEqual(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.IgnoreCaseEqual, property, value);
 	}
 
-	public static ConditionalCriteria lessThan(Property<?> property, Object value) {
+	public static ConditionalCriteria lessThan(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.LessThan, property, value);
 	}
 
-	public static ConditionalCriteria lessThanOrEqual(Property<?> property, Object value) {
+	public static ConditionalCriteria lessThanOrEqual(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.LessThanOrEqual, property, value);
 	}
 
-	public static ConditionalCriteria greatThan(Property<?> property, Object value) {
+	public static ConditionalCriteria greatThan(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.GreatThan, property, value);
 	}
 
-	public static ConditionalCriteria greatThanOrEqual(Property<?> property, Object value) {
+	public static ConditionalCriteria greatThanOrEqual(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.GreatThanOrEqual, property, value);
 	}
 
-	public static ConditionalCriteria like(Property<?> property, Object value) {
+	public static ConditionalCriteria like(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.Like, property, value);
 	}
 
-	public static ConditionalCriteria ignoreCaseLike(Property<?> property, Object value) {
+	public static ConditionalCriteria ignoreCaseLike(Expression<?> property, Object value) {
 		return new ConditionalCriteria(Operator.IgnoreCaseLike, property, value);
 	}
 
-	public static ConditionalCriteria between(Property<?> property, Object lowRange, Object hightRange) {
+	public static ConditionalCriteria between(Expression<?> property, Object lowRange, Object hightRange) {
 		return new ConditionalCriteria(Operator.Between, property, lowRange, hightRange);
 	}
 
-	public static ConditionalCriteria in(Property<?> property, Object... itemList) {
+	public static ConditionalCriteria in(Expression<?> property, Object... itemList) {
 		if (itemList != null && itemList.length == 1 && itemList[0] instanceof Collection<?>) {
 			return new ConditionalCriteria(Operator.In, property, itemList[0]);
 		} else {
@@ -135,19 +151,19 @@ public class ConditionalCriteria {
 		}
 	}
 
-	public static ConditionalCriteria isNull(Property<?> property) {
+	public static ConditionalCriteria isNull(Expression<?> property) {
 		return new ConditionalCriteria(Operator.IsNull, property);
 	}
 
-	public static ConditionalCriteria isNotNull(Property<?> property) {
+	public static ConditionalCriteria isNotNull(Expression<?> property) {
 		return new ConditionalCriteria(Operator.IsNotNull, property);
 	}
 
-	public static ConditionalCriteria isEmpty(Property<?> property) {
+	public static ConditionalCriteria isEmpty(Expression<?> property) {
 		return new ConditionalCriteria(Operator.IsEmpty, property);
 	}
 
-	public static ConditionalCriteria isNotEmpty(Property<?> property) {
+	public static ConditionalCriteria isNotEmpty(Expression<?> property) {
 		return new ConditionalCriteria(Operator.IsNotEmpty, property);
 	}
 
@@ -172,39 +188,39 @@ public class ConditionalCriteria {
 	}
 
 	// Property comparators
-	public static ConditionalCriteria equalProperty(Property<?> propertyLeft, Property<?> propertyRight) {
-		return new ConditionalCriteria(Operator.EqualProperty, propertyLeft, propertyRight.getName());
+	public static ConditionalCriteria equalProperty(Expression<?> propertyLeft, Expression<?> propertyRight) {
+		return new ConditionalCriteria(Operator.EqualProperty, propertyLeft, propertyRight);
 	}
 
-	public static ConditionalCriteria lessThanProperty(Property<?> propertyLeft, Property<?> propertyRight) {
-		return new ConditionalCriteria(Operator.LessThanProperty, propertyLeft, propertyRight.getName());
+	public static ConditionalCriteria lessThanProperty(Expression<?> propertyLeft, Expression<?> propertyRight) {
+		return new ConditionalCriteria(Operator.LessThanProperty, propertyLeft, propertyRight);
 	}
 
-	public static ConditionalCriteria lessThanOrEqualProperty(Property<?> propertyLeft, Property<?> propertyRight) {
-		return new ConditionalCriteria(Operator.LessThanOrEqualProperty, propertyLeft, propertyRight.getName());
+	public static ConditionalCriteria lessThanOrEqualProperty(Expression<?> propertyLeft, Expression<?> propertyRight) {
+		return new ConditionalCriteria(Operator.LessThanOrEqualProperty, propertyLeft, propertyRight);
 	}
 
-	public static ConditionalCriteria greatThanProperty(Property<?> propertyLeft, Property<?> propertyRight) {
-		return new ConditionalCriteria(Operator.GreatThanProperty, propertyLeft, propertyRight.getName());
+	public static ConditionalCriteria greatThanProperty(Expression<?> propertyLeft, Expression<?> propertyRight) {
+		return new ConditionalCriteria(Operator.GreatThanProperty, propertyLeft, propertyRight);
 	}
 
-	public static ConditionalCriteria greatThanOrEqualProperty(Property<?> propertyLeft, Property<?> propertyRight) {
-		return new ConditionalCriteria(Operator.GreatThanOrEqualProperty, propertyLeft, propertyRight.getName());
+	public static ConditionalCriteria greatThanOrEqualProperty(Expression<?> propertyLeft, Expression<?> propertyRight) {
+		return new ConditionalCriteria(Operator.GreatThanOrEqualProperty, propertyLeft, propertyRight);
 	}
 
-	public static ConditionalCriteria orderAsc(Property<?> property) {
+	public static ConditionalCriteria orderAsc(Expression<?> property) {
 		return new ConditionalCriteria(Operator.OrderAsc, property);
 	}
 
-	public static ConditionalCriteria orderDesc(Property<?> property) {
+	public static ConditionalCriteria orderDesc(Expression<?> property) {
 		return new ConditionalCriteria(Operator.OrderDesc, property);
 	}
 
-	public static ConditionalCriteria fetchEager(Property<?> property) {
+	public static ConditionalCriteria fetchEager(Expression<?> property) {
 		return new ConditionalCriteria(Operator.FetchEager, property);
 	}
 
-	public static ConditionalCriteria fetchLazy(Property<?> property) {
+	public static ConditionalCriteria fetchLazy(Expression<?> property) {
 		return new ConditionalCriteria(Operator.FetchLazy, property);
 	}
 
@@ -224,68 +240,55 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.Scroll, null);
 	}
 
-	public static ConditionalCriteria groupBy(Property<?> property) {
+	public static ConditionalCriteria groupBy(Expression<?> property) {
 		return new ConditionalCriteria(Operator.GroupBy, property);
 	}
 
-	public static ConditionalCriteria groupBy(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.GroupBy, property, function);
-	}
-
-	public static ConditionalCriteria select(Property<?> property) {
+	public static ConditionalCriteria select(Expression<?> property) {
 		return new ConditionalCriteria(Operator.Select, property);
 	}
 
-	public static ConditionalCriteria select(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.Select, property, function);
+	public void setHaving() {
+		having=true;
 	}
 
-	public static ConditionalCriteria min(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.Min, property, function);
+	public void unsetHaving() {
+		having=false;
 	}
 
-	public static ConditionalCriteria max(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.Max, property, function);
+	public boolean isHaving() {
+		return having;
 	}
 
-	public static ConditionalCriteria avg(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.Avg, property, function);
-	}
-
-	public static ConditionalCriteria sum(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.Sum, property, function);
-	}
-
-	public static ConditionalCriteria sumAsLong(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.SumAsLong, property, function);
-	}
-
-	public static ConditionalCriteria sumAsDouble(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.SumAsDouble, property, function);
-	}
-
-	public static ConditionalCriteria count(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.Count, property, function);
-	}
-
-	public static ConditionalCriteria countDistinct(Property<?> property, Function function) {
-		return new ConditionalCriteria(Operator.CountDistinct, property, function);
+	public enum OperatorType {
+		Predicate, Sql, Config
 	}
 
 	public enum Operator {
 		Equal, LessThan, LessThanOrEqual, GreatThan, GreatThanOrEqual, Like, IgnoreCaseLike, IgnoreCaseEqual
 		, IsNull, IsNotNull, IsEmpty, IsNotEmpty
-		, Not, Or, And
 		, In, Between
 		, EqualProperty, LessThanProperty, LessThanOrEqualProperty, GreatThanProperty, GreatThanOrEqualProperty
-		, OrderAsc, OrderDesc, DistinctRoot, ProjectionRoot
-		, FetchLazy, FetchEager
-		, GroupBy
-		, ReadOnly, Scroll
-		, Select, Min, Max, Avg, Sum, SumAsLong, SumAsDouble, Count, CountDistinct
-	}
+		, Not, Or, And
+		, OrderAsc(OperatorType.Sql), OrderDesc(OperatorType.Sql)
+		, GroupBy(OperatorType.Sql), Select(OperatorType.Sql)
+		, DistinctRoot(OperatorType.Config), ProjectionRoot(OperatorType.Config)
+		, FetchLazy(OperatorType.Config), FetchEager(OperatorType.Config)
+		, ReadOnly(OperatorType.Config), Scroll(OperatorType.Config)
+		;
 
-	public enum Function {
-		hour, day, week, month, quarter, year, dayOfWeek, dayOfYear
+		private OperatorType operatorType;
+
+		Operator() {
+			this.operatorType = OperatorType.Predicate;
+		}
+
+		Operator(OperatorType type) {
+			this.operatorType = type;
+		}
+
+		public OperatorType getOperatorType() {
+			return operatorType;
+		}
 	}
 }

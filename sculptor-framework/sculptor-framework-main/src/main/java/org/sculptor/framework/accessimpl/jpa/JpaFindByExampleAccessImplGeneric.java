@@ -71,8 +71,8 @@ public class JpaFindByExampleAccessImplGeneric<T, R> extends JpaCriteriaQueryAcc
 	}
 
 	@Override
-	protected List<Predicate> preparePredicates() {
-		return preparePredicates(exampleInstance);
+	protected List<Predicate> prepareWhere() {
+		return prepareWhere(exampleInstance);
 	}
 
 }
