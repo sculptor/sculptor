@@ -44,10 +44,12 @@ def String genericFactoryMethod(RepositoryOperation it) {
 	'''
 	«IF useGenericAccessStrategy(it)»
 		«IF name != "findByExample"»
-			// convenience method
-			protected «genericAccessObjectInterface(name)»2«it.getGenericType()» create«getAccessNormalizedName()»() {
-				return create«getAccessNormalizedName()»(getPersistentClass(), getPersistentClass());
-			}
+			«IF it.getGenericType() != "<R>"»
+				// convenience method
+				protected «genericAccessObjectInterface(name)»2«it.getGenericType()» create«getAccessNormalizedName()»() {
+					return create«getAccessNormalizedName()»(getPersistentClass(), getPersistentClass());
+				}
+			«ENDIF»
 
 			// convenience method
 			protected <R> «genericAccessObjectInterface(name)»2<R> create«getAccessNormalizedName()»(Class<R> resultType) {

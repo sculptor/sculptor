@@ -373,17 +373,21 @@ def String setQueryHint(RepositoryOperation it) {
 }
 
 def String genericBaseRepositoryMethod(RepositoryOperation it) {
+	val resultTypeParameter = it.parameters.findFirst(e | e.name == 'resultType');
+	val bond = resultTypeParameter === null ? '' : ' <R> ';
 	'''
 		/**
 		 * Delegates to {@link «genericAccessObjectInterface(name)»}
 		 */
 		«repositoryMethodAnnotation(it)»
 		«IF it.useGenericAccessStrategy()»
-			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
-				return «name»(«FOR param : parameters SEPARATOR ","»«param.name»«ENDFOR»«IF it.hasParameters()»,«ENDIF»getPersistentClass());
-			}
+			«it.getVisibilityLitteral()»«bond»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
+			«IF resultTypeParameter === null»
+					return «name»(«FOR param : parameters SEPARATOR ","»«param.name»«ENDFOR»«IF it.hasParameters()»,«ENDIF»getPersistentClass());
+				}
 
-			«it.getVisibilityLitteral()» <R> «it.getGenericResultTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»«IF it.hasParameters()»,«ENDIF» Class<R> resultType) «exceptionTmpl.throwsDecl(it)» {
+				«it.getVisibilityLitteral()» <R> «it.getGenericResultTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»«IF it.hasParameters()»,«ENDIF» Class<R> resultType) «exceptionTmpl.throwsDecl(it)» {
+			«ENDIF»
 		«ELSE»
 			«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		«ENDIF»
@@ -405,8 +409,7 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 				ao.setUseSingleResult(true);
 			«ENDIF»
 			«IF name != "findByKey"»
-				«/* TODO: why do you need to remove persistentClass from parameter list? */»
-				«FOR parameter : parameters.filter[e | !(jpa() && e.name == "persistentClass")]»
+				«FOR parameter : parameters.filter[e | !(jpa() && (e.name == "persistentClass" || e == resultTypeParameter))]»
 					ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
 				«ENDFOR»
 			«ENDIF»
@@ -429,20 +432,22 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 }
 
 def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
-	val pagingParameter = it.getPagingParameter()
+	val pagingParameter = it.getPagingParameter();
+	val resultTypeParameter = it.parameters.findFirst(e | e.name == 'resultType');
+	val bond = resultTypeParameter === null ? '' : ' <R> ';
 
 	'''
 	«repositoryMethodAnnotation(it)»
-	«it.getVisibilityLitteral()»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
+	«it.getVisibilityLitteral()»«bond»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 		«IF it.useGenericAccessStrategy()»
-			«genericAccessObjectInterface(name)»2«it.getGenericType()» ao = create«getAccessNormalizedName()»();
+			«genericAccessObjectInterface(name)»2«it.getGenericType()» ao = create«getAccessNormalizedName()»(«resultTypeParameter === null ? '' : resultTypeParameter.name»);
 		«ELSE»
-			«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessNormalizedName()»();
+			«genericAccessObjectInterface(name)»«it.getGenericType()» ao = create«getAccessNormalizedName()»(«resultTypeParameter === null ? '' : resultTypeParameter.name»);
 		«ENDIF»
 		«setCache(it)»
 		«setEagerColumns(it)»
 		«setOrdered(it)»
-		«FOR parameter : parameters.filter(e | e != pagingParameter)»
+		«FOR parameter : parameters.filter(e | e != pagingParameter && e != resultTypeParameter)»
 		ao.set«parameter.name.toFirstUpper()»(«parameter.name»);
 		«ENDFOR»
 
@@ -454,9 +459,13 @@ def String pagedGenericBaseRepositoryMethod(RepositoryOperation it) {
 
 		ao.execute();
 		«IF it.isPagedResult()»
-			«it.getAccessObjectResultTypeName()» result = ao.getResult();
+			«IF resultTypeParameter === null»
+				«it.getAccessObjectResultTypeName()» result = ao.getResult();
+			«ELSE»
+				List<R> result = ao.getResult();
+			«ENDIF»
 			«calculateMaxPages(it)»
-	
+
 			«it.getTypeName()» pagedResult = new «it.getTypeName()»(result
 					, pagingParameter.getStartRow()
 					, pagingParameter.getRowCount()
@@ -632,9 +641,11 @@ def String nullThrowsNotFoundExcpetion(RepositoryOperation it) {
 }
 
 def String interfaceRepositoryMethod(RepositoryOperation it) {
+	var typeName = it.getTypeName();
+	typeName = (typeName.endsWith("<R>") ? "<R> " : "") + typeName;
 	'''
 		«it.formatJavaDoc()»
-		public «it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
+		«it.getVisibilityLitteral()» «typeName» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)»;
 		«findByNaturalKeysInterfaceRepositoryMethod(it) »
 	'''
 }

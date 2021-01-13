@@ -100,6 +100,18 @@ public class GenericAccessObjectManager {
 		return strategy.isPersistentClassConstructor();
 	}
 
+	public boolean useGenericAccessStrategy(RepositoryOperation op) {
+		return op.getName().equals("findAll") ||
+				op.getName().equals("findByQuery") ||
+				op.getName().equals("findByExample") ||
+				op.getName().equals("findByKeys") ||
+				op.getName().equals("findByNaturalKeys") ||
+				op.getName().equals("findByCondition") ||
+				op.getName().equals("findByConditionAs") ||
+				op.getName().equals("findByCriteria");
+
+	}
+
 	public PropertiesBase getPropBase() {
 		return propBase;
 	}
@@ -156,7 +168,7 @@ public class GenericAccessObjectManager {
 
 		protected void addDefaultCollectionType(RepositoryOperation operation) {
 			if (operation.getCollectionType() == null || operation.getCollectionType().equals("")) {
-				operation.setCollectionType("List");
+				operation.setCollectionType("java.util.List");
 			}
 		}
 
@@ -597,11 +609,10 @@ public class GenericAccessObjectManager {
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
 				if (hasParameter(operation, "pagingParameter")) {
 					operation.setType("PagedResult");
-					addDefaultDomainObjectType(operation);
 				} else {
-					addDefaultDomainObjectType(operation);
 					addDefaultCollectionType(operation);
 				}
+				addDefaultDomainObjectType(operation);
 			}
 			if (propBase.getBooleanProperty("generate.singleLevelFetchEager")) {
 				helperBase.addHint(operation, "useFetchEager");
@@ -615,6 +626,52 @@ public class GenericAccessObjectManager {
 			} else {
 				return "<" + helperBase.getTypeName(operation, false) + ">";
 			}
+		}
+
+		@Override
+		public boolean isPersistentClassConstructor() {
+			return true;
+		}
+
+	}
+
+	public class FindByConditionAsStrategy extends AbstractGenericAccessObjectStrategy {
+
+		@Override
+		public void addDefaultValues(RepositoryOperation operation) {
+			if (propBase.getBooleanProperty("findByConditionAs.paging") && operation.getParameters().isEmpty()) {
+				addParameter(operation, "PagingParameter", "pagingParameter");
+			}
+			if (operation.getParameters().isEmpty()
+					|| (operation.getParameters().size() == 1 && hasParameter(operation, "pagingParameter"))) {
+
+				String conditionalCriteriaClass;
+				if (propBase.hasProperty("framework.accessapi.ConditionalCriteria")) {
+					conditionalCriteriaClass = propBase.getProperty("framework.accessapi.ConditionalCriteria");
+				} else {
+					conditionalCriteriaClass = "org.sculptor.framework.accessapi.ConditionalCriteria";
+				}
+				addParameterFirst(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
+				addParameter(operation, "Class<R>", "resultType");
+			}
+
+			if (operation.getType() != null && !operation.getType().equals("R")) {
+				operation.setCollectionType(operation.getType());
+			} else if (hasParameter(operation, "pagingParameter")) {
+				operation.setCollectionType("PagedResult");
+			} else {
+				addDefaultCollectionType(operation);
+			}
+			operation.setType("R");
+			operation.setDomainObjectType(null);
+			if (propBase.getBooleanProperty("generate.singleLevelFetchEager")) {
+				helperBase.addHint(operation, "useFetchEager");
+			}
+		}
+
+		@Override
+		public String getGenericType(RepositoryOperation operation) {
+			return "<R>";
 		}
 
 		@Override

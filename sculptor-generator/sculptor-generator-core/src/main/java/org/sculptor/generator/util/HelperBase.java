@@ -351,8 +351,7 @@ public class HelperBase {
 		String type = typeName;
 		String domainObjectTypeName = null;
 		if (element.getDomainObjectType() != null) {
-			domainObjectTypeName = getJavaTypeOrVoid(getDomainPackage(element.getDomainObjectType()) + "."
-					+ element.getDomainObjectType().getName());
+			domainObjectTypeName = getTypeName(element.getDomainObjectType());
 			type = domainObjectTypeName;
 		}
 
@@ -361,6 +360,10 @@ public class HelperBase {
 		}
 
 		return (surroundWithCollectionType ? surroundWithCollectionType(type, element, false) : type);
+	}
+
+	public String getTypeName(DomainObject element) {
+		return getJavaTypeOrVoid(getDomainPackage(element) + "." + element.getName());
 	}
 
 	public String getImplTypeName(TypedElement element) {
@@ -388,7 +391,7 @@ public class HelperBase {
 	private String getMapKeyType(DomainObjectTypedElement element) {
 		DomainObject domainObject = element.getMapKeyDomainObjectType();
 		if (domainObject != null) {
-			return getJavaTypeOrVoid(getDomainPackage(domainObject) + "." + domainObject.getName());
+			return getTypeName(domainObject);
 		}
 		String type = element.getMapKeyType();
 		if (type != null) {
@@ -425,7 +428,7 @@ public class HelperBase {
 	/**
 	 * Java interface for the collection type.
 	 * 
-	 * @see #getCollectionType(sculptormetamodel.Reference)
+	 * @see #getRefCollectionType(sculptormetamodel.Reference)
 	 */
 	public String getCollectionInterfaceType(Reference ref) {
 		String collectionType = getRefCollectionType(ref);
@@ -443,7 +446,7 @@ public class HelperBase {
 	/**
 	 * Java implementation class for the collection type.
 	 * 
-	 * @see #getCollectionType(sculptormetamodel.Reference)
+	 * @see #getRefCollectionType(sculptormetamodel.Reference)
 	 */
 	public String getCollectionImplType(Reference ref) {
 		String collectionType = getRefCollectionType(ref);

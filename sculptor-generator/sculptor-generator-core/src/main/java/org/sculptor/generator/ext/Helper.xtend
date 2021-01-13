@@ -218,7 +218,7 @@ class Helper {
 	}
 
 	def boolean isPagedResult(TypedElement e) {
-		e.type == "PagedResult"
+		e.type == "PagedResult" || e.collectionType == "PagedResult"
 	}
 
 	def String getAccessObjectResultTypeName(RepositoryOperation op) {
@@ -1339,7 +1339,7 @@ class Helper {
 	}
 
 	def String getGenericResultTypeName(RepositoryOperation op) {
-		if (op.collectionType !== null || op.isPagedResult())
+		if ((op.collectionType !== null || op.isPagedResult()) && op.domainObjectType !== null)
 			op.getTypeName().replaceAll(getDomainObjectTypeName(op.domainObjectType),"R")
 		else
 			"R"
@@ -1415,14 +1415,7 @@ class Helper {
 
 	// TODO: quick solution, it would be better to implement a new access strategy
 	def boolean useGenericAccessStrategy(RepositoryOperation op) {
-		jpa &&
-				(op.name == "findAll" ||
-				 op.name == "findByQuery" ||
-				 op.name == "findByExample" ||
-				 op.name == "findByKeys" ||
-				 op.name == "findByNaturalKeys" ||
-				 op.name == "findByCondition" ||
-				 op.name == "findByCriteria")
+		jpa && genericAccessObjectManager.useGenericAccessStrategy(op)
 	}
 
 	def boolean useTupleToObjectMapping(RepositoryOperation op) {
