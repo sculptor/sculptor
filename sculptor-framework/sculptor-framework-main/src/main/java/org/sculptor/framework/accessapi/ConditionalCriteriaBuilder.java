@@ -402,6 +402,9 @@ public class ConditionalCriteriaBuilder<T> {
                     }
                     criteriaStack.push(compositeCriteria);
                     operatorStack.pop();
+                    if (operatorStack.peek() == ExpressionOperator.LBrace) {
+                        operatorStack.push(ExpressionOperator.And);
+                    }
                 } else if (currentOperator == ExpressionOperator.Not) {
                     ConditionalCriteria notCriteria = ConditionalCriteria.not(criteria);
                     criteriaStack.push(notCriteria);
