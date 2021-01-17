@@ -31,6 +31,8 @@ ApplicationPart RelationPart {
             Repository PersonRepository {
 				PagedResult findByCondition(PagingParameter pagingParameter);
 				findByConditionTuple();
+				findByConditionAs();
+				PagedResult findByConditionAs(PagingParameter pagingParameter);
             }
         }
 

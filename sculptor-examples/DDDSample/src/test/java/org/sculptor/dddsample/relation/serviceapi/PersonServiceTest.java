@@ -2,10 +2,7 @@ package org.sculptor.dddsample.relation.serviceapi;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.sculptor.dddsample.relation.domain.House;
-import org.sculptor.dddsample.relation.domain.Person;
-import org.sculptor.dddsample.relation.domain.PersonProperties;
-import org.sculptor.dddsample.relation.domain.PersonRepository;
+import org.sculptor.dddsample.relation.domain.*;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.sculptor.framework.domain.JpaFunction;
@@ -26,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.sculptor.dddsample.relation.domain.PersonProperties.*;
@@ -282,6 +280,45 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 	}
 
 	@Test
+	public void testFindByConditionAs() throws Exception {
+		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+			.select(id())
+			.select(secondName())
+			.select(first())
+			.select(createdDate())
+			.where(first()).greaterThanOrEqual("H")
+			.where(id()).lessThan(105)
+			.orderBy(createdDate().expr().year())
+			.orderBy(id())
+			.build();
+		List<MiniPerson> result = personRepository.findByConditionAs(condition, MiniPerson.class);
+		testFindByConditionAsResult(result);
+	}
+
+	@Test
+	public void testFindByConditionAsPaging() throws Exception {
+		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.select(id())
+				.select(secondName())
+				.select(first())
+				.select(createdDate())
+				.where(first()).greaterThanOrEqual("H")
+				.where(id()).lessThan(105)
+				.orderBy(createdDate().expr().year())
+				.orderBy(id())
+				.build();
+		List<MiniPerson> result = personRepository.findByConditionAs(condition, PagingParameter.noLimits(), MiniPerson.class).getValues();
+		testFindByConditionAsResult(result);
+	}
+
+	private void testFindByConditionAsResult(List<MiniPerson> result) throws Exception {
+		assertEquals("Result size", 3, result.size());
+		assertEquals(101l, result.get(0).getId().longValue());
+		assertEquals(102l, result.get(1).getId().longValue());
+		assertEquals(104l, result.get(2).getId().longValue());
+	}
+
+	@Test
 	public void testFindByConditionExpr() throws Exception {
 		Expression<Person> firtst2Upper = first().expr().substring(2).toUpper();
 		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
@@ -294,7 +331,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 //				.select(secondName(), substring(3), append(" aha"), initCap()).min()
 				.select(secondName().expr().substring(3).append(" aha").minAsString())
 				.select(secondName().expr().append(" ").append(first()).minAsString())
-				.select(secondName().expr().join(" ", first(), version()).minAsString())
+				.select(secondName().expr().join("-", first(), createdBy(), version()).minAsString())
 				.select(secondName().expr().append("_").append(firtst2Upper).minAsString())
 				.select(secondName().expr().rightPad(15, "#-").leftPad(20, "%").minAsString())
 				.select(secondName().expr().left(5).right(3).minAsString())
@@ -309,13 +346,15 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				.select(secondName().expr().prepend("   @@@").trimLeading().trimLeading('@').trimLeading('G').minAsString())
 				.select(secondName().expr().append("@@   ").trimTrailing().trimTrailing('@').trimTrailing('n').minAsString())
 				.select(secondName().expr().prepend("      @@").append("@@@   ").trimBoth().trimBoth('@').trimBoth('n').minAsString())
-//				.select(secondName()
-//						.expr().caseExpr()
-//						.when(secondName().like("Ga%"))
-//						.than("KUKU")
-//						.otherwise("BUBU")
-//						.end()
-//				)// .startsWith("Ga")).min()
+				.select(secondName().expr().count())
+				.select(secondName().expr().left(4)
+					.caseExpr()
+					.when(id()).lessThanOrEqual(102).than("ABC")
+					.when().lessThanOrEqual("F").or().when(secondName()).lessThan("K").than("DEF")
+					.when(createdBy()).isNull().than("GHI")
+					.when(createdBy()).greaterThan("p").and().when(id()).greaterThanOrEqual(103).than("JKL")
+					.otherwise("OTHER").trimBoth()
+				).min()
 				.where(createdDate().expr().year()).greaterThan(2004)
 				.where(first().expr().length()).greaterThan(5)
 				.groupBy(createdDate().expr().year())
@@ -323,23 +362,24 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				.orderBy(createdDate().expr().year())
 				.build();
 		List<Tuple> result = personRepository.findByConditionTuple(condition);
+		printTuple(result);
 
 		Object[][] expected = new Object[][] {
-			{102l, 306l, 306l, "102 * 3 = 306", 34l, "Gandhi", "ndhi aha", "Gandhi Mahatutma", "Gandhi"
+			{102l, 306l, 306l, "102 * 3 = 306", 34l, "Gandhi", "ndhi aha", "Gandhi Mahatutma", "Gandhi-Mahatutma-3"
 				, "Gandhi_AHATUTMA", "%%%%%Gandhi#-#-#-#-#", "ndh", 6, "andh", "gandhi", 12
 				, "2 <- index of 'a' in \"Gandhi\"", "Gandhi##############", "++++++Gandhi", "---------Gandhi"
-				, "andhi", "Gandhi", "Gandhi"},
-			{104l, 312l, 416l, "104 * 4 = 416", 51l, "Gabrielson", "brielson aha", "Gabrielson Peterson"
-				, "Gabrielson", "Gabrielson_ETERSON", "%%%%%Gabrielson#-#-#", "bri", 8, "abri", "gabrielson", 16
+				, "andhi", "Gandhi", "Gandhi", 1l, "ABC"},
+			{104l, 312l, 416l, "104 * 4 = 416", 51l, "Gabrielson", "brielson aha", "Gabrielson Peterson", "Gabrielson-Peterson-4"
+				, "Gabrielson_ETERSON", "%%%%%Gabrielson#-#-#", "bri", 8, "abri", "gabrielson", 16
 				, "2 <- index of 'a' in \"Gabrielson\"", "Gabrielson##########", "++++Smradoch", "-------Smradoch"
-				, "Smradoch", "Gabrielso", "Gabrielso"},
-			{105l, 315l, 420l, "105 * 4 = 420", 26l, "Sablinson", "blinson aha", "Sablinson Gerthrude"
-				, "Sablinson", "Sablinson_ERTHRUDE", "%%%%%Sablinson#-#-#-", "bli", 9, "abli", "sablinson", 15
+				, "Smradoch", "Gabrielso", "Gabrielso", 2l, "DEF"},
+			{105l, 315l, 420l, "105 * 4 = 420", 26l, "Sablinson", "blinson aha", "Sablinson Gerthrude", "Sablinson-Gerthrude-prizdisral-4"
+				, "Sablinson_ERTHRUDE", "%%%%%Sablinson#-#-#-", "bli", 9, "abli", "sablinson", 15
 				, "2 <- index of 'a' in \"Sablinson\"", "Sablinson###########", "+++Sablinson", "------Sablinson"
-				, "Sablinson", "Sablinso", "Sablinso"}
+				, "Sablinson", "Sablinso", "Sablinso", 1l, "JKL"}
 		};
 		assertEquals("Number of result rows", 3, result.size());
-		assertEquals("Some comparison skipped", 23 * 3, assertTuple(expected, result));
+		assertEquals("Some comparison skipped", 25 * 3, assertTuple(expected, result));
 	}
 
 	@Test
@@ -451,6 +491,92 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		assertEquals("Some comparison skipped", assertTuple(expected, result), 6 * 3);
 	}
 
+	@Test
+	public void testFindByConditionCaseInGroupBy() throws Exception {
+		Expression<Person> firtst2Upper = first().expr().substring(2).toUpper();
+		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.select(id()).min()
+				.select(id()).max()
+				.select(id()).count()
+				.select(first().expr().left(4).toUpper().minAsString())
+				.select(createdDate().expr().year().multiply(100).add(createdDate().expr().month())).min()
+				.select(createdDate().expr().year().multiply(100).add(createdDate().expr().month())
+						.caseExpr()
+						.when().lessThan(200901).than("OLD")
+						.when().lessThan(201001).than("NEW")
+						.otherwise(createdDate().expr().asString())
+				)
+				.select(id().expr().add(1000).sum())
+				.where(createdDate().expr().year()).greaterThan(2004)
+				.groupBy(createdDate().expr().year().multiply(100).add(createdDate().expr().month())
+						.caseExpr()
+						.when().lessThan(200901).than("OLD")
+						.when().lessThan(201001).than("NEW")
+						.otherwise(createdDate().expr().asString())
+				)
+				.having(id().expr().add(1000).sum()).greaterThan(1100)
+				.orderBy(id().expr().min())
+				.build();
+		List<Tuple> result = personRepository.findByConditionTuple(condition);
+
+		Object[][] expected = new Object[][] {
+				{101l, 102l, 2l, "JOZE", 200812, "OLD", 2203l},
+				{103l, 104l, 2l, "FERO", 200908, "NEW", 2207l},
+				{105l, 105l, 1l, "GERT", 201302, "2013-02-17 23:59:59.000000", 1105l},
+		};
+		assertEquals("Number of result rows", 3, result.size());
+		assertEquals("Some comparison skipped", 7 * 3, assertTuple(expected, result));
+	}
+	@Test
+	public void testFindByConditionCase() throws Exception {
+		Expression<Person> firtst2Upper = first().expr().substring(2).toUpper();
+		List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(Person.class)
+				.select(id())
+				.select(first().expr().left(4).toUpper()
+					.caseExpr()
+						.when(id()).lessThanOrEqual(101).than("ABC")
+						// Default when() - using original expression where caseExpr() was started
+						// in this case first().expr().left(4).toUpper()
+						.when().lessThanOrEqual("G").or().when(secondName()).lessThan("G").than("DEF")
+						.when(createdBy()).isNull().than("GHI")
+						// Default than() - using original expression
+						.when(createdBy()).greaterThan("P").and().when(id()).greaterThanOrEqual(103).than()
+					.otherwise("OTHER")
+					.trimBoth()
+				)
+				.select(createdDate().expr().year().multiply(100).add(createdDate().expr().month())
+					.caseExpr()
+						.when().lessThan(200901).than("OLD")
+						.when().lessThan(200909).than("NEW")
+						.when(id()).lessThanOrEqual(104).than("<=104")
+						// Convert to string - all results have to be of same type otherwise SQL exception from server
+					.otherwise(createdDate().expr().asString())
+				)
+				.select(createdDate().expr().year().multiply(100).add(createdDate().expr().month())
+					.caseExpr()
+						.when().lessThan(200901).than("OLD")
+						.when().lessThan(200909).than("NEW")
+						.when(id()).lessThanOrEqual(104).than("<=104")
+						// Without otherwise - have to return NULL
+					.end()
+					.trimTrailing()
+				)
+				.where(createdDate().expr().year()).greaterThan(2004)
+				.orderBy(id())
+				.build();
+		List<Tuple> result = personRepository.findByConditionTuple(condition);
+
+		Object[][] expected = new Object[][] {
+				{101l, "ABC", "OLD", "OLD"},
+				{102l, "GHI", "OLD", "OLD"},
+				{103l, "DEF", "NEW", "NEW"},
+				{104l, "GHI", "<=104", "<=104"},
+				{105l, "GERT", "2013-02-17 23:59:59.000000", null},
+		};
+		assertEquals("Number of result rows", 5, result.size());
+		assertEquals("Some comparison skipped", 4 * 5, assertTuple(expected, result));
+	}
+
 	private int assertTuple(Object[][] expected, List<Tuple> result) {
 		int n=0;
 		for (int row = 0; row < expected.length; row++) {
@@ -458,7 +584,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 			Object[] resRow = result.get(row).toArray();
 			for (int i = 0; i < exRow.length; i++) {
 				Object exElem = exRow[i];
-				if (exElem.equals("SKIP")) {
+				if (exElem == null) {
+				} else if (exElem.equals("SKIP")) {
 					continue;
 				} else if (resRow[i] instanceof Date) {
 					try {
@@ -495,7 +622,9 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				}
 				n++;
 
-				if (resRow[i] instanceof Double) {
+				if (exElem == null) {
+					assertNull("Item in row " + row + " element " + i + " is not NULL", resRow[i]);
+				} else if (resRow[i] instanceof Double) {
 					double exElemDouble = (double) exElem;
 					double resRowDouble = (double) resRow[i];
 					assertEquals("Item in row " + row + " element " + i + " doesnt' match", exElemDouble, resRowDouble, 0.001);
@@ -548,7 +677,11 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 			System.out.println(">>>>> ROW >>>>>");
 			Object[] arr = t.toArray();
 			for (int i = 0; i < arr.length; i++) {
-				System.out.printf("    col[%02d] = %-8s :: %s\n", i, arr[i].toString(), arr[i].getClass().getName());
+				if (arr[i] == null) {
+					System.out.printf("    col[%02d] = NULL\n", i);
+				} else {
+					System.out.printf("    col[%02d] = %-8s :: %s\n", i, arr[i].toString(), arr[i].getClass().getName());
+				}
 			}
 		});
 
