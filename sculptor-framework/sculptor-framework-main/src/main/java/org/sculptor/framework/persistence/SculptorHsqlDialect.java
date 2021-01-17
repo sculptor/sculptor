@@ -20,10 +20,10 @@ public class SculptorHsqlDialect extends HSQLDialect {
 		registerFunction("quarter", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(quarter from ?1)"));
 		registerFunction("dow", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(day_of_week from ?1)"));
 		registerFunction("doy", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(day_of_year from ?1)"));
+		registerFunction("join", new StandardSQLFunction("concat_ws", StandardBasicTypes.STRING));
 		registerFunction("right", new StandardSQLFunction("right", StandardBasicTypes.STRING));
 		registerFunction("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
 		registerFunction("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
-//		registerFunction("concat_ws", new StandardSQLFunction("concat_ws", StandardBasicTypes.STRING));
 //		registerFunction("strpos", new StandardSQLFunction("instr", StandardBasicTypes.STRING));
 //		registerFunction("starts_with", new StandardSQLFunction("starts_with", StandardBasicTypes.STRING));
 //		registerFunction("starts_with", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1 LIKE ?2"));

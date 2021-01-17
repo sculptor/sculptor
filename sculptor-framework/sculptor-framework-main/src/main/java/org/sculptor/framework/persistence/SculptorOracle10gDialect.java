@@ -2,6 +2,7 @@ package org.sculptor.framework.persistence;
 
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
+import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 
 /**
@@ -13,5 +14,9 @@ public class SculptorOracle10gDialect extends Oracle10gDialect {
 		registerFunction("quarter", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(quarter from ?1)"));
 		registerFunction("dow", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(day_of_week from ?1)"));
 		registerFunction("doy", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(day_of_year from ?1)"));
+		registerFunction("join", new StandardSQLFunction("concat_ws", StandardBasicTypes.STRING));
+		registerFunction("right", new StandardSQLFunction("right", StandardBasicTypes.STRING));
+		registerFunction("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
+		registerFunction("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
 	}
 }

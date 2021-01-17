@@ -47,14 +47,17 @@ public class ConditionalCriteriaBuilder<T> {
     }
 
     public static <T> ConditionRoot<T> criteriaFor(Class<T> clazz) {
-        return new ConditionalCriteriaBuilder<T>().new RootBuilderImpl();
+        return new RootBuilderImpl();
     }
 
-    public class RootBuilderImpl implements ConditionRootLogic<T>, OrderBy<T>, Selection<T>, GroupBy<T> {
+    public static class RootBuilderImpl<T> implements ConditionRootLogic<T>, OrderBy<T>, Selection<T>, GroupBy<T> {
         private final SimpleStack<ConditionalCriteria> otherCriteriaStack = new SimpleStack<ConditionalCriteria>();
         private final SimpleStack<ConditionalCriteria> havingCriteriaStack = new SimpleStack<ConditionalCriteria>();
         private final SimpleStack<ConditionalCriteria> whereCriteriaStack = new SimpleStack<ConditionalCriteria>();
         private final SimpleStack<ExpressionOperator> operatorStack = new SimpleStack<ExpressionOperator>();
+
+        public RootBuilderImpl() {
+        }
 
         // only used to give good error message
         private int braceCount = 0;
@@ -600,8 +603,8 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRootLogic<T> eq(Object value);
         ConditionRootLogic<T> ignoreCaseEq(Object value);
         ConditionRootLogic<T> eq(Expression<T> property);
-        ConditionRootLogic<T> between(Object value1, Object value2);
-        Between<T> between(Object value1);
+        ConditionRootLogic<T> between(Object from, Object to);
+        Between<T> between(Object from);
         ConditionRootLogic<T> lessThan(Object value);
         ConditionRootLogic<T> lessThanOrEqual(Object value);
         ConditionRootLogic<T> greaterThan(Object value);
@@ -623,7 +626,7 @@ public class ConditionalCriteriaBuilder<T> {
     }
 
     public interface Between<T> {
-        ConditionRootLogic<T> to(Object value2);
+        ConditionRootLogic<T> to(Object to);
     }
 
 	public interface Selection<T> extends ConditionRoot<T> {

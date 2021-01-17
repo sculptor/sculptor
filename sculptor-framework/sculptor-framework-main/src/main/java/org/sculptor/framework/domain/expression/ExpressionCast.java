@@ -2,9 +2,6 @@ package org.sculptor.framework.domain.expression;
 
 import org.sculptor.framework.domain.JpaFunction;
 
-import java.sql.Date;
-import java.sql.Time;
-
 public interface ExpressionCast<T> extends Expression<T> {
 	ExpressionNumeric<T> asInteger();
 
@@ -29,4 +26,6 @@ public interface ExpressionCast<T> extends Expression<T> {
 	ComplexExpression<T> function(String name, Class resultType, Object... arguments);
 
 	ComplexExpression<T> function(JpaFunction jpaFunction);
+
+	CaseWhen<T> caseExpr();
 }

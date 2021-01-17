@@ -19,6 +19,11 @@ public class PropertyWithExpression<T> implements ComplexExpression<T> {
 		this.base = base;
 	}
 
+	PropertyWithExpression(PropertyWithExpression<T> e) {
+		this.base = e.base;
+		this.functions = new ArrayList(e.functions);
+	}
+
 	public Property<T> getBase() {
 		return base;
 	}
@@ -288,7 +293,14 @@ public class PropertyWithExpression<T> implements ComplexExpression<T> {
 
 	@Override
 	public ExpressionString<T> join(String separator, Expression<T>... properties) {
-//		functions.add((cb, left, ec) -> cb.jo(left, ec.convertObjectArray(properties)));
+		functions.add((cb, left, ec) -> {
+			Object[] args = new Object[properties.length + 2];
+			args[0] = separator;
+			args[1] = left;
+			System.arraycopy(properties, 0, args, 2, properties.length);
+			javax.persistence.criteria.Expression[] exprs = ec.convertObjectArray(args);
+			return cb.function("join", String.class, exprs);
+		});
 		return this;
 	}
 
@@ -522,4 +534,12 @@ public class PropertyWithExpression<T> implements ComplexExpression<T> {
 		functions.add((cb, left, ec) -> cb.currentTimestamp());
 		return this;
 	}
+
+	@Override
+	public CaseWhen<T> caseExpr() {
+		CaseExpressionBuilder<T> caseExpressionBuilder = new CaseExpressionBuilder(this);
+		functions.add(caseExpressionBuilder);
+		return caseExpressionBuilder;
+	}
+
 }

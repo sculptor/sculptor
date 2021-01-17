@@ -123,6 +123,8 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         Expression retVal;
         if (param instanceof Expression) {
             retVal = (Expression) param;
+        } else if (param instanceof ConditionalCriteria) {
+            retVal = preparePredicate((ConditionalCriteria) param, false);
         } else if (param instanceof PropertyWithExpression) {
             retVal = processExpressions((PropertyWithExpression) param);
         } else if (param instanceof Property) {
@@ -155,105 +157,6 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         if (functions != null && functions.size() > 0) {
             for (JpaFunction jpaFunction : functions) {
                 result = jpaFunction.prepareFunction(getCriteriaBuilder(), result, this);
-//                ConditionalCriteria.NativeFunction nativeFunction = jpaFunction.makeNativeFunction(null);
-//                if (nativeFunction.getName().equalsIgnoreCase("min")) {
-//                    result = getCriteriaBuilder().min(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("max")) {
-//                    result = getCriteriaBuilder().max(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("least")) {
-//                    result = getCriteriaBuilder().least(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("greatest")) {
-//                    result = getCriteriaBuilder().greatest(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("avg")) {
-//                    result = getCriteriaBuilder().avg(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("sum")) {
-//                    result = getCriteriaBuilder().sum(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("sumAsDouble")) {
-//                    result = getCriteriaBuilder().sumAsDouble(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("sumAsLong")) {
-//                    result = getCriteriaBuilder().sumAsLong(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("count")) {
-//                    result = getCriteriaBuilder().count(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("countDistinct")) {
-//                    result = getCriteriaBuilder().countDistinct(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("abs")) {
-//                    result = getCriteriaBuilder().abs(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("neg")) {
-//                    result = getCriteriaBuilder().neg(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("sqrt")) {
-//                    result = getCriteriaBuilder().sqrt(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("coalesce") || nativeFunction.getName().equalsIgnoreCase("nvl")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().coalesce(args[0], args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("concat")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().concat((Expression<String>) args[0], (Expression<String>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("currentDate")) {
-//                    result = getCriteriaBuilder().currentDate();
-//                } else if (nativeFunction.getName().equalsIgnoreCase("currentTime")) {
-//                    result = getCriteriaBuilder().currentTime();
-//                } else if (nativeFunction.getName().equalsIgnoreCase("currentTimestamp")) {
-//                    result = getCriteriaBuilder().currentTimestamp();
-//                    result = getCriteriaBuilder().diff((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("add")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().sum((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("substract")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("multiply")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().prod((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("divide")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().quot((Expression<? extends Number>) args[0], (Expression<? extends Number>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("mod")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().mod((Expression<Integer>) args[0], (Expression<Integer>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toInteger")) {
-//                    result = getCriteriaBuilder().toInteger(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toLong")) {
-//                    result = getCriteriaBuilder().toLong(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toFloat")) {
-//                    result = getCriteriaBuilder().toFloat(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toDouble")) {
-//                    result = getCriteriaBuilder().toDouble(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toBigInteger")) {
-//                    result = getCriteriaBuilder().toBigInteger(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toBigDecimal")) {
-//                    result = getCriteriaBuilder().toBigDecimal(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("toString")) {
-//                    result = getCriteriaBuilder().toString(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("append")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().concat((Expression<String>) args[0], (Expression<String>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("prefix")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().concat((Expression<String>) args[0], (Expression<String>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("length")) {
-//                    result = getCriteriaBuilder().length(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("indexOf")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().locate((Expression<String>) args[0], (Expression<String>) args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("lower")) {
-//                    result = getCriteriaBuilder().lower(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("upper")) {
-//                    result = getCriteriaBuilder().upper(result);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("nullif")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().nullif(args[0], args[1]);
-//                } else if (nativeFunction.getName().equalsIgnoreCase("substring")) {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    if (args.length == 2) {
-//                        result = getCriteriaBuilder().substring((Expression<String>) args[0], (Expression<Integer>) args[1]);
-//                    } else {
-//                        result = getCriteriaBuilder().substring((Expression<String>) args[0], (Expression<Integer>) args[1], (Expression<Integer>) args[2]);
-//                    }
-//                } else if (nativeFunction.getName().equalsIgnoreCase("trim")) {
-//                    result = getCriteriaBuilder().trim(result);
-//                } else {
-//                    Expression<?> args[] = makeNativeArgs(nativeFunction.getParameters(), result);
-//                    result = getCriteriaBuilder().function(nativeFunction.getName(), nativeFunction.getResultType(), args);
-//                }
             }
         }
         return result;
