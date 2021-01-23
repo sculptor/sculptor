@@ -216,7 +216,6 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate-version>5.4.23.Final</hibernate-version>
 			</properties>
 			<build>
 			</build>

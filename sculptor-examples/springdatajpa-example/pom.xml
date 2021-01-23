@@ -13,7 +13,6 @@
 	<name>Sculptor :: Examples :: Spring Data JPA</name>
 
 	<properties>
-		<spring-data-jpa.version>2.1.8.RELEASE</spring-data-jpa.version>
 	</properties>
 
 	<build>
@@ -76,7 +75,7 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring-data-jpa.version}</version>
+			<version>${spring-data-jpa-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
