@@ -24,6 +24,7 @@ import org.sculptor.generator.template.camel.CamelTmpl
 import org.sculptor.generator.template.common.EhCacheTmpl
 import org.sculptor.generator.template.drools.DroolsTmpl
 import org.sculptor.generator.template.springint.SpringIntegrationTmpl
+import org.sculptor.generator.template.jpa.JPATmpl
 import org.sculptor.generator.util.HelperBase
 import org.sculptor.generator.util.OutputSlot
 import org.sculptor.generator.util.PropertiesBase
@@ -638,7 +639,7 @@ def String dataSource(Application it) {
 		<property name="jdbcUrl" value="${jdbc.url}"/>
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
-		<!-- override following properties by extending SpringTmpl.dataSourceAdditions -->
+		«printProperties("dataSource")»
 		«dataSourceAdditions(it)»
 	</bean>
 	'''
@@ -649,9 +650,7 @@ def String dataSource(Application it) {
  */
 def String dataSourceAdditions(Application it) {
 	'''
-	<property name="maximumPoolSize" value="40" />
-	<property name="connectionTimeout" value="5000" />
-	<property name="leakDetectionThreshold" value="15000" />
+		<!-- override following properties by extending SpringTmpl.dataSourceAdditions -->
 	'''
 }
 
@@ -758,13 +757,17 @@ def String entityManagerFactory(Application it) {
 				«IF isSpringDataSourceSupportToBeGenerated()»
 					«dataSource(it)»
 				«ENDIF»
+				«IF entityManagerFactoryType == "scan" && (isJpaProviderHibernate() || isJpaProviderEclipseLink())»
+					«IF isJpaProviderHibernate()»
+						<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+					«ELSEIF isJpaProviderEclipseLink()»
+						<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"/>
+					«ENDIF»
+						«printProperties('vendorAdapter')»
+					</bean>
+				«ENDIF»
 				<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-					«IF isSpringDataSourceSupportToBeGenerated()»
-						<property name="dataSource" ref="dataSource"/>
-					«ENDIF»
-					«IF persistenceXml() != "META-INF/persistence.xml"»
-						<property name="persistenceXmlLocation" value="classpath:«persistenceXml()»"/>
-					«ENDIF»
+					«entityManagerFactoryScan(it)»
 				</bean>
 			«ENDIF»
 		«ENDIF»
@@ -776,27 +779,66 @@ def String entityManagerFactory(Application it) {
 	)
 }
 
+def String entityManagerFactoryScan(Application it) {
+	var emList=new java.util.Properties();
+	var jpaPropList=new java.util.Properties();
+	if (isSpringDataSourceSupportToBeGenerated()) {
+		emList.put("dataSource", "dataSource");
+	}
+	if (entityManagerFactoryType == "scan") {
+		emList.put("packagesToScan", basePackage);
+		emList.put("persistenceUnitName", persistenceUnitName);
+		if (isJpaProviderHibernate() || isJpaProviderEclipseLink()) {
+			emList.put("jpaVendorAdapter", "jpaVendorAdapter");
+		} else {
+			emList.put("persistenceProvider", jpaProviderClass);
+		}
+
+		if (isJpaProviderHibernate()) {
+			jpaTmpl.persistenceUnitPropertiesHibernate(it, null, jpaPropList);
+		} else if (isJpaProviderEclipseLink()) {
+			jpaTmpl.persistenceUnitPropertiesEclipseLink(it, null, jpaPropList)
+		} else if (isJpaProviderDataNucleus()) {
+			jpaTmpl.persistenceUnitPropertiesDataNucleus(it, null, jpaPropList);
+		} else if (isJpaProviderAppEngine()) {
+			jpaTmpl.persistenceUnitPropertiesAppEngine(it, null, jpaPropList);
+		} else if (isJpaProviderOpenJpa()) {
+			jpaTmpl.persistenceUnitPropertiesOpenJpa(it, null, jpaPropList);
+		}
+	} else if (persistenceXml() != "META-INF/persistence.xml") {
+		emList.put("persistenceXmlLocation", persistenceXml());
+	}
+	'''
+	«printProperties("entityManagerFactory", emList)»
+	«IF getEntityManagerFactoryType() == "scan"»
+		<property name="jpaProperties">
+			<props>
+				«printPropertiesForHash("jpaProperties", jpaPropList)»
+			</props>
+		</property>
+	«ENDIF»
+	'''
+}
+
 def String entityManagerFactoryTest(Application it) {
 	fileOutput(it.getResourceDir("spring") + it.getApplicationContextFile("EntityManagerFactory-test.xml"), OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«headerWithMoreNamespaces(it)»
 		«testDataSource(it)»
 
-		«IF isJpaProviderHibernate()»
-			<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-		«ENDIF»
-		«IF isJpaProviderEclipseLink()»
-			<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"/>
+		«IF entityManagerFactoryTestType == "scan" && (isJpaProviderHibernate() || isJpaProviderEclipseLink())»
+			«IF isJpaProviderHibernate()»
+				<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+			«ELSEIF isJpaProviderEclipseLink()»
+				<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"/>
+			«ENDIF»
+				«printProperties('test.vendorAdapter')»
+			</bean>
 		«ENDIF»
 
-		<!-- Creates a EntityManagerFactory for use with JPA provider -->
 		<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-			<property name="dataSource" ref="testDataSource"/>
-			<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-test.xml"/>
-			«IF isJpaProviderHibernate() || isJpaProviderEclipseLink()»
-				<property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-			«ENDIF»
+			«entityManagerFactoryTestScan(it)»
 		</bean>
-	
+
 		«entityManagerFactoryTx(it, true)»
 		<!-- add additional beans by extending SpringTmpl.entityManagerFactoryAdditions -->
 		«entityManagerFactoryAdditions(it, true)»
@@ -812,6 +854,45 @@ def String entityManagerFactoryAdditions(Application it, boolean test) {
 	'''
 	'''
 }
+
+def String entityManagerFactoryTestScan(Application it) {
+	var emList=new java.util.Properties();
+	var jpaPropList=new java.util.Properties();
+	emList.put("dataSource", "#REF#testDataSource");
+	if (entityManagerFactoryTestType == "scan") {
+		emList.put("packagesToScan", basePackage);
+		emList.put("persistenceUnitName", persistenceUnitName);
+		if (isJpaProviderHibernate() || isJpaProviderEclipseLink()) {
+			emList.put("jpaVendorAdapter", "#REF#jpaVendorAdapter");
+		} else {
+			emList.put("persistenceProvider", jpaProviderClass);
+		}
+
+		if (isJpaProviderHibernate()) {
+			jpaTmpl.persistenceUnitPropertiesTestHibernate(it, null, jpaPropList);
+		} else if (isJpaProviderEclipseLink()) {
+			jpaTmpl.persistenceUnitPropertiesTestEclipseLink(it, null, jpaPropList);
+		} else if (isJpaProviderDataNucleus()) {
+			jpaTmpl.persistenceUnitPropertiesTestDataNucleus(it, null, jpaPropList);
+		} else if (isJpaProviderOpenJpa()) {
+			jpaTmpl.persistenceUnitPropertiesTestOpenJpa(it, null, jpaPropList);
+		}
+	} else {
+		emList.put("persistenceXmlLocation", "classpath:META-INF/persistence-test.xml");
+	}
+
+	'''
+	«printProperties("test.entityManagerFactory", emList)»
+	«IF getEntityManagerFactoryTestType() == "scan"»
+		<property name="jpaProperties">
+			<props>
+				«printPropertiesForHash("test.jpaProperties", jpaPropList)»
+			</props>
+		</property>
+	«ENDIF»
+	'''
+}
+
 
 def String entityManagerFactoryTx(Application it, boolean test) {
 	'''

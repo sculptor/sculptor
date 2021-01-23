@@ -449,6 +449,15 @@ public class PropertiesBase {
 		return getProperty(key);
 	}
 
+	public String getTestDbProduct() {
+		return getProperty("test.db.product");
+	}
+
+	public String getTestHibernateDialect() {
+		String key = "db." + getTestDbProduct() + ".hibernate.dialect";
+		return getProperty(key);
+	}
+
 	public String getDbType(String javaType) {
 		String key = "db." + getDbProduct() + ".type." + javaType;
 		return getProperty(key);

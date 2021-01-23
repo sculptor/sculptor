@@ -63,7 +63,11 @@ class Properties {
 			«ENDFOR»
 		«ELSE»
 			«FOR e : getPropertiesAsMap(prefix + ".", props).entrySet»
-				<property name="«e.key»" value="«e.value»"/>
+				«IF e.value.startsWith("#REF#")»
+					<property name="«e.key»" ref="«e.value.substring(5)»"/>
+				«ELSE»
+					<property name="«e.key»" value="«e.value»"/>
+				«ENDIF»
 			«ENDFOR»
 		«ENDIF»
 		<!-- END -->
@@ -447,8 +451,17 @@ class Properties {
 		if (getProperty("javaHeader") == "")
 			""
 		else
-			"/* " + getProperty("javaHeader").replaceAll("\n", "\n * ") + "\n */"
+			"/* " + getPropertyWithSubstitute("javaHeader").replaceAll("\n", "\n * ") + "\n */"
 	}
+
+	def String getEntityManagerFactoryType() {
+		getProperty("generate.entityManagerFactoryType")
+	}
+
+	def String getEntityManagerFactoryTestType() {
+		getProperty("test.generate.entityManagerFactoryType")
+	}
+
 
 	def boolean jpa() {
 		jpaProvider() != "none"
@@ -537,6 +550,16 @@ class Properties {
 
 	def boolean isJpaProviderOpenJpa() {
 		jpaProvider() == "openjpa"
+	}
+
+	def String getJpaProviderClass() {
+		switch 1 {
+			case isJpaProviderHibernate()   : 'org.hibernate.jpa.HibernatePersistenceProvider'
+			case isJpaProviderEclipseLink() : 'org.eclipse.persistence.jpa.PersistenceProvider'
+			case isJpaProviderDataNucleus(),
+			case isJpaProviderAppEngine()   : 'org.datanucleus.api.jpa.PersistenceProviderImpl'
+			case isJpaProviderOpenJpa()     : 'org.apache.openjpa.persistence.PersistenceProviderImpl'
+		}
 	}
 
 	def String validationProvider() {

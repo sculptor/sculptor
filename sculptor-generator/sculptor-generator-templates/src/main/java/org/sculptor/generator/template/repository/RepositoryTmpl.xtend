@@ -383,7 +383,7 @@ def String genericBaseRepositoryMethod(RepositoryOperation it) {
 		«IF it.useGenericAccessStrategy()»
 			«it.getVisibilityLitteral()»«bond»«it.getTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")») «exceptionTmpl.throwsDecl(it)» {
 			«IF resultTypeParameter === null»
-					return «name»(«FOR param : parameters SEPARATOR ","»«param.name»«ENDFOR»«IF it.hasParameters()»,«ENDIF»getPersistentClass());
+				return «name»(«FOR param : parameters SEPARATOR ","»«param.name»«ENDFOR»«IF it.hasParameters()»,«ENDIF»getPersistentClass());
 				}
 
 				«it.getVisibilityLitteral()» <R> «it.getGenericResultTypeName()» «name»(«it.parameters.map[paramTypeAndName(it)].join(",")»«IF it.hasParameters()»,«ENDIF» Class<R> resultType) «exceptionTmpl.throwsDecl(it)» {

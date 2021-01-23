@@ -43,7 +43,9 @@ class JPATmpl {
 
 def String jpa(Application it) {
 	'''
-	«persistenceUnitXmlFile(it)»
+	«IF getEntityManagerFactoryType() == 'static'»
+		«persistenceUnitXmlFile(it)»
+	«ENDIF»
 	«IF isJpaProviderEclipseLink()»
 		«eclipseLinkTmpl.eclipseLink(it)»
 	«ENDIF»
@@ -53,7 +55,7 @@ def String jpa(Application it) {
 	«IF isJpaProviderOpenJpa()»
 		«openJpaTmpl.openJpa(it)»
 	«ENDIF»
-	«IF isTestToBeGenerated() && !pureEjb3()»
+	«IF isTestToBeGenerated() && !pureEjb3() && getEntityManagerFactoryTestType() == 'static'»
 		«persistenceUnitXmlFileTest(it)»
 	«ENDIF»
 	'''
@@ -63,7 +65,6 @@ def String jpa(Application it) {
 /* ###################################################################### */
 /* JPA PersistenceUnit configuration                                      */
 /* ###################################################################### */
-
 def String persistenceUnitXmlFile(Application it) {
 	fileOutput(persistenceXml(), OutputSlot.TO_GEN_RESOURCES, '''
 	«persistenceUnitHeader(it)»
@@ -89,13 +90,13 @@ def String persistenceUnitContent(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»" «IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»transaction-type="JTA"«ELSE»transaction-type="RESOURCE_LOCAL"«ENDIF»>
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-		«persistenceUnitProvider(it)»
+		<provider>«jpaProviderClass»</provider>
 		«persistenceUnitDataSource(it, unitName)»
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
 		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
-	    «persistenceUnitSharedCacheMode(it)»
-	    «persistenceUnitValidationMode(it)»
+		«persistenceUnitSharedCacheMode(it)»
+		«persistenceUnitValidationMode(it)»
 		<!-- properties -->
 		«persistenceUnitProperties(it, unitName)»
 		<!-- add additional configuration by overriding "JPATmpl.persistenceUnitAdditions(Application)" -->
@@ -104,10 +105,16 @@ def String persistenceUnitContent(Application it, String unitName) {
 	'''
 }
 
+/* extension point for additional configuration of the PersistenceUnit */
+def String persistenceUnitAdditions(Application it, String unitName) {
+	'''
+	'''
+}
+
 def String persistenceUnitAnnotatedClasses(Application it, String unitName) {
 	'''
 	«IF isJpaProviderEclipseLink()»
-	<mapping-file>«it.getResourceDir("META-INF") + "orm.xml"»</mapping-file>
+		<mapping-file>«it.getResourceDir("META-INF") + "orm.xml"»</mapping-file>
 	«ENDIF»
 	«it.getAllDomainObjects().filter(d | d.module.persistenceUnit == unitName).map[persistenceUnitAnnotatedClasses(it)].join()»
 	'''
@@ -162,20 +169,6 @@ def String persistenceUnitDataSource(Application it, String unitName) {
 	'''
 }
 
-def String persistenceUnitProvider(Application it) {
-	'''
-	«IF isJpaProviderHibernate()»
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-	«ELSEIF isJpaProviderEclipseLink()»
-		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-	«ELSEIF isJpaProviderDataNucleus() || isJpaProviderAppEngine()»
-		<provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
-	«ELSEIF isJpaProviderOpenJpa()»
-		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-	«ENDIF»
-	'''
-}
-
 def String persistenceUnitSharedCacheMode(Application it) {
 	'''
 	<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
@@ -189,20 +182,21 @@ def String persistenceUnitValidationMode(Application it) {
 }
 
 def String persistenceUnitProperties(Application it, String unitName) {
+	var propertyList=new java.util.Properties();
 	'''
 	<properties>
 		«IF isJpaProviderHibernate()»
-			«persistenceUnitPropertiesHibernate(it, unitName)»
+			«persistenceUnitPropertiesHibernate(it, unitName, propertyList)»
 		«ELSEIF isJpaProviderEclipseLink()»
-			«persistenceUnitPropertiesEclipseLink(it, unitName)»
+			«persistenceUnitPropertiesEclipseLink(it, unitName, propertyList)»
 		«ELSEIF isJpaProviderDataNucleus()»
-			«persistenceUnitPropertiesDataNucleus(it, unitName)»
+			«persistenceUnitPropertiesDataNucleus(it, unitName, propertyList)»
 		«ELSEIF isJpaProviderAppEngine()»
-			«persistenceUnitPropertiesAppEngine(it)»
+			«persistenceUnitPropertiesAppEngine(it, unitName, propertyList)»
 		«ELSEIF isJpaProviderOpenJpa()»
-			«persistenceUnitPropertiesOpenJpa(it)»
+			«persistenceUnitPropertiesOpenJpa(it, unitName, propertyList)»
 		«ENDIF»
-		<!-- add additional configuration properties by overriding "JPATmpl.persistenceUnitAdditionalProperties(Application)" -->
+		«printProperties("persistenceUnit", propertyList)»
 		«persistenceUnitAdditionalProperties(it, unitName)»
 	</properties>
 	'''
@@ -210,193 +204,139 @@ def String persistenceUnitProperties(Application it, String unitName) {
 
 def String persistenceUnitAdditionalProperties(Application it, String unitName) {
 	'''
-	«persistenceUnitAdditionalProperties(it)»
+		<!-- add additional configuration properties by overriding "JPATmpl.persistenceUnitAdditionalProperties(Application it,String unitName)" -->
 	'''
 }
 
-def String persistenceUnitAdditionalProperties(Application it) {
-	'''
-	'''
+/* ########################################################################## */
+/* PERSISTENCE UNIT PROPERTIES                                                */
+/* ########################################################################## */
+def void persistenceUnitPropertiesHibernate(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('hibernate.dialect', propBase.getHibernateDialect());
+	propertyList.put('query.substitutions', 'true 1, false 0');
+	// for testing only
+	if (propBase.getDbProduct() == "hsqldb-inmemory") {
+		propertyList.put('hibernate.show_sql', 'true');
+		propertyList.put('hibernate.hbm2ddl.auto', 'create-drop');
+	}
+	persistenceUnitCachePropertiesHibernate(it, unitName, propertyList);
+	persistenceUnitTransactionPropertiesHibernate(it, unitName, propertyList);
 }
 
-def String persistenceUnitPropertiesHibernate(Application it, String unitName) {
-	'''
-	<property name="hibernate.dialect" value="«propBase.hibernateDialect»" />
-	<property name="query.substitutions" value="true 1, false 0" />
-	«/* for testing purposes only */»
-	«IF propBase.dbProduct == "hsqldb-inmemory"»
-		<property name="hibernate.show_sql" value="true" />
-		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-	«ENDIF»
-	«persistenceUnitCacheProperties(it, unitName)»
-	«IF isEar()»
-		«persistenceUnitTransactionProperties(it, unitName)»
-		«IF !isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss"»
-			<!-- Bind entity manager factory to JNDI -->
-			<property name="jboss.entity.manager.factory.jndi.name" value="java:/«unitName»"/>
-		«ENDIF»
-	«ENDIF»
-	'''
+def void persistenceUnitPropertiesEclipseLink(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('eclipselink.weaving', 'static');
+	propertyList.put('eclipselink.target-database', getEclipseLinkTargetDatabase(propBase.dbProduct));
+	if (isEar() && applicationServer() == "jboss") {
+		propertyList.put('eclipselink.target-server', 'JBoss');
+	}
+	// need this to create sequence table IF dbProduct == "hsqldb-inmemory"
+	// TODO: find better solution, maybe put sequence table generation to ddl script
+	propertyList.put('eclipselink.ddl-generation', 'create-tables');
+	propertyList.put('eclipselink.ddl-generation.output-mode', 'database');
+	// ENDIF
+	persistenceUnitCachePropertiesEclipseLink(it, unitName, propertyList);
+	persistenceUnitTransactionPropertiesEclipseLink(it, unitName, propertyList);
 }
 
-def String persistenceUnitPropertiesEclipseLink(Application it, String unitName) {
-	'''
-		<property name="eclipselink.weaving" value="static"/>
-		<property name="eclipselink.target-database" value="«getEclipseLinkTargetDatabase(unitName)»"/>
-		«IF isEar() && applicationServer() == "jboss"»
-			<property name="eclipselink.target-server" value="JBoss"/>
-		«ENDIF»
-		«
-		/* need this to create sequence table «IF dbProduct == "hsqldb-inmemory"» */
-		/* TODO: find better solution, maybe put sequence table generation to ddl script */
-		»<property name="eclipselink.ddl-generation" value="create-tables"/>
-		<property name="eclipselink.ddl-generation.output-mode" value="database"/>
-		«/* «ENDIF» */»
-	'''
+def void persistenceUnitPropertiesDataNucleus(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('datanucleus.storeManagerType', 'rdbms');
+	propertyList.put('datanucleus.ConnectionFactoryName', 'java:comp/env/jdbc/' + it.dataSourceName(unitName));
+	if (propBase.dbProduct == 'hsqldb-inmemory') {
+		propertyList.put('datanucleus.autoCreateSchema', 'true');
+	}
+	persistenceUnitCachePropertiesDataNucleus(it, unitName, propertyList);
+	persistenceUnitTransactionPropertiesDataNucleus(it, unitName, propertyList);
 }
 
-def String persistenceUnitPropertiesDataNucleus(Application it, String unitName) {
-	'''
-		<property name="datanucleus.storeManagerType" value="rdbms"/>
-		<property name="datanucleus.ConnectionFactoryName" value="java:comp/env/jdbc/«it.dataSourceName(unitName)»"/>
-		«IF propBase.dbProduct == "hsqldb-inmemory"»
-			<property name="datanucleus.autoCreateSchema" value="true"/>
-		«ENDIF»
-	'''
+def void persistenceUnitPropertiesAppEngine(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('datanucleus.NontransactionalRead', 'true');
+	propertyList.put('datanucleus.NontransactionalWrite', 'true');
+	propertyList.put('datanucleus.ConnectionURL', 'appengine');
+	propertyList.put('datanucleus.singletonEMFForName', 'true');
+	propertyList.put('datanucleus.appengine.datastoreReadConsistency', 'EVENTUAL');
+	propertyList.put('javax.persistence.query.timeout', '5000');
+	propertyList.put('datanucleus.datastoreWriteTimeout', '10000');
+	propertyList.put('datanucleus.appengine.datastoreEnableXGTransactions', 'true');
+	// propertyList.put('datanucleus.manageRelationshipsChecks', 'false');
+	persistenceUnitCachePropertiesDataNucleus(it, unitName, propertyList);
+	persistenceUnitTransactionPropertiesDataNucleus(it, unitName, propertyList);
 }
 
-def String persistenceUnitPropertiesAppEngine(Application it) {
-	'''
-			<property name="datanucleus.NontransactionalRead" value="true"/>
-			<property name="datanucleus.NontransactionalWrite" value="true"/>
-			<property name="datanucleus.ConnectionURL" value="appengine"/>
-			<property name="datanucleus.singletonEMFForName" value="true"/>
-			<!-- <property name="datanucleus.appengine.autoCreateDatastoreTxns" value="true"/> -->
-			<!-- <property name="datanucleus.manageRelationshipsChecks" value="false"/> -->
-	'''
+def void persistenceUnitPropertiesOpenJpa(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('openjpa.Log', 'DefaultLevel=INFO');
+	propertyList.put('openjpa.Compatibility', 'AbstractMappingUniDirectional=false');
+	persistenceUnitCachePropertiesOpenJpa(it, unitName, propertyList);
+	persistenceUnitTransactionPropertiesOpenJpa(it, unitName, propertyList);
 }
 
-def String persistenceUnitPropertiesOpenJpa(Application it, String unitName) {
-	'''
-			<property name="openjpa.Log" value="DefaultLevel=INFO"/>
-			<property name="openjpa.Compatibility" value="AbstractMappingUniDirectional=false"/>
-	'''
+/* ########################################################################## */
+/* CACHE PROPERTIES                                                           */
+/* ########################################################################## */
+def persistenceUnitCachePropertiesHibernate(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('hibernate.cache.use_query_cache', 'true');
+	propertyList.put('hibernate.cache.use_second_level_cache', 'true');
+	propertyList.put('hibernate.cache.region_prefix', '');
+	if (cacheProvider() == 'EhCache' || cacheProvider() == 'JCache') {
+		propertyList.put("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.internal.JCacheRegionFactory");
+	} else if (cacheProvider() == "TreeCache") {
+		propertyList.put('hibernate.cache.provider_class', 'org.hibernate.cache.TreeCacheProvider');
+	} else if (cacheProvider() == "JbossTreeCache") {
+		// Clustered cache with Jboss TreeCache
+		propertyList.put('hibernate.cache.provider_class', 'org.jboss.ejb3.entity.TreeCacheProviderHook');
+		propertyList.put('treecache.mbean.object_name', "jboss.cache:service=EJB3EntityTreeCache");
+	} else if (cacheProvider() == "DeployedTreeCache") {
+		propertyList.put('hibernate.cache.provider_class', 'org.jboss.hibernate.cache.DeployedTreeCacheProvider');
+		propertyList.put('hibernate.treecache.objectName', 'jboss.cache:service=' + (it.isDefaultPersistenceUnitName(unitName) ? name : unitName) + 'TreeCache');
+		// use_minimal_puts in clustered environment
+		propertyList.put('hibernate.cache.use_minimal_puts', 'true');
+	} else if (cacheProvider() == "Infinispan") {
+		if (!isEar() || applicationServer() != "jboss") {
+			propertyList.put('hibernate.cache.region.factory_class', 'org.hibernate.cache.infinispan.JndiInfinispanRegionFactory');
+			propertyList.put('hibernate.cache.infinispan.cachemanager', 'java:/CacheManager');
+		}
+	}
 }
 
-def String persistenceUnitCacheProperties(Application it, String unitName) {
-	'''
-	«IF isJpaProviderHibernate()»
-		«persistenceUnitCachePropertiesHibernate(it, unitName)»
-	«ELSEIF isJpaProviderEclipseLink()»
-		«persistenceUnitCachePropertiesEclipseLink(it, unitName)»
-	«ELSEIF isJpaProviderDataNucleus() || isJpaProviderAppEngine()»
-		«persistenceUnitCachePropertiesDataNucleus(it, unitName)»
-	«ELSEIF isJpaProviderOpenJpa()»
-		«persistenceUnitCachePropertiesOpenJpa(it, unitName)»
-	«ENDIF»
-	'''
+def persistenceUnitCachePropertiesEclipseLink(Application it, String unitName, java.util.Properties propertyList) {
 }
 
-def String persistenceUnitCachePropertiesHibernate(Application it, String unitName) {
-	'''
-		<property name="hibernate.cache.use_query_cache" value="true"/>
-		<property name="hibernate.cache.use_second_level_cache" value="true"/>
-		<property name="hibernate.cache.region_prefix" value=""/>
-		«IF cacheProvider() == "EhCache" || cacheProvider() == "JCache"»
-			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.internal.JCacheRegionFactory"/>
-		«ELSEIF cacheProvider() == "TreeCache"»
-			<property name="hibernate.cache.provider_class" value="org.hibernate.cache.TreeCacheProvider"/>
-		«ELSEIF cacheProvider() == "JbossTreeCache"»
-			<!-- Clustered cache with Jboss TreeCache -->
-			<property name="hibernate.cache.provider_class" value="org.jboss.ejb3.entity.TreeCacheProviderHook"/>
-			<property name="treecache.mbean.object_name" value="jboss.cache:service=EJB3EntityTreeCache"/>
-		«ELSEIF cacheProvider() == "DeployedTreeCache"»
-			<property name="hibernate.cache.provider_class" value="org.jboss.hibernate.cache.DeployedTreeCacheProvider"/>
-			<property name="hibernate.treecache.objectName" value="jboss.cache:service=«if (it.isDefaultPersistenceUnitName(unitName)) name else unitName»TreeCache"/>
-			<!-- use_minimal_puts in clustered environment -->
-			<property name="hibernate.cache.use_minimal_puts" value="true"/>
-		«ELSEIF cacheProvider() == "Infinispan"»
-			«IF !isEar() || applicationServer() != "jboss"»
-				<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.infinispan.JndiInfinispanRegionFactory"/>
-				<property name="hibernate.cache.infinispan.cachemanager" value="java:/CacheManager"/>
-			«ENDIF»
-		«ENDIF»
-	'''
+def persistenceUnitCachePropertiesDataNucleus(Application it, String unitName, java.util.Properties propertyList) {
+	var dataNucleusCachePrefix="DataNucleus"
+	if (cacheProvider() == "EhCache") {
+		propertyList.put('datanucleus.cache.level2.type', 'ehcache');
+		propertyList.put('datanucleus.cache.level2.cacheName', unitName);
+		// TODO: check if needed
+		// propertyList.put('datanucleus.cache.level2.configurationFile', 'ehcache.xml');
+	} else if (cacheProvider().startsWith(dataNucleusCachePrefix)) {
+		propertyList.put('datanucleus.cache.level2.type', cacheProvider().substring(dataNucleusCachePrefix.length()).toLowerCase());
+		propertyList.put('datanucleus.cache.level2.cacheName', unitName);
+	}
 }
 
-def String persistenceUnitCachePropertiesEclipseLink(Application it, String unitName) {
-	'''
-	'''
+def persistenceUnitCachePropertiesOpenJpa(Application it, String unitName, java.util.Properties propertyList) {
 }
 
-def String persistenceUnitCachePropertiesDataNucleus(Application it, String unitName) {
-	'''
-	«/* TODO: add more cache providers, oscache, swarmcache, ... */
-	»«IF cacheProvider() == "EhCache"»
-		<property name="datanucleus.cache.level2.type" value="ehcache"/>
-		«/* TODO: check if needed
-		<property name="datanucleus.cache.level2.cacheName" value="ehcache"/>
-		<property name="datanucleus.cache.level2.configurationFile" value="ehcache.xml"/>
-		*/»
-	«ELSEIF cacheProvider() == "DataNucleusWeak"»
-		<property name="datanucleus.cache.level2.type" value="weak"/>
-	«ELSEIF cacheProvider() == "DataNucleusSoft"»
-		<property name="datanucleus.cache.level2.type" value="soft"/>
-	«ENDIF»
-	'''
+/* ########################################################################## */
+/* TRANSACTION PROPERTIES                                                     */
+/* ########################################################################## */
+def persistenceUnitTransactionPropertiesHibernate(Application it, String unitName, java.util.Properties propertyList) {
+	if (isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")) {
+		propertyList.put('jboss.entity.manager.factory.jndi.name', 'java:/' + unitName);
+		propertyList.put('hibernate.transaction.manager_lookup_class', 'org.hibernate.transaction.JBossTransactionManagerLookup');
+	}
 }
 
-def String persistenceUnitCachePropertiesOpenJpa(Application it, String unitName) {
-	'''
-	'''
+def persistenceUnitTransactionPropertiesEclipseLink(Application it, String unitName, java.util.Properties propertyList) {
 }
 
-def String persistenceUnitPropertiesOpenJpa(Application it) {
-	'''
-		<property name="openjpa.Log" value="DefaultLevel=WARN"/>
-	'''
+def persistenceUnitTransactionPropertiesDataNucleus(Application it, String unitName, java.util.Properties propertyList) {
+	if (isEar() && (!isSpringDataSourceSupportToBeGenerated())) {
+		propertyList.put('datanucleus.jtaLocator', applicationServer());
+		// propertyList.put('datanucleus.jtaJndiLocation', 'java:/TransactionManager');
+	}
 }
 
-def String persistenceUnitTransactionProperties(Application it, String unitName) {
-	'''
-	«IF isJpaProviderHibernate()»
-		«persistenceUnitTransactionPropertiesHibernate(it, unitName)»
-	«ELSEIF isJpaProviderEclipseLink()»
-		«persistenceUnitTransactionPropertiesEclipseLink(it, unitName)»
-	«ELSEIF isJpaProviderDataNucleus()»
-		«persistenceUnitTransactionPropertiesDataNucleus(it, unitName)»
-	«ENDIF»
-	'''
-}
-
-def String persistenceUnitTransactionPropertiesHibernate(Application it, String unitName) {
-	'''
-		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated() || applicationServer() == "jboss")»
-			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
-		«ENDIF»
-	'''
-}
-
-def String persistenceUnitTransactionPropertiesEclipseLink(Application it, String unitName) {
-	'''
-	'''
-}
-
-def String persistenceUnitTransactionPropertiesDataNucleus(Application it, String unitName) {
-	'''
-		«IF isEar() && (!isSpringDataSourceSupportToBeGenerated())»
-			<property name="datanucleus.jtaLocator" value="«applicationServer()»"/>
-			<!--
-			<property name="datanucleus.jtaJndiLocation " value="java:/TransactionManager"/>
-			-->
- 		«ENDIF»
-	'''
-}
-
-/* extension point for additional configuration of the PersistenceUnit */
-def String persistenceUnitAdditions(Application it, String unitName) {
-	'''
-	'''
+def persistenceUnitTransactionPropertiesOpenJpa(Application it, String unitName, java.util.Properties propertyList) {
 }
 
 /* ########################################################################## */

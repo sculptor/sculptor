@@ -382,12 +382,8 @@ class DbHelper {
 			null
 	}
 
-	def String getEclipseLinkTargetDatabase(String persistenceUnitName) {
-		getEclipseLinkTargetDatabase()
-	}
-
-	def String getEclipseLinkTargetDatabase() {
-		switch (getDbProduct) {
+	def String getEclipseLinkTargetDatabase(String dbProduct) {
+		switch (dbProduct) {
 			case "oracle" :
 				"Oracle"
 			case "postgresql" :

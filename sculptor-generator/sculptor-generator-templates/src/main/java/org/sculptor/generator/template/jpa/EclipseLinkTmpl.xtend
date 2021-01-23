@@ -31,13 +31,13 @@ class EclipseLinkTmpl {
 
 def String eclipseLink(Application it) {
 	'''
-		«mapping(it)»
-		«IF isJodaDateTimeLibrary()»
-			«jodaConverterClass(it)»
-		«ENDIF»
-		«IF it.containsNonOrdinaryEnums()»
-			«enumConverterClass(it)»
-		«ENDIF»
+	«mapping(it)»
+	«IF isJodaDateTimeLibrary()»
+		«jodaConverterClass(it)»
+	«ENDIF»
+	«IF it.containsNonOrdinaryEnums()»
+		«enumConverterClass(it)»
+	«ENDIF»
 	'''
 }
 
@@ -45,9 +45,9 @@ def String header(Application it) {
 	'''
 	<?xml version="1.0" encoding="utf-8" ?>
 	<entity-mappings
-	xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	version="1.0">
+				xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/orm"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				version="1.0">
 	'''
 }
 
@@ -60,10 +60,10 @@ def String footer(Application it) {
 def String mapping(Application it) {
 	fileOutput("/META-INF/orm.xml", OutputSlot.TO_GEN_RESOURCES, '''
 	«header(it)»
-	«enumConverter(it)»
+		«enumConverter(it)»
 		«IF isJodaDateTimeLibrary()»
-		«jodaConverter(it)»
-	«ENDIF»
+			«jodaConverter(it)»
+		«ENDIF»
 	«footer(it)»
 	'''
 	)
