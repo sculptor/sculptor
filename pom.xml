@@ -85,22 +85,16 @@
 		<tycho-version>1.6.0</tycho-version>
 		<tycho.disableP2Mirrors>true</tycho.disableP2Mirrors>
 
-		<xtext-version>2.24.0</xtext-version>
-		<emf-version>2.23.0</emf-version>
-		<emf-xmi-version>2.16.0</emf-xmi-version>
-		<emf-common-version>2.21.0</emf-common-version>
-		<emf-codegen-ecore-version>2.24.0</emf-codegen-ecore-version>
-		<emf-codegen-version>2.21.0</emf-codegen-version>
-		<emf-mwe2-launch-version>2.12.0</emf-mwe2-launch-version>
+		<xtext-version>2.21.0</xtext-version>
+		<emf-mwe2-launch-version>2.11.2</emf-mwe2-launch-version>
 		<ecore-xtext-version>1.5.0</ecore-xtext-version>
-		<ecore-xcore-version>1.16.0</ecore-xcore-version>
-		<ecore-xcore-lib-version>1.5.0</ecore-xcore-lib-version>
+		<ecore-xcore-version>1.13.0</ecore-xcore-version>
 
-		<spring-version>5.3.2</spring-version>
+		<spring-version>5.3.3</spring-version>
 		<spring-security-version>5.4.2</spring-security-version>
 		<spring-integration-version>5.4.2</spring-integration-version>
-		<spring-data-jpa-version>2.4.2</spring-data-jpa-version>
-		<spring-boot-version>2.4.1</spring-boot-version>
+		<spring-data-jpa-version>2.4.3</spring-data-jpa-version>
+		<spring-boot-version>2.4.2</spring-boot-version>
 
 		<aspectj-version>1.9.6</aspectj-version>
 		<slf4j-version>1.7.30</slf4j-version>
