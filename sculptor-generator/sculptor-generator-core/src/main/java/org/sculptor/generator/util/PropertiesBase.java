@@ -16,14 +16,9 @@
  */
 package org.sculptor.generator.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -315,11 +310,106 @@ public class PropertiesBase {
 	Properties getProperties(String prefix, boolean removePrefix) {
 		Properties result = new Properties();
 		for (String key : getPropertyNames()) {
-			if (key.startsWith(prefix)) {
+			if (key.startsWith(prefix) && !"*NONE*".equals(getProperty(key))) {
 				result.put((removePrefix) ? key.substring(prefix.length()) : key, getProperty(key));
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Gets all properties with a key starting with prefix merged with system properties. Values in properties
+	 * has higher priority than in props. They can be replaced in generator.properties
+	 *
+	 * @param prefix
+	 *			prefix used for properties lookup
+	 * @param props
+	 *			Properties from template
+	 * @return properties starting with prefix
+	 */
+	public Map<String, String> getPropertiesAsMap(String prefix, Properties props) {
+		Map<String, String> result = new TreeMap<>();
+		List<String> removed = new ArrayList<>();
+		for (String key : getPropertyNames()) {
+			if (key.startsWith(prefix)) {
+				String pureKey = key.substring(prefix.length());
+				removed.add(pureKey);
+				String value = getPropertyWithSubstitute(key, prefix, props);
+				if (value!=null && !"*NONE*".equals(value)) {
+					result.put(pureKey, value);
+				}
+			}
+		}
+		if (props != null) {
+			for (String key : removed) {
+				props.remove(key);
+			}
+			for (Map.Entry<Object, Object> prop : props.entrySet()) {
+				result.put(prop.getKey().toString(), prop.getValue().toString());
+			}
+		}
+		return result;
+	}
+
+	private Pattern replacement = Pattern.compile("\\\\?\\$\\{[^${}]*\\}");
+	private String getPropertyWithSubstitute(String name, String prefix, Properties properties) {
+		String value = null;
+		if (hasProperty(name)) {
+			value = getProperty(name);
+		}
+		if (value == null) {
+			// Fallback to supplied properties
+			value = properties != null ? properties.getProperty(name) : null;
+		} else if (value.startsWith("!")) {
+			value = value.substring(1);
+		} else if (prefix != null && properties != null) {
+			String defaultValue = properties.getProperty(name.substring(prefix.length()));
+			if (defaultValue == null) {
+				value = null;
+			}
+		}
+		boolean wasMatch=value != null && value.indexOf('$') != -1;
+		while(wasMatch) {
+			wasMatch=false;
+			Matcher matcher = replacement.matcher(value);
+			StringBuffer result = new StringBuffer();
+			while (matcher.find()) {
+				String match = matcher.group();
+				if (match.startsWith("\\")) {
+					String replace = "\\\\\\${" + match.substring(3, match.length() - 1) + "}";
+					matcher.appendReplacement(result, replace);
+					continue;
+				}
+
+				wasMatch=true;
+				int colonIndex = match.indexOf(':');
+				String subName = match.substring(2, colonIndex != -1 ? colonIndex : match.length() - 1);
+				String property = getPropertyWithSubstitute(subName, null, properties);
+				if (property == null || property.trim().length() == 0) {
+					property = colonIndex != -1
+							? match.substring(colonIndex + 1, match.length() - 1)
+							: prefix != null
+							? "#" + name + "#"
+							: "*NONE*";
+				}
+				matcher.appendReplacement(result, property);
+			}
+			matcher.appendTail(result);
+			value = result.toString();
+		}
+		return prefix != null && value != null ? value.replaceAll("\\\\\\$\\{", "\\${") : value;
+	}
+
+	/**
+	 * Get property value where placeholders ${variable} in property value are replaced by other property values.
+	 * Kind of expression language
+	 *
+	 * @param name
+	 *			property name
+	 * @return String containing property value
+	 */
+	public String getPropertyWithSubstitute(String name) {
+		return getPropertyWithSubstitute(name, "", null);
 	}
 
 	/**

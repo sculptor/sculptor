@@ -38,6 +38,50 @@ class Properties {
 		if (hasProperty(propertyName)) getProperty(propertyName) else defaultValue
 	}
 
+	/*
+	 * Extension point to generate properties with specified prefix
+	 */
+	private def String printProperties(String prefix, java.util.Properties props, boolean asMapProps) {
+
+		'''
+		«IF getBooleanProperty("generate.shortPropertyComment")»
+			<!-- START - Properties derived from base name '«prefix»' -->
+		«ELSE»
+			<!-- START
+			Properties derived from base name '«prefix»'.
+			REPLACE value by defining new property value with = e.g.:
+				«prefix».existingProperty=newValue
+			or REMOVE property by setting value to *NONE* like:
+				«prefix».existingProperty=*NONE*
+			or ADD property by defining new property with =! e.g.:
+				«prefix».newProperty=!newValue
+			-->
+		«ENDIF»
+		«IF asMapProps»
+			«FOR e : getPropertiesAsMap(prefix + ".", props).entrySet»
+				<prop key="«e.key»">«e.value»</prop>
+			«ENDFOR»
+		«ELSE»
+			«FOR e : getPropertiesAsMap(prefix + ".", props).entrySet»
+				<property name="«e.key»" value="«e.value»"/>
+			«ENDFOR»
+		«ENDIF»
+		<!-- END -->
+		'''
+	}
+
+	def String printProperties(String prefix) {
+		printProperties(prefix, null, false);
+	}
+
+	def String printProperties(String prefix, java.util.Properties props) {
+		printProperties(prefix, props, false);
+	}
+
+	def String printPropertiesForHash(String prefix, java.util.Properties props) {
+		printProperties(prefix, props, true);
+	}
+
 	def String fw(String fwClassName) {
 		val propName = "framework." + fwClassName
 		getProperty(propName, "org.sculptor." + propName)
