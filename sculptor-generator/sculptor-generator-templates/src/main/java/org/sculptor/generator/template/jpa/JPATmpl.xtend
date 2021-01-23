@@ -399,6 +399,9 @@ def String persistenceUnitAdditions(Application it, String unitName) {
 	'''
 }
 
+/* ########################################################################## */
+/* TEST PERSISTENCE UNIT                                                      */
+/* ########################################################################## */
 def String persistenceUnitXmlFileTest(Application it) {
 	fileOutput("META-INF/persistence-test.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
 	«persistenceUnitHeader(it)»
@@ -414,7 +417,7 @@ def String persistenceUnitContentTest(Application it, String unitName) {
 	'''
 	<persistence-unit name="«unitName»">
 		<description>JPA configuration for «name» «IF !it.isDefaultPersistenceUnitName(unitName)»«unitName»«ENDIF»</description>
-		«persistenceUnitProvider(it)»
+		<provider>«jpaProviderClass»</provider>
 		<!-- annotated classes -->
 		«persistenceUnitAnnotatedClasses(it, unitName)»
 		«persistenceUnitExcludeUnlistedClasses(it, unitName)»
@@ -422,25 +425,34 @@ def String persistenceUnitContentTest(Application it, String unitName) {
 		«persistenceUnitValidationMode(it)»
 		<!-- properties -->
 		«persistenceUnitPropertiesTest(it, unitName)»
-		<!-- add additional configuration by overriding "JPATmpl.persistenceUnitAdditions(Application)" -->
-		«persistenceUnitAdditions(it, unitName)»
+		«persistenceUnitAdditionsTest(it, unitName)»
 	</persistence-unit>
 	'''
 }
 
+def String persistenceUnitAdditionsTest(Application it, String unitName) {
+	'''
+		<!-- add additional configuration by overriding "JPATmpl.persistenceUnitAdditionsTest(Application app, String unitName)" -->
+	'''
+}
+
+/* ########################################################################## */
+/* TEST PERSISTENCE UNIT PROPERTIES                                           */
+/* ########################################################################## */
 def String persistenceUnitPropertiesTest(Application it, String unitName) {
+	var propertyList=new java.util.Properties();
 	'''
 		<properties>
 			«IF isJpaProviderHibernate()»
-				«persistenceUnitPropertiesTestHibernate(it, unitName)»
+				«persistenceUnitPropertiesTestHibernate(it, unitName, propertyList)»
 			«ELSEIF isJpaProviderEclipseLink()»
-				«persistenceUnitPropertiesTestEclipseLink(it, unitName)»
+				«persistenceUnitPropertiesTestEclipseLink(it, unitName, propertyList)»
 			«ELSEIF isJpaProviderDataNucleus()»
-				«persistenceUnitPropertiesTestDataNucleus(it, unitName)»
+				«persistenceUnitPropertiesTestDataNucleus(it, unitName, propertyList)»
 			«ELSEIF isJpaProviderOpenJpa()»
-				«persistenceUnitPropertiesTestOpenJpa(it, unitName)»
+				«persistenceUnitPropertiesTestOpenJpa(it, unitName, propertyList)»
 			«ENDIF»
-			<!-- add additional configuration properties by overriding "JPATmpl.persistenceUnitAdditionalPropertiesTest(Application)" -->
+			«printProperties("persistenceUnitTest", propertyList)»
 			«persistenceUnitAdditionalPropertiesTest(it, unitName)»
 		</properties>
 	'''
@@ -448,55 +460,42 @@ def String persistenceUnitPropertiesTest(Application it, String unitName) {
 
 def String persistenceUnitAdditionalPropertiesTest(Application it, String unitName) {
 	'''
-	«persistenceUnitAdditionalPropertiesTest(it)»
+		<!-- add additional configuration properties by overriding "JPATmpl.persistenceUnitAdditionalPropertiesTest(Application it, String unitName)" -->
 	'''
 }
 
-def String persistenceUnitAdditionalPropertiesTest(Application it) {
-	'''
-	'''
+def void persistenceUnitPropertiesTestHibernate(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('hibernate.dialect', propBase.getTestHibernateDialect());
+	propertyList.put('hibernate.show_sql', 'true');
+	propertyList.put('hibernate.hbm2ddl.auto', 'create-drop');
+	propertyList.put('query.substitutions', 'true 1, false 0');
+	propertyList.put('hibernate.cache.use_query_cache', 'true');
+	propertyList.put('hibernate.cache.use_second_level_cache', 'true');
+	propertyList.put('hibernate.cache.region.factory_class', 'org.hibernate.cache.jcache.internal.JCacheRegionFactory');
 }
 
-def String persistenceUnitPropertiesTestHibernate(Application it, String unitName) {
-	'''
-		<property name="hibernate.dialect" value="«fw("persistence.SculptorHsqlDialect")»" />
-		<property name="hibernate.show_sql" value="true" />
-		<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-		<property name="query.substitutions" value="true 1, false 0" />
-		<property name="hibernate.cache.use_query_cache" value="true"/>
-		<property name="hibernate.cache.use_second_level_cache" value="true"/>
-		<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.internal.JCacheRegionFactory"/>
-	'''
+def void persistenceUnitPropertiesTestEclipseLink(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('eclipselink.target-database', getEclipseLinkTargetDatabase(propBase.testDbProduct));
+	propertyList.put('eclipselink.ddl-generation', 'create-tables');
+	propertyList.put('eclipselink.ddl-generation.output-mode', 'database');
+	propertyList.put('eclipselink.logging.level', 'FINE');
+	propertyList.put('eclipselink.weaving', 'static');
 }
 
-def String persistenceUnitPropertiesTestEclipseLink(Application it, String unitName) {
-	'''
-		<property name="eclipselink.target-database" value="HSQL"/>
-		<property name="eclipselink.ddl-generation" value="create-tables"/>
-		<property name="eclipselink.ddl-generation.output-mode" value="database"/>
-		<property name="eclipselink.logging.level" value="FINE" />
-		<property name="eclipselink.weaving" value="static"/>
-	'''
+def void persistenceUnitPropertiesTestDataNucleus(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('datanucleus.storeManagerType', 'rdbms');
+	propertyList.put('datanucleus.jpa.addClassTransformer', 'false');
+	propertyList.put('datanucleus.autoStartMechanism', 'none');
+	propertyList.put('datanucleus.autoCreateSchema', 'true');
 }
 
-def String persistenceUnitPropertiesTestDataNucleus(Application it, String unitName) {
-	'''
-		<property name="datanucleus.storeManagerType" value="rdbms"/>
-		<property name="datanucleus.jpa.addClassTransformer" value="false"/>
-		<property name="datanucleus.autoStartMechanism" value="none"/>
-		<property name="datanucleus.autoCreateSchema" value="true"/>
-	'''
-}
-
-def String persistenceUnitPropertiesTestOpenJpa(Application it, String unitName) {
-	'''
-		<property name="openjpa.Log" value="DefaultLevel=TRACE"/>
-		<property name="openjpa.DynamicEnhancementAgent" value="false"/>
-		<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(PrimaryKeys=true,ForeignKeys=true,Indexes=true)"/>
-		<property name="openjpa.jdbc.MappingDefaults" value="ForeignKeyDeleteAction=restrict, JoinForeignKeyDeleteAction=restrict"/>
-		<property name="openjpa.Compatibility" value="AbstractMappingUniDirectional=false"/>
-		<property name="openjpa.Sequence" value="InitialValue=100"/>
-	'''
+def void persistenceUnitPropertiesTestOpenJpa(Application it, String unitName, java.util.Properties propertyList) {
+	propertyList.put('openjpa.Log', 'DefaultLevel=TRACE');
+	propertyList.put('openjpa.DynamicEnhancementAgent', 'false');
+	propertyList.put('openjpa.jdbc.SynchronizeMappings', 'buildSchema(PrimaryKeys=true,ForeignKeys=true,Indexes=true)');
+	propertyList.put('openjpa.jdbc.MappingDefaults', 'ForeignKeyDeleteAction=restrict, JoinForeignKeyDeleteAction=restrict');
+	propertyList.put('openjpa.Compatibility', 'AbstractMappingUniDirectional=false');
+	propertyList.put('openjpa.Sequence', 'InitialValue=100');
 }
 
 }
