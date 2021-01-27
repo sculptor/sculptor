@@ -19,6 +19,7 @@ package org.sculptor.generator.util;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -713,4 +714,43 @@ public class PropertiesBase {
 		return keyValues;
 	}
 
+	/**
+	 * Returns first index (3) from range specified as 3..5 or 3,5 or 3-5 or 3;5 or just 3
+	 */
+	public int getFrom(String range) {
+		String from;
+		int dotsIndex = range.indexOf("..");
+		if (dotsIndex != -1) {
+			from = range.substring(0, dotsIndex);
+		} else {
+			String[] split=range.split("[,;-]");
+			from = split[0];
+		}
+		return Integer.parseInt(from);
+	}
+
+	/**
+	 * Returns second index (5) from range specified as 3..5 or 3,5 or 3-5 or 3;5 or just 3
+	 */
+	public int getTo(String range) {
+		String from;
+		int dotsIndex = range.indexOf("..");
+		if (dotsIndex != -1) {
+			from = range.substring(dotsIndex + 2);
+		} else {
+			String[] split=range.split("[,;-]");
+			from = split.length == 1 ? split[0] : split[1];
+		}
+		return Integer.parseInt(from);
+	}
+
+	public int randomInRange(String range) {
+		int fromNum = getFrom(range);
+		int toNum = getTo(range);
+		return fromNum == toNum ? fromNum : (int) (Math.random() * (toNum - fromNum + 1)) + fromNum;
+	}
+
+	public boolean randomInProbability(int percent) {
+		return percent == 0 ? false : percent == 100 ? true : ((int) (Math.random() * 100)) < percent;
+	}
 }

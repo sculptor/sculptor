@@ -24,11 +24,13 @@ import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.DbHelperBase
+import org.sculptor.generator.util.PropertiesBase
 import org.sculptor.generator.util.OutputSlot
 import sculptormetamodel.Application
 import sculptormetamodel.Attribute
 import sculptormetamodel.Enum
 import sculptormetamodel.Reference
+import sculptormetamodel.DomainObject;
 import java.util.Date
 import java.text.SimpleDateFormat
 
@@ -38,6 +40,7 @@ class DbUnitTmpl {
 	@Inject extension DbHelper dbHelper
 	@Inject extension Helper helper
 	@Inject extension Properties properties
+	@Inject extension PropertiesBase propertiesBase;
 
 def String emptyDbunitTestData(Application it) {
 	fileOutput("dbunit/EmptyDatabase.xml", OutputSlot.TO_GEN_RESOURCES_TEST, '''
@@ -73,25 +76,23 @@ def String dbunitTestDataContent(Application it) {
 				«comment»
 			-->
 			«ENDIF»
-			«IF dbunitTestDataRows === 0»
+			«IF dbunitTestDataRowsAll === 0»
 				<«domainObject.getDatabaseName()» />
 			«ELSE»
-				«FOR index : 0..(dbunitTestDataRows - 1)»
-					<«domainObject.getDatabaseName()»
-						«domainObject.attributes.filter(a | index > 0 || !a.isNullable())
-							.map[a | " " + a.getDatabaseName() + "=\"" + genValue(index + dbunitTestDataIdBase, a) + "\"\n"].join()»
-						«domainObject.references.filter(r | (index > 0 || !r.isNullable()) && !r.many)
-							.map[r | " " + r.getDatabaseName() + "=\"" + genRefValue(index + dbunitTestDataIdBase, r) + "\"\n"].join()»
-					/>
-				«ENDFOR»
+				«var fullNo=randomInRange(dbunitTestDataRowsFull())»
+				«var mixedNo=randomInRange(dbunitTestDataRowsMixed())»
+				«var minimalNo=randomInRange(dbunitTestDataRowsMinimal())»
+				«dbunitTestDataRow(domainObject, fullNo, 100, dbunitTestDataIdBase)»
+				«dbunitTestDataRow(domainObject, mixedNo, dbunitTestDataRowsMixedProbability(), dbunitTestDataIdBase + fullNo)»
+				«dbunitTestDataRow(domainObject, minimalNo, 0, dbunitTestDataIdBase + fullNo + mixedNo)»
 			«ENDIF»
 		«ENDFOR» 
 		«FOR domainObject  : manyToManyRelations» 
-			«IF dbunitTestDataRows === 0»
+			«IF dbunitTestDataRowsAll === 0»
 				<«domainObject.getDatabaseName()» />
 			«ELSE»
-				«FOR j : 0..(dbunitTestDataRows - 1)»
-					«FOR k : 0..(dbunitTestDataRows - 1)»
+				«FOR j : 0..(dbunitTestDataRowsAll)»
+					«FOR k : 0..(dbunitTestDataRowsAll)»
 						«val AtomicInteger offset = new AtomicInteger(0)»
 						<«domainObject.getDatabaseName()»
 							«domainObject.references.map[a | " " + a.getDatabaseName() + "=\"" + ((offset.getAndAdd(1) == 0 ? j : k) + dbunitTestDataIdBase) + "\"\n"].join()»
@@ -103,7 +104,23 @@ def String dbunitTestDataContent(Application it) {
 	</dataset>
 	'''
 }
-	
+
+def String dbunitTestDataRow(DomainObject domainObject, int rows, int probability, int base) {
+	'''
+		«FOR index : 0..(rows - 1)»
+			<«domainObject.getDatabaseName()»
+				«domainObject.attributes.filter(attr | !attr.isNullable() || randomInProbability(probability))
+					.map[attr | " " + attr.getDatabaseName() + "=\"" + genValue(index + base, attr) + "\"\n"].join()»
+				«domainObject.references.filter(ref | (!ref.isNullable() || randomInProbability(probability)) && !ref.many)
+					.map[ref | " " + ref.getDatabaseName() + "=\""
+						+ genRefValue(Math.min(index + base, dbunitTestDataRowsAll + dbunitTestDataIdBase), ref)
+						+ "\"\n"
+					].join()»
+			/>
+		«ENDFOR»
+	'''
+}
+
 def String genValue(int id, Attribute attr) {
 	var uType = attr.type.toUpperCase();
 	if (attr.name == "id") {

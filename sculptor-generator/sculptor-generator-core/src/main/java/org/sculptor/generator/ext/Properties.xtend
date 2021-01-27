@@ -354,8 +354,29 @@ class Properties {
 		getBooleanProperty("generate.test.emptyDbunitTestData")
 	}
 
-	def int dbunitTestDataRows() {
-		Integer.parseInt(getProperty("generate.test.dbunitTestDataRows"))
+	def String dbunitTestDataRowsFull() {
+		getProperty("generate.test.dbunitTestDataRows.full")
+	}
+
+	def String dbunitTestDataRowsMixed() {
+		getProperty("generate.test.dbunitTestDataRows.mixed")
+	}
+
+	def String dbunitTestDataRowsMinimal() {
+		getProperty("generate.test.dbunitTestDataRows.minimal")
+	}
+
+	def int dbunitTestDataRowsMixedProbability() {
+		Integer.parseInt(getProperty("generate.test.dbunitTestDataRows.mixed.probability"))
+	}
+
+	int testRowsAll = -1;
+	def int dbunitTestDataRowsAll() {
+		if (testRowsAll == -1) {
+			testRowsAll = getFrom(dbunitTestDataRowsFull()) + getFrom(dbunitTestDataRowsMixed())
+					+ getFrom(dbunitTestDataRowsMinimal())
+		}
+		return testRowsAll;
 	}
 
 	def int dbunitTestDataIdBase() {
