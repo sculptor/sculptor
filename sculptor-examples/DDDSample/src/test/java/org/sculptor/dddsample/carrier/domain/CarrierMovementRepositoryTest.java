@@ -1,11 +1,11 @@
 package org.sculptor.dddsample.carrier.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HELSINKI;
 import static org.sculptor.dddsample.location.domain.SampleLocations.STOCKHOLM;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 

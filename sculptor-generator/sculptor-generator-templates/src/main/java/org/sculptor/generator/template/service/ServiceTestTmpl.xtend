@@ -68,7 +68,7 @@ def String serviceJUnitSubclassWithAnnotations(Service it) {
 
 /// Sculptor code formatter imports ///
 
-	import static org.junit.Assert.*;
+	import static org.junit.jupiter.api.Assertions.*;
 
 	/**
 	 * Spring based transactional test with DbUnit support.
@@ -99,7 +99,7 @@ def String serviceJUnitSubclassAppEngine(Service it) {
 
 /// Sculptor code formatter imports ///
 
-	import static org.junit.Assert.*;
+	import static org.junit.jupiter.api.Assertions.*;
 
 	/**
 	 * Spring based test with Google App Engine support.
@@ -118,7 +118,7 @@ def String serviceJUnitSubclassAppEngine(Service it) {
 
 def String serviceJUnitSubclassAppEnginePopulateDataStore(Service it) {
 	'''
-		@org.junit.Before
+		@org.junit.jupiter.api.BeforeEach
 		public void populateDatastore() {
 			// here you can add objects to data store before test methods are executed
 			// getEntityManager().persist(obj);
@@ -142,7 +142,7 @@ def String serviceJUnitGetDataSetFile(Service it) {
 /*this (FOR String) is the name of the operation */
 def String testMethod(String it) {
 	'''
-	@org.junit.Test
+	@org.junit.jupiter.api.Test
 	public void test«it.toFirstUpper()»() throws Exception {
 		// TODO Auto-generated method stub
 		fail("test«it.toFirstUpper()» not implemented");

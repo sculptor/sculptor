@@ -13,13 +13,8 @@ Require-Bundle: org.sculptor.dsl,
  org.eclipse.xtext.xbase.testing,
  org.eclipse.xtext.xbase.lib;bundle-version="2.14.0"
 Import-Package: org.apache.log4j,
- org.junit;version="4.5.0",
- org.junit.runner;version="4.5.0",
- org.junit.runner.manipulation;version="4.5.0",
- org.junit.runner.notification;version="4.5.0",
- org.junit.runners;version="4.5.0",
- org.junit.runners.model;version="4.5.0",
- org.hamcrest.core
+ org.junit.jupiter.api;version="5.7.0",
+ org.junit.jupiter.api.extension;version="5.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: SculptordslValidatorITest,
  org.eclipselabs.xtext.utils.unittesting,

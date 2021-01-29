@@ -17,11 +17,6 @@
 
 package org.sculptor.examples.library.person.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -29,7 +24,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.sculptor.examples.library.person.domain.Country;
 import org.sculptor.examples.library.person.domain.Gender;
 import org.sculptor.examples.library.person.domain.Person;
@@ -45,6 +41,8 @@ import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.errorhandling.ValidationException;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Spring based transactional test with DbUnit support.
@@ -64,9 +62,11 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		assertNotNull(person);
 	}
 
-	@Test(expected = PersonNotFoundException.class)
+	@Test
 	public void testFindByIdWithNotFoundException() throws Exception {
-		personService.findById(getServiceContext(), -1L);
+		assertThrows(PersonNotFoundException.class, () -> {
+			personService.findById(getServiceContext(), -1L);
+		});
 	}
 
 	@Test
@@ -83,25 +83,29 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		assertEquals(before + 1, countRowsInTable(Person.class));
 	}
 
-	@Test(expected = ValidationException.class)
+	@Test
 	public void testCreateThrowingValidationExceptionForBirthDate() throws Exception {
-		Person person = new Person(Gender.FEMALE, new Ssn("12345", Country.DENMARK));
-		PersonName name = new PersonName("New", "Person");
-		person.setName(name);
+		assertThrows(ValidationException.class, () -> {
+			Person person = new Person(Gender.FEMALE, new Ssn("12345", Country.DENMARK));
+			PersonName name = new PersonName("New", "Person");
+			person.setName(name);
 
-		LocalDate now = LocalDate.now();
-		LocalDate bd = now.plusYears(1);
-		person.setBirthDate(bd);
-		personService.save(getServiceContext(), person);
+			LocalDate now = LocalDate.now();
+			LocalDate bd = now.plusYears(1);
+			person.setBirthDate(bd);
+			personService.save(getServiceContext(), person);
+		});
 	}
 
-	@Test(expected = ValidationException.class)
+	@Test
 	public void testCreateThrowingValidationExceptionForMissinBirthDate() throws Exception {
-		Person person = new Person(Gender.FEMALE, new Ssn("0815", Country.DENMARK));
-		PersonName name = new PersonName("New", "Person");
-		person.setName(name);
-		person.setBirthDate(null);
-		personService.save(getServiceContext(), person);
+		assertThrows(ValidationException.class, () -> {
+			Person person = new Person(Gender.FEMALE, new Ssn("0815", Country.DENMARK));
+			PersonName name = new PersonName("New", "Person");
+			person.setName(name);
+			person.setBirthDate(null);
+			personService.save(getServiceContext(), person);
+		});
 	}
 
 	@Override
@@ -130,7 +134,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 	@Test
 	public void testFindPersonByName() throws Exception {
 		// NamedQuery needs '()', see comments in Person class
-		assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
+		Assumptions.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
 		List<Person> persons = personService.findPersonByName(getServiceContext(), "Skarsgård");
 		assertEquals(2, persons.size());
 	}

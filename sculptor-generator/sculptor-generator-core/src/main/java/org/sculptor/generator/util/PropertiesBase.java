@@ -188,8 +188,10 @@ public class PropertiesBase {
 		defaultConfiguration.setBoolean("generate.spring", false);
 		defaultConfiguration.setBoolean("generate.resource", false);
 		defaultConfiguration.setBoolean("generate.restWeb", false);
-		defaultConfiguration.setString("naming.suffix.Impl", "Bean");
 		defaultConfiguration.setBoolean("generate.logbackConfig", false);
+		defaultConfiguration.setString("naming.suffix.Impl", "Bean");
+		defaultConfiguration.setString("generate.entityManagerFactoryType", "static");
+		defaultConfiguration.setString("test.generate.entityManagerFactoryType", "static");
 	}
 
 	private void initDerivedDefaultsForAppengine(MutableConfigurationProvider defaultConfiguration) {
@@ -199,6 +201,7 @@ public class PropertiesBase {
 		defaultConfiguration.setBoolean("generate.validation.annotation", false);
 		defaultConfiguration.setString("javaType.IDTYPE", "com.google.appengine.api.datastore.Key");
 		defaultConfiguration.setString("cache.provider", "memcache");
+		defaultConfiguration.setString("generate.entityManagerFactoryType", "static");
 		defaultConfiguration.setBoolean("generate.test.dbunitTestData", false);
 		defaultConfiguration.setBoolean("generate.test.emptyDbunitTestData", false);
 	}

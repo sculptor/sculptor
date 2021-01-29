@@ -32,8 +32,8 @@ import javax.sql.DataSource;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.test.ejbtestbean.jpa.JpaTestLocal;
 import org.sculptor.framework.util.db.DbUnitDataSourceUtils;
@@ -66,7 +66,7 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
     public AbstractOpenEJBDbUnitTest() {
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void initialize() throws Exception {
         super.initialize();
@@ -167,7 +167,7 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
         }
      }
 
-    @After
+    @AfterEach
     public void tearDownDatabaseTester() throws Exception {
         DbUnitDataSourceUtils.tearDownDatabaseTester();
     }

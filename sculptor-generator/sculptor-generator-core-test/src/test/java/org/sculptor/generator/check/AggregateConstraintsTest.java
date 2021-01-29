@@ -16,11 +16,10 @@
  */
 package org.sculptor.generator.check;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.check.AggregateConstraints;
 
 import sculptormetamodel.Application;
@@ -40,7 +39,7 @@ public class AggregateConstraintsTest {
 	private Entity c;
 	private Entity d;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		factory = SculptormetamodelFactoryImpl.eINSTANCE;
 		app = factory.createApplication();

@@ -17,22 +17,22 @@
 package org.sculptor.generator.configuration
 
 import com.google.inject.Guice
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ConfigurationProviderModuleTest {
 
-	@Before
+	@BeforeEach
 	def void prepareSystemProperties() {
 		System.setProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY, "properties/generator.properties");
 		System.setProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY,
 			"properties/common-generator.properties");
 	}
 
-	@After
+	@AfterEach
 	def void clearSystemProperties() {
 		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY);
 		System.clearProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY);

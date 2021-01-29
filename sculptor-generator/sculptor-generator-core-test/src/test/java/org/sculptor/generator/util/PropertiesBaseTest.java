@@ -17,27 +17,27 @@
 
 package org.sculptor.generator.util;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.chain.ChainOverrideAwareInjector;
 import org.sculptor.generator.configuration.ConfigurationProvider;
 import org.sculptor.generator.configuration.ConfigurationProviderModule;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 import java.util.Properties;
 
 public class PropertiesBaseTest {
 
-	@Before
+	@BeforeEach
 	public void prepareSystemProperties() {
 		System.setProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY, "properties/generator.properties");
 		System.setProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY, "properties/common-generator.properties");
 	}
 
-	@After
+	@AfterEach
 	public void clearSystemProperties() {
 		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY);
 		System.clearProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY);

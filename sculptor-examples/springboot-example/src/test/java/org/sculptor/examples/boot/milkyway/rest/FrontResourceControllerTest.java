@@ -16,12 +16,8 @@
  */
 package org.sculptor.examples.boot.milkyway.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -29,10 +25,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles({ "test", "web" })
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class FrontResourceControllerTest {
 
@@ -43,25 +41,25 @@ public class FrontResourceControllerTest {
 	public void testHome() throws Exception {
 		ResponseEntity<String> entity = restTemplate.getForEntity("/", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue("Wrong body (refresh URL doesn't match):\n" + entity.getBody(),
-				entity.getBody().contains(";URL=rest/front"));
+		assertTrue(entity.getBody().contains(";URL=rest/front")
+				, "Wrong body (refresh URL doesn't match):\n" + entity.getBody());
 	}
 
 	@Test
 	public void testFront() throws Exception {
 		ResponseEntity<String> entity = restTemplate.getForEntity("/rest/front", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue("Wrong body (title doesn't match):\n" + entity.getBody(),
-				entity.getBody().contains("<title>Sculptor REST Example"));
-		assertFalse("Wrong body (found layout:fragment):\n" + entity.getBody(),
-				entity.getBody().contains("layout:fragment"));
+		assertTrue(entity.getBody().contains("<title>Sculptor REST Example")
+				, "Wrong body (title doesn't match):\n" + entity.getBody());
+		assertFalse(entity.getBody().contains("layout:fragment")
+				, "Wrong body (found layout:fragment):\n" + entity.getBody());
 	}
 
 	@Test
 	public void testCss() throws Exception {
 		ResponseEntity<String> entity = restTemplate.getForEntity("/css/main.css", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue("Wrong body:\n" + entity.getBody(), entity.getBody().contains("body"));
+		assertTrue(entity.getBody().contains("body"), "Wrong body:\n" + entity.getBody());
 	}
 
 }

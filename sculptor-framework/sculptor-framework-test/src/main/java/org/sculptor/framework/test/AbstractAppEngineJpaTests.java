@@ -20,12 +20,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.context.ServiceContext;
 import org.sculptor.framework.context.ServiceContextStore;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -36,21 +37,21 @@ import com.google.apphosting.api.ApiProxy.Environment;
  * 
  * @author Patrik Nordwall
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public abstract class AbstractAppEngineJpaTests extends AbstractJUnit4SpringContextTests {
+public abstract class AbstractAppEngineJpaTests { //extends AbstractJUnit4SpringContextTests {
     private EntityManager entityManager;
 
     public AbstractAppEngineJpaTests() {
     }
 
-    @Before
+    @BeforeEach
     public void setUpAppEngine() {
         AppEngineTestHelper.setUpAppEngine(createAppEngineTestEnvironment());
         ServiceContextStore.set(getServiceContext());
     }
 
-    @After
+    @AfterEach
     public void tearDownAppEngine() {
         AppEngineTestHelper.tearDownAppEngine();
     }

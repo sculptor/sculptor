@@ -783,13 +783,13 @@ def String entityManagerFactoryScan(Application it) {
 	var emList=new java.util.Properties();
 	var jpaPropList=new java.util.Properties();
 	if (isSpringDataSourceSupportToBeGenerated()) {
-		emList.put("dataSource", "dataSource");
+		emList.put("dataSource", "#REF#dataSource");
 	}
 	if (entityManagerFactoryType == "scan") {
 		emList.put("packagesToScan", basePackage);
 		emList.put("persistenceUnitName", persistenceUnitName);
 		if (isJpaProviderHibernate() || isJpaProviderEclipseLink()) {
-			emList.put("jpaVendorAdapter", "jpaVendorAdapter");
+			emList.put("jpaVendorAdapter", "#REF#jpaVendorAdapter");
 		} else {
 			emList.put("persistenceProvider", jpaProviderClass);
 		}

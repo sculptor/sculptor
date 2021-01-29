@@ -1,10 +1,10 @@
 package org.sculptor.framework.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.util.EqualsHelper;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class EqualsHelperTest {
@@ -49,7 +49,5 @@ public class EqualsHelperTest {
         String s2 = null;
         assertFalse(EqualsHelper.equals(s1, s2));
     }
-    
-    
 
 }

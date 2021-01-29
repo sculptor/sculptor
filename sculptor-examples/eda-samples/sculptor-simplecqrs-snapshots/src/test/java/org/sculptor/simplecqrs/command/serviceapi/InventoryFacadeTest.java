@@ -1,13 +1,11 @@
 package org.sculptor.simplecqrs.command.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.sculptor.simplecqrs.command.mapper.InventoryItemMapper;
 import org.sculptor.simplecqrs.query.mapper.InventoryItemDetailsMapper;
@@ -15,14 +13,16 @@ import org.sculptor.simplecqrs.query.mapper.InventoryItemListMapper;
 import org.sculptor.simplecqrs.query.serviceapi.ReadModelFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based test with MongoDB.
  */
-@RunWith(org.springframework.test.context.junit4.SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class InventoryFacadeTest extends AbstractJUnit4SpringContextTests implements InventoryFacadeTestBase {
+public class InventoryFacadeTest implements InventoryFacadeTestBase {
 
 	@Autowired
 	private DbManager dbManager;
@@ -33,17 +33,17 @@ public class InventoryFacadeTest extends AbstractJUnit4SpringContextTests implem
 	@Autowired
 	private ReadModelFacade readFacade;
 
-	@Before
+	@BeforeEach
 	public void initTestData() {
 	}
 
-	@Before
+	@BeforeEach
 	public void initDbManagerThreadInstance() throws Exception {
 		// to be able to do lazy loading of associations inside test class
 		DbManager.setThreadInstance(dbManager);
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		Set<String> names = dbManager.getDB().getCollectionNames();
 		for (String each : names) {

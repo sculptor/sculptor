@@ -1,15 +1,15 @@
 package org.helloworld.milkyway.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
 import org.helloworld.milkyway.domain.Planet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javassist.NotFoundException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based transactional test with DbUnit support.

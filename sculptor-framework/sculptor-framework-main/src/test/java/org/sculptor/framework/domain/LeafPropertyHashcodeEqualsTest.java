@@ -1,9 +1,10 @@
 package org.sculptor.framework.domain;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.Property;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class LeafPropertyHashcodeEqualsTest {
@@ -20,31 +21,31 @@ public class LeafPropertyHashcodeEqualsTest {
 	@Test
 	public void testHashcode() {
 		// Always return same value
-		Assert.assertEquals(firstNameProp.hashCode(), firstNameProp.hashCode());
-		Assert.assertEquals(secondNameProp.hashCode(), secondNameProp.hashCode());
+		assertEquals(firstNameProp.hashCode(), firstNameProp.hashCode());
+		assertEquals(secondNameProp.hashCode(), secondNameProp.hashCode());
 
 		// Return for equals objects
-		Assert.assertEquals(myFirstNameProp.hashCode(), firstNameProp.hashCode());
-		Assert.assertEquals(mySecondNameProp.hashCode(), secondNameProp.hashCode());
+		assertEquals(myFirstNameProp.hashCode(), firstNameProp.hashCode());
+		assertEquals(mySecondNameProp.hashCode(), secondNameProp.hashCode());
 
 		// Inheritance test
-		Assert.assertFalse(myFirstName1.hashCode() == firstNameProp.hashCode());
-		Assert.assertFalse(myFirstName2.hashCode() == firstNameProp.hashCode());
-		Assert.assertFalse(myFirstName3.hashCode() == firstNameProp.hashCode());
+		assertFalse(myFirstName1.hashCode() == firstNameProp.hashCode());
+		assertFalse(myFirstName2.hashCode() == firstNameProp.hashCode());
+		assertFalse(myFirstName3.hashCode() == firstNameProp.hashCode());
 	}
 
 	@Test
 	public void testEquals() {
 		// Equals
-		Assert.assertFalse(firstNameProp.equals(null));
-		Assert.assertFalse(firstNameProp.equals("asdf"));
-		Assert.assertFalse(firstNameProp.equals(secondNameProp));
-		Assert.assertTrue(firstNameProp.equals(firstNameProp));
-		Assert.assertTrue(firstNameProp.equals(myFirstNameProp));
+		assertFalse(firstNameProp.equals(null));
+		assertFalse(firstNameProp.equals("asdf"));
+		assertFalse(firstNameProp.equals(secondNameProp));
+		assertTrue(firstNameProp.equals(firstNameProp));
+		assertTrue(firstNameProp.equals(myFirstNameProp));
 
-		Assert.assertFalse(firstNameProp.equals(myFirstName1));
-		Assert.assertFalse(firstNameProp.equals(myFirstName2));
-		Assert.assertFalse(firstNameProp.equals(myFirstName3));
+		assertFalse(firstNameProp.equals(myFirstName1));
+		assertFalse(firstNameProp.equals(myFirstName2));
+		assertFalse(firstNameProp.equals(myFirstName3));
 	}
 }
 

@@ -1,26 +1,24 @@
 package org.sculptor.framework.event;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.event.Event;
 import org.sculptor.framework.event.EventBus;
 import org.sculptor.framework.event.EventSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(org.springframework.test.context.junit4.SpringJUnit4ClassRunner.class)
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class EventBusTest extends AbstractJUnit4SpringContextTests {
+public class EventBusTest {
     private static final String CHANNEL = "testChannel";
     MyEventHandler handler;
     @Autowired
@@ -31,7 +29,6 @@ public class EventBusTest extends AbstractJUnit4SpringContextTests {
     public void publicEventShouldBeRoutedThroughTheBus() {
         eventBus.publish(CHANNEL, new TestEvent("foo"));
         assertNotNull(handler.event);
-
     }
 
     @Test
@@ -56,14 +53,14 @@ public class EventBusTest extends AbstractJUnit4SpringContextTests {
         assertEquals(noOfEvents, handler.counter.get());
     }
 
-    @Before
+    @BeforeEach
     public void initBusAndHandler() {
         MyEventHandler handler = new MyEventHandler();
         eventBus.subscribe(CHANNEL, handler);
         this.handler = handler;
     }
 
-    @After
+    @AfterEach
     public void cleanUpBusAndHandler() {
         if (handler != null) {
             eventBus.unsubscribe(CHANNEL, handler);

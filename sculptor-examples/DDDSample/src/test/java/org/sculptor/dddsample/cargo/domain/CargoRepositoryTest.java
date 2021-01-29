@@ -1,10 +1,6 @@
 package org.sculptor.dddsample.cargo.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HELSINKI;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HONGKONG;
@@ -23,7 +19,7 @@ import java.util.TimeZone;
 import javax.persistence.Query;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.exception.CargoNotFoundException;
 import org.sculptor.dddsample.carrier.domain.CarrierMovement;
 import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
@@ -145,9 +141,11 @@ public class CargoRepositoryTest extends AbstractDbUnitJpaTests {
         assertEquals(cargo, event.getCargo());
     }
 
-    @Test(expected=CargoNotFoundException.class)
+    @Test
     public void testFindByCargoIdUnknownId() throws CargoNotFoundException {
-        cargoRepository.find(trackingId("UNKNOWN"));
+        assertThrows(CargoNotFoundException.class, () -> {
+            cargoRepository.find(trackingId("UNKNOWN"));
+        });
     }
 
     private void assertLeg(Leg firstLeg, String cmId, Location expectedFrom, Location expectedTo) {

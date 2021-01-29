@@ -17,10 +17,8 @@
 package org.sculptor.generator.transformation
 
 import javax.inject.Provider
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslInheritanceType
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
@@ -33,11 +31,10 @@ import sculptormetamodel.InheritanceType
 import sculptormetamodel.Service
 import sculptormetamodel.ValueObject
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
-@RunWith(typeof(JUnit4))
 class DslTransformationTest {
 
 	static val SculptordslFactory FACTORY = SculptordslFactory.eINSTANCE
@@ -47,7 +44,7 @@ class DslTransformationTest {
 	var DslApplication model
 	var Provider<DslTransformation> dslTransformProvider
 
-	@Before
+	@BeforeEach
 	def void setupDslModel() {
 
 		// Activate cartridge 'test' with transformation extensions 

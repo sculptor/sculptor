@@ -30,8 +30,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.sculptor.framework.context.ServiceContext;
 import org.sculptor.framework.context.ServiceContextFactory;
 import org.sculptor.framework.test.ejbtestbean.messaging.MessagingTestLocal;
@@ -89,13 +89,13 @@ public abstract class AbstractOpenEJBTest {
     public AbstractOpenEJBTest() {
     }
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         initOpenEjb();
         initAnnotatedDependencies();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         if ("destroy".equals(initalContextProperties.get("openejb.embedded.initialcontext.close"))) {
             closeOpenEjb();

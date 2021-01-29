@@ -16,8 +16,8 @@
  */
 package org.sculptor.generator.template.ext
 
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.test.GeneratorTestBase
 
 import static org.sculptor.generator.test.GeneratorTestExtensions.*
@@ -30,7 +30,7 @@ class TemplateOverrideTest extends GeneratorTestBase {
 		super(TEST_NAME)
 	}
 
-	@BeforeClass
+	@BeforeAll
 	def static void setup() {
 
 		// Define property with package where override classes will be looked for -> here the class "DomainObjectReferenceTmplOverride"

@@ -1,14 +1,11 @@
 package org.sculptor.examples.library.media.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.sculptor.examples.library.media.domain.MediaCharacterBuilder.mediaCharacter;
-
 import java.time.LocalDateTime;
-import java.util.Date;
-
-import org.sculptor.examples.library.media.domain.Book;
-import org.junit.Test;
 
 public class BookBuilderTest {
 

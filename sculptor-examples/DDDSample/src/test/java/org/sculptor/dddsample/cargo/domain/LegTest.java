@@ -1,9 +1,12 @@
 package org.sculptor.dddsample.cargo.domain;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class LegTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.fail;
 
+public class LegTest {
+
+  @Test
   public void testConstructor() throws Exception {
     try {
       new Leg(null,null,null);

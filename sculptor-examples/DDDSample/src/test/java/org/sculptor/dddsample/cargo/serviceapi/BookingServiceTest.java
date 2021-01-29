@@ -1,12 +1,12 @@
 package org.sculptor.dddsample.cargo.serviceapi;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.domain.Itinerary;
 import org.sculptor.dddsample.cargo.domain.TrackingId;
 import org.sculptor.dddsample.location.domain.UnLocode;

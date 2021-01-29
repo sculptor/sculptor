@@ -19,10 +19,10 @@ package org.sculptor.generator.chain
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.eclipse.xtend.lib.macro.services.Problem.Severity
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.generator.chain.ChainOverrideTestHelper.*
 
 class ChainOverrideTest {
@@ -50,9 +50,9 @@ class ChainOverrideTest {
 					parameters.size == 2 && parameters.get(0).simpleName == 'next' && parameters.get(1).simpleName == 'methodsDispatchNext']
 			)
 
-			assertNotNull("_getOverridesDispatchArray should be generated", clazz.findDeclaredMethod("_getOverridesDispatchArray"))
+			assertNotNull(clazz.findDeclaredMethod("_getOverridesDispatchArray"), "_getOverridesDispatchArray should be generated")
 						
-			assertNull("_getOverridesDispatchArray shouldn't get chained", clazz.findDeclaredMethod("_chained__getOverridesDispatchArray"))			
+			assertNull(clazz.findDeclaredMethod("_chained__getOverridesDispatchArray"), "_getOverridesDispatchArray shouldn't get chained")
 		]
 	}
 
@@ -128,29 +128,30 @@ class ChainOverrideTest {
 			assertTrue(methods.exists[m|m.simpleName == "_chained_test2" && m.parameters.size == 0])
 			assertTrue(methods.exists[m|m.simpleName == "test2" && m.parameters.size == 0])
 			assertTrue(methods.exists[m|m.simpleName == "test2" && m.parameters.size == 1])
-			assertNotNull("_getOverridesDispatchArray should be generated", clazz.findDeclaredMethod("_getOverridesDispatchArray"))
-						
+			assertNotNull(clazz.findDeclaredMethod("_getOverridesDispatchArray"), "_getOverridesDispatchArray should be generated")
 		]
 	}
 
-	@Test(expected=typeof(RuntimeException))
-	@Ignore
+	@Test
+	@Disabled
 	def void testInferredReturnType() {
-		'''
-			@org.sculptor.generator.chain.ChainOverride
-			class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
-				override test() {
-					""
+		assertThrows(typeof(RuntimeException), [
+			'''
+				@org.sculptor.generator.chain.ChainOverride
+				class ChainOverrideTestTemplateOverride extends ChainOverrideTestTemplate {
+					override test() {
+						""
+					}
 				}
-			}
 
-			@org.sculptor.generator.chain.ChainOverridable
-			class ChainOverrideTestTemplate {
-				def String test() {
-					""
+				@org.sculptor.generator.chain.ChainOverridable
+				class ChainOverrideTestTemplate {
+					def String test() {
+						""
+					}
 				}
-			}
-		'''.compile[]
+			'''.compile[]
+		]);
 	}
 
 	@Test
@@ -190,7 +191,7 @@ class ChainOverrideTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	def void testNoXtendClass() {
 		'''
 			@org.sculptor.generator.chain.ChainOverride
@@ -209,7 +210,7 @@ class ChainOverrideTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	def void testNoSupportChainOverridingAnnotation() {
 		'''
 			@org.sculptor.generator.chain.ChainOverride

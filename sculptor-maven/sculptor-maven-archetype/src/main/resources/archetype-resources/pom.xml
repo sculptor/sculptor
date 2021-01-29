@@ -31,13 +31,15 @@
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 
-		<java-version>1.7</java-version>
+		<java-version>1.8</java-version>
 		<maven.compiler.source>${java-version}</maven.compiler.source>
 		<maven.compiler.target>${java-version}</maven.compiler.target>
 
 		<sculptor-version>${project.version}</sculptor-version>
 		<jboss-javaee6-version>${jboss-javaee6-version}</jboss-javaee6-version>
-	    <hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
+		<hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
+		<ehcache-version>${ehcache-version}</ehcache-version>
+		<tomcat-jasper-el>${tomcat-jasper-el}</tomcat-jasper-el>
 		<slf4j-version>${slf4j-version}</slf4j-version>
 		<logback-version>${logback-version}</logback-version>
 		<spring-version>${spring-version}</spring-version>
@@ -467,11 +469,9 @@
 	</dependencies>
 
 	<!-- Profiles -->
-
 	<profiles>
 
 		<!-- HIBERNATE -->
-
 		<profile>
 			<id>hibernate</id>
 			<activation>
@@ -507,16 +507,21 @@
 					<scope>provided</scope>
 				</dependency>
 #end
-#if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
+				<dependency>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>tomcat-jasper-el</artifactId>
+					<version>${tomcat-jasper-el}</version>
+				</dependency>
 				<dependency>
 					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-ehcache</artifactId>
-					<version>\${hibernate-version}</version>
-#if( $jboss == "true" || $jboss == "y" || $jboss == "yes")
-					<scope>test</scope>
-#end
+					<artifactId>hibernate-jcache</artifactId>
+					<version>${hibernate-version}</version>
 				</dependency>
-#end
+				<dependency>
+					<groupId>org.ehcache</groupId>
+					<artifactId>ehcache</artifactId>
+					<version>${ehcache-version}</version>
+				</dependency>
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>
 					<artifactId>usertype.core</artifactId>
@@ -540,7 +545,6 @@
 		</profile>
 
 		<!-- DATANUCLEUS -->
-
 		<profile>
 			<id>datanucleus</id>
 			<activation>
@@ -655,7 +659,6 @@
 		</profile>
 
 		<!-- ECLIPSELINK -->
-
 		<profile>
 			<id>eclipselink</id>
 			<activation>
@@ -686,15 +689,15 @@
 								</configuration>
 							</execution>
 						</executions>
-				        <dependencies>
-				            <dependency>
-				                <groupId>org.eclipse.persistence</groupId>
-				                <artifactId>eclipselink</artifactId>
-				                <version>\${eclipselink-version}</version>
-				            </dependency>
-				        </dependencies>
+						<dependencies>
+							<dependency>
+								<groupId>org.eclipse.persistence</groupId>
+								<artifactId>eclipselink</artifactId>
+								<version>\${eclipselink-version}</version>
+							</dependency>
+						</dependencies>
 					</plugin>
-    			</plugins>
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -711,7 +714,6 @@
 		</profile>
 
 		<!-- OPENJPA -->
-
 		<profile>
 			<id>openjpa</id>
 			<activation>

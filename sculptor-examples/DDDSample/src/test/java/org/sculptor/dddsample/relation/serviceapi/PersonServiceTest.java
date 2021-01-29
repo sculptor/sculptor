@@ -1,7 +1,8 @@
 package org.sculptor.dddsample.relation.serviceapi;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.joda.time.DateTimeZone;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.relation.domain.*;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -26,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.relation.domain.PersonProperties.*;
 
 /**
@@ -128,7 +129,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		Person person = personService.findById(getServiceContext(), 103l);
 		personService.delete(getServiceContext(), person);
 		int personCount2 = countRowsInTable(Person.class);
-		assertEquals("Person with ID 103 not removed", 1, personCount - personCount2);
+		assertEquals(1, personCount - personCount2, "Person with ID 103 not removed");
 	}
 
 	@Test
@@ -228,17 +229,17 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		List<Tuple> result = personRepository.findByConditionTuple(condition);
 		Object[][] expected = new Object[][] {
 				{113l, 995, "Merkvicko", "Merk", "cko", "Merkvicko-12 Jozef101", "SKIP", "SKIP", "SKIP"
-						, "2008-12-07 02:02:03", 3, 2, 1, 7, 12, 2008, 49, 4, 1, 342, 200},
+						, "2008-12-07 01:02:03", 3, 2, 1, 7, 12, 2008, 49, 4, 1, 342, 200},
 				{114l, 994, "Gandhi", "Gand", "dhi", "Gandhi-12 Mahatutma102", "SKIP", "SKIP", "SKIP"
-						, "2008-12-07 05:05:06", 6, 5, 4, 7, 12, 2008, 49, 4, 1, 342, 200},
+						, "2008-12-07 04:05:06", 6, 5, 4, 7, 12, 2008, 49, 4, 1, 342, 200},
 				{115l, 993, "Smradoch", "Smra", "och", "Smradoch-12 Feromon103", "SKIP", "SKIP", "SKIP"
-						, "2009-08-07 02:00:00", 0, 0, 0, 7, 8, 2009, 32, 3, 6, 219, 200},
+						, "2009-08-07 00:00:00", 0, 0, 0, 7, 8, 2009, 32, 3, 6, 219, 200},
 				{116l, 992, "Gabrielson", "Gabr", "son", "Gabrielson-12 Peterson104", "SKIP", "SKIP", "SKIP"
-						, "2009-09-20 09:08:09", 9, 8, 7, 20, 9, 2009, 38, 3, 1, 263, 200},
+						, "2009-09-20 07:08:09", 9, 8, 7, 20, 9, 2009, 38, 3, 1, 263, 200},
 				{117l, 991, "Sablinson", "Sabl", "son", "Sablinson-12 Gerthrude105", "SKIP", "SKIP", "SKIP"
-						, "2013-02-18 00:59:59", 59, 59, 23, 17, 2, 2013, 7, 1, 1, 48, 201}
+						, "2013-02-17 23:59:59", 59, 59, 23, 17, 2, 2013, 7, 1, 1, 48, 201}
 		};
-		assertEquals("Some comparison skipped", 18 * 5, assertTuple(expected, result));
+		assertEquals(18 * 5, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	@Test
@@ -261,7 +262,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				{104l, 104l, 207l, 207l, 2l, 2l, 2009, 219},
 				{105l, 105l, 105l, 105l, 1l, 1l, 2013, 48}
 		};
-		assertEquals("Some comparison skipped", 8 * 2, assertTuple(expected, result));
+		assertEquals(8 * 2, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	private JpaFunction myCustomLpad12(String padChar) {
@@ -313,7 +314,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 	}
 
 	private void testFindByConditionAsResult(List<MiniPerson> result) throws Exception {
-		assertEquals("Result size", 3, result.size());
+		assertEquals(3, result.size(), "Result size");
 		assertEquals(101l, result.get(0).getId().longValue());
 		assertEquals(102l, result.get(1).getId().longValue());
 		assertEquals(104l, result.get(2).getId().longValue());
@@ -379,8 +380,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				, "2 <- index of 'a' in \"Sablinson\"", "Sablinson###########", "+++Sablinson", "------Sablinson"
 				, "Sablinson", "Sablinso", "Sablinso", 1l, "JKL"}
 		};
-		assertEquals("Number of result rows", 3, result.size());
-		assertEquals("Some comparison skipped", 25 * 3, assertTuple(expected, result));
+		assertEquals(3, result.size(), "Number of result rows");
+		assertEquals(25 * 3, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	@Test
@@ -411,8 +412,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				{3l, 3l, 3l, 2l, 3l, 3l, 10l, 10l, 3.333d, 2, 4, "Gabrielson", "Smradoch", 2009, 2013},
 		};
 
-		assertEquals("Number of result rows", 2, result.size());
-		assertEquals("Some comparison skipped", 15 * 2, assertTuple(expected, result));
+		assertEquals(2, result.size(), "Number of result rows");
+		assertEquals(15 * 2, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	@Test
@@ -441,8 +442,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				, "2008-12-07 01:02:03", "2009-12-07 01:02:03", 9},
 		};
 
-		assertEquals("Number of result rows", 1, result.size());
-		assertEquals("Some comparison skipped", 12, assertTuple(expected, result));
+		assertEquals(1, result.size(), "Number of result rows");
+		assertEquals(12, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	@Test
@@ -465,8 +466,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				{1l, 1l, 1l, 1l, 1l, 1l, 9, 9},
 		};
 
-		assertEquals("Number of result rows", 2, result.size());
-		assertEquals("Some comparison skipped", 8 * 2, assertTuple(expected, result));
+		assertEquals(2, result.size(), "Number of result rows");
+		assertEquals(8 * 2, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	@Test
@@ -488,8 +489,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				{1l, 1l, 1l, 1l, 1l, 1l},
 		};
 
-		assertEquals("Number of result rows", 3, result.size());
-		assertEquals("Some comparison skipped", assertTuple(expected, result), 6 * 3);
+		assertEquals(3, result.size(), "Number of result rows");
+		assertEquals(assertTuple(expected, result), 6 * 3, "Some comparison skipped");
 	}
 
 	@Test
@@ -525,8 +526,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				{103l, 104l, 2l, "FERO", 200908, "NEW", 2207l},
 				{105l, 105l, 1l, "GERT", 201302, "2013-02-17 23:59:59.000000", 1105l},
 		};
-		assertEquals("Number of result rows", 3, result.size());
-		assertEquals("Some comparison skipped", 7 * 3, assertTuple(expected, result));
+		assertEquals(3, result.size(), "Number of result rows");
+		assertEquals(7 * 3, assertTuple(expected, result), "Some comparison skipped");
 	}
 	@Test
 	public void testFindByConditionCase() throws Exception {
@@ -574,8 +575,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				{104l, "GHI", "<=104", "<=104"},
 				{105l, "GERT", "2013-02-17 23:59:59.000000", null},
 		};
-		assertEquals("Number of result rows", 5, result.size());
-		assertEquals("Some comparison skipped", 4 * 5, assertTuple(expected, result));
+		assertEquals(5, result.size(), "Number of result rows");
+		assertEquals(4 * 5, assertTuple(expected, result), "Some comparison skipped");
 	}
 
 	private int assertTuple(Object[][] expected, List<Tuple> result) {
@@ -624,50 +625,51 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				n++;
 
 				if (exElem == null) {
-					assertNull("Item in row " + row + " element " + i + " is not NULL", resRow[i]);
+					assertNull(resRow[i], "Item in row " + row + " element " + i + " is not NULL");
 				} else if (resRow[i] instanceof Double) {
 					double exElemDouble = (double) exElem;
 					double resRowDouble = (double) resRow[i];
-					assertEquals("Item in row " + row + " element " + i + " doesnt' match", exElemDouble, resRowDouble, 0.001);
+					assertEquals(exElemDouble, resRowDouble, 0.001, "Item in row " + row + " element " + i + " doesnt' match");
 				} else if (resRow[i] instanceof BigInteger) {
 					int exElemInt = (int) exElem;
 					int resRowInt = ((BigInteger) resRow[i]).intValue();
-					assertEquals("Item in row " + row + " element " + i + " doesnt' match", exElemInt, resRowInt);
+					assertEquals(exElemInt, resRowInt, "Item in row " + row + " element " + i + " doesnt' match");
 				} else if (resRow[i] instanceof BigDecimal) {
 					double exElemDouble = (double) exElem;
 					double resRowDouble = ((BigDecimal) resRow[i]).doubleValue();
-					assertEquals("Item in row " + row + " element " + i + " doesnt' match", exElemDouble, resRowDouble, 0.001);
+					assertEquals(exElemDouble, resRowDouble, 0.001, "Item in row " + row + " element " + i + " doesnt' match");
 				} else if (resRow[i] instanceof Time) {
 					Time resRowTime = (Time) resRow[i];
 					Time exRowTime = (Time) exElem;
 					String error = " in " + exRowTime + " doesn't match with " + resRowTime;
-					assertEquals("Hour" + error, exRowTime.getHours(), resRowTime.getHours());
-					assertEquals("Minute" + error, exRowTime.getMinutes(), resRowTime.getMinutes());
-					assertEquals("Second" + error, exRowTime.getSeconds(), resRowTime.getSeconds());
+					assertEquals(exRowTime.getHours(), resRowTime.getHours(), "Hour" + error);
+					assertEquals(exRowTime.getMinutes(), resRowTime.getMinutes(), "Minute" + error);
+					assertEquals(exRowTime.getSeconds(), resRowTime.getSeconds(), "Second" + error);
 				} else if (resRow[i] instanceof Timestamp) {
 					Timestamp resRowTime = (Timestamp) resRow[i];
 					Timestamp exRowTime = (Timestamp) exElem;
 					String error = " in " + exRowTime + " doesn't match with " + resRowTime;
-					assertEquals("Year" + error, exRowTime.getYear(), resRowTime.getYear());
-					assertEquals("Month" + error, exRowTime.getMonth(), resRowTime.getMonth());
-					assertEquals("Day" + error, exRowTime.getDay(), resRowTime.getDay());
-					assertEquals("Hour" + error, exRowTime.getHours(), resRowTime.getHours());
-					assertEquals("Minute" + error, exRowTime.getMinutes(), resRowTime.getMinutes());
-					assertEquals("Second" + error, exRowTime.getSeconds(), resRowTime.getSeconds());
+					assertEquals(exRowTime.getYear(), resRowTime.getYear(), "Year" + error);
+					assertEquals(exRowTime.getMonth(), resRowTime.getMonth(), "Month" + error);
+					assertEquals(exRowTime.getDay(), resRowTime.getDay(), "Day" + error);
+					assertEquals(exRowTime.getHours(), resRowTime.getHours(), "Hour" + error);
+					assertEquals(exRowTime.getMinutes(), resRowTime.getMinutes(), "Minute" + error);
+					assertEquals(exRowTime.getSeconds(), resRowTime.getSeconds(), "Second" + error);
 				} else if (resRow[i] instanceof DateTime) {
-					DateTime resRowTime = (DateTime) resRow[i];
-					resRowTime = resRowTime.withZone(DateTimeZone.UTC);
+					DateTime resRowTime = ((DateTime) resRow[i]).withZone(DateTimeZone.UTC);
 					DateTime exRowTime = (DateTime) exElem;
 					String error = " in " + exRowTime + " doesn't match with " + resRowTime;
-					assertEquals("Year" + error, exRowTime.getYear(), resRowTime.getYear());
-					assertEquals("Month" + error, exRowTime.getMonthOfYear(), resRowTime.getMonthOfYear());
-					assertEquals("Day" + error, exRowTime.getDayOfMonth(), resRowTime.getDayOfMonth());
-					assertEquals("Hour" + error, exRowTime.getHourOfDay(), resRowTime.getHourOfDay());
-					assertEquals("Minute" + error, exRowTime.getMinuteOfHour(), resRowTime.getMinuteOfHour());
-					assertEquals("Second" + error, exRowTime.getSecondOfMinute(), resRowTime.getSecondOfMinute());
+					assertEquals(exRowTime.getYear(), resRowTime.getYear(), "Year" + error);
+					assertEquals(exRowTime.getMonthOfYear(), resRowTime.getMonthOfYear(), "Month" + error);
+					assertEquals(exRowTime.getDayOfMonth(), resRowTime.getDayOfMonth(), "Day" + error);
+					assertEquals(exRowTime.getHourOfDay(), resRowTime.getHourOfDay(), "Hour" + error);
+					assertEquals(exRowTime.getMinuteOfHour(), resRowTime.getMinuteOfHour(), "Minute" + error);
+					assertEquals(exRowTime.getSecondOfMinute(), resRowTime.getSecondOfMinute(), "Second" + error);
 				} else {
-					assertEquals("Item in row " + row + " element " + i + " type mismatch", exElem.getClass().getName(), resRow[i].getClass().getName());
-					assertEquals("Item in row " + row + " element " + i + " doesnt' match", exElem, resRow[i]);
+					assertEquals(exElem.getClass().getName(), resRow[i].getClass().getName()
+							, "Item in row " + row + " element " + i + " type mismatch");
+					assertEquals(exElem, resRow[i]
+							, "Item in row " + row + " element " + i + " doesnt' match");
 				}
 			}
 		}

@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator;
 
-import org.junit.Test
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.test.GeneratorTestBase
 
 class SculptorGeneratorRunnerTest extends GeneratorTestBase {

@@ -39,7 +39,7 @@ import org.sculptor.generator.transform.Transformation
 import org.slf4j.LoggerFactory
 import sculptormetamodel.Application
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * Test fixtures for tests that work on a loaded and transformed Sculptor model

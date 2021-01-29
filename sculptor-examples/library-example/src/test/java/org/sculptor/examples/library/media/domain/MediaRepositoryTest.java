@@ -1,17 +1,17 @@
 package org.sculptor.examples.library.media.domain;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.examples.library.media.domain.MediaProperties.title;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 import java.util.*;
 
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.sculptor.examples.library.media.domain.Book;
 import org.sculptor.examples.library.media.domain.MediaProperties;
 import org.sculptor.examples.library.media.domain.MediaRepository;
 import org.sculptor.examples.library.media.domain.MovieProperties;
-import org.junit.Assume;
-import org.junit.Test;
 import org.sculptor.examples.library.media.domain.Media;
 import org.sculptor.examples.library.media.domain.Movie;
 import org.sculptor.framework.accessapi.*;
@@ -94,9 +94,9 @@ public class MediaRepositoryTest extends AbstractDbUnitJpaTests {
     public void testFindByNestedCondition() throws Exception {
     	// hibernate seems not to support this nested condition
     	// TODO: watch hibernate issue HHH-5948
-        Assume.assumeTrue(!JpaHelper.isJpaProviderHibernate(getEntityManager()));
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderHibernate(getEntityManager()));
     	// datanucleus seems not to support this nested condition
-        Assume.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
         List<ConditionalCriteria> conditionalCriteria = criteriaFor(Media.class).withProperty(
                 MediaProperties.physicalMedia().location()).eq("abc123").build();
         List<Media> found = mediaRepository.findByCondition(conditionalCriteria);

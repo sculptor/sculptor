@@ -16,8 +16,10 @@
  */
 package org.sculptor.generator;
 
-import org.junit.Test
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.test.GeneratorTestBase
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SculptorGeneratorRunnerFailedTest extends GeneratorTestBase {
 
@@ -27,9 +29,11 @@ class SculptorGeneratorRunnerFailedTest extends GeneratorTestBase {
 		super(TEST_NAME)
 	}
 
-	@Test(expected=typeof(SculptorGeneratorException))
+	@Test
 	def void assertFailureDueToMissingGapKeyword() {
-		runGenerator(TEST_NAME)
+		assertThrows(typeof(SculptorGeneratorException), [
+			runGenerator(TEST_NAME)
+		]);
 	}
 
 }

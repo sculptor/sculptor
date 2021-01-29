@@ -227,11 +227,9 @@
 	</dependencies>
 
 	<!-- Profiles -->
-
 	<profiles>
 
 		<!-- HIBERNATE -->
-
 		<profile>
 			<id>hibernate</id>
 			<activation>
@@ -242,7 +240,7 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate-version>${hibernate-version}</hibernate-version>
+				<hibernate-version>5.4.27.Final</hibernate-version>
 			</properties>
 			<build>
 			</build>
@@ -255,9 +253,19 @@
 					<!-- <scope>provided</scope> -->
 				</dependency>
 				<dependency>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>tomcat-jasper-el</artifactId>
+					<version>9.0.41</version>
+				</dependency>
+				<dependency>
 					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-ehcache</artifactId>
-					<version>\${hibernate-version}</version>
+					<artifactId>hibernate-jcache</artifactId>
+					<version>5.4.27.Final</version>
+				</dependency>
+				<dependency>
+					<groupId>org.ehcache</groupId>
+					<artifactId>ehcache</artifactId>
+					<version>3.9.0</version>
 				</dependency>
 				<dependency>
 					<groupId>org.jadira.usertype</groupId>
@@ -282,7 +290,6 @@
 		</profile>
 
 		<!-- DATANUCLEUS -->
-
 		<profile>
 			<id>datanucleus</id>
 			<activation>
@@ -397,7 +404,6 @@
 		</profile>
 
 		<!-- ECLIPSELINK -->
-
 		<profile>
 			<id>eclipselink</id>
 			<activation>
@@ -428,15 +434,15 @@
 								</configuration>
 							</execution>
 						</executions>
-				        <dependencies>
-				            <dependency>
-				                <groupId>org.eclipse.persistence</groupId>
-				                <artifactId>eclipselink</artifactId>
-				                <version>\${eclipselink-version}</version>
-				            </dependency>
-				        </dependencies>
+						<dependencies>
+							<dependency>
+								<groupId>org.eclipse.persistence</groupId>
+								<artifactId>eclipselink</artifactId>
+								<version>\${eclipselink-version}</version>
+							</dependency>
+						</dependencies>
 					</plugin>
-    			</plugins>
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -453,7 +459,6 @@
 		</profile>
 
 		<!-- OPENJPA -->
-
 		<profile>
 			<id>openjpa</id>
 			<activation>

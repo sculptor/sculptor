@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 import javax.jms.Destination;
 import javax.jms.Queue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.example.ejb.helloworld.milkyway.domain.Planet;
 import org.sculptor.framework.test.AbstractOpenEJBDbUnitTest;
 

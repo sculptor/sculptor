@@ -5,14 +5,15 @@ package org.sculptor.dsl.tests
 
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.sculptordsl.DslModel
 
-@RunWith(XtextRunner)
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(SculptordslInjectorProvider)
 class SculptordslParsingTest {
 
@@ -29,7 +30,7 @@ class SculptordslParsingTest {
 				
 			}
 		''')
-		Assert.assertNotNull(result)
-		Assert.assertTrue(result.eResource.errors.isEmpty)
+		assertNotNull(result)
+		assertTrue(result.eResource.errors.isEmpty)
 	}
 }

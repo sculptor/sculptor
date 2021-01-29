@@ -1,10 +1,6 @@
 package org.sculptor.examples.library.person.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.examples.library.person.domain.PersonName.personName;
 import static org.sculptor.examples.library.person.domain.PersonProperties.name;
 import static org.sculptor.examples.library.person.domain.PersonProperties.sex;
@@ -18,11 +14,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.examples.library.person.exception.PersonNotFoundException;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
@@ -31,12 +27,11 @@ import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.errorhandling.UnexpectedRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
+public class PersonRepositoryTest {
 
 	private static final String[] DATE_PATTERNS = { "yyyy-MM-dd" };
 
@@ -46,7 +41,7 @@ public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
 	@Autowired
 	private DbManager dbManager;
 
-	@Before
+	@BeforeEach
 	public void initialData() throws Exception {
 		Person p1 = new Person(Gender.MALE, ssn("123456", Country.DENMARK));
 		p1.setBirthDate(DateUtils.parseDate("1963-01-01", DATE_PATTERNS));
@@ -79,7 +74,7 @@ public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
 		p = personRepository.save(p);
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		dbManager.getDB().dropDatabase();
 	}
@@ -101,11 +96,13 @@ public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
 		assertEquals(Country.SWEDEN, persons.get(0).getSsn().getCountry());
 	}
 
-	@Test(expected = UnexpectedRuntimeException.class)
+	@Test
 	public void shouldFindByOrCondition() throws Exception {
-		List<ConditionalCriteria> conditionalCriteria = criteriaFor(Person.class).withProperty(name().first())
-				.eq("Aaaa").or().withProperty(name().last()).eq("Dddd").orderBy(name().last()).build();
-		personRepository.findByCondition(conditionalCriteria);
+		assertThrows(UnexpectedRuntimeException.class, () -> {
+			List<ConditionalCriteria> conditionalCriteria = criteriaFor(Person.class).withProperty(name().first())
+					.eq("Aaaa").or().withProperty(name().last()).eq("Dddd").orderBy(name().last()).build();
+			personRepository.findByCondition(conditionalCriteria);
+		});
 	}
 
 	@Test
@@ -146,8 +143,7 @@ public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
 		String previous = null;
 		for (Person each : persons) {
 			if (previous != null) {
-				assertTrue("Expected " + each.getName().getFirst() + " >= " + previous, each.getName().getFirst()
-						.compareTo(previous) >= 0);
+				assertTrue(each.getName().getFirst().compareTo(previous) >= 0, "Expected " + each.getName().getFirst() + " >= " + previous);
 			}
 			previous = each.getName().getFirst();
 		}
@@ -168,9 +164,11 @@ public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
 		assertEquals(Country.DENMARK, found.getSsn().getCountry());
 	}
 
-	@Test(expected = PersonNotFoundException.class)
+	@Test
 	public void shouldNotFindByKey() throws Exception {
-		personRepository.findByKey(ssn("123456", Country.NORWAY));
+		assertThrows(PersonNotFoundException.class, () -> {
+			personRepository.findByKey(ssn("123456", Country.NORWAY));
+		});
 	}
 
 	@Test
@@ -384,7 +382,7 @@ public class PersonRepositoryTest extends AbstractJUnit4SpringContextTests {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	// not implemented yet
 	public void shouldFetchAllWithNextPageAccess() throws Exception {
 		Set<Person> all = new HashSet<Person>();

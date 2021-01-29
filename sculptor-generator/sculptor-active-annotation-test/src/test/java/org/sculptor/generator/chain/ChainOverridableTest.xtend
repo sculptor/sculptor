@@ -18,9 +18,9 @@ package org.sculptor.generator.chain
 
 import org.eclipse.xtend.core.compiler.batch.XtendCompilerTester
 import org.eclipse.xtend.lib.macro.services.Problem.Severity
-import org.junit.Test
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 class ChainOverridableTest {
 
@@ -50,26 +50,26 @@ class ChainOverridableTest {
 			// Check the AST if the annotated class has the generated constructor
 			val annotatedClass = findClass('ChainOverridableTestTemplate')
 			assertNotNull(annotatedClass)
-			assertTrue('No chaining constructor',
-				annotatedClass.declaredConstructors.exists[
-					parameters.size == 1 && parameters.get(0).simpleName == 'next']
+			assertTrue(annotatedClass.declaredConstructors.exists[
+					parameters.size == 1 && parameters.get(0).simpleName == 'next'
+				], 'No chaining constructor'
 			)
 
 			// Check the AST if the generated extension class has the overriden methods of the annotated class
-			assertNotNull('No public method', annotatedClass.findDeclaredMethod('overridableMethod'))
-			assertNotNull('No overriden method', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'))
+			assertNotNull(annotatedClass.findDeclaredMethod('overridableMethod'), 'No public method')
+			assertNotNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'overridableMethod'), 'No overriden method')
 
 			// Check the AST if the generated extension class has no non-overridable methods of the annotated class
-			assertNull('Final method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'finalMethod'))
-			assertNull('Inferred method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'inferredMethod'))
+			assertNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'finalMethod'), 'Final method renamed')
+			assertNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'inferredMethod'), 'Inferred method renamed')
 
-			assertNotNull('Dispatch method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + '_dispatchMethod', newTypeReference(typeof(long))))
-			assertNotNull('Dispatch method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + '_dispatchMethod', newTypeReference(typeof(int))))
-			assertNull('Dispatch create method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'dispatchCreateMethod', newTypeReference(typeof(long))))
-			assertNull('Dispatch create method renamed', annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'dispatchCreateMethod', newTypeReference(typeof(int))))
+			assertNotNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + '_dispatchMethod', newTypeReference(typeof(long))), 'Dispatch method renamed')
+			assertNotNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + '_dispatchMethod', newTypeReference(typeof(int))), 'Dispatch method renamed')
+			assertNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'dispatchCreateMethod', newTypeReference(typeof(long))), 'Dispatch create method renamed')
+			assertNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + 'dispatchCreateMethod', newTypeReference(typeof(int))), 'Dispatch create method renamed')
 
-			assertNotNull("_getOverridesDispatchArray should be generated", annotatedClass.findDeclaredMethod("_getOverridesDispatchArray"))
-			assertNull("_getOverridesDispatchArray shouldn't get chained", annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + "_getOverridesDispatchArray"))
+			assertNotNull(annotatedClass.findDeclaredMethod("_getOverridesDispatchArray"), "_getOverridesDispatchArray should be generated")
+			assertNull(annotatedClass.findDeclaredMethod(ChainOverrideHelper.RENAMED_METHOD_NAME_PREFIX + "_getOverridesDispatchArray"), "_getOverridesDispatchArray shouldn't get chained")
 						
 			val indexInterface = findInterface('ChainOverridableTestTemplateMethodIndexes')
 			assertNotNull(indexInterface)

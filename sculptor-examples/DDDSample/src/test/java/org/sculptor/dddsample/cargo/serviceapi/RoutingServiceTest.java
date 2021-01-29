@@ -1,8 +1,6 @@
 package org.sculptor.dddsample.cargo.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HELSINKI;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HONGKONG;
@@ -10,7 +8,7 @@ import static org.sculptor.dddsample.location.domain.SampleLocations.HONGKONG;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.domain.Cargo;
 import org.sculptor.dddsample.cargo.domain.Itinerary;
 import org.sculptor.dddsample.cargo.domain.Leg;

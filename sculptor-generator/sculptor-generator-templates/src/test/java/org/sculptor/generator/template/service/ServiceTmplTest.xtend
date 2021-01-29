@@ -18,19 +18,19 @@ package org.sculptor.generator.template.service
 
 import javax.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.test.GeneratorModelTestFixtures
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
-@RunWith(typeof(XtextRunner))
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class ServiceTmplTest extends XtextTest {
 
@@ -39,7 +39,7 @@ class ServiceTmplTest extends XtextTest {
 
 	var ServiceTmpl serviceTmpl
 
-	@Before
+	@BeforeEach
 	def void setup() {
 		generatorModelTestFixtures.setupInjector(typeof(ServiceTmpl))
 		generatorModelTestFixtures.setupModel("generator-tests/library/model.btdesign", "generator-tests/library/model-person.btdesign")

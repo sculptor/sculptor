@@ -26,9 +26,9 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.context.ServiceContext;
 import org.sculptor.framework.context.ServiceContextFactory;
 import org.sculptor.framework.util.FactoryConfiguration;
@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Patrik Nordwall
  * @author Oliver Ringel
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
 @Transactional(transactionManager = "txManager")
 public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
@@ -95,7 +96,7 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
      *
      * @throws Exception
      */
-    @Before
+    @BeforeEach
     public void setUpDatabaseTester() throws Exception {
     	if (getJdbcTemplate().getDataSource() == null) {
     		throw new IllegalStateException("Missing @Resource 'testDataSource'");
@@ -179,7 +180,7 @@ public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
     protected void buildSchema() {
     }
 
-    @After
+    @AfterEach
     public void tearDownDatabaseTester() throws Exception {
         DbUnitDataSourceUtils.tearDownDatabaseTester();
     }

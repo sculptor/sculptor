@@ -1,9 +1,12 @@
 package org.sculptor.dddsample.location.domain;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class UnLocodeTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
 
+public class UnLocodeTest {
+
+  @Test
   public void testNew() throws Exception {
     assertValid("AA234");
     assertValid("AAA9B");
@@ -18,10 +21,12 @@ public class UnLocodeTest extends TestCase {
     assertInvalid(null);
   }
 
+  @Test
   public void testIdString() throws Exception {
     assertEquals("ABCDE", new UnLocode("AbcDe").getUnlocode());
   }
 
+  @Test
   public void testEquals() throws Exception {
     UnLocode allCaps = new UnLocode("ABCDE");
     UnLocode mixedCase = new UnLocode("aBcDe");
@@ -34,6 +39,7 @@ public class UnLocodeTest extends TestCase {
     assertFalse(allCaps.equals(new UnLocode("FGHIJ")));
   }
 
+  @Test
   public void testHashCode() throws Exception {
     UnLocode allCaps = new UnLocode("ABCDE");
     UnLocode mixedCase = new UnLocode("aBcDe");

@@ -16,8 +16,8 @@
  */
 package org.sculptor.generator.template.rest
 
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.test.GeneratorTestBase
 
 import static org.sculptor.generator.test.GeneratorTestExtensions.*
@@ -30,7 +30,7 @@ class ResourceTmplTest extends GeneratorTestBase {
 		super(TEST_NAME)
 	}
 
-	@BeforeClass
+	@BeforeAll
 	def static void setup() {
 		runGenerator(TEST_NAME)
 	}

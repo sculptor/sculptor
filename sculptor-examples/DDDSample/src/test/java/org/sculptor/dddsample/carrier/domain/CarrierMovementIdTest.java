@@ -1,9 +1,12 @@
 package org.sculptor.dddsample.carrier.domain;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class CarrierMovementIdTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.fail;
 
+public class CarrierMovementIdTest {
+
+    @Test
     public void testConstructor() throws Exception {
         try {
             new CarrierMovementId(null);

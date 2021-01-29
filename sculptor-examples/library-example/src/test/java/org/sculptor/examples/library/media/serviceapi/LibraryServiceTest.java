@@ -16,18 +16,13 @@
  */
 package org.sculptor.examples.library.media.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Assume;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.sculptor.examples.library.media.domain.Library;
 import org.sculptor.examples.library.media.domain.LibraryProperties;
 import org.sculptor.examples.library.media.domain.Media;
@@ -45,6 +40,8 @@ import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Spring based transactional test with DbUnit support.
@@ -78,9 +75,11 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
 
 	}
 
-    @Test(expected=LibraryNotFoundException.class)
+    @Test
     public void testFindLibraryByNameNotFound() throws Exception {
-        libraryService.findLibraryByName(getServiceContext(), "not a library");
+        assertThrows(LibraryNotFoundException.class, () -> {
+            libraryService.findLibraryByName(getServiceContext(), "not a library");
+        });
     }
 
     @Test
@@ -93,24 +92,26 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
         assertNotNull(foundLibrary);
         assertNotNull(foundLibrary.getLastUpdated());
         assertEquals("system", foundLibrary.getLastUpdatedBy());
-        assertTrue("Expected " + foundLibrary.getLastUpdated() + " > " + now,
-        foundLibrary.getLastUpdated().compareTo(now) >= 0);
+        assertTrue(foundLibrary.getLastUpdated().compareTo(now) >= 0
+                , "Expected " + foundLibrary.getLastUpdated() + " > " + now);
     }
 
-    @Test(expected=OptimisticLockingException.class)
+    @Test
     @Transactional(propagation = Propagation.NEVER)
     public void testOptimisticLocking() throws Exception {
-    	// TODO: expected exception not thrown for datanucleus, find out why.
-        if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
-        	throw new OptimisticLockingException("");
-        }
-    	// TODO: expected exception not thrown for openjpa, find out why.
-        if (JpaHelper.isJpaProviderOpenJpa(getEntityManager())) {
-        	throw new OptimisticLockingException("");
-        }
-        Library foundLibrary = libraryService.findById(getServiceContext(), 1L);
-        foundLibrary.setVersion(0L);
-        libraryService.save(getServiceContext(), foundLibrary);
+        assertThrows(OptimisticLockingException.class, () -> {
+            // TODO: expected exception not thrown for datanucleus, find out why.
+            if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
+                throw new OptimisticLockingException("");
+            }
+            // TODO: expected exception not thrown for openjpa, find out why.
+            if (JpaHelper.isJpaProviderOpenJpa(getEntityManager())) {
+                throw new OptimisticLockingException("");
+            }
+            Library foundLibrary = libraryService.findById(getServiceContext(), 1L);
+            foundLibrary.setVersion(0L);
+            libraryService.save(getServiceContext(), foundLibrary);
+        });
     }
 
     @Test
@@ -140,7 +141,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
     @Test
     public void testFindPersonByName() throws Exception {
        	// NamedQuery needs '()', see comments in Person class
-    	Assume.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
         String name = "Pierce Brosnan";
         List<Person> persons = libraryService.findPersonByName(getServiceContext(), name);
         assertNotNull(persons);
@@ -158,7 +159,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
     public void testDelete() throws Exception {
         // DataNucleus does not allow clearing sets for entities marked for deletion
         // @PreDelete is not working as expected, seems to be a bug in DataNucleus, report to issue tracker
-        Assume.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
         int before = countRowsInTable(Library.class);
         int physicalMediaBefore = countRowsInTable(PhysicalMedia.class);
         Library library = libraryService.findById(getServiceContext(), new Long(1));
@@ -189,10 +190,10 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
     }
 
     // DistinctRoot is not supported, ignore test
-    @Ignore
+    @Disabled
     @Test
     public void testFindByCondition() throws Exception {
-        Assume.assumeTrue(JpaHelper.isJpaProviderHibernate(getEntityManager()));
+        Assumptions.assumeTrue(JpaHelper.isJpaProviderHibernate(getEntityManager()));
 
         PagingParameter paging = PagingParameter.rowAccess(0, 2, 0);
 
@@ -214,8 +215,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
             libraryService.findByCondition(getServiceContext(), condition, paging);
             fail("Exception not thrown");
         } catch (Exception ex) {
-            assertTrue("",
-                    ex.getMessage().indexOf("create distinct condition order by foreign field 'media.location'") != -1);
+            assertTrue(ex.getMessage().indexOf("create distinct condition order by foreign field 'media.location'") != -1);
         }
 
         // Correct run after distinctRoot() specified. Size of result is 2 and
@@ -243,7 +243,7 @@ public class LibraryServiceTest extends AbstractDbUnitJpaTests implements Librar
     }
 
     // ProjectionRoot and FetchLazy is not supported, ignore test
-    @Ignore
+    @Disabled
     @Test
     public void testFindByConditionLazyFetch() throws Exception {
         PagingParameter paging = PagingParameter.noLimits();

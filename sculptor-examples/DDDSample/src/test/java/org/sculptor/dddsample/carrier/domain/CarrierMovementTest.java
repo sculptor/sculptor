@@ -1,11 +1,15 @@
 package org.sculptor.dddsample.carrier.domain;
 
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HAMBURG;
 import static org.sculptor.dddsample.location.domain.SampleLocations.STOCKHOLM;
-import junit.framework.TestCase;
 
-public class CarrierMovementTest extends TestCase {
+public class CarrierMovementTest {
 
+    @Test
     public void testSameValueAsEqualsHashCode() throws Exception {
         CarrierMovementId id1 = new CarrierMovementId("CAR1");
         CarrierMovementId id2a = new CarrierMovementId("CAR2");

@@ -1,13 +1,13 @@
 package org.sculptor.dddsample.routing.serviceapi;
 
-import static org.junit.Assert.assertFalse;
-
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.routing.domain.TransitPath;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Spring based transactional test with DbUnit support.

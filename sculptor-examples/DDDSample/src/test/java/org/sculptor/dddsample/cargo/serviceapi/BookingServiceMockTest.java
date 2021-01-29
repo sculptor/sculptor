@@ -5,11 +5,15 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.CHICAGO;
 import static org.sculptor.dddsample.location.domain.SampleLocations.STOCKHOLM;
-import junit.framework.TestCase;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.domain.Cargo;
 import org.sculptor.dddsample.cargo.domain.CargoRepository;
 import org.sculptor.dddsample.cargo.domain.TrackingId;
@@ -21,7 +25,7 @@ import org.sculptor.framework.context.JUnitServiceContextFactory;
 import org.sculptor.framework.context.ServiceContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class BookingServiceMockTest extends TestCase {
+public class BookingServiceMockTest {
 
     private final ServiceContext serviceContext = JUnitServiceContextFactory.createServiceContext();
 
@@ -29,7 +33,7 @@ public class BookingServiceMockTest extends TestCase {
     private CargoRepository cargoRepository;
     private LocationRepository locationRepository;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         cargoService = new BookingServiceImpl();
         cargoRepository = createMock(CargoRepository.class);
@@ -40,6 +44,7 @@ public class BookingServiceMockTest extends TestCase {
         ReflectionTestUtils.setField(cargoService, "locationService", locationService);
     }
 
+    @Test
     public void testRegisterNew() throws Exception {
         TrackingId expectedTrackingId = trackingId("TRK1");
         UnLocode fromUnlocode = new UnLocode("USCHI");
@@ -56,6 +61,7 @@ public class BookingServiceMockTest extends TestCase {
         assertEquals(expectedTrackingId, trackingId);
     }
 
+    @Test
     public void testRegisterNewNullArguments() throws Exception {
         replay(cargoRepository, locationRepository);
         try {
@@ -65,7 +71,7 @@ public class BookingServiceMockTest extends TestCase {
         }
     }
 
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
         verify(cargoRepository, locationRepository);
     }

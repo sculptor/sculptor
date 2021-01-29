@@ -1,14 +1,10 @@
 package org.sculptor.examples.library.person.domain;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.examples.library.person.domain.PersonProperties.name;
 import static org.sculptor.examples.library.person.domain.PersonProperties.sex;
 import static org.sculptor.examples.library.person.domain.PersonProperties.ssn;
 import static org.sculptor.examples.library.person.domain.Ssn.ssn;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 import java.time.LocalDate;
@@ -19,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.jupiter.api.Test;
 import org.sculptor.examples.library.person.domain.Country;
 import org.sculptor.examples.library.person.domain.Gender;
 import org.sculptor.examples.library.person.domain.PersonName;
 import org.sculptor.examples.library.person.domain.PersonRepository;
 import org.sculptor.examples.library.person.domain.Ssn;
 import org.sculptor.examples.library.person.exception.PersonNotFoundException;
-import org.junit.Test;
 import org.sculptor.examples.library.person.domain.Person;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
@@ -77,7 +73,7 @@ public class PersonRepositoryTest extends AbstractDbUnitJpaTests {
 
     @Test
     public void shouldFindByDynamicQuery() throws Exception {
-    	Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("country", Country.SWEDEN);
         List<Person> persons =
             personRepository.findByQuery("select e from Person e where e.ssn.country = :country", parameters);
@@ -130,9 +126,11 @@ public class PersonRepositoryTest extends AbstractDbUnitJpaTests {
         assertEquals(Country.DENMARK, found.getSsn().getCountry());
     }
 
-    @Test(expected = PersonNotFoundException.class)
+    @Test
     public void shouldNotFindByKey() throws Exception {
-        personRepository.findByKey(ssn("123456", Country.NORWAY));
+        assertThrows(PersonNotFoundException.class, () -> {
+            personRepository.findByKey(ssn("123456", Country.NORWAY));
+        });
     }
 
     @Test

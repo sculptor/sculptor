@@ -1,16 +1,13 @@
 package org.sculptor.betting.customer.serviceapi;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
 import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.betting.core.domain.Bet;
 import org.sculptor.betting.core.domain.BetPlaced;
 import org.sculptor.betting.core.serviceapi.BettingPublisher;
@@ -19,15 +16,17 @@ import org.sculptor.betting.customer.mapper.CustomerBetMapper;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Spring based test with MongoDB.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class BettingQueryServiceTest extends AbstractJUnit4SpringContextTests implements BettingQueryServiceTestBase {
+public class BettingQueryServiceTest implements BettingQueryServiceTestBase {
 
 	@Autowired
 	private DbManager dbManager;
@@ -38,17 +37,17 @@ public class BettingQueryServiceTest extends AbstractJUnit4SpringContextTests im
 	@Autowired
 	private BettingQueryService bettingQueryService;
 
-	@Before
+	@BeforeEach
 	public void initTestData() {
 	}
 
-	@Before
+	@BeforeEach
 	public void initDbManagerThreadInstance() throws Exception {
 		// to be able to do lazy loading of associations inside test class
 		DbManager.setThreadInstance(dbManager);
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		Set<String> names = dbManager.getDB().getCollectionNames();
 		for (String each : names) {

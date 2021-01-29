@@ -1,9 +1,9 @@
 package org.sculptor.framework.accessimpl.jpa;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.accessimpl.jpa.QueryExpressions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Holds the expressions of the query

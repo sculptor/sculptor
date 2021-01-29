@@ -1,13 +1,14 @@
 package org.sculptor.dddsample.location.serviceapi;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.location.domain.Location;
 import org.sculptor.dddsample.location.domain.UnLocode;
 import org.sculptor.dddsample.location.exception.LocationNotFoundException;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Spring based transactional test with DbUnit support.
@@ -31,8 +32,10 @@ public class LocationServiceTest extends AbstractDbUnitJpaTests implements Locat
         assertNotNull(found);
     }
 
-    @Test(expected=LocationNotFoundException.class)
+    @Test
     public void testNotFound() throws LocationNotFoundException {
-        locationService.find(getServiceContext(), new UnLocode("ZZZZZ"));
+        assertThrows(LocationNotFoundException.class, () -> {
+            locationService.find(getServiceContext(), new UnLocode("ZZZZZ"));
+        });
     }
 }

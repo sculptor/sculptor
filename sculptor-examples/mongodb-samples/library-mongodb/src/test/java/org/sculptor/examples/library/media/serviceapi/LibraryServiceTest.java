@@ -1,17 +1,15 @@
 package org.sculptor.examples.library.media.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.Date;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.examples.library.media.domain.Library;
 import org.sculptor.examples.library.media.domain.LibraryTestData;
 import org.sculptor.examples.library.media.domain.Media;
@@ -24,12 +22,11 @@ import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.sculptor.framework.errorhandling.OptimisticLockingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class LibraryServiceTest extends AbstractJUnit4SpringContextTests implements LibraryServiceTestBase {
+public class LibraryServiceTest implements LibraryServiceTestBase {
 
 	@Autowired
 	private LibraryService libraryService;
@@ -39,12 +36,12 @@ public class LibraryServiceTest extends AbstractJUnit4SpringContextTests impleme
 	@Autowired
 	private DbManager dbManager;
 
-	@Before
+	@BeforeEach
 	public void initialData() throws Exception {
 		testData.saveInitialData();
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		dbManager.getDB().dropDatabase();
 	}
@@ -71,9 +68,11 @@ public class LibraryServiceTest extends AbstractJUnit4SpringContextTests impleme
 		assertNotNull(library.getId());
 	}
 
-	@Test(expected = LibraryNotFoundException.class)
+	@Test
 	public void testFindLibraryByNameNotFound() throws Exception {
-		libraryService.findLibraryByName(getServiceContext(), "not a library");
+		assertThrows(LibraryNotFoundException.class, () -> {
+			libraryService.findLibraryByName(getServiceContext(), "not a library");
+		});
 	}
 
 	@Override
@@ -87,16 +86,17 @@ public class LibraryServiceTest extends AbstractJUnit4SpringContextTests impleme
 		assertNotNull(foundLibrary);
 		assertNotNull(foundLibrary.getLastUpdated());
 		assertEquals("JUnit", foundLibrary.getLastUpdatedBy());
-		assertTrue("Expected " + foundLibrary.getLastUpdated() + " > " + now,
-				foundLibrary.getLastUpdated().compareTo(now) >= 0);
-
+		assertTrue(foundLibrary.getLastUpdated().compareTo(now) >= 0
+				, "Expected " + foundLibrary.getLastUpdated() + " > " + now);
 	}
 
-	@Test(expected = OptimisticLockingException.class)
+	@Test
 	public void testOptimisticLocking() throws Exception {
-		Library foundLibrary = libraryService.findById(getServiceContext(), testData.getLibraryId());
-		foundLibrary.setVersion(0L);
-		libraryService.save(getServiceContext(), foundLibrary);
+		assertThrows(OptimisticLockingException.class, () -> {
+			Library foundLibrary = libraryService.findById(getServiceContext(), testData.getLibraryId());
+			foundLibrary.setVersion(0L);
+			libraryService.save(getServiceContext(), foundLibrary);
+		});
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package org.blog.core.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.Date;
@@ -11,22 +10,21 @@ import org.blog.core.domain.Blog;
 import org.blog.core.domain.BlogPost;
 import org.blog.core.domain.Comment;
 import org.blog.core.exception.BlogPostNotFoundException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Spring based test with MongoDB.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class BlogPostServiceTest extends AbstractJUnit4SpringContextTests implements BlogPostServiceTestBase {
+public class BlogPostServiceTest implements BlogPostServiceTestBase {
 
 	@Autowired
 	private DbManager dbManager;
@@ -40,7 +38,7 @@ public class BlogPostServiceTest extends AbstractJUnit4SpringContextTests implem
 	private Blog blog;
     private BlogPost post;
 
-	@Before
+	@BeforeEach
 	public void initTestData() {
         Blog b = new Blog("http://www.test.org/cool");
         b.setIntro("This is cool");
@@ -59,13 +57,13 @@ public class BlogPostServiceTest extends AbstractJUnit4SpringContextTests implem
         postService.save(getServiceContext(), p2);
 	}
 
-	@Before
+	@BeforeEach
 	public void initDbManagerThreadInstance() throws Exception {
 		// to be able to do lazy loading of associations inside test class
 		DbManager.setThreadInstance(dbManager);
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		dbManager.getDB().dropDatabase();
 	}
@@ -152,9 +150,11 @@ public class BlogPostServiceTest extends AbstractJUnit4SpringContextTests implem
         assertEquals(post, found);
     }
 
-    @Test(expected = BlogPostNotFoundException.class)
+    @Test
     public void testFindByIdNotFound() throws Exception {
-        postService.findById(getServiceContext(), "jdfldfhiu");
+        assertThrows(BlogPostNotFoundException.class, () -> {
+            postService.findById(getServiceContext(), "jdfldfhiu");
+        });
     }
 
     @Override

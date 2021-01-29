@@ -1,26 +1,24 @@
 package org.sculptor.examples.library.media.serviceapi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.examples.library.media.domain.LibraryTestData;
 import org.sculptor.examples.library.media.domain.MediaCharacter;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class MediaCharacterServiceTest extends AbstractJUnit4SpringContextTests implements
-		MediaCharacterServiceTestBase {
+public class MediaCharacterServiceTest implements MediaCharacterServiceTestBase {
 
 	@Autowired
 	private MediaCharacterService mediaCharacterService;
@@ -30,12 +28,12 @@ public class MediaCharacterServiceTest extends AbstractJUnit4SpringContextTests 
 	@Autowired
 	private DbManager dbManager;
 
-	@Before
+	@BeforeEach
 	public void initialData() throws Exception {
 		testData.saveInitialData();
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		dbManager.getDB().dropDatabase();
 	}

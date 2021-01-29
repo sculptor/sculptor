@@ -17,18 +17,18 @@
 package org.sculptor.generator.formatter
 
 import com.google.inject.Guice
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.configuration.ConfigurationProviderModule
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 class JavaCodeFormatterTest {
 
 	var JavaCodeFormatter codeFormatter
 
-	@Before
+	@BeforeEach
 	def void setup() {
 		System.setProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY, "formatter/generator.properties")
 		val bootstrapInjector = Guice.createInjector(new ConfigurationProviderModule())
@@ -36,7 +36,7 @@ class JavaCodeFormatterTest {
 		bootstrapInjector.injectMembers(codeFormatter)
 	}
 
-	@After
+	@AfterEach
 	def void clearSystemProperties() {
 		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY)
 	}

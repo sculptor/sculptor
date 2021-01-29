@@ -16,16 +16,15 @@
  */
 package org.sculptor.framework.event.annotation;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.event.Event;
 import org.sculptor.framework.event.EventBus;
 import org.sculptor.framework.event.EventSubscriber;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SubscribeBeanPostProcessorTest {
 

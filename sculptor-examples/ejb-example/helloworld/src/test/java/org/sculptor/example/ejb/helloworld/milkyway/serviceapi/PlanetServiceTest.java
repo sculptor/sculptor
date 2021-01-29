@@ -1,17 +1,17 @@
 package org.sculptor.example.ejb.helloworld.milkyway.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
 
 import javax.ejb.EJB;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.example.ejb.helloworld.milkyway.domain.Planet;
 import org.sculptor.example.ejb.helloworld.milkyway.serviceapi.PlanetService;
 import org.sculptor.example.ejb.helloworld.milkyway.serviceapi.PlanetServiceTestBase;
 import org.sculptor.framework.test.AbstractOpenEJBDbUnitTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * JUnit test with OpenEJB support.

@@ -16,10 +16,10 @@
  */
 package org.sculptor.generator.chain
 
-import org.junit.Test
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.cartridge.test.TestTemplateExtension
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 class ChainOverrideAwareModuleTest {
 

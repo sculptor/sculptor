@@ -1,5 +1,6 @@
 package org.sculptor.dddsample.cargo.domain;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.GOTHENBURG;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HANGZOU;
@@ -12,18 +13,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.joda.time.DateTime;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.carrier.domain.CarrierMovement;
 import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
 
-public class ItineraryTest extends TestCase {
+public class ItineraryTest {
     private final CarrierMovement abc = new CarrierMovement(new CarrierMovementId("ABC"), SHANGHAI, ROTTERDAM);
     private final CarrierMovement def = new CarrierMovement(new CarrierMovementId("DEF"), ROTTERDAM, GOTHENBURG);
     private final CarrierMovement ghi = new CarrierMovement(new CarrierMovementId("GHI"), ROTTERDAM, NEWYORK);
     private final CarrierMovement jkl = new CarrierMovement(new CarrierMovementId("JKL"), SHANGHAI, HELSINKI);
 
+    @Test
     public void testCargoOnTrack() throws Exception {
 
         Cargo cargo = new Cargo(trackingId("CARGO1"), SHANGHAI, GOTHENBURG);
@@ -73,10 +74,12 @@ public class ItineraryTest extends TestCase {
 
     }
 
+    @Test
     public void testNextExpectedEvent() throws Exception {
 
     }
 
+    @Test
     public void testCreateItinerary() throws Exception {
         try {
             new Itinerary(new ArrayList<Leg>());

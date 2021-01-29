@@ -1,6 +1,6 @@
 package org.sculptor.dddsample.cargo.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.exception.CargoNotFoundException;
 import org.sculptor.dddsample.location.domain.Location;
 import org.sculptor.dddsample.location.domain.LocationRepository;

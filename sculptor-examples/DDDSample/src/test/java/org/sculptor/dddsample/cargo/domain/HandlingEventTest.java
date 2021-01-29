@@ -1,6 +1,7 @@
 package org.sculptor.dddsample.cargo.domain;
 
 import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.cargo.domain.Type.CLAIM;
 import static org.sculptor.dddsample.cargo.domain.Type.CUSTOMS;
@@ -13,15 +14,16 @@ import static org.sculptor.dddsample.location.domain.SampleLocations.HAMBURG;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HELSINKI;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HONGKONG;
 import static org.sculptor.dddsample.location.domain.SampleLocations.NEWYORK;
-import junit.framework.TestCase;
 
 import org.joda.time.DateTime;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.carrier.domain.CarrierMovement;
 import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
 
-public class HandlingEventTest extends TestCase {
+public class HandlingEventTest {
     private final Cargo cargo = new Cargo(trackingId("XYZ"), HONGKONG, NEWYORK);
 
+    @Test
     public void testNewWithCarrierMovement() throws Exception {
         CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("C01"), HONGKONG, NEWYORK);
 
@@ -51,11 +53,13 @@ public class HandlingEventTest extends TestCase {
         }
     }
 
+    @Test
     public void testNewWithLocation() throws Exception {
         HandlingEvent e1 = new HandlingEvent(cargo, new DateTime(), new DateTime(), Type.CLAIM, HELSINKI, null);
         assertEquals(HELSINKI, e1.getLocation());
     }
 
+    @Test
     public void testCurrentLocationLoadEvent() throws Exception {
         CarrierMovementId carrierMovementId = new CarrierMovementId("CAR_001");
         CarrierMovement cm = new CarrierMovement(carrierMovementId, CHICAGO, HAMBURG);
@@ -65,6 +69,7 @@ public class HandlingEventTest extends TestCase {
         assertEquals(CHICAGO, ev.getLocation());
     }
 
+    @Test
     public void testCurrentLocationUnloadEvent() throws Exception {
         CarrierMovementId carrierMovementId = new CarrierMovementId("CAR_001");
         CarrierMovement cm = new CarrierMovement(carrierMovementId, CHICAGO, HAMBURG);
@@ -74,18 +79,21 @@ public class HandlingEventTest extends TestCase {
         assertEquals(HAMBURG, ev.getLocation());
     }
 
+    @Test
     public void testCurrentLocationReceivedEvent() throws Exception {
         HandlingEvent ev = new HandlingEvent(cargo, new DateTime(), new DateTime(), RECEIVE, CHICAGO, null);
 
         assertEquals(CHICAGO, ev.getLocation());
     }
 
+    @Test
     public void testCurrentLocationClaimedEvent() throws Exception {
         HandlingEvent ev = new HandlingEvent(cargo, new DateTime(), new DateTime(), CLAIM, CHICAGO, null);
 
         assertEquals(CHICAGO, ev.getLocation());
     }
 
+    @Test
     public void testParseType() throws Exception {
         assertEquals(CLAIM, valueOf("CLAIM"));
         assertEquals(LOAD, valueOf("LOAD"));
@@ -93,15 +101,17 @@ public class HandlingEventTest extends TestCase {
         assertEquals(RECEIVE, valueOf("RECEIVE"));
     }
 
+    @Test
     public void testParseTypeIllegal() throws Exception {
         try {
             valueOf("NOT_A_HANDLING_EVENT_TYPE");
-            assertTrue("Expected IllegaArgumentException to be thrown", false);
+            assertTrue(false, "Expected IllegaArgumentException to be thrown");
         } catch (IllegalArgumentException e) {
             // All's well
         }
     }
 
+    @Test
     public void testEqualsAndSameAs() throws Exception {
         DateTime timeOccured = new DateTime();
         DateTime timeRegistered = new DateTime();

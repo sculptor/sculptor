@@ -1,5 +1,6 @@
 package org.sculptor.dddsample.cargo.domain;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.GOTHENBURG;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HAMBURG;
@@ -19,74 +20,83 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.carrier.domain.CarrierMovement;
 import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
 import org.sculptor.dddsample.location.domain.Location;
 
-public class CargoTest extends TestCase {
+public class CargoTest {
   private Set<HandlingEvent> events;
 
+  @Test
   public void testlastKnownLocationUnknownWhenNoEvents() throws Exception {
     Cargo cargo = new Cargo(trackingId("XYZ"), STOCKHOLM, MELBOURNE);
 
     assertEquals(Location.UNKNOWN, cargo.lastKnownLocation());
   }
 
+  @Test
   public void testlastKnownLocationReceived() throws Exception {
     Cargo cargo = populateCargoReceivedStockholm();
 
     assertEquals(STOCKHOLM, cargo.lastKnownLocation());
   }
 
+  @Test
   public void testlastKnownLocationClaimed() throws Exception {
     Cargo cargo = populateCargoClaimedMelbourne();
 
     assertEquals(MELBOURNE, cargo.lastKnownLocation());
   }
 
+  @Test
   public void testlastKnownLocationUnloaded() throws Exception {
     Cargo cargo = populateCargoOffHongKong();
 
     assertEquals(HONGKONG, cargo.lastKnownLocation());
   }
 
+  @Test
   public void testlastKnownLocationloaded() throws Exception {
     Cargo cargo = populateCargoOnHamburg();
 
     assertEquals(HAMBURG, cargo.lastKnownLocation());
   }
 
+  @Test
   public void testAtFinalLocation() throws Exception {
     Cargo cargo = populateCargoOffMelbourne();
 
     assertTrue(cargo.hasArrived());
   }
 
+  @Test
   public void testNotAtFinalLocationWhenNotUnloaded() throws Exception {
     Cargo cargo = populateCargoOnHongKong();
 
     assertFalse(cargo.hasArrived());
   }
 
+  @Test
   public void testEquality() throws Exception {
     Cargo c1 = new Cargo(trackingId("ABC"), STOCKHOLM, HONGKONG);
         Cargo c2 = new Cargo(trackingId("CBA"), STOCKHOLM, HONGKONG);
         Cargo c3 = new Cargo(trackingId("ABC"), STOCKHOLM, MELBOURNE);
         Cargo c4 = new Cargo(trackingId("ABC"), STOCKHOLM, HONGKONG);
 
-    assertTrue("Cargos should be equal when TrackingIDs are equal", c1.equals(c4));
-    assertTrue("Cargos should be equal when TrackingIDs are equal", c1.equals(c3));
-    assertTrue("Cargos should be equal when TrackingIDs are equal", c3.equals(c4));
-    assertFalse("Cargos are not equal when TrackingID differ", c1.equals(c2));
+    assertTrue(c1.equals(c4), "Cargos should be equal when TrackingIDs are equal");
+    assertTrue(c1.equals(c3), "Cargos should be equal when TrackingIDs are equal");
+    assertTrue(c3.equals(c4), "Cargos should be equal when TrackingIDs are equal");
+    assertFalse(c1.equals(c2), "Cargos are not equal when TrackingID differ");
   }
 
-  @Override
-protected void setUp() throws Exception {
+  @BeforeEach
+  protected void setUp() throws Exception {
     events = new HashSet<HandlingEvent>();
   }
 

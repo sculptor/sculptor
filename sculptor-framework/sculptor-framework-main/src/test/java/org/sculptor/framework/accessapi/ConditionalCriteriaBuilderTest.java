@@ -1,6 +1,6 @@
 package org.sculptor.framework.accessapi;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.framework.accessapi.ConditionalCriteria.Operator.*;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.PersonProperties.*;
@@ -8,7 +8,7 @@ import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.Pe
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilderTest.AddressProperties.AddressProperty;
 import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.PropertiesCollection;
@@ -778,8 +778,8 @@ public class ConditionalCriteriaBuilderTest {
                             .buildSingle();
             fail("Have to fire exception");
         } catch (IllegalStateException ise) {
-            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
-            assertEquals("Wrong method fired exception", "having", ise.getStackTrace()[1].getMethodName());
+            assertEquals("withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage(), "Wrong message for where/having mixup");
+            assertEquals("having", ise.getStackTrace()[1].getMethodName(), "Wrong method fired exception");
         }
 
         try {
@@ -788,8 +788,8 @@ public class ConditionalCriteriaBuilderTest {
                             .buildSingle();
             fail("Have to fire exception");
         } catch (IllegalStateException ise) {
-            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
-            assertEquals("Wrong method fired exception", "where", ise.getStackTrace()[2].getMethodName());
+            assertEquals("withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage(), "Wrong message for where/having mixup");
+            assertEquals("where", ise.getStackTrace()[2].getMethodName(), "Wrong method fired exception");
         }
 
         try {
@@ -800,8 +800,8 @@ public class ConditionalCriteriaBuilderTest {
                     .buildSingle();
             fail("Have to fire exception");
         } catch (IllegalStateException ise) {
-            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
-            assertEquals("Wrong method fired exception", "where", ise.getStackTrace()[2].getMethodName());
+            assertEquals("withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage(), "Wrong message for where/having mixup");
+            assertEquals("where", ise.getStackTrace()[2].getMethodName(), "Wrong method fired exception");
         }
 
         try {
@@ -838,19 +838,23 @@ public class ConditionalCriteriaBuilderTest {
                             .build();
             fail("Have to fire exception");
         } catch (IllegalStateException ise) {
-            assertEquals("Wrong message for where/having mixup", "withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage());
-            assertEquals("Wrong method fired exception", "having", ise.getStackTrace()[1].getMethodName());
+            assertEquals("withProperty()/where()/having() mixed inside braces (missing 1 rbrace)", ise.getMessage(), "Wrong message for where/having mixup");
+            assertEquals("having", ise.getStackTrace()[1].getMethodName(), "Wrong method fired exception");
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test()
     public void shouldDetectTooManyLeftBraces() {
-        criteriaFor(Person.class).lbrace().withProperty(aaa()).eq("A").buildSingle();
+        assertThrows(IllegalStateException.class, () -> {
+            criteriaFor(Person.class).lbrace().withProperty(aaa()).eq("A").buildSingle();
+        });
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test()
     public void shouldDetectTooManyRightBraces() {
-        criteriaFor(Person.class).lbrace().withProperty(aaa()).eq("A").rbrace().rbrace().buildSingle();
+        assertThrows(IllegalStateException.class, () -> {
+            criteriaFor(Person.class).lbrace().withProperty(aaa()).eq("A").rbrace().rbrace().buildSingle();
+        });
     }
 
     // Entity

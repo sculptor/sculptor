@@ -1,10 +1,10 @@
 package org.sculptor.dddsample.cargo.serviceapi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.domain.HandlingEvent;
 import org.sculptor.dddsample.cargo.domain.TrackingId;
 import org.sculptor.dddsample.cargo.domain.Type;

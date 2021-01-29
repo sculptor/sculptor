@@ -1,7 +1,6 @@
 package org.sculptor.examples.library.person.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.examples.library.person.domain.PersonName.personName;
 import static org.sculptor.examples.library.person.domain.Ssn.ssn;
 import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
@@ -10,11 +9,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.examples.library.person.domain.Country;
 import org.sculptor.examples.library.person.domain.Gender;
 import org.sculptor.examples.library.person.domain.Person;
@@ -28,12 +27,11 @@ import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.errorhandling.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class PersonServiceTest extends AbstractJUnit4SpringContextTests implements PersonServiceTestBase {
+public class PersonServiceTest implements PersonServiceTestBase {
 
 	private static final String[] DATE_PATTERNS = { "yyyy-MM-dd" };
 
@@ -43,7 +41,7 @@ public class PersonServiceTest extends AbstractJUnit4SpringContextTests implemen
 	@Autowired
 	private DbManager dbManager;
 
-	@Before
+	@BeforeEach
 	public void initialData() throws Exception {
 		Person p1 = new Person(Gender.MALE, ssn("123456", Country.SWEDEN));
 		p1.setBirthDate(DateUtils.parseDate("1951-06-13", DATE_PATTERNS));
@@ -62,7 +60,7 @@ public class PersonServiceTest extends AbstractJUnit4SpringContextTests implemen
 		p3 = personService.save(getServiceContext(), p3);
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		dbManager.getDB().dropDatabase();
 	}
@@ -82,9 +80,11 @@ public class PersonServiceTest extends AbstractJUnit4SpringContextTests implemen
 		assertNotNull(person);
 	}
 
-	@Test(expected=PersonNotFoundException.class)
+	@Test
 	public void testFindByIdWithNotFoundException() throws Exception {
-		personService.findById(getServiceContext(), "zzz");
+		assertThrows(PersonNotFoundException.class, () -> {
+			personService.findById(getServiceContext(), "zzz");
+		});
 	}
 
 	@Test
@@ -101,29 +101,33 @@ public class PersonServiceTest extends AbstractJUnit4SpringContextTests implemen
 		assertEquals(before + 1, countRowsInPersonCollection());
 	}
 
-	@Test(expected=ValidationException.class)
-	@Ignore
+	@Test
+	@Disabled
 	// validation not supported yet, need JSR-303 first
-	public void testCreateThrowingValidationExceptionForBirthDate() throws Exception {
-		Person person = new Person(Gender.FEMALE, new Ssn("12345", Country.DENMARK));
-		PersonName name = new PersonName("New", "Person");
-		person.setName(name);
+	public void testCreateThrowingValidationExceptionForBirthDate() {
+		assertThrows(ValidationException.class, () -> {
+			Person person = new Person(Gender.FEMALE, new Ssn("12345", Country.DENMARK));
+			PersonName name = new PersonName("New", "Person");
+			person.setName(name);
 
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, 1);
-		person.setBirthDate(cal.getTime());
-		personService.save(getServiceContext(), person);
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.YEAR, 1);
+			person.setBirthDate(cal.getTime());
+			personService.save(getServiceContext(), person);
+		});
 	}
 
-	@Test(expected=ValidationException.class)
-	@Ignore
+	@Test
+	@Disabled
 	// validation not supported yet, need JSR-303 first
 	public void testCreateThrowingValidationException() throws Exception {
-		Person person = new Person(Gender.FEMALE, new Ssn("0815", Country.DENMARK));
-		PersonName name = new PersonName("New", "Person");
-		person.setName(name);
-		person.setBirthDate(null);
-		personService.save(getServiceContext(), person);
+		assertThrows(ValidationException.class, () -> {
+			Person person = new Person(Gender.FEMALE, new Ssn("0815", Country.DENMARK));
+			PersonName name = new PersonName("New", "Person");
+			person.setName(name);
+			person.setBirthDate(null);
+			personService.save(getServiceContext(), person);
+		});
 	}
 
 	@Override

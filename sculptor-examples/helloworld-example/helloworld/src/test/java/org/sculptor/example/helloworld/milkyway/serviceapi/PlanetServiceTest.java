@@ -1,9 +1,6 @@
 package org.sculptor.example.helloworld.milkyway.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.example.helloworld.milkyway.domain.Moon;
 import org.sculptor.example.helloworld.milkyway.domain.Planet;
 import org.sculptor.example.helloworld.milkyway.exception.PlanetNotFoundException;
@@ -11,6 +8,8 @@ import org.sculptor.framework.domain.PagedResult;
 import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Spring based transactional test with DbUnit support.
@@ -26,9 +25,11 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
         assertEquals("Hello from Earth", greeting);
     }
 
-    @Test(expected=PlanetNotFoundException.class)
+    @Test
     public void testSayHelloError() throws Exception {
-        planetService.sayHello(getServiceContext(), "Pluto");
+        assertThrows(PlanetNotFoundException.class, () -> {
+            planetService.sayHello(getServiceContext(), "Pluto");
+        });
     }
 
     @Test

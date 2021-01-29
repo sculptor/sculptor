@@ -1,17 +1,13 @@
 package org.sculptor.examples.library.person.domain;
 
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
-
-@RunWith(BlockJUnit4ClassRunner.class)
-public class PersonTest extends TestCase {
+public class PersonTest {
 
     @Test
     public void testGetAge() {

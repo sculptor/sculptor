@@ -1,22 +1,27 @@
 package org.sculptor.dddsample.cargo.domain;
 
-import static org.junit.Assert.fail;
-import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 
 public class TrackingIdTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructorShouldRejectNullIdentifier() throws Exception {
-        new TrackingId(null);
-        fail("Should not accept null constructor arguments");
+        assertThrows(IllegalArgumentException.class, () -> {
+            new TrackingId(null);
+            fail("Should not accept null constructor arguments");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void factoryMethodShouldRejectNullIdentifier() throws Exception {
-        trackingId(null);
-        fail("Should not accept null constructor arguments");
+        assertThrows(IllegalArgumentException.class, () -> {
+            trackingId(null);
+            fail("Should not accept null constructor arguments");
+        });
     }
 
 }

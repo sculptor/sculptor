@@ -1,20 +1,20 @@
 package org.sculptor.examples.library.media.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
 import org.sculptor.examples.library.media.domain.Book;
 import org.sculptor.examples.library.media.domain.PhysicalMedia;
 import org.sculptor.examples.library.media.serviceapi.LibraryService;
 import org.sculptor.examples.library.media.serviceapi.PhysicalMediaService;
 import org.sculptor.examples.library.media.serviceapi.PhysicalMediaServiceTestBase;
-import org.junit.Test;
 import org.sculptor.examples.library.media.domain.Library;
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Spring based transactional test with DbUnit support.

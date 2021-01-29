@@ -18,22 +18,22 @@ package org.sculptor.generator.template.domain
 
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.configuration.Configuration
 import org.sculptor.generator.configuration.ConfigurationProviderModule
 import org.sculptor.generator.test.GeneratorModelTestFixtures
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
-@RunWith(typeof(XtextRunner))
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 
@@ -43,7 +43,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 	var DomainObjectReferenceAnnotationTmpl domainObjectReferenceAnnotationTmpl;
 	var DomainObjectReferenceTmpl domainObjectReferenceTmpl;
 
-	@Before
+	@BeforeEach
 	def void setup() {
 		System.setProperty(Configuration.PROPERTIES_LOCATION_PROPERTY,
 			"generator-tests/dddsample/sculptor-generator.properties")
@@ -57,7 +57,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 			typeof(DomainObjectReferenceTmpl));
 	}
 
-	@After
+	@AfterEach
 	def void clearSystemProperties() {
 		System.clearProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY);
 	}

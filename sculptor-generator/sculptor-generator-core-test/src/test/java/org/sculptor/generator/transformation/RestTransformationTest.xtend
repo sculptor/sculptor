@@ -18,11 +18,11 @@ package org.sculptor.generator.transformation
 
 import com.google.inject.Provider
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.sculptordsl.DslApplication
 import org.sculptor.dsl.sculptordsl.DslModel
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
@@ -35,11 +35,11 @@ import sculptormetamodel.HttpMethod
 import sculptormetamodel.Module
 import sculptormetamodel.Resource
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
-@RunWith(typeof(XtextRunner))
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class RestTransformationTest extends XtextTest {
 
@@ -48,7 +48,7 @@ class RestTransformationTest extends XtextTest {
 	var Provider<Transformation> transformationProvider
 	var Application app
 
-	@Before
+	@BeforeEach
 	def void setupDslModel() {
 
 		// Activate cartridge 'test' with transformation extensions 

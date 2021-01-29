@@ -1,7 +1,7 @@
 package org.blog.core.serviceapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.getServiceContext;
 
 import java.util.List;
@@ -9,22 +9,21 @@ import java.util.Set;
 
 import org.blog.core.domain.Author;
 import org.blog.core.domain.Blog;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Spring based test with MongoDB.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class BlogServiceTest extends AbstractJUnit4SpringContextTests implements BlogServiceTestBase {
+public class BlogServiceTest implements BlogServiceTestBase {
 
 	@Autowired
 	private BlogService blogService;
@@ -35,18 +34,18 @@ public class BlogServiceTest extends AbstractJUnit4SpringContextTests implements
 	@Autowired
 	private DbManager dbManager;
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		dbManager.getDB().dropDatabase();
 	}
 
-	@Before
+	@BeforeEach
 	public void initDbManagerThreadInstance() throws Exception {
 		// to be able to do lazy loading of associations inside test class
 		DbManager.setThreadInstance(dbManager);
 	}
 
-	@After
+	@AfterEach
 	public void cleanupDbManagerThreadInstance() {
 		DbManager.setThreadInstance(null);
 	}

@@ -1,9 +1,12 @@
 package org.sculptor.dddsample.location.domain;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class LocationTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
 
+public class LocationTest {
+
+  @Test
   public void testEquals() {
     // Same UN locode - equal
     assertTrue(new Location("test-name", new UnLocode("ATEST")).

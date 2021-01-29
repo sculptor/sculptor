@@ -1,5 +1,6 @@
 package org.sculptor.dddsample.cargo.domain;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HAMBURG;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HONGKONG;
@@ -10,18 +11,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.carrier.domain.CarrierMovement;
 import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
 
-public class DeliveryHistoryTest extends TestCase {
+public class DeliveryHistoryTest {
 
     private final Cargo cargo = new Cargo(trackingId("XYZ"), HONGKONG, NEWYORK);
 
+    @Test
     public void testEvensOrderedByTimeOccured() throws Exception {
 
         DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -45,6 +46,7 @@ public class DeliveryHistoryTest extends TestCase {
         assertSame(he3, orderEvents.get(3));
     }
 
+    @Test
     public void testCargoStatusFromLastHandlingEvent() {
         Set<HandlingEvent> events = new HashSet<HandlingEvent>();
         DeliveryHistory deliveryHistory = new DeliveryHistory(events);
@@ -69,6 +71,7 @@ public class DeliveryHistoryTest extends TestCase {
         assertEquals(StatusCode.CLAIMED, deliveryHistory.status());
     }
 
+    @Test
     public void testCurrentLocation() throws Exception {
         Set<HandlingEvent> events = new HashSet<HandlingEvent>();
         DeliveryHistory deliveryHistory = new DeliveryHistory(events);

@@ -1,11 +1,5 @@
 package org.eclipselabs.xtext.utils.unittesting;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,9 +40,11 @@ import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.Issue;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -124,16 +120,16 @@ public abstract class XtextTest {
     	}
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void init_internal() {
         new StandaloneSetup().setPlatformUri("..");
     }
 
-    @Before
+    @BeforeEach
     @Deprecated
     public void before() {}
 
-    @Before
+    @BeforeEach
     public final void _before() {
     	issues = null;
     	assertedIssues = new HashSet<Issue>();
@@ -155,11 +151,11 @@ public abstract class XtextTest {
     	}
     }
     
-    @After
+    @AfterEach
     @Deprecated
     public void after() {}
 
-    @After
+    @AfterEach
     public void _after() {
         if (issues != null) {
         	dumpUnassertedIssues();
@@ -311,14 +307,14 @@ public abstract class XtextTest {
      * */
     protected void testTerminal(String input, String... expectedTerminals) {
       List<Token> tokens = getTokens(input);
-      assertEquals(input, expectedTerminals.length, tokens.size());
+      assertEquals(expectedTerminals.length, tokens.size(), input);
       for (int i = 0; i < tokens.size(); i++) {
         Token token = tokens.get(i);
         String exp = expectedTerminals[i];
         if (!exp.startsWith("'")) {
         	exp = "RULE_" + exp;
         }
-        assertEquals(input, exp, getTokenType(token));
+        assertEquals(exp, getTokenType(token), input);
       }
     }
 
@@ -347,9 +343,9 @@ public abstract class XtextTest {
      * */
     protected void testNoKeyword(String keyword) {
       List<Token> tokens = getTokens(keyword);
-      assertEquals(keyword, 1, tokens.size());
+      assertEquals(1, tokens.size(), keyword);
       String type = getTokenType(tokens.get(0));
-      assertFalse(keyword, type.charAt(0) == '\'');
+      assertFalse(type.charAt(0) == '\'', keyword);
     }
     
 
@@ -451,7 +447,7 @@ public abstract class XtextTest {
         	fail("\n\n" + failMessage + "\n");
         }
 
-        assertFalse("Resource has no content", resource.getContents().isEmpty());
+        assertFalse(resource.getContents().isEmpty(), "Resource has no content");
         EObject o = resource.getContents().get(0);
         // assure that the root element is of the expected type
         if (clazz != null) {
@@ -545,21 +541,21 @@ public abstract class XtextTest {
 		ensureIsAfterTestFile();
 		
 		assertedIssues.addAll(coll.getIssues());
-		assertTrue("failed "+msg+coll.getMessageString(), coll.evaluate() );
+		assertTrue(coll.evaluate(), "failed "+msg+coll.getMessageString());
 	}
 	
 	protected void assertConstraints( FluentIssueCollection coll) {
 		ensureIsAfterTestFile();
 		
 		assertedIssues.addAll(coll.getIssues());
-		assertTrue("<no id> failed"+coll.getMessageString(), coll.evaluate() );
+		assertTrue(coll.evaluate(), "<no id> failed"+coll.getMessageString());
 	}
 	
 	protected void assertConstraints( String constraintID, FluentIssueCollection coll) {
 		ensureIsAfterTestFile();
 		
 		assertedIssues.addAll(coll.getIssues());
-		assertTrue(constraintID+" failed"+coll.getMessageString(), coll.evaluate() );
+		assertTrue(coll.evaluate(), constraintID + " failed"+coll.getMessageString());
 	}
 	
 	public EObject getEObject( URI uri ) {

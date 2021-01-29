@@ -20,15 +20,15 @@ import com.google.inject.Injector
 import javax.inject.Inject
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.sculptordsl.SculptordslFactory
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 
-@RunWith(typeof(XtextRunner))
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class SculptordslValidatorTest extends XtextTest {
 
@@ -36,7 +36,7 @@ class SculptordslValidatorTest extends XtextTest {
 	@Inject SculptordslValidator validator  
 	ValidatorTester<SculptordslValidator> tester;
 
-	@Before
+	@BeforeEach
 	def void prepareTester() {
 		tester = new ValidatorTester<SculptordslValidator>(validator, injector)
 	}

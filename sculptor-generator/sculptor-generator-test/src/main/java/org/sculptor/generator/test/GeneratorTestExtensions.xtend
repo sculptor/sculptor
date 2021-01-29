@@ -24,7 +24,7 @@ import java.util.regex.Pattern
 import org.eclipse.emf.common.util.EList
 import sculptormetamodel.NamedElement
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Extensions used in generator tests
@@ -40,7 +40,7 @@ class GeneratorTestExtensions {
 	}
 
 	def static void assertContains(String text, String subString) {
-		assertTrue("text does not contain expected substring: " + subString, text.contains(subString));
+		assertTrue(text.contains(subString), "text does not contain expected substring: " + subString);
 	}
 
 	/**
@@ -48,7 +48,7 @@ class GeneratorTestExtensions {
       */
 	def static void assertMatchesRegexp(String text, String regexp) {
 		val p = Pattern.compile(regexp, Pattern.MULTILINE);
-		assertTrue("Text did not contain pattern \"" + regexp + "\"", p.matcher(text).find());
+		assertTrue(p.matcher(text).find(), "Text did not contain pattern \"" + regexp + "\"");
 	}
 
 	/**
@@ -64,7 +64,7 @@ class GeneratorTestExtensions {
 	}
 
 	def static void assertNotContains(String text, String subStr) {
-		assertFalse("Text contained substring \"" + subStr + "\"", text.contains(subStr));
+		assertFalse(text.contains(subStr), "Text contained substring \"" + subStr + "\"");
 	}
 
 	/**
@@ -89,8 +89,8 @@ class GeneratorTestExtensions {
 		val actualNames = listOfNamedElements.map[ne|ne.name].filter[name|
 			expectedNamesList.contains(name) || !SYSTEM_ATTRIBUTES.contains(name)].toList
 
-		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames,
-			actualNames.sort.equals(expectedNamesList.sort))
+		assertTrue(actualNames.sort.equals(expectedNamesList.sort)
+			, "Expected: " + expectedNamesList + ", Actual: " + actualNames)
 	}
 
 	def static <NE extends NamedElement> void assertOneAndOnlyOneWithoutFilter(EList<NE> listOfNamedElements, String... expectedNames) {
@@ -98,8 +98,8 @@ class GeneratorTestExtensions {
 
 		val actualNames = listOfNamedElements.map[ne|ne.name].toList
 
-		assertTrue("Expected: " + expectedNamesList + ", Actual: " + actualNames,
-			actualNames.sort.equals(expectedNamesList.sort))
+		assertTrue(actualNames.sort.equals(expectedNamesList.sort)
+			, "Expected: " + expectedNamesList + ", Actual: " + actualNames)
 	}
 
 }

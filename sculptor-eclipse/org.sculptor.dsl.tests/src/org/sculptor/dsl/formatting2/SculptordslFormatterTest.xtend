@@ -3,13 +3,13 @@ package org.sculptor.dsl.formatting2
 import javax.inject.Inject
 import org.eclipse.xtext.formatting2.FormatterPreferenceKeys
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipse.xtext.testing.formatter.FormatterTestHelper
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 
-@RunWith(XtextRunner)
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(SculptordslInjectorProvider)
 class SculptordslFormatterTest {
 	

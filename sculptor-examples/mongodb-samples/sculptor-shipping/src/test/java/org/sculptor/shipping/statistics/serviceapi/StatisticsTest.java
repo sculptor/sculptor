@@ -1,16 +1,16 @@
 package org.sculptor.shipping.statistics.serviceapi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sculptor.shipping.core.domain.ShipId.shipId;
 import static org.sculptor.shipping.core.domain.UnLocode.unLocode;
 
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.sculptor.framework.event.EventBus;
 import org.sculptor.shipping.core.domain.Country;
@@ -23,14 +23,14 @@ import org.sculptor.shipping.statistics.serviceapi.StatisticsTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Spring based test with MongoDB.
  */
-@RunWith(org.springframework.test.context.junit4.SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class StatisticsTest extends AbstractJUnit4SpringContextTests implements StatisticsTestBase {
+public class StatisticsTest implements StatisticsTestBase {
     @Autowired
     private DbManager dbManager;
     @Autowired
@@ -47,7 +47,7 @@ public class StatisticsTest extends AbstractJUnit4SpringContextTests implements 
     private Port sfo;
     private ShipId kr;
 
-    @Before
+    @BeforeEach
     public void initTestData() {
         kr = shipId("KR");
         referenceDataService.createShip(kr, "King Roy");
@@ -60,13 +60,13 @@ public class StatisticsTest extends AbstractJUnit4SpringContextTests implements 
         statistics.reset();
     }
 
-    @Before
+    @BeforeEach
     public void initDbManagerThreadInstance() throws Exception {
         // to be able to do lazy loading of associations inside test class
         DbManager.setThreadInstance(dbManager);
     }
 
-    @After
+    @AfterEach
     public void dropDatabase() {
         Set<String> names = dbManager.getDB().getCollectionNames();
         for (String each : names) {

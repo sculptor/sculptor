@@ -47,7 +47,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @author Patrik Nordwall
  */
-public class IsolatedDatabaseTestCase extends DatabaseTestCase {
+// TODO: It's broken now, we can't use DatabaseTestCase because it depends on junit4
+// This class is used only in DatabaseImport util class (tool used during testing)
+public class IsolatedDatabaseTestCase { //extends DatabaseTestCase {
 
     private static String DEFAULT_SPRING_CONFIG_FILE_LOCATION = "/applicationContext-test.xml";
 
@@ -72,7 +74,7 @@ public class IsolatedDatabaseTestCase extends DatabaseTestCase {
         if (ServiceContextStore.get() == null) {
             ServiceContextStore.set(getServiceContext());
         }
-        super.setUp();
+        // super.setUp();
     }
 
     /**
@@ -84,7 +86,7 @@ public class IsolatedDatabaseTestCase extends DatabaseTestCase {
     }
 
     protected void tearDown() throws Exception {
-        super.tearDown();
+        // super.tearDown();
         ((ConfigurableApplicationContext) context).close();
         context = null;
     }

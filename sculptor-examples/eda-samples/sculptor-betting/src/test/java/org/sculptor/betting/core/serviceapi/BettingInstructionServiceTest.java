@@ -2,24 +2,22 @@ package org.sculptor.betting.core.serviceapi;
 
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sculptor.framework.accessimpl.mongodb.DbManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Spring based test with MongoDB.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public class BettingInstructionServiceTest extends AbstractJUnit4SpringContextTests implements
-		BettingInstructionServiceTestBase {
+public class BettingInstructionServiceTest implements BettingInstructionServiceTestBase {
 
 	@Autowired
 	private DbManager dbManager;
@@ -27,17 +25,17 @@ public class BettingInstructionServiceTest extends AbstractJUnit4SpringContextTe
 	@Autowired
 	private BettingInstructionService bettingInstructionService;
 
-	@Before
+	@BeforeEach
 	public void initTestData() {
 	}
 
-	@Before
+	@BeforeEach
 	public void initDbManagerThreadInstance() throws Exception {
 		// to be able to do lazy loading of associations inside test class
 		DbManager.setThreadInstance(dbManager);
 	}
 
-	@After
+	@AfterEach
 	public void dropDatabase() {
 		Set<String> names = dbManager.getDB().getCollectionNames();
 		for (String each : names) {
@@ -53,25 +51,25 @@ public class BettingInstructionServiceTest extends AbstractJUnit4SpringContextTe
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testFindById() throws Exception {
 		// TODO Auto-generated method stub
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testFindAll() throws Exception {
 		// TODO Auto-generated method stub
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testSave() throws Exception {
 		// TODO Auto-generated method stub
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testDelete() throws Exception {
 		// TODO Auto-generated method stub
 	}

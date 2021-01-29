@@ -1,13 +1,14 @@
 package org.sculptor.dddsample.cargo.serviceapi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HELSINKI;
 import static org.sculptor.dddsample.location.domain.SampleLocations.HONGKONG;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sculptor.dddsample.cargo.domain.Cargo;
 import org.sculptor.dddsample.cargo.domain.HandlingEvent;
 import org.sculptor.dddsample.cargo.domain.Type;
@@ -50,9 +51,11 @@ public class TrackingServiceTest extends AbstractDbUnitJpaTests implements Track
         assertEquals(Type.LOAD, handlingEvent.getType());
     }
 
-    @Test(expected=CargoNotFoundException.class)
+    @Test
     public void testTrackThrowingCargoNotFoundException() throws CargoNotFoundException {
-        trackingService.track(getServiceContext(), trackingId("ZZZ"));
+        assertThrows(CargoNotFoundException.class, () -> {
+            trackingService.track(getServiceContext(), trackingId("ZZZ"));
+        });
     }
 
     @Test

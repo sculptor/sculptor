@@ -1,16 +1,17 @@
 package org.sculptor.examples.library.media.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.sculptor.examples.library.media.domain.PhysicalMedia;
 import org.sculptor.examples.library.media.domain.PhysicalMediaProperties;
 import org.sculptor.examples.library.media.domain.PhysicalMediaRepository;
-import org.junit.Assume;
-import org.junit.Test;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.domain.PagedResult;
@@ -78,9 +79,9 @@ public class PhysicalMediaRepositoryTest extends AbstractDbUnitJpaTests {
 
     @Test
     public void testFindByNestedCondition3WithCount() throws Exception {
-    	// TODO: possible solution is to use JoinFetch to optimize query execution (didn't get it to work until now)
-        Assume.assumeTrue(!JpaHelper.isJpaProviderEclipselink(getEntityManager()));
-    	ConditionalCriteria condition1 = criteriaFor(PhysicalMedia.class).withProperty(
+        // TODO: possible solution is to use JoinFetch to optimize query execution (didn't get it to work until now)
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderEclipselink(getEntityManager()));
+        ConditionalCriteria condition1 = criteriaFor(PhysicalMedia.class).withProperty(
                 PhysicalMediaProperties.library().name()).eq("LibraryServiceTest").buildSingle();
         ConditionalCriteria condition2 = criteriaFor(PhysicalMedia.class)
                 .withProperty(PhysicalMediaProperties.status()).eq("A").buildSingle();
@@ -95,13 +96,13 @@ public class PhysicalMediaRepositoryTest extends AbstractDbUnitJpaTests {
 
     @Test
     public void testFindByNestedCondition4() throws Exception {
-    	// hibernate seems not to support this nested condition
-    	// TODO: watch hibernate issue HHH-5948
-        Assume.assumeTrue(!JpaHelper.isJpaProviderHibernate(getEntityManager()));
-    	// datanucleus seems not to support this nested condition
-        Assume.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
-    	// need a distinct query for openjpa and eclipselink to get the correct results
-    	List<ConditionalCriteria> conditionalCriteria = criteriaFor(PhysicalMedia.class).withProperty(
+        // hibernate seems not to support this nested condition
+        // TODO: watch hibernate issue HHH-5948
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderHibernate(getEntityManager()));
+        // datanucleus seems not to support this nested condition
+        Assumptions.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
+        // need a distinct query for openjpa and eclipselink to get the correct results
+        List<ConditionalCriteria> conditionalCriteria = criteriaFor(PhysicalMedia.class).withProperty(
                 PhysicalMediaProperties.library().media().status()).eq("A").distinctRoot().build();
         PagingParameter pParam = PagingParameter.rowAccess(0, 1, true);
         PagedResult<PhysicalMedia> pResult = physicalMediaRepository.findByCondition(conditionalCriteria, pParam);
