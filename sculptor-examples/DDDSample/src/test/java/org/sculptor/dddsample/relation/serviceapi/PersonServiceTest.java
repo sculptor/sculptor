@@ -656,6 +656,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 					assertEquals("Second" + error, exRowTime.getSeconds(), resRowTime.getSeconds());
 				} else if (resRow[i] instanceof DateTime) {
 					DateTime resRowTime = (DateTime) resRow[i];
+					resRowTime = resRowTime.withZone(DateTimeZone.UTC);
 					DateTime exRowTime = (DateTime) exElem;
 					String error = " in " + exRowTime + " doesn't match with " + resRowTime;
 					assertEquals("Year" + error, exRowTime.getYear(), resRowTime.getYear());
