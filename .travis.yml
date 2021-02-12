@@ -7,10 +7,7 @@ jdk:
 
 services:
  - mongodb
- - postgresql
-
-addons:
-  postgresql: "11"
+ - postgresql: "11.2"
 
 before_install:
  # See https://github.com/travis-ci/travis-ci/issues/4629#issuecomment-239493916
