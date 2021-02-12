@@ -9,6 +9,9 @@ services:
  - mongodb
  - postgresql
 
+addons:
+  postgresql: "11"
+
 before_install:
  # See https://github.com/travis-ci/travis-ci/issues/4629#issuecomment-239493916
  - rm ~/.m2/settings.xml
