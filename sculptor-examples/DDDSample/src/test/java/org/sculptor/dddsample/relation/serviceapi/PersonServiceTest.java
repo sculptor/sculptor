@@ -9,6 +9,7 @@ import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.sculptor.framework.domain.JpaFunction;
 import org.sculptor.framework.domain.PagingParameter;
 import org.sculptor.framework.domain.expression.Expression;
+import org.sculptor.framework.domain.expression.ExpressionBuilder;
 import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -210,9 +211,9 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				.select(secondName().expr().left(4))
 				.select(secondName().expr().right(3))
 				.select(secondName().expr().append("-").append(12).append(" ").append(first()).append(id()))
-				.select(Expression.currentDate())
-				.select(Expression.currentTime())
-				.select(Expression.currentTimestamp())
+				.select(ExpressionBuilder.currentDate())
+				.select(ExpressionBuilder.currentTime())
+				.select(ExpressionBuilder.currentTimestamp())
 				.select(createdDate())
 				.select(createdDate().expr().second())
 				.select(createdDate().expr().minute())

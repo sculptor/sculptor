@@ -27,6 +27,7 @@ import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.domain.Property;
 import org.sculptor.framework.domain.expression.ComplexExpression;
 import org.sculptor.framework.domain.expression.Expression;
+import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
 
 /**
  * Expression Builder for ConditionalCriteria. A small internal DSL (fluent
@@ -564,17 +565,29 @@ public class ConditionalCriteriaBuilder<T> {
             public ConditionRootLogic<T> isNotEmpty() {
                pushConditionalCriteria(ConditionalCriteria.isNotEmpty(baseProp));
                return RootBuilderImpl.this;
-           }
+            }
 
             public ConditionRootLogic<T> fetchEager() {
                pushConditionalCriteria(ConditionalCriteria.fetchEager(baseProp));
                return RootBuilderImpl.this;
-           }
+            }
 
             public ConditionRootLogic<T> fetchLazy() {
                pushConditionalCriteria(ConditionalCriteria.fetchLazy(baseProp));
                return RootBuilderImpl.this;
-           }
+            }
+
+            @Override
+            public ConditionRootLogic<T> ftsEq(ExpressionFtsQuery query) {
+                pushConditionalCriteria(ConditionalCriteria.ftsEq(baseProp, query));
+                return RootBuilderImpl.this;
+            }
+
+            @Override
+            public ConditionRootLogic<T> ftsEq(String query) {
+                pushConditionalCriteria(ConditionalCriteria.ftsEq(baseProp, query));
+                return RootBuilderImpl.this;
+            }
         }
    }
 
@@ -626,6 +639,10 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRootLogic<T> isNotEmpty();
         ConditionRootLogic<T> fetchLazy();
         ConditionRootLogic<T> fetchEager();
+
+        // Full test search for PostgreSQL
+        ConditionRootLogic<T> ftsEq(ExpressionFtsQuery query);
+        ConditionRootLogic<T> ftsEq(String query);
     }
 
     public interface Between<T> {

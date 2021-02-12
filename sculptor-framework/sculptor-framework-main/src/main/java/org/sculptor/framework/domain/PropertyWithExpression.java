@@ -1,6 +1,9 @@
 package org.sculptor.framework.domain;
 
 import org.sculptor.framework.domain.expression.*;
+import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
+import org.sculptor.framework.domain.expression.fts.ExpressionFtsVector;
+import org.sculptor.framework.domain.expression.fts.HighlightOptions;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
@@ -11,7 +14,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropertyWithExpression<T> implements ComplexExpression<T> {
+import static org.sculptor.framework.domain.expression.fts.ExpressionFtsVector.DEFAULT_LANGUAGE;
+
+public class PropertyWithExpression<T> implements ComplexExpression<T>, ExpressionFtsVector<T>, ExpressionFtsQuery<T> {
 	Property<T> base;
 	List<JpaFunction> functions = new ArrayList<>();
 
@@ -520,6 +525,289 @@ public class PropertyWithExpression<T> implements ComplexExpression<T> {
 		return this;
 	}
 
+	@Override
+	public CaseWhen<T> caseExpr() {
+		CaseExpressionBuilder<T> caseExpressionBuilder = new CaseExpressionBuilder(this);
+		functions.add(caseExpressionBuilder);
+		return caseExpressionBuilder;
+	}
+
+	// Full text search support for PostgreSQL
+	@Override
+	public ExpressionFtsVector<T> asFtsVector() {
+		functions.add((cb, left, ec) -> cb.function("toFtsVector", String.class, cb.literal(DEFAULT_LANGUAGE), left));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> asFtsVector(String lang) {
+		functions.add((cb, left, ec) -> cb.function("toFtsVector", String.class, cb.literal(lang), left));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(ExpressionFtsQuery query) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(DEFAULT_LANGUAGE)
+				, left
+				, ec.convertObject(query)
+				, cb.literal("")));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(DEFAULT_LANGUAGE)
+				, left
+				, cb.function("ftsQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query))
+				, cb.literal("")));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(ExpressionFtsQuery query, HighlightOptions options) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(DEFAULT_LANGUAGE)
+				, left
+				, ec.convertObject(query)
+				, cb.literal(options.toSpecString())));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(String query, HighlightOptions options) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(DEFAULT_LANGUAGE)
+				, left
+				, cb.function("ftsQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query))
+				, cb.literal(options.toSpecString())));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(String language, ExpressionFtsQuery query) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(language)
+				, left
+				, ec.convertObject(query)
+				, cb.literal("")));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(String language, String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(language)
+				, left
+				, cb.function("ftsQuery", String.class, cb.literal(language), cb.literal(query))
+				, cb.literal("")));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(String language, ExpressionFtsQuery query, HighlightOptions options) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(language)
+				, left
+				, ec.convertObject(query)
+				, cb.literal(options.toSpecString())));
+		return this;
+	}
+
+	@Override
+	public ExpressionString<T> ftsHighlight(String language, String query, HighlightOptions options) {
+		functions.add((cb, left, ec) -> cb.function("ftsHighlight", String.class
+				, cb.literal(language)
+				, left
+				, cb.function("ftsQuery", String.class, cb.literal(language), cb.literal(query))
+				, cb.literal(options.toSpecString())));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query) {
+		functions.add((cb, left, ec) -> cb.function("ftsRank", String.class, left, ec.convertObject(query)));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, int normalization) {
+		functions.add((cb, left, ec) -> cb.function("ftsRank", String.class, left, ec.convertObject(query), cb.literal(normalization)));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD) {
+		functions.add((cb, left, ec) -> {
+			String rank = "{" + weightD + "," + weightC + "," + weightB + "," + weightA + "}";
+			return cb.function("ftsRank", String.class, cb.literal(rank), left
+					, ec.convertObject(query), cb.literal(ExpressionFtsVector.NORM_DEFAULT));
+		});
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD, int normalization) {
+		functions.add((cb, left, ec) -> {
+			String rank = "{" + weightD + "," + weightC + "," + weightB + "," + weightA + "}";
+			return cb.function("ftsRank", String.class, cb.literal(rank), left, ec.convertObject(query), cb.literal(normalization));
+		});
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query) {
+		functions.add((cb, left, ec) -> cb.function("ftsRankCd", String.class, left, ec.convertObject(query)));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, int normalization) {
+		functions.add((cb, left, ec) -> cb.function("ftsRankCd", String.class, left, ec.convertObject(query), cb.literal(normalization)));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD) {
+		functions.add((cb, left, ec) -> {
+			String rank = "{" + weightD + "," + weightC + "," + weightB + "," + weightA + "}";
+			return cb.function("ftsRankCd", String.class, cb.literal(rank), left, ec.convertObject(query));
+		});
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD, int normalization) {
+		functions.add((cb, left, ec) -> {
+			String rank = "{" + weightD + "," + weightC + "," + weightB + "," + weightA + "}";
+			return cb.function("ftsRankCd", String.class, cb.literal(rank), left
+					, ec.convertObject(query), cb.literal(normalization));
+		});
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> ftsStrip() {
+		functions.add((cb, left, ec) -> cb.function("ftsStrip", String.class, left));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsLength() {
+		functions.add((cb, left, ec) -> cb.function("ftsLength", Integer.class, left));
+		return this;
+	}
+
+	@Override
+	public ExpressionNumeric<T> ftsNumNode() {
+		functions.add((cb, left, ec) -> cb.function("ftsNumNode", Integer.class, left));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> ftsSetWeightA() {
+		functions.add((cb, left, ec) -> cb.function("ftsSetWeight", String.class, left, cb.literal("A")));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> ftsSetWeightB() {
+		functions.add((cb, left, ec) -> cb.function("ftsSetWeight", String.class, left, cb.literal("B")));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> ftsSetWeightC() {
+		functions.add((cb, left, ec) -> cb.function("ftsSetWeight", String.class, left, cb.literal("C")));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> ftsSetWeightD() {
+		functions.add((cb, left, ec) -> cb.function("ftsSetWeight", String.class, left, cb.literal("D")));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsVector<T> ftsConcat(ExpressionFtsVector<T> other) {
+		functions.add((cb, left, ec) -> cb.function("ftsConcat", String.class, left, ec.convertObject(other)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsQuery(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsQuery(String lang, String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsQuery", String.class, cb.literal(lang), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsPlainQuery(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsPlainQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsPlainQuery(String lang, String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsPlainQuery", String.class, cb.literal(lang), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsPhraseQuery(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsPhraseQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsPhraseQuery(String lang, String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsPhraseQuery", String.class, cb.literal(lang), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsWebQuery(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsWebQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query)));
+		return this;
+	}
+
+	public ExpressionFtsQuery<T> ftsWebQuery(String lang, String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsWebQuery", String.class, cb.literal(lang), cb.literal(query)));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsQuery<T> andFtsQuery(ExpressionFtsQuery query) {
+		functions.add((cb, left, ec) -> cb.function("ftsAnd", String.class, left, ec.convertObject(query)));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsQuery<T> andFtsQuery(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsAnd", String.class, left
+				, cb.function("ftsQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query))));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsQuery<T> orFtsQuery(ExpressionFtsQuery query) {
+		functions.add((cb, left, ec) -> cb.function("ftsOr", String.class, left, ec.convertObject(query)));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsQuery<T> orFtsQuery(String query) {
+		functions.add((cb, left, ec) -> cb.function("ftsOr", String.class, left
+				, cb.function("ftsQuery", String.class, cb.literal(DEFAULT_LANGUAGE), cb.literal(query))));
+		return this;
+	}
+
+	@Override
+	public ExpressionFtsQuery<T> notFtsQuery() {
+		functions.add((cb, left, ec) -> cb.function("ftsNot", String.class, left));
+		return this;
+	}
+
+	// Support for creating date, time and timestamp from Expression without column
 	public ExpressionDate<T> currentDate() {
 		functions.add((cb, left, ec) -> cb.currentDate());
 		return this;
@@ -533,13 +821,6 @@ public class PropertyWithExpression<T> implements ComplexExpression<T> {
 	public ExpressionDate<T> currentTimestamp() {
 		functions.add((cb, left, ec) -> cb.currentTimestamp());
 		return this;
-	}
-
-	@Override
-	public CaseWhen<T> caseExpr() {
-		CaseExpressionBuilder<T> caseExpressionBuilder = new CaseExpressionBuilder(this);
-		functions.add(caseExpressionBuilder);
-		return caseExpressionBuilder;
 	}
 
 }

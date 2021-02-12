@@ -7,11 +7,15 @@ jdk:
 
 services:
  - mongodb
+ - postgresql
 
 before_install:
  # See https://github.com/travis-ci/travis-ci/issues/4629#issuecomment-239493916
  - rm ~/.m2/settings.xml
  # We need GraphViz to generate images
  - "sudo apt-get install graphviz 2>&1 | tail -n 2"
+
+before_script:
+ - psql -c 'create database fulltexttest;' -U postgres
 
 script: mvn -B -V install && mvn -B -V install -Pexamples

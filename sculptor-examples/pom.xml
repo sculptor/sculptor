@@ -20,5 +20,6 @@
 		<!-- <module>ejb-example</module> -->
 		<module>springboot-example</module> 
 		<module>springdatajpa-example</module>
+		<module>fulltextsearch-example</module>
 	</modules>
 </project>

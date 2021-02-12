@@ -18,5 +18,25 @@ public class SculptorPostgreSql10Dialect extends PostgreSQL10Dialect {
 		registerFunction("right", new StandardSQLFunction("right", StandardBasicTypes.STRING));
 		registerFunction("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
 		registerFunction("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
+
+		registerFunction("ftsEquals", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "(?1 @@ ?2)"));
+		registerFunction("toFtsVector", new SQLFunctionTemplate(StandardBasicTypes.STRING, "to_tsvector(?1::regconfig, ?2)"));
+		registerFunction("ftsLength", new StandardSQLFunction("length", StandardBasicTypes.INTEGER));
+		registerFunction("ftsNumNode", new StandardSQLFunction("numnode", StandardBasicTypes.INTEGER));
+		registerFunction("ftsSetWeight", new StandardSQLFunction("setweight", StandardBasicTypes.STRING));
+		registerFunction("ftsConcat", new SQLFunctionTemplate(StandardBasicTypes.STRING, "(?1 || ?2)"));
+		registerFunction("ftsAnd", new SQLFunctionTemplate(StandardBasicTypes.STRING, "(?1 && ?2)"));
+		registerFunction("ftsOr", new SQLFunctionTemplate(StandardBasicTypes.STRING, "(?1 || ?2)"));
+		registerFunction("ftsNot", new SQLFunctionTemplate(StandardBasicTypes.STRING, "!! ?1"));
+		registerFunction("ftsStrip", new StandardSQLFunction("strip", StandardBasicTypes.STRING));
+
+		registerFunction("ftsRank", new StandardSQLFunction("ts_rank", StandardBasicTypes.FLOAT));
+		registerFunction("ftsRankCd", new StandardSQLFunction("ts_rank_cd", StandardBasicTypes.FLOAT));
+		registerFunction("ftsHighlight", new SQLFunctionTemplate(StandardBasicTypes.STRING, "ts_headline(?1::regconfig, ?2, ?3, ?4)"));
+
+		registerFunction("ftsQuery", new SQLFunctionTemplate(StandardBasicTypes.STRING, "to_tsquery(?1::regconfig, ?2)"));
+		registerFunction("ftsPlainQuery", new SQLFunctionTemplate(StandardBasicTypes.STRING, "plainto_tsquery(?1::regconfig, ?2)"));
+		registerFunction("ftsPhraseQuery", new SQLFunctionTemplate(StandardBasicTypes.STRING, "phraseto_tsquery(?1::regconfig, ?2)"));
+		registerFunction("ftsWebQuery", new SQLFunctionTemplate(StandardBasicTypes.STRING, "websearch_to_tsquery(?1::regconfig, ?2)"));
 	}
 }

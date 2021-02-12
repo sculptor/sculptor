@@ -7,6 +7,7 @@ import org.sculptor.framework.domain.Property;
 import org.sculptor.framework.domain.PropertyWithExpression;
 import org.sculptor.framework.domain.expression.Expression;
 import org.sculptor.framework.domain.LeafProperty;
+import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
 
 public class ConditionalCriteria {
 
@@ -224,6 +225,14 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.FetchLazy, property);
 	}
 
+	public static ConditionalCriteria ftsEq(Expression<?> property, ExpressionFtsQuery query) {
+		return new ConditionalCriteria(Operator.FtsEqual, property, query);
+	}
+
+	public static ConditionalCriteria ftsEq(Expression<?> property, String query) {
+		return new ConditionalCriteria(Operator.FtsEqual, property, query);
+	}
+
 	public static ConditionalCriteria distinctRoot() {
 		return new ConditionalCriteria(Operator.DistinctRoot, null);
 	}
@@ -275,6 +284,7 @@ public class ConditionalCriteria {
 		, DistinctRoot(OperatorType.Config), ProjectionRoot(OperatorType.Config)
 		, FetchLazy(OperatorType.Config), FetchEager(OperatorType.Config)
 		, ReadOnly(OperatorType.Config), Scroll(OperatorType.Config)
+		, FtsEqual
 		;
 
 		private OperatorType operatorType;

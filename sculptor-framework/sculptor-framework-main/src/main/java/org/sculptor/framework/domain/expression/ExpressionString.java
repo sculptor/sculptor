@@ -1,5 +1,8 @@
 package org.sculptor.framework.domain.expression;
 
+import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
+import org.sculptor.framework.domain.expression.fts.HighlightOptions;
+
 public interface ExpressionString<T> extends ExpressionCast<T> {
 	// String
 	ExpressionString<T> coalesce(Object value);
@@ -67,4 +70,20 @@ public interface ExpressionString<T> extends ExpressionCast<T> {
 	ExpressionString<T> maxAsString();
 
 	ExpressionString<T> minAsString();
+
+	ExpressionString<T> ftsHighlight(String query);
+
+	ExpressionString<T> ftsHighlight(ExpressionFtsQuery query);
+
+	ExpressionString<T> ftsHighlight(String query, HighlightOptions options);
+
+	ExpressionString<T> ftsHighlight(ExpressionFtsQuery query, HighlightOptions options);
+
+	ExpressionString<T> ftsHighlight(String language, String query);
+
+	ExpressionString<T> ftsHighlight(String language, ExpressionFtsQuery query);
+
+	ExpressionString<T> ftsHighlight(String language, String query, HighlightOptions options);
+
+	ExpressionString<T> ftsHighlight(String language, ExpressionFtsQuery query, HighlightOptions options);
 }

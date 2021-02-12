@@ -17,6 +17,7 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
+import org.hibernate.query.criteria.internal.expression.function.ParameterizedFunctionExpression;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.accessapi.FindByConditionAccess2;
@@ -385,6 +386,14 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             return builder.greaterThan((Expression<Comparable>) path, (Expression<Comparable>) getPath(root, (String) criteria.getFirstOperant()));
         } else if (Operator.GreatThanOrEqualProperty.equals(operator)) {
             return builder.greaterThanOrEqualTo((Expression<Comparable>) path, (Expression<Comparable>) getPath(getRoot(), (String) criteria.getFirstOperant()));
+        } else if (Operator.FtsEqual.equals(operator)) {
+            Expression ftsQuery;
+            if (criteria.getFirstOperant() instanceof String) {
+                ftsQuery = builder.function("ftsQuery", String.class, builder.literal(criteria.getFirstOperant()));
+            } else {
+                ftsQuery = processExpressions((PropertyWithExpression) criteria.getFirstOperant());
+            }
+            return builder.isTrue(builder.function("ftsEquals", Boolean.class, (Expression<Comparable>) path, ftsQuery));
         } else if (Operator.ProjectionRoot.equals(operator)) {
             // TODO: support projectionRoot, if possible
             if (getConfig().throwExceptionOnConfigurationError()) {

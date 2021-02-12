@@ -1,0 +1,29 @@
+Application MyApp {
+	basePackage=org.sculptorgenerator.examples
+
+	Module examplemodule {
+		Entity Person {
+			scaffold
+
+			String firstName;
+			String secondName;
+			Date birthDate;
+			-@Sex sex;
+			String emailAddress email;
+			-List<Address> addresses inverse <-> person;
+		}
+
+		Entity Address {
+			-@Person person <-> addresses;
+			String street;
+			String city;
+			String zip length="8";
+		}
+
+		enum Sex {
+			MAN, WOMAN
+		}
+
+	}
+
+}
