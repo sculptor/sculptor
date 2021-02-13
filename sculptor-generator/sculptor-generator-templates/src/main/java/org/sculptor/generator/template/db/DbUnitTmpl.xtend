@@ -95,7 +95,7 @@ def String dbunitTestDataContent(Application it) {
 					«FOR k : 0..(dbunitTestDataRowsAll)»
 						«val AtomicInteger offset = new AtomicInteger(0)»
 						<«domainObject.getDatabaseName()»
-							«domainObject.references.map[a | " " + a.getDatabaseName() + "=\"" + ((offset.getAndAdd(1) == 0 ? j : k) + dbunitTestDataIdBase) + "\"\n"].join()»
+							«domainObject.references.map[a | a.getDatabaseName() + "=\"" + ((offset.getAndAdd(1) == 0 ? j : k) + dbunitTestDataIdBase) + "\"\n"].join()»
 						/>
 					«ENDFOR»
 				«ENDFOR»
@@ -110,9 +110,9 @@ def String dbunitTestDataRow(DomainObject domainObject, int rows, int probabilit
 		«FOR index : 0..(rows - 1)»
 			<«domainObject.getDatabaseName()»
 				«domainObject.attributes.filter(attr | !attr.isNullable() || randomInProbability(probability))
-					.map[attr | " " + attr.getDatabaseName() + "=\"" + genValue(index + base, attr) + "\"\n"].join()»
+					.map[attr | attr.getDatabaseName() + "=\"" + genValue(index + base, attr) + "\"\n"].join()»
 				«domainObject.references.filter(ref | (!ref.isNullable() || randomInProbability(probability)) && !ref.many)
-					.map[ref | " " + ref.getDatabaseName() + "=\""
+					.map[ref | ref.getDatabaseName() + "=\""
 						+ genRefValue(Math.min(index + base, dbunitTestDataRowsAll + dbunitTestDataIdBase), ref)
 						+ "\"\n"
 					].join()»
