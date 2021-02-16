@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.sculptorgenerator.examples.eda-samples</groupId>
 	<artifactId>sculptor-betting</artifactId>
-	<name>Sculptor :: Examples :: EDA Samples :: Betting Sample</name>
+	<name>Sculptor :: Examples :: EDA :: Betting</name>
 	<description>EDA example: Business tier project for betting sample</description>
 
 	<build>
@@ -147,12 +147,12 @@
 			<artifactId>spring-orm</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>

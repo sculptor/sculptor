@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.sculptorgenerator.examples.eda-samples</groupId>
 	<artifactId>sculptor-simplecqrs-snapshots</artifactId>
-	<name>Sculptor :: Examples :: EDA Samples :: Simple CQRS with snapshots</name>
+	<name>Sculptor :: Examples :: EDA :: Simple CQRS snapshots</name>
 	<description>EDA example: Business tier project for Simple CQRS with snapshots</description>
 
 	<build>
@@ -142,12 +142,12 @@
 			<artifactId>spring-orm</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>

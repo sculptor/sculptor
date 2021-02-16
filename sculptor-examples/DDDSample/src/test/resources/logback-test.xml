@@ -20,7 +20,7 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="org.sculptor.dddsample" level="DEBUG" />
+	<logger name="org.sculptor.dddsample" level="INFO" />
 
 	<!-- Spring security framework -->
 	<!--

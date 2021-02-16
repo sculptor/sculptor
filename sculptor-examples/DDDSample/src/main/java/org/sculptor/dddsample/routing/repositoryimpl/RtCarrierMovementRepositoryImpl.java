@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.sculptor.dddsample.routing.domain.RtCarrierMovement;
 import org.sculptor.dddsample.routing.domain.RtCarrierMovementRepository;
 import org.sculptor.dddsample.routing.domain.RtLocation;

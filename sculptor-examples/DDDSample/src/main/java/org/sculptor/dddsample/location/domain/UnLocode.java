@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Embeddable;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 
 /**

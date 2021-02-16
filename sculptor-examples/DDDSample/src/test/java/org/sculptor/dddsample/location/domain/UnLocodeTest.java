@@ -18,7 +18,10 @@ public class UnLocodeTest {
     assertInvalid("AAAAAA");
     assertInvalid("22AAA");
     assertInvalid("AA111");
-    assertInvalid(null);
+    assertThrows(NullPointerException.class, () -> {
+      new UnLocode(null);
+      fail("NULL is not a valid UnLocode");
+    });
   }
 
   @Test
@@ -52,10 +55,10 @@ public class UnLocodeTest {
   }
 
   private void assertInvalid(String unlocode) {
-    try {
+    assertThrows(IllegalArgumentException.class, () -> {
       new UnLocode(unlocode);
       fail("The combination [" + unlocode + "] is not a valid UnLocode");
-    } catch (IllegalArgumentException expected) {}
+    });
   }
 
 }

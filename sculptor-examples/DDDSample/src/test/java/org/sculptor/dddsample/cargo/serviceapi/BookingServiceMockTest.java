@@ -5,8 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sculptor.dddsample.cargo.domain.TrackingId.trackingId;
 import static org.sculptor.dddsample.location.domain.SampleLocations.CHICAGO;
 import static org.sculptor.dddsample.location.domain.SampleLocations.STOCKHOLM;
@@ -64,11 +63,10 @@ public class BookingServiceMockTest {
     @Test
     public void testRegisterNewNullArguments() throws Exception {
         replay(cargoRepository, locationRepository);
-        try {
+        assertThrows(NullPointerException.class, () -> {
             cargoService.bookNewCargo(serviceContext, null, null);
             fail("Null arguments should not be allowed");
-        } catch (IllegalArgumentException expected) {
-        }
+        });
     }
 
     @AfterEach

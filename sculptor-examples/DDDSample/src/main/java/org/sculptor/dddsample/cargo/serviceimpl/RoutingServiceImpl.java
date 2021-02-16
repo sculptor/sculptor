@@ -3,7 +3,7 @@ package org.sculptor.dddsample.cargo.serviceimpl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.sculptor.dddsample.cargo.domain.Itinerary;
 import org.sculptor.dddsample.cargo.domain.Leg;
 import org.sculptor.dddsample.cargo.domain.RouteSpecification;

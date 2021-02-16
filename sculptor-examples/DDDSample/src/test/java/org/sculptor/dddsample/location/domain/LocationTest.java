@@ -26,10 +26,10 @@ public class LocationTest {
     // Special UNKNOWN location is equal to itself
     assertTrue(Location.UNKNOWN.equals(Location.UNKNOWN));
 
-    try {
+    assertThrows(NullPointerException.class, () -> {
       new Location(null, null);
       fail("Should not allow any null constructor arguments");
-    } catch (IllegalArgumentException expected) {}
+    });
   }
 
 }

@@ -1,7 +1,7 @@
 package org.sculptor.dddsample.cargo.domain;
 
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.sculptor.dddsample.common.Specification;
 import org.sculptor.dddsample.location.domain.Location;

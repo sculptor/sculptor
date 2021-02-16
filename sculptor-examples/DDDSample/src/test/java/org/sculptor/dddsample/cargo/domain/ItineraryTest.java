@@ -81,20 +81,32 @@ public class ItineraryTest {
 
     @Test
     public void testCreateItinerary() throws Exception {
-        try {
+        assertThrows(IllegalArgumentException.class, () -> {
             new Itinerary(new ArrayList<Leg>());
             fail("An empty itinerary is not OK");
-        } catch (IllegalArgumentException iae) {
-            // Expected
-        }
+        });
 
-        try {
+        assertThrows(NullPointerException.class, () -> {
             List<Leg> legs = null;
             new Itinerary(legs);
             fail("Null itinerary is not OK");
-        } catch (IllegalArgumentException iae) {
-            //Expected
-        }
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            List<Leg> legs = new ArrayList<>();
+            legs.add(null);
+            new Itinerary(legs);
+            fail("Itinerary with null element is not OK");
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            List<Leg> legs = new ArrayList<>();
+            legs.add(new Leg());
+            legs.add(new Leg());
+            legs.add(null);
+            new Itinerary(legs);
+            fail("Itinerary with null element is not OK");
+        });
     }
 
 }

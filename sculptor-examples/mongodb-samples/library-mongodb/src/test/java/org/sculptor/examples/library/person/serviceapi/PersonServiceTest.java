@@ -8,7 +8,7 @@ import static org.sculptor.framework.context.SimpleJUnitServiceContextFactory.ge
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

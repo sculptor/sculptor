@@ -3,7 +3,7 @@ package org.sculptor.examples.library.media.domain;
 import static org.sculptor.examples.library.person.domain.PersonName.personName;
 import static org.sculptor.examples.library.person.domain.Ssn.ssn;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.sculptor.examples.library.person.domain.Country;
 import org.sculptor.examples.library.person.domain.Gender;
 import org.sculptor.examples.library.person.domain.Person;

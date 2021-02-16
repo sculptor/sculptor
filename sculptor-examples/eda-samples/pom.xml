@@ -10,7 +10,7 @@
 	<groupId>org.sculptorgenerator.examples</groupId>
 	<artifactId>eda-samples</artifactId>
 	<packaging>pom</packaging>
-	<name>Sculptor :: Examples :: EDA Samples</name>
+	<name>Sculptor :: Examples :: EDA</name>
 
 	<modules>
 		<module>sculptor-betting</module>

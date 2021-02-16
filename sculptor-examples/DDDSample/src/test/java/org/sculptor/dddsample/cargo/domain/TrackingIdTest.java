@@ -10,7 +10,7 @@ public class TrackingIdTest {
 
     @Test
     public void constructorShouldRejectNullIdentifier() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             new TrackingId(null);
             fail("Should not accept null constructor arguments");
         });
@@ -18,7 +18,7 @@ public class TrackingIdTest {
 
     @Test
     public void factoryMethodShouldRejectNullIdentifier() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             trackingId(null);
             fail("Should not accept null constructor arguments");
         });
