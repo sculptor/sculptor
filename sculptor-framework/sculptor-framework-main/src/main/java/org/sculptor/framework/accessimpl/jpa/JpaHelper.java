@@ -33,7 +33,7 @@ import javax.persistence.TupleElement;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

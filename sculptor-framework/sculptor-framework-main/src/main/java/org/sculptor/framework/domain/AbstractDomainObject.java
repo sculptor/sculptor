@@ -20,12 +20,15 @@ package org.sculptor.framework.domain;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Base class for all Domain Objects. It provides stuff like toString, equals
@@ -35,8 +38,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public abstract class AbstractDomainObject implements Serializable, Cloneable {
     private static final long serialVersionUID = -7580523094174795539L;
 
-    // acceptedToStringTypes contains Class objects or String names of types
-    // accepted by toString
+    // acceptedToStringTypes contains Class objects accepted by toString
     private static Set<Object> acceptedToStringTypes = new HashSet<Object>();
     static {
         acceptedToStringTypes.add(int.class);
@@ -50,13 +52,23 @@ public abstract class AbstractDomainObject implements Serializable, Cloneable {
         acceptedToStringTypes.add(Boolean.class);
         acceptedToStringTypes.add(String.class);
         acceptedToStringTypes.add(Date.class);
+        acceptedToStringTypes.add(LocalDate.class);
+        acceptedToStringTypes.add(LocalDateTime.class);
+        acceptedToStringTypes.add(LocalTime.class);
         acceptedToStringTypes.add(float.class);
         acceptedToStringTypes.add(Float.class);
         acceptedToStringTypes.add(short.class);
         acceptedToStringTypes.add(Short.class);
         // avoid runtime dependency to joda, since it is optional
-        acceptedToStringTypes.add("org.joda.time.LocalDate");
-        acceptedToStringTypes.add("org.joda.time.DateTime");
+        try {
+            Class.forName("org.joda.time.LocalDate");
+            acceptedToStringTypes.add(Class.forName("org.joda.time.LocalDate"));
+            acceptedToStringTypes.add(Class.forName("org.joda.time.LocalTime"));
+            acceptedToStringTypes.add(Class.forName("org.joda.time.LocalDateTime"));
+            acceptedToStringTypes.add(Class.forName("org.joda.time.DateTime"));
+        } catch (ClassNotFoundException e) {
+            // Joda time library not available on classpath -> IGNORE
+        }
     }
 
     /**
@@ -111,8 +123,7 @@ public abstract class AbstractDomainObject implements Serializable, Cloneable {
      * @return true to include the field in toString, or false to exclude it
      */
     protected boolean acceptToString(Field field) {
-        return acceptedToStringTypes.contains(field.getType())
-                || acceptedToStringTypes.contains(field.getType().getName());
+        return acceptedToStringTypes.contains(field.getType());
     }
 
     /**

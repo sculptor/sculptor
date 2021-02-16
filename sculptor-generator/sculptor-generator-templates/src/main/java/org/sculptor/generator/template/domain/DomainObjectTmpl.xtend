@@ -391,8 +391,8 @@ def String acceptToString(DomainObject it) {
 def String toStringStyleMethod(DomainObject it) {
 	'''
 	«IF it.toStringStyle() !== null»
-		protected org.apache.commons.lang.builder.ToStringStyle toStringStyle() {
-			return org.apache.commons.lang.builder.ToStringStyle.«it.toStringStyle()»;
+		protected org.apache.commons.lang3.builder.ToStringStyle toStringStyle() {
+			return org.apache.commons.lang3.builder.ToStringStyle.«it.toStringStyle()»;
 		}
 	«ENDIF»
 	'''

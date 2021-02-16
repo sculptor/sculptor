@@ -153,7 +153,7 @@ def String propertyConstructorBaseIdReferencesSubclass(DomainObject it) {
 
 def dispatch String validateNotNull(DomainObject it, String field) {
 	'''
-		org.apache.commons.lang.Validate.notNull(«field», "«name».«field» must not be null");
+		org.apache.commons.lang3.Validate.notNull(«field», "«name».«field» must not be null");
 	'''
 }
 

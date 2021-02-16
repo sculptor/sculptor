@@ -111,7 +111,7 @@ public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
      */
     protected void initPersistenceUnitProperties(String unitName, Properties properties) {
         properties.put(unitName + ".hibernate.dialect", "org.sculptor.framework.persistence.SculptorHsqlDialect");
-        properties.put(unitName + ".hibernate.show_sql", "true");
+        properties.put(unitName + ".hibernate.show_sql", "false");
         properties.put(unitName + ".hibernate.hbm2ddl.auto", "create-drop");
         properties.put(unitName + ".hibernate.cache.use_query_cache", "false");
         properties.put(unitName + ".hibernate.cache.use_second_level_cache", "false");

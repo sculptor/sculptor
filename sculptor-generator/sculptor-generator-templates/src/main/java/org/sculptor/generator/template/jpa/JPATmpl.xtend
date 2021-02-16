@@ -216,7 +216,7 @@ def void persistenceUnitPropertiesHibernate(Application it, String unitName, jav
 	propertyList.put('query.substitutions', 'true 1, false 0');
 	// for testing only
 	if (propBase.getDbProduct() == "hsqldb-inmemory") {
-		propertyList.put('hibernate.show_sql', 'true');
+		propertyList.put('hibernate.show_sql', 'false');
 		propertyList.put('hibernate.hbm2ddl.auto', 'create-drop');
 	}
 	persistenceUnitCachePropertiesHibernate(it, unitName, propertyList);
@@ -406,7 +406,7 @@ def String persistenceUnitAdditionalPropertiesTest(Application it, String unitNa
 
 def void persistenceUnitPropertiesTestHibernate(Application it, String unitName, java.util.Properties propertyList) {
 	propertyList.put('hibernate.dialect', propBase.getTestHibernateDialect());
-	propertyList.put('hibernate.show_sql', 'true');
+	propertyList.put('hibernate.show_sql', 'false');
 	propertyList.put('hibernate.hbm2ddl.auto', 'create-drop');
 	propertyList.put('query.substitutions', 'true 1, false 0');
 	propertyList.put('hibernate.cache.use_query_cache', 'true');
