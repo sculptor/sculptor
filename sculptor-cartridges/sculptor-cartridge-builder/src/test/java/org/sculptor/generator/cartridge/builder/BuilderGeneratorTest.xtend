@@ -16,11 +16,13 @@
  */
 package org.sculptor.generator.cartridge.builder
 
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.sculptor.generator.test.GeneratorTestBase
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sculptor.generator.test.GeneratorTestExtensions.*
+
 import java.io.FileNotFoundException
 
 /**
@@ -34,7 +36,7 @@ class BuilderGeneratorTest extends GeneratorTestBase {
 		super(TEST_NAME)
 	}
 
-	@BeforeClass
+	@BeforeAll
 	def static void setup() {
 		runGenerator(TEST_NAME)
 	}
@@ -46,9 +48,11 @@ class BuilderGeneratorTest extends GeneratorTestBase {
 		assertContains(code, "public class FooBuilder {")
 	}
 
-	@Test(expected=FileNotFoundException)
+	@Test
 	def void assertNoBarBuilder() {
-		getFileText(TO_GEN_SRC + "/org/sculptor/example/builder/foobar/domain/BarBuilder.java")
+		assertThrows(typeof(FileNotFoundException), [
+			getFileText(TO_GEN_SRC + "/org/sculptor/example/builder/foobar/domain/BarBuilder.java")
+		]);
 	}
 
 }

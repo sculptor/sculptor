@@ -18,19 +18,19 @@ package org.sculptor.generator.cartridge.mongodb
 
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.^extension.ExtendWith;
 import org.sculptor.dsl.tests.SculptordslInjectorProvider
 import org.sculptor.generator.test.GeneratorModelTestFixtures
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*;
 
 import static extension org.sculptor.generator.test.GeneratorTestExtensions.*
 
-@RunWith(typeof(XtextRunner))
+@ExtendWith(typeof(InjectionExtension))
 @InjectWith(typeof(SculptordslInjectorProvider))
 class MongoDbMapperTemplatesTest extends XtextTest {
 
@@ -39,7 +39,7 @@ class MongoDbMapperTemplatesTest extends XtextTest {
 
 	var MongoDbMapperTmpl mongoDbMapperTmpl
 
-	@Before
+	@BeforeEach
 	def void setupExtensions() {
 		generatorModelTestFixtures.setupInjector(typeof(MongoDbMapperTmpl))
 		generatorModelTestFixtures.setupModel("generator-tests/mongodb/model.btdesign", "generator-tests/mongodb/model-person.btdesign")
