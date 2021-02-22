@@ -795,15 +795,15 @@ def String entityManagerFactoryScan(Application it) {
 		}
 
 		if (isJpaProviderHibernate()) {
-			jpaTmpl.persistenceUnitPropertiesHibernate(it, null, jpaPropList);
+			jpaTmpl.persistenceUnitPropertiesHibernate(it, persistenceUnitName, jpaPropList);
 		} else if (isJpaProviderEclipseLink()) {
-			jpaTmpl.persistenceUnitPropertiesEclipseLink(it, null, jpaPropList)
+			jpaTmpl.persistenceUnitPropertiesEclipseLink(it, persistenceUnitName, jpaPropList)
 		} else if (isJpaProviderDataNucleus()) {
-			jpaTmpl.persistenceUnitPropertiesDataNucleus(it, null, jpaPropList);
+			jpaTmpl.persistenceUnitPropertiesDataNucleus(it, persistenceUnitName, jpaPropList);
 		} else if (isJpaProviderAppEngine()) {
-			jpaTmpl.persistenceUnitPropertiesAppEngine(it, null, jpaPropList);
+			jpaTmpl.persistenceUnitPropertiesAppEngine(it, persistenceUnitName, jpaPropList);
 		} else if (isJpaProviderOpenJpa()) {
-			jpaTmpl.persistenceUnitPropertiesOpenJpa(it, null, jpaPropList);
+			jpaTmpl.persistenceUnitPropertiesOpenJpa(it, persistenceUnitName, jpaPropList);
 		}
 	} else if (persistenceXml() != "META-INF/persistence.xml") {
 		emList.put("persistenceXmlLocation", persistenceXml());
