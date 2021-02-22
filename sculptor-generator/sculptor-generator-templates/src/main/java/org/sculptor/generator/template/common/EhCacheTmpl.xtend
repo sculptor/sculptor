@@ -27,45 +27,80 @@ class EhCacheTmpl {
 
 	@Inject extension Helper helper
 
-	def String ehcacheConfig(Application it) {
+	def void ehcacheConfig(Application it) {
 		ehcacheXml
 		ehcacheTestXml
 	}
 
-	def String ehcacheXml(Application it) {
-		fileOutput("ehcache.xml", OutputSlot.TO_RESOURCES, '''
-		<?xml version="1.0" encoding="UTF-8"?>
-		<ehcache updateCheck="false">
-			<diskStore path="java.io.tmpdir"/>
-			<defaultCache
-				maxElementsInMemory="100000"
-				eternal="false"
-				timeToIdleSeconds="120"
-				timeToLiveSeconds="120"
-				overflowToDisk="false"
-				diskPersistent="false"
-				/>
-		</ehcache>
-		'''
-		)
+	def void ehcacheXml(Application it) {
+		fileOutput("ehcache.xml", OutputSlot.TO_RESOURCES,   ehcacheTemplateXml())
 	}
 
-	def String ehcacheTestXml(Application it) {
-		fileOutput("ehcache.xml", OutputSlot.TO_RESOURCES_TEST, '''
-		<?xml version="1.0" encoding="UTF-8"?>
-		<ehcache updateCheck="false">
-			<diskStore path="java.io.tmpdir"/>
-			<defaultCache
-				maxElementsInMemory="10000"
-				eternal="false"
-				timeToIdleSeconds="120"
-				timeToLiveSeconds="120"
-				overflowToDisk="false"
-				diskPersistent="false"
-				/>
-		</ehcache>
-		'''
-		)
+	def void ehcacheTestXml(Application it) {
+		fileOutput("ehcache-test.xml", OutputSlot.TO_RESOURCES_TEST,  ehcacheTemplateXml())
 	}
 
+	def String ehcacheTemplateXml() {
+		'''
+		<config
+				xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+				xmlns='http://www.ehcache.org/v3'
+				xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+				xsi:schemaLocation="
+					http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd
+					http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext.xsd">
+
+			<service>
+				<jsr107:defaults default-template="defaultCache" enable-management="false" enable-statistics="false"/>
+			</service>
+
+			<!--
+			According to documentation https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#caching-query-region
+			this cache should be set ETERNAL if possible. Cache region for the default-update-timestamps-region have to be
+			set to a higher value than the timeout setting of any of the QUERY caches.
+			-->
+			<cache alias="default-update-timestamps-region">
+				<expiry>
+					<none/>
+				</expiry>
+				<heap unit="entries">5000</heap>
+			</cache>
+
+			<cache alias="default-query-results-region">
+				<expiry>
+					<tti unit="minutes">5</tti>
+				</expiry>
+				<heap unit="entries">1000</heap>
+			</cache>
+
+			<!-- Override defaultCache per entity and avoid warning in console -->
+			<!--
+			<cache alias="com.package.domain.Entity" uses-template="defaultCache">
+				<expiry>
+					<ttl unit="minutes">1</ttl>
+				</expiry>
+				<heap unit="MB">5</heap>
+			</cache>
+			-->
+
+			<!-- Override query cache -->
+			<!--
+			<cache alias="query.com.package.domain.Entity" uses-template="defaultCache">
+				<expiry>
+					<ttl unit="minutes">3</ttl>
+				</expiry>
+				<heap unit="MB">5</heap>
+			</cache>
+			-->
+
+			<cache-template name="defaultCache">
+				<expiry>
+					<ttl unit="minutes">3</ttl>
+				</expiry>
+				<heap unit="entries">500</heap>
+			</cache-template>
+
+		</config>
+		'''
+	}
 }

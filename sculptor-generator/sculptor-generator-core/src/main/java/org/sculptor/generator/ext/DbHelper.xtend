@@ -73,6 +73,7 @@ class DbHelper {
 
 	def String getHibernateCacheUsage(Object obj) {
 		switch (cacheProvider()) {
+			case "JCache" : "nonstrict-read-write"
 			case "EhCache" : "nonstrict-read-write"
 			case "TreeCache" : "nonstrict-read-write"
 			case "JbossTreeCache" : "transactional"
@@ -260,6 +261,7 @@ class DbHelper {
 
 	def String getHibernateCacheStrategy(Object obj) {
 		switch (cacheProvider()) {
+			case "JCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE"
 			case "EhCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE"
 			case "TreeCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE"
 			case "JbossTreeCache" : "org.hibernate.annotations.CacheConcurrencyStrategy.TRANSACTIONAL"

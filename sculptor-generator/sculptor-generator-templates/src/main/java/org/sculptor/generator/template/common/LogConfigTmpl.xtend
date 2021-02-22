@@ -72,20 +72,26 @@ class LogConfigTmpl {
 			<!-- Spring framework -->
 			<!--
 			<logger name="org.springframework" level="DEBUG" />
-			 -->
+			-->
 
 			<!-- Hibernate SQL statements -->
 			<logger name="org.hibernate.SQL" level="DEBUG" />
 
-			<!-- Binding SQL parameters -->
+			<!-- Hibernate binding SQL parameters -->
 			<!--
 			<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="ALL" />
 			<logger name="org.hibernate.type.EnumType" level="ALL" />
 			-->
 
-			<!-- Binding and extracting SQL parameters -->
+			<!-- Hibernate binding and extracting SQL parameters -->
 			<!--
 			<logger name="org.hibernate.type" level="ALL" />
+			-->
+
+			<!-- Hibernate 2nd level caching and caching generally -->
+			<!--
+			<logger name="org.ehcache" level="DEBUG" />
+			<logger name="org.hibernate.cache" level="DEBUG" />
 			-->
 
 		</configuration>

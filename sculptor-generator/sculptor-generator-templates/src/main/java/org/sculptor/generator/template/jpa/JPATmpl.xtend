@@ -276,8 +276,14 @@ def persistenceUnitCachePropertiesHibernate(Application it, String unitName, jav
 	propertyList.put('hibernate.cache.use_query_cache', 'true');
 	propertyList.put('hibernate.cache.use_second_level_cache', 'true');
 	propertyList.put('hibernate.cache.region_prefix', '');
-	if (cacheProvider() == 'EhCache' || cacheProvider() == 'JCache') {
+	if (cacheProvider() == 'JCache') {
+		// Default jcache provider will be used
 		propertyList.put("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.internal.JCacheRegionFactory");
+	} else if (cacheProvider() == 'EhCache') {
+		// Enforce EhCache provider
+		propertyList.put("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.internal.JCacheRegionFactory");
+		propertyList.put("hibernate.javax.cache.provider", "org.ehcache.jsr107.EhcacheCachingProvider");
+		propertyList.put("hibernate.javax.cache.uri", "classpath://ehcache.xml");
 	} else if (cacheProvider() == "TreeCache") {
 		propertyList.put('hibernate.cache.provider_class', 'org.hibernate.cache.TreeCacheProvider');
 	} else if (cacheProvider() == "JbossTreeCache") {
@@ -412,6 +418,11 @@ def void persistenceUnitPropertiesTestHibernate(Application it, String unitName,
 	propertyList.put('hibernate.cache.use_query_cache', 'true');
 	propertyList.put('hibernate.cache.use_second_level_cache', 'true');
 	propertyList.put('hibernate.cache.region.factory_class', 'org.hibernate.cache.jcache.internal.JCacheRegionFactory');
+	if (cacheProvider() != 'JCache') {
+		// Enforce EhCache provider
+		propertyList.put("hibernate.javax.cache.provider", "org.ehcache.jsr107.EhcacheCachingProvider");
+		propertyList.put("hibernate.javax.cache.uri", "classpath://ehcache-test.xml");
+	}
 }
 
 def void persistenceUnitPropertiesTestEclipseLink(Application it, String unitName, java.util.Properties propertyList) {
