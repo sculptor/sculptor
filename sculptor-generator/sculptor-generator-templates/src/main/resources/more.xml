@@ -1,5 +1,0 @@
-
-	<!-- Import more custom beans
-		<import resource="classpath:/moreBeans.xml"/>
-	-->
-</beans>
