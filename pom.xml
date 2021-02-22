@@ -89,6 +89,7 @@
 		<emf-mwe2-launch-version>2.11.2</emf-mwe2-launch-version>
 		<ecore-xtext-version>1.5.0</ecore-xtext-version>
 		<ecore-xcore-version>1.13.0</ecore-xcore-version>
+		<asm-version>9.1</asm-version>
 
 		<spring-version>5.3.3</spring-version>
 		<spring-security-version>5.4.2</spring-security-version>

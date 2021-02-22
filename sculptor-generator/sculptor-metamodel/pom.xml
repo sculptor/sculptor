@@ -63,6 +63,11 @@
 						<artifactId>org.eclipse.emf.ecore.xcore</artifactId>
 						<version>${ecore-xcore-version}</version>
 					</dependency>
+					<dependency>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>asm</artifactId>
+						<version>${asm-version}</version>
+					</dependency>
 				</dependencies>
 			</plugin>
 			<plugin>
