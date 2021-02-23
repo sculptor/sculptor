@@ -17,9 +17,9 @@ before_install:
  # We need GraphViz to generate images
  - "sudo apt-get install graphviz 2>&1 | tail -n 2"
 
+install: skip
+
 before_script:
- - psql --version
- - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
  - psql -c 'CREATE DATABASE fulltexttest;' -U postgres
  - psql -c 'CREATE USER testfts PASSWORD '"'testfts'"';' -U postgres fulltexttest
  - psql -c 'GRANT ALL ON DATABASE fulltexttest to testfts' -U postgres fulltexttest
