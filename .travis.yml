@@ -3,7 +3,7 @@ dist: focal
 language: java
 
 jdk:
- - oraclejdk8
+ - oraclejdk11
 
 services:
  - mongodb
