@@ -365,15 +365,16 @@ public class PropertyWithExpression<T> implements ComplexExpression<T>, Expressi
 		return this;
 	}
 
+	// Standard CriteriaBuilder.substring() is broken (WARN when using 2 arguments only)
 	@Override
 	public ExpressionString<T> substring(int from) {
-		functions.add((cb, left, ec) -> cb.substring((javax.persistence.criteria.Expression<String>) left, from));
+		functions.add((cb, left, ec) -> cb.function("substr", String.class, left, cb.literal(from)));
 		return this;
 	}
 
 	@Override
 	public ExpressionString<T> substring(int from, int to) {
-		functions.add((cb, left, ec) -> cb.substring((javax.persistence.criteria.Expression<String>) left, from, to));
+		functions.add((cb, left, ec) -> cb.function("substr", String.class, left, cb.literal(from), cb.literal(to)));
 		return this;
 	}
 

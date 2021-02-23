@@ -24,6 +24,7 @@ public class SculptorHsqlDialect extends HSQLDialect {
 		registerFunction("right", new StandardSQLFunction("right", StandardBasicTypes.STRING));
 		registerFunction("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
 		registerFunction("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
+		registerFunction("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
 //		registerFunction("strpos", new StandardSQLFunction("instr", StandardBasicTypes.STRING));
 //		registerFunction("starts_with", new StandardSQLFunction("starts_with", StandardBasicTypes.STRING));
 //		registerFunction("starts_with", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1 LIKE ?2"));
