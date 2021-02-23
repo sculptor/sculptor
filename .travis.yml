@@ -9,26 +9,20 @@ services:
  - mongodb
 
 addons:
-  postgresql: "11"
+  postgresql: "13"
 
 before_install:
  # See https://github.com/travis-ci/travis-ci/issues/4629#issuecomment-239493916
  - rm ~/.m2/settings.xml
  # We need GraphViz to generate images
  - "sudo apt-get install graphviz 2>&1 | tail -n 2"
- # PostgreSQL
- - pg_lsclusters
- - ls -l /etc/postgresql/
- - sudo apt-get update
- - sudo apt-get --yes remove postgresql\*
- - sudo apt-get install -y postgresql-11 postgresql-client-11
- - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
- - sudo service postgresql restart 11
 
 before_script:
  - psql --version
- - psql -c 'CREATE DATABASE fulltexttest;' -U postgres
  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
+ - psql -c 'CREATE DATABASE fulltexttest;' -U postgres
+ - psql -c 'CREATE USER testfts PASSWORD '"'testfts'"';' -U postgres fulltexttest
+ - psql -c 'GRANT ALL ON DATABASE fulltexttest to testfts' -U postgres fulltexttest
 
-#script: mvn -B -V install && mvn -B -V install -Pexamples
+#script: mvn -B -V install && mvn -B -V -Pexamples install
 script: mvn -version
