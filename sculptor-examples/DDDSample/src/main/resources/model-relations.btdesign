@@ -4,13 +4,14 @@ ApplicationPart RelationPart {
         "Testing entity for different type of relations"
         Entity Person {
         	scaffold
+        	cache
 
         	String first;
         	String secondName;
 
         	// 1:N with backref
             - List<@House> owning <-> owner inverse;
-            - Set<@House> related <-> relation inverse;
+            - Set<@House> related cache <-> relation inverse;
             - Bag<@House> other <-> something inverse;
 
         	// 1:N without backref
@@ -29,7 +30,7 @@ ApplicationPart RelationPart {
             - Bag<@House> otherUniN;
 
             Repository PersonRepository {
-				PagedResult findByCondition(PagingParameter pagingParameter);
+				PagedResult findByCondition(PagingParameter pagingParameter) hint="cache";
 				findByConditionTuple();
 				findByConditionAs();
 				PagedResult findByConditionAs(PagingParameter pagingParameter);

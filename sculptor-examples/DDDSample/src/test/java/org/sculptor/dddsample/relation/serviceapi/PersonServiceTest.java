@@ -365,7 +365,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				.orderBy(createdDate().expr().year())
 				.build();
 		List<Tuple> result = personRepository.findByConditionTuple(condition);
-		printTuple(result);
+//		printTuple(result);
 
 		Object[][] expected = new Object[][] {
 			{102l, 306l, 306l, "102 * 3 = 306", 34l, "Gandhi", "ndhi aha", "Gandhi Mahatutma", "Gandhi-Mahatutma-3"
@@ -436,7 +436,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 				.where(id()).eq(101)
 				.build();
 		List<Tuple> result = personRepository.findByConditionTuple(condition);
-		printTuple(result);
+//		printTuple(result);
 
 		Object[][] expected = new Object[][] {
 			{101, 101l, 101f, 101d, 101, 101d, "2008-12-07 01:02:03.456000", "2008-12-07", "01:02:03"
