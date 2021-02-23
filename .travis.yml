@@ -24,5 +24,4 @@ before_script:
  - psql -c 'CREATE USER testfts PASSWORD '"'testfts'"';' -U postgres fulltexttest
  - psql -c 'GRANT ALL ON DATABASE fulltexttest to testfts' -U postgres fulltexttest
 
-#script: mvn -B -V install && mvn -B -V -Pexamples install
-script: mvn -version
+script: mvn -B -V install && mvn -B -V -Pexamples install
