@@ -47,7 +47,9 @@
 		<joda-time-version>${joda-time-version}</joda-time-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
+
 		<junit-version>${junit-version}</junit-version>
+		<hamcrest-version>2.2</hamcrest-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 #end
@@ -120,29 +122,29 @@
 				</configuration>
 			</plugin>
 			<plugin>
-			    <groupId>org.eclipse.jetty</groupId>
-			    <artifactId>jetty-maven-plugin</artifactId>
-			    <version>9.2.8.v20150217</version>
-			    <configuration>
-			        <webAppConfig>
-			            <contextPath>/</contextPath>
-			        </webAppConfig>
-			        <port>8888</port>
-			        <stopKey>STOP</stopKey>
-			        <stopPort>8889</stopPort>
-			        <systemProperties>
-			            <!-- enable easy JMX connection to JConsole -->
-			            <systemProperty>
-			                <name>com.sun.management.jmxremote</name>
-			                <value />
-			            </systemProperty>
-			            <systemProperty>
-			                <name>jetty.port</name>
-			                <value>8888</value>
-			            </systemProperty>
-			        </systemProperties>
-			        <scanIntervalSeconds>30</scanIntervalSeconds>
-			    </configuration>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.2.8.v20150217</version>
+				<configuration>
+					<webAppConfig>
+						<contextPath>/</contextPath>
+					</webAppConfig>
+					<port>8888</port>
+					<stopKey>STOP</stopKey>
+					<stopPort>8889</stopPort>
+					<systemProperties>
+						<!-- enable easy JMX connection to JConsole -->
+						<systemProperty>
+							<name>com.sun.management.jmxremote</name>
+							<value />
+						</systemProperty>
+						<systemProperty>
+							<name>jetty.port</name>
+							<value>8888</value>
+						</systemProperty>
+					</systemProperties>
+					<scanIntervalSeconds>30</scanIntervalSeconds>
+				</configuration>
 			</plugin>
 #else
 			<plugin>
@@ -170,6 +172,14 @@
 				</executions>
 			</plugin>
 #end
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<argLine>-Xms32m -Xmx1024m</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -263,12 +273,12 @@
 			<version>1.1.2</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-webmvc</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 		<dependency>
-		   <groupId>org.springframework</groupId>
-		   <artifactId>spring-oxm</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -276,9 +286,9 @@
 			<version>\${jackson-version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.thoughtworks.xstream</groupId>
-		    <artifactId>xstream</artifactId>
-		    <version>\${xstream-version}</version>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>\${xstream-version}</version>
 		</dependency>
 #end
 		<dependency>
@@ -402,9 +412,21 @@
 		</dependency>
 #if( $standalone == "true" || $standalone == "y" || $standalone == "yes")
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
 			<version>\${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>\${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>\${hamcrest-version}</version>
 			<scope>test</scope>
 		</dependency>
 #end
@@ -413,6 +435,12 @@
 			<artifactId>dbunit</artifactId>
 			<version>2.4.9</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 #if( $ejb != "true" && $ejb != "y" && $ejb != "yes")
 		<dependency>

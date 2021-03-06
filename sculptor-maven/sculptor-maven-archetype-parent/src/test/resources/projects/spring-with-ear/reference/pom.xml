@@ -12,22 +12,26 @@
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 
-		<java-version>1.7</java-version>
-		<maven.compiler.source>${java-version}</maven.compiler.source>
-		<maven.compiler.target>${java-version}</maven.compiler.target>
+		<java-version>1.8</java-version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<sculptor-version>${project.version}</sculptor-version>
-		<jboss-javaee6-version>${jboss-javaee6-version}</jboss-javaee6-version>
-	    <hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
-		<slf4j-version>${slf4j-version}</slf4j-version>
-		<logback-version>${logback-version}</logback-version>
-		<spring-version>${spring-version}</spring-version>
-		<aspectj-version>${aspectj-version}</aspectj-version>
-		<joda-time-version>${joda-time-version}</joda-time-version>
-		<jackson-version>${jackson-version}</jackson-version>
-		<xstream-version>${xstream-version}</xstream-version>
-		<junit-version>${junit-version}</junit-version>
-		<hsqldb-version>${hsqldb-version}</hsqldb-version>
+		<sculptor-version>3.2.0-SNAPSHOT</sculptor-version>
+		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
+		<hibernate-validator-version>6.2.0.Final</hibernate-validator-version>
+		<ehcache-version>3.9.0</ehcache-version>
+		<tomcat-jasper-el>9.0.41</tomcat-jasper-el>
+		<slf4j-version>1.7.30</slf4j-version>
+		<logback-version>1.2.3</logback-version>
+		<spring-version>5.3.3</spring-version>
+		<aspectj-version>1.9.6</aspectj-version>
+		<joda-time-version>2.10.9</joda-time-version>
+		<jackson-version>2.12.0</jackson-version>
+		<xstream-version>1.4.15</xstream-version>
+
+		<junit-version>5.7.0</junit-version>
+		<hamcrest-version>2.2</hamcrest-version>
+		<hsqldb-version>2.5.1</hsqldb-version>
 	</properties>
 
 	<modules>
@@ -67,13 +71,25 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>\${junit-version}</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

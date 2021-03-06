@@ -30,7 +30,6 @@
 	    <fileSet filtered="true">
 			<directory></directory>
 			<includes>
-				<include>pom.xml</include>
 				<include>**/*.btdesign</include>
 				<include>**/*.properties</include>
 			</includes>

@@ -1,12 +1,13 @@
 Application MyWebApp {
-    basePackage=${groupId}
+	basePackage=${groupId}
 
-    Module mywebmodule {
+	Module mywebmodule {
 
 #if( $rest == "true" || $rest == "y" || $rest == "yes")
- 	    Resource FrontResource {
+		Resource FrontResource {
 			String front return="front/overview";
-	    }
+		}
+
 #end
 	}
 

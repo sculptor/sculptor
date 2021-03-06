@@ -1,7 +1,7 @@
 Application MyWebApp {
-    basePackage=archetype.it
+	basePackage=archetype.it
 
-    Module mywebmodule {
+	Module mywebmodule {
 
 	}
 

@@ -631,7 +631,7 @@ public class PropertiesBase {
 		String value = getProperty("project.nature");
 		String[] operations = value.split(",");
 		trim(operations);
-		return new ArrayList<String>(Arrays.asList(operations));
+		return Arrays.asList(operations);
 	}
 
 	private void trim(String[] strings) {

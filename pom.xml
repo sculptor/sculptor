@@ -95,7 +95,7 @@
 		<spring-security-version>5.4.2</spring-security-version>
 		<spring-integration-version>5.4.2</spring-integration-version>
 		<spring-data-jpa-version>2.4.3</spring-data-jpa-version>
-		<spring-boot-version>2.4.2</spring-boot-version>
+		<spring-boot-version>2.4.3</spring-boot-version>
 
 		<aspectj-version>1.9.6</aspectj-version>
 		<slf4j-version>1.7.30</slf4j-version>
@@ -325,7 +325,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.22.2</version>
+					<version>3.0.0-M5</version>
 					<configuration>
 						<argLine>-Xms32m -Xmx1024m</argLine>
 						<!-- Adjusting TZ, travis run in UTC '-Duser.timezone=UTC' -->
@@ -460,6 +460,9 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-archetype-plugin</artifactId>
 					<version>3.2.0</version>
+					<configuration>
+						<ignoreEOLStyle>true</ignoreEOLStyle>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

@@ -33,9 +33,13 @@ class RestWebConfigTmpl {
 
 def String config(Application it) {
 	'''
-		«webXml(it)»
-		«restServletXml(it)»
-		«contextTmpl.contextXml(it)»
+		«IF getBooleanProperty("generate.restWeb.config.springboot")»
+				«springBootConfig(it)»
+		«ELSE»
+				«webXml(it)»
+				«restServletXml(it)»
+				«contextTmpl.contextXml(it)»
+		«ENDIF»
 	'''
 }
 
@@ -207,6 +211,154 @@ def String restServletXml(Application it) {
 		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
 
 	</beans>
+	'''
+	)
+}
+
+def String springBootConfig(Application it) {
+	'''
+		«springBootAppConfig(it)»
+		«springBootAppProperties(it)»
+		«springBootBackendConfig(it)»
+		«springBootWebConfig(it)»
+	'''
+}
+
+def String springBootAppConfig(Application it) {
+	fileOutput(basePackage + "/Application.java", OutputSlot.TO_SRC, '''
+		«javaHeader()»
+		package «basePackage»;
+
+		import org.springframework.boot.autoconfigure.SpringBootApplication;
+		import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+		import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+		import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+		import org.springframework.boot.builder.SpringApplicationBuilder;
+
+		@SpringBootApplication(exclude = {
+				DataSourceAutoConfiguration.class,
+				DataSourceTransactionManagerAutoConfiguration.class,
+				HibernateJpaAutoConfiguration.class
+		})
+		public class Application {
+
+			public static void main(String[] args) throws Exception {
+				new SpringApplicationBuilder().sources(Application.class).profiles("web").run(args);
+			}
+
+		}
+	'''
+	)
+}
+
+def String springBootAppProperties(Application it) {
+	fileOutput("/application.properties", OutputSlot.TO_RESOURCES, '''
+		# LOGGING
+		logging.level.org.springframework.web=INFO
+
+		# SPRING MVC
+		# Allow Thymeleaf templates to be reloaded at dev time
+		spring.thymeleaf.cache=false
+
+		# Use Sculptor banner from sculptor-framework-main
+		spring.banner.location=classpath:/sculptor-banner.txt
+
+		# EMBEDDED WEB CONTAINER CONFIGURATION
+		# Set the error path
+		server.error.path=/error
+	'''
+	)
+}
+
+def String springBootBackendConfig(Application it) {
+	fileOutput(javaFileName(basePackage + ".config.BackendConfig"), OutputSlot.TO_SRC, '''
+		«javaHeader()»
+		package «basePackage».config;
+
+		import org.springframework.context.annotation.Configuration;
+		import org.springframework.context.annotation.ImportResource;
+		import org.springframework.context.annotation.Profile;
+
+		@Profile("!test")
+		@Configuration
+		@ImportResource("classpath:applicationContext.xml")
+		public class BackendConfig {
+		}
+	'''
+	)
+}
+
+def String springBootWebConfig(Application it) {
+	fileOutput(javaFileName(basePackage + ".config.WebConfig"), OutputSlot.TO_SRC, '''
+		«javaHeader()»
+		package «basePackage».config;
+
+		/// Sculptor code formatter imports ///
+
+		import java.util.Arrays;
+		import java.util.HashMap;
+		import java.util.Map;
+
+		import org.sculptor.framework.context.ServiceContextServletFilter;
+		import org.springframework.boot.web.servlet.FilterRegistrationBean;
+		import org.springframework.context.annotation.Bean;
+		import org.springframework.context.annotation.Configuration;
+		import org.springframework.context.annotation.Profile;
+		import org.springframework.core.Ordered;
+		import org.springframework.http.MediaType;
+		import org.springframework.web.accept.ContentNegotiationManager;
+		import org.springframework.web.servlet.View;
+		import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+		import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+		import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+		import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+		import org.springframework.web.servlet.view.xml.MappingJackson2XmlView;
+
+		/* We have to disable this configuration during backend tests */
+		@Profile("web")
+		@Configuration
+		public class WebConfig implements WebMvcConfigurer {
+
+			@Bean
+			public View xmlView() {
+				return new MappingJackson2XmlView();
+			}
+
+			@Bean
+			public View jsonView() {
+				return new MappingJackson2JsonView();
+			}
+
+			@Override
+			public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+				configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.TEXT_HTML)
+						.mediaType("html", MediaType.TEXT_HTML).mediaType("xml", MediaType.APPLICATION_XML)
+						.mediaType("json", MediaType.APPLICATION_JSON);
+			}
+
+			@Bean
+			public ContentNegotiatingViewResolver viewResolver(ContentNegotiationManager manager) {
+				ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+				resolver.setContentNegotiationManager(manager);
+				resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
+				resolver.setDefaultViews(Arrays.asList(new View[] { xmlView(), jsonView() }));
+				return resolver;
+			}
+
+			@Bean
+			public FilterRegistrationBean<ServiceContextServletFilter> serviceContextFilterRegistration() {
+				FilterRegistrationBean<ServiceContextServletFilter> registration = new FilterRegistrationBean<>();
+				registration.setFilter(new ServiceContextServletFilter());
+				Map<String, String> initParams = new HashMap<String, String>(1);
+				initParams.put("ServiceContextFactoryImplementationClassName",
+						"org.sculptor.framework.context.ServletContainerServiceContextFactory");
+				registration.setInitParameters(initParams);
+				registration.addUrlPatterns("/rest/*");
+				registration.setOrder(Ordered.LOWEST_PRECEDENCE);
+				return registration;
+			}
+
+		}
 	'''
 	)
 }
