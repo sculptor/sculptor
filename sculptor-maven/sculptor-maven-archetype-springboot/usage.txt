@@ -1,0 +1,1 @@
+mvn archetype:generate -DarchetypeGroupId=org.sculptorgenerator -DarchetypeArtifactId=sculptor-maven-archetype-springboot -DarchetypeVersion=3.2.0-SNAPSHOT -Dejb=false -Dear=false -Drest=false -Djboss=false
