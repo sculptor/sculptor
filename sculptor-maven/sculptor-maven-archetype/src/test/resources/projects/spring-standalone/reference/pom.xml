@@ -29,7 +29,7 @@
 		<xstream-version>${xstream-version}</xstream-version>
 
 		<junit-version>${junit-version}</junit-version>
-		<hamcrest-version>2.2</hamcrest-version>
+		<hamcrest-version>${hamcrest-version}</hamcrest-version>
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 	</properties>
 

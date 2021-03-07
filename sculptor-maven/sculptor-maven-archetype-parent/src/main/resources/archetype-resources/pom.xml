@@ -32,7 +32,7 @@
 		<xstream-version>${xstream-version}</xstream-version>
 
 		<junit-version>${junit-version}</junit-version>
-		<hamcrest-version>2.2</hamcrest-version>
+		<hamcrest-version>${hamcrest-version}</hamcrest-version>
 #if( $mongodb != "true" && $mongodb != "y" && $mongodb != "yes")
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 #end
