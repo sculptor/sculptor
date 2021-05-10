@@ -40,17 +40,17 @@ class DomainObjectAttributeConverterTmpl {
 			/// Sculptor code formatter imports ///
 
 			@javax.persistence.Converter
-			public class «name»Converter implements javax.persistence.AttributeConverter<«name», «identifierAttribute.typeName»> {
+			public class «name»Converter implements javax.persistence.AttributeConverter<«name», «identifierAttribute.typeName.getObjectTypeName()»> {
 
 				@Override
-				public «identifierAttribute.typeName» convertToDatabaseColumn(«name» «name.toFirstLower») {
+				public «identifierAttribute.typeName.getObjectTypeName()» convertToDatabaseColumn(«name» «name.toFirstLower») {
 					return «name.toFirstLower» == null
 							? null
 							: «name.toFirstLower».get«identifierAttribute.name.toFirstUpper»();
 				}
 
 				@Override
-				public «name» convertToEntityAttribute(«identifierAttribute.typeName» «identifierAttribute.name») {
+				public «name» convertToEntityAttribute(«identifierAttribute.typeName.getObjectTypeName()» «identifierAttribute.name») {
 					return «identifierAttribute.name» == null
 							? null
 							: «name».from«identifierAttribute.name.toFirstUpper»(«identifierAttribute.name»);
