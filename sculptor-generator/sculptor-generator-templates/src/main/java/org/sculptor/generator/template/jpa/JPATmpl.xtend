@@ -283,7 +283,7 @@ def persistenceUnitCachePropertiesHibernate(Application it, String unitName, jav
 		// Enforce EhCache provider
 		propertyList.put("hibernate.cache.region.factory_class", "org.hibernate.cache.jcache.internal.JCacheRegionFactory");
 		propertyList.put("hibernate.javax.cache.provider", "org.ehcache.jsr107.EhcacheCachingProvider");
-		propertyList.put("hibernate.javax.cache.uri", "classpath://ehcache.xml");
+		propertyList.put("hibernate.javax.cache.uri", "classpath:///ehcache.xml");
 	} else if (cacheProvider() == "TreeCache") {
 		propertyList.put('hibernate.cache.provider_class', 'org.hibernate.cache.TreeCacheProvider');
 	} else if (cacheProvider() == "JbossTreeCache") {
