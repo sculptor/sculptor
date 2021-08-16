@@ -736,7 +736,7 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 				«IF !it.useTupleToObjectMapping()»
 					findByCondition(condition«
 						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter === null
-							», PagingParameter.noLimits()).getValues();«
+							», «getJavaType("PagingParameter")».noLimits()).getValues();«
 						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter !== null
 							», «pagingParameter.name»).getValues();«
 						ELSE»«
@@ -751,14 +751,7 @@ def String conditionBasedFinderMethod(RepositoryOperation it) {
 			«ELSE»
 				«it.getResultTypeName()» result =
 				«IF !it.useTupleToObjectMapping()»
-						findByCondition(condition, true«
-						IF properties.getBooleanProperty("findByCondition.paging") && pagingParameter === null
-							», new PagingParameter.rowAccess(0,1));«
-						ELSEIF properties.getBooleanProperty("findByCondition.paging") && pagingParameter !== null
-							», «pagingParameter.name»);«
-						ELSE»«
-							IF jpa()», «it.getResultTypeName()».class«ENDIF»);
-						«ENDIF»
+						findByCondition(condition, true«IF jpa()», «it.getResultTypeName()».class«ENDIF»);
 				«ELSE»
 					«fw("accessimpl.jpa.JpaHelper")».mapTupleToObject(
 						findByCondition(condition, true, «it.getResultTypeNameForMapping()».class), «it.getResultTypeName()».class);
