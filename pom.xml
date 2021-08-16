@@ -62,6 +62,19 @@
 	</developers>
 
 	<distributionManagement>
+		<repository>
+			<id>artifactory.hq.f4s.sk</id>
+			<name>F4S artifactory release repository</name>
+			<url>http://10.0.3.208:8081/artifactory/libs-release-local</url>
+		</repository>
+		<snapshotRepository>
+			<id>artifactory.hq.f4s.sk</id>
+			<name>F4S artifactory snapshot repository</name>
+			<url>http://10.0.3.208:8081/artifactory/libs-snapshot-local</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<!--
+	<distributionManagement>
 		<snapshotRepository>
 			<id>sonatype-nexus-snapshots</id>
 			<name>Sonatype Nexus Snapshots</name>
@@ -73,6 +86,7 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+	-->
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -92,7 +106,7 @@
 		<asm-version>9.1</asm-version>
 
 		<spring-version>5.3.4</spring-version>
-		<spring-security-version>5.4.5</spring-security-version>
+		<spring-security-version>5.4.7</spring-security-version>
 		<spring-integration-version>5.4.4</spring-integration-version>
 		<spring-data-jpa-version>2.4.5</spring-data-jpa-version>
 		<spring-boot-version>2.4.3</spring-boot-version>
@@ -311,6 +325,14 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.1.0</version>
+					<configuration>
+						<filesets>
+							<fileset><directory>src/main/xtend-gen/</directory></fileset>
+						</filesets>
+						<filesets>
+							<fileset><directory>src/test/xtend-gen/</directory></fileset>
+						</filesets>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -330,6 +352,9 @@
 						<argLine>-Xms32m -Xmx1024m</argLine>
 						<!-- Adjusting TZ, travis run in UTC '-Duser.timezone=UTC' -->
 						<!-- Using dynamic class enhancement '-javaagent:/home/tavoda/.m2/repository/org/eclipse/persistence/eclipselink/2.7.1/eclipselink-2.7.1.jar' -->
+						<additionalClasspathElements>
+							<additionalClasspathElement>path/to/additional/resources</additionalClasspathElement>
+						</additionalClasspathElements>
 					</configuration>
 				</plugin>
 				<plugin>
