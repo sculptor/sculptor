@@ -87,6 +87,23 @@
 						<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
 						<version>${xtext-version}</version>
 					</dependency>
+					<!-- JDT java 11 support - explicit downgrade -->
+					<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.equinox.common</artifactId>
+						<version>3.12.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.core.runtime</artifactId>
+						<version>3.18.0</version>
+						<exclusions>
+							<exclusion>
+								<groupId>org.eclipse.platform</groupId>
+								<artifactId>org.eclipse.equinox.common</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
 				</dependencies>
 			</plugin>
 			<plugin>
