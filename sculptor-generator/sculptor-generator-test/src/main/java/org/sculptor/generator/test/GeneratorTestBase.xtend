@@ -91,7 +91,15 @@ abstract class GeneratorTestBase {
 			new File("src/test/resources/" + CONFIG_DIR + testName + "/model.btdesign"), generatorProperties)
 
 		// Log all issues occured during workflow execution
+		var String msg = null;
+		var Throwable ex = null;
 		for (issue : result.getIssues()) {
+			if (msg === null) {
+				msg = issue.getMessage();
+				if (issue.getThrowable() !== null) {
+					ex = issue.getThrowable();
+				}
+			}
 			switch (issue.getSeverity()) {
 				case ERROR :
 					if (issue.getThrowable() !== null) {
@@ -106,7 +114,13 @@ abstract class GeneratorTestBase {
 			}
 		}
 		if (result.status != Status.SUCCESS) {
-			throw new SculptorGeneratorException("Code generation failed")
+			if (msg !== null && ex !== null) {
+				throw new SculptorGeneratorException("Code generation failed - " + msg, ex);
+			} else if (msg !== null) {
+				throw new SculptorGeneratorException("Code generation failed - " + msg);
+			} else {
+				throw new SculptorGeneratorException("Code generation failed")
+			}
 		}
 		result.generatedFiles
 	}
