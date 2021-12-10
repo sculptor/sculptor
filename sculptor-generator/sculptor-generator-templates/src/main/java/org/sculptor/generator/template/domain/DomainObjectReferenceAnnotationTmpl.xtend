@@ -184,7 +184,7 @@ def String oneToOneJpaAnnotation(Reference it) {
 				!nullable, "optional", false,
 				isRefInverse(), "mappedBy", '"' + opposite.name + '"',
 				it.getCascadeType() !== null, "cascade", it.getCascadeType(),
-				isOrphanRemoval(it.getCascadeType()), "orphanRemoval", true,
+				isOrphanRemoval(dbHelper.getCascade(it)), "orphanRemoval", true,
 				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
 		«IF !isRefInverse()»
@@ -377,7 +377,7 @@ def String oneToManyJpaAnnotation(Reference it) {
 		@javax.persistence.OneToMany(
 			«formatAnnotationParameters(<Object>newArrayList(
 				it.getCascadeType() !== null, "cascade", it.getCascadeType(),
-				isOrphanRemoval(it.getCascadeType(), it), "orphanRemoval", true,
+				isOrphanRemoval(dbHelper.getCascade(it), it), "orphanRemoval", true,
 				isMappedBy, "mappedBy", '"' + opposite?.name + '"',
 				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
