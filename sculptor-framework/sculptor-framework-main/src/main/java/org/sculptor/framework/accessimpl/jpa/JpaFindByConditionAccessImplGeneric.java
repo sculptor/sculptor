@@ -29,11 +29,9 @@ import org.sculptor.framework.domain.expression.ExpressionConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.FetchType;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -186,27 +184,35 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
 
         // Apply eager from criteria
+        Map<String, FetchParent> mapEager = new HashMap<>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.FetchEager.equals(criteria.getOperator())) {
-                // TODO: this is not tested
-                String[] split = criteria.getPropertyFullName().split("\\.");
-                FetchParent parent = root;
-                for (String s : split) {
-                    parent = parent.fetch(s, JoinType.LEFT);
-                }
-                // Remove fields which are overridden in criteria
-                eagerProperties.remove(criteria.getPropertyFullName());
+                doFetch(root, criteria.getPropertyFullName(), criteria.getFirstOperantAs(JoinType.class), mapEager);
             } else if (Operator.FetchLazy.equals(criteria.getOperator())) {
-                // TODO: fetchLazy is not supported actually
+                // fetchLazy is not supported actually, but we will remove from list of fetchEager for firstLevel
             }
+            // Remove fields which are overridden in criteria
+            eagerProperties.remove(criteria.getPropertyFullName());
         }
 
         // Apply eager unspecified in criteria
         for (String eager : eagerProperties) {
-            String[] split = eager.split("\\.");
-            FetchParent parent = root;
-            for (String s : split) {
-                parent = parent.fetch(s, JoinType.LEFT);
+            doFetch(root,  eager, JoinType.LEFT, mapEager);
+        }
+    }
+
+    private void doFetch(Root<T> root, String propertyFullName, JoinType joinType, Map<String, FetchParent> mapEager) {
+        joinType = joinType == null ? JoinType.LEFT : joinType;
+        String[] split = propertyFullName.split("\\.");
+        FetchParent parent = root;
+        String actualPath = "";
+        for (String s : split) {
+            actualPath += "#" + s;
+            if (mapEager.containsKey(actualPath)) {
+                parent = mapEager.get(actualPath);
+            } else {
+                parent = parent.fetch(s, joinType);
+                mapEager.put(actualPath, parent);
             }
         }
     }

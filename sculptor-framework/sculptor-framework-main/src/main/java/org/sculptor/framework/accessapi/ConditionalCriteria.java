@@ -1,13 +1,14 @@
 package org.sculptor.framework.accessapi;
 
-import java.util.Collection;
-import java.util.List;
-
+import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.Property;
 import org.sculptor.framework.domain.PropertyWithExpression;
 import org.sculptor.framework.domain.expression.Expression;
-import org.sculptor.framework.domain.LeafProperty;
 import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
+
+import javax.persistence.criteria.JoinType;
+import java.util.Collection;
+import java.util.List;
 
 public class ConditionalCriteria {
 
@@ -219,6 +220,10 @@ public class ConditionalCriteria {
 
 	public static ConditionalCriteria fetchEager(Expression<?> property) {
 		return new ConditionalCriteria(Operator.FetchEager, property);
+	}
+
+	public static ConditionalCriteria fetchEager(Expression<?> property, JoinType joinType) {
+		return new ConditionalCriteria(Operator.FetchEager, property, joinType);
 	}
 
 	public static ConditionalCriteria fetchLazy(Expression<?> property) {

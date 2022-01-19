@@ -29,6 +29,9 @@ import org.sculptor.framework.domain.expression.ComplexExpression;
 import org.sculptor.framework.domain.expression.Expression;
 import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
 
+import javax.persistence.FetchType;
+import javax.persistence.criteria.JoinType;
+
 /**
  * Expression Builder for ConditionalCriteria. A small internal DSL (fluent
  * interface) for creating criteria conditions.
@@ -368,6 +371,9 @@ public class ConditionalCriteriaBuilder<T> {
             if (ConditionalCriteria.OperatorType.Sql.equals(operatorType)
                     || ConditionalCriteria.OperatorType.Config.equals(operatorType)) {
                 otherCriteriaStack.push(criteria);
+                if (operatorStack.peek() == ExpressionOperator.And) {
+                    operatorStack.pop();
+                }
             } else {
                 SimpleStack<ConditionalCriteria> criteriaStack = isHaving ? havingCriteriaStack : whereCriteriaStack;
                 ExpressionOperator currentOperator = operatorStack.peek();
@@ -572,6 +578,11 @@ public class ConditionalCriteriaBuilder<T> {
                return RootBuilderImpl.this;
             }
 
+            public ConditionRootLogic<T> fetchEager(JoinType joinType) {
+                pushConditionalCriteria(ConditionalCriteria.fetchEager(baseProp, joinType));
+                return RootBuilderImpl.this;
+            }
+
             public ConditionRootLogic<T> fetchLazy() {
                pushConditionalCriteria(ConditionalCriteria.fetchLazy(baseProp));
                return RootBuilderImpl.this;
@@ -639,6 +650,7 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRootLogic<T> isNotEmpty();
         ConditionRootLogic<T> fetchLazy();
         ConditionRootLogic<T> fetchEager();
+        ConditionRootLogic<T> fetchEager(JoinType joinType);
 
         // Full test search for PostgreSQL
         ConditionRootLogic<T> ftsEq(ExpressionFtsQuery query);
