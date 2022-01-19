@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.security.auth.Subject;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.sculptor.framework.util.FactoryConfiguration;
 import org.sculptor.framework.util.FactoryHelper;
@@ -105,9 +106,10 @@ public abstract class ServiceContextFactory {
             return context;
         }
 
-        String sessionId = request.getSession().getId();
-        // ServletContextName is defined in <display-name> in web.xml
-        String applicationId = request.getSession().getServletContext().getServletContextName();
+        String applicationId = request.getServletContext().getServletContextName();
+        // Respect session creation policy - microservices
+        HttpSession session = request.getSession(false);
+        String sessionId = session != null ? session.getId() : null;
 
         String userId = null;
         Set<String> roles = Collections.emptySet();
