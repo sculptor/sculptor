@@ -153,12 +153,12 @@ public class ConditionalCriteriaBuilder<T> {
             return new PropBuilderImpl(property, false);
         }
 
-		public ConditionProperty<T> where(Expression<T> property) {
-        	return withProperty(property);
-		}
+        public ConditionProperty<T> where(Expression<T> property) {
+            return withProperty(property);
+        }
 
-		public ConditionRoot<T> and() {
-			operatorStack.push(ExpressionOperator.And);
+        public ConditionRoot<T> and() {
+            operatorStack.push(ExpressionOperator.And);
             return this;
         }
 
@@ -187,17 +187,17 @@ public class ConditionalCriteriaBuilder<T> {
            return this;
         }
 
-		@Override
-		public ConditionRoot<T> readOnly() {
-			pushCriteria(ConditionalCriteria.readOnly());
-			return this;
-		}
+        @Override
+        public ConditionRoot<T> readOnly() {
+            pushCriteria(ConditionalCriteria.readOnly());
+            return this;
+        }
 
-		@Override
-		public ConditionRoot<T> scroll() {
-			pushCriteria(ConditionalCriteria.scroll());
-			return this;
-		}
+        @Override
+        public ConditionRoot<T> scroll() {
+            pushCriteria(ConditionalCriteria.scroll());
+            return this;
+        }
 
         public ConditionRoot<T> ascending() {
             // syntactic sugar
@@ -213,11 +213,11 @@ public class ConditionalCriteriaBuilder<T> {
             return this;
         }
 
-		@Override
-		public GroupBy<T> groupBy(Expression<T> property) {
-			pushCriteria(ConditionalCriteria.groupBy(property));
-			return this;
-		}
+        @Override
+        public GroupBy<T> groupBy(Expression<T> property) {
+            pushCriteria(ConditionalCriteria.groupBy(property));
+            return this;
+        }
 
 //		@Override
 //		public GroupBy<T> groupBy(Expression<T> property, ConditionalCriteria.Function function) {
@@ -225,8 +225,8 @@ public class ConditionalCriteriaBuilder<T> {
 //			return this;
 //		}
 
-		@Override
-		public ConditionProperty<T> having(Expression<T> property) {
+        @Override
+        public ConditionProperty<T> having(Expression<T> property) {
             if (isHaving == false) {
                 assertHaving();
             }
@@ -236,13 +236,13 @@ public class ConditionalCriteriaBuilder<T> {
                 and();
             }
             return new PropBuilderImpl(property, true);
-		}
+        }
 
-		@Override
-		public Selection<T> select(Expression<T> property) {
-			pushCriteria(ConditionalCriteria.select(property));
-			return this;
-		}
+        @Override
+        public Selection<T> select(Expression<T> property) {
+            pushCriteria(ConditionalCriteria.select(property));
+            return this;
+        }
 
 //		@Override
 //		public Selection<T> select(Expression<T> property, ConditionalCriteria.Function function) {
@@ -258,24 +258,24 @@ public class ConditionalCriteriaBuilder<T> {
 //			return this;
 //		}
 
-		@Override
-		public Selection<T> select(Expression<T> property, String alias) {
-			ConditionalCriteria criteria = ConditionalCriteria.select(property);
-			criteria.propertyAlias = alias;
-			pushCriteria(criteria);
-			return this;
-		}
+        @Override
+        public Selection<T> select(Expression<T> property, String alias) {
+            ConditionalCriteria criteria = ConditionalCriteria.select(property);
+            criteria.propertyAlias = alias;
+            pushCriteria(criteria);
+            return this;
+        }
 
-		@Override
-		public Selection<T> alias(String alias) {
-			ConditionalCriteria last = otherCriteriaStack.pop();
-			if (last.getOperator() != Operator.Select) {
-				throw new IllegalStateException("alias can only be used after select");
-			}
-			last.propertyAlias = alias;
-			pushCriteria(last);
-			return this;
-		}
+        @Override
+        public Selection<T> alias(String alias) {
+            ConditionalCriteria last = otherCriteriaStack.pop();
+            if (last.getOperator() != Operator.Select) {
+                throw new IllegalStateException("alias can only be used after select");
+            }
+            last.propertyAlias = alias;
+            pushCriteria(last);
+            return this;
+        }
 
         private void makeAggregateFunction(String operation, Consumer<ComplexExpression> c) {
             ConditionalCriteria last = otherCriteriaStack.pop();
@@ -297,54 +297,54 @@ public class ConditionalCriteriaBuilder<T> {
         }
 
         @Override
-		public ConditionRoot<T> max() {
+        public ConditionRoot<T> max() {
             makeAggregateFunction("max", ComplexExpression::max);
-			return this;
-		}
+            return this;
+        }
 
         @Override
-		public ConditionRoot<T> min() {
+        public ConditionRoot<T> min() {
             makeAggregateFunction("min", ComplexExpression::min);
             return this;
-		}
+        }
 
-		@Override
-		public ConditionRoot<T> sum() {
+        @Override
+        public ConditionRoot<T> sum() {
             makeAggregateFunction("sum", ComplexExpression::sum);
             return this;
-		}
+        }
 
-		@Override
-		public ConditionRoot<T> avg() {
+        @Override
+        public ConditionRoot<T> avg() {
             makeAggregateFunction("avg", ComplexExpression::avg);
-			return this;
-		}
+            return this;
+        }
 
-		@Override
-		public ConditionRoot<T> sumAsLong() {
+        @Override
+        public ConditionRoot<T> sumAsLong() {
             makeAggregateFunction("sumAsLong", ComplexExpression::sumAsLong);
             return this;
-		}
+        }
 
-		@Override
-		public ConditionRoot<T> sumAsDouble() {
+        @Override
+        public ConditionRoot<T> sumAsDouble() {
             makeAggregateFunction("sumAsDouble", ComplexExpression::sumAsDouble);
             return this;
-		}
+        }
 
-		@Override
-		public ConditionRoot<T> count() {
+        @Override
+        public ConditionRoot<T> count() {
             makeAggregateFunction("count", ComplexExpression::count);
             return this;
-		}
+        }
 
-		@Override
-		public ConditionRoot<T> countDistinct() {
+        @Override
+        public ConditionRoot<T> countDistinct() {
             makeAggregateFunction("countDistinct", ComplexExpression::countDistinct);
             return this;
-		}
+        }
 
-		public ConditionRoot<T> lbrace() {
+        public ConditionRoot<T> lbrace() {
             braceCount++;
             operatorStack.push(ExpressionOperator.LBrace);
             return this;
@@ -365,8 +365,8 @@ public class ConditionalCriteriaBuilder<T> {
             return this;
         }
 
-		@SuppressWarnings("unchecked")
-		private void pushCriteria(ConditionalCriteria criteria) {
+        @SuppressWarnings("unchecked")
+        private void pushCriteria(ConditionalCriteria criteria) {
             ConditionalCriteria.OperatorType operatorType = criteria.getOperator().getOperatorType();
             if (ConditionalCriteria.OperatorType.Sql.equals(operatorType)
                     || ConditionalCriteria.OperatorType.Config.equals(operatorType)) {
@@ -384,7 +384,7 @@ public class ConditionalCriteriaBuilder<T> {
                             || popCriteria.getOperator() == Operator.Or && currentOperator == ExpressionOperator.Or) {
                         compositeCriteria = addSameCriteria(popCriteria, criteria);
                     } else if (popCriteria.getOperator() == Operator.Or && currentOperator == ExpressionOperator.And) {
-                    	// Add to rightmost branch of OR
+                        // Add to rightmost branch of OR
                         ConditionalCriteria rightmost;
                         if (popCriteria.getFirstOperant() instanceof List) {
                             List<ConditionalCriteria> criteriaList = (List<ConditionalCriteria>) popCriteria.getFirstOperant();
@@ -393,7 +393,7 @@ public class ConditionalCriteriaBuilder<T> {
                                     ? addSameCriteria(rightmost, criteria)
                                     : ConditionalCriteria.and(rightmost, criteria);
                             criteriaList.set(criteriaList.size() - 1, newCriteria);
-						} else {
+                        } else {
                             rightmost = (ConditionalCriteria) popCriteria.getSecondOperant();
                             ConditionalCriteria newCriteria = rightmost.getOperator() == Operator.And
                                     ? addSameCriteria(rightmost, criteria)
@@ -457,10 +457,10 @@ public class ConditionalCriteriaBuilder<T> {
             }
 
             private void pushConditionalCriteria(ConditionalCriteria criteria) {
-            	if (having) {
-            	    criteria.setHaving();
+                if (having) {
+                    criteria.setHaving();
                 }
-            	pushCriteria(criteria);
+                pushCriteria(criteria);
             }
 
             public ConditionRootLogic<T> eq(Object value) {
@@ -604,16 +604,16 @@ public class ConditionalCriteriaBuilder<T> {
 
     public interface ConditionRoot<T> {
         List<ConditionalCriteria> build();
-		ConditionalCriteria buildSingle();
+        ConditionalCriteria buildSingle();
         ConditionRoot<T> not();
         ConditionProperty<T> withProperty(Expression<T> property);
-		ConditionProperty<T> where(Expression<T> property);
+        ConditionProperty<T> where(Expression<T> property);
         Selection<T> select(Expression<T> property);
         Selection<T> select(Expression<T> property, String alias);
         OrderBy<T> orderBy(Expression<T> property);
         GroupBy<T> groupBy(Expression<T> property);
-		ConditionProperty<T> having(Expression<T> property);
-		ConditionRoot<T> distinctRoot();
+        ConditionProperty<T> having(Expression<T> property);
+        ConditionRoot<T> distinctRoot();
         ConditionRoot<T> projectionRoot();
         ConditionRoot<T> readOnly();
         ConditionRoot<T> scroll();
@@ -661,8 +661,8 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRootLogic<T> to(Object to);
     }
 
-	public interface Selection<T> extends ConditionRoot<T> {
-		Selection<T> alias(String alias);
+    public interface Selection<T> extends ConditionRoot<T> {
+        Selection<T> alias(String alias);
 
         ConditionRoot<T> max();
         ConditionRoot<T> min();

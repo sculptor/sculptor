@@ -62,16 +62,16 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
     }
 
     public void setCondition(List<ConditionalCriteria> criteria) {
-		conditionalCriterias=criteria;
-	}
+        conditionalCriterias=criteria;
+    }
 
-	public void addCondition(ConditionalCriteria criteria) {
-		conditionalCriterias.add(criteria);
-	}
+    public void addCondition(ConditionalCriteria criteria) {
+        conditionalCriterias.add(criteria);
+    }
 
-	public List<R> getResult() {
-		return getListResult();
-	}
+    public List<R> getResult() {
+        return getListResult();
+    }
 
     @Override
     protected List<Predicate> prepareWhere() {
@@ -89,16 +89,16 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 
     @Override
     protected void prepareConfig(QueryConfig config) {
-		config.setDistinct(false);
+        config.setDistinct(false);
     }
 
     @SuppressWarnings("unchecked")
     protected void prepareSelect(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
-		List<Selection<?>> selections = new ArrayList<Selection<?>>();
+        List<Selection<?>> selections = new ArrayList<Selection<?>>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
-        	Selection<?> selection = null;
+            Selection<?> selection = null;
             if (Operator.Select.equals(criteria.getOperator())) {
-            	selection = getExpression(criteria, root);
+                selection = getExpression(criteria, root);
                 if (selection != null) {
                     if (criteria.getPropertyAlias() != null) {
                         selection.alias(criteria.getPropertyAlias());
@@ -108,7 +108,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             }
         }
         if (!selections.isEmpty()) {
-        	setFetchEager(null);
+            setFetchEager(null);
             if (selections.size() == 1) {
                 criteriaQuery.select((Selection<? extends R>) selections.get(0));
             } else {
@@ -139,7 +139,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
     public Expression[] convertObjectArray(Object... obj) {
         Expression<?>[] args = new Expression[obj.length];
         for (int i = 0; i < args.length; i++) {
-        	args[i] = convertObject(obj[i]);
+            args[i] = convertObject(obj[i]);
         }
         return args;
     }
@@ -265,10 +265,10 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 
     @Override
     protected void prepareGroupBy(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
-		List<Expression<?>> groups = new ArrayList<Expression<?>>();
+        List<Expression<?>> groups = new ArrayList<Expression<?>>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.GroupBy.equals(criteria.getOperator())) {
-            	groups.add(getExpression(criteria, root));
+                groups.add(getExpression(criteria, root));
             }
         }
         if (!groups.isEmpty()) {
@@ -301,7 +301,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Predicate preparePredicate(ConditionalCriteria criteria, boolean forceJoin) {
-    	// Performance improvement
+        // Performance improvement
         if (Operator.Select.equals(criteria.getOperator())
                 || Operator.GroupBy.equals(criteria.getOperator())
                 || Operator.FetchEager.equals(criteria.getOperator())
@@ -360,7 +360,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             for (ConditionalCriteria condition : (List<ConditionalCriteria>) criteria.getFirstOperant()) {
                 resultPredicates.add(preparePredicate(condition, true));
             }
-			return builder.or(resultPredicates.toArray(new Predicate[resultPredicates.size()]));
+            return builder.or(resultPredicates.toArray(new Predicate[resultPredicates.size()]));
         } else if (Operator.Or.equals(operator)) {
             return builder.or(
                     preparePredicate((ConditionalCriteria) criteria.getFirstOperant(), true),
@@ -410,32 +410,32 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
             getConfig().setDistinct(true);
             return null;
         } else if (Operator.ReadOnly.equals(operator)) {
-			if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+            if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
                 // org.hibernate.annotations.QueryHints.READ_ONLY
                 setHint("org.hibernate.readOnly", true);
             } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-				// org.eclipse.persistence.config.QueryHints.READ_ONLY
+                // org.eclipse.persistence.config.QueryHints.READ_ONLY
                 setHint("eclipselink.read-only", true);
             } else if (JpaHelper.isJpaProviderOpenJpa(getEntityManager())) {
-				// Open JPA doesn't support READ-ONLY query
+                // Open JPA doesn't support READ-ONLY query
                 log.warn("Read only query hint ignored - not supported by OpenJPA");
             } else if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
                 log.warn("Read only query hint ignored - not supported by DataNucleus");
             } else {
-			    String provider = getEntityManager().getDelegate().getClass().getSimpleName();
-			    log.warn("Read only query hint ignored - unsupported provider " + provider);
+                String provider = getEntityManager().getDelegate().getClass().getSimpleName();
+                log.warn("Read only query hint ignored - unsupported provider " + provider);
             }
             return null;
         } else if (Operator.Scroll.equals(operator)) {
-        	getConfig().setScroll(true);
+            getConfig().setScroll(true);
             return null;
         } else {
             return null;
         }
     }
 
-	public void executeCount() {
-		executeResultCount();
-	}
+    public void executeCount() {
+        executeResultCount();
+    }
 
 }
