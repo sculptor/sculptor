@@ -17,6 +17,7 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
+import org.hibernate.metamodel.model.domain.internal.SingularAttributeImpl;
 import org.hibernate.query.criteria.internal.expression.function.ParameterizedFunctionExpression;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
@@ -31,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.FetchType;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.Type;
 import java.util.*;
 
 
@@ -89,6 +92,12 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 
     @Override
     protected void prepareConfig(QueryConfig config) {
+        for (ConditionalCriteria criteria : conditionalCriterias) {
+            if (Operator.UseWhereForFetch.equals(criteria.getOperator())) {
+                getConfig().setUseWhereForFetch(true);
+                break;
+            }
+        }
         config.setDistinct(false);
     }
 
@@ -184,10 +193,9 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
         }
 
         // Apply eager from criteria
-        Map<String, FetchParent> mapEager = new HashMap<>();
         for (ConditionalCriteria criteria : conditionalCriterias) {
             if (Operator.FetchEager.equals(criteria.getOperator())) {
-                doFetch(root, criteria.getPropertyFullName(), criteria.getFirstOperantAs(JoinType.class), mapEager);
+                doFetch(root, criteria.getPropertyFullName().split("\\."), criteria.getFirstOperantAs(JoinType.class));
             } else if (Operator.FetchLazy.equals(criteria.getOperator())) {
                 // fetchLazy is not supported actually, but we will remove from list of fetchEager for firstLevel
             }
@@ -197,24 +205,28 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 
         // Apply eager unspecified in criteria
         for (String eager : eagerProperties) {
-            doFetch(root,  eager, JoinType.LEFT, mapEager);
+            doFetch(root,  eager.split("\\."), JoinType.LEFT);
         }
     }
 
-    private void doFetch(Root<T> root, String propertyFullName, JoinType joinType, Map<String, FetchParent> mapEager) {
-        joinType = joinType == null ? JoinType.LEFT : joinType;
-        String[] split = propertyFullName.split("\\.");
+    Map<String, FetchParent> mapEager = new HashMap<>();
+
+    private FetchParent doFetch(FetchParent root, String[] propertyPath, JoinType joinType) {
         FetchParent parent = root;
-        String actualPath = "";
-        for (String s : split) {
-            actualPath += "#" + s;
-            if (mapEager.containsKey(actualPath)) {
-                parent = mapEager.get(actualPath);
-            } else {
-                parent = parent.fetch(s, joinType);
-                mapEager.put(actualPath, parent);
+        if (propertyPath != null && propertyPath.length > 0) {
+            joinType = joinType == null ? JoinType.LEFT : joinType;
+            String actualPath = "";
+            for (String s : propertyPath) {
+                actualPath += "#" + s;
+                if (mapEager.containsKey(actualPath)) {
+                    parent = mapEager.get(actualPath);
+                } else {
+                    parent = parent.fetch(s, joinType);
+                    mapEager.put(actualPath, parent);
+                }
             }
         }
+        return parent;
     }
 
     @Override
@@ -244,22 +256,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
     }
 
     private Path getFetchPath(Root<T> root, ConditionalCriteria criteria) {
-        FetchParent from = root;
-        for (int i = 0; i < criteria.getPropertyPath().length; i++) {
-            String stringPath = criteria.getPropertyPath()[i];
-            Set<Fetch<?, ?>> fetches = from.getFetches();
-            boolean found = false;
-            for (Fetch<?, ?> fetch : fetches) {
-                if (fetch.getAttribute().getName().equals(stringPath)) {
-                    from = (FetchParent) fetch;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                from = from.fetch(stringPath, JoinType.LEFT);
-            }
-        }
+        FetchParent from = doFetch(root, criteria.getPropertyPath(), JoinType.LEFT);
         return ((Path) from).get(criteria.getPropertyName());
     }
 
@@ -312,8 +309,7 @@ public class JpaFindByConditionAccessImplGeneric<T,R>
 
         CriteriaBuilder builder = getCriteriaBuilder();
         Root<T> root = getRoot();
-        Expression<?> path = getPath(root, criteria.getPropertyFullName(), forceJoin);
-        path = getExpression(criteria, root);
+        Expression<?> path = getExpression(criteria, root);
 
         ConditionalCriteria.Operator operator = criteria.getOperator();
         if (Operator.Equal.equals(operator)) {

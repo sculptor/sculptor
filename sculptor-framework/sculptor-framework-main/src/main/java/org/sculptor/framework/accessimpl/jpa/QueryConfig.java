@@ -21,6 +21,8 @@ public interface QueryConfig {
     QueryConfig setScroll(boolean scroll);
     List<String> getExcludeProperties();
     QueryConfig setExcludeProperties(List<String> excludeProperties);
+    boolean isUseWhereForFetch();
+    QueryConfig setUseWhereForFetch(boolean useWhereForFetch);
 
     int getFirstResult();
     QueryConfig setFirstResult(int firstResult);
@@ -55,6 +57,7 @@ public interface QueryConfig {
         private boolean excludeZeroes = true;
         private boolean enableLike = true;
         private boolean scroll = false;
+        private boolean useWhereForFetch = false;
         private List<String> excludeProperties = new ArrayList<String>();
 
         private Class<?> resultType = null;
@@ -96,7 +99,7 @@ public interface QueryConfig {
         }
 
         public QueryConfig setScroll(boolean scroll) {
-        	this.scroll = scroll;
+            this.scroll = scroll;
             return this;
         }
 
@@ -106,6 +109,15 @@ public interface QueryConfig {
 
         public QueryConfig setExcludeProperties(List<String> excludeProperties) {
             this.excludeProperties = excludeProperties;
+            return this;
+        }
+
+        public boolean isUseWhereForFetch() {
+            return useWhereForFetch;
+        }
+
+        public QueryConfig setUseWhereForFetch(boolean useWhereForFetch) {
+            this.useWhereForFetch = useWhereForFetch;
             return this;
         }
 

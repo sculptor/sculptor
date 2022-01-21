@@ -28,15 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.ManagedType;
@@ -235,8 +227,6 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 
 	/**
 	 * 
-	 * @param path
-	 * @param type
 	 * @param entity
 	 * @return
 	 */
@@ -248,7 +238,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * 
 	 * @param path
 	 * @param type
-	 * @param entity
+	 * @param managedObject
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -314,11 +304,11 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	/**
 	 * 
 	 * @param restrictions
-	 * @param disjunction
+	 * @param isAnd
 	 * @return
 	 */
-	protected Predicate preparePredicate(Map<String, Object> restrictions, boolean AND) {
-		return (AND) ? andPredicates(prepareWhere(restrictions)) : orPredicates(prepareWhere(restrictions));
+	protected Predicate preparePredicate(Map<String, Object> restrictions, boolean isAnd) {
+		return (isAnd) ? andPredicates(prepareWhere(restrictions)) : orPredicates(prepareWhere(restrictions));
 	}
 
 	/**
@@ -513,6 +503,19 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 						break;
 					}
 				}
+
+				// If not found try in fetch
+				if (!found && getConfig().isUseWhereForFetch()) {
+					Set<Fetch<F, ?>> fetches = curPath.getFetches();
+					for (Fetch<F, ?> fetch : fetches) {
+						if (fetch.getAttribute().getName().equals(pathElem)) {
+							curPath = (From) fetch;
+							found = true;
+							break;
+						}
+					}
+				}
+
 				if (!found) {
 					curPath = curPath.join(pathElem, JoinType.LEFT);
 				}

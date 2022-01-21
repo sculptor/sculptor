@@ -194,6 +194,12 @@ public class ConditionalCriteriaBuilder<T> {
         }
 
         @Override
+        public ConditionRoot<T> useWhereForFetch() {
+            pushCriteria(ConditionalCriteria.useWhereForFetch());
+            return this;
+        }
+
+        @Override
         public ConditionRoot<T> scroll() {
             pushCriteria(ConditionalCriteria.scroll());
             return this;
@@ -617,6 +623,7 @@ public class ConditionalCriteriaBuilder<T> {
         ConditionRoot<T> projectionRoot();
         ConditionRoot<T> readOnly();
         ConditionRoot<T> scroll();
+        ConditionRoot<T> useWhereForFetch();
         ConditionRoot<T> lbrace();
         ConditionRootLogic<T> rbrace();
     }

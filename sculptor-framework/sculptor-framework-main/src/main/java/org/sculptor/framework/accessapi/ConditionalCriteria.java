@@ -250,6 +250,10 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.ReadOnly, null);
 	}
 
+	public static ConditionalCriteria useWhereForFetch() {
+		return new ConditionalCriteria(Operator.UseWhereForFetch, null);
+	}
+
 	public static ConditionalCriteria scroll() {
 		return new ConditionalCriteria(Operator.Scroll, null);
 	}
@@ -284,12 +288,13 @@ public class ConditionalCriteria {
 		, In, Between
 		, EqualProperty, LessThanProperty, LessThanOrEqualProperty, GreatThanProperty, GreatThanOrEqualProperty
 		, Not, Or, And
+		, FtsEqual
 		, OrderAsc(OperatorType.Sql), OrderDesc(OperatorType.Sql)
 		, GroupBy(OperatorType.Sql), Select(OperatorType.Sql)
 		, DistinctRoot(OperatorType.Config), ProjectionRoot(OperatorType.Config)
 		, FetchLazy(OperatorType.Config), FetchEager(OperatorType.Config)
 		, ReadOnly(OperatorType.Config), Scroll(OperatorType.Config)
-		, FtsEqual
+		, UseWhereForFetch(OperatorType.Config)
 		;
 
 		private OperatorType operatorType;
