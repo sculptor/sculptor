@@ -54,6 +54,9 @@ public class PagingParameter implements Serializable {
         if (page < 1) {
             throw new IllegalArgumentException("Page numbers are 1 based");
         }
+        if (additionalResultPages < 0) {
+            throw new IllegalArgumentException("additionalResultPages min values is 0 (actual " + additionalResultPages + ")");
+        }
         int startRow = (page - 1) * pageSize;
         // To ensure N additional pages we need only (N - 1) * pageSize + 1 rows
         int additionalRows=additionalResultPages > 0 ? (additionalResultPages - 1) * pageSize + 1 : UNKNOWN;
@@ -78,6 +81,10 @@ public class PagingParameter implements Serializable {
 
     public static PagingParameter firstRow() {
         return new PagingParameter(0, 1, false, 0, UNKNOWN);
+    }
+
+    public static PagingParameter firstRows(int numberOfRows) {
+        return new PagingParameter(0, numberOfRows, false, 0, UNKNOWN);
     }
 
     public static PagingParameter noLimits() {
@@ -122,7 +129,7 @@ public class PagingParameter implements Serializable {
     }
 
     /**
-     * Number of results (rows) per page, i.e. same as {@link #getMaxResults}.
+     * Number of results (rows) per page
      */
     public int getPageSize() {
         return pageSize;
@@ -173,8 +180,8 @@ public class PagingParameter implements Serializable {
        if (result.getTotalPages() == UNKNOWN) {
           throw new IllegalArgumentException("Unknown total pages - PagingParameter need countTotalPages=true");
        }
-       int startRow=result.getTotalPages() * result.getPageSize();
-       int endRow=result.getTotalPages() * result.getPageSize();
+       int startRow=result.getTotalPages() * result.getPageSize() - result.getPageSize();
+       int endRow=result.getTotalRows();
        return new PagingParameter(startRow, endRow, false, 0, result.getPageSize());
     }
 
