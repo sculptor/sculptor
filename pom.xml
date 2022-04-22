@@ -105,7 +105,7 @@
 		<ecore-xcore-version>1.13.0</ecore-xcore-version>
 		<asm-version>9.1</asm-version>
 
-		<spring-version>5.3.4</spring-version>
+		<spring-version>5.3.19</spring-version>
 		<spring-security-version>5.4.7</spring-security-version>
 		<spring-integration-version>5.4.4</spring-integration-version>
 		<spring-data-jpa-version>2.4.5</spring-data-jpa-version>
