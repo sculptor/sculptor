@@ -393,6 +393,7 @@ def String componentScan(Application it) {
 def String componentScanExclusionFilter(Application it) {
 	'''
 	<context:exclude-filter type="regex" expression=".*web.*"/>
+	<context:exclude-filter type="regex" expression=".*rest.*"/>
 	'''
 }
 
