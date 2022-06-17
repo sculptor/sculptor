@@ -17,7 +17,7 @@
 
 		<sculptor-version>3.2.0-SNAPSHOT</sculptor-version>
 		<spring-boot-version>2.4.3</spring-boot-version>
-		<tomcat-jasper-el>9.0.41</tomcat-jasper-el>
+		<tomcat-jasper-el>9.0.64</tomcat-jasper-el>
 		<joda-time-version>2.10.9</joda-time-version>
 	</properties>
 

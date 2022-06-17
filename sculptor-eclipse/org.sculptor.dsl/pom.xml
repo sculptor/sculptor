@@ -76,6 +76,7 @@
 					<includePluginDependencies>true</includePluginDependencies>
 					<cleanupDaemonThreads>false</cleanupDaemonThreads><!-- see https://bugs.eclipse.org/bugs/show_bug.cgi?id=475098#c3 -->
 				</configuration>
+				<!-- JDT java 11 support - explicit downgrade -->
 				<dependencies>
 					<dependency>
 						<groupId>org.eclipse.emf</groupId>
@@ -86,8 +87,21 @@
 						<groupId>org.eclipse.xtext</groupId>
 						<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
 						<version>${xtext-version}</version>
+						<exclusions>
+							<exclusion>
+								<groupId>org.eclipse.platform</groupId>
+								<artifactId>org.eclipse.equinox.common</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>org.eclipse.platform</groupId>
+								<artifactId>org.eclipse.equinox.preferences</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>org.eclipse.emf</groupId>
+								<artifactId>org.eclipse.emf.mwe2.runtime</artifactId>
+							</exclusion>
+						</exclusions>
 					</dependency>
-					<!-- JDT java 11 support - explicit downgrade -->
 					<dependency>
 						<groupId>org.eclipse.platform</groupId>
 						<artifactId>org.eclipse.equinox.common</artifactId>
@@ -95,14 +109,8 @@
 					</dependency>
 					<dependency>
 						<groupId>org.eclipse.platform</groupId>
-						<artifactId>org.eclipse.core.runtime</artifactId>
-						<version>3.18.0</version>
-						<exclusions>
-							<exclusion>
-								<groupId>org.eclipse.platform</groupId>
-								<artifactId>org.eclipse.equinox.common</artifactId>
-							</exclusion>
-						</exclusions>
+						<artifactId>org.eclipse.equinox.preferences</artifactId>
+						<version>3.9.100</version>
 					</dependency>
 				</dependencies>
 			</plugin>

@@ -100,38 +100,38 @@
 		<tycho.disableP2Mirrors>true</tycho.disableP2Mirrors>
 
 		<xtext-version>2.21.0</xtext-version>
-		<emf-mwe2-launch-version>2.11.2</emf-mwe2-launch-version>
+		<emf-mwe2-launch-version>2.11.3</emf-mwe2-launch-version>
 		<ecore-xtext-version>1.5.0</ecore-xtext-version>
 		<ecore-xcore-version>1.13.0</ecore-xcore-version>
 		<asm-version>9.1</asm-version>
 
-		<spring-version>5.3.4</spring-version>
-		<spring-security-version>5.4.7</spring-security-version>
-		<spring-integration-version>5.4.4</spring-integration-version>
-		<spring-data-jpa-version>2.4.5</spring-data-jpa-version>
-		<spring-boot-version>2.4.3</spring-boot-version>
+		<spring-version>5.3.21</spring-version>
+		<spring-security-version>5.7.1</spring-security-version>
+		<spring-integration-version>5.5.12</spring-integration-version>
+		<spring-data-jpa-version>2.7.0</spring-data-jpa-version>
+		<spring-boot-version>2.7.0</spring-boot-version>
 
-		<aspectj-version>1.9.6</aspectj-version>
-		<slf4j-version>1.7.30</slf4j-version>
-		<logback-version>1.2.3</logback-version>
+		<aspectj-version>1.9.9.1</aspectj-version>
+		<slf4j-version>1.7.36</slf4j-version>
+		<logback-version>1.2.11</logback-version>
 		<!-- We are using the Java EE 6 API provided by JBoss due to the missing implementation classes in Sun/Oracle JARs -->
 		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
-		<hibernate-version>5.4.27.Final</hibernate-version>
-		<hibernate-validator-version>6.2.0.Final</hibernate-validator-version>
-		<tomcat-jasper-el>9.0.41</tomcat-jasper-el>
-		<ehcache-version>3.9.0</ehcache-version>
+		<hibernate-version>5.6.9.Final</hibernate-version>
+		<hibernate-validator-version>6.2.3.Final</hibernate-validator-version>
+		<tomcat-jasper-el>9.0.64</tomcat-jasper-el>
+		<ehcache-version>3.10.0</ehcache-version>
 		<appengine-version>1.9.84</appengine-version>
 		<mongodb-version>2.14.3</mongodb-version>
 		<drools-version>6.5.0.Final</drools-version>
-		<camel-version>2.25.3</camel-version>
-		<activemq-version>5.16.0</activemq-version>
+		<camel-version>2.25.4</camel-version>
+		<activemq-version>5.17.1</activemq-version>
 		<joda-time-version>2.10.9</joda-time-version>
-		<jackson-version>2.12.0</jackson-version>
-		<xstream-version>1.4.15</xstream-version>
+		<jackson-version>2.13.3</jackson-version>
+		<xstream-version>1.4.19</xstream-version>
 
 		<hamcrest-version>2.2</hamcrest-version>
 		<junit-version>5.7.0</junit-version>
-		<hsqldb-version>2.5.1</hsqldb-version>
+		<hsqldb-version>2.6.1</hsqldb-version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
