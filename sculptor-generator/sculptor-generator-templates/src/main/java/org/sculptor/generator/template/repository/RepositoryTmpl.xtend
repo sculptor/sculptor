@@ -493,7 +493,7 @@ def String calculateMaxPages(RepositoryOperation it) {
 		int additionalRows=«fw("domain.PagedResult")».UNKNOWN;
 		if (!(result instanceof org.sculptor.framework.accessimpl.jpa.StreamOnlyList) && «pagingParameter.name».getStartRow() != «fw("domain.PagedResult")».UNKNOWN && «pagingParameter.name».getRealFetchCount() != 0) {
 			int resultSize=result.size();
-			if (resultSize > 0 && resultSize < pagingParameter.getRealFetchCount()) {
+			if (resultSize >= 0 && resultSize < pagingParameter.getRealFetchCount()) {
 				// Not enough rows fetched - end of result reached, we should fill row
 				// count and also additional pages without real counting.
 				// Fill it even when nobody  ask (isCountTotal), don't cost nothing and can be used on client side
