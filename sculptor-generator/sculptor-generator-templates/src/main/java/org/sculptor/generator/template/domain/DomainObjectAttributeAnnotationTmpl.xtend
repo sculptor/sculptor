@@ -146,7 +146,7 @@ def String auditAnnotations(Attribute it) {
 			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
 		«ELSEIF isJpaProviderAppEngine()»
 			@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
-		«ELSE»
+		«ELSEIF supportTemporal(it)»
 			«IF getHibernateType() == 'date'»
 				@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
 			«ELSEIF getHibernateType() == 'timestamp'»
@@ -183,7 +183,7 @@ def String columnDateAnnotations(Attribute it) {
 			@org.eclipse.persistence.annotations.Convert("JodaConverter")
 		«ELSEIF isJpaProviderOpenJpa() && it.isJodaTemporal()»
 			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
-		«ELSE»
+		«ELSEIF supportTemporal(it)»
 			«IF it.isDate()»
 				@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
 			«ELSEIF it.isDateTime()»
