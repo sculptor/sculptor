@@ -493,12 +493,12 @@ def String calculateMaxPages(RepositoryOperation it) {
 		int additionalRows=«fw("domain.PagedResult")».UNKNOWN;
 		if (!(result instanceof org.sculptor.framework.accessimpl.jpa.StreamOnlyList) && «pagingParameter.name».getStartRow() != «fw("domain.PagedResult")».UNKNOWN && «pagingParameter.name».getRealFetchCount() != 0) {
 			int resultSize=result.size();
-			if (resultSize >= 0 && resultSize < pagingParameter.getRealFetchCount()) {
+			if ( (resultSize > 0 || (resultSize == 0 && «pagingParameter.name».getStartRow() == 0)) && resultSize < «pagingParameter.name».getRealFetchCount()) {
 				// Not enough rows fetched - end of result reached, we should fill row
 				// count and also additional pages without real counting.
 				// Fill it even when nobody  ask (isCountTotal), don't cost nothing and can be used on client side
-				rowCount=pagingParameter.getStartRow()+resultSize;
-				additionalRows=resultSize - pagingParameter.getRowCount();
+				rowCount=«pagingParameter.name».getStartRow()+resultSize;
+				additionalRows=resultSize - «pagingParameter.name».getRowCount();
 				additionalRows=additionalRows < 0 ? 0 : additionalRows;
 			} else {
 				if («pagingParameter.name».isCountTotal()) {
@@ -539,15 +539,15 @@ def String calculateMaxPages(RepositoryOperation it) {
 					rowCount = countNumber == null ? «fw("domain.PagedResult")».UNKNOWN : countNumber.intValue();
 				}
 				if (rowCount != «fw("domain.PagedResult")».UNKNOWN) {
-					additionalRows = rowCount - pagingParameter.getEndRow();
+					additionalRows = rowCount - «pagingParameter.name».getEndRow();
 					additionalRows = additionalRows < 0 ? 0 : additionalRows;
 				} else {
-					additionalRows = resultSize - pagingParameter.getRowCount();
+					additionalRows = resultSize - «pagingParameter.name».getRowCount();
 					additionalRows = additionalRows < 0 ? 0 : additionalRows;
 				}
 
-				additionalRows = additionalRows > pagingParameter.getAdditionalResultRows()
-					? pagingParameter.getAdditionalResultRows()
+				additionalRows = additionalRows > «pagingParameter.name».getAdditionalResultRows()
+					? «pagingParameter.name».getAdditionalResultRows()
 					: additionalRows;
 			}
 		}

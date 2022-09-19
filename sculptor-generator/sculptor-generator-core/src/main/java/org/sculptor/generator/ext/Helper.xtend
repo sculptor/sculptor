@@ -1023,19 +1023,23 @@ class Helper {
 	}
 
 	def boolean isNumeric(Attribute attribute) {
-	supportedNumericTypes().contains(attribute.type) && !attribute.isCollection()
+		supportedNumericTypes().contains(attribute.type) && !attribute.isCollection()
 	}
 
 	def boolean isTemporal(Attribute attribute) {
-	supportedTemporalTypes().contains(attribute.type) && !attribute.isCollection()
+		supportedTemporalTypes().contains(attribute.type) && !attribute.isCollection()
+	}
+
+	def boolean supportTemporal(Attribute attribute) {
+		attribute.getTypeName() == 'java.util.Date' || attribute.getTypeName() == 'java.util.Calendar';
 	}
 
 	def boolean isDate(Attribute attribute) {
-	attribute.type == "Date"
+		attribute.type == "Date"
 	}
 
 	def boolean isDateTime(Attribute attribute) {
-	attribute.type == "DateTime" || attribute.type == "Timestamp"
+		attribute.type == "DateTime" || attribute.type == "Timestamp"
 	}
 
 	def boolean isPrimitive(Attribute attribute) {
