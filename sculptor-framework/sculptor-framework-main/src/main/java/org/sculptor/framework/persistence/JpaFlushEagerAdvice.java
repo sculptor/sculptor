@@ -33,15 +33,17 @@ import org.springframework.aop.AfterReturningAdvice;
 public class JpaFlushEagerAdvice implements AfterReturningAdvice {
 
 	@PersistenceContext
-	private EntityManager entityManager;
+	private EntityManager[] entityManagers;
 
 	@Override
 	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-		if (entityManager != null) {
-			try {
-				entityManager.flush();
-			} catch (TransactionRequiredException ignore) {
-				// already marked for rollback
+		if (entityManagers != null && entityManagers.length > 0) {
+			for (EntityManager e : entityManagers) {
+				try {
+					e.flush();
+				} catch (TransactionRequiredException ignore) {
+					// already marked for rollback
+				}
 			}
 		}
 	}
