@@ -16,6 +16,8 @@
  */
 package org.sculptor.framework.persistence;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
@@ -33,7 +35,7 @@ import javax.persistence.TransactionRequiredException;
  */
 public class JpaFlushEagerInterceptor {
 
-	@PersistenceContext
+	@Autowired
 	private EntityManager[] entityManagers;
 
 	@AroundInvoke

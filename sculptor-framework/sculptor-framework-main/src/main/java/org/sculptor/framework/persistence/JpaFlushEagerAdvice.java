@@ -19,10 +19,10 @@ package org.sculptor.framework.persistence;
 import java.lang.reflect.Method;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TransactionRequiredException;
 
 import org.springframework.aop.AfterReturningAdvice;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This advice flushes the {@link EntityManager} after normal return.
@@ -32,7 +32,7 @@ import org.springframework.aop.AfterReturningAdvice;
  */
 public class JpaFlushEagerAdvice implements AfterReturningAdvice {
 
-	@PersistenceContext
+	@Autowired
 	private EntityManager[] entityManagers;
 
 	@Override
