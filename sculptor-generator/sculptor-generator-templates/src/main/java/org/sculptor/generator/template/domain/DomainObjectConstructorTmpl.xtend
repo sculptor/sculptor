@@ -209,8 +209,18 @@ def String limitedEventConstructor(DomainObject it) {
 			 * Current time is used for recorded timestamp
 			 */ 
 			public «name»(«parameters2.map[parameterTypeAndName(it)].join(",")») {
-				this(«FOR a : allParameters SEPARATOR ","»«IF a.name=="recorded"»new «(a as TypedElement).getTypeName()»()«
-					ELSEIF parameters2.contains(a)»«a.name»« ELSE»null«ENDIF»«ENDFOR»);
+				this(
+					«FOR a : allParameters SEPARATOR ","»
+						«IF a.name == "recorded" && (a as TypedElement).getTypeName() == "java.time.Instant"»
+							java.time.Instant.now()
+						«ELSEIF a.name == "recorded"»
+							new «(a as TypedElement).getTypeName()»()
+						«ELSEIF parameters.contains(a)»
+							«a.name»
+						«ELSE»
+							null
+						«ENDIF»
+					«ENDFOR»);
 			}
 		«ENDIF»
 		
@@ -262,7 +272,18 @@ def String eventFactoryMethod(DomainObject it) {
 			 * Current time is used for recorded timestamp.
 			 */
 			public static «name» «name.toFirstLower()»(«parameters.map[parameterTypeAndName(it)].join(",")») {
-				return new «name»(«FOR a : allParameters SEPARATOR ","»«IF a.name == "recorded"»new «(a as TypedElement).getTypeName()»()«ELSEIF parameters.contains(a)»«a.name»«ELSE»null«ENDIF»«ENDFOR»);
+				return new «name»(
+					«FOR a : allParameters SEPARATOR ","»
+						«IF a.name == "recorded" && (a as TypedElement).getTypeName() == "java.time.Instant"»
+							java.time.Instant.now()
+						«ELSEIF a.name == "recorded"»
+							new «(a as TypedElement).getTypeName()»()
+						«ELSEIF parameters.contains(a)»
+							«a.name»
+						«ELSE»
+							null
+						«ENDIF»
+					«ENDFOR»);
 			}
 		«ENDIF»
 	'''
