@@ -131,7 +131,7 @@
 
 		<hamcrest-version>2.2</hamcrest-version>
 		<junit-version>5.7.0</junit-version>
-		<hsqldb-version>2.6.1</hsqldb-version>
+		<hsqldb-version>2.7.1</hsqldb-version>
 
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
