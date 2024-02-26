@@ -26,8 +26,9 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 	@Override
 	public void setColumnStat(List<ColumnStatRequest<T>> columnStat) {
 		columnStatRequest = columnStat;
-		ConditionalCriteriaBuilder.ConditionRoot<? extends T> criteriaBuilder = ConditionalCriteriaBuilder.criteriaFor(getPersistentClass());
-		for (ColumnStatRequest statRequest : columnStat) {
+		@SuppressWarnings("unchecked")
+		ConditionalCriteriaBuilder.ConditionRoot<T> criteriaBuilder = (ConditionalCriteriaBuilder.ConditionRoot<T>) ConditionalCriteriaBuilder.criteriaFor(getPersistentClass());
+		for (ColumnStatRequest<T> statRequest : columnStat) {
 			List<ColumnStatType> statFlags = statRequest.getStatFlags();
 			for (ColumnStatType statType : statFlags) {
 				if (ColumnStatType.COUNT.equals(statType)) {
@@ -45,32 +46,30 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 				} else if (ColumnStatType.GROUP_BY_VAL.equals(statType)) {
 					criteriaBuilder.select(statRequest.getColumn());
 					criteriaBuilder.groupBy(statRequest.getColumn());
-					/*
 				} else if (ColumnStatType.GROUP_BY_HOUR.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.hour);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.hour);
+					criteriaBuilder.select(statRequest.getColumn().expr().hour());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().hour());
 				} else if (ColumnStatType.GROUP_BY_DAY.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.day);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.day);
+					criteriaBuilder.select(statRequest.getColumn().expr().day());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().day());
 				} else if (ColumnStatType.GROUP_BY_WEEK.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.week);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.week);
+					criteriaBuilder.select(statRequest.getColumn().expr().week());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().week());
 				} else if (ColumnStatType.GROUP_BY_MONTH.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.month);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.month);
+					criteriaBuilder.select(statRequest.getColumn().expr().month());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().month());
 				} else if (ColumnStatType.GROUP_BY_QUARTER.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.quarter);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.quarter);
+					criteriaBuilder.select(statRequest.getColumn().expr().quarter());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().quarter());
 				} else if (ColumnStatType.GROUP_BY_YEAR.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.year);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.year);
+					criteriaBuilder.select(statRequest.getColumn().expr().year());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().year());
 				} else if (ColumnStatType.GROUP_BY_DOW.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.dayOfWeek);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.dayOfWeek);
+					criteriaBuilder.select(statRequest.getColumn().expr().dayOfWeek());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().dayOfWeek());
 				} else if (ColumnStatType.GROUP_BY_DOY.equals(statType)) {
-					criteriaBuilder.select(statRequest.getColumn(), ConditionalCriteria.Function.dayOfYear);
-					criteriaBuilder.groupBy(statRequest.getColumn(), ConditionalCriteria.Function.dayOfYear);
-					 */
+					criteriaBuilder.select(statRequest.getColumn().expr().dayOfYear());
+					criteriaBuilder.groupBy(statRequest.getColumn().expr().dayOfYear());
 				}
 			}
 		}
@@ -87,7 +86,7 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 			List<ColumnStatResult> rowResult = new ArrayList<>();
 			result.add(rowResult);
 			int i = 0;
-			for (ColumnStatRequest statRequest : columnStatRequest) {
+			for (ColumnStatRequest<T> statRequest : columnStatRequest) {
 				List<ColumnStatType> statFlags = statRequest.getStatFlags();
 				ColumnStatResult colResult = new ColumnStatResult(statRequest);
 
