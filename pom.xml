@@ -106,7 +106,7 @@
 		<asm-version>9.1</asm-version>
 
 		<spring-version>5.3.21</spring-version>
-		<spring-security-version>5.7.1</spring-security-version>
+		<spring-security-version>5.7.8</spring-security-version>
 		<spring-integration-version>5.5.12</spring-integration-version>
 		<spring-data-jpa-version>2.7.0</spring-data-jpa-version>
 		<spring-boot-version>2.7.0</spring-boot-version>
