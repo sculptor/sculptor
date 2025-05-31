@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-eclipse</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>org.sculptorgenerator.eclipse</groupId>
 	<artifactId>org.sculptor.dsl</artifactId>
@@ -73,7 +73,7 @@
 						<argument>rootPath=/${project.basedir}/..</argument>
 					</arguments>
 					<classpathScope>compile</classpathScope>
-					<includePluginDependencies>true</includePluginDependencies>
+					<includePluginDependencies>false</includePluginDependencies>
 					<cleanupDaemonThreads>false</cleanupDaemonThreads><!-- see https://bugs.eclipse.org/bugs/show_bug.cgi?id=475098#c3 -->
 				</configuration>
 				<!-- JDT java 11 support - explicit downgrade -->
@@ -87,6 +87,7 @@
 						<groupId>org.eclipse.xtext</groupId>
 						<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
 						<version>${xtext-version}</version>
+						<!--
 						<exclusions>
 							<exclusion>
 								<groupId>org.eclipse.platform</groupId>
@@ -101,7 +102,9 @@
 								<artifactId>org.eclipse.emf.mwe2.runtime</artifactId>
 							</exclusion>
 						</exclusions>
+						-->
 					</dependency>
+					<!--
 					<dependency>
 						<groupId>org.eclipse.platform</groupId>
 						<artifactId>org.eclipse.equinox.common</artifactId>
@@ -112,6 +115,7 @@
 						<artifactId>org.eclipse.equinox.preferences</artifactId>
 						<version>3.9.100</version>
 					</dependency>
+					-->
 				</dependencies>
 			</plugin>
 			<plugin>
