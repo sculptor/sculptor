@@ -20,7 +20,7 @@ package org.sculptor.framework.accessimpl.jpa;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.sculptor.framework.accessapi.PopulateAssociationsAccess;

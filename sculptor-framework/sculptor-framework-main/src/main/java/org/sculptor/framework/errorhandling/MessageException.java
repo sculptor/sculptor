@@ -1,7 +1,7 @@
 package org.sculptor.framework.errorhandling;
 
 /**
- * JMS messaging problems such {@link javax.jms.JMSException}
+ * JMS messaging problems such {@link jakarta.jms.JMSException}
  * are caught and wrapped by this exception.
  *  
  */

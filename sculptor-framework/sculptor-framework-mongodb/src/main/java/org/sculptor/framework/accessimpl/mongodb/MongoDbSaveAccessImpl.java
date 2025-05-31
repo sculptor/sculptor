@@ -22,6 +22,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.sculptor.framework.accessapi.SaveAccess;
@@ -31,8 +36,6 @@ import org.sculptor.framework.domain.DateAuditable;
 import org.sculptor.framework.domain.JodaAuditable;
 import org.sculptor.framework.errorhandling.OptimisticLockingException;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 /**
@@ -98,7 +101,7 @@ public class MongoDbSaveAccessImpl<T> extends MongoDbAccessBase<T> implements Sa
             if (dbObj.containsField("version")) {
                 updateWithOptimisticLocking(obj, dbObj);
             } else {
-                update(dbObj);
+                update(dbObj.get("_id"), dbObj);
             }
         } else {
             insert(obj, dbObj);
@@ -108,32 +111,27 @@ public class MongoDbSaveAccessImpl<T> extends MongoDbAccessBase<T> implements Sa
     }
 
     protected void insert(T obj, DBObject dbObj) {
-        ObjectId objectId = ObjectId.get();
-        dbObj.put("_id", objectId);
+        dbObj.put("_id", ObjectId.get());
         Long newVersion = null;
         if (dbObj.containsField("version") && dbObj.get("version") == null) {
             newVersion = 1L;
             dbObj.put("version", newVersion);
         }
-        getDBCollection().insert(dbObj);
-        checkLastError();
-        IdReflectionUtil.internalSetId(obj, objectId.toStringMongod());
+        InsertOneResult result = getDBCollection().insertOne(dbObj);
+        IdReflectionUtil.internalSetId(obj, result.getInsertedId().asObjectId().getValue());
         if (newVersion != null) {
             IdReflectionUtil.internalSetVersion(obj, newVersion);
         }
     }
 
-    protected void update(DBObject dbObj) {
-        getDBCollection().save(dbObj);
-        checkLastError();
+    protected void update(Object objId, DBObject dbObj) {
+        getDBCollection().updateOne(Filters.eq("_id", objId), new Document(dbObj.toMap()));
     }
 
     protected void updateWithOptimisticLocking(T obj, DBObject dbObj) {
         Long version = (Long) dbObj.get("version");
-        DBObject q = new BasicDBObject();
-        q.put("_id", dbObj.get("_id"));
-        // version in db must be same as old version
-        q.put("version", version);
+        Bson q = Filters.and(Filters.eq("_id", dbObj.get("_id")), Filters.eq("version", version));
+
         Long newVersion;
         if (version == null) {
             newVersion = 1L;
@@ -141,15 +139,12 @@ public class MongoDbSaveAccessImpl<T> extends MongoDbAccessBase<T> implements Sa
             newVersion = version + 1;
         }
         dbObj.put("version", newVersion);
-        DBCollection dbCollection = getDBCollection();
-        dbCollection.update(q, dbObj);
-        DBObject lastError = dbCollection.getDB().getLastError();
 
-        if (lastError.containsField("updatedExisting") && Boolean.FALSE.equals(lastError.get("updatedExisting"))) {
+        UpdateResult updateResult = getDBCollection().updateOne(q, new Document(dbObj.toMap()));
+        if (updateResult.getModifiedCount() != 1) {
             throw new OptimisticLockingException("Optimistic locking violation. Object was updated by someone else.");
         }
 
-        checkLastError();
         IdReflectionUtil.internalSetVersion(obj, newVersion);
     }
 

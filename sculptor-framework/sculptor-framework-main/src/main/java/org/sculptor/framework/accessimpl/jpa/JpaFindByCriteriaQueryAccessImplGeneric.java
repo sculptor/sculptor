@@ -19,7 +19,7 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
 

@@ -21,17 +21,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
+import org.bson.conversions.Bson;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.accessapi.FindByConditionAccess;
 import org.sculptor.framework.domain.Property;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.QueryOperators;
 
 /**
  * <p>
@@ -105,10 +105,8 @@ public class MongoDbFindByConditionAccessImpl<T> extends MongoDbAccessBase<T> im
 
     @Override
     public void performExecute() {
-
-        DBObject query = createQuery();
-
-        DBCursor cur = getDBCollection().find(query);
+        Bson query = createQuery();
+        FindIterable<DBObject> cur = getDBCollection().find(query);
         sort(cur);
 
         if (firstResult >= 0) {
@@ -119,156 +117,79 @@ public class MongoDbFindByConditionAccessImpl<T> extends MongoDbAccessBase<T> im
         }
 
         List<T> foundResult = new ArrayList<T>();
-        for (DBObject each : cur) {
-            T eachResult = getDataMapper().toDomain(each);
-            foundResult.add(eachResult);
-        }
+        cur.map(row -> getDataMapper().toDomain(row)).into(result);
 
         this.result = foundResult;
-
     }
 
-    private DBObject createQuery() {
-        DBObject query = new BasicDBObject();
+    private Bson createQuery() {
+        List<Bson> andCriteria = new ArrayList<>();
         for (ConditionalCriteria crit : cndCriterias) {
-            makeCriterion(query, crit, false);
+            andCriteria.add(makeCriterion(crit, false));
         }
-        return query;
+        return Filters.and(andCriteria);
     }
 
-    protected void makeCriterion(DBObject query, ConditionalCriteria crit, boolean not) {
+    protected Bson makeCriterion(ConditionalCriteria crit, boolean not) {
+        Bson bson = makeSimpleCriterion(crit);
+        return not ? Filters.not(bson) : bson;
+    }
+
+    private Bson makeSimpleCriterion(ConditionalCriteria crit) {
         ConditionalCriteria.Operator operator = crit.getOperator();
-        if (Operator.Equal.equals(operator)) {
-            Object dbValue = toData(crit.getFirstOperant());
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.NE, dbValue);
+        return switch (operator) {
+            case Equal -> Filters.eq(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+            case Like -> Filters.regex(crit.getPropertyFullName(), String.valueOf(crit.getFirstOperant()));
+            case IgnoreCaseLike -> Filters.regex(crit.getPropertyFullName(), String.valueOf(crit.getFirstOperant()), "i");
+            case In -> {
+                if (crit.getFirstOperant() instanceof Iterable<?> fo) {
+                    yield Filters.in(crit.getPropertyFullName(), fo);
+                } else {
+                    yield Filters.in(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+                }
             }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.Like.equals(operator)) {
-            Pattern regex = regex(crit.getFirstOperant(), false);
-            Object dbValue = wrapNot(not, regex);
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.IgnoreCaseLike.equals(operator)) {
-            Pattern regex = regex(crit.getFirstOperant(), true);
-            Object dbValue = wrapNot(not, regex);
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.In.equals(operator)) {
-            Object dbValue = toData(crit.getFirstOperant());
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.NIN, dbValue);
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.IN, dbValue);
+            case LessThan -> Filters.lt(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+            case LessThanOrEqual -> Filters.lte(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+            case GreatThan -> Filters.gt(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+            case GreatThanOrEqual -> Filters.gte(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+            case IsNull -> Filters.exists(crit.getPropertyFullName(), false);
+            case IsNotNull -> Filters.exists(crit.getPropertyFullName(), true);
+            case IsEmpty -> Filters.eq(crit.getPropertyFullName(), "");
+            case IsNotEmpty -> Filters.ne(crit.getPropertyFullName(), "");
+            case Between -> {
+                Object val = toData(crit.getFirstOperant());
+                yield Filters.and(Filters.gte(crit.getPropertyFullName(), val)
+                        , Filters.lte(crit.getPropertyFullName(), val));
             }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.LessThan.equals(operator)) {
-            Object dbValue = toData(crit.getFirstOperant());
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.GTE, dbValue);
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.LT, dbValue);
+            case And -> {
+                Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
+                Bson right = makeSimpleCriterion((ConditionalCriteria) crit.getSecondOperant());
+                yield Filters.and(left, right);
             }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.LessThanOrEqual.equals(operator)) {
-            Object dbValue = toData(crit.getFirstOperant());
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.GT, dbValue);
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.LTE, dbValue);
+            case Or -> {
+                Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
+                Bson right = makeSimpleCriterion((ConditionalCriteria) crit.getSecondOperant());
+                yield Filters.or(left, right);
             }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.GreatThan.equals(operator)) {
-            Object dbValue = toData(crit.getFirstOperant());
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.LTE, dbValue);
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.GT, dbValue);
+            case Not -> {
+                Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
+                yield Filters.not(left);
             }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.GreatThanOrEqual.equals(operator)) {
-            Object dbValue = toData(crit.getFirstOperant());
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.LT, dbValue);
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.GTE, dbValue);
-            }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.IsNull.equals(operator)) {
-            Object dbValue = null;
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.NE, dbValue);
-            }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.IsNotNull.equals(operator)) {
-            Object dbValue;
-            if (not) {
-                dbValue = null;
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.NE, null);
-            }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.IsEmpty.equals(operator)) {
-            Object dbValue = "";
-            if (not) {
-                dbValue = new BasicDBObject(QueryOperators.NE, dbValue);
-            }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.IsNotEmpty.equals(operator)) {
-            Object dbValue;
-            if (not) {
-                dbValue = "";
-            } else {
-                dbValue = new BasicDBObject(QueryOperators.NE, "");
-            }
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (not && Operator.Between.equals(operator)) {
-            throw new UnsupportedOperationException("Not between condition not supported");
-        } else if (Operator.Between.equals(operator)) {
-            Object first = toData(crit.getFirstOperant());
-            Object second = toData(crit.getSecondOperant());
-            DBObject dbValue = new BasicDBObject();
-            dbValue.put(QueryOperators.GTE, first);
-            dbValue.put(QueryOperators.LTE, second);
-            query.put(crit.getPropertyFullName(), dbValue);
-        } else if (Operator.And.equals(operator)) {
-            makeCriterion(query, (ConditionalCriteria) crit.getFirstOperant(), not);
-            makeCriterion(query, (ConditionalCriteria) crit.getSecondOperant(), not);
-        } else if (Operator.Not.equals(operator)) {
-            makeCriterion(query, (ConditionalCriteria) crit.getFirstOperant(), !not);
-        } else if (Operator.Or.equals(operator)) {
-            throw new UnsupportedOperationException("Or condition not supported");
-        }
+            default -> throw new UnsupportedOperationException("Unsupported operator '" + operator.name() + "'");
+        };
     }
 
-    private Object wrapNot(boolean not, Object dbValue) {
-        if (not) {
-            dbValue = new BasicDBObject("$not", dbValue);
-        }
-        return dbValue;
-    }
-
-    protected Pattern regex(Object expression, boolean ignoreCase) {
-        if (expression instanceof Pattern) {
-            return (Pattern) expression;
-        }
-        String strExpression = String.valueOf(expression);
-        if (ignoreCase) {
-            return Pattern.compile(strExpression, Pattern.CASE_INSENSITIVE);
-        } else {
-            return Pattern.compile(strExpression);
-        }
-    }
-
-    protected void sort(DBCursor cur) {
-        BasicDBObject orderBy = new BasicDBObject();
+    protected void sort(FindIterable<DBObject> cursor) {
+        List<Bson> orders = new ArrayList<>();
         for (ConditionalCriteria crit : cndCriterias) {
             if (Operator.OrderAsc.equals(crit.getOperator())) {
-                orderBy.put(crit.getPropertyFullName(), 1);
+                orders.add(Sorts.ascending(crit.getPropertyFullName()));
             } else if (Operator.OrderDesc.equals(crit.getOperator())) {
-                orderBy.put(crit.getPropertyFullName(), -1);
+                orders.add(Sorts.descending(crit.getPropertyFullName()));
             }
         }
-        if (!orderBy.isEmpty()) {
-            cur.sort(orderBy);
+        if (!orders.isEmpty()) {
+            cursor.sort(Sorts.orderBy(orders));
         }
     }
 
@@ -277,8 +198,8 @@ public class MongoDbFindByConditionAccessImpl<T> extends MongoDbAccessBase<T> im
     }
 
     public void executeCount() {
-        DBObject query = createQuery();
-        long count = getDBCollection().getCount(query);
+        Bson query = createQuery();
+        long count = getDBCollection().countDocuments(query);
         if (count > Integer.MAX_VALUE) {
             throw new IllegalStateException("Too many in count: " + count);
         }

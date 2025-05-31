@@ -19,10 +19,13 @@ package org.sculptor.framework.accessimpl.mongodb;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -32,10 +35,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * This Servlet Filter should be placed in front of Servlets to facilitate lazy
  * loading of DomainObject associations in view.
  * 
- * @author Patrik Nordwall
+ * @author Patrik Nordwall, Pavel Tavoda
  * 
  */
 public class DbManagerFilter extends OncePerRequestFilter {
+    TransactionOptions transactionOptions = TransactionOptions.builder()
+            .writeConcern(WriteConcern.MAJORITY)
+            .build();
 
     public DbManagerFilter() {
     }
@@ -44,26 +50,24 @@ public class DbManagerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        DbManager dbManager = null;
-        try {
-            dbManager = lookupDbManager();
-            DbManager.setThreadInstance(dbManager);
-            dbManager.requestStart();
+        DbManager dbManager = lookupDbManager();
 
+        try (ClientSession session = dbManager.startSession()) {
+            session.startTransaction(transactionOptions);
             filterChain.doFilter(request, response);
-
-        } finally {
-            if (dbManager != null) {
-                dbManager.requestDone();
-                DbManager.setThreadInstance(null);
-            }
         }
-
     }
 
     protected DbManager lookupDbManager() {
-        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-        return (DbManager) wac.getBean("mongodbManager", DbManager.class);
+        WebApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+        return context.getBean("mongodbManager", DbManager.class);
     }
 
+    public TransactionOptions getTransactionOptions() {
+        return transactionOptions;
+    }
+
+    public void setTransactionOptions(TransactionOptions transactionOptions) {
+        this.transactionOptions = transactionOptions;
+    }
 }

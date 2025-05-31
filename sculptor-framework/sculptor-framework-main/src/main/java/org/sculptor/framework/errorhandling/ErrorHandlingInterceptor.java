@@ -23,13 +23,13 @@ import static org.sculptor.framework.errorhandling.ExceptionHelper.isJmsRedelive
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 
-import javax.ejb.EJBException;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.ejb.EJBException;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PersistenceException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

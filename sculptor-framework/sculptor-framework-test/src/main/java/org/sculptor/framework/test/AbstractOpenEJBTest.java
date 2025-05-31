@@ -22,10 +22,10 @@ import java.lang.reflect.Field;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.jms.Destination;
-import javax.jms.Message;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

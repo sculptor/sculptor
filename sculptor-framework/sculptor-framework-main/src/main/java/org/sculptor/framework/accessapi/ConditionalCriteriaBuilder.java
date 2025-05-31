@@ -29,8 +29,8 @@ import org.sculptor.framework.domain.expression.ComplexExpression;
 import org.sculptor.framework.domain.expression.Expression;
 import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
 
-import javax.persistence.FetchType;
-import javax.persistence.criteria.JoinType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.criteria.JoinType;
 
 /**
  * Expression Builder for ConditionalCriteria. A small internal DSL (fluent

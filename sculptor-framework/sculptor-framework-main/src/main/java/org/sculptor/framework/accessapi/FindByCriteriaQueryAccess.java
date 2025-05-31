@@ -20,7 +20,7 @@ package org.sculptor.framework.accessapi;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 /**
  * Access command for finding objects by JPA2 criteria query

@@ -20,7 +20,7 @@ package org.sculptor.framework.accessimpl.jpa;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Predicate;
 
 import org.sculptor.framework.accessapi.FindByExampleAccess2;
 

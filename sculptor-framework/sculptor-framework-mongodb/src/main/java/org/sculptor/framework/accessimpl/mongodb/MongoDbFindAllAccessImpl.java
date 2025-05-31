@@ -20,11 +20,11 @@ package org.sculptor.framework.accessimpl.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Sorts;
 import org.sculptor.framework.accessapi.FindAllAccess;
 import org.sculptor.framework.domain.Property;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 /**
@@ -91,13 +91,8 @@ public class MongoDbFindAllAccessImpl<T> extends MongoDbAccessBase<T> implements
 
     @Override
     public void performExecute() {
-        List<T> foundResult = new ArrayList<T>();
-
-        DBCursor cur = getDBCollection().find();
-
-        if (orderBy != null) {
-            cur.sort(new BasicDBObject(orderBy, orderByAsc ? 1 : -1));
-        }
+        FindIterable<DBObject> cur = getDBCollection().find();
+        sort(cur);
 
         if (firstResult >= 0) {
             cur.skip(firstResult);
@@ -106,12 +101,13 @@ public class MongoDbFindAllAccessImpl<T> extends MongoDbAccessBase<T> implements
             cur.limit(maxResult);
         }
 
-        for (DBObject each : cur) {
-            T eachResult = getDataMapper().toDomain(each);
-            foundResult.add(eachResult);
-        }
+        List<T> foundResult = new ArrayList<T>();
+        cur.map(row -> getDataMapper().toDomain(row)).into(result);
 
         this.result = foundResult;
     }
 
+    protected void sort(FindIterable<DBObject> cursor) {
+        cursor.sort(orderByAsc ? Sorts.ascending(orderBy) : Sorts.descending(orderBy));
+    }
 }

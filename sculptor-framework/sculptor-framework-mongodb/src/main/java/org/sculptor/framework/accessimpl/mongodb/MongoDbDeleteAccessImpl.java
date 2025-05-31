@@ -19,6 +19,8 @@ package org.sculptor.framework.accessimpl.mongodb;
 
 import java.util.Collection;
 
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import org.sculptor.framework.accessapi.DeleteAccess;
 
 import com.mongodb.BasicDBObject;
@@ -74,12 +76,9 @@ public class MongoDbDeleteAccessImpl<T> extends MongoDbAccessBase<T> implements 
     protected void performRemove(T obj) {
         DBObject dbObj = getDataMapper().toData(obj);
         if (dbObj.containsField("_id")) {
-            DBObject id = new BasicDBObject("_id", dbObj.get("_id"));
-            getDBCollection().remove(id);
+            getDBCollection().deleteOne(Filters.eq("_id", dbObj.get("_id")));
         } else {
-            getDBCollection().remove(dbObj);
+            getDBCollection().deleteMany(Filters.eq(dbObj));
         }
-        checkLastError();
     }
-
 }

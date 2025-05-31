@@ -6,7 +6,7 @@ import org.sculptor.framework.domain.PropertyWithExpression;
 import org.sculptor.framework.domain.expression.Expression;
 import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
 
-import javax.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.JoinType;
 import java.util.Collection;
 import java.util.List;
 

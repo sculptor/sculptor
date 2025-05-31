@@ -17,12 +17,12 @@
 
 package org.sculptor.framework.test.ejbtestbean.jpa;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 import org.sculptor.framework.test.AbstractOpenEJBDbUnitTest;

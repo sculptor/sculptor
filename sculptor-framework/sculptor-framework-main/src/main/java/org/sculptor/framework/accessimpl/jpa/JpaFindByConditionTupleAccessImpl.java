@@ -2,8 +2,8 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.accessapi. FindByConditionTupleAccess;
 
-import javax.persistence.Tuple;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**

@@ -18,8 +18,8 @@ package org.sculptor.framework.test;
 
 import java.sql.SQLException;
 
-import javax.annotation.Resource;
-import javax.persistence.Table;
+import jakarta.annotation.Resource;
+import jakarta.persistence.Table;
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;

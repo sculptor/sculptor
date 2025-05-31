@@ -19,8 +19,8 @@ package org.sculptor.framework.accessapi;
 
 import java.util.List;
 
-import javax.persistence.PersistenceException;
-import javax.persistence.Tuple;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Tuple;
 
 /**
  * <p>Access command for calculating statistics by condition. The specified

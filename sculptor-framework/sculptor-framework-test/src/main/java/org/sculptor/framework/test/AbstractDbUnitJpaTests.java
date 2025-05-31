@@ -17,10 +17,10 @@
 
 package org.sculptor.framework.test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.Query;
 
 import org.sculptor.framework.accessimpl.jpa.JpaHelper;
 import org.sculptor.framework.domain.Property;

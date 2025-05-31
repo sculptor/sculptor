@@ -25,8 +25,8 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Table;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Table;
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;

@@ -21,13 +21,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.mongodb.client.model.Filters;
+import org.bson.conversions.Bson;
 import org.sculptor.framework.accessimpl.ChunkFetcherBase;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.DBObject;
-import com.mongodb.QueryOperators;
 
 /**
  * This class can be used when fetching objects with a Query IN expression when
@@ -40,14 +39,14 @@ import com.mongodb.QueryOperators;
  */
 public abstract class MongoDbChunkFetcher<T, KEY> extends ChunkFetcherBase<T, KEY> {
 
-    private final DBCollection dbCollection;
+    private final MongoCollection<DBObject> dbCollection;
     private final DataMapper<T, DBObject> dataMapper;
 
     /**
      * @param restrictionPropertyName
      *            the name of the property to use for the 'in' criteria
      */
-    public MongoDbChunkFetcher(DBCollection dbCollection, DataMapper<T, DBObject> dataMapper,
+    public MongoDbChunkFetcher(MongoCollection<DBObject> dbCollection, DataMapper<T, DBObject> dataMapper,
             String restrictionPropertyName) {
         super(restrictionPropertyName);
         this.dbCollection = dbCollection;
@@ -56,21 +55,13 @@ public abstract class MongoDbChunkFetcher<T, KEY> extends ChunkFetcherBase<T, KE
 
     @Override
     protected List<T> getChunk(Collection<KEY> keys) {
-        DBObject query = new BasicDBObject();
-        DBObject inCondition = new BasicDBObject();
-        Collection<KEY> restrictionPropertyValues = restrictionPropertyValues(keys);
-        inCondition.put(QueryOperators.IN, restrictionPropertyValues);
-        query.put(getRestrictionPropertyName(), inCondition);
+        List<T> result = new ArrayList<>();
+        Bson filter = Filters.in(getRestrictionPropertyName(), restrictionPropertyValues(keys));
+        dbCollection.find(filter)
+                .map(dataMapper::toDomain)
+                .into(result);
 
-        DBCursor cur = dbCollection.find(query);
-
-        List<T> foundResult = new ArrayList<T>();
-        for (DBObject each : cur) {
-            T eachResult = dataMapper.toDomain(each);
-            foundResult.add(eachResult);
-        }
-
-        return foundResult;
+        return result;
     }
 
 }

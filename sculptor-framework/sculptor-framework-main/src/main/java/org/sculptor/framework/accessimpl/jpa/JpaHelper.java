@@ -25,12 +25,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Tuple;
-import javax.persistence.TupleElement;
-import javax.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TupleElement;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;

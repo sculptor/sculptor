@@ -19,7 +19,7 @@ package org.sculptor.framework.event;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;

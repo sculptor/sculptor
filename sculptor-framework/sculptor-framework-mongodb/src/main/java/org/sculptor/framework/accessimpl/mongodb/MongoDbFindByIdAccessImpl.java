@@ -19,6 +19,7 @@ package org.sculptor.framework.accessimpl.mongodb;
 
 import java.io.Serializable;
 
+import com.mongodb.client.model.Filters;
 import org.bson.types.ObjectId;
 import org.sculptor.framework.accessapi.FindByIdAccess;
 
@@ -62,8 +63,7 @@ public class MongoDbFindByIdAccessImpl<T, ID extends Serializable> extends Mongo
 
     @Override
     public void performExecute() {
-        ObjectId objectId = ObjectId.massageToObjectId(getId());
-        DBObject found = getDBCollection().findOne(objectId);
+        DBObject found = getDBCollection().find(Filters.eq("id", id)).first();
         result = getDataMapper().toDomain(found);
     }
 

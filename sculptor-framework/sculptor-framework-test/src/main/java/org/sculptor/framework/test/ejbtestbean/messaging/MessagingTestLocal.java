@@ -16,8 +16,8 @@
  */
 package org.sculptor.framework.test.ejbtestbean.messaging;
 
-import javax.jms.Destination;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
 
 public interface MessagingTestLocal {
 

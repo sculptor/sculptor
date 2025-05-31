@@ -16,6 +16,10 @@
  */
 package org.sculptor.framework.context;
 
+import com.sun.security.auth.NTUserPrincipal;
+
+import java.nio.file.attribute.GroupPrincipal;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,9 +27,6 @@ import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.jacc.PolicyContext;
 import javax.security.jacc.PolicyContextException;
-
-import org.jboss.security.SimpleGroup;
-import org.jboss.security.SimplePrincipal;
 
 /**
  * JBoss specific implementation of
@@ -48,16 +49,14 @@ public class JBossServiceContextFactory extends ServiceContextFactory {
     }
     
     protected String userIdFromSubject(Subject caller) {
-        Set<SimplePrincipal> jaasUserPrincipals = caller.getPrincipals(SimplePrincipal.class);
+        Set<UserPrincipal> jaasUserPrincipals = caller.getPrincipals(UserPrincipal.class);
         if (jaasUserPrincipals.isEmpty()) {
             return null;
         } else {
-            for (SimplePrincipal p : jaasUserPrincipals) {
+            for (UserPrincipal p : jaasUserPrincipals) {
                 // Use the first SimplePrincipal, which is not a SimpleGroup
                 // SimpleGroup is subclass of SimplePrincipal
-                if (p instanceof SimpleGroup) {
-                    continue;
-                } else {
+                if (!(p instanceof GroupPrincipal)) {
                     return p.getName();
                 }
             }
@@ -68,12 +67,9 @@ public class JBossServiceContextFactory extends ServiceContextFactory {
 
     protected Set<String> rolesFromSubject(Subject caller) {
         Set<String> roles = new HashSet<String>();
-        Set<SimpleGroup> jaasRolesPrincipals = caller.getPrincipals(SimpleGroup.class);
-        for (SimpleGroup role : jaasRolesPrincipals) {
-            for (Enumeration<?> membersEnum = role.members(); membersEnum.hasMoreElements();) {
-                String member = String.valueOf(membersEnum.nextElement());
-                roles.add(member);
-            }
+        Set<GroupPrincipal> jaasRolesPrincipals = caller.getPrincipals(GroupPrincipal.class);
+        for (GroupPrincipal p : jaasRolesPrincipals) {
+            roles.add(p.getName());
         }
         return roles;
     }

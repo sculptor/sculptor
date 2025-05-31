@@ -4,7 +4,7 @@ import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.sculptor.framework.domain.expression.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,9 +22,9 @@ class CaseExpressionBuilder<T> implements JpaFunction, CaseRoot, CaseConditionRo
 	}
 
 	@Override
-	public javax.persistence.criteria.Expression prepareFunction(CriteriaBuilder cb, javax.persistence.criteria.Expression left, ExpressionConverter converter) {
+	public jakarta.persistence.criteria.Expression prepareFunction(CriteriaBuilder cb, jakarta.persistence.criteria.Expression left, ExpressionConverter converter) {
 		CriteriaBuilder.Case<Object> selectCase = cb.selectCase();
-		javax.persistence.criteria.Expression result = selectCase;
+		jakarta.persistence.criteria.Expression result = selectCase;
 		for (CaseWhenThan wt : cases) {
 			if (wt.condition != null) {
 				selectCase.when(converter.convertObject(wt.condition), converter.convertObject(wt.result));

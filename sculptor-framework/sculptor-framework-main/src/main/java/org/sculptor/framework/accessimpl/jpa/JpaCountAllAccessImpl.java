@@ -17,8 +17,8 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import org.sculptor.framework.accessapi.CountAllAccess;
 

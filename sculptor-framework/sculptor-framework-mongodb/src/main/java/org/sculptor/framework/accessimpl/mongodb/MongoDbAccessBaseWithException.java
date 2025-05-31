@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.mongodb.client.MongoCollection;
 import org.sculptor.framework.errorhandling.ApplicationException;
 import org.sculptor.framework.errorhandling.DatabaseAccessException;
 
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 /**
@@ -109,7 +109,7 @@ public abstract class MongoDbAccessBaseWithException<T> {
         this.dbManager = dbManager;
     }
 
-    protected DBCollection getDBCollection() {
+    protected MongoCollection<DBObject> getDBCollection() {
         return dbManager.getDBCollection(getDataMapper().getDBCollectionName());
     }
 
@@ -164,12 +164,5 @@ public abstract class MongoDbAccessBaseWithException<T> {
         }
 
         return value;
-    }
-
-    protected void checkLastError() {
-        DBObject lastError = getDBCollection().getDB().getLastError();
-        if (lastError.containsField("err") && lastError.get("err") != null) {
-            throw new DatabaseAccessException(lastError.get("err").toString());
-        }
     }
 }

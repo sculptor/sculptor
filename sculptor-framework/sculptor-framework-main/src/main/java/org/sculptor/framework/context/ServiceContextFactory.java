@@ -22,9 +22,9 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.sculptor.framework.util.FactoryConfiguration;
 import org.sculptor.framework.util.FactoryHelper;

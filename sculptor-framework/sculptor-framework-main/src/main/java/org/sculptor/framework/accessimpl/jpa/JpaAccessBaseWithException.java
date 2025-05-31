@@ -17,8 +17,8 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 
 import org.sculptor.framework.errorhandling.ApplicationException;
 

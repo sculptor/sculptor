@@ -17,10 +17,15 @@
 
 package org.sculptor.framework.accessimpl.mongodb;
 
+import com.mongodb.client.model.Filters;
+import org.bson.conversions.Bson;
 import org.sculptor.framework.accessapi.FindByKeyAccess;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -83,13 +88,13 @@ public class MongoDbFindByKeyAccessImpl<T> extends MongoDbAccessBase<T> implemen
     public void performExecute() {
         checkKeyPropertyNamesValues();
 
-        DBObject query = new BasicDBObject();
+        List<Bson> filters = new ArrayList<>();
         for (int i = 0; i < keyPropertyNames.length; i++) {
             Object dbValue = toData(keyValues[i]);
-            query.put(keyPropertyNames[i], dbValue);
+            filters.add(Filters.eq(keyPropertyNames[i], dbValue));
         }
 
-        DBObject found = getDBCollection().findOne(query);
+        DBObject found = getDBCollection().find(Filters.and(filters)).first();
         result = getDataMapper().toDomain(found);
     }
 

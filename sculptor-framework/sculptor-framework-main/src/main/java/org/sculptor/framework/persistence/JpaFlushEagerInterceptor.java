@@ -18,12 +18,12 @@ package org.sculptor.framework.persistence;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TransactionRequiredException;
+import jakarta.ejb.EJBTransactionRolledbackException;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TransactionRequiredException;
 
 /**
  * This interceptor flushes the {@link EntityManager} after normal return.

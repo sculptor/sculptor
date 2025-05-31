@@ -17,8 +17,6 @@
 
 package org.sculptor.framework.accessimpl.jpa;
 
-import org.hibernate.metamodel.model.domain.internal.SingularAttributeImpl;
-import org.hibernate.query.criteria.internal.expression.function.ParameterizedFunctionExpression;
 import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.sculptor.framework.accessapi.FindByConditionAccess2;
@@ -30,10 +28,8 @@ import org.sculptor.framework.domain.expression.ExpressionConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.FetchType;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.criteria.*;
+
 import java.util.*;
 
 

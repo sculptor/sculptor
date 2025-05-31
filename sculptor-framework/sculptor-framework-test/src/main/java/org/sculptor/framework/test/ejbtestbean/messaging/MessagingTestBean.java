@@ -16,19 +16,19 @@
  */
 package org.sculptor.framework.test.ejbtestbean.messaging;
 
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-import javax.jms.TemporaryQueue;
-import javax.jms.TextMessage;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Session;
+import jakarta.jms.TemporaryQueue;
+import jakarta.jms.TextMessage;
 
 import org.sculptor.framework.consumer.MessageSender;
 import org.sculptor.framework.consumer.MessageSenderImpl;
@@ -44,7 +44,7 @@ import org.sculptor.framework.consumer.MessageSenderImpl;
 public class MessagingTestBean implements MessagingTestLocal {
     @Resource
     private ConnectionFactory connectionFactory;
-    private javax.jms.Connection connection;
+    private jakarta.jms.Connection connection;
 
     @Override
     public Destination sendMessage(Destination destination, String message) {
@@ -88,7 +88,7 @@ public class MessagingTestBean implements MessagingTestLocal {
         return new MessageSenderImpl(getJmsConnection());
     }
 
-    protected javax.jms.Connection getJmsConnection() {
+    protected jakarta.jms.Connection getJmsConnection() {
         try {
             if (connection == null) {
                 connection = connectionFactory.createConnection();

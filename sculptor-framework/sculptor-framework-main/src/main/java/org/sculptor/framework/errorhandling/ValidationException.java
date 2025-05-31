@@ -3,7 +3,7 @@ package org.sculptor.framework.errorhandling;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 import org.sculptor.framework.errorhandling.annotation.ApplicationException;
 

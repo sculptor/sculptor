@@ -16,6 +16,9 @@
  */
 package org.sculptor.framework.accessimpl.mongodb;
 
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -31,6 +34,10 @@ public class DbManagerAdvice implements MethodInterceptor {
 
     private DbManager dbManager;
 
+    private TransactionOptions transactionOptions = TransactionOptions.builder()
+            .writeConcern(WriteConcern.MAJORITY)
+            .build();
+
     public Object invoke(MethodInvocation invocation) throws Throwable {
         if (DbManager.getThreadInstance() != null || dbManager == null) {
             // this is not the first advice and it should therefore be ignored
@@ -38,13 +45,10 @@ public class DbManagerAdvice implements MethodInterceptor {
             // the DbManager
             return invocation.proceed();
         }
-        try {
+        try (ClientSession session = dbManager.startSession()) {
             DbManager.setThreadInstance(dbManager);
-            dbManager.requestStart();
+            session.startTransaction(transactionOptions);
             return invocation.proceed();
-        } finally {
-            dbManager.requestDone();
-            DbManager.setThreadInstance(null);
         }
     }
 
@@ -56,4 +60,11 @@ public class DbManagerAdvice implements MethodInterceptor {
         this.dbManager = dbManager;
     }
 
+    public TransactionOptions getTransactionOptions() {
+        return transactionOptions;
+    }
+
+    public void setTransactionOptions(TransactionOptions transactionOptions) {
+        this.transactionOptions = transactionOptions;
+    }
 }

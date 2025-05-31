@@ -16,7 +16,7 @@
  */
 package org.sculptor.framework.test.ejbtestbean.jpa;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import javax.sql.DataSource;
 
 public interface JpaTestLocal {

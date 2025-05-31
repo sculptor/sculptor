@@ -19,7 +19,7 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.Collection;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 
 import org.sculptor.framework.accessapi.DeleteAccess;
 

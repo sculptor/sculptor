@@ -1,6 +1,6 @@
 package org.sculptor.framework.accessapi;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 
 /**
  * Created by tavoda on 10/31/16.

@@ -19,8 +19,8 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import java.util.Map;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.sculptor.framework.domain.Property;
 

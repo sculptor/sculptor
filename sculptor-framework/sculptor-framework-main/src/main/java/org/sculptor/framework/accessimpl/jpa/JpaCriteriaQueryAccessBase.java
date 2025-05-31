@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute.PersistentAttributeType;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 import org.sculptor.framework.domain.Property;
 

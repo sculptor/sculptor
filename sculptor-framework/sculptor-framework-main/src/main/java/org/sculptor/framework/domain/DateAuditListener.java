@@ -19,8 +19,8 @@ package org.sculptor.framework.domain;
 
 import org.sculptor.framework.context.ServiceContextStore;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.sql.Timestamp;
 
 

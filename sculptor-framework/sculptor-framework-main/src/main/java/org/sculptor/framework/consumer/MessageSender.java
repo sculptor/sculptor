@@ -16,8 +16,8 @@
  */
 package org.sculptor.framework.consumer;
 
-import javax.jms.Destination;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
 
 /**
  * Interface for sending JMS messages.

@@ -1,30 +1,35 @@
 package org.sculptor.framework.persistence;
 
+import org.hibernate.boot.model.FunctionContributions;
 import org.hibernate.dialect.HSQLDialect;
-import org.hibernate.dialect.PostgreSQL10Dialect;
-import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.query.sqm.function.SqmFunctionRegistry;
+import org.hibernate.type.BasicType;
+import org.hibernate.type.BasicTypeRegistry;
 import org.hibernate.type.StandardBasicTypes;
-
-import java.sql.Types;
 
 /**
  * Created by tavoda on 22 Nov 2020
  */
 public class SculptorHsqlDialect extends HSQLDialect {
-	public SculptorHsqlDialect() {
-		registerColumnType(Types.BOOLEAN, "boolean");
-		registerHibernateType(Types.BOOLEAN, "boolean");
+	public void initializeFunctionRegistry(FunctionContributions functionContributions) {
+		super.initializeFunctionRegistry(functionContributions);
+		SqmFunctionRegistry functionRegistry = functionContributions.getFunctionRegistry();
+		BasicTypeRegistry basicTypeRegistry = functionContributions.getTypeConfiguration().getBasicTypeRegistry();
+		BasicType<Integer> intType = basicTypeRegistry.resolve(StandardBasicTypes.INTEGER);
 
-		registerFunction("week", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(week_of_year from ?1)"));
-		registerFunction("quarter", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(quarter from ?1)"));
-		registerFunction("dow", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(day_of_week from ?1)"));
-		registerFunction("doy", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "extract(day_of_year from ?1)"));
-		registerFunction("join", new StandardSQLFunction("concat_ws", StandardBasicTypes.STRING));
-		registerFunction("right", new StandardSQLFunction("right", StandardBasicTypes.STRING));
-		registerFunction("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
-		registerFunction("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
-		registerFunction("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
+//		registerColumnType(Types.BOOLEAN, "boolean");
+//		registerHibernateType(Types.BOOLEAN, "boolean");
+
+		functionRegistry.registerPattern("week", "extract(week_of_year from ?1)", intType);
+		functionRegistry.registerPattern("quarter", "extract(quarter from ?1)", intType);
+		functionRegistry.registerPattern("dow", "extract(day_of_week from ?1)", intType);
+		functionRegistry.registerPattern("doy", "extract(day_of_year from ?1)", intType);
+		functionRegistry.register("join", new StandardSQLFunction("concat_ws", StandardBasicTypes.STRING));
+		functionRegistry.register("right", new StandardSQLFunction("right", StandardBasicTypes.STRING));
+		functionRegistry.register("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
+		functionRegistry.register("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
+		functionRegistry.register("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
 //		registerFunction("strpos", new StandardSQLFunction("instr", StandardBasicTypes.STRING));
 //		registerFunction("starts_with", new StandardSQLFunction("starts_with", StandardBasicTypes.STRING));
 //		registerFunction("starts_with", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1 LIKE ?2"));

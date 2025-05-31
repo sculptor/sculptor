@@ -42,7 +42,7 @@ public class MongoDbCountAllAccessImpl<T> extends MongoDbAccessBase<T> implement
 
     @Override
     public void performExecute() {
-        result = getDBCollection().getCount();
+        result = getDBCollection().countDocuments();
     }
 
 }

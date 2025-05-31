@@ -5,7 +5,7 @@ import org.sculptor.framework.domain.expression.fts.ExpressionFtsQuery;
 import org.sculptor.framework.domain.expression.fts.ExpressionFtsVector;
 import org.sculptor.framework.domain.expression.fts.HighlightOptions;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
@@ -303,7 +303,7 @@ public class PropertyWithExpression<T> implements ComplexExpression<T>, Expressi
 			args[0] = separator;
 			args[1] = left;
 			System.arraycopy(properties, 0, args, 2, properties.length);
-			javax.persistence.criteria.Expression[] exprs = ec.convertObjectArray(args);
+			jakarta.persistence.criteria.Expression[] exprs = ec.convertObjectArray(args);
 			return cb.function("join", String.class, exprs);
 		});
 		return this;
@@ -312,7 +312,7 @@ public class PropertyWithExpression<T> implements ComplexExpression<T>, Expressi
 	@Override
 	public ExpressionString<T> leftPad(int length, String value) {
 		functions.add((cb, left, ec) -> {
-			javax.persistence.criteria.Expression[] expr = new javax.persistence.criteria.Expression[] {
+			jakarta.persistence.criteria.Expression[] expr = new jakarta.persistence.criteria.Expression[] {
 					left,
 					cb.literal(length),
 					cb.literal(value)
@@ -325,7 +325,7 @@ public class PropertyWithExpression<T> implements ComplexExpression<T>, Expressi
 	@Override
 	public ExpressionString<T> rightPad(int length, String value) {
 		functions.add((cb, left, ec) -> {
-			javax.persistence.criteria.Expression[] expr = new javax.persistence.criteria.Expression[] {
+			jakarta.persistence.criteria.Expression[] expr = new jakarta.persistence.criteria.Expression[] {
 					left,
 					cb.literal(length),
 					cb.literal(value)
@@ -380,28 +380,28 @@ public class PropertyWithExpression<T> implements ComplexExpression<T>, Expressi
 
 	@Override
 	public ExpressionString<T> substring(Expression<T> from) {
-		functions.add((cb, left, ec) -> cb.substring((javax.persistence.criteria.Expression<String>) left
+		functions.add((cb, left, ec) -> cb.substring((jakarta.persistence.criteria.Expression<String>) left
 				, ec.convertObject(from)));
 		return this;
 	}
 
 	@Override
 	public ExpressionString<T> substring(Expression<T> from, Expression<T> to) {
-		functions.add((cb, left, ec) -> cb.substring((javax.persistence.criteria.Expression<String>) left
+		functions.add((cb, left, ec) -> cb.substring((jakarta.persistence.criteria.Expression<String>) left
 				, ec.convertObject(from), ec.convertObject(to)));
 		return this;
 	}
 
 	@Override
 	public ExpressionString<T> substring(int from, Expression<T> to) {
-		functions.add((cb, left, ec) -> cb.substring((javax.persistence.criteria.Expression<String>) left
+		functions.add((cb, left, ec) -> cb.substring((jakarta.persistence.criteria.Expression<String>) left
 				, ec.convertObject(from), ec.convertObject(to)));
 		return this;
 	}
 
 	@Override
 	public ExpressionString<T> substring(Expression<T> from, int to) {
-		functions.add((cb, left, ec) -> cb.substring((javax.persistence.criteria.Expression<String>) left
+		functions.add((cb, left, ec) -> cb.substring((jakarta.persistence.criteria.Expression<String>) left
 				, ec.convertObject(from), ec.convertObject(to)));
 		return this;
 	}

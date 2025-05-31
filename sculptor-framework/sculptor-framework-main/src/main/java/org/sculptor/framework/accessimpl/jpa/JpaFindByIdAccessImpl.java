@@ -19,8 +19,8 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import java.io.Serializable;
 
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceException;
 
 import org.sculptor.framework.accessapi.FindByIdAccess;
 

@@ -18,8 +18,8 @@ package org.sculptor.framework.persistence;
 
 import java.lang.reflect.Method;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TransactionRequiredException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TransactionRequiredException;
 
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.annotation.Autowired;

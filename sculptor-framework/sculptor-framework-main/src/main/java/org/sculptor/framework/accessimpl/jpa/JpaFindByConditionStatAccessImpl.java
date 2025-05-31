@@ -7,7 +7,7 @@ import org.sculptor.framework.accessapi.ConditionalCriteria;
 import org.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.sculptor.framework.accessapi.FindByConditionStatAccess;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

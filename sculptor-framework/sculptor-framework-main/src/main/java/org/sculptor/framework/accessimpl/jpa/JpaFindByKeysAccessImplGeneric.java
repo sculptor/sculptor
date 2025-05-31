@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Predicate;
 
 import org.sculptor.framework.accessapi.FindByKeysAccess2;
 

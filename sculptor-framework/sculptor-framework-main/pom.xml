@@ -4,10 +4,14 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-framework</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-framework-main</artifactId>
 	<name>Sculptor :: Runtime Framework :: Main</name>
+	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
 
 	<build>
 		<plugins>
@@ -65,70 +69,67 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.interceptor</groupId>
-			<artifactId>jboss-interceptors-api_1.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.jms</groupId>
-			<artifactId>jboss-jms-api_1.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.security.jacc</groupId>
-			<artifactId>jboss-jacc-api_1.4_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate-version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
+<dependency>
+    <groupId>jakarta.ejb</groupId>
+    <artifactId>jakarta.ejb-api</artifactId>
+<!-- <version>4.0.1</version> -->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>jakarta.interceptor</groupId>
+    <artifactId>jakarta.interceptor-api</artifactId>
+    <!-- <version>2.2.0</version> -->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>jakarta.jms</groupId>
+    <artifactId>jakarta.jms-api</artifactId>
+    <!-- <version>3.1.0</version> -->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <!--<version>6.1.0</version>-->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>jakarta.security.jacc</groupId>
+    <artifactId>jakarta.security.jacc-api</artifactId>
+    <!-- <version>1.6.1</version> -->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-orm</artifactId>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jms</artifactId>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+    <scope>provided</scope>
+</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-compiler</artifactId>
-			<version>${drools-version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jbosssx</artifactId>
-			<version>3.2.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -170,7 +171,6 @@
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-core</artifactId>
-			<version>${spring-integration-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-framework</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>sculptor-framework-test</artifactId>
 	<name>Sculptor :: Runtime Framework :: Test</name>
@@ -45,29 +45,32 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.jms</groupId>
-			<artifactId>jboss-jms-api_1.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+<dependency>
+    <groupId>jakarta.ejb</groupId>
+    <artifactId>jakarta.ejb-api</artifactId>
+<!-- <version>4.0.1</version> -->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>jakarta.jms</groupId>
+    <artifactId>jakarta.jms-api</artifactId>
+    <!-- <version>3.1.0</version> -->
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <!--<version>6.1.0</version>-->
+    <scope>provided</scope>
+</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -83,11 +86,13 @@
 			<artifactId>spring-test</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>javax.el</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
@@ -115,7 +120,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
+			<artifactId>mockito-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

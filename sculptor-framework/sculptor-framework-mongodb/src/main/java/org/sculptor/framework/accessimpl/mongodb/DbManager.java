@@ -16,24 +16,20 @@
  */
 package org.sculptor.framework.accessimpl.mongodb;
 
-import com.mongodb.DB;
-import com.mongodb.DBAddress;
-import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
-import com.mongodb.MongoOptions;
-import com.mongodb.ServerAddress;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.*;
 
 public class DbManager implements Cloneable {
+    private static final ThreadLocal<DbManager> threadInstance = new ThreadLocal<>();
 
-    private static ThreadLocal<DbManager> threadInstance = new ThreadLocal<DbManager>();
-    private Mongo mongo;
-    private DB db;
+    private MongoClient mongo;
+    private MongoDatabase db;
     private boolean initialized = false;
 
     private String dbname;
-    private String dbUrl1;
-    private String dbUrl2;
-    private MongoOptions options = new MongoOptions();
+    private String dbConnection;
+    private MongoClientSettings options = null;
 
     public DbManager() {
     }
@@ -54,9 +50,7 @@ public class DbManager implements Cloneable {
         return (other != this);
     }
 
-    // lazy init
-    @SuppressWarnings("deprecation")	
-	private synchronized void init() {
+    private synchronized void init() {
         if (initialized) {
             return;
         }
@@ -64,43 +58,23 @@ public class DbManager implements Cloneable {
             throw new IllegalStateException("MongoDB dbname not defined");
         }
         try {
-            if (dbUrl1 == null || dbUrl1.equals("")) {
-                // default host/port, but with options
-                mongo = new Mongo(new ServerAddress(), options);
-            } else if (dbUrl2 != null && !dbUrl2.equals("")) {
-                DBAddress left = new DBAddress(urlWithDbname(dbUrl1));
-                DBAddress right = new DBAddress(urlWithDbname(dbUrl2));
-                mongo = new Mongo(left, right, options);
+            if (options != null) {
+                mongo = MongoClients.create(options);
             } else {
-                DBAddress left = new DBAddress(urlWithDbname(dbUrl1));
-                mongo = new Mongo(left, options);
+                mongo = MongoClients.create(dbConnection);
             }
-            db = mongo.getDB(dbname);
+            db = mongo.getDatabase(dbname);
             initialized = true;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private String urlWithDbname(String dbUrl) {
-        if (dbUrl == null) {
-            return null;
-        }
-        if (!dbUrl.endsWith(dbname)) {
-            return dbUrl + "/" + dbname;
-        }
-        return dbUrl;
+    public ClientSession startSession() {
+        return mongo.startSession();
     }
 
-    public void requestStart() {
-        getDB().requestStart();
-    }
-
-    public void requestDone() {
-        getDB().requestDone();
-    }
-
-    public synchronized DB getDB() {
+    public synchronized MongoDatabase getDB() {
         if (isAnotherThreadInstance()) {
             return getThreadInstance().getDB();
         }
@@ -108,10 +82,9 @@ public class DbManager implements Cloneable {
         return db;
     }
 
-    public DBCollection getDBCollection(String name) {
+    public MongoCollection<DBObject> getDBCollection(String name) {
         try {
-            DBCollection coll = getDB().getCollection(name);
-            return coll;
+			return getDB().getCollection(name, DBObject.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -121,35 +94,26 @@ public class DbManager implements Cloneable {
         return dbname;
     }
 
-    public synchronized void setDbname(String dbname) {
+    public void setDbname(String dbname) {
         this.dbname = dbname;
         initialized = false;
     }
 
-    public String getDbUrl1() {
-        return dbUrl1;
-    }
-
-    public synchronized void setDbUrl1(String dbUrl1) {
-        this.dbUrl1 = dbUrl1;
-        initialized = false;
-    }
-
-    public String getDbUrl2() {
-        return dbUrl2;
-    }
-
-    public synchronized void setDbUrl2(String dbUrl2) {
-        this.dbUrl2 = dbUrl2;
-        initialized = false;
-    }
-
-    public MongoOptions getOptions() {
+    public MongoClientSettings getOptions() {
         return options;
     }
 
-    public synchronized void setOptions(MongoOptions options) {
+    public synchronized void setOptions(MongoClientSettings options) {
         this.options = options;
+        initialized = false;
+    }
+
+    public String getDbConnection() {
+        return dbConnection;
+    }
+
+    public void setDbConnection(String dbConnection) {
+        this.dbConnection = dbConnection;
         initialized = false;
     }
 
@@ -162,5 +126,4 @@ public class DbManager implements Cloneable {
             throw new InternalError();
         }
     }
-
 }

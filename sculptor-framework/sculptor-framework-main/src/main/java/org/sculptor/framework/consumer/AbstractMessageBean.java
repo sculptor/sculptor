@@ -16,13 +16,13 @@
  */
 package org.sculptor.framework.consumer;
 
-import javax.annotation.Resource;
-import javax.ejb.MessageDrivenContext;
-import javax.jms.Connection;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.ejb.MessageDrivenContext;
+import jakarta.jms.Connection;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
 
 import org.sculptor.framework.context.ServiceContext;
 import org.sculptor.framework.context.ServiceContextFactory;

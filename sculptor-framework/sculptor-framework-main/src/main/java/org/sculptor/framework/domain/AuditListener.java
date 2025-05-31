@@ -20,8 +20,8 @@ package org.sculptor.framework.domain;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 import org.sculptor.framework.context.ServiceContextStore;
 
