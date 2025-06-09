@@ -1,0 +1,9 @@
+Application App {
+	basePackage=org.sculptor.test
+	Module test {
+		Entity Test {}
+	}
+	Module test {
+		Entity AnotherTest {}
+	}
+}

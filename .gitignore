@@ -8,6 +8,7 @@ target/
 *.iml
 src-gen/
 xtend-gen/
+xtext-gen/
 plugin.xml_gen
 dependency-reduced-pom.xml
 .p2-mirror/

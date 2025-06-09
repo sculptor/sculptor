@@ -1,0 +1,8 @@
+import "app_duplicate_name_part.btdesign"
+
+Application Test {
+	basePackage=org.sculptor.test
+	Module mod {
+		Entity Test {}
+	}
+}

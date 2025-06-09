@@ -1,0 +1,15 @@
+Application App {
+	basePackage=org.sculptor.test
+	Module mod {
+		Service Test {
+			SomeType anOperation();
+		}
+		Entity SomeType {
+			Repository SomeTypeRepository {
+				SomeType findIt();
+				
+				@SomeType findSomeTypeMatching(@SomeType toMatch);
+			}
+		}
+	}
+}
