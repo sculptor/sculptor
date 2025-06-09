@@ -394,7 +394,7 @@ def String handleExceptions(Resource it) {
 def String handleNotFoundException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
-		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
+		public void handleException(«it» e, jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
 			response.sendError(org.springframework.http.HttpStatus.NOT_FOUND.value(), e.getMessage());
 		}
 	'''
@@ -403,7 +403,7 @@ def String handleNotFoundException(String it) {
 def String handleOptimisticLockingException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
-		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
+		public void handleException(«it» e, jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
 			response.sendError(org.springframework.http.HttpStatus.CONFLICT.value(), e.getMessage());
 		}
 	'''
@@ -412,7 +412,7 @@ def String handleOptimisticLockingException(String it) {
 def String handleIllegalArgumentException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
-		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
+		public void handleException(«it» e, jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
 			response.sendError(org.springframework.http.HttpStatus.BAD_REQUEST.value(), e.getMessage());
 		}
 	'''
@@ -421,7 +421,7 @@ def String handleIllegalArgumentException(String it) {
 def String handleSystemException(String it) {
 	'''
 		@org.springframework.web.bind.annotation.ExceptionHandler
-		public void handleException(«it» e, javax.servlet.http.HttpServletResponse response) throws java.io.IOException {
+		public void handleException(«it» e, jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
 			response.sendError(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE.value(), e.getMessage());
 		}
 	'''

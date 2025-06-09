@@ -72,7 +72,7 @@ def String ejbBeanImplBase(Service it) {
 		 * Generated base class for implementation of «name».
 		 * <p>Make sure that subclass defines the following annotations:
 		 * <pre>
-		@javax.ejb.Stateless(name="«name.toFirstLower()»")
+		@jakarta.ejb.Stateless(name="«name.toFirstLower()»")
 		«ejbInterceptors(it)»
 		«IF webService»
 		«webServiceAnnotations(it)»
@@ -83,7 +83,7 @@ def String ejbBeanImplBase(Service it) {
 		/**
 		 * Generated implementation of «name».
 		 */
-		@javax.ejb.Stateless(name="«name.toFirstLower()»")
+		@jakarta.ejb.Stateless(name="«name.toFirstLower()»")
 		«IF !gapClass && webService»
 			«webServiceAnnotations(it)»
 		«ENDIF»
@@ -115,7 +115,7 @@ def String ejbBeanImplSubclass(Service it) {
 	/**
 	 * Implementation of «name».
 	 */
-	@javax.ejb.Stateless(name="«name.toFirstLower()»")
+	@jakarta.ejb.Stateless(name="«name.toFirstLower()»")
 	«IF webService»
 		«webServiceAnnotations(it)»
 	«ENDIF»
@@ -138,7 +138,7 @@ def String ejbBeanImplSubclass(Service it) {
 
 def String ejbInterceptors(Service it) {
 	'''
-	@javax.interceptor.Interceptors({«IF isServiceContextToBeGenerated()»«fw("context.ServiceContextStoreInterceptor")».class, «ENDIF»
+	@jakarta.interceptor.Interceptors({«IF isServiceContextToBeGenerated()»«fw("context.ServiceContextStoreInterceptor")».class, «ENDIF»
 		«fw("errorhandling.ErrorHandlingInterceptor")».class})
 	'''
 }
@@ -171,7 +171,7 @@ def String ejbRemoteInterface(Service it) {
 	/**
 	 * Generated EJB remote interface for the Service «name».
 	 */
-	@javax.ejb.Remote
+	@jakarta.ejb.Remote
 	public interface «name»Remote extends «name» {
 	}
 	'''
@@ -188,7 +188,7 @@ def String ejbLocalInterface(Service it) {
 	/**
 	 * Generated EJB local interface for the Service «name».
 	 */
-	@javax.ejb.Local
+	@jakarta.ejb.Local
 	public interface «name»Local extends «name» {
 	}
 	'''
@@ -529,9 +529,9 @@ def String webServiceParamTypeAndName(Parameter it) {
 
 def String webServicePackageInfo(Service it) {
 	fileOutput(javaFileName(it.getServiceapiPackage() + ".package-info"), OutputSlot.TO_GEN_SRC, '''
-	@javax.xml.bind.annotation.XmlSchema(
+	@jakarta.xml.bind.annotation.XmlSchema(
 		namespace = "http://«FOR e : reversePackageName(it.getServiceapiPackage()) SEPARATOR '.'»«e»«ENDFOR»/",
-		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+		elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 	package «it.getServiceapiPackage()»;
 
 /// Sculptor code formatter imports ///

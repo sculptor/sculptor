@@ -550,7 +550,7 @@ public class GenericAccessObjectManager {
 					|| (operation.getParameters().size() == 1 && hasParameter(operation, "useSingleResult"))
 					|| (operation.getParameters().size() == 1 && hasParameter(operation, "pagingParameter"))) {
 				addParameterFirst(operation, "java.util.Map<String, Object>", "parameters");
-				addParameterFirst(operation, "javax.persistence.criteria.CriteriaQuery", "query");
+				addParameterFirst(operation, "jakarta.persistence.criteria.CriteriaQuery", "query");
 			}
 
 			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
@@ -748,7 +748,7 @@ public class GenericAccessObjectManager {
 			operation.setHint("map");
 
 			if (operation.getType() == null && operation.getDomainObjectType() == null) {
-				operation.setType("List<javax.persistence.Tuple>");
+				operation.setType("List<jakarta.persistence.Tuple>");
 			}
 		}
 

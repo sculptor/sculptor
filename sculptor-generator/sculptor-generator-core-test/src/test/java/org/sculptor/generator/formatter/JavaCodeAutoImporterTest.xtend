@@ -120,10 +120,10 @@ class JavaCodeAutoImporterTest {
 				
 				class Test {
 
-					@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+					@jakarta.persistence.Temporal(jakarta.persistence.TemporalType.TIMESTAMP)
 					private java.util.Date createdDate;
 
-					@org.hibernate.annotations.Cascade(cascade = javax.persistence.CascadeType.ALL)
+					@org.hibernate.annotations.Cascade(cascade = jakarta.persistence.CascadeType.ALL)
 					@org.hibernate.annotations.Cascade(cascade = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 					public List<Media> findByTitle(String title) {
 						return org.springframework.http.HttpStatus.NOT_FOUND.value();
@@ -136,9 +136,9 @@ class JavaCodeAutoImporterTest {
 				package com.acme;
 				
 				import java.util.Date;
-				import javax.persistence.CascadeType;
-				import javax.persistence.Temporal;
-				import javax.persistence.TemporalType;
+				import jakarta.persistence.CascadeType;
+				import jakarta.persistence.Temporal;
+				import jakarta.persistence.TemporalType;
 				import org.hibernate.annotations.Cascade;
 				import org.springframework.http.HttpStatus;
 				
@@ -212,7 +212,7 @@ class JavaCodeAutoImporterTest {
 	def testReplaceQualifiedTypesPackageAnnotations() {
 		val source = new JavaCodeAutoImporter().replaceQualifiedTypes(
 			'''
-				@javax.xml.bind.annotation.XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+				@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 				package org.sculptor.example.helloworld.milkyway.serviceapi;
 				
 				/// Insert imports here ///
@@ -220,10 +220,10 @@ class JavaCodeAutoImporterTest {
 			''', '/// Insert imports here ///')
 		assertEquals(
 			'''
-				@XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+				@XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 				package org.sculptor.example.helloworld.milkyway.serviceapi;
 
-				import javax.xml.bind.annotation.XmlSchema;
+				import jakarta.xml.bind.annotation.XmlSchema;
 
 
 			'''.toString, source)

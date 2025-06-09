@@ -176,7 +176,7 @@ def String delegateRepositories(Service it) {
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.EJB
+			@jakarta.ejb.EJB
 		«ENDIF»
 		private «getRepositoryapiPackage(delegateRepository.aggregateRoot.module)».«delegateRepository.name» «delegateRepository.name.toFirstLower()»;
 
@@ -194,7 +194,7 @@ def String delegateServices(Service it) {
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.EJB
+			@jakarta.ejb.EJB
 		«ENDIF»
 		private «getServiceapiPackage(delegateService)».«delegateService.name»«IF pureEjb3()»Local«ENDIF» «delegateService.name.toFirstLower()»;
 
@@ -245,7 +245,7 @@ def String otherDependencies(Service it) {
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.EJB
+			@jakarta.ejb.EJB
 		«ENDIF»
 		public void set«dependency.toFirstUpper()»(Object «dependency») {
 			// TODO implement setter for dependency injection of «dependency»
@@ -300,7 +300,7 @@ def String serviceMethodAnnotation(ServiceOperation it) {
 		«ENDIF»
 	«ENDIF»
 	«IF pureEjb3() && jpa() && !it.isReadOnly()»
-		@javax.interceptor.Interceptors({«service.module.getJpaFlushEagerInterceptorClass()».class})
+		@jakarta.interceptor.Interceptors({«service.module.getJpaFlushEagerInterceptorClass()».class})
 	«ENDIF»
 	«IF service.webService»
 		@javax.jws.WebMethod

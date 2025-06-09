@@ -69,16 +69,16 @@ def dispatch String domainObjectSubclassAnnotations(DomainObject it) {
 def String domainObjectAnnotations(DomainObject it) {
 	'''
 		«IF it.isEmbeddable() »
-			@javax.persistence.Embeddable
+			@jakarta.persistence.Embeddable
 		«ENDIF»
 		«IF it.hasOwnDatabaseRepresentation()»
-			@javax.persistence.Entity
+			@jakarta.persistence.Entity
 			«IF !isInheritanceTypeSingleTable(it.getRootExtends()) || it == it.getRootExtends()»
-				@javax.persistence.Table(name = "«it.getDatabaseName()»"«IF it.hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
+				@jakarta.persistence.Table(name = "«it.getDatabaseName()»"«IF it.hasClassLevelUniqueConstraints() »«uniqueConstraints(it)»«ENDIF»)
 			«ENDIF»
 			«domainObjectInheritanceAnnotations(it)»
 			«IF cache»
-				@javax.persistence.Cacheable
+				@jakarta.persistence.Cacheable
 			«ENDIF»
 			«IF isJpaProviderHibernate() && cache»
 				@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
@@ -130,7 +130,7 @@ def String xstreamAliasAnnotation(DomainObject it) {
 /* TODO: optimize this quick solution */
 def String jpaEntityListenersAnnotation(DomainObject it) {
 	'''
-		@javax.persistence.EntityListeners({
+		@jakarta.persistence.EntityListeners({
 		«formatAnnotationParameters(<Object>newArrayList(it.getAuditEntityListener() !== null, "", it.getAuditEntityListener() + ".class"))»})
 	'''
 }
@@ -140,34 +140,34 @@ def String domainObjectInheritanceAnnotations(DomainObject it) {
 	'''
 	«IF it.hasSubClass()»
 		«IF it.isInheritanceTypeSingleTable()»
-			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.SINGLE_TABLE)
-			«formatAnnotationParameters("@javax.persistence.DiscriminatorColumn", <Object>newArrayList( inheritance.discriminatorColumnName !== null, "name", '"' + inheritance.discriminatorColumnName + '"',
-				it.getDiscriminatorType() != "javax.persistence.DiscriminatorType.STRING", "discriminatorType", it.getDiscriminatorType(),
+			@jakarta.persistence.Inheritance(strategy=jakarta.persistence.InheritanceType.SINGLE_TABLE)
+			«formatAnnotationParameters("@jakarta.persistence.DiscriminatorColumn", <Object>newArrayList( inheritance.discriminatorColumnName !== null, "name", '"' + inheritance.discriminatorColumnName + '"',
+				it.getDiscriminatorType() != "jakarta.persistence.DiscriminatorType.STRING", "discriminatorType", it.getDiscriminatorType(),
 				inheritance.discriminatorColumnLength !== null, "length", inheritance.discriminatorColumnLength,
 				isJpaAnnotationColumnDefinitionToBeGenerated(), "columnDefinition", '"' + inheritance.getDiscriminatorColumnDatabaseType() + '"'
 			)) »
 			«IF !^abstract && discriminatorColumnValue !== null»
-				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
+				@jakarta.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
 		«ELSEIF it.isInheritanceTypeJoined()»
-			@javax.persistence.Inheritance(strategy=javax.persistence.InheritanceType.JOINED)
+			@jakarta.persistence.Inheritance(strategy=jakarta.persistence.InheritanceType.JOINED)
 		«ENDIF»
 	«ENDIF»
 	«IF it.hasSuperClass()»
 		«IF isInheritanceTypeSingleTable(it.getRootExtends())»
 			«IF discriminatorColumnValue !== null»
-				@javax.persistence.DiscriminatorValue("«discriminatorColumnValue»")
+				@jakarta.persistence.DiscriminatorValue("«discriminatorColumnValue»")
 			«ENDIF»
 		«ELSEIF isInheritanceTypeJoined(it.getRootExtends())»
-			@javax.persistence.PrimaryKeyJoinColumn(name="«^extends.getExtendsForeignKeyName()»",
-			foreignKey=@javax.persistence.ForeignKey(name="FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»"))
+			@jakarta.persistence.PrimaryKeyJoinColumn(name="«^extends.getExtendsForeignKeyName()»",
+			foreignKey=@jakarta.persistence.ForeignKey(name="FK_«truncateLongDatabaseName(it.getDatabaseName(), ^extends.getDatabaseName())»"))
 		«ENDIF»
 	«ENDIF»
 	'''
 }
 
 def String uniqueConstraints(DomainObject it) {
-	''', uniqueConstraints = @javax.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})'''
+	''', uniqueConstraints = @jakarta.persistence.UniqueConstraint(columnNames={«it.getAllNaturalKeys().map[k | uniqueColumns(k,"")].join(", ")»})'''
 }
 
 def dispatch String uniqueColumns(NamedElement it, String columnPrefix) {

@@ -172,7 +172,7 @@ def String serviceDependencies(Consumer it) {
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.EJB
+			@jakarta.ejb.EJB
 		«ENDIF»
 			private «getServiceapiPackage(serviceDependency)».«serviceDependency.name»«IF pureEjb3()»Local«ENDIF» «serviceDependency.name.toFirstLower()»;
 		
@@ -190,7 +190,7 @@ def String repositoryDependencies(Consumer it) {
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.EJB
+			@jakarta.ejb.EJB
 		«ENDIF»
 			private «getRepositoryapiPackage(repositoryDependency.aggregateRoot.module)».«repositoryDependency.name» «repositoryDependency.name.toFirstLower()»;
 			
@@ -211,7 +211,7 @@ def String otherDependencies(Consumer it) {
 		@org.springframework.beans.factory.annotation.Autowired
 	«ENDIF»
 	«IF pureEjb3()»
-		@javax.ejb.EJB
+		@jakarta.ejb.EJB
 	«ENDIF»
 		public void set«dependency.toFirstUpper()»(Object «dependency») {
 			// TODO implement setter for dependency injection of «dependency»

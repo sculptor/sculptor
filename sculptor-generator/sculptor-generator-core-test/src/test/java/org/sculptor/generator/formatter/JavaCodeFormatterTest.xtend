@@ -97,9 +97,9 @@ class JavaCodeFormatterTest {
 	def testFormatPackageInfoWithAnnotations() {
 		val source = codeFormatter.format("package-info.java",
 			'''
-				@javax.xml.bind.annotation.XmlSchema(    
+				@jakarta.xml.bind.annotation.XmlSchema(    
 				   namespace     =     "http://serviceapi.milkyway.helloworld.example.sculptor.org/",
-				     elementFormDefault      =       javax.xml.bind.annotation.XmlNsForm.QUALIFIED          )				    package             org.sculptor.example.helloworld.milkyway.serviceapi       ;
+				     elementFormDefault      =       jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED          )				    package             org.sculptor.example.helloworld.milkyway.serviceapi       ;
 				
 				
 				
@@ -107,10 +107,10 @@ class JavaCodeFormatterTest {
 			''', true)
 		assertEquals(
 			'''
-				@XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+				@XmlSchema(namespace = "http://serviceapi.milkyway.helloworld.example.sculptor.org/", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 				package org.sculptor.example.helloworld.milkyway.serviceapi;
 
-				import javax.xml.bind.annotation.XmlSchema;
+				import jakarta.xml.bind.annotation.XmlSchema;
 			'''.toString, source)
 	}
 

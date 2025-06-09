@@ -51,7 +51,7 @@ class PureEjb3Test extends GeneratorTestBase {
 	@Test
 	def void assertPackageInfo() {
 		val info = getFileText(TO_GEN_SRC + "/org/sculptor/example/helloworld/milkyway/serviceapi/package-info.java")
-		assertContains(info, 'import javax.xml.bind.annotation.XmlSchema;')
+		assertContains(info, 'import jakarta.xml.bind.annotation.XmlSchema;')
 	}
 
 	@Test

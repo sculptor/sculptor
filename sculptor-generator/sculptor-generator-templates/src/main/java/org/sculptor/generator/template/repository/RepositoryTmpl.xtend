@@ -71,7 +71,7 @@ def String repositoryInterface(Repository it) {
 		«it.formatJavaDoc()»
 	«ENDIF »
 	«IF pureEjb3()»
-	@javax.ejb.Local
+	@jakarta.ejb.Local
 	«ENDIF »
 	public interface «name» «IF subscribe !== null»extends «fw("event.EventSubscriber")» «ENDIF» {
 
@@ -111,7 +111,7 @@ def String repositoryBase(Repository it) {
 			«»
 			 * <p>Make sure that subclass defines the following annotations:
 			 * <pre>
-			    @javax.ejb.Stateless(name="«name.toFirstLower()»")
+			    @jakarta.ejb.Stateless(name="«name.toFirstLower()»")
 			 * </pre>
 			 *
 		«ENDIF»
@@ -124,7 +124,7 @@ def String repositoryBase(Repository it) {
 			@org.springframework.stereotype.Repository("«name.toFirstLower()»")
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.Stateless(name="«name.toFirstLower()»")
+			@jakarta.ejb.Stateless(name="«name.toFirstLower()»")
 		«ENDIF»
 	«ENDIF»
 	«IF subscribe !== null»«pubSubTmpl.subscribeAnnotation(it.subscribe)»«ENDIF»
@@ -176,18 +176,18 @@ def String accessObjectFactory(Repository it) {
 
 def String entityManagerDependency(Repository it) {
 	'''
-		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
-		private javax.persistence.EntityManager entityManager;
+		@jakarta.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
+		private jakarta.persistence.EntityManager entityManager;
 
 		/**
 		 * Dependency injection
 		 */
-		@javax.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
-		protected void setEntityManager(javax.persistence.EntityManager entityManager) {
+		@jakarta.persistence.PersistenceContext«IF it.persistenceContextUnitName() != ""»(unitName = "«it.persistenceContextUnitName()»")«ENDIF»
+		protected void setEntityManager(jakarta.persistence.EntityManager entityManager) {
 			this.entityManager = entityManager;
 		}
 
-		protected javax.persistence.EntityManager getEntityManager() {
+		protected jakarta.persistence.EntityManager getEntityManager() {
 			return entityManager;
 		}
 	'''
@@ -210,7 +210,7 @@ def String repositoryDependencies(Repository it) {
 			@org.springframework.beans.factory.annotation.Autowired
 		«ENDIF»
 		«IF pureEjb3()»
-			@javax.ejb.EJB
+			@jakarta.ejb.EJB
 		«ENDIF»
 		private «dependency.aggregateRoot.module.getRepositoryapiPackage()».«dependency.name» «dependency.name.toFirstLower()»;
 
@@ -237,7 +237,7 @@ def String repositorySubclass(Repository it) {
 	@org.springframework.stereotype.Repository("«name.toFirstLower()»")
 	«ENDIF»
 	«IF pureEjb3()»
-	@javax.ejb.Stateless(name="«name.toFirstLower()»")
+	@jakarta.ejb.Stateless(name="«name.toFirstLower()»")
 	«ENDIF»
 	public class «name + getSuffix("Impl")» extends «name»Base {
 
@@ -263,7 +263,7 @@ def String otherDependencies(Repository it) {
 		@org.springframework.beans.factory.annotation.Autowired
 	«ENDIF»
 	«IF pureEjb3()»
-		@javax.ejb.EJB
+		@jakarta.ejb.EJB
 	«ENDIF»
 	public void set«dependency.toFirstUpper()»(Object «dependency») {
 		// TODO implement setter for dependency injection of «dependency»

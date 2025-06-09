@@ -42,7 +42,7 @@ def String keyGetter(DomainObject it) {
 			 * @return {{@link #getUuid}
 			 */
 			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-				@javax.persistence.Transient
+				@jakarta.persistence.Transient
 			«ENDIF»
 			public Object getKey() {
 				return getUuid();
@@ -55,7 +55,7 @@ def String keyGetter(DomainObject it) {
 			 * @return {@link #get«it.getNaturalKeyReferences().head.name.toFirstUpper()»}
 			 */
 			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-				@javax.persistence.Transient
+				@jakarta.persistence.Transient
 			«ENDIF»
 			public Object getKey() {
 				return get«it.getNaturalKeyReferences().head.name.toFirstUpper()»();
@@ -66,7 +66,7 @@ def String keyGetter(DomainObject it) {
 			 * @return {@link #«getGetAccessor(attributes.filter(a | a.naturalKey).head)»}
 			 */
 			«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-				@javax.persistence.Transient
+				@jakarta.persistence.Transient
 			«ENDIF»
 			public Object getKey() {
 				return «getGetAccessor(attributes.filter(a | a.naturalKey).head)»();
@@ -87,14 +87,14 @@ def String compositeKeyGetter(DomainObject it) {
 		 * @return {@link #get«name»Key}
 		 */
 		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ENDIF»
 		public Object getKey() {
 			return get«name»Key();
 		}
 
 		«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ENDIF»
 		private transient «name»Key cached«name»Key;
 
@@ -103,7 +103,7 @@ def String compositeKeyGetter(DomainObject it) {
 		 * a composite key consisting of several attributes.
 		 */
 		«IF isJpaAnnotationToBeGenerated() && !isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ENDIF»
 		public «name»Key get«name»Key() {
 			if (cached«name»Key == null) {

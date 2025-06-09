@@ -36,7 +36,7 @@ class ConsumerEjbTmpl {
 	/* Used for pure-ejb3, i.e. without spring */
 	def String messageBeanInterceptors(Consumer it) {
 		'''
-		@javax.interceptor.Interceptors({
+		@jakarta.interceptor.Interceptors({
 		«fw("context.ServiceContextStoreInterceptor")».class,
 			«fw("errorhandling.ErrorHandlingInterceptor")».class«IF jpa()»,
 			«module.getJpaFlushEagerInterceptorClass()».class}«ENDIF»)
@@ -98,13 +98,13 @@ class ConsumerEjbTmpl {
 
 	def String messageBeanAnnotation(Consumer it) {
 		'''
-		@javax.ejb.MessageDriven(name="«name.toFirstLower()»",
-		messageListenerInterface=javax.jms.MessageListener.class,
+		@jakarta.ejb.MessageDriven(name="«name.toFirstLower()»",
+		messageListenerInterface=jakarta.jms.MessageListener.class,
 		activationConfig =
 		{
-			@javax.ejb.ActivationConfigProperty(propertyName="destinationType",
-			propertyValue="javax.jms.Queue"),
-			@javax.ejb.ActivationConfigProperty(propertyName="destination",
+			@jakarta.ejb.ActivationConfigProperty(propertyName="destinationType",
+			propertyValue="jakarta.jms.Queue"),
+			@jakarta.ejb.ActivationConfigProperty(propertyName="destination",
 			propertyValue="«IF channel === null || channel == ""»queue/«name»Queue«ELSE»«channel»«ENDIF»")
 		})
 		'''
@@ -112,12 +112,12 @@ class ConsumerEjbTmpl {
 
 	def String jmsConnection(Consumer it) {
 		'''
-		@javax.annotation.Resource(mappedName = "java:/jms/QueueFactory")
-		private javax.jms.ConnectionFactory connectionFactory;
-		private javax.jms.Connection connection;
+		@jakarta.annotation.Resource(mappedName = "java:/jms/QueueFactory")
+		private jakarta.jms.ConnectionFactory connectionFactory;
+		private jakarta.jms.Connection connection;
 
 			@Override
-			protected javax.jms.Connection getJmsConnection() {
+			protected jakarta.jms.Connection getJmsConnection() {
 				try {
 					if (connection == null) {
 					    connection = connectionFactory.createConnection();
@@ -130,7 +130,7 @@ class ConsumerEjbTmpl {
 				}
 			}
 			
-			@javax.annotation.PreDestroy
+			@jakarta.annotation.PreDestroy
 			public void ejbRemove() {
 				closeConnection();
 			}
@@ -151,10 +151,10 @@ class ConsumerEjbTmpl {
 
 	def String invalidMessageQueue(Consumer it) {
 		'''
-		@javax.annotation.Resource(mappedName = "java:/jms/invalidMessageQueue")
-		private javax.jms.Queue invalidMessageQueue;
+		@jakarta.annotation.Resource(mappedName = "java:/jms/invalidMessageQueue")
+		private jakarta.jms.Queue invalidMessageQueue;
 
-		protected javax.jms.Destination getInvalidMessageQueue() {
+		protected jakarta.jms.Destination getInvalidMessageQueue() {
 			return invalidMessageQueue;
 		}
 		'''
@@ -189,7 +189,7 @@ class ConsumerEjbTmpl {
 		 */
 		«messageBeanAnnotation(it)»
 		«messageBeanInterceptors(it)»
-		public class «name + getSuffix("Impl")» extends «name + getSuffix("Impl")»Base implements javax.jms.MessageListener {
+		public class «name + getSuffix("Impl")» extends «name + getSuffix("Impl")»Base implements jakarta.jms.MessageListener {
 		«consumerTmpl.serialVersionUID(it)»
 			public «name + getSuffix("Impl")»() {
 			}

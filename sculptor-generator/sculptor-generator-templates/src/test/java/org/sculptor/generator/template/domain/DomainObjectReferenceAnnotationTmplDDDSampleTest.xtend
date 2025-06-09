@@ -84,13 +84,13 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.oneToManyJpaAnnotation(legs)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.OneToMany')
-		assertContains(code, 'cascade=javax.persistence.CascadeType.ALL')
+		assertContains(code, '@jakarta.persistence.OneToMany')
+		assertContains(code, 'cascade=jakarta.persistence.CascadeType.ALL')
 		assertContains(code, 'orphanRemoval=true')
-		assertContains(code, 'fetch=javax.persistence.FetchType.EAGER')
-		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, 'fetch=jakarta.persistence.FetchType.EAGER')
+		assertContains(code, '@jakarta.persistence.JoinColumn')
 		assertContains(code, 'name="ITINERARY"')
-		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey')
+		assertContains(code, 'foreignKey=@jakarta.persistence.ForeignKey')
 		assertContains(code, 'name="FK_ITINERARY_LEG"')
 	}
 
@@ -108,12 +108,12 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.manyToOneJpaAnnotation(carrierMovement)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.ManyToOne')
+		assertContains(code, '@jakarta.persistence.ManyToOne')
 		assertContains(code, 'optional=false')
-		assertContains(code, 'fetch=javax.persistence.FetchType.EAGER')
-		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, 'fetch=jakarta.persistence.FetchType.EAGER')
+		assertContains(code, '@jakarta.persistence.JoinColumn')
 		assertContains(code, 'name="CARRIERMOVEMENT"')
-		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey')
+		assertContains(code, 'foreignKey=@jakarta.persistence.ForeignKey')
 		assertContains(code, 'name="FK_LEG_CARRIERMOVEMENT"')
 	}
 
@@ -134,7 +134,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - List<@House> owning <-> owner inverse;
 		val owning = person.references.namedElement("owning");
 		val owningCode = domainObjectReferenceTmpl.manyReferenceAttribute(owning, true);
-		assertContains(owningCode, '@javax.persistence.OneToMany');
+		assertContains(owningCode, '@jakarta.persistence.OneToMany');
 		assertContains(owningCode, 'mappedBy="owner"');
 		assertContains(owningCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(owningCode, 'owning = new');
@@ -142,7 +142,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Set<@House> related <-> relation inverse;
 		val related = person.references.namedElement("related");
 		val relCode = domainObjectReferenceTmpl.manyReferenceAttribute(related, true);
-		assertContains(relCode, '@javax.persistence.OneToMany');
+		assertContains(relCode, '@jakarta.persistence.OneToMany');
 		assertContains(relCode, 'mappedBy="relation"');
 		assertContains(relCode, 'java.util.Set<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(relCode, 'related = new');
@@ -150,7 +150,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Bag<@House> other <-> something inverse;
 		val other = person.references.namedElement("other");
 		val otherCode = domainObjectReferenceTmpl.manyReferenceAttribute(other, true)
-		assertContains(otherCode, '@javax.persistence.OneToMany');
+		assertContains(otherCode, '@jakarta.persistence.OneToMany');
 		assertContains(otherCode, 'mappedBy="something"')
 		assertContains(otherCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(otherCode, 'other = new');
@@ -158,10 +158,10 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - List<@House> owningUni inverse;
 		val owningUni = person.references.namedElement("owningUni");
 		val owningUniCode = domainObjectReferenceTmpl.manyReferenceAttribute(owningUni, true);
-		assertContains(owningUniCode, '@javax.persistence.OneToMany');
-		assertContains(owningUniCode, '@javax.persistence.JoinColumn');
+		assertContains(owningUniCode, '@jakarta.persistence.OneToMany');
+		assertContains(owningUniCode, '@jakarta.persistence.JoinColumn');
 		assertContains(owningUniCode, 'name="PERSON"');
-		assertContains(owningUniCode, 'foreignKey=@javax.persistence.ForeignKey');
+		assertContains(owningUniCode, 'foreignKey=@jakarta.persistence.ForeignKey');
 		assertContains(owningUniCode, 'name="FK_PERSON_HOUSE"');
 		assertContains(owningUniCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(owningUniCode, 'owningUni = new');
@@ -169,10 +169,10 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Set<@House> relatedUni inverse;
 		val relatedUni = person.references.namedElement("relatedUni");
 		val relUniCode = domainObjectReferenceTmpl.manyReferenceAttribute(relatedUni, true);
-		assertContains(relUniCode, '@javax.persistence.OneToMany');
-		assertContains(relUniCode, '@javax.persistence.JoinColumn');
+		assertContains(relUniCode, '@jakarta.persistence.OneToMany');
+		assertContains(relUniCode, '@jakarta.persistence.JoinColumn');
 		assertContains(relUniCode, 'name="PERSON"');
-		assertContains(relUniCode, 'foreignKey=@javax.persistence.ForeignKey');
+		assertContains(relUniCode, 'foreignKey=@jakarta.persistence.ForeignKey');
 		assertContains(relUniCode, 'name="FK_PERSON_HOUSE"');
 		assertContains(relUniCode, 'java.util.Set<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(relUniCode, 'relatedUni = new');
@@ -180,10 +180,10 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Bag<@House> otherUni inverse;
 		val otherUni = person.references.namedElement("otherUni");
 		val otherUniCode = domainObjectReferenceTmpl.manyReferenceAttribute(otherUni, true)
-		assertContains(otherUniCode, '@javax.persistence.OneToMany');
-		assertContains(otherUniCode, '@javax.persistence.JoinColumn');
+		assertContains(otherUniCode, '@jakarta.persistence.OneToMany');
+		assertContains(otherUniCode, '@jakarta.persistence.JoinColumn');
 		assertContains(otherUniCode, 'name="PERSON"');
-		assertContains(otherUniCode, 'foreignKey=@javax.persistence.ForeignKey');
+		assertContains(otherUniCode, 'foreignKey=@jakarta.persistence.ForeignKey');
 		assertContains(otherUniCode, 'name="FK_PERSON_HOUSE"');
 		assertContains(otherUniCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(otherUniCode, 'otherUni = new');
@@ -191,7 +191,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - List<@House> owningN <-> ownerN;
 		val owningN = person.references.namedElement("owningN");
 		val owningNCode = domainObjectReferenceTmpl.manyReferenceAttribute(owningN, true)
-		assertContains(owningNCode, '@javax.persistence.ManyToMany');
+		assertContains(owningNCode, '@jakarta.persistence.ManyToMany');
 		assertContains(owningNCode, 'mappedBy="ownerN"')
 		assertContains(owningNCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(owningNCode, 'owningN = new');
@@ -199,7 +199,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Set<@House> relatedN <-> relationN;
 		val relatedN = person.references.namedElement("relatedN");
 		val relNCode = domainObjectReferenceTmpl.manyReferenceAttribute(relatedN, true)
-		assertContains(relNCode, '@javax.persistence.ManyToMany');
+		assertContains(relNCode, '@jakarta.persistence.ManyToMany');
 		assertContains(relNCode, 'mappedBy="relationN"')
 		assertContains(relNCode, 'java.util.Set<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(relNCode, 'relatedN = new');
@@ -207,7 +207,7 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Bag<@House> otherN <-> somethingN;
 		val otherN = person.references.namedElement("otherN");
 		val otherNCode = domainObjectReferenceTmpl.manyReferenceAttribute(otherN, true)
-		assertContains(otherNCode, '@javax.persistence.ManyToMany');
+		assertContains(otherNCode, '@jakarta.persistence.ManyToMany');
 		assertContains(otherNCode, 'mappedBy="somethingN"')
 		assertContains(otherNCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
 		assertContains(otherNCode, 'otherN = new');
@@ -215,14 +215,14 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - List<@House> owningUniN;
 		val owningUniN = person.references.namedElement("owningUniN");
 		val owningUniNCode = domainObjectReferenceTmpl.manyReferenceAttribute(owningUniN, true);
-		assertContains(owningUniNCode, '@javax.persistence.ManyToMany');
-		assertContains(owningUniNCode, '@javax.persistence.JoinTable');
+		assertContains(owningUniNCode, '@jakarta.persistence.ManyToMany');
+		assertContains(owningUniNCode, '@jakarta.persistence.JoinTable');
 		assertContains(owningUniNCode, 'name="OWNINGUNIN_PERSON"');
-		assertContains(owningUniNCode, 'joinColumns=@javax.persistence.JoinColumn');
+		assertContains(owningUniNCode, 'joinColumns=@jakarta.persistence.JoinColumn');
 		assertContains(owningUniNCode, 'name="PERSON"');
-		assertContains(owningUniNCode, 'foreignKey=@javax.persistence.ForeignKey');
+		assertContains(owningUniNCode, 'foreignKey=@jakarta.persistence.ForeignKey');
 		assertContains(owningUniNCode, 'name="FK_OWNINGUNIN_PERSON_PERSON"');
-		assertContains(owningUniNCode, 'inverseJoinColumns=@javax.persistence.JoinColumn');
+		assertContains(owningUniNCode, 'inverseJoinColumns=@jakarta.persistence.JoinColumn');
 		assertContains(owningUniNCode, 'name="OWNINGUNIN"');
 		assertContains(owningUniNCode, 'name="FK_OWNINGUNIN_PERSON_OWNINGUNIN"');
 		assertContains(owningUniNCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');
@@ -231,14 +231,14 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Set<@House> relatedUniN;
 		val relatedUniN = person.references.namedElement("relatedUniN");
 		val relatedUniNCode = domainObjectReferenceTmpl.manyReferenceAttribute(relatedUniN, true);
-		assertContains(relatedUniNCode, '@javax.persistence.ManyToMany');
-		assertContains(relatedUniNCode, '@javax.persistence.JoinTable');
+		assertContains(relatedUniNCode, '@jakarta.persistence.ManyToMany');
+		assertContains(relatedUniNCode, '@jakarta.persistence.JoinTable');
 		assertContains(relatedUniNCode, 'name="PERSON_RELATEDUNIN"');
-		assertContains(relatedUniNCode, 'joinColumns=@javax.persistence.JoinColumn');
+		assertContains(relatedUniNCode, 'joinColumns=@jakarta.persistence.JoinColumn');
 		assertContains(relatedUniNCode, 'name="PERSON"');
-		assertContains(relatedUniNCode, 'foreignKey=@javax.persistence.ForeignKey');
+		assertContains(relatedUniNCode, 'foreignKey=@jakarta.persistence.ForeignKey');
 		assertContains(relatedUniNCode, 'name="FK_PERSON_RELATEDUNIN_PERSON"');
-		assertContains(relatedUniNCode, 'inverseJoinColumns=@javax.persistence.JoinColumn');
+		assertContains(relatedUniNCode, 'inverseJoinColumns=@jakarta.persistence.JoinColumn');
 		assertContains(relatedUniNCode, 'name="RELATEDUNIN"');
 		assertContains(relatedUniNCode, 'name="FK_PERSON_RELATEDUNIN_RELATEDUNIN"');
 		assertContains(relatedUniNCode, 'java.util.Set<org.sculptor.dddsample.relation.domain.House>');
@@ -247,14 +247,14 @@ class DomainObjectReferenceAnnotationTmplDDDSampleTest extends XtextTest {
 		// - Bag<@House> otherUniN;
 		val otherUniN = person.references.namedElement("otherUniN");
 		val otherUniNCode = domainObjectReferenceTmpl.manyReferenceAttribute(otherUniN, true);
-		assertContains(otherUniNCode, '@javax.persistence.ManyToMany');
-		assertContains(otherUniNCode, '@javax.persistence.JoinTable');
+		assertContains(otherUniNCode, '@jakarta.persistence.ManyToMany');
+		assertContains(otherUniNCode, '@jakarta.persistence.JoinTable');
 		assertContains(otherUniNCode, 'name="OTHERUNIN_PERSON"');
-		assertContains(otherUniNCode, 'joinColumns=@javax.persistence.JoinColumn');
+		assertContains(otherUniNCode, 'joinColumns=@jakarta.persistence.JoinColumn');
 		assertContains(otherUniNCode, 'name="PERSON"');
-		assertContains(otherUniNCode, 'foreignKey=@javax.persistence.ForeignKey');
+		assertContains(otherUniNCode, 'foreignKey=@jakarta.persistence.ForeignKey');
 		assertContains(otherUniNCode, 'name="FK_OTHERUNIN_PERSON_PERSON"');
-		assertContains(otherUniNCode, 'inverseJoinColumns=@javax.persistence.JoinColumn');
+		assertContains(otherUniNCode, 'inverseJoinColumns=@jakarta.persistence.JoinColumn');
 		assertContains(otherUniNCode, 'name="OTHERUNIN",');
 		assertContains(otherUniNCode, 'name="FK_OTHERUNIN_PERSON_OTHERUNIN"');
 		assertContains(otherUniNCode, 'java.util.List<org.sculptor.dddsample.relation.domain.House>');

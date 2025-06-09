@@ -126,7 +126,7 @@ def String delegateToTraitMethod(DomainObjectOperation it) {
 def String traitInstance(Trait it, DomainObject inDomainObject) {
 	'''
 		«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ENDIF»
 		private «getDomainPackage()».«name»Trait<«inDomainObject.getDomainPackage()».«inDomainObject.name»> «name.toFirstLower()»Trait = new «getDomainPackage()».«name»Trait<«inDomainObject.getDomainPackage()».«inDomainObject.name»>() {
 			«domainObjectTmpl.serialVersionUID(it)»

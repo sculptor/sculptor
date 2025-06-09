@@ -254,7 +254,7 @@ def void persistenceUnitPropertiesAppEngine(Application it, String unitName, jav
 	propertyList.put('datanucleus.ConnectionURL', 'appengine');
 	propertyList.put('datanucleus.singletonEMFForName', 'true');
 	propertyList.put('datanucleus.appengine.datastoreReadConsistency', 'EVENTUAL');
-	propertyList.put('javax.persistence.query.timeout', '5000');
+	propertyList.put('jakarta.persistence.query.timeout', '5000');
 	propertyList.put('datanucleus.datastoreWriteTimeout', '10000');
 	propertyList.put('datanucleus.appengine.datastoreEnableXGTransactions', 'true');
 	// propertyList.put('datanucleus.manageRelationshipsChecks', 'false');

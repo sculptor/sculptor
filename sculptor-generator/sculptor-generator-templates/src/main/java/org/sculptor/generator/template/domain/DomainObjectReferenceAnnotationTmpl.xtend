@@ -39,12 +39,12 @@ class DomainObjectReferenceAnnotationTmpl {
 def String xmlElementAnnotation(Reference it) {
 	'''
 		«IF transient»
-			@javax.xml.bind.annotation.XmlTransient
+			@jakarta.xml.bind.annotation.XmlTransient
 		«ELSEIF many»
-			@javax.xml.bind.annotation.XmlElementWrapper(name = "«name»")
-			@javax.xml.bind.annotation.XmlElement(name = "«name.singular()»")
+			@jakarta.xml.bind.annotation.XmlElementWrapper(name = "«name»")
+			@jakarta.xml.bind.annotation.XmlElement(name = "«name.singular()»")
 		«ELSE»
-			@javax.xml.bind.annotation.XmlElement(«formatAnnotationParameters(<Object>newArrayList(
+			@jakarta.xml.bind.annotation.XmlElement(«formatAnnotationParameters(<Object>newArrayList(
 				required, "required", "true",
 				nullable, "nillable", "true"
 			))»)
@@ -67,8 +67,8 @@ def String oneReferenceAttributeAnnotations(Reference it) {
 
 def String oneReferenceAppEngineKeyAnnotation(Reference it) {
 	'''
-		@javax.persistence.Basic
-		@javax.persistence.Column(
+		@jakarta.persistence.Basic
+		@jakarta.persistence.Column(
 		«formatAnnotationParameters(<Object>newArrayList(
 			true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable
@@ -96,7 +96,7 @@ def String oneReferenceJpaAnnotations(Reference it) {
 	'''
 	«IF isJpaAnnotationToBeGenerated() && (from.isPersistent() || (jpa && from.isEmbeddable()))»
 		«IF transient»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ELSE»
 			«IF it.isBasicTypeReference()»
 				«basicTypeJpaAnnotation(it)»
@@ -111,7 +111,7 @@ def String oneReferenceJpaAnnotations(Reference it) {
 					«ENDIF»
 					«oneReferenceOnDeleteJpaAnnotation(it)»
 				«ELSE»
-					@javax.persistence.Transient
+					@jakarta.persistence.Transient
 				«ENDIF»
 			«ENDIF»
 			«IF isJpaProviderHibernate() && cache»
@@ -133,12 +133,12 @@ def String oneReferenceOnDeleteJpaAnnotation(Reference it) {
 
 def String basicTypeJpaAnnotation(Reference it) {
 	'''
-		@javax.persistence.Embedded
+		@jakarta.persistence.Embedded
 		«IF isJpaProviderAppEngine() »
-			@javax.persistence.OneToOne(fetch = javax.persistence.FetchType.EAGER)
+			@jakarta.persistence.OneToOne(fetch = jakarta.persistence.FetchType.EAGER)
 		«ENDIF »
 		«IF !useJpaDefaults()»
-			@javax.persistence.AttributeOverrides({
+			@jakarta.persistence.AttributeOverrides({
 				«val elem = <NamedElement>newArrayList()»
 				«{
 					elem.addAll(to.attributes)
@@ -148,7 +148,7 @@ def String basicTypeJpaAnnotation(Reference it) {
 			})
 				«IF it.isAssociationOverrideNeeded()»
 					/* TODO: not sufficient if embeddable is used in more than one entity */
-					@javax.persistence.AssociationOverrides({
+					@jakarta.persistence.AssociationOverrides({
 						    «it.to.references.filter(e | !e.isBasicTypeReference() && !e.isEnumReference()).map[e | associationOverride(e, from.getDatabaseName(), nullable)].join(",")»
 					})
 				«ENDIF»
@@ -159,7 +159,7 @@ def String basicTypeJpaAnnotation(Reference it) {
 def String enumJpaAnnotation(Reference it) {
 	val ^enum = it.getEnum()
 	'''
-		@javax.persistence.Column(
+		@jakarta.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(
 				true, "name", '"' + it.getDatabaseName() + '"',
 				!nullable, "nullable", false,
@@ -167,19 +167,19 @@ def String enumJpaAnnotation(Reference it) {
 			))»)
 		«IF (enum.isOrdinaryEnum())»
 			«IF !enum.ordinal»
-				@javax.persistence.Enumerated(javax.persistence.EnumType.STRING)
+				@jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
 			«ELSE»
-				@javax.persistence.Enumerated
+				@jakarta.persistence.Enumerated
 			«ENDIF»
 		«ELSE»
-			@javax.persistence.Convert(converter = «it.enum.domainObjectTypeName»Converter.class)
+			@jakarta.persistence.Convert(converter = «it.enum.domainObjectTypeName»Converter.class)
 		«ENDIF»
 	'''
 }
 
 def String oneToOneJpaAnnotation(Reference it) {
 	'''
-		@javax.persistence.OneToOne(
+		@jakarta.persistence.OneToOne(
 			«formatAnnotationParameters(<Object>newArrayList(
 				!nullable, "optional", false,
 				isRefInverse(), "mappedBy", '"' + opposite.name + '"',
@@ -188,12 +188,12 @@ def String oneToOneJpaAnnotation(Reference it) {
 				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
 		«IF !isRefInverse()»
-			@javax.persistence.JoinColumn(
+			@jakarta.persistence.JoinColumn(
 			«formatAnnotationParameters(<Object>newArrayList(
 				true, "name", '"' + it.getDatabaseName() + '"',
 				!isJpaProviderOpenJpa() && !nullable, "nullable", false,
 				it.isSimpleNaturalKey(), "unique", "true",
-				true, "foreignKey", "@javax.persistence.ForeignKey(name=\"FK_" + truncateLongDatabaseName(from.getDatabaseName(), it.getDatabaseName()) + "\")"
+				true, "foreignKey", "@jakarta.persistence.ForeignKey(name=\"FK_" + truncateLongDatabaseName(from.getDatabaseName(), it.getDatabaseName()) + "\")"
 			))»)
 			«IF isJpaProviderHibernate() && it.getHibernateFetchType() !== null»
 				@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
@@ -204,18 +204,18 @@ def String oneToOneJpaAnnotation(Reference it) {
 
 def String manyToOneJpaAnnotation(Reference it) {
 	'''
-		@javax.persistence.ManyToOne(
+		@jakarta.persistence.ManyToOne(
 		«formatAnnotationParameters(<Object>newArrayList(
 			!nullable, "optional", false,
 			it.getCascadeType() !== null, "cascade", it.getCascadeType(),
 			it.getFetchType() !== null, "fetch", it.getFetchType()
 		))»)
 		«IF !it.hasOpposite() || !opposite.isList()»
-			@javax.persistence.JoinColumn(«formatAnnotationParameters(<Object>newArrayList(
+			@jakarta.persistence.JoinColumn(«formatAnnotationParameters(<Object>newArrayList(
 				true, "name", '"' + it.getDatabaseName() + '"',
 				!isJpaProviderOpenJpa() && !nullable, "nullable", false,
 				it.isSimpleNaturalKey(), "unique", "true",
-				true, "foreignKey", "@javax.persistence.ForeignKey(name=\"FK_" + truncateLongDatabaseName(from.isEmbeddable() ? from.name.toUpperCase() : from.getDatabaseName(), it.getDatabaseName()) + "\")"
+				true, "foreignKey", "@jakarta.persistence.ForeignKey(name=\"FK_" + truncateLongDatabaseName(from.isEmbeddable() ? from.name.toUpperCase() : from.getDatabaseName(), it.getDatabaseName()) + "\")"
 			))»)
 			«IF isJpaProviderHibernate() && it.getHibernateFetchType() !== null»
 				@org.hibernate.annotations.Fetch(«it.getHibernateFetchType()»)
@@ -237,9 +237,9 @@ def dispatch String attributeOverride(Object it, String columnPrefix, String att
 
 def dispatch String attributeOverride(Attribute it, String columnPrefix, String attributePrefix, boolean referenceIsNullable) {
 	'''
-		@javax.persistence.AttributeOverride(
+		@jakarta.persistence.AttributeOverride(
 			name="«attributePrefix + name»",
-			column = @javax.persistence.Column(
+			column = @jakarta.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(
 				true, "name", '"' + getDatabaseName(columnPrefix, it) + '"',
 				!(referenceIsNullable || (!referenceIsNullable && nullable)), "nullable", false,
@@ -254,9 +254,9 @@ def dispatch String attributeOverride(Reference it, String columnPrefix, String 
 			«it.to.attributes.map[a | attributeOverride(a, getDatabaseName(columnPrefix, it), name + ".", it.nullable)].join(",")»
 		«ELSEIF it.isEnumReference()»
 			«val ^enum = it.getEnum()»
-			@javax.persistence.AttributeOverride(
+			@jakarta.persistence.AttributeOverride(
 				name="«name»",
-				column = @javax.persistence.Column(
+				column = @jakarta.persistence.Column(
 				«formatAnnotationParameters(<Object>newArrayList(
 					true, "name", '"' + getDatabaseName(columnPrefix, it) + '"',
 					!referenceIsNullable, "nullable", false,
@@ -270,19 +270,19 @@ def String associationOverride(Reference it, String prefix, boolean referenceIsN
 	'''
 	««« TODO: verify the table and column naming
 		«IF many»
-			@javax.persistence.AssociationOverride(
+			@jakarta.persistence.AssociationOverride(
 				name="«name»",
-				joinTable = @javax.persistence.JoinTable(
+				joinTable = @jakarta.persistence.JoinTable(
 					name="«getDatabaseName(prefix + "_" + from.getDatabaseName(), to)»",
-					joinColumns= @javax.persistence.JoinColumn(name = "«prefix»")
+					joinColumns= @jakarta.persistence.JoinColumn(name = "«prefix»")
 					«IF isRefInverse()»
-						, inverseJoinColumns= @javax.persistence.JoinColumn(name = "«to.getDatabaseName()»")
+						, inverseJoinColumns= @jakarta.persistence.JoinColumn(name = "«to.getDatabaseName()»")
 					«ENDIF»
 			))
 		«ELSE»
-			@javax.persistence.AssociationOverride(
+			@jakarta.persistence.AssociationOverride(
 				name="«name»",
-				joinColumns = @javax.persistence.JoinColumn(
+				joinColumns = @jakarta.persistence.JoinColumn(
 					name="«getDatabaseName(from.getDatabaseName(), to)»",
 					nullable=true
 			))
@@ -326,7 +326,7 @@ def String manyReferenceGetterAnnotations(Reference it) {
 
 def String manyReferenceAppEngineKeyAnnotation(Reference it) {
 	'''
-		@javax.persistence.Column(
+		@jakarta.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(
 				true, "name", '"' + it.getDatabaseName() + '"',
 				!nullable, "nullable", nullable
@@ -346,10 +346,10 @@ def String manyReferenceJpaAnnotations(Reference it) {
 					«manyToManyJpaAnnotation(it)»
 				«ENDIF»
 				«IF it.isList() && it.hasHint("orderColumn")»
-					@javax.persistence.OrderColumn(name="«it.getListIndexColumnName()»")
+					@jakarta.persistence.OrderColumn(name="«it.getListIndexColumnName()»")
 				«ENDIF»
 				«IF orderBy !== null»
-					@javax.persistence.OrderBy("«orderBy»")
+					@jakarta.persistence.OrderBy("«orderBy»")
 				«ENDIF»
 				«IF isJpaProviderHibernate() && cache»
 					@org.hibernate.annotations.Cache(usage = «it.getHibernateCacheStrategy()»)
@@ -365,7 +365,7 @@ def String manyReferenceJpaAnnotations(Reference it) {
 				«elementCollectionJpaAnnotation(it)»
 			«ENDIF»
 		«ELSE»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ENDIF»
 	«ENDIF»
 	'''
@@ -374,7 +374,7 @@ def String manyReferenceJpaAnnotations(Reference it) {
 def String oneToManyJpaAnnotation(Reference it) {
 	val isMappedBy = it.hasOpposite();
 	'''
-		@javax.persistence.OneToMany(
+		@jakarta.persistence.OneToMany(
 			«formatAnnotationParameters(<Object>newArrayList(
 				it.getCascadeType() !== null, "cascade", it.getCascadeType(),
 				isOrphanRemoval(dbHelper.getCascade(it), it), "orphanRemoval", true,
@@ -383,24 +383,24 @@ def String oneToManyJpaAnnotation(Reference it) {
 			))»)
 		«IF !isMappedBy»
 			«IF !isRefInverse()»
-				@javax.persistence.JoinColumn(
+				@jakarta.persistence.JoinColumn(
 					name="«it.getOppositeForeignKeyName()»",
-					foreignKey=@javax.persistence.ForeignKey(
+					foreignKey=@jakarta.persistence.ForeignKey(
 						name="FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getOppositeForeignKeyName())»"))
 			«ENDIF»
 			««« TODO: add support for unidirectional onetomany relationships with and without jointable
 			«/*
 			«IF !it.isUnidirectionalToManyWithoutJoinTable()»
-				@javax.persistence.JoinTable(
+				@jakarta.persistence.JoinTable(
 					name="«it.getManyToManyJoinTableName()»",
-					joinColumns=@javax.persistence.JoinColumn(name="«it.getOppositeForeignKeyName()»"),
-					inverseJoinColumns=@javax.persistence.JoinColumn(name="«it.getForeignKeyName()»"))
+					joinColumns=@jakarta.persistence.JoinColumn(name="«it.getOppositeForeignKeyName()»"),
+					inverseJoinColumns=@jakarta.persistence.JoinColumn(name="«it.getForeignKeyName()»"))
 			«ENDIF»
 			 */»
 			«IF isRefInverse() && (!it.hasOpposite() || it.isList())»
-				@javax.persistence.JoinColumn(
+				@jakarta.persistence.JoinColumn(
 					name="«it.getOppositeForeignKeyName()»",
-					foreignKey=@javax.persistence.ForeignKey(
+					foreignKey=@jakarta.persistence.ForeignKey(
 						name="FK_«truncateLongDatabaseName(from.getDatabaseName(), to.getDatabaseName())»"))
 			«ENDIF»
 		«ENDIF»
@@ -411,7 +411,7 @@ def String elementCollectionJpaAnnotation(Reference it) {
 	'''
 		/* nested element collections are not allowed by jpa, some provider may support this, we not */
 		/* TODO: add a constraint for to avoid nested element collections */
-			@javax.persistence.ElementCollection(
+			@jakarta.persistence.ElementCollection(
 				«formatAnnotationParameters(<Object>newArrayList(
 					it.getFetchType() !== null, "fetch", it.getFetchType()
 				))»)
@@ -422,31 +422,31 @@ def String elementCollectionTableJpaAnnotation(Reference it) {
 	'''
 		/* It's not possible to overwrite the collection table later, therefore we can not use it here */
 		/*
-			@javax.persistence.CollectionTable(
+			@jakarta.persistence.CollectionTable(
 				name="«it.getElementCollectionTableName()»",
-				joinColumns=@javax.persistence.JoinColumn(name="«it.getOppositeForeignKeyName()»"))
+				joinColumns=@jakarta.persistence.JoinColumn(name="«it.getOppositeForeignKeyName()»"))
 		*/
 	'''
 }
 
 def String manyToManyJpaAnnotation(Reference it) {
 	'''
-		@javax.persistence.ManyToMany(
+		@jakarta.persistence.ManyToMany(
 			«formatAnnotationParameters(<Object>newArrayList(
 				it.getCascadeType() !== null, "cascade", it.getCascadeType(),
 				isRefInverse(), "mappedBy", '"' + opposite?.name + '"',
 				it.getFetchType() !== null, "fetch", it.getFetchType()
 			))»)
 		«IF !isRefInverse()»
-			@javax.persistence.JoinTable(
+			@jakarta.persistence.JoinTable(
 				name="«it.getManyToManyJoinTableName()»",
-				joinColumns=@javax.persistence.JoinColumn(
+				joinColumns=@jakarta.persistence.JoinColumn(
 					name="«it.getOppositeForeignKeyName()»",
-					foreignKey=@javax.persistence.ForeignKey(
+					foreignKey=@jakarta.persistence.ForeignKey(
 						name="FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getOppositeForeignKeyName())»")),
-				inverseJoinColumns=@javax.persistence.JoinColumn(
+				inverseJoinColumns=@jakarta.persistence.JoinColumn(
 					name="«it.getForeignKeyName()»",
-					foreignKey=@javax.persistence.ForeignKey(
+					foreignKey=@jakarta.persistence.ForeignKey(
 						name="FK_«truncateLongDatabaseName(it.getManyToManyJoinTableName(), it.getForeignKeyName())»")))
 		«ENDIF»
 	'''

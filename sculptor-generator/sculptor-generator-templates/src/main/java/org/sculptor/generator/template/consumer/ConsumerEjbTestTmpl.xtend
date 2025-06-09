@@ -49,8 +49,8 @@ class ConsumerEjbTestTmpl {
 		 */
 		public class «name»Test extends «IF jpa()»«fw("test.AbstractOpenEJBDbUnitTest")»«ELSE»«fw("test.AbstractOpenEJBTest")»«ENDIF» {
 
-			@javax.annotation.Resource(mappedName="«name.toFirstLower()»")
-			private javax.jms.Queue queue;
+			@jakarta.annotation.Resource(mappedName="«name.toFirstLower()»")
+			private jakarta.jms.Queue queue;
 
 			«consumerTestTmpl.consumerJUnitGetDataSetFile(it)»
 
@@ -69,7 +69,7 @@ class ConsumerEjbTestTmpl {
 			public void testConsume() throws Exception {
 				// TODO Auto-generated method stub
 				String message = createMessage();
-				javax.jms.Destination replyTo = sendMessage(queue, message);
+				jakarta.jms.Destination replyTo = sendMessage(queue, message);
 				waitForReply(replyTo);
 				fail("testConsume not implemented");
 			}

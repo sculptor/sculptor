@@ -80,11 +80,11 @@ class DomainObjectReferenceAnnotationTmplLibraryTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.oneToManyJpaAnnotation(media)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.OneToMany')
-		assertContains(code, 'cascade=javax.persistence.CascadeType.ALL')
+		assertContains(code, '@jakarta.persistence.OneToMany')
+		assertContains(code, 'cascade=jakarta.persistence.CascadeType.ALL')
 		assertContains(code, 'mappedBy="library"')
-		assertNotContains(code, '@javax.persistence.JoinColumn')
-		assertNotContains(code, '@javax.persistence.ForeignKey')
+		assertNotContains(code, '@jakarta.persistence.JoinColumn')
+		assertNotContains(code, '@jakarta.persistence.ForeignKey')
 	}
 
 	@Test
@@ -101,11 +101,11 @@ class DomainObjectReferenceAnnotationTmplLibraryTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.manyToOneJpaAnnotation(media)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.ManyToOne')
+		assertContains(code, '@jakarta.persistence.ManyToOne')
 		assertContains(code, 'optional=false')
-		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, '@jakarta.persistence.JoinColumn')
 		assertContains(code, 'name="MEDIA"')
-		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey(name="FK_ENGAGEMENT_MEDIA")')
+		assertContains(code, 'foreignKey=@jakarta.persistence.ForeignKey(name="FK_ENGAGEMENT_MEDIA")')
 	}
 
 	@Test
@@ -122,17 +122,17 @@ class DomainObjectReferenceAnnotationTmplLibraryTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.manyToManyJpaAnnotation(mediaCharacters)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.ManyToMany')
-		assertContains(code, 'cascade=javax.persistence.CascadeType.ALL')
-		assertContains(code, '@javax.persistence.JoinTable')
+		assertContains(code, '@jakarta.persistence.ManyToMany')
+		assertContains(code, 'cascade=jakarta.persistence.CascadeType.ALL')
+		assertContains(code, '@jakarta.persistence.JoinTable')
 		assertContains(code, 'name="EXISTSINMEDIA_MEDIACHARACTER"')
-		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, '@jakarta.persistence.JoinColumn')
 		assertContains(code, 'name="EXISTSINMEDIA"')
-		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey')
+		assertContains(code, 'foreignKey=@jakarta.persistence.ForeignKey')
 		assertContains(code, 'name="FK_EXISTSINMEDIA_MEDIACHARACTER_EXISTSINMEDIA"')
-		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, '@jakarta.persistence.JoinColumn')
 		assertContains(code, 'name="MEDIACHARACTER"')
-		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey')
+		assertContains(code, 'foreignKey=@jakarta.persistence.ForeignKey')
 		assertContains(code, 'name="FK_EXISTSINMEDIA_MEDIACHARACTER_MEDIACHARACTER"')
 	}
 

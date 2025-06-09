@@ -145,7 +145,7 @@ def String notChangeablePrimitivePropertySetter(Attribute it) {
 	'''
 		«IF it.isSetterNeeded()»
 			«IF isJpaAnnotationToBeGenerated() && isJpaAnnotationOnFieldToBeGenerated()»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 			«ENDIF»
 			private boolean «name»IsSet = false;
 			«IF notChangeablePropertySetterVisibility() == "private"»

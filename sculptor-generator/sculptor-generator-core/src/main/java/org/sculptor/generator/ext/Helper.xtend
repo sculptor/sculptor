@@ -1372,7 +1372,7 @@ class Helper {
 
 	def String getResultTypeNameForMapping(RepositoryOperation op) {
 		if (op.useTupleToObjectMapping())
-			"javax.persistence.Tuple"
+			"jakarta.persistence.Tuple"
 		else
 			op.getResultTypeName()
 	}

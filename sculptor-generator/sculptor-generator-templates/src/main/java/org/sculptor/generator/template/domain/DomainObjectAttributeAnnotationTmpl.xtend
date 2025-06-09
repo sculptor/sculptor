@@ -67,18 +67,18 @@ def String propertyGetterAnnotations(Attribute it) {
 def String xmlElementAnnotation(Attribute it) {
 	'''
 		«IF transient»
-			@javax.xml.bind.annotation.XmlTransient
+			@jakarta.xml.bind.annotation.XmlTransient
 		«ELSE»
-			@javax.xml.bind.annotation.XmlElement(«formatAnnotationParameters(<Object>newArrayList(required, "required", "true",
+			@jakarta.xml.bind.annotation.XmlElement(«formatAnnotationParameters(<Object>newArrayList(required, "required", "true",
 				nullable, "nillable", "true"
 			))»)
 			«IF it.getTypeName() == "org.joda.time.LocalDate"»
-				@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaLocalDateXmlAdapter")».class)
+				@jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaLocalDateXmlAdapter")».class)
 			«ELSEIF it.getTypeName() == "org.joda.time.DateTime"»
-				@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaDateTimeXmlAdapter")».class)
+				@jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(«fw("xml.JodaDateTimeXmlAdapter")».class)
 			«ENDIF»
 			«IF it.isDate()»
-				@javax.xml.bind.annotation.XmlSchemaType(name="date")
+				@jakarta.xml.bind.annotation.XmlSchemaType(name="date")
 			«ENDIF»
 		«ENDIF»
 	'''
@@ -87,7 +87,7 @@ def String xmlElementAnnotation(Attribute it) {
 def String jpaAnnotations(Attribute it) {
 	'''
 		«IF transient»
-			@javax.persistence.Transient
+			@jakarta.persistence.Transient
 		«ELSE»
 			«IF it.isCollection()»
 				«elementCollectionAnnotations(it)»
@@ -102,10 +102,10 @@ def String jpaAnnotations(Attribute it) {
 					«columnAnnotations(it)»
 				«ENDIF»
 				«IF it.useJpaLobAnnotation()»
-					@javax.persistence.Lob
+					@jakarta.persistence.Lob
 				«ENDIF»
 				«IF it.useJpaBasicAnnotation()»
-					@javax.persistence.Basic
+					@jakarta.persistence.Basic
 				«ENDIF»
 				«IF index»
 					«indexAnnotations(it)»
@@ -117,20 +117,20 @@ def String jpaAnnotations(Attribute it) {
 
 def String idAnnotations(Attribute it) {
 	'''
-		@javax.persistence.Id
+		@jakarta.persistence.Id
 		«IF isJpaProviderAppEngine()»
-			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+			@jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
 		«ELSE»
-			@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
+			@jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
 		«ENDIF»
-		@javax.persistence.Column(name="«it.getDatabaseName()»")
+		@jakarta.persistence.Column(name="«it.getDatabaseName()»")
 	'''
 }
 
 def String versionAnnotations(Attribute it) {
 	'''
-		@javax.persistence.Version
-		@javax.persistence.Column(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
+		@jakarta.persistence.Version
+		@jakarta.persistence.Column(«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 			!isJpaProviderAppEngine() && !nullable, "nullable", nullable))»)
 	'''
 }
@@ -145,15 +145,15 @@ def String auditAnnotations(Attribute it) {
 		«ELSEIF isJpaProviderOpenJpa() && it.isJodaTemporal()»
 			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
 		«ELSEIF isJpaProviderAppEngine()»
-			@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
+			@jakarta.persistence.Temporal(jakarta.persistence.TemporalType.DATE)
 		«ELSEIF supportTemporal(it)»
 			«IF getHibernateType() == 'date'»
-				@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
+				@jakarta.persistence.Temporal(jakarta.persistence.TemporalType.DATE)
 			«ELSEIF getHibernateType() == 'timestamp'»
-				@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+				@jakarta.persistence.Temporal(jakarta.persistence.TemporalType.TIMESTAMP)
 			«ENDIF»
 		«ENDIF»
-		@javax.persistence.Column(
+		@jakarta.persistence.Column(
 		«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
 			dbType !== null, "columnDefinition", '"' + dbType + '"'
@@ -164,7 +164,7 @@ def String auditAnnotations(Attribute it) {
 def String columnAnnotations(Attribute it) {
 	val dbType = if (isJpaAnnotationColumnDefinitionToBeGenerated()) getDatabaseType() else null
 	'''
-		@javax.persistence.Column(
+		@jakarta.persistence.Column(
 		«formatAnnotationParameters(<Object>newArrayList( true, "name", '"' + it.getDatabaseName() + '"',
 			!nullable, "nullable", nullable,
 			it.getDatabaseLength() !== null, "length", it.getDatabaseLength(),
@@ -185,9 +185,9 @@ def String columnDateAnnotations(Attribute it) {
 			@org.apache.openjpa.persistence.jdbc.Strategy("«it.getApplicationBasePackage()».util.JodaHandler")
 		«ELSEIF supportTemporal(it)»
 			«IF it.isDate()»
-				@javax.persistence.Temporal(javax.persistence.TemporalType.DATE)
+				@jakarta.persistence.Temporal(jakarta.persistence.TemporalType.DATE)
 			«ELSEIF it.isDateTime()»
-				@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+				@jakarta.persistence.Temporal(jakarta.persistence.TemporalType.TIMESTAMP)
 			«ENDIF»
 		«ENDIF»
 	'''
@@ -206,7 +206,7 @@ def String indexAnnotations(Attribute it) {
 def String elementCollectionAnnotations(Attribute it) {
 	'''
 		«/* TODO: change support for fetchtype, add a keyword */»
-		@javax.persistence.ElementCollection(
+		@jakarta.persistence.ElementCollection(
 			«formatAnnotationParameters(<Object>newArrayList(it.getFetchType() !== null, "fetch", it.getFetchType()))»)
 		«IF !useJpaDefaults()»
 				«elementCollectionTableJpaAnnotation(it)»
@@ -221,10 +221,10 @@ def String elementCollectionTableJpaAnnotation(Attribute it) {
 		 therefore not set it for embeddables
 		*/
 		«IF !it.getDomainObject().isEmbeddable()»
-			@javax.persistence.CollectionTable(
+			@jakarta.persistence.CollectionTable(
 			name="«it.getElementCollectionTableName()»",
-			joinColumns = @javax.persistence.JoinColumn(name = "«it.getDomainObject().getDatabaseName() + (if (useIdSuffixInForeigKey()) "_ID" else "")»"))
-			@javax.persistence.Column(
+			joinColumns = @jakarta.persistence.JoinColumn(name = "«it.getDomainObject().getDatabaseName() + (if (useIdSuffixInForeigKey()) "_ID" else "")»"))
+			@jakarta.persistence.Column(
 			«formatAnnotationParameters(<Object>newArrayList(true, "name", '"' + it.getDatabaseName().toLowerCase().singular().toUpperCase() + '"'))»)
 		«ENDIF»
 	'''

@@ -220,12 +220,12 @@ class DbHelper {
 
 	def String mapCascadeType(String cascade) {
 		switch (cascade.trim()) {
-			case "persist" : "javax.persistence.CascadeType.PERSIST"
-			case "merge" : "javax.persistence.CascadeType.MERGE"
-			case "remove" : "javax.persistence.CascadeType.REMOVE"
-			case "refresh" : "javax.persistence.CascadeType.REFRESH"
-			case "all" : "javax.persistence.CascadeType.ALL"
-			case "all-delete-orphan" : "javax.persistence.CascadeType.ALL"
+			case "persist" : "jakarta.persistence.CascadeType.PERSIST"
+			case "merge" : "jakarta.persistence.CascadeType.MERGE"
+			case "remove" : "jakarta.persistence.CascadeType.REMOVE"
+			case "refresh" : "jakarta.persistence.CascadeType.REFRESH"
+			case "all" : "jakarta.persistence.CascadeType.ALL"
+			case "all-delete-orphan" : "jakarta.persistence.CascadeType.ALL"
 			default : null
 		}
 	}
@@ -273,10 +273,10 @@ class DbHelper {
 
 	def dispatch String getFetchType(Reference ref) {
 		switch (getFetch(ref)) {
-			// case "select" : "javax.persistence.FetchType.LAZY"
-			case "join" : "javax.persistence.FetchType.EAGER"
-			case "eager" : "javax.persistence.FetchType.EAGER"
-			case "lazy" : "javax.persistence.FetchType.LAZY"
+			// case "select" : "jakarta.persistence.FetchType.LAZY"
+			case "join" : "jakarta.persistence.FetchType.EAGER"
+			case "eager" : "jakarta.persistence.FetchType.EAGER"
+			case "lazy" : "jakarta.persistence.FetchType.LAZY"
 			default : null // use default in jpa
 		}
 	}
@@ -287,10 +287,10 @@ class DbHelper {
 
 	def dispatch String getFetchType(String fetch) {
 		switch (fetch) {
-			// case "select" : "javax.persistence.FetchType.LAZY"
-			case "join" : "javax.persistence.FetchType.EAGER"
-			case "eager" : "javax.persistence.FetchType.EAGER"
-			case "lazy" : "javax.persistence.FetchType.LAZY"
+			// case "select" : "jakarta.persistence.FetchType.LAZY"
+			case "join" : "jakarta.persistence.FetchType.EAGER"
+			case "eager" : "jakarta.persistence.FetchType.EAGER"
+			case "lazy" : "jakarta.persistence.FetchType.LAZY"
 			default : null // use default in jpa
 		}
 	}
@@ -316,7 +316,7 @@ class DbHelper {
 		if (domainObject.inheritance.discriminatorType === null)
 			null
 		else
-			"javax.persistence.DiscriminatorType." + domainObject.inheritance.discriminatorType
+			"jakarta.persistence.DiscriminatorType." + domainObject.inheritance.discriminatorType
 	}
 
 	def String getHbmDiscriminatorType(DomainObject domainObject) {

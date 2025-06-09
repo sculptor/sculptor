@@ -80,11 +80,11 @@ class DomainObjectReferenceAnnotationTmplHelloworldTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.oneToManyJpaAnnotation(moons)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.OneToMany')
-		assertContains(code, 'cascade=javax.persistence.CascadeType.REMOVE')
+		assertContains(code, '@jakarta.persistence.OneToMany')
+		assertContains(code, 'cascade=jakarta.persistence.CascadeType.REMOVE')
 		assertContains(code, 'orphanRemoval=true')
 		assertContains(code, 'mappedBy="planet"')
-		assertContains(code, 'fetch=javax.persistence.FetchType.EAGER')
+		assertContains(code, 'fetch=jakarta.persistence.FetchType.EAGER')
 	}
 
 	@Test
@@ -101,11 +101,11 @@ class DomainObjectReferenceAnnotationTmplHelloworldTest extends XtextTest {
 
 		val code = domainObjectReferenceAnnotationTmpl.manyToOneJpaAnnotation(planet)
 		assertNotNull(code)
-		assertContains(code, '@javax.persistence.ManyToOne')
+		assertContains(code, '@jakarta.persistence.ManyToOne')
 		assertContains(code, 'optional=false')
-		assertContains(code, '@javax.persistence.JoinColumn')
+		assertContains(code, '@jakarta.persistence.JoinColumn')
 		assertContains(code, 'name="PLANET"')
-		assertContains(code, 'foreignKey=@javax.persistence.ForeignKey(name="FK_MOON_PLANET")')
+		assertContains(code, 'foreignKey=@jakarta.persistence.ForeignKey(name="FK_MOON_PLANET")')
 	}
 
 }

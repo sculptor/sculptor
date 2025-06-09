@@ -255,7 +255,7 @@ def String domainObjectBaseJavaDoc(DomainObject it) {
 		«ENDIF»
 		 */
 		«IF isJpaAnnotationToBeGenerated() && isPersistent(it)»
-			@javax.persistence.MappedSuperclass
+			@jakarta.persistence.MappedSuperclass
 		«ENDIF»
 	«ELSEIF formatJavaDoc(it) == "" »
 		/**
@@ -331,7 +331,7 @@ def String prePersist(DomainObject it) {
 	val hasUuidAttribute  = it.attributes.exists(a | a.isUuid())
 	'''
 	«IF hasUuidAttribute && isJpaAnnotationOnFieldToBeGenerated()»
-		@javax.persistence.PrePersist
+		@jakarta.persistence.PrePersist
 		protected void prePersist() {
 			getUuid();
 		}
@@ -341,7 +341,7 @@ def String prePersist(DomainObject it) {
 
 def String generateFullAudit(DomainObject it) {
 	'''
-	@javax.persistence.Transient
+	@jakarta.persistence.Transient
 	«fw("domain.AuditHandlerImpl")»<«name»> auditHandler = new «fw("domain.AuditHandlerImpl")»<«name»>();
 
 	public «fw("domain.AuditHandler")»<? extends «name»> receiveAuditHandler() {
@@ -352,7 +352,7 @@ def String generateFullAudit(DomainObject it) {
 		return auditHandler;
 	}
 
-	@javax.persistence.PostLoad
+	@jakarta.persistence.PostLoad
 	protected void startAuditing() {
 		auditHandler.startAuditing();
 	}

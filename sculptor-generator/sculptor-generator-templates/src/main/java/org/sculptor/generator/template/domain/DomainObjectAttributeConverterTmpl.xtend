@@ -39,8 +39,8 @@ class DomainObjectAttributeConverterTmpl {
 
 			/// Sculptor code formatter imports ///
 
-			@javax.persistence.Converter
-			public class «name»Converter implements javax.persistence.AttributeConverter<«name», «identifierAttribute.typeName.getObjectTypeName()»> {
+			@jakarta.persistence.Converter
+			public class «name»Converter implements jakarta.persistence.AttributeConverter<«name», «identifierAttribute.typeName.getObjectTypeName()»> {
 
 				@Override
 				public «identifierAttribute.typeName.getObjectTypeName()» convertToDatabaseColumn(«name» «name.toFirstLower») {
