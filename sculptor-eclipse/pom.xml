@@ -1,97 +1,134 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-parent</artifactId>
 		<version>4.0.0-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>sculptor-eclipse</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Eclipse</name>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
 	<modules>
-		<module>org.sculptor.dsl.target</module>
 		<module>org.sculptor.dsl</module>
-		<module>org.sculptor.dsl.tests</module>
 		<module>org.sculptor.dsl.ide</module>
-		<module>org.sculptor.dsl.ui</module>
-		<module>org.sculptor.dsl.ui.tests</module>
-		<module>org.sculptor.dsl.feature</module>
+		<module>org.sculptor.dsl.web</module>
+		<module>org.sculptor.dsl.tests</module>
 	</modules>
-
-	<profiles>
-		<profile>
-			<id>release-finish</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<modules>
-				<module>eclipse-repository</module>
-			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.eclipse.xtext</groupId>
+				<artifactId>xtext-dev-bom</artifactId>
+				<version>${xtext-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.eclipse.xtend</groupId>
 					<artifactId>xtend-maven-plugin</artifactId>
+					<version>${xtext-version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>compile</goal>
+								<goal>xtend-install-debug-info</goal>
+								<goal>testCompile</goal>
+								<goal>xtend-test-install-debug-info</goal>
+							</goals>
+						</execution>
+					</executions>
 					<configuration>
-						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
+						<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+						<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.2.0</version>
+					<configuration>
+						<filesets>
+							<fileset>
+								<directory>${basedir}/src/main/xtend-gen</directory>
+								<includes>
+									<include>**/*</include>
+								</includes>
+							</fileset>
+							<fileset>
+								<directory>${basedir}/src/test/xtend-gen</directory>
+								<includes>
+									<include>**/*</include>
+								</includes>
+							</fileset>
+						</filesets>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
-
-		<plugins>
-			<!-- Activate Tycho -->
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-			</plugin>
-		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>codehaus-snapshots</id>
+			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
+			<url>http://nexus.codehaus.org/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>codehaus-snapshots</id>
+			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
+			<url>http://nexus.codehaus.org/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	<profiles>
+		<profile>
+			<id>macos</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<!-- THE FOLLOWING LINE MUST NOT BE BROKEN BY AUTOFORMATTING -->
+				<platformSystemProperties>-XstartOnFirstThread</platformSystemProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>jdk9-or-newer</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<properties>
+				<moduleProperties>--add-modules=ALL-SYSTEM</moduleProperties>
+			</properties>
+		</profile>
+	</profiles>
 
+	<dependencies>
+	</dependencies>
 </project>

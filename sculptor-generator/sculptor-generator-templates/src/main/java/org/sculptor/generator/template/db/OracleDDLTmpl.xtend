@@ -17,7 +17,7 @@
 package org.sculptor.generator.template.db
 
 import java.util.Set
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper

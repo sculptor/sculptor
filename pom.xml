@@ -302,12 +302,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.5.0</version>
 					<configuration>
 						<filesets>
 							<fileset><directory>src/main/xtend-gen/</directory></fileset>
@@ -320,17 +320,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.14.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>1.4.1</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.0.0-M5</version>
+					<version>3.5.3</version>
 					<configuration>
 						<argLine>-Xms32m -Xmx1024m</argLine>
 						<!-- Adjusting TZ, travis run in UTC '-Duser.timezone=UTC' -->
@@ -343,22 +343,22 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.22.2</version>
+					<version>3.5.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.2</version>
+					<version>3.1.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.8.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.4.2</version>
 					<configuration>
 						<archive>
 							<manifest>
@@ -371,7 +371,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>3.2.2</version>
+					<version>3.4.0</version>
 					<configuration>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
@@ -389,7 +389,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>3.3.1</version>
 					<executions>
 						<!--
 						 ~ This workaround prevents Maven from executing the 'generate-sources' phase twice.
@@ -416,7 +416,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.11.2</version>
 					<configuration>
 						<debug>false</debug>
 						<minmemory>128m</minmemory>
@@ -457,12 +457,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.2.4</version>
+					<version>3.6.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-archetype-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.4.0</version>
 					<configuration>
 						<ignoreEOLStyle>true</ignoreEOLStyle>
 					</configuration>
@@ -479,7 +479,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.5.3</version>
+					<version>3.1.1</version>
 					<configuration>
 						<mavenExecutorId>forked-path</mavenExecutorId>
 					</configuration>
@@ -487,27 +487,27 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.6</version>
+					<version>3.2.7</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.9.1</version>
+					<version>3.21.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.15.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-invoker-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>3.9.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.5.1</version>
 					<configuration>
 						<!--
 							to get rid of the warning: [WARNING] Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.
@@ -535,6 +535,17 @@
 						</signature>
 					</configuration>
 				</plugin>
+				<!--
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-baseline-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-maven-plugin</artifactId>
@@ -552,8 +563,8 @@
 							<excludeResource>**/*.xtend</excludeResource>
 						</excludeResources>
 						<useProjectSettings>false</useProjectSettings>
-						<!-- <compilerArgument>-warn:none</compilerArgument> -->
-						<!-- <compilerArgument>-err:none</compilerArgument> -->
+						<!- <compilerArgument>-warn:none</compilerArgument> ->
+						<!- <compilerArgument>-err:none</compilerArgument> ->
 					</configuration>
 				</plugin>
 				<plugin>
@@ -569,7 +580,7 @@
 								<version>${project.version}</version>
 							</artifact>
 						</target>
-						<!-- Sculptors p2 repository must contain only Sculptors Eclipse plugins -->
+						<!- Sculptors p2 repository must contain only Sculptors Eclipse plugins ->
 						<filters>
 							<filter>
 								<type>java-package</type>
@@ -611,11 +622,6 @@
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-p2-plugin</artifactId>
-					<version>${tycho-version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-repository-plugin</artifactId>
 					<version>${tycho-version}</version>
 				</plugin>
@@ -647,6 +653,7 @@
 					<artifactId>tycho-p2-extras-plugin</artifactId>
 					<version>${tycho-version}</version>
 				</plugin>
+				-->
 				<plugin>
 					<groupId>com.github.github</groupId>
 					<artifactId>site-maven-plugin</artifactId>
@@ -1049,6 +1056,13 @@
 				<artifactId>mockito-core</artifactId>
 				<version>5.18.0</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>5.13.0</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

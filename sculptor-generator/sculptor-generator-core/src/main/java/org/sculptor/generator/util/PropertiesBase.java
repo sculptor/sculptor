@@ -21,8 +21,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.sculptor.generator.configuration.ConfigurationProvider;
 import org.sculptor.generator.configuration.MutableConfigurationProvider;

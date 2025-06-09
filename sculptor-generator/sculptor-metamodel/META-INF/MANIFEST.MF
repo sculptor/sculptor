@@ -2,17 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: sculptor-metamodel;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Automatic-Module-Name: sculptor-metamodel
+Bundle-Version: 4.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: sculptormetamodel,
  sculptormetamodel.impl,
  sculptormetamodel.util
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;bundle-version="2.6.0";visibility:=reexport,
+ org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.emf.ecore.xcore.lib
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Automatic-Module-Name: sculptor-metamodel

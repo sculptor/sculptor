@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator.cartridge.mongodb
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Module
 

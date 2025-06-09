@@ -18,7 +18,7 @@ package org.sculptor.generator.template.db
 
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.DbHelper
 import org.sculptor.generator.ext.Helper

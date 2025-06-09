@@ -1,8 +1,0 @@
-Application App {
-	basePackage=org.sculptor.test
-	Module test {
-		Entity TestEntity extends NonExistentEntity {}
-		ValueObject TestVO extends NonExistentVO {}
-		DataTransferObject TestDTO extends NonExistentDTO {}
-	}
-}

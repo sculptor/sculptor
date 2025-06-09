@@ -64,6 +64,8 @@ public class PropertiesBaseTest {
 				.getInstance(PropertiesBase.class);
 		Properties props = new Properties();
 		props.put("property1", "fromCodeWrong1"); // Replaced from properties
+		props.put("property3", "fromCodeWrong3"); // Replaced from properties
+		props.put("property4", "fromCodeWrong4"); // Replaced from properties
 		props.put("propertyY", "fromCodeWrong2"); // Removed whole entry by *NONE* value
 		props.put("propertyX", "fromCodeGood${fallbackProp}"); // Not replaced - expressions work only in properties
 		props.put("fallbackProp", "OK");

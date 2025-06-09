@@ -19,7 +19,7 @@ package org.sculptor.generator.ext
 import java.util.Collection
 import java.util.List
 import java.util.Set
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.util.CamelCaseConverter
 import org.sculptor.generator.util.DbHelperBase

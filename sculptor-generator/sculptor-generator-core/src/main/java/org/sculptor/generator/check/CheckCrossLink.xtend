@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator.check
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.dsl.sculptordsl.DslBasicType
 import org.sculptor.dsl.sculptordsl.DslCommandEvent
 import org.sculptor.dsl.sculptordsl.DslDataTransferObject

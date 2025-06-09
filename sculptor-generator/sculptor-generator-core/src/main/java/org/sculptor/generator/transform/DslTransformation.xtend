@@ -17,7 +17,7 @@
 package org.sculptor.generator.transform
 
 import java.util.List
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.eclipse.xtext.EcoreUtil2
 import org.sculptor.dsl.sculptordsl.DslAnyProperty
 import org.sculptor.dsl.sculptordsl.DslApplication

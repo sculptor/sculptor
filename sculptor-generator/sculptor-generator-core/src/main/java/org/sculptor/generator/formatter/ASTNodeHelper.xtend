@@ -109,7 +109,7 @@ class ASTNodeHelper {
 	}
 
 	static def qualifiedTypeName(ImportReference reference) {
-		reference.print(0, new StringBuffer(), false).toString
+		reference.print(0, new StringBuilder(), false).toString
 	}
 
 }

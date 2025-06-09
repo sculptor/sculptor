@@ -1,6 +1,6 @@
 package org.sculptor.generator.template.rest
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import sculptormetamodel.Application

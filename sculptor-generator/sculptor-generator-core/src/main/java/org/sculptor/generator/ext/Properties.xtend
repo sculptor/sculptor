@@ -17,7 +17,7 @@
 package org.sculptor.generator.ext
 
 import java.util.Collection
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.util.PropertiesBase
 import sculptormetamodel.Application

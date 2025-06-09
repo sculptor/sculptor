@@ -1,8 +1,0 @@
-Application App {
-	basePackage=org.sculptor.test
-	Module mod {
-		Service Test {}
-		Service Test {}
-		Service Huhu {}
-	}
-}

@@ -17,7 +17,7 @@
 package org.sculptor.generator.cartridge.builder
 
 import java.util.List
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.util.HelperBase

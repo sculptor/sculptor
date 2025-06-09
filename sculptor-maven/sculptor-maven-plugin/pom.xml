@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
@@ -12,7 +14,7 @@
 	<description>Maven plugin for the Sculptor code generator</description>
 
 	<properties>
-        <maven-api-version>3.5.0</maven-api-version>
+		<maven-api-version>3.9.9</maven-api-version>
 		<mojo.java.target>${java-version}</mojo.java.target>
 	</properties>
 
@@ -36,7 +38,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!-- make sure our code only has dependencies for the specified target java version -->
+				<!-- make sure our code only has dependencies for the specified target 
+					java version -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
 			</plugin>
@@ -79,6 +82,10 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -87,19 +94,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.9.0</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.15.1</version>
 			</plugin>
 		</plugins>
 	</reporting>
 
 	<dependencies>
 
-	    <!-- Sculptor -->
+		<!-- Sculptor -->
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
 			<artifactId>sculptor-generator-library</artifactId>
@@ -121,26 +128,28 @@
 			<version>${project.version}</version>
 		</dependency>
 
-	    <!-- Maven -->
- 		<dependency>
+		<!-- Maven -->
+		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
 			<version>${maven-api-version}</version>
+			<scope>provided</scope>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
 			<version>${maven-api-version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-compat</artifactId>
 			<version>${maven-api-version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
-			<version>3.5.2</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -148,33 +157,35 @@
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-interpolation</artifactId>
-			<version>1.16</version>
+			<version>1.28</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-archiver</artifactId>
-			<version>2.4.1</version>
+			<version>4.10.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sonatype.plexus</groupId>
+			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-build-api</artifactId>
-			<version>0.0.7</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>5.0.1</version>
+			<version>6.0.0</version>
 		</dependency>
 
 		<!-- Commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-exec</artifactId>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+			<version>2.19.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -191,11 +202,12 @@
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
+			<version>2.0.9</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
+			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -203,6 +215,6 @@
 			<artifactId>hamcrest</artifactId>
 			<scope>test</scope>
 		</dependency>
- 	</dependencies>
+	</dependencies>
 
 </project>

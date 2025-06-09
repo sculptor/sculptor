@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Conversion of English words to plural and singular. By default words become

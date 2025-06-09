@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator.template.repository
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipselabs.xtext.utils.unittesting.XtextTest

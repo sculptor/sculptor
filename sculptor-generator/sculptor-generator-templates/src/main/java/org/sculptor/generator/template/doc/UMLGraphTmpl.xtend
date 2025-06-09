@@ -17,7 +17,7 @@
 package org.sculptor.generator.template.doc
 
 import java.util.Set
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties

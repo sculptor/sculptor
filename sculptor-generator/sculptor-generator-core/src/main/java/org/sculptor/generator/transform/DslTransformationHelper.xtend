@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator.transform
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.dsl.sculptordsl.DslAttribute
 import org.sculptor.dsl.sculptordsl.DslCollectionType
 import org.sculptor.dsl.sculptordsl.DslComplexType

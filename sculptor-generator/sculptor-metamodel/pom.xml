@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
 		<artifactId>sculptor-generator</artifactId>
@@ -8,74 +8,40 @@
 	</parent>
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-metamodel</artifactId>
+	<!--
 	<packaging>eclipse-plugin</packaging>
+	-->
 	<name>Sculptor :: Generator :: Metamodel</name>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>src-gen</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>xtext-maven-plugin</artifactId>
-				<version>${xtext-version}</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<languages>
-						<language>
-							<setup>org.eclipse.xtext.ecore.EcoreSupport</setup>
-						</language>
-						<language>
-							<setup>org.eclipse.emf.codegen.ecore.xtext.GenModelSupport</setup>
-						</language>
-						<language>
-							<setup>org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup</setup>
-						</language>
-					</languages>
-					<sourceRoots>
-						<root>${basedir}/model</root>
-					</sourceRoots>
-				</configuration>
-				<dependencies>
-					<!--
-					<dependency>
-						<groupId>org.eclipse.emf</groupId>
-						<artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
-						<version>${ecore-xtext-version}</version>
-					</dependency>
-					-->
-					<dependency>
-						<groupId>org.eclipse.emf</groupId>
-						<artifactId>org.eclipse.emf.ecore.xcore</artifactId>
-						<version>${ecore-xcore-version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
-						<version>${asm-version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src</source>
+                                <source>src-gen</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+    </plugins>
+  </build>
+	<dependencies>
+		<dependency>
+			 <groupId>org.eclipse.emf</groupId>
+			 <artifactId>org.eclipse.emf.ecore</artifactId>
+			 <version>${xtext-version}</version>
+		</dependency>
+	</dependencies>
 </project>

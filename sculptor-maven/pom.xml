@@ -12,11 +12,13 @@
 
 	<modules>
 		<module>sculptor-maven-plugin</module>
+		<!--
 		<module>sculptor-maven-archetype-parent</module>
 		<module>sculptor-maven-archetype</module>
 		<module>sculptor-maven-archetype-web</module>
 		<module>sculptor-maven-archetype-ear</module>
 		<module>sculptor-maven-archetype-springboot</module>
+		-->
 	</modules>
 
 	<build>

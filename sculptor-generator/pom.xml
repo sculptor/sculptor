@@ -27,6 +27,7 @@
 	<build>
 		<plugins>
 			<!-- Activate Tycho -->
+			<!--
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
@@ -36,6 +37,7 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 

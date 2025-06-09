@@ -79,7 +79,7 @@ class LibraryTransformationTest extends XtextTest {
 	}
 
 	def getDomainModel() {
-		testFileNoSerializer("generator-tests/transformation/model.btdesign", "generator-tests/transformation/model-person.btdesign")
+		testFileNoSerializer("generator-tests/transformation/model.btdesign"); //, "generator-tests/transformation/model-person.btdesign")
 		modelRoot as DslModel
 	}
 

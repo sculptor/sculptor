@@ -7,11 +7,35 @@
 	</parent>
 	<groupId>org.sculptorgenerator.eclipse</groupId>
 	<artifactId>org.sculptor.dsl.tests</artifactId>
+	<!--
 	<packaging>eclipse-test-plugin</packaging>
+	-->
 	<name>Sculptor :: Eclipse :: Textual DSL Tests</name>
 
 	<build>
 		<plugins>
+		<!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src</source>
+                                <source>src-gen</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+				-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -34,9 +58,13 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>xtend-gen</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
@@ -46,6 +74,7 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -66,4 +95,32 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.sculptor.dsl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			 <groupId>org.eclipse.xtext</groupId>
+			 <artifactId>org.eclipse.xtext</artifactId>
+			 <version>${xtext-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.mwe.utils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.testing</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+		</dependency>
+	</dependencies>
 </project>

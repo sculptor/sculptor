@@ -17,7 +17,7 @@
 
 package org.sculptor.generator.template.domain
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.ext.Helper
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase

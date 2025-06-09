@@ -16,7 +16,7 @@
  */
 package org.sculptor.generator.template.common
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.ext.Properties
 import org.sculptor.generator.util.HelperBase
 import sculptormetamodel.Publish

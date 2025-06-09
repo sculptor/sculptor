@@ -20,7 +20,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Collection
 import java.util.List
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.SculptorGeneratorContext
 import org.sculptor.generator.chain.ChainOverridable
 import org.sculptor.generator.check.AggregateConstraints

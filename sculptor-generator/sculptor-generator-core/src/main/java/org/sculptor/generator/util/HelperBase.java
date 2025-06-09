@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.sculptor.generator.SculptorGeneratorException;
 import org.slf4j.Logger;

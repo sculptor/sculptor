@@ -1,7 +1,0 @@
-ApplicationPart Test {
-	
-	Module mod {
-		Entity Test {}
-	}
-	
-}

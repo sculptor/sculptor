@@ -21,7 +21,7 @@ import java.lang.reflect.Array
 import java.util.HashSet
 import java.util.List
 import java.util.Stack
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.sculptor.generator.configuration.ConfigurationProvider
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

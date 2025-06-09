@@ -19,8 +19,8 @@ package org.sculptor.generator
 import com.google.inject.Injector
 import java.lang.reflect.Method
 import java.util.Properties
-import javax.inject.Inject
-import javax.inject.Named
+import jakarta.inject.Inject
+import jakarta.inject.Named
 import org.eclipse.emf.common.util.Diagnostic
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
@@ -65,7 +65,7 @@ class SculptorGeneratorWorkflow {
 
 	@Inject
 	@Named("Mutable Defaults")
-	var MutableConfigurationProvider configuration
+	var MutableConfigurationProvider configuration;
 
 	@Inject
 	var IResourceServiceProvider.Registry registry
