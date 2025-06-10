@@ -1,7 +1,5 @@
 # Work in progress
-Sculptor is moving to new XText, Java, Spring, Hibernate, ...
-[Old 3.2.0 version](https://github.com/sculptor/sculptor/tree/v3.2.0) is in separate branch
-Develop branch is moving forward
+Sculptor is moving to new XText, Java, Spring, Hibernate, ... . [Old 3.2.0 version](https://github.com/sculptor/sculptor/tree/v3.2.0) is in separate branch. Develop branch is moving forward.
 
 # [![Sculptor](https://raw.github.com/sculptor/sculptor.github.io/master/images/sculptor-banner.png)](https://sculptor.github.io)  [![Build Status](https://travis-ci.org/sculptor/sculptor.png?branch=develop)](https://travis-ci.org/sculptor/sculptor) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sculptorgenerator/sculptor-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.sculptorgenerator/sculptor-maven-plugin/) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sculptor/sculptor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) #
 
