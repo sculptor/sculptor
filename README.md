@@ -1,3 +1,8 @@
+# Work in progress
+Sculptor is moving to new XText, Java, Spring, Hibernate, ...
+[Old 3.2.0 version](https://github.com/sculptor/sculptor/tree/v3.2.0) is in separate branch
+Develop branch is moving forward
+
 # [![Sculptor](https://raw.github.com/sculptor/sculptor.github.io/master/images/sculptor-banner.png)](https://sculptor.github.io)  [![Build Status](https://travis-ci.org/sculptor/sculptor.png?branch=develop)](https://travis-ci.org/sculptor/sculptor) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sculptorgenerator/sculptor-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.sculptorgenerator/sculptor-maven-plugin/) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sculptor/sculptor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) #
 
 
@@ -28,9 +33,9 @@ Sculptor takes care of the technical details, the tedious repetitive work, and l
 
 To use Sculptor you need local installations of the following tools:
 
-* [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/) (1.8)
-* [Maven](http://maven.apache.org/download.html) (3.5.0 or newer)
-* [Eclipse](http://eclipse.org/downloads/) (4.7 or newer) with [Xtext](http://www.eclipse.org/Xtext/download.html) (2.15.0 or newer)
+* [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/) (17)
+* [Maven](http://maven.apache.org/download.html) (3.9.9 or newer)
+* [Eclipse](http://eclipse.org/downloads/) (XXX or newer) with [Xtext](http://www.eclipse.org/Xtext/download.html) (2.38.0 or newer)
 * (optional) [GraphViz](http://www.graphviz.org/) (2.2.8 or newer)
 
 The installation and configuration of these tools is described in [Sculptors installation guide](http://sculptor.github.io/documentation/installation).
