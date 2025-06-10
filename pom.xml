@@ -56,31 +56,17 @@
 		</developer>
 	</developers>
 	<distributionManagement>
-		<repository>
-			<id>artifactory.hq.f4s.sk</id>
-			<name>F4S artifactory release repository</name>
-			<url>http://10.0.3.208:8081/artifactory/libs-release-local</url>
-		</repository>
 		<snapshotRepository>
-			<id>artifactory.hq.f4s.sk</id>
-			<name>F4S artifactory snapshot repository</name>
-			<url>http://10.0.3.208:8081/artifactory/libs-snapshot-local</url>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
-	<!--
-		<distributionManagement>
-			<snapshotRepository>
-				<id>sonatype-nexus-snapshots</id>
-				<name>Sonatype Nexus Snapshots</name>
-				<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			</snapshotRepository>
-			<repository>
-				<id>sonatype-nexus-staging</id>
-				<name>Nexus Release Repository</name>
-				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-			</repository>
-		</distributionManagement>
-		-->
 	<properties>
 		<!-- Generic build properties -->
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
