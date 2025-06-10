@@ -92,6 +92,8 @@
 		<xtext-version>2.38.0</xtext-version>
 		<!-- Framework dependencies -->
 		<spring-boot-version>3.5.0</spring-boot-version>
+		<junit-version>5.13.1</junit-version>
+		<junit-platform-version>1.13.1</junit-platform-version>
 		<appengine-version>2.0.36</appengine-version>
 		<drools-version>6.5.0.Final</drools-version>
 		<camel-version>4.11.0</camel-version>
@@ -320,10 +322,34 @@
 						<argLine>-Xms32m -Xmx1024m</argLine>
 						<!-- Adjusting TZ, travis run in UTC '-Duser.timezone=UTC' -->
 						<!-- Using dynamic class enhancement '-javaagent:/home/tavoda/.m2/repository/org/eclipse/persistence/eclipselink/2.7.1/eclipselink-2.7.1.jar' -->
+						<!--
 						<additionalClasspathElements>
 							<additionalClasspathElement>path/to/additional/resources</additionalClasspathElement>
 						</additionalClasspathElements>
+						-->
 					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.junit.jupiter</groupId>
+							<artifactId>junit-jupiter-engine</artifactId>
+							<version>${junit-version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.junit.platform</groupId>
+							<artifactId>junit-platform-engine</artifactId>
+							<version>${junit-platform-version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.junit.platform</groupId>
+							<artifactId>junit-platform-commons</artifactId>
+							<version>${junit-platform-version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.junit.platform</groupId>
+							<artifactId>junit-platform-launcher</artifactId>
+							<version>${junit-platform-version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1039,12 +1065,62 @@
 				<version>5.18.0</version>
 				<scope>test</scope>
 			</dependency>
+			<!-- JUnit 5 -->
 			<dependency>
 				<groupId>org.junit</groupId>
 				<artifactId>junit-bom</artifactId>
-				<version>5.13.0</version>
+				<version>${junit-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<!-- explicit dependencies because of dbunit wrong dependencies -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-suite-engine</artifactId>
+				<version>${junit-platform-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-suite-api</artifactId>
+				<version>${junit-platform-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-suite-commons</artifactId>
+				<version>${junit-platform-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-engine</artifactId>
+				<version>${junit-platform-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-commons</artifactId>
+				<version>${junit-platform-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-launcher</artifactId>
+				<version>${junit-platform-version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

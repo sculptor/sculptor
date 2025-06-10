@@ -21,6 +21,11 @@ public class PagedResultTest {
 				{10, 10, 10, 30, 3, 2, 3, 1}, {10, 10, 10, 31, 3, 2, 4, 1}});
 	}
 
+	@Test
+	public void testData() {
+		System.out.println("DATA: " + data());
+	}
+
 	@ParameterizedTest
 	@MethodSource("data")
 	void testPagedResult(int startRow, int rowCount, int pageSize, int totalRows, int additionalResultRows,

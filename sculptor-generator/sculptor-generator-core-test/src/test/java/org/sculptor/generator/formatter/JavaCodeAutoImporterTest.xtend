@@ -135,10 +135,10 @@ class JavaCodeAutoImporterTest {
 			'''
 				package com.acme;
 				
-				import java.util.Date;
 				import jakarta.persistence.CascadeType;
 				import jakarta.persistence.Temporal;
 				import jakarta.persistence.TemporalType;
+				import java.util.Date;
 				import org.hibernate.annotations.Cascade;
 				import org.springframework.http.HttpStatus;
 				

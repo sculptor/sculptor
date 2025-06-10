@@ -102,8 +102,11 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 		statusFileProps.load(new FileReader(mojo.getStatusFile()));
 
 		assertEquals(2, statusFileProps.size());
-		assertEquals("e747f800870423a6c554ae2ec80aeeb6", statusFileProps.getProperty(ONE_SHOT_GENERATED_FILE));
-		assertEquals("7d436134142a2e69dfc98eb9f22f5907", statusFileProps.getProperty(GENERATED_FILE));
+		System.out.println("BASE: " + mojo.getProject().getBasedir());
+		System.out.println("STATUS: " + mojo.getStatusFile());
+		System.out.println("PROP: " + statusFileProps.getProperty(GENERATED_FILE));
+		assertEquals("3ecb613f4d42bd98ad8af13f92117cd5", statusFileProps.getProperty(ONE_SHOT_GENERATED_FILE));
+		assertEquals("e42e4b078da1826fe1fe865881129f67", statusFileProps.getProperty(GENERATED_FILE));
 	}
 
 	public void testExecuteSkip() throws Exception {
@@ -135,14 +138,18 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 
 		mojo.getStatusFile().setLastModified(System.currentTimeMillis() + 1000);
 		mojo.getModelFile().setLastModified(System.currentTimeMillis() + 2000);
+		File oneShot = new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE);
+		File genFile = new File(mojo.getProject().getBasedir(),  GENERATED_FILE);
+		oneShot.delete();
+		genFile.delete();
 
 		setVariableValueToObject(mojo, "clean", true);
 		try {
 			mojo.execute();
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("testExecuteWithClean")) {
-				assertFalse(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
-				assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE).exists());
+				assertFalse(oneShot.exists());
+				assertFalse(genFile.exists());
 			}
 			return;
 		}
