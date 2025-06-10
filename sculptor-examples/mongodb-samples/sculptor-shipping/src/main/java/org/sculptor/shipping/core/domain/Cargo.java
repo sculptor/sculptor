@@ -8,13 +8,13 @@ package org.sculptor.shipping.core.domain;
  * {@link org.sculptor.shipping.core.domain.CargoBase}.
  */
 public class Cargo extends CargoBase {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    protected Cargo() {
-    }
+	protected Cargo() {
+	}
 
-    public Cargo(String cargoId) {
-        super(cargoId);
-    }
+	public Cargo(String cargoId) {
+		super(cargoId);
+	}
 
 }

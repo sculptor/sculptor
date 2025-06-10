@@ -15,12 +15,11 @@
  */
 package org.sculptor.framework.domain;
 
-
 /**
  * Full audit log support. Entity will implement this when full audit log is ON
  * 
  * @author Ing. Pavel Tavoda
  */
 public interface FullAuditLog<T> {
-    public AuditHandler<? extends T> receiveAuditHandler();
+	public AuditHandler<? extends T> receiveAuditHandler();
 }

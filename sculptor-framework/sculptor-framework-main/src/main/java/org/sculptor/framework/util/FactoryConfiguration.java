@@ -24,9 +24,9 @@ package org.sculptor.framework.util;
  */
 public interface FactoryConfiguration {
 
-    /**
-     * @return the name of the class of the concrete factory to instantiate
-     */
-    public String getFactoryImplementationClassName();
+	/**
+	 * @return the name of the class of the concrete factory to instantiate
+	 */
+	public String getFactoryImplementationClassName();
 
 }

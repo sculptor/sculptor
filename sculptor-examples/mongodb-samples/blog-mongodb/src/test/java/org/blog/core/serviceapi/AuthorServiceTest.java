@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Spring based test with MongoDB.
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class AuthorServiceTest implements AuthorServiceTestBase {
 
 	@Autowired
@@ -26,13 +26,13 @@ public class AuthorServiceTest implements AuthorServiceTestBase {
 	@Autowired
 	private AuthorService authorService;
 
-    private String authorId1;
+	private String authorId1;
 
 	@BeforeEach
 	public void initTestData() {
-        Author author1 = new Author("Patrik");
-        Author saved = authorService.save(SimpleJUnitServiceContextFactory.getServiceContext(), author1);
-        authorId1 = saved.getId();
+		Author author1 = new Author("Patrik");
+		Author saved = authorService.save(SimpleJUnitServiceContextFactory.getServiceContext(), author1);
+		authorId1 = saved.getId();
 	}
 
 	@BeforeEach
@@ -48,8 +48,8 @@ public class AuthorServiceTest implements AuthorServiceTestBase {
 
 	@Test
 	public void testFindById() throws Exception {
-        Author found = authorService.findById(SimpleJUnitServiceContextFactory.getServiceContext(), authorId1);
-        assertEquals("Patrik", found.getName());
+		Author found = authorService.findById(SimpleJUnitServiceContextFactory.getServiceContext(), authorId1);
+		assertEquals("Patrik", found.getName());
 	}
 
 	@Test

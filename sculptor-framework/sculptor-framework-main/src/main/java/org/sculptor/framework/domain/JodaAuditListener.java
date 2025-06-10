@@ -30,30 +30,29 @@ import org.sculptor.framework.context.ServiceContextStore;
  * {@link org.sculptor.framework.domain.JodaAuditable}.
  * <p>
  * It will grab the user from
- * {@link org.sculptor.framework.context.ServiceContext}
- * provided by
+ * {@link org.sculptor.framework.context.ServiceContext} provided by
  * {@link org.sculptor.framework.context.ServiceContextStore}.
  *
  */
-public class JodaAuditListener  {
-    /**
-     * set audit informations, doesn't modify createdDate and createdBy once
-     * set. Only works with DomainObjects that implement the JodaAuditable
-     * interface. In other cases a IllegalArgumentException is thrown.
-     *
-     * @param entity
-     * @return
-     */
-    @PreUpdate
-    @PrePersist
-    private void changeAuditInformation(JodaAuditable auditableEntity) {
-    	DateTime lastUpdated = new DateTime();
-        auditableEntity.setLastUpdated(lastUpdated);
-        String lastUpdatedBy = ServiceContextStore.getCurrentUser();
-        auditableEntity.setLastUpdatedBy(lastUpdatedBy);
-        if (auditableEntity.getCreatedDate() == null)
-            auditableEntity.setCreatedDate(lastUpdated);
-        if (auditableEntity.getCreatedBy() == null)
-            auditableEntity.setCreatedBy(lastUpdatedBy);
-    }
+public class JodaAuditListener {
+	/**
+	 * set audit informations, doesn't modify createdDate and createdBy once set.
+	 * Only works with DomainObjects that implement the JodaAuditable interface. In
+	 * other cases a IllegalArgumentException is thrown.
+	 *
+	 * @param entity
+	 * @return
+	 */
+	@PreUpdate
+	@PrePersist
+	private void changeAuditInformation(JodaAuditable auditableEntity) {
+		DateTime lastUpdated = new DateTime();
+		auditableEntity.setLastUpdated(lastUpdated);
+		String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+		auditableEntity.setLastUpdatedBy(lastUpdatedBy);
+		if (auditableEntity.getCreatedDate() == null)
+			auditableEntity.setCreatedDate(lastUpdated);
+		if (auditableEntity.getCreatedBy() == null)
+			auditableEntity.setCreatedBy(lastUpdatedBy);
+	}
 }

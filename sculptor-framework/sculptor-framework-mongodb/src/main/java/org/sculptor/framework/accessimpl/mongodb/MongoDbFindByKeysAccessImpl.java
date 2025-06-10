@@ -35,8 +35,7 @@ import org.sculptor.framework.accessapi.FindByKeysAccess;
  * Command design pattern.
  * </p>
  */
-public class MongoDbFindByKeysAccessImpl<T> extends MongoDbAccessBase<T>
-		implements FindByKeysAccess<T> {
+public class MongoDbFindByKeysAccessImpl<T> extends MongoDbAccessBase<T> implements FindByKeysAccess<T> {
 
 	private String keyPropertyName;
 	private String restrictionPropertyName;
@@ -70,10 +69,8 @@ public class MongoDbFindByKeysAccessImpl<T> extends MongoDbAccessBase<T>
 	protected String getRestrictionValuePropertyName() {
 		if (restrictionPropertyName == null) {
 			return null;
-		} else if (restrictionPropertyName.startsWith(getKeyPropertyName()
-				+ ".")) {
-			return restrictionPropertyName.substring(getKeyPropertyName()
-					.length() + 1);
+		} else if (restrictionPropertyName.startsWith(getKeyPropertyName() + ".")) {
+			return restrictionPropertyName.substring(getKeyPropertyName().length() + 1);
 		} else {
 			return restrictionPropertyName;
 		}
@@ -94,25 +91,21 @@ public class MongoDbFindByKeysAccessImpl<T> extends MongoDbAccessBase<T>
 
 	@Override
 	public void performExecute() {
-		MongoDbChunkFetcher<T, Object> chunkFetcher = new MongoDbChunkFetcher<T, Object>(
-				getDBCollection(), getDataMapper(),
-				getRestrictionPropertyName()) {
+		MongoDbChunkFetcher<T, Object> chunkFetcher = new MongoDbChunkFetcher<T, Object>(getDBCollection(),
+				getDataMapper(), getRestrictionPropertyName()) {
 			@Override
 			protected Object key(T obj) {
 				try {
 					return PropertyUtils.getProperty(obj, getKeyPropertyName());
 				} catch (Exception e) {
-					throw new IllegalArgumentException("Invalid property: "
-							+ getKeyPropertyName());
+					throw new IllegalArgumentException("Invalid property: " + getKeyPropertyName());
 				}
 			}
 
 			@Override
-			protected Collection<Object> restrictionPropertyValues(
-					Collection<Object> keys) {
+			protected Collection<Object> restrictionPropertyValues(Collection<Object> keys) {
 				if (getRestrictionValuePropertyName() == null) {
-					Collection<Object> values = super
-							.restrictionPropertyValues(keys);
+					Collection<Object> values = super.restrictionPropertyValues(keys);
 					List<Object> dbValues = new ArrayList<Object>();
 					for (Object each : values) {
 						dbValues.add(toData(each));
@@ -122,16 +115,13 @@ public class MongoDbFindByKeysAccessImpl<T> extends MongoDbAccessBase<T>
 					try {
 						List<Object> values = new ArrayList<Object>();
 						for (Object k : keys) {
-							Object restrictionValue = PropertyUtils
-									.getProperty(k,
-											getRestrictionValuePropertyName());
+							Object restrictionValue = PropertyUtils.getProperty(k, getRestrictionValuePropertyName());
 							Object dbValue = toData(restrictionValue);
 							values.add(dbValue);
 						}
 						return values;
 					} catch (Exception e) {
-						throw new IllegalArgumentException("Invalid property: "
-								+ getRestrictionValuePropertyName());
+						throw new IllegalArgumentException("Invalid property: " + getRestrictionValuePropertyName());
 					}
 				}
 			}

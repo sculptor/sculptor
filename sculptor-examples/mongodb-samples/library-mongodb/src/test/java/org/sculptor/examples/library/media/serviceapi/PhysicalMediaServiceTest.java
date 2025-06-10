@@ -22,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class PhysicalMediaServiceTest implements PhysicalMediaServiceTestBase {
 
 	@Autowired

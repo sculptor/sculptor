@@ -43,9 +43,8 @@ public class SculptorGeneratorSetup extends SculptordslStandaloneSetup {
 		ConfigurationProvider configurationProvider = configurationInjector.getInstance(ConfigurationProvider.class);
 		try {
 			/*
-			 * Starting with Xtext 2.9+ we can't use a child injector here
-			 * anymore - details available in Xtext forum
-			 * https://www.eclipse.org/forums/index.php/t/1078751/
+			 * Starting with Xtext 2.9+ we can't use a child injector here anymore - details
+			 * available in Xtext forum https://www.eclipse.org/forums/index.php/t/1078751/
 			 */
 			return Guice.createInjector(new ConfigurationProviderModule(), (Module) new SculptordslRuntimeModule(),
 					new ChainOverrideAwareModule(configurationProvider, DslTransformation.class, Transformation.class,

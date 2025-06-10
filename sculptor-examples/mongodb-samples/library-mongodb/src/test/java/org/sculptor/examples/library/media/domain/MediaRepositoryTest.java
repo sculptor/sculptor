@@ -24,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class MediaRepositoryTest {
 
 	@Autowired
@@ -94,7 +94,7 @@ public class MediaRepositoryTest {
 				.ignoreCaseLike("^pippi").build();
 		List<Media> found = mediaRepository.findByCondition(conditionalCriteria);
 		assertEquals(1, found.size());
-		assertEquals("Pippi Långstrump i Söderhavet", found.get(0).getTitle());
+		assertEquals("Pippi Lï¿½ngstrump i Sï¿½derhavet", found.get(0).getTitle());
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class MediaRepositoryTest {
 				.like("Pippi.*").build();
 		List<Media> found = mediaRepository.findByCondition(conditionalCriteria);
 		assertEquals(1, found.size());
-		assertEquals("Pippi Långstrump i Söderhavet", found.get(0).getTitle());
+		assertEquals("Pippi Lï¿½ngstrump i Sï¿½derhavet", found.get(0).getTitle());
 	}
 
 	@Test

@@ -4,14 +4,13 @@
 package org.sculptor.dsl.web
 
 import java.net.InetSocketAddress
-import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.ee10.webapp.Configuration;
-import org.eclipse.jetty.ee10.webapp.MetaInfConfiguration;
-import org.eclipse.jetty.ee10.webapp.WebAppConfiguration;
-import org.eclipse.jetty.ee10.webapp.WebAppContext;
-import org.eclipse.jetty.ee10.webapp.WebInfConfiguration;
-import org.eclipse.jetty.ee10.webapp.WebXmlConfiguration;
+import org.eclipse.jetty.ee10.annotations.AnnotationConfiguration
+import org.eclipse.jetty.ee10.webapp.MetaInfConfiguration
+import org.eclipse.jetty.ee10.webapp.WebAppConfiguration
+import org.eclipse.jetty.ee10.webapp.WebAppContext
+import org.eclipse.jetty.ee10.webapp.WebInfConfiguration
+import org.eclipse.jetty.ee10.webapp.WebXmlConfiguration
+import org.eclipse.jetty.server.Server
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -20,9 +19,9 @@ import org.slf4j.LoggerFactory
  * Just execute it and point a web browser to http://localhost:8080/
  */
 class ServerLauncher {
-	
+
 	static final Logger LOG = LoggerFactory.getLogger(ServerLauncher);
-	
+
 	def static void main(String[] args) {
 		val server = new Server(new InetSocketAddress('localhost', 8080))
 		server.handler = new WebAppContext => [
@@ -42,7 +41,7 @@ class ServerLauncher {
 		try {
 			server.start
 			LOG.info('Server started ' + server.getURI + '...')
-			new Thread[
+			new Thread [
 				LOG.info('Press enter to stop the server...')
 				val key = System.in.read
 				if (key != -1) {

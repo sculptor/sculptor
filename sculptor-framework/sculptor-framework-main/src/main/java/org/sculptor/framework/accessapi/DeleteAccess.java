@@ -19,7 +19,6 @@ package org.sculptor.framework.accessapi;
 
 import java.util.Collection;
 
-
 /**
  * <p>
  * Removes an entity.
@@ -30,10 +29,10 @@ import java.util.Collection;
  */
 public interface DeleteAccess<T> {
 
-    void setEntity(T entity);
+	void setEntity(T entity);
 
-    void setEntities(Collection<T> entities);
-    
-    void execute();
+	void setEntities(Collection<T> entities);
+
+	void execute();
 
 }

@@ -18,9 +18,9 @@ package org.sculptor.framework.event;
 
 public interface EventBus {
 
-    boolean publish(String topic, Event event);
+	boolean publish(String topic, Event event);
 
-    boolean subscribe(String topic, EventSubscriber subscriber);
+	boolean subscribe(String topic, EventSubscriber subscriber);
 
-    boolean unsubscribe(String topic, EventSubscriber subscriber);
+	boolean unsubscribe(String topic, EventSubscriber subscriber);
 }

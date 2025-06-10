@@ -20,8 +20,8 @@ package org.sculptor.maven.plugin;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * {@link AbstractLogOutputStream} which redirects the output or error stream to the
- * plugins Maven {@link Log} and increases the correspondig counters (
+ * {@link AbstractLogOutputStream} which redirects the output or error stream to
+ * the plugins Maven {@link Log} and increases the correspondig counters (
  * <code>lineCount</code> and <code>errorCount</code>).
  */
 public class MavenLogOutputStream extends AbstractLogOutputStream {

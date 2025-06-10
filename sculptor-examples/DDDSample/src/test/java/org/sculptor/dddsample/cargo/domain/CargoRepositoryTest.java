@@ -32,231 +32,231 @@ import org.sculptor.framework.test.AbstractDbUnitJpaTests;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CargoRepositoryTest extends AbstractDbUnitJpaTests {
-    private CargoRepository cargoRepository;
-    private LocationRepository locationRepository;
-    private CarrierMovementRepository carrierMovementRepository;
+	private CargoRepository cargoRepository;
+	private LocationRepository locationRepository;
+	private CarrierMovementRepository carrierMovementRepository;
 
-    @Autowired
-    public void setCargoRepository(CargoRepository cargoRepository) {
-        this.cargoRepository = cargoRepository;
-    }
+	@Autowired
+	public void setCargoRepository(CargoRepository cargoRepository) {
+		this.cargoRepository = cargoRepository;
+	}
 
-    @Autowired
-    public void setLocationRepository(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
+	@Autowired
+	public void setLocationRepository(LocationRepository locationRepository) {
+		this.locationRepository = locationRepository;
+	}
 
-    @Autowired
-    public void setCarrierMovementRepository(CarrierMovementRepository carrierMovementRepository) {
-        this.carrierMovementRepository = carrierMovementRepository;
-    }
+	@Autowired
+	public void setCarrierMovementRepository(CarrierMovementRepository carrierMovementRepository) {
+		this.carrierMovementRepository = carrierMovementRepository;
+	}
 
-    private static final Timestamp base;
-    static {
-        try {
-            SimpleDateFormat utcSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd") {
-                {
-                    // set the calendar to use UTC
-                    calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                    calendar.setLenient(false);
-                }
-            };
+	private static final Timestamp base;
+	static {
+		try {
+			SimpleDateFormat utcSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd") {
+				{
+					// set the calendar to use UTC
+					calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+					calendar.setLenient(false);
+				}
+			};
 
-            Date date = utcSimpleDateFormat.parse("2008-01-01");
-            base = new Timestamp(date.getTime());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+			Date date = utcSimpleDateFormat.parse("2008-01-01");
+			base = new Timestamp(date.getTime());
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    private static Timestamp ts(int hours) {
-        return new Timestamp(base.getTime() + 1000L * 60 * 60 * hours);
-    }
+	private static Timestamp ts(int hours) {
+		return new Timestamp(base.getTime() + 1000L * 60 * 60 * hours);
+	}
 
-    public static DateTime offset(int hours) {
-        return new DateTime(new Date(ts(hours).getTime()));
-    }
+	public static DateTime offset(int hours) {
+		return new DateTime(new Date(ts(hours).getTime()));
+	}
 
-    @Override
-    protected String[] getCompositeDataSetFiles() {
-        return new String[] {"dbunit/TestData.xml","dbunit/ExtraCargo.xml" };
-    }
+	@Override
+	protected String[] getCompositeDataSetFiles() {
+		return new String[]{"dbunit/TestData.xml", "dbunit/ExtraCargo.xml"};
+	}
 
-    @Test
-    public void testFindByCargoIdExtra() throws Exception {
-        Cargo cargo = cargoRepository.find(trackingId("JJJ"), true);
-        assertEquals(Long.valueOf(6), cargo.getOrigin().getId());
-        assertEquals(Long.valueOf(2), cargo.getDestination().getId());
-    }
-    
-    @Test
-    public void testFindByCargoId() throws Exception {
-        Cargo cargo = cargoRepository.find(trackingId("FGH"), true);
-        assertEquals(HONGKONG, cargo.getOrigin());
-        assertEquals(HELSINKI, cargo.getDestination());
+	@Test
+	public void testFindByCargoIdExtra() throws Exception {
+		Cargo cargo = cargoRepository.find(trackingId("JJJ"), true);
+		assertEquals(Long.valueOf(6), cargo.getOrigin().getId());
+		assertEquals(Long.valueOf(2), cargo.getDestination().getId());
+	}
 
-        DeliveryHistory dh = cargo.deliveryHistory();
-        assertNotNull(dh);
+	@Test
+	public void testFindByCargoId() throws Exception {
+		Cargo cargo = cargoRepository.find(trackingId("FGH"), true);
+		assertEquals(HONGKONG, cargo.getOrigin());
+		assertEquals(HELSINKI, cargo.getDestination());
 
-        List<HandlingEvent> events = dh.eventsOrderedByCompletionTime();
-        assertEquals(2, events.size());
+		DeliveryHistory dh = cargo.deliveryHistory();
+		assertNotNull(dh);
 
-        HandlingEvent firstEvent = events.get(0);
-        assertHandlingEvent(cargo, firstEvent, Type.RECEIVE, HONGKONG, 100, 160, null);
+		List<HandlingEvent> events = dh.eventsOrderedByCompletionTime();
+		assertEquals(2, events.size());
 
-        HandlingEvent secondEvent = events.get(1);
-        CarrierMovement expectedCm = new CarrierMovement(new CarrierMovementId("CAR_010"), HONGKONG, MELBOURNE);
-        assertHandlingEvent(cargo, secondEvent, Type.LOAD, HONGKONG, 150, 110, expectedCm);
+		HandlingEvent firstEvent = events.get(0);
+		assertHandlingEvent(cargo, firstEvent, Type.RECEIVE, HONGKONG, 100, 160, null);
 
-        List<Leg> legs = cargo.itinerary().getLegs();
-        assertEquals(3, legs.size());
+		HandlingEvent secondEvent = events.get(1);
+		CarrierMovement expectedCm = new CarrierMovement(new CarrierMovementId("CAR_010"), HONGKONG, MELBOURNE);
+		assertHandlingEvent(cargo, secondEvent, Type.LOAD, HONGKONG, 150, 110, expectedCm);
 
-        Leg firstLeg = legs.get(0);
-        assertLeg(firstLeg, "CAR_010", HONGKONG, MELBOURNE);
+		List<Leg> legs = cargo.itinerary().getLegs();
+		assertEquals(3, legs.size());
 
-        Leg secondLeg = legs.get(1);
-        assertLeg(secondLeg, "CAR_011", MELBOURNE, STOCKHOLM);
+		Leg firstLeg = legs.get(0);
+		assertLeg(firstLeg, "CAR_010", HONGKONG, MELBOURNE);
 
-        Leg thirdLeg = legs.get(2);
-        assertLeg(thirdLeg, "CAR_011", STOCKHOLM, HELSINKI);
-    }
+		Leg secondLeg = legs.get(1);
+		assertLeg(secondLeg, "CAR_011", MELBOURNE, STOCKHOLM);
 
-    private void assertHandlingEvent(Cargo cargo, HandlingEvent event, Type expectedEventType,
-            Location expectedLocation, int completionTimeMs, int registrationTimeMs,
-            CarrierMovement expectedCarrierMovement) {
-        assertEquals(expectedEventType, event.getType());
-        assertEquals(expectedLocation, event.getLocation());
+		Leg thirdLeg = legs.get(2);
+		assertLeg(thirdLeg, "CAR_011", STOCKHOLM, HELSINKI);
+	}
 
-        DateTime expectedCompletionTime = offset(completionTimeMs);
-        assertEquals(expectedCompletionTime, event.getCompletionTime());
+	private void assertHandlingEvent(Cargo cargo, HandlingEvent event, Type expectedEventType,
+			Location expectedLocation, int completionTimeMs, int registrationTimeMs,
+			CarrierMovement expectedCarrierMovement) {
+		assertEquals(expectedEventType, event.getType());
+		assertEquals(expectedLocation, event.getLocation());
 
-        DateTime expectedRegistrationTime = offset(registrationTimeMs);
-        assertEquals(expectedRegistrationTime, event.getRegistrationTime());
+		DateTime expectedCompletionTime = offset(completionTimeMs);
+		assertEquals(expectedCompletionTime, event.getCompletionTime());
 
-        if (expectedCarrierMovement == null) {
-            assertNull(event.getCarrierMovement());
-        } else {
-            assertEquals(expectedCarrierMovement, event.getCarrierMovement());
-        }
-        assertEquals(cargo, event.getCargo());
-    }
+		DateTime expectedRegistrationTime = offset(registrationTimeMs);
+		assertEquals(expectedRegistrationTime, event.getRegistrationTime());
 
-    @Test
-    public void testFindByCargoIdUnknownId() throws CargoNotFoundException {
-        assertThrows(CargoNotFoundException.class, () -> {
-            cargoRepository.find(trackingId("UNKNOWN"));
-        });
-    }
+		if (expectedCarrierMovement == null) {
+			assertNull(event.getCarrierMovement());
+		} else {
+			assertEquals(expectedCarrierMovement, event.getCarrierMovement());
+		}
+		assertEquals(cargo, event.getCargo());
+	}
 
-    private void assertLeg(Leg firstLeg, String cmId, Location expectedFrom, Location expectedTo) {
-        assertEquals(new CarrierMovementId(cmId), firstLeg.getCarrierMovement().getCarrierMovementId());
-        assertEquals(expectedFrom, firstLeg.getFrom());
-        assertEquals(expectedTo, firstLeg.getTo());
-    }
+	@Test
+	public void testFindByCargoIdUnknownId() throws CargoNotFoundException {
+		assertThrows(CargoNotFoundException.class, () -> {
+			cargoRepository.find(trackingId("UNKNOWN"));
+		});
+	}
 
-    @Test
-    public void testSave() throws LocationNotFoundException {
-        TrackingId trackingId = trackingId("AAA");
-        Location origin = locationRepository.find(STOCKHOLM.getUnLocode());
-        Location destination = locationRepository.find(MELBOURNE.getUnLocode());
+	private void assertLeg(Leg firstLeg, String cmId, Location expectedFrom, Location expectedTo) {
+		assertEquals(new CarrierMovementId(cmId), firstLeg.getCarrierMovement().getCarrierMovementId());
+		assertEquals(expectedFrom, firstLeg.getFrom());
+		assertEquals(expectedTo, firstLeg.getTo());
+	}
 
-        Cargo cargo = new Cargo(trackingId, origin, destination);
-        cargoRepository.save(cargo);
+	@Test
+	public void testSave() throws LocationNotFoundException {
+		TrackingId trackingId = trackingId("AAA");
+		Location origin = locationRepository.find(STOCKHOLM.getUnLocode());
+		Location destination = locationRepository.find(MELBOURNE.getUnLocode());
 
-        assertEquals(cargo, getCargoForTrackingIdByNativeQuery(trackingId));
-    }
+		Cargo cargo = new Cargo(trackingId, origin, destination);
+		cargoRepository.save(cargo);
 
-    /**
-     * need to lookup Cargo within the same transaction, hsqldb 2.x doesn't
-     * support read uncommitted
-     */
-    private Cargo getCargoForTrackingIdByNativeQuery(TrackingId trackingId) {
-        flush();
-        getEntityManager().clear();
-        Query query = getEntityManager().createNativeQuery(
-                "select * from Cargo where TRACKINGID = '" + trackingId.getIdentifier() + "'", Cargo.class);
-        return (Cargo) query.getSingleResult();
-    }
+		assertEquals(cargo, getCargoForTrackingIdByNativeQuery(trackingId));
+	}
 
-    @Test
-    public void testDeleteOrphanedItinerary() throws Exception {
-        Cargo cargo = cargoRepository.find(trackingId("FGH"));
+	/**
+	 * need to lookup Cargo within the same transaction, hsqldb 2.x doesn't support
+	 * read uncommitted
+	 */
+	private Cargo getCargoForTrackingIdByNativeQuery(TrackingId trackingId) {
+		flush();
+		getEntityManager().clear();
+		Query query = getEntityManager().createNativeQuery(
+				"select * from Cargo where TRACKINGID = '" + trackingId.getIdentifier() + "'", Cargo.class);
+		return (Cargo) query.getSingleResult();
+	}
 
-        int countBefore = countRowsInTable(Itinerary.class);
+	@Test
+	public void testDeleteOrphanedItinerary() throws Exception {
+		Cargo cargo = cargoRepository.find(trackingId("FGH"));
 
-        // Repository is responsible for deleting orphaned, detached itineraries
-        cargoRepository.detachItineray(cargo);
+		int countBefore = countRowsInTable(Itinerary.class);
 
-        int countAfter = countRowsInTable(Itinerary.class);
-        assertEquals(countBefore - 1, countAfter);
-    }
+		// Repository is responsible for deleting orphaned, detached itineraries
+		cargoRepository.detachItineray(cargo);
 
-    @Test
-    public void testReplaceItinerary() throws Exception {
-        Cargo cargo = cargoRepository.find(trackingId("FGH"));
-        Long oldItineraryId = cargo.itinerary().getId();
+		int countAfter = countRowsInTable(Itinerary.class);
+		assertEquals(countBefore - 1, countAfter);
+	}
 
-        assertEquals(1, countRowsInTable(Itinerary.class, "where id = " + oldItineraryId));
+	@Test
+	public void testReplaceItinerary() throws Exception {
+		Cargo cargo = cargoRepository.find(trackingId("FGH"));
+		Long oldItineraryId = cargo.itinerary().getId();
 
-        CarrierMovement cm = carrierMovementRepository.find(new CarrierMovementId("CAR_006"));
-        Location legFrom = locationRepository.find(new UnLocode("FIHEL"));
-        Location legTo = locationRepository.find(new UnLocode("DEHAM"));
-        Itinerary newItinerary = new Itinerary(Arrays.asList(new Leg(cm, legFrom, legTo)));
+		assertEquals(1, countRowsInTable(Itinerary.class, "where id = " + oldItineraryId));
 
-        cargoRepository.detachItineray(cargo);
-        cargo.attachItinerary(newItinerary);
+		CarrierMovement cm = carrierMovementRepository.find(new CarrierMovementId("CAR_006"));
+		Location legFrom = locationRepository.find(new UnLocode("FIHEL"));
+		Location legTo = locationRepository.find(new UnLocode("DEHAM"));
+		Itinerary newItinerary = new Itinerary(Arrays.asList(new Leg(cm, legFrom, legTo)));
 
-        cargo = cargoRepository.save(cargo);
+		cargoRepository.detachItineray(cargo);
+		cargo.attachItinerary(newItinerary);
 
-        // Old itinerary should be deleted
-        assertEquals(0, countRowsInTable(Itinerary.class, "where id = " + oldItineraryId));
+		cargo = cargoRepository.save(cargo);
 
-        // New itinerary should be cascade-saved
-        Long newItineraryId = cargo.itinerary().getId();
+		// Old itinerary should be deleted
+		assertEquals(0, countRowsInTable(Itinerary.class, "where id = " + oldItineraryId));
 
-        assertEquals(1, countRowsInTable(Itinerary.class, "where id = " + newItineraryId));
-    }
+		// New itinerary should be cascade-saved
+		Long newItineraryId = cargo.itinerary().getId();
 
-    @Test
-    public void testSaveShouldNotCascadeToHandlingEvents() throws Exception {
-        Cargo cargo = cargoRepository.find(trackingId("FGH"), true);
-        int eventCount = cargo.deliveryHistory().eventsOrderedByCompletionTime().size();
+		assertEquals(1, countRowsInTable(Itinerary.class, "where id = " + newItineraryId));
+	}
 
-        Location origin = locationRepository.find(STOCKHOLM.getUnLocode());
+	@Test
+	public void testSaveShouldNotCascadeToHandlingEvents() throws Exception {
+		Cargo cargo = cargoRepository.find(trackingId("FGH"), true);
+		int eventCount = cargo.deliveryHistory().eventsOrderedByCompletionTime().size();
 
-        HandlingEvent event = new HandlingEvent(cargo, new DateTime(), new DateTime(), Type.RECEIVE, origin, null);
-        assertFalse(cargo.deliveryHistory().eventsOrderedByCompletionTime().contains(event));
+		Location origin = locationRepository.find(STOCKHOLM.getUnLocode());
 
-        cargo.getEvents().addAll(Arrays.asList(event));
-        assertTrue(cargo.deliveryHistory().eventsOrderedByCompletionTime().contains(event));
+		HandlingEvent event = new HandlingEvent(cargo, new DateTime(), new DateTime(), Type.RECEIVE, origin, null);
+		assertFalse(cargo.deliveryHistory().eventsOrderedByCompletionTime().contains(event));
 
-        // Save cargo, and then re-load it - should not pick
-        // up the added event,
-        // as it was never cascade-saved
+		cargo.getEvents().addAll(Arrays.asList(event));
+		assertTrue(cargo.deliveryHistory().eventsOrderedByCompletionTime().contains(event));
 
-        cargo = cargoRepository.save(cargo);
+		// Save cargo, and then re-load it - should not pick
+		// up the added event,
+		// as it was never cascade-saved
 
-        getEntityManager().refresh(cargo);
-        // cargo = cargoRepository.find(cargo.getTrackingId(), true);
-        assertFalse(cargo.deliveryHistory().eventsOrderedByCompletionTime().contains(event));
-        assertEquals(eventCount, cargo.deliveryHistory().eventsOrderedByCompletionTime().size());
-    }
+		cargo = cargoRepository.save(cargo);
 
-    @Test
-    public void testFindAll() {
-        List<Cargo> all = cargoRepository.findAll();
-        assertNotNull(all);
-        assertEquals(7, all.size());
-    }
+		getEntityManager().refresh(cargo);
+		// cargo = cargoRepository.find(cargo.getTrackingId(), true);
+		assertFalse(cargo.deliveryHistory().eventsOrderedByCompletionTime().contains(event));
+		assertEquals(eventCount, cargo.deliveryHistory().eventsOrderedByCompletionTime().size());
+	}
 
-    @Test
-    public void testNextTrackingId() {
-        TrackingId trackingId = cargoRepository.nextTrackingId();
-        assertNotNull(trackingId);
+	@Test
+	public void testFindAll() {
+		List<Cargo> all = cargoRepository.findAll();
+		assertNotNull(all);
+		assertEquals(7, all.size());
+	}
 
-        TrackingId trackingId2 = cargoRepository.nextTrackingId();
-        assertNotNull(trackingId2);
-        assertFalse(trackingId.equals(trackingId2));
-    }
+	@Test
+	public void testNextTrackingId() {
+		TrackingId trackingId = cargoRepository.nextTrackingId();
+		assertNotNull(trackingId);
+
+		TrackingId trackingId2 = cargoRepository.nextTrackingId();
+		assertNotNull(trackingId2);
+		assertFalse(trackingId.equals(trackingId2));
+	}
 
 }

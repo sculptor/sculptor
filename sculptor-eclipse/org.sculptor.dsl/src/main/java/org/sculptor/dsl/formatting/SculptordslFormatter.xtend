@@ -16,50 +16,52 @@ import org.sculptor.dsl.services.SculptordslGrammarAccess
  */
 class SculptordslFormatter extends AbstractDeclarativeFormatter {
 
-	@Inject extension SculptordslGrammarAccess
-	
+	@Inject
+	extension SculptordslGrammarAccess
+
 	override protected void configureFormatting(FormattingConfig c) {
 
 		c.setAutoLinewrap(120);
 
-		c.setIndentation(dslApplicationAccess.leftCurlyBracketKeyword_1_0_2,
-				dslApplicationAccess.rightCurlyBracketKeyword_3
+		c.setIndentation(
+			dslApplicationAccess.leftCurlyBracketKeyword_1_0_2,
+			dslApplicationAccess.rightCurlyBracketKeyword_3
 		)
-		findKeywordPairs("{", "}").forEach[
+		findKeywordPairs("{", "}").forEach [
 			c.setIndentation(it.first, it.second)
 			c.setLinewrap().after(it.first)
 			c.setLinewrap(1, 2, 2).around(it.second)
 		]
 
-		findKeywords("@").forEach[
+		findKeywords("@").forEach [
 			c.setNoSpace().after(it)
 		]
-		findKeywords("!").forEach[
+		findKeywords("!").forEach [
 			c.setNoSpace().after(it)
 		]
-		findKeywords(";").forEach[
+		findKeywords(";").forEach [
 			c.setNoSpace().before(it)
 			c.setLinewrap(1, 2, 2).after(it)
 		]
-		findKeywords(".").forEach[
+		findKeywords(".").forEach [
 			c.setNoSpace().around(it)
 		]
-		findKeywords("=").forEach[
+		findKeywords("=").forEach [
 			c.setNoSpace().around(it)
 		]
-		findKeywords("<").forEach[
+		findKeywords("<").forEach [
 			c.setNoSpace().around(it)
 		]
-		findKeywords(">").forEach[
+		findKeywords(">").forEach [
 			c.setNoSpace().before(it)
 		]
-		findKeywords("(").forEach[
+		findKeywords("(").forEach [
 			c.setNoSpace().around(it)
 		]
-		findKeywords(")").forEach[
+		findKeywords(")").forEach [
 			c.setNoSpace().before(it)
 		]
-		findKeywords(",").forEach[
+		findKeywords(",").forEach [
 			c.setNoSpace().before(it)
 			c.setSpace(" ").after(it)
 		]
@@ -70,8 +72,8 @@ class SculptordslFormatter extends AbstractDeclarativeFormatter {
 		]
 
 		// Linewrap before
-		findKeywords("package", "belongsTo", "validate", "databaseTable", "discriminatorValue", "discriminatorColumn",
-			"discriminatorType", "discriminatorLength", "inheritanceType", "subscribe", "eventbus", "inject").forEach [
+		findKeywords("package", "belongsTo", "validate", "databaseTable", "discriminatorValue", "discriminatorColumn", "discriminatorType",
+			"discriminatorLength", "inheritanceType", "subscribe", "eventbus", "inject").forEach [
 			c.setLinewrap().before(it)
 		]
 

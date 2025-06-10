@@ -9,7 +9,6 @@
 	</parent>
 	<artifactId>sculptor-generator-test-library</artifactId>
 	<name>Sculptor :: Generator :: Test Library</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -48,7 +47,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
@@ -69,5 +67,4 @@
 			<artifactId>org.eclipse.xtext.xbase.testing</artifactId>
 		</dependency>
 	</dependencies>
-
 </project>

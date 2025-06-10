@@ -19,7 +19,6 @@ package org.sculptor.framework.accessapi;
 
 import java.util.List;
 
-
 /**
  * <p>
  * Access command for finding entities similar to another entity.
@@ -31,14 +30,14 @@ import java.util.List;
  */
 public interface FindByExampleAccess<T> extends Cacheable, Ordered {
 
-    void setExample(T example);
+	void setExample(T example);
 
-    void setExcludeProperties(String[] excludeProperties);
+	void setExcludeProperties(String[] excludeProperties);
 
-    void execute();
+	void execute();
 
-    /**
-     * The result of the command.
-     */
-    List<T> getResult();
+	/**
+	 * The result of the command.
+	 */
+	List<T> getResult();
 }

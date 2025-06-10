@@ -45,211 +45,211 @@ import org.slf4j.LoggerFactory;
  */
 public class ErrorHandlingInterceptor {
 
-    public ErrorHandlingInterceptor() {
-    }
+	public ErrorHandlingInterceptor() {
+	}
 
-    @AroundInvoke
-    public Object invoke(InvocationContext context) throws Exception {
-        try {
-            try {
-                return context.proceed();
-            } catch (EJBException ejbExc) {
-                if (ejbExc.getCause() != null && ejbExc.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) ejbExc.getCause();
-                } else {
-                    throw ejbExc;
-                }
-            }
-        } catch (EJBException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (SystemException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (ApplicationException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (ConstraintViolationException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (SQLException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (OptimisticLockException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (PersistenceException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (RuntimeException e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        } catch (Error e) {
-            afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
-            throw e;
-        }
-    }
+	@AroundInvoke
+	public Object invoke(InvocationContext context) throws Exception {
+		try {
+			try {
+				return context.proceed();
+			} catch (EJBException ejbExc) {
+				if (ejbExc.getCause() != null && ejbExc.getCause() instanceof RuntimeException) {
+					throw (RuntimeException) ejbExc.getCause();
+				} else {
+					throw ejbExc;
+				}
+			}
+		} catch (EJBException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (SystemException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (ApplicationException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (ConstraintViolationException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (SQLException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (OptimisticLockException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (PersistenceException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (RuntimeException e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		} catch (Error e) {
+			afterThrowing(context.getMethod(), context.getParameters(), context.getTarget(), e);
+			throw e;
+		}
+	}
 
-    /**
-     * Handles validation exception
-     */
-    public void afterThrowing(Method m, Object[] args, Object target, ConstraintViolationException e) {
+	/**
+	 * Handles validation exception
+	 */
+	public void afterThrowing(Method m, Object[] args, Object target, ConstraintViolationException e) {
 
-        Logger log = LoggerFactory.getLogger(target.getClass());
+		Logger log = LoggerFactory.getLogger(target.getClass());
 
-        StringBuilder logText = new StringBuilder(excMessage(e));
-        if (e.getConstraintViolations() != null && e.getConstraintViolations().size() > 0) {
-            for (ConstraintViolation<?> each : e.getConstraintViolations()) {
-                logText.append(" : ").append(each.getPropertyPath()).append(" ");
-                logText.append("'").append(each.getMessage()).append("'");
-                logText.append(" ");
-                logText.append(each.getPropertyPath()).append("=");
-                logText.append(each.getInvalidValue());
-            }
-            // TODO: find better solution
-            logText.append(" rootBean=").append(e.getConstraintViolations().iterator().next().getRootBean());
-        }
+		StringBuilder logText = new StringBuilder(excMessage(e));
+		if (e.getConstraintViolations() != null && e.getConstraintViolations().size() > 0) {
+			for (ConstraintViolation<?> each : e.getConstraintViolations()) {
+				logText.append(" : ").append(each.getPropertyPath()).append(" ");
+				logText.append("'").append(each.getMessage()).append("'");
+				logText.append(" ");
+				logText.append(each.getPropertyPath()).append("=");
+				logText.append(each.getInvalidValue());
+			}
+			// TODO: find better solution
+			logText.append(" rootBean=").append(e.getConstraintViolations().iterator().next().getRootBean());
+		}
 
-        if (isJmsContext()) {
-            LogMessage message = new LogMessage(mapLogCode(mapLogCode(ValidationException.ERROR_CODE)),
-                    logText.toString());
-            log.error("{}", message);
-        } else {
-            LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), logText.toString());
-            log.debug("{}", message);
-        }
+		if (isJmsContext()) {
+			LogMessage message = new LogMessage(mapLogCode(mapLogCode(ValidationException.ERROR_CODE)),
+					logText.toString());
+			log.error("{}", message);
+		} else {
+			LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), logText.toString());
+			log.debug("{}", message);
+		}
 
-        ValidationException newException = new ValidationException(excMessage(e));
-        newException.setLogged(true);
-        newException.setConstraintViolations(e.getConstraintViolations());
-        throw newException;
-    }
+		ValidationException newException = new ValidationException(excMessage(e));
+		newException.setLogged(true);
+		newException.setConstraintViolations(e.getConstraintViolations());
+		throw newException;
+	}
 
-    /**
-     * Possibility for subclass to override and map logCodes.
-     */
-    protected String mapLogCode(String logCode) {
-        return logCode;
-    }
+	/**
+	 * Possibility for subclass to override and map logCodes.
+	 */
+	protected String mapLogCode(String logCode) {
+		return logCode;
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, SystemException e) {
-        if (e.isLogged()) {
-            return;
-        }
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
-        if (e.isFatal()) {
-            log.error(message.toString(), e);
-        } else {
-            log.error(message.toString(), e);
-        }
-        e.setLogged(true);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, SystemException e) {
+		if (e.isLogged()) {
+			return;
+		}
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
+		if (e.isFatal()) {
+			log.error(message.toString(), e);
+		} else {
+			log.error(message.toString(), e);
+		}
+		e.setLogged(true);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, ApplicationException e) {
-        if (e.isLogged()) {
-            return;
-        }
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        if (log.isDebugEnabled()) {
-            LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
-            log.debug(message.toString(), e);
-            e.setLogged(true);
-        }
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, ApplicationException e) {
+		if (e.isLogged()) {
+			return;
+		}
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		if (log.isDebugEnabled()) {
+			LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
+			log.debug(message.toString(), e);
+			e.setLogged(true);
+		}
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, RuntimeException e) {
-        SystemException wrappedSystemException = SystemException.unwrapSystemException(e);
-        if (wrappedSystemException == null) {
-            Logger log = LoggerFactory.getLogger(target.getClass());
-            // null message is useless, e.g. NullPointerException
-            String message = excMessage(e);
-            LogMessage logMessage = new LogMessage(mapLogCode(UnexpectedRuntimeException.ERROR_CODE), message);
-            log.error(logMessage.toString(), e);
-            UnexpectedRuntimeException newException = new UnexpectedRuntimeException(message);
-            newException.setLogged(true);
-            throw newException;
-        } else {
-            afterThrowing(m, args, target, wrappedSystemException);
-        }
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, RuntimeException e) {
+		SystemException wrappedSystemException = SystemException.unwrapSystemException(e);
+		if (wrappedSystemException == null) {
+			Logger log = LoggerFactory.getLogger(target.getClass());
+			// null message is useless, e.g. NullPointerException
+			String message = excMessage(e);
+			LogMessage logMessage = new LogMessage(mapLogCode(UnexpectedRuntimeException.ERROR_CODE), message);
+			log.error(logMessage.toString(), e);
+			UnexpectedRuntimeException newException = new UnexpectedRuntimeException(message);
+			newException.setLogged(true);
+			throw newException;
+		} else {
+			afterThrowing(m, args, target, wrappedSystemException);
+		}
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, SQLException e) {
-        handleDatabaseAccessException(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, SQLException e) {
+		handleDatabaseAccessException(target, e);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, PersistenceException e) {
-        handleDatabaseAccessException(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, PersistenceException e) {
+		handleDatabaseAccessException(target, e);
+	}
 
-    protected void handleDatabaseAccessException(Object target, Exception e) {
-        Logger log = LoggerFactory.getLogger(target.getClass());
+	protected void handleDatabaseAccessException(Object target, Exception e) {
+		Logger log = LoggerFactory.getLogger(target.getClass());
 
-        // often the wrapped SQLException contains the interesting piece of
-        // information
-        StringBuilder message = new StringBuilder();
-        message.append(e.getClass().getName()).append(": ");
-        message.append(excMessage(e));
-        SQLException sqlExc = ExceptionHelper.unwrapSQLException(e);
-        if (sqlExc != null) {
-            message.append(", Caused by: ");
-            message.append(sqlExc.getClass().getName()).append(": ");
-            message.append(excMessage(sqlExc));
-        }
+		// often the wrapped SQLException contains the interesting piece of
+		// information
+		StringBuilder message = new StringBuilder();
+		message.append(e.getClass().getName()).append(": ");
+		message.append(excMessage(e));
+		SQLException sqlExc = ExceptionHelper.unwrapSQLException(e);
+		if (sqlExc != null) {
+			message.append(", Caused by: ");
+			message.append(sqlExc.getClass().getName()).append(": ");
+			message.append(excMessage(sqlExc));
+		}
 
-        if (isJmsContext() && !isJmsRedelivered()) {
-            LogMessage logMessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message.toString());
-            log.info("{}", logMessage);
-        } else {
-            LogMessage logMmessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message.toString());
-            log.error(logMmessage.toString(), e);
-        }
+		if (isJmsContext() && !isJmsRedelivered()) {
+			LogMessage logMessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message.toString());
+			log.info("{}", logMessage);
+		} else {
+			LogMessage logMmessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message.toString());
+			log.error(logMmessage.toString(), e);
+		}
 
-        DatabaseAccessException newException = new DatabaseAccessException(message.toString());
-        newException.setLogged(true);
-        throw newException;
-    }
+		DatabaseAccessException newException = new DatabaseAccessException(message.toString());
+		newException.setLogged(true);
+		throw newException;
+	}
 
-    /**
-     * JPA exception for Optimistic Locking.
-     */
-    public void afterThrowing(Method m, Object[] args, Object target, OptimisticLockException e)
-            throws OptimisticLockingException {
-        handleOptimisticLockingException(target, e);
-    }
+	/**
+	 * JPA exception for Optimistic Locking.
+	 */
+	public void afterThrowing(Method m, Object[] args, Object target, OptimisticLockException e)
+			throws OptimisticLockingException {
+		handleOptimisticLockingException(target, e);
+	}
 
-    protected void handleOptimisticLockingException(Object target, Exception e) throws OptimisticLockingException {
-        Logger log = LoggerFactory.getLogger(target.getClass());
+	protected void handleOptimisticLockingException(Object target, Exception e) throws OptimisticLockingException {
+		Logger log = LoggerFactory.getLogger(target.getClass());
 
-        if (isJmsContext() && isJmsRedelivered()) {
-            LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE), excMessage(e));
-            log.error(logMessage.toString(), e);
-        } else {
-            LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE), excMessage(e));
-            log.info("{}", logMessage);
-        }
+		if (isJmsContext() && isJmsRedelivered()) {
+			LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE), excMessage(e));
+			log.error(logMessage.toString(), e);
+		} else {
+			LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE), excMessage(e));
+			log.info("{}", logMessage);
+		}
 
-        OptimisticLockingException newException = new OptimisticLockingException(excMessage(e));
-        newException.setLogged(true);
-        throw newException;
-    }
+		OptimisticLockingException newException = new OptimisticLockingException(excMessage(e));
+		newException.setLogged(true);
+		throw newException;
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, OutOfMemoryError e) {
-        // OutOfMemoryError is important and therefore handled separatly from
-        // other Errors
-        handleError(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, OutOfMemoryError e) {
+		// OutOfMemoryError is important and therefore handled separatly from
+		// other Errors
+		handleError(target, e);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, Error e) {
-        handleError(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, Error e) {
+		handleError(target, e);
+	}
 
-    protected void handleError(Object target, Error e) {
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        String errorCode = e.getClass().getName();
-        String mappedErrorCode = mapLogCode(errorCode);
-        LogMessage message = new LogMessage(mappedErrorCode, excMessage(e));
-        log.error(message.toString(), e);
-    }
+	protected void handleError(Object target, Error e) {
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		String errorCode = e.getClass().getName();
+		String mappedErrorCode = mapLogCode(errorCode);
+		LogMessage message = new LogMessage(mappedErrorCode, excMessage(e));
+		log.error(message.toString(), e);
+	}
 
 }

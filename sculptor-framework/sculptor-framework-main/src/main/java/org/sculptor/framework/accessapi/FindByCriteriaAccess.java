@@ -21,13 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
-
 /**
  * <p>
- * Access command for finding objects by simple restrictions
- * of a criteria. The specified {@link #setRestrictions restrictions}
- * are used to build the restrictions with simple equals conditions.
+ * Access command for finding objects by simple restrictions of a criteria. The
+ * specified {@link #setRestrictions restrictions} are used to build the
+ * restrictions with simple equals conditions.
  * </p>
  * <p>
  * Command design pattern.
@@ -35,42 +33,39 @@ import java.util.Set;
  *
  */
 public interface FindByCriteriaAccess<T> extends Cacheable, Ordered, Pageable {
-    /**
-     * These restriction parameters are used to build the restrictions
-     * with simple equals conditions. The map contains
-     * property names and values.
-     * {@link #addRestriction} is an alternative way to
-     * define the restrictions.
-     */
-    void setRestrictions(Map<String, Object> restrictions);
+	/**
+	 * These restriction parameters are used to build the restrictions with simple
+	 * equals conditions. The map contains property names and values.
+	 * {@link #addRestriction} is an alternative way to define the restrictions.
+	 */
+	void setRestrictions(Map<String, Object> restrictions);
 
-    /**
-     * Add a restriction parameter.
-     * {@link #setRestrictions} is an alternative way to
-     * define the restrictions.
-     * @param name property name
-     * @param value property value
-     */
-    void addRestriction(String name, Object value);
+	/**
+	 * Add a restriction parameter. {@link #setRestrictions} is an alternative way
+	 * to define the restrictions.
+	 * 
+	 * @param name
+	 *            property name
+	 * @param value
+	 *            property value
+	 */
+	void addRestriction(String name, Object value);
 
-    /**
-     * These association paths will be fetched with
-     * fetch mode join.
-     */
-    void setFetchAssociations(Set<String> associationPaths);
+	/**
+	 * These association paths will be fetched with fetch mode join.
+	 */
+	void setFetchAssociations(Set<String> associationPaths);
 
-    /**
-     * Add an association path, which will be fetched with
-     * fetch mode join.
-     */
-    void addFetchAssociation(String associationPath);
+	/**
+	 * Add an association path, which will be fetched with fetch mode join.
+	 */
+	void addFetchAssociation(String associationPath);
 
+	void execute();
 
-    void execute();
-
-    /**
-     * The result of the command.
-     */
-    List<T> getResult();
+	/**
+	 * The result of the command.
+	 */
+	List<T> getResult();
 
 }

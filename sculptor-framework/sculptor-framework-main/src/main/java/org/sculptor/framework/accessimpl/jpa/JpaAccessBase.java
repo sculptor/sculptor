@@ -21,10 +21,9 @@ import jakarta.persistence.PersistenceException;
 
 import org.sculptor.framework.errorhandling.ApplicationException;
 
-
 /**
- * Base class for Access Objects that doesn't throw ApplicationException.
- * It is responsible for some common JPA stuff and error handling.
+ * Base class for Access Objects that doesn't throw ApplicationException. It is
+ * responsible for some common JPA stuff and error handling.
  * <p>
  * Subclasses must implement {@link #performExecute()}
  *
@@ -32,13 +31,13 @@ import org.sculptor.framework.errorhandling.ApplicationException;
 public abstract class JpaAccessBase<T> extends JpaAccessBaseWithException<T> {
 
 	public void execute() {
-        try {
-            super.execute();
-        } catch (ApplicationException e) {
-            throw new RuntimeException("Don't expect " + e.getClass().getName() +
-                    " from execute of " + getClass().getName());
-        }
-    }
+		try {
+			super.execute();
+		} catch (ApplicationException e) {
+			throw new RuntimeException(
+					"Don't expect " + e.getClass().getName() + " from execute of " + getClass().getName());
+		}
+	}
 
-    public abstract void performExecute() throws PersistenceException;
+	public abstract void performExecute() throws PersistenceException;
 }

@@ -1,26 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>archetype.it</groupId>
 	<artifactId>basic-web</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>New Sculptor Project :: SpringBoot</name>
-
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<java-version>1.8</java-version>
 		<maven-version>3.0</maven-version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-
 		<sculptor-version>3.2.0-SNAPSHOT</sculptor-version>
 		<spring-boot-version>2.4.3</spring-boot-version>
 		<tomcat-jasper-el>9.0.64</tomcat-jasper-el>
 		<joda-time-version>2.10.9</joda-time-version>
 	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -77,7 +73,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -94,11 +89,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<exclusions>
@@ -227,7 +222,5 @@
 			<!-- Add scope test when deployed in jboss -->
 			<!-- <scope>test</scope> -->
 		</dependency>
- 	</dependencies>
-
+	</dependencies>
 </project>
-

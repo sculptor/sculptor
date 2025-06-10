@@ -25,8 +25,8 @@ import jakarta.jms.Message;
  */
 public interface MessageSender {
 
-    void sendMessage(Destination destination, Message message);
+	void sendMessage(Destination destination, Message message);
 
-    void sendMessage(Destination destination, String message, String correlationId);
+	void sendMessage(Destination destination, String message, String correlationId);
 
 }

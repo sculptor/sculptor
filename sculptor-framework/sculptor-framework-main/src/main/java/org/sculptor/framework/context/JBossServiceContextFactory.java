@@ -35,43 +35,43 @@ import javax.security.jacc.PolicyContextException;
  * @author Patrik Nordwall
  */
 public class JBossServiceContextFactory extends ServiceContextFactory {
-    
-    /** The JACC PolicyContext key for the current Subject */
-    private static final String SUBJECT_CONTEXT_KEY = "javax.security.auth.Subject.container";
 
-    protected Subject activeSubject() {
-        try {
-            Subject caller = (Subject) PolicyContext.getContext(SUBJECT_CONTEXT_KEY);
-            return caller;
-        } catch (PolicyContextException e) {
-            return null;
-        }
-    }
-    
-    protected String userIdFromSubject(Subject caller) {
-        Set<UserPrincipal> jaasUserPrincipals = caller.getPrincipals(UserPrincipal.class);
-        if (jaasUserPrincipals.isEmpty()) {
-            return null;
-        } else {
-            for (UserPrincipal p : jaasUserPrincipals) {
-                // Use the first SimplePrincipal, which is not a SimpleGroup
-                // SimpleGroup is subclass of SimplePrincipal
-                if (!(p instanceof GroupPrincipal)) {
-                    return p.getName();
-                }
-            }
-            // userPrincipal not found
-            return null;
-        }
-    }
+	/** The JACC PolicyContext key for the current Subject */
+	private static final String SUBJECT_CONTEXT_KEY = "javax.security.auth.Subject.container";
 
-    protected Set<String> rolesFromSubject(Subject caller) {
-        Set<String> roles = new HashSet<String>();
-        Set<GroupPrincipal> jaasRolesPrincipals = caller.getPrincipals(GroupPrincipal.class);
-        for (GroupPrincipal p : jaasRolesPrincipals) {
-            roles.add(p.getName());
-        }
-        return roles;
-    }
+	protected Subject activeSubject() {
+		try {
+			Subject caller = (Subject) PolicyContext.getContext(SUBJECT_CONTEXT_KEY);
+			return caller;
+		} catch (PolicyContextException e) {
+			return null;
+		}
+	}
+
+	protected String userIdFromSubject(Subject caller) {
+		Set<UserPrincipal> jaasUserPrincipals = caller.getPrincipals(UserPrincipal.class);
+		if (jaasUserPrincipals.isEmpty()) {
+			return null;
+		} else {
+			for (UserPrincipal p : jaasUserPrincipals) {
+				// Use the first SimplePrincipal, which is not a SimpleGroup
+				// SimpleGroup is subclass of SimplePrincipal
+				if (!(p instanceof GroupPrincipal)) {
+					return p.getName();
+				}
+			}
+			// userPrincipal not found
+			return null;
+		}
+	}
+
+	protected Set<String> rolesFromSubject(Subject caller) {
+		Set<String> roles = new HashSet<String>();
+		Set<GroupPrincipal> jaasRolesPrincipals = caller.getPrincipals(GroupPrincipal.class);
+		for (GroupPrincipal p : jaasRolesPrincipals) {
+			roles.add(p.getName());
+		}
+		return roles;
+	}
 
 }

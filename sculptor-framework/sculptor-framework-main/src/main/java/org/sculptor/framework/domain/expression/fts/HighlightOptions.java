@@ -10,10 +10,11 @@ public class HighlightOptions {
 	String stopMark;
 	String delimiter;
 
-	private HighlightOptions() {};
+	private HighlightOptions() {
+	};
 
-	public HighlightOptions(int minWords, int maxWords, int shortWord
-			, int maxFragments, String startMark, String stopMark, String delimiter) {
+	public HighlightOptions(int minWords, int maxWords, int shortWord, int maxFragments, String startMark,
+			String stopMark, String delimiter) {
 		this.highlightAll = false;
 
 		this.minWords = minWords;
@@ -110,8 +111,6 @@ public class HighlightOptions {
 			spec.append("FragmentDelimiter=").append(delimiter).append(", ");
 		}
 
-		return spec.length() > 0
-				? spec.substring(0, spec.length() - 2)
-				: "";
+		return spec.length() > 0 ? spec.substring(0, spec.length() - 2) : "";
 	}
 }

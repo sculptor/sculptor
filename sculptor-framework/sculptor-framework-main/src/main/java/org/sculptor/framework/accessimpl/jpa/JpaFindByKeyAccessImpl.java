@@ -34,75 +34,73 @@ import org.sculptor.framework.accessapi.FindByKeyAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByKeyAccessImpl<T>
-    extends JpaCriteriaQueryAccessBase<T,T>
-    implements FindByKeyAccess<T> {
+public class JpaFindByKeyAccessImpl<T> extends JpaCriteriaQueryAccessBase<T, T> implements FindByKeyAccess<T> {
 
-    private String[] keyPropertyNames;
-    private Object[] keyValues;
+	private String[] keyPropertyNames;
+	private Object[] keyValues;
 
-    public JpaFindByKeyAccessImpl(Class<T> persistentClass) {
-        super(persistentClass);
-    }
+	public JpaFindByKeyAccessImpl(Class<T> persistentClass) {
+		super(persistentClass);
+	}
 
-    @Override
-    public void setPersistentClass(Class<? extends T> persistentClass) {
-        super.setPersistentClass(persistentClass);
-    }
+	@Override
+	public void setPersistentClass(Class<? extends T> persistentClass) {
+		super.setPersistentClass(persistentClass);
+	}
 
-    public void setKeyPropertyNames(String... keyPropertyNames) {
-        this.keyPropertyNames = keyPropertyNames;
-    }
+	public void setKeyPropertyNames(String... keyPropertyNames) {
+		this.keyPropertyNames = keyPropertyNames;
+	}
 
-    public void setKeyPropertyValues(Object... keyValues) {
-        this.keyValues = keyValues;
-    }
+	public void setKeyPropertyValues(Object... keyValues) {
+		this.keyValues = keyValues;
+	}
 
-    protected String[] getKeyPropertyNames() {
-        return keyPropertyNames;
-    }
+	protected String[] getKeyPropertyNames() {
+		return keyPropertyNames;
+	}
 
-    protected Object[] getKeyValues() {
-        return keyValues;
-    }
+	protected Object[] getKeyValues() {
+		return keyValues;
+	}
 
-    public T getResult() {
-        return (T) getSingleResult();
-    }
+	public T getResult() {
+		return (T) getSingleResult();
+	}
 
-    @Override
-    protected void validate() {
-        if (keyValues == null) {
-            throw new IllegalArgumentException("keyPropertyValues not defined");
-        }
-        if (keyPropertyNames == null) {
-            throw new IllegalArgumentException("keyPropertyNames not defined");
-        }
-        if (keyValues.length != keyPropertyNames.length) {
-            throw new IllegalArgumentException("Number of keyPropertyValues must be the same "
-                    + "as the number of keyPropertyNames. " + keyValues + " != " + keyPropertyNames);
-        }
-    }
+	@Override
+	protected void validate() {
+		if (keyValues == null) {
+			throw new IllegalArgumentException("keyPropertyValues not defined");
+		}
+		if (keyPropertyNames == null) {
+			throw new IllegalArgumentException("keyPropertyNames not defined");
+		}
+		if (keyValues.length != keyPropertyNames.length) {
+			throw new IllegalArgumentException("Number of keyPropertyValues must be the same "
+					+ "as the number of keyPropertyNames. " + keyValues + " != " + keyPropertyNames);
+		}
+	}
 
-    @Override
-    protected void prepareConfig(QueryConfig config) {
-    	// datanucleus bug. datanucleus is not handling enums correctly.
-    	// user type mapping is not called
-    	// TODO: report to datanucleus issue tracker
-    	if (!JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
-            config.setSingleResult(true);
-    	}
-        config.setEnableLike(false);
-        config.setIgnoreCase(false);
-    }
+	@Override
+	protected void prepareConfig(QueryConfig config) {
+		// datanucleus bug. datanucleus is not handling enums correctly.
+		// user type mapping is not called
+		// TODO: report to datanucleus issue tracker
+		if (!JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
+			config.setSingleResult(true);
+		}
+		config.setEnableLike(false);
+		config.setIgnoreCase(false);
+	}
 
-    @Override
-    protected List<Predicate> prepareWhere() {
-        // map key to restrictions
-        Map<String, Object> restrictions = new HashMap<String, Object>();
-        for (int i = 0; i < keyPropertyNames.length; i++) {
-            restrictions.put(keyPropertyNames[i], keyValues[i]);
-        }
-        return prepareWhere(restrictions);
-    }
+	@Override
+	protected List<Predicate> prepareWhere() {
+		// map key to restrictions
+		Map<String, Object> restrictions = new HashMap<String, Object>();
+		for (int i = 0; i < keyPropertyNames.length; i++) {
+			restrictions.put(keyPropertyNames[i], keyValues[i]);
+		}
+		return prepareWhere(restrictions);
+	}
 }

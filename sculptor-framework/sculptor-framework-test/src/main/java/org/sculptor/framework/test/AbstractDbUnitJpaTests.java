@@ -39,95 +39,95 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
  */
 public abstract class AbstractDbUnitJpaTests extends AbstractDbUnitAnnotationAwareTransactionalTests {
 
-    private EntityManager entityManager;
-    private static boolean buildSchemaExecuted = false;
+	private EntityManager entityManager;
+	private static boolean buildSchemaExecuted = false;
 
-    public AbstractDbUnitJpaTests() {
-    }
+	public AbstractDbUnitJpaTests() {
+	}
 
-    @PersistenceUnit
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
-    }
+	@PersistenceUnit
+	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManager = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
+	}
 
-    protected EntityManager getEntityManager() {
-        return entityManager;
-    }
+	protected EntityManager getEntityManager() {
+		return entityManager;
+	}
 
-    /**
-     * In case you don't need to start the id sequence from a high value to
-     * avoid conflicts with test data you should override this method and return
-     * null.
-     */
-    @Override
-    protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_sequence";
-        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "SEQ_GEN";
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * In case you don't need to start the id sequence from a high value to avoid
+	 * conflicts with test data you should override this method and return null.
+	 */
+	@Override
+	protected String getSequenceName() {
+		if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+			return "hibernate_sequence";
+		} else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+			return "SEQ_GEN";
+		} else {
+			return null;
+		}
+	}
 
-    @Override
-    public void tearDownDatabaseTester() throws Exception {
-        // commented out because of locking problems with OrderedDeleteAllOperation
-        // DbUnitDataSourceUtils.tearDownDatabaseTester();
-    }
+	@Override
+	public void tearDownDatabaseTester() throws Exception {
+		// commented out because of locking problems with OrderedDeleteAllOperation
+		// DbUnitDataSourceUtils.tearDownDatabaseTester();
+	}
 
-    /**
-     * flushes the entity manager to get the correct result via jdbc
-     */
-    protected void flush() {
-        entityManager.flush();
-    }
+	/**
+	 * flushes the entity manager to get the correct result via jdbc
+	 */
+	protected void flush() {
+		entityManager.flush();
+	}
 
-    protected void clear() {
-        entityManager.clear();
-    }
+	protected void clear() {
+		entityManager.clear();
+	}
 
-    /**
-     * Using a separate JDBC connection causes locking problems with different rdbms
-     * (hsqldb 2.x introduced a new transaction, locking and isolation level handling)
-     */
-    @Override
-    protected int countRowsInTable(String tableName, String additionalCondition) {
-        flush();
-        clear();
-        Query query = entityManager.createNativeQuery("select count(*) from " + tableName + " " + additionalCondition);
-        Number rowCount = (Number) query.getSingleResult();
-        return rowCount.intValue();
-    }
+	/**
+	 * Using a separate JDBC connection causes locking problems with different rdbms
+	 * (hsqldb 2.x introduced a new transaction, locking and isolation level
+	 * handling)
+	 */
+	@Override
+	protected int countRowsInTable(String tableName, String additionalCondition) {
+		flush();
+		clear();
+		Query query = entityManager.createNativeQuery("select count(*) from " + tableName + " " + additionalCondition);
+		Number rowCount = (Number) query.getSingleResult();
+		return rowCount.intValue();
+	}
 
-    @Override
-    protected void buildSchema() {
-    	if (!buildSchemaExecuted) {
-            executeScript("file:src/test/generated/resources/dbunit/ddl.sql");
-            executeScript("file:src/test/generated/resources/dbunit/ddl_additional.sql");
-            buildSchemaExecuted = true;
-        }
-    };
+	@Override
+	protected void buildSchema() {
+		if (!buildSchemaExecuted) {
+			executeScript("file:src/test/generated/resources/dbunit/ddl.sql");
+			executeScript("file:src/test/generated/resources/dbunit/ddl_additional.sql");
+			buildSchemaExecuted = true;
+		}
+	};
 
-    /**
-     * Execute some SQL scripts before setup the database
-     * (Workaround for DataNucleus and OpenJPA together with DBUnit).
-     *
-     * @throws Exception
-     */
-    protected boolean executeScript(String scriptFile) {
-        if (getApplicationContext().getResource(scriptFile).exists()) {
-            executeSqlScript(scriptFile, true);
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * Execute some SQL scripts before setup the database (Workaround for
+	 * DataNucleus and OpenJPA together with DBUnit).
+	 *
+	 * @throws Exception
+	 */
+	protected boolean executeScript(String scriptFile) {
+		if (getApplicationContext().getResource(scriptFile).exists()) {
+			executeSqlScript(scriptFile, true);
+			return true;
+		}
+		return false;
+	}
 
-    protected String genUniqFieldKey(Property<?> field) {
+	protected String genUniqFieldKey(Property<?> field) {
 		return "#" + field.getName().toUpperCase();
-    }
+	}
 
-    protected String genUniqRowKey(long rowId, Property<?> field) {
+	protected String genUniqRowKey(long rowId, Property<?> field) {
 		return "#" + field.getName().toUpperCase() + rowId;
-    }
+	}
 }

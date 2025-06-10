@@ -37,7 +37,7 @@ public class SculptorPostgresPlusDialect extends PostgresPlusDialect {
 		functionRegistry.registerPattern("ftsConcat", "(?1 || ?2)", stringType);
 		functionRegistry.registerPattern("ftsAnd", "(?1 && ?2)", stringType);
 		functionRegistry.registerPattern("ftsOr", "(?1 || ?2)", stringType);
-		functionRegistry.registerPattern("ftsNot","!! ?1", stringType);
+		functionRegistry.registerPattern("ftsNot", "!! ?1", stringType);
 		functionRegistry.register("ftsStrip", new StandardSQLFunction("strip", StandardBasicTypes.STRING));
 		functionRegistry.register("ftsRank", new StandardSQLFunction("ts_rank", StandardBasicTypes.FLOAT));
 		functionRegistry.register("ftsRankCd", new StandardSQLFunction("ts_rank_cd", StandardBasicTypes.FLOAT));

@@ -23,7 +23,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 
 import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
 
-
 /**
  * <p>
  * Implementation of Access command FindByCriteriaQueryAccess.
@@ -32,27 +31,27 @@ import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByCriteriaQueryAccessImplGeneric<T,R>
-    extends JpaCriteriaQueryAccessBase<T,R>
-    implements FindByCriteriaQueryAccess<R> {
+public class JpaFindByCriteriaQueryAccessImplGeneric<T, R> extends JpaCriteriaQueryAccessBase<T, R>
+		implements
+			FindByCriteriaQueryAccess<R> {
 
-    public JpaFindByCriteriaQueryAccessImplGeneric() {
-        super();
-    }
+	public JpaFindByCriteriaQueryAccessImplGeneric() {
+		super();
+	}
 
-    public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type) {
+		super(type);
+	}
 
-    public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
-        super(type,resultType);
-    }
+	public JpaFindByCriteriaQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
+		super(type, resultType);
+	}
 
-    public List<R> getResult() {
-        return getListResult();
-    }
+	public List<R> getResult() {
+		return getListResult();
+	}
 
-    public void setQuery(CriteriaQuery<R> criteriaQuery) {
-        setCriteriaQuery(criteriaQuery);
-    }
+	public void setQuery(CriteriaQuery<R> criteriaQuery) {
+		setCriteriaQuery(criteriaQuery);
+	}
 }

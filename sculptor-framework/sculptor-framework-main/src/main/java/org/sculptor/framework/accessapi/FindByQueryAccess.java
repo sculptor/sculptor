@@ -20,7 +20,6 @@ package org.sculptor.framework.accessapi;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * <p>
  * Access command for finding objects by query..
@@ -32,28 +31,28 @@ import java.util.Map;
  */
 public interface FindByQueryAccess<T> extends Cacheable, Pageable {
 
-    void setQuery(String aQuery);
+	void setQuery(String aQuery);
 
-    void setParameters(Map<String, Object> parameters);
+	void setParameters(Map<String, Object> parameters);
 
-    /**
-     * Define if it is a named query or direct executable query string, default
-     * is true
-     */
-    void setNamedQuery(boolean namedQuery);
+	/**
+	 * Define if it is a named query or direct executable query string, default is
+	 * true
+	 */
+	void setNamedQuery(boolean namedQuery);
 
-    void setUseSingleResult(boolean singleResult);
+	void setUseSingleResult(boolean singleResult);
 
-    void execute();
+	void execute();
 
-    /**
-     * The result of the command.
-     */
-    List<T> getResult();
+	/**
+	 * The result of the command.
+	 */
+	List<T> getResult();
 
-    /**
-     * Result when singleResult is used.
-     */
-    Object getSingleResult();
+	/**
+	 * Result when singleResult is used.
+	 */
+	Object getSingleResult();
 
 }

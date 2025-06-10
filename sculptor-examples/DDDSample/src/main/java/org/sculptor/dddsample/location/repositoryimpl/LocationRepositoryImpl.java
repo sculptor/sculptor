@@ -14,18 +14,17 @@ import org.springframework.stereotype.Repository;
  * Repository implementation for Location
  */
 @Repository("locationRepository")
-public class LocationRepositoryImpl extends LocationRepositoryBase
-    implements LocationRepository {
-    public LocationRepositoryImpl() {
-    }
+public class LocationRepositoryImpl extends LocationRepositoryBase implements LocationRepository {
+	public LocationRepositoryImpl() {
+	}
 
-    public Location find(UnLocode unLocode) throws LocationNotFoundException {
-        Set<UnLocode> keys = new HashSet<UnLocode>();
-        keys.add(unLocode);
-        Map<UnLocode, Location> result = findByNaturalKeys(keys);
-        if (result.get(unLocode) == null) {
-            throw new LocationNotFoundException("Unknown carrier movement: " + unLocode);
-        }
-        return result.get(unLocode);
-    }
+	public Location find(UnLocode unLocode) throws LocationNotFoundException {
+		Set<UnLocode> keys = new HashSet<UnLocode>();
+		keys.add(unLocode);
+		Map<UnLocode, Location> result = findByNaturalKeys(keys);
+		if (result.get(unLocode) == null) {
+			throw new LocationNotFoundException("Unknown carrier movement: " + unLocode);
+		}
+		return result.get(unLocode);
+	}
 }

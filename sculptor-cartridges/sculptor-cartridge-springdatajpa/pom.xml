@@ -8,7 +8,6 @@
 	</parent>
 	<artifactId>sculptor-cartridge-springdatajpa</artifactId>
 	<name>Sculptor :: Cartridges :: Spring Data JPA</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -52,8 +51,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<!-- Needed to run SculptorGeneratorRunner because
-						ContextClassLoaderAwareRuntimeResourceSetInitializer 
-						needs access to the thread context classloader -->
+											ContextClassLoaderAwareRuntimeResourceSetInitializer 
+											needs access to the thread context classloader -->
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<useManifestOnlyJar>false</useManifestOnlyJar>
 					<!-- Run every test class in a newly forked JVM -->
@@ -62,7 +61,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
@@ -76,5 +74,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

@@ -17,30 +17,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class MediaServiceTest extends AbstractDbUnitJpaTests implements MediaServiceTestBase {
 
-    private MediaService mediaService;
+	private MediaService mediaService;
 
-    @Autowired
-    public void setMediaService(MediaService mediaService) {
-        this.mediaService = mediaService;
-    }
+	@Autowired
+	public void setMediaService(MediaService mediaService) {
+		this.mediaService = mediaService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        // use same testdata as for LibraryService
-        if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "dbunit/LibraryServiceTest_eclipselink.xml";
-        }
-        // datanucleus bug. PrimaryKeyJoinColumn is not working correctly for entities inherited from mappedsuperclass
-        // TODO: report to datanucleus issue tracker
-        else if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
-            return "dbunit/LibraryServiceTest_datanucleus.xml";
-        }
-        return "dbunit/LibraryServiceTest.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		// use same testdata as for LibraryService
+		if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+			return "dbunit/LibraryServiceTest_eclipselink.xml";
+		}
+		// datanucleus bug. PrimaryKeyJoinColumn is not working correctly for entities
+		// inherited from mappedsuperclass
+		// TODO: report to datanucleus issue tracker
+		else if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
+			return "dbunit/LibraryServiceTest_datanucleus.xml";
+		}
+		return "dbunit/LibraryServiceTest.xml";
+	}
 
-    @Test
-    public void testFindAll() throws Exception {
-        List<Media> all = mediaService.findAll(getServiceContext());
-        assertEquals(3, all.size());
-    }
+	@Test
+	public void testFindAll() throws Exception {
+		List<Media> all = mediaService.findAll(getServiceContext());
+		assertEquals(3, all.size());
+	}
 }

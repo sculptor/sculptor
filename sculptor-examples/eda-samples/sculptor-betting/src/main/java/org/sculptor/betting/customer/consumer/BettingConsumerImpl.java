@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component("bettingConsumer")
 public class BettingConsumerImpl extends BettingConsumerImplBase {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BettingConsumerImpl.class); 
+	private static final Logger LOG = LoggerFactory.getLogger(BettingConsumerImpl.class);
 
 	public BettingConsumerImpl() {
 	}

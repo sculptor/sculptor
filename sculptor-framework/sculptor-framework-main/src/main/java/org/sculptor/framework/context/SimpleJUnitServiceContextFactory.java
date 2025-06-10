@@ -24,17 +24,17 @@ import java.util.Set;
  */
 public class SimpleJUnitServiceContextFactory {
 
-    private static final Set<String> roles = new HashSet<String>();
-    static {
-        roles.add("JUnitRole");
-    }
+	private static final Set<String> roles = new HashSet<String>();
+	static {
+		roles.add("JUnitRole");
+	}
 
-    public static ServiceContext getServiceContext() {
-        ServiceContext context = ServiceContextStore.get();
-        if (context != null) {
-            return context;
-        }
-        return new ServiceContext("JUnit", "1234", "junit-test", roles);
-    }
+	public static ServiceContext getServiceContext() {
+		ServiceContext context = ServiceContextStore.get();
+		if (context != null) {
+			return context;
+		}
+		return new ServiceContext("JUnit", "1234", "junit-test", roles);
+	}
 
 }

@@ -17,7 +17,6 @@
 
 package org.sculptor.framework.accessapi;
 
-
 /**
  * <p>
  * Find all entities of a specific type.

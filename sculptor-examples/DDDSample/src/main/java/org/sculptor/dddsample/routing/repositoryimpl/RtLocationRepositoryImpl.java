@@ -12,15 +12,15 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("rtLocationRepository")
 public class RtLocationRepositoryImpl extends RtLocationRepositoryBase implements RtLocationRepository {
-    public RtLocationRepositoryImpl() {
-    }
+	public RtLocationRepositoryImpl() {
+	}
 
-    public List<String> listLocations() {
-        List<RtLocation> all = findAll();
-        List<String> result = new ArrayList<String>();
-        for (RtLocation each : all) {
-            result.add(each.getUnlocode());
-        }
-        return result;
-    }
+	public List<String> listLocations() {
+		List<RtLocation> all = findAll();
+		List<String> result = new ArrayList<String>();
+		for (RtLocation each : all) {
+			result.add(each.getUnlocode());
+		}
+		return result;
+	}
 }

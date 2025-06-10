@@ -31,65 +31,64 @@ import org.dbunit.database.IDatabaseConnection;
 import org.sculptor.framework.util.ApplicationContextSingleton;
 import org.springframework.context.ApplicationContext;
 
-
 public class DbUnitConnection {
 
-    private final String dataSourceSpringBeanName;
+	private final String dataSourceSpringBeanName;
 
-    public DbUnitConnection(String dataSourceSpringBeanName) {
-        this.dataSourceSpringBeanName = dataSourceSpringBeanName;
-    }
+	public DbUnitConnection(String dataSourceSpringBeanName) {
+		this.dataSourceSpringBeanName = dataSourceSpringBeanName;
+	}
 
-    public IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
+	public IDatabaseConnection getConnection() throws SQLException, DatabaseUnitException {
 
-        ApplicationContext context = ApplicationContextSingleton.getApplicationContext();
+		ApplicationContext context = ApplicationContextSingleton.getApplicationContext();
 
-        DataSource ds = (DataSource) context.getBean(dataSourceSpringBeanName);
+		DataSource ds = (DataSource) context.getBean(dataSourceSpringBeanName);
 
-        IDatabaseConnection connection = new DatabaseConnection(ds.getConnection());
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqlDataTypeFactory());
+		IDatabaseConnection connection = new DatabaseConnection(ds.getConnection());
+		DatabaseConfig config = connection.getConfig();
+		config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqlDataTypeFactory());
 
-        return connection;
-    }
+		return connection;
+	}
 
-    public int countRows(String table) throws Exception {
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            con = getConnection().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery("select count(*) as rowcount from " + table);
-            rs.next();
-            int count = rs.getInt("rowcount");
-            return count;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            close(con, stmt, rs);
-        }
-    }
+	public int countRows(String table) throws Exception {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = getConnection().getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select count(*) as rowcount from " + table);
+			rs.next();
+			int count = rs.getInt("rowcount");
+			return count;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			close(con, stmt, rs);
+		}
+	}
 
-    private static void close(Connection con, Statement stmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException ignore) {
-            }
-        }
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException ignore) {
-            }
-        }
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException ignore) {
-            }
-        }
-    }
+	private static void close(Connection con, Statement stmt, ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException ignore) {
+			}
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (SQLException ignore) {
+			}
+		}
+		if (con != null) {
+			try {
+				con.close();
+			} catch (SQLException ignore) {
+			}
+		}
+	}
 }

@@ -29,28 +29,28 @@ import jakarta.interceptor.InvocationContext;
  */
 public class ServiceContextStoreInterceptor {
 
-    @AroundInvoke
-    public Object invoke(InvocationContext context) throws Exception {
-        if (ServiceContextStore.get() != null) {
-            // this is not the first advice and it should therefore be ignored
-            // it is the first advice that is responsible for setting/clearing
-            // the service context
-            return context.proceed();
-        }
-        try {
-            Object[] args = context.getParameters();
-            if (args != null) {
-                for (int i = 0; i < args.length; i++) {
-                    if (args[i] instanceof ServiceContext) {
-                        ServiceContextStore.set((ServiceContext) args[i]);
-                        break;
-                    }
-                }
-            }
-            return context.proceed();
-        } finally {
-            ServiceContextStore.set(null);
-        }
-    }
+	@AroundInvoke
+	public Object invoke(InvocationContext context) throws Exception {
+		if (ServiceContextStore.get() != null) {
+			// this is not the first advice and it should therefore be ignored
+			// it is the first advice that is responsible for setting/clearing
+			// the service context
+			return context.proceed();
+		}
+		try {
+			Object[] args = context.getParameters();
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					if (args[i] instanceof ServiceContext) {
+						ServiceContextStore.set((ServiceContext) args[i]);
+						break;
+					}
+				}
+			}
+			return context.proceed();
+		} finally {
+			ServiceContextStore.set(null);
+		}
+	}
 
 }

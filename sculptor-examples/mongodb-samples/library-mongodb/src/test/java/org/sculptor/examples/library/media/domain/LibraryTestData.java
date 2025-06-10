@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LibraryTestData {
 
-	private static final String[] DATE_PATTERNS = { "yyyy-MM-dd" };
+	private static final String[] DATE_PATTERNS = {"yyyy-MM-dd"};
 
 	@Autowired
 	private LibraryRepository libraryRepository;
@@ -58,7 +58,7 @@ public class LibraryTestData {
 		// we have added physicalMedia to the library
 		libraryRepository.save(library);
 
-		Movie m1 = new Movie("Pippi Långstrump i Söderhavet", "abc");
+		Movie m1 = new Movie("Pippi Lï¿½ngstrump i Sï¿½derhavet", "abc");
 		m1.setPlayLength(82);
 		m1.getPhysicalMediaIds().add(pm1.getId());
 		m1 = (Movie) mediaRepository.save(m1);

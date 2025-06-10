@@ -23,48 +23,51 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 public class JodaDateTimeMapper implements DataMapper<DateTime, Date> {
-    private static JodaDateTimeMapper instance = new JodaDateTimeMapper();
+	private static JodaDateTimeMapper instance = new JodaDateTimeMapper();
 
-    protected JodaDateTimeMapper() {
-    }
+	protected JodaDateTimeMapper() {
+	}
 
-    public static JodaDateTimeMapper getInstance() {
-        return instance;
-    }
+	public static JodaDateTimeMapper getInstance() {
+		return instance;
+	}
 
-    public boolean canMapToData(Class<?> domainObjectClass) {
-        if (domainObjectClass == null) {
-            return true;
-        }
-        return DateTime.class.isAssignableFrom(domainObjectClass);
-    }
+	public boolean canMapToData(Class<?> domainObjectClass) {
+		if (domainObjectClass == null) {
+			return true;
+		}
+		return DateTime.class.isAssignableFrom(domainObjectClass);
+	}
 
-    public String getDBCollectionName() {
-        throw new IllegalStateException("Not a DBCollection");
-    }
+	public String getDBCollectionName() {
+		throw new IllegalStateException("Not a DBCollection");
+	}
 
-    public Date toData(DateTime from) {
-        if (from == null) {
-            return null;
-        }
-        return from.toDate();
-    }
+	public Date toData(DateTime from) {
+		if (from == null) {
+			return null;
+		}
+		return from.toDate();
+	}
 
-// Comment out due to compile error:
-// name clash: toDomain(java.lang.Object) in org.sculptor.framework.accessimpl.mongodb.JodaDateTimeMapper and toDomain(D) in org.sculptor.framework.accessimpl.mongodb.DataMapper have the same erasure, yet neither overrides the other
-//  public DateTime toDomain(Object from) {
-//  return toDomain((Date) from);
-//}
-// TODO: Remove permanently after more testing if not needed
+	// Comment out due to compile error:
+	// name clash: toDomain(java.lang.Object) in
+	// org.sculptor.framework.accessimpl.mongodb.JodaDateTimeMapper and toDomain(D)
+	// in org.sculptor.framework.accessimpl.mongodb.DataMapper have the same
+	// erasure, yet neither overrides the other
+	// public DateTime toDomain(Object from) {
+	// return toDomain((Date) from);
+	// }
+	// TODO: Remove permanently after more testing if not needed
 
-    public DateTime toDomain(Date from) {
-        if (from == null) {
-            return null;
-        }
-        return new DateTime(from.getTime());
-    }
+	public DateTime toDomain(Date from) {
+		if (from == null) {
+			return null;
+		}
+		return new DateTime(from.getTime());
+	}
 
-    public List<IndexSpecification> indexes() {
-        return Collections.emptyList();
-    }
+	public List<IndexSpecification> indexes() {
+		return Collections.emptyList();
+	}
 }

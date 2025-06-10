@@ -21,8 +21,7 @@ import java.lang.reflect.Method;
 
 public class EnumHelper {
 
-	public static <T extends Enum<T>> Enum<T> toEnum(Class<T> enumClass,
-			Object value) {
+	public static <T extends Enum<T>> Enum<T> toEnum(Class<T> enumClass, Object value) {
 		assert enumClass != null;
 		if (value == null) {
 			return null;
@@ -33,9 +32,8 @@ public class EnumHelper {
 			Enum<T> cast = (Enum<T>) method.invoke(null, value);
 			return cast;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("value " + value
-					+ " can not be converted to Enum '"
-					+ enumClass.getSimpleName() + "'", e);
+			throw new IllegalArgumentException(
+					"value " + value + " can not be converted to Enum '" + enumClass.getSimpleName() + "'", e);
 		}
 	}
 
@@ -47,9 +45,8 @@ public class EnumHelper {
 			Method method = enumClass.getClass().getMethod("toData");
 			return method.invoke(enumClass);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Enum '"
-					+ enumClass.getClass().getSimpleName()
-					+ "' can not be converted to value", e);
+			throw new IllegalArgumentException(
+					"Enum '" + enumClass.getClass().getSimpleName() + "' can not be converted to value", e);
 		}
 	}
 
@@ -69,8 +66,7 @@ public class EnumHelper {
 			}
 			return false;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Enum '"
-					+ enumClass.getClass().getSimpleName()
+			throw new IllegalArgumentException("Enum '" + enumClass.getClass().getSimpleName()
 					+ "' can not examined for identifier attribute type", e);
 		}
 	}

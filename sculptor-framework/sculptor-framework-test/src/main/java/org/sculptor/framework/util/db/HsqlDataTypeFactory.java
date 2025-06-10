@@ -25,11 +25,11 @@ import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 
 public class HsqlDataTypeFactory extends DefaultDataTypeFactory {
 
-    public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-        if (sqlType == Types.BOOLEAN) {
-            return DataType.BOOLEAN;
-        }
+	public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
+		if (sqlType == Types.BOOLEAN) {
+			return DataType.BOOLEAN;
+		}
 
-        return super.createDataType(sqlType, sqlTypeName);
-    }
+		return super.createDataType(sqlType, sqlTypeName);
+	}
 }

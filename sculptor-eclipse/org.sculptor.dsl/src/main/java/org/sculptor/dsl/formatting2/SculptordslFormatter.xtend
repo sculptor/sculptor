@@ -60,8 +60,7 @@ class SculptordslFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(DslSimpleDomainObject dslSimpleDomainObject, extension IFormattableDocument document) {
 		dslSimpleDomainObject.regionFor.feature(DSL_SIMPLE_DOMAIN_OBJECT__NAME).surround[oneSpace]
-		interior(dslSimpleDomainObject.regionFor.keyword("{").append[setNewLines(1, 1, 2)],
-			dslSimpleDomainObject.regionFor.keyword("}"))[indent]
+		interior(dslSimpleDomainObject.regionFor.keyword("{").append[setNewLines(1, 1, 2)], dslSimpleDomainObject.regionFor.keyword("}"))[indent]
 	}
 
 // TODO: implement for DslModule, DslService, DslResource, DslConsumer, DslServiceOperation, DslResourceOperation, DslRepositoryOperation, DslParameter, DslEntity, DslValueObject, DslDomainEvent, DslCommandEvent, DslTrait, DslDomainObjectOperation, DslDataTransferObject, DslBasicType, DslReference, DslRepository, DslEnum, DslEnumValue

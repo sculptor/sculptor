@@ -32,39 +32,38 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class DbManagerAdvice implements MethodInterceptor {
 
-    private DbManager dbManager;
+	private DbManager dbManager;
 
-    private TransactionOptions transactionOptions = TransactionOptions.builder()
-            .writeConcern(WriteConcern.MAJORITY)
-            .build();
+	private TransactionOptions transactionOptions = TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY)
+			.build();
 
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        if (DbManager.getThreadInstance() != null || dbManager == null) {
-            // this is not the first advice and it should therefore be ignored
-            // it is the first advice that is responsible for setting/clearing
-            // the DbManager
-            return invocation.proceed();
-        }
-        try (ClientSession session = dbManager.startSession()) {
-            DbManager.setThreadInstance(dbManager);
-            session.startTransaction(transactionOptions);
-            return invocation.proceed();
-        }
-    }
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		if (DbManager.getThreadInstance() != null || dbManager == null) {
+			// this is not the first advice and it should therefore be ignored
+			// it is the first advice that is responsible for setting/clearing
+			// the DbManager
+			return invocation.proceed();
+		}
+		try (ClientSession session = dbManager.startSession()) {
+			DbManager.setThreadInstance(dbManager);
+			session.startTransaction(transactionOptions);
+			return invocation.proceed();
+		}
+	}
 
-    public DbManager getDbManager() {
-        return dbManager;
-    }
+	public DbManager getDbManager() {
+		return dbManager;
+	}
 
-    public void setDbManager(DbManager dbManager) {
-        this.dbManager = dbManager;
-    }
+	public void setDbManager(DbManager dbManager) {
+		this.dbManager = dbManager;
+	}
 
-    public TransactionOptions getTransactionOptions() {
-        return transactionOptions;
-    }
+	public TransactionOptions getTransactionOptions() {
+		return transactionOptions;
+	}
 
-    public void setTransactionOptions(TransactionOptions transactionOptions) {
-        this.transactionOptions = transactionOptions;
-    }
+	public void setTransactionOptions(TransactionOptions transactionOptions) {
+		this.transactionOptions = transactionOptions;
+	}
 }

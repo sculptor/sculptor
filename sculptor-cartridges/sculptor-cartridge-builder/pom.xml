@@ -8,7 +8,6 @@
 	</parent>
 	<artifactId>sculptor-cartridge-builder</artifactId>
 	<name>Sculptor :: Cartridges :: Builder</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -57,7 +56,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
@@ -71,17 +69,16 @@
 			<scope>test</scope>
 		</dependency>
 		<!--
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		-->
+				<dependency>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter-engine</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter-api</artifactId>
+					<scope>test</scope>
+				</dependency>
+				-->
 	</dependencies>
-
 </project>

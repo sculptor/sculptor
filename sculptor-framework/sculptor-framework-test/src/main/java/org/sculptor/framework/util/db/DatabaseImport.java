@@ -30,31 +30,31 @@ import org.dbunit.operation.DatabaseOperation;
  */
 public class DatabaseImport extends IsolatedDatabaseTestCase {
 
-    /**
-     * Override, because super will drop all tables.
-     */
-    protected DatabaseOperation getTearDownOperation() throws Exception {
-        return DatabaseOperation.NONE;
-    }
+	/**
+	 * Override, because super will drop all tables.
+	 */
+	protected DatabaseOperation getTearDownOperation() throws Exception {
+		return DatabaseOperation.NONE;
+	}
 
-    /**
-     * Override this method to specify the XML file to import into database. By
-     * default "dbunit/full.xml" is used.
-     */
-    protected String getDataSetFile() {
-        return "dbunit/full.xml";
-    }
+	/**
+	 * Override this method to specify the XML file to import into database. By
+	 * default "dbunit/full.xml" is used.
+	 */
+	protected String getDataSetFile() {
+		return "dbunit/full.xml";
+	}
 
-    /**
-     * Override this to specify another datasource. By default testDataSource
-     * is used.
-     */
-    protected String getDataSourceSpringBeanName() {
-        return "testDataSource";
-    }
+	/**
+	 * Override this to specify another datasource. By default testDataSource is
+	 * used.
+	 */
+	protected String getDataSourceSpringBeanName() {
+		return "testDataSource";
+	}
 
-    public void testDummy() {
+	public void testDummy() {
 
-    }
+	}
 
 }

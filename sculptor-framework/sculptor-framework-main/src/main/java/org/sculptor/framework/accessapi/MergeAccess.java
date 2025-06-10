@@ -30,10 +30,10 @@ package org.sculptor.framework.accessapi;
 @Deprecated
 public interface MergeAccess<T> {
 
-    void setEntity(T entity);
+	void setEntity(T entity);
 
-    void execute();
+	void execute();
 
-    T getResult();
+	T getResult();
 
 }

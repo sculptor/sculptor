@@ -29,81 +29,81 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * Spring based test with MongoDB.
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class ReferenceDataServiceTest implements ReferenceDataServiceTestBase {
-    @Autowired
-    private DbManager dbManager;
-    @Autowired
-    private ReferenceDataService referenceDataService;
+	@Autowired
+	private DbManager dbManager;
+	@Autowired
+	private ReferenceDataService referenceDataService;
 
-    @BeforeEach
-    public void initTestData() {
-    }
+	@BeforeEach
+	public void initTestData() {
+	}
 
-    @BeforeEach
-    public void initDbManagerThreadInstance() throws Exception {
-        // to be able to do lazy loading of associations inside test class
-        DbManager.setThreadInstance(dbManager);
-    }
+	@BeforeEach
+	public void initDbManagerThreadInstance() throws Exception {
+		// to be able to do lazy loading of associations inside test class
+		DbManager.setThreadInstance(dbManager);
+	}
 
-    @AfterEach
-    public void dropDatabase() {
-        Set<String> names = dbManager.getDB().getCollectionNames();
-        for (String each : names) {
-            if (!each.startsWith("system")) {
-                dbManager.getDB().getCollection(each).drop();
-            }
-        }
+	@AfterEach
+	public void dropDatabase() {
+		Set<String> names = dbManager.getDB().getCollectionNames();
+		for (String each : names) {
+			if (!each.startsWith("system")) {
+				dbManager.getDB().getCollection(each).drop();
+			}
+		}
 
-        // dbManager.getDB().dropDatabase();
-    }
+		// dbManager.getDB().dropDatabase();
+	}
 
-    private int countRowsInDBCollection(String name) {
-        return (int) dbManager.getDBCollection(name).getCount();
-    }
+	private int countRowsInDBCollection(String name) {
+		return (int) dbManager.getDBCollection(name).getCount();
+	}
 
-    @Override
-    @Test
-    public void testGetShip() throws Exception {
-        String name = "King Roy";
-        ShipId shipId = shipId("KR");
-        referenceDataService.createShip(shipId, name);
-        Ship ship = referenceDataService.getShip(shipId);
-        assertEquals(name, ship.getName());
-    }
+	@Override
+	@Test
+	public void testGetShip() throws Exception {
+		String name = "King Roy";
+		ShipId shipId = shipId("KR");
+		referenceDataService.createShip(shipId, name);
+		Ship ship = referenceDataService.getShip(shipId);
+		assertEquals(name, ship.getName());
+	}
 
-    @Override
-    @Test
-    public void testCreateShip() throws Exception {
-        ShipId shipId = shipId("KR");
-        referenceDataService.createShip(shipId, "King Roy");
-        assertEquals(1, countRowsInDBCollection(ShipMapper.getInstance().getDBCollectionName()));
-        assertEquals(1, countRowsInDBCollection(ShipEventMapper.getInstance().getDBCollectionName()));
-    }
+	@Override
+	@Test
+	public void testCreateShip() throws Exception {
+		ShipId shipId = shipId("KR");
+		referenceDataService.createShip(shipId, "King Roy");
+		assertEquals(1, countRowsInDBCollection(ShipMapper.getInstance().getDBCollectionName()));
+		assertEquals(1, countRowsInDBCollection(ShipEventMapper.getInstance().getDBCollectionName()));
+	}
 
-    @Override
-    @Test
-    public void testSavePort() throws Exception {
-        UnLocode unLocode = unLocode("USSFO");
-        Port sfo = new Port(unLocode);
-        sfo.setCity("San Francisco");
-        sfo.setCountry(Country.US);
-        referenceDataService.savePort(sfo);
-        assertEquals(1, countRowsInDBCollection(PortMapper.getInstance().getDBCollectionName()));
-    }
+	@Override
+	@Test
+	public void testSavePort() throws Exception {
+		UnLocode unLocode = unLocode("USSFO");
+		Port sfo = new Port(unLocode);
+		sfo.setCity("San Francisco");
+		sfo.setCountry(Country.US);
+		referenceDataService.savePort(sfo);
+		assertEquals(1, countRowsInDBCollection(PortMapper.getInstance().getDBCollectionName()));
+	}
 
-    @Override
-    @Test
-    public void testSaveCargo() throws Exception {
-        referenceDataService.saveCargo(new Cargo("Refactoring"));
-        assertEquals(1, countRowsInDBCollection(CargoMapper.getInstance().getDBCollectionName()));
-    }
+	@Override
+	@Test
+	public void testSaveCargo() throws Exception {
+		referenceDataService.saveCargo(new Cargo("Refactoring"));
+		assertEquals(1, countRowsInDBCollection(CargoMapper.getInstance().getDBCollectionName()));
+	}
 
-    @Override
-    public void testGetCargo() throws Exception {
-    }
+	@Override
+	public void testGetCargo() throws Exception {
+	}
 
-    @Override
-    public void testGetPort() throws Exception {
-    }
+	@Override
+	public void testGetPort() throws Exception {
+	}
 }

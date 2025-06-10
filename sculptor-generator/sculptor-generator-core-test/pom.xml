@@ -9,7 +9,6 @@
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-core-test</artifactId>
 	<name>Sculptor :: Generator :: Core tests</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -39,7 +38,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
-				<configuration><skip>true</skip></configuration>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
@@ -65,7 +66,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>

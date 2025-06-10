@@ -40,11 +40,11 @@ class SculptordslRuntimeModule extends AbstractSculptordslRuntimeModule {
 	override Class<? extends IValueConverterService> bindIValueConverterService() {
 		typeof(SculptordslValueConverters)
 	}
-	
+
 	override bindIFormatter() {
 		typeof(SculptordslFormatter)
 	}
-	
+
 	override bindIGlobalScopeProvider() {
 		typeof(ImportUriGlobalScopeProvider)
 	}

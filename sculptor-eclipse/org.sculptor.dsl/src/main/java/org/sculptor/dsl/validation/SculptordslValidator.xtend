@@ -58,7 +58,7 @@ import org.eclipse.emf.ecore.EAttribute
 
 /**
  * Custom validation rules. 
- *
+ * 
  * see http://www.eclipse.org/Xtext/documentation.html#validation
  */
 class SculptordslValidator extends AbstractSculptordslValidator implements IssueCodes {
@@ -76,8 +76,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!Character.isLowerCase(module.name.charAt(0))) {
-			warning("The module name should begin with a lower case letter", DSL_MODULE__NAME, UNCAPITALIZED_NAME,
-					module.name)
+			warning("The module name should begin with a lower case letter", DSL_MODULE__NAME, UNCAPITALIZED_NAME, module.name)
 		}
 	}
 
@@ -87,8 +86,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!Character.isUpperCase(service.name.charAt(0))) {
-			warning("The service name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME,
-					CAPITALIZED_NAME, service.name)
+			warning("The service name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME, CAPITALIZED_NAME, service.name)
 		}
 	}
 
@@ -98,8 +96,8 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!Character.isUpperCase(repository.name.charAt(0))) {
-			warning("The repository name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME,
-					CAPITALIZED_NAME, repository.name)
+			warning("The repository name should begin with an upper case letter", DSL_SERVICE_REPOSITORY_OPTION__NAME, CAPITALIZED_NAME,
+				repository.name)
 		}
 	}
 
@@ -109,8 +107,8 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!Character.isUpperCase(domainObject.name.charAt(0))) {
-			warning("The domain object name should begin with an upper case letter", DSL_SIMPLE_DOMAIN_OBJECT__NAME,
-					CAPITALIZED_NAME, domainObject.name)
+			warning("The domain object name should begin with an upper case letter", DSL_SIMPLE_DOMAIN_OBJECT__NAME, CAPITALIZED_NAME,
+				domainObject.name)
 		}
 	}
 
@@ -169,8 +167,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		abstractOperations(domainObject, result)
 
 		if (!result.isEmpty()) {
-			error("The domain object should be declared abstract, since it defines abstract operations: " + result,
-					DSL_DOMAIN_OBJECT__ABSTRACT)
+			error("The domain object should be declared abstract, since it defines abstract operations: " + result, DSL_DOMAIN_OBJECT__ABSTRACT)
 		}
 	}
 
@@ -181,7 +178,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 				abstractOperations(domainObjectExtends, result)
 			}
 		}
-		domainObject.operations.forEach[
+		domainObject.operations.forEach [
 			// we don't consider overloaded operations, only by name
 			if (it.^abstract) {
 				result.add(it.name)
@@ -197,8 +194,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!Character.isLowerCase(prop.name.charAt(0))) {
-			warning("Attribute/reference should begin with a lower case letter", DSL_ANY_PROPERTY__NAME,
-					UNCAPITALIZED_NAME, prop.name)
+			warning("Attribute/reference should begin with a lower case letter", DSL_ANY_PROPERTY__NAME, UNCAPITALIZED_NAME, prop.name)
 		}
 	}
 
@@ -208,16 +204,14 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!Character.isLowerCase(param.name.charAt(0))) {
-			warning("Parameter should begin with a lower case letter", DSL_PARAMETER__NAME, UNCAPITALIZED_NAME,
-					param.name)
+			warning("Parameter should begin with a lower case letter", DSL_PARAMETER__NAME, UNCAPITALIZED_NAME, param.name)
 		}
 	}
 
 	@Check
 	def checkRequired(DslProperty prop) {
 		if (prop.notChangeable && prop.required) {
-			warning("The combination not changeable and required doesn't make sense, remove required",
-					DSL_ANY_PROPERTY__REQUIRED)
+			warning("The combination not changeable and required doesn't make sense, remove required", DSL_ANY_PROPERTY__REQUIRED)
 		}
 	}
 
@@ -247,11 +241,10 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (!ref.isInverse()) {
 			return
 		}
-		if (!(ref.collectionType != DslCollectionType.NONE || (ref.getOppositeHolder() !== null
-				&& ref.getOppositeHolder().getOpposite() !== null && ref.getOppositeHolder().getOpposite()
-				.collectionType == DslCollectionType.NONE))) {
-			error("Inverse is only applicable for references with cardinality many, or one-to-one",
-					DSL_REFERENCE__INVERSE)
+		if (!(ref.collectionType != DslCollectionType.NONE ||
+			(ref.getOppositeHolder() !== null && ref.getOppositeHolder().getOpposite() !== null &&
+				ref.getOppositeHolder().getOpposite().collectionType == DslCollectionType.NONE))) {
+			error("Inverse is only applicable for references with cardinality many, or one-to-one", DSL_REFERENCE__INVERSE)
 		}
 	}
 
@@ -262,13 +255,12 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		}
 
 		if (isBidirectionalManyToMany(ref) && ref.getOppositeHolder().getOpposite().getDatabaseJoinTable() !== null) {
-			warning("Define databaseJoinTable only at one side of the many-to-many association",
-					DSL_REFERENCE__DATABASE_JOIN_TABLE)
+			warning("Define databaseJoinTable only at one side of the many-to-many association", DSL_REFERENCE__DATABASE_JOIN_TABLE)
 		}
 
 		if (!(isBidirectionalManyToMany(ref) || (isUnidirectionalToMany(ref) && !ref.isInverse()))) {
 			error("databaseJoinTable is only applicable for bidirectional many-to-many, or unidirectional to-many without inverse",
-					DSL_REFERENCE__DATABASE_JOIN_TABLE)
+				DSL_REFERENCE__DATABASE_JOIN_TABLE)
 		}
 	}
 
@@ -279,8 +271,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		}
 
 		if (!(isUnidirectionalToMany(ref) && !ref.isInverse())) {
-			error("databaseJoinColumn is only applicable for unidirectional to-many without inverse",
-					DSL_REFERENCE__DATABASE_JOIN_COLUMN)
+			error("databaseJoinColumn is only applicable for unidirectional to-many without inverse", DSL_REFERENCE__DATABASE_JOIN_COLUMN)
 		}
 	}
 
@@ -289,16 +280,14 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	}
 
 	def private boolean isBidirectionalManyToMany(DslReference ref) {
-		(ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() !== null
-				&& ref.getOppositeHolder().getOpposite() !== null && ref.getOppositeHolder().getOpposite()
-				.collectionType != DslCollectionType.NONE)
+		(ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() !== null && ref.getOppositeHolder().getOpposite() !== null &&
+			ref.getOppositeHolder().getOpposite().collectionType != DslCollectionType.NONE)
 	}
 
 	@Check
 	def checkNullable(DslReference ref) {
 		if (ref.nullable && ref.collectionType != DslCollectionType.NONE) {
-			error("Nullable isn't applicable for references with cardinality many (" + ref.collectionType + ")",
-					DSL_ANY_PROPERTY__NULLABLE)
+			error("Nullable isn't applicable for references with cardinality many (" + ref.collectionType + ")", DSL_ANY_PROPERTY__NULLABLE)
 		}
 	}
 
@@ -311,9 +300,8 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (ref.getDatabaseColumn() === null) {
 			return
 		}
-		if (ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() !== null
-				&& ref.getOppositeHolder().getOpposite() !== null
-				&& ref.getOppositeHolder().getOpposite().collectionType == DslCollectionType.NONE) {
+		if (ref.collectionType != DslCollectionType.NONE && ref.getOppositeHolder() !== null && ref.getOppositeHolder().getOpposite() !== null &&
+			ref.getOppositeHolder().getOpposite().collectionType == DslCollectionType.NONE) {
 			error("databaseColumn should be defined at the opposite side", DSL_PROPERTY__DATABASE_COLUMN)
 		}
 	}
@@ -323,19 +311,17 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (ref.getOppositeHolder() === null || ref.getOppositeHolder().getOpposite() === null) {
 			return
 		}
-		if (!(ref.getOppositeHolder().getOpposite().getOppositeHolder() !== null && ref.getOppositeHolder()
-				.getOpposite().getOppositeHolder().getOpposite() == ref)) {
-			error("Opposite should specify this reference as opposite: "
-					+ ref.getOppositeHolder().getOpposite().name + " <-> " + ref.name,
-					DSL_REFERENCE__OPPOSITE_HOLDER)
+		if (!(ref.getOppositeHolder().getOpposite().getOppositeHolder() !== null &&
+			ref.getOppositeHolder().getOpposite().getOppositeHolder().getOpposite() == ref)) {
+			error("Opposite should specify this reference as opposite: " + ref.getOppositeHolder().getOpposite().name + " <-> " + ref.name,
+				DSL_REFERENCE__OPPOSITE_HOLDER)
 		}
 	}
 
 	@Check
 	def checkChangeableCollection(DslReference ref) {
 		if (ref.isNotChangeable() && ref.collectionType != DslCollectionType.NONE) {
-			warning("x-to-many references are never changeable, the content of the collection is always changeable",
-					DSL_ANY_PROPERTY__NOT_CHANGEABLE)
+			warning("x-to-many references are never changeable, the content of the collection is always changeable", DSL_ANY_PROPERTY__NOT_CHANGEABLE)
 		}
 	}
 
@@ -373,8 +359,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 		if (prop.key && prop.nullable) {
 			val parent = prop.eContainer()
 			if (!hasAtLeastOneNotNullableKeyElement(parent)) {
-				error("Natural key must not be nullable. Composite keys must have at least one not nullable property.",
-						DSL_ANY_PROPERTY__NULLABLE)
+				error("Natural key must not be nullable. Composite keys must have at least one not nullable property.", DSL_ANY_PROPERTY__NULLABLE)
 			}
 		}
 	}
@@ -454,8 +439,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	@Check
 	def checkEnumReference(DslReference ref) {
 		if (ref.getDomainObjectType() instanceof DslEnum && ref.collectionType != DslCollectionType.NONE) {
-			val notPersistentVO = ((ref.eContainer() instanceof DslValueObject)
-					&& (ref.eContainer as DslValueObject).notPersistent)
+			val notPersistentVO = ((ref.eContainer() instanceof DslValueObject) && (ref.eContainer as DslValueObject).notPersistent)
 			if (!notPersistentVO) {
 				error("Collection of enum is not supported", DSL_ANY_PROPERTY__COLLECTION_TYPE)
 			}
@@ -603,16 +587,14 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	@Check
 	def checkDiscriminatorValue(DslEntity domainObj) {
 		if (domainObj.discriminatorValue !== null && domainObj.^extends === null) {
-			error("discriminatorValue can only be used when you extend another Entity",
-					DSL_DOMAIN_OBJECT__DISCRIMINATOR_VALUE)
+			error("discriminatorValue can only be used when you extend another Entity", DSL_DOMAIN_OBJECT__DISCRIMINATOR_VALUE)
 		}
 	}
 
 	@Check
 	def checkDiscriminatorValue(DslValueObject domainObj) {
 		if (domainObj.discriminatorValue !== null && domainObj.^extends === null) {
-			error("discriminatorValue can only be used when you extend another ValueObject",
-					DSL_DOMAIN_OBJECT__DISCRIMINATOR_VALUE)
+			error("discriminatorValue can only be used when you extend another ValueObject", DSL_DOMAIN_OBJECT__DISCRIMINATOR_VALUE)
 		}
 	}
 
@@ -637,8 +619,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	@Check
 	def checkAggregateRootOnlyForPersistentValueObject(DslValueObject domainObj) {
 		if (belongsToAggregate(domainObj) && domainObj.isNotPersistent()) {
-			error("not aggregateRoot is only applicable for persistent ValueObjects",
-					DSL_DOMAIN_OBJECT__NOT_AGGREGATE_ROOT)
+			error("not aggregateRoot is only applicable for persistent ValueObjects", DSL_DOMAIN_OBJECT__NOT_AGGREGATE_ROOT)
 		}
 	}
 
@@ -780,8 +761,8 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	@Check
 	def checkRepositoryEvent(DslEvent event) {
 		if (event.repository !== null && !event.isPersistent()) {
-			error("Repository not useful for not-persistent event.", DSL_DOMAIN_OBJECT__REPOSITORY,
-				NON_PERSISTENT_EVENT, DSL_DOMAIN_OBJECT__REPOSITORY.name)
+			error("Repository not useful for not-persistent event.", DSL_DOMAIN_OBJECT__REPOSITORY, NON_PERSISTENT_EVENT,
+				DSL_DOMAIN_OBJECT__REPOSITORY.name)
 		}
 	}
 
@@ -815,46 +796,56 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 
 	@Check
 	def checkDomainObjectDuplicateName(DslSimpleDomainObject obj) {
-		if (obj.name !== null && obj.rootContainer.eAllOfClass(typeof(DslSimpleDomainObject)).filter [it.name == obj.name].size > 1) {
-			error("Duplicate name.  There is already an existing Domain Object named '"
-				+ obj.name + "'.", DSL_SIMPLE_DOMAIN_OBJECT__NAME, obj.name
-			);  
+		if (obj.name !== null && obj.rootContainer.eAllOfClass(typeof(DslSimpleDomainObject)).filter[it.name == obj.name].size > 1) {
+			error(
+				"Duplicate name.  There is already an existing Domain Object named '" + obj.name + "'.",
+				DSL_SIMPLE_DOMAIN_OBJECT__NAME,
+				obj.name
+			);
 		}
 	}
 
 	@Check
 	def checkServiceDuplicateName(DslService service) {
-		if (service.name !== null && service.rootContainer.eAllOfType(typeof(DslService)).filter [it.name == service.name].size > 1) {
-			error("Duplicate name.  There is already an existing Service named '"
-				+ service.name + "'.", DSL_SERVICE_REPOSITORY_OPTION__NAME, service.name
-			);  
+		if (service.name !== null && service.rootContainer.eAllOfType(typeof(DslService)).filter[it.name == service.name].size > 1) {
+			error(
+				"Duplicate name.  There is already an existing Service named '" + service.name + "'.",
+				DSL_SERVICE_REPOSITORY_OPTION__NAME,
+				service.name
+			);
 		}
 	}
 
 	@Check
 	def checkRepositoryDuplicateName(DslRepository repository) {
-		if (repository.name !== null && repository.rootContainer.eAllOfClass(typeof(DslRepository)).filter [it.name == repository.name].size > 1) {
-			error("Duplicate name.  There is already an existing Repository named '"
-				+ repository.name + "'.", DSL_SERVICE_REPOSITORY_OPTION__NAME, repository.name
-			);  
+		if (repository.name !== null && repository.rootContainer.eAllOfClass(typeof(DslRepository)).filter[it.name == repository.name].size > 1) {
+			error(
+				"Duplicate name.  There is already an existing Repository named '" + repository.name + "'.",
+				DSL_SERVICE_REPOSITORY_OPTION__NAME,
+				repository.name
+			);
 		}
 	}
 
 	@Check
 	def checkModuleDuplicateName(DslModule module) {
-		if (module.name !== null && module.rootContainer.eAllOfClass(typeof(DslModule)).filter [it.name == module.name].size > 1) {
-			error("Duplicate name.  There is already an existing Module named '"
-				+ module.name + "'.", DSL_MODULE__NAME, module.name
-			);  
+		if (module.name !== null && module.rootContainer.eAllOfClass(typeof(DslModule)).filter[it.name == module.name].size > 1) {
+			error(
+				"Duplicate name.  There is already an existing Module named '" + module.name + "'.",
+				DSL_MODULE__NAME,
+				module.name
+			);
 		}
 	}
 
 	@Check
 	def checkApplicationDuplicateName(DslApplication app) {
-		if (app.name !== null && app.rootContainer.eAllOfClass(typeof(DslApplication)).filter [it.name == app.name].size > 1) {
-			error("Duplicate name.  There is already an existing Application named '"
-				+ app.name + "'.", DSL_APPLICATION__NAME, app.name
-			);  
+		if (app.name !== null && app.rootContainer.eAllOfClass(typeof(DslApplication)).filter[it.name == app.name].size > 1) {
+			error(
+				"Duplicate name.  There is already an existing Application named '" + app.name + "'.",
+				DSL_APPLICATION__NAME,
+				app.name
+			);
 		}
 	}
 
@@ -863,8 +854,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	 */
 	@Check
 	def checkMissingReferenceNotationWithNoCollection(DslAttribute attr) {
-		if(attr.type !== null && attr.collectionType == DslCollectionType.NONE &&
-			attr.domainObjectsForAttributeType.empty == false) {
+		if (attr.type !== null && attr.collectionType == DslCollectionType.NONE && attr.domainObjectsForAttributeType.empty == false) {
 			warning("Use - " + attr.type, DSL_ATTRIBUTE__TYPE, attr.type)
 		}
 	}
@@ -874,32 +864,29 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 	 */
 	@Check
 	def checkMissingReferenceNotationWithCollection(DslAttribute attr) {
-		if(attr.type !== null && attr.collectionType != DslCollectionType.NONE &&
-			attr.domainObjectsForAttributeType.empty == false) {
+		if (attr.type !== null && attr.collectionType != DslCollectionType.NONE && attr.domainObjectsForAttributeType.empty == false) {
 			warning("Use - " + attr.collectionType + "<" + attr.type + ">", DSL_ATTRIBUTE__TYPE, attr.type)
 		}
 	}
 
 	@Check
 	def checkMissingDomainObjectInServiceOperationReturnType(DslServiceOperation it) {
-		if(returnType !== null && returnType.domainObjectType === null && returnType.type !== null &&
-		   returnType.firstDomainObjectForType !== null) {
+		if (returnType !== null && returnType.domainObjectType === null && returnType.type !== null && returnType.firstDomainObjectForType !== null) {
 			warning("Use @" + returnType.type, DSL_SERVICE_OPERATION__RETURN_TYPE, returnType.type)
 		}
 	}
 
 	@Check
 	def checkMissingDomainObjectInRepositoryOperationReturnType(DslRepositoryOperation it) {
-		if(returnType !== null && returnType.domainObjectType === null && returnType.type !== null &&
-		   returnType.firstDomainObjectForType !== null) {
+		if (returnType !== null && returnType.domainObjectType === null && returnType.type !== null && returnType.firstDomainObjectForType !== null) {
 			warning("Use @" + returnType.type, DSL_REPOSITORY_OPERATION__RETURN_TYPE, returnType.type)
 		}
 	}
 
 	@Check
 	def checkMissingDomainObjectInParameter(DslParameter it) {
-		if(parameterType !== null && parameterType.domainObjectType === null && parameterType.type !== null &&
-		   parameterType.firstDomainObjectForType !== null) {
+		if (parameterType !== null && parameterType.domainObjectType === null && parameterType.type !== null &&
+			parameterType.firstDomainObjectForType !== null) {
 			warning("Use @" + parameterType.type, DSL_PARAMETER__PARAMETER_TYPE, parameterType.type)
 		}
 	}
@@ -910,8 +897,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!application.basePackage.isAllLowerCase) {
-			warning("The basepackage name should be in lower case", DSL_APPLICATION__BASE_PACKAGE,
-				ALL_LOWERCASE_NAME, application.basePackage)
+			warning("The basepackage name should be in lower case", DSL_APPLICATION__BASE_PACKAGE, ALL_LOWERCASE_NAME, application.basePackage)
 		}
 	}
 
@@ -921,8 +907,7 @@ class SculptordslValidator extends AbstractSculptordslValidator implements Issue
 			return
 		}
 		if (!module.basePackage.isAllLowerCase) {
-			warning("The basepackage name should be in lower case", DSL_MODULE__BASE_PACKAGE, ALL_LOWERCASE_NAME,
-				module.basePackage)
+			warning("The basepackage name should be in lower case", DSL_MODULE__BASE_PACKAGE, ALL_LOWERCASE_NAME, module.basePackage)
 		}
 	}
 

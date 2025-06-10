@@ -26,9 +26,9 @@ public interface DateAuditable {
 	public void setCreatedDate(Date createdDate);
 	public Date getCreatedDate();
 
-    public void setLastUpdatedBy(String updatedBy);
-    public String getLastUpdatedBy();
-    public void setLastUpdated(Date updateDate);
-    public Date getLastUpdated();
+	public void setLastUpdatedBy(String updatedBy);
+	public String getLastUpdatedBy();
+	public void setLastUpdated(Date updateDate);
+	public Date getLastUpdated();
 
 }

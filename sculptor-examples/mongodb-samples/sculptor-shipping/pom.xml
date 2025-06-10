@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator.examples</groupId>
@@ -12,9 +10,8 @@
 	<artifactId>sculptor-shipping</artifactId>
 	<name>Sculptor :: Examples :: MongoDB Samples :: Shipping</name>
 	<description>MongoDB example: Business tier project for sculptor-shipping</description>
-
 	<build>
- 		<plugins>
+		<plugins>
 			<plugin>
 				<groupId>org.sculptorgenerator</groupId>
 				<artifactId>sculptor-maven-plugin</artifactId>
@@ -36,13 +33,13 @@
 						</goals>
 					</execution>
 				</executions>
- 				<dependencies>
+				<dependencies>
 					<dependency>
 						<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
 						<artifactId>sculptor-shipping-generator</artifactId>
 						<version>${project.version}</version>
 					</dependency>
- 				</dependencies>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -82,7 +79,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
@@ -135,7 +131,8 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<!-- Remove dependency to javax.transaction when running in a transaction 
-			supporting container (jboss etc) -->
+			  supporting container (jboss etc)
+		-->
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
@@ -180,7 +177,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
-  					<artifactId>commons-logging</artifactId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -206,5 +203,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

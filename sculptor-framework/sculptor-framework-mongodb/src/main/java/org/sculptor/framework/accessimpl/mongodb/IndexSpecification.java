@@ -19,26 +19,26 @@ package org.sculptor.framework.accessimpl.mongodb;
 import com.mongodb.DBObject;
 
 public class IndexSpecification {
-    private final String name;
-    private final DBObject keys;
-    private final boolean unique;
+	private final String name;
+	private final DBObject keys;
+	private final boolean unique;
 
-    public IndexSpecification(String name, DBObject keys, boolean unique) {
-        this.name = name;
-        this.keys = keys;
-        this.unique = unique;
-    }
+	public IndexSpecification(String name, DBObject keys, boolean unique) {
+		this.name = name;
+		this.keys = keys;
+		this.unique = unique;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public DBObject getKeys() {
-        return keys;
-    }
+	public DBObject getKeys() {
+		return keys;
+	}
 
-    public boolean isUnique() {
-        return unique;
-    }
+	public boolean isUnique() {
+		return unique;
+	}
 
 }

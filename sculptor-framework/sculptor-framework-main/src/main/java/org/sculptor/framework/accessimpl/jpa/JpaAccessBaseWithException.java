@@ -27,70 +27,70 @@ import org.sculptor.framework.errorhandling.ApplicationException;
  * <p>
  * Subclasses must implement {@link #performExecute()}
  * <p>
- * It is rare that AccessObjecs throws ApplicationException you
- * will normally use {@link JpaAccessBase}, which
- * does not declare ApplicationException in the method signatures.
+ * It is rare that AccessObjecs throws ApplicationException you will normally
+ * use {@link JpaAccessBase}, which does not declare ApplicationException in the
+ * method signatures.
  */
 public abstract class JpaAccessBaseWithException<T> {
 
-    private Class<? extends T> persistentClass;
-    private String cacheRegion;
+	private Class<? extends T> persistentClass;
+	private String cacheRegion;
 
 	private EntityManager entityManager;
 
-    public void setEntityManager(EntityManager entityManager) {
-    	this.entityManager = entityManager;
-    }
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
 
-    public void execute() throws ApplicationException {
-    	// subclass implementation in separate method to make it possible
-    	// to add stuff around the call here
-        performExecute();
-    }
+	public void execute() throws ApplicationException {
+		// subclass implementation in separate method to make it possible
+		// to add stuff around the call here
+		performExecute();
+	}
 
-    public abstract void performExecute() throws ApplicationException, PersistenceException;
+	public abstract void performExecute() throws ApplicationException, PersistenceException;
 
-    protected Class<? extends T> getPersistentClass() {
-        return persistentClass;
-    }
+	protected Class<? extends T> getPersistentClass() {
+		return persistentClass;
+	}
 
-    protected void setPersistentClass(Class<? extends T> persistentClass) {
-        this.persistentClass = persistentClass;
-    }
+	protected void setPersistentClass(Class<? extends T> persistentClass) {
+		this.persistentClass = persistentClass;
+	}
 
-    public boolean isCache() {
-        return (getCacheRegion() != null);
-    }
+	public boolean isCache() {
+		return (getCacheRegion() != null);
+	}
 
-    public void setCache(boolean cache) {
-        if (cache) {
-            String name;
-            if (getPersistentClass() == null) {
-                name = getClass().getName();
-            } else {
-                name = getPersistentClass().getName();
-            }
+	public void setCache(boolean cache) {
+		if (cache) {
+			String name;
+			if (getPersistentClass() == null) {
+				name = getClass().getName();
+			} else {
+				name = getPersistentClass().getName();
+			}
 
-            setCacheRegion(getQueryCacheRegionPrefix() + name);
-        } else {
-            // no cache
-            setCacheRegion(null);
-        }
-    }
+			setCacheRegion(getQueryCacheRegionPrefix() + name);
+		} else {
+			// no cache
+			setCacheRegion(null);
+		}
+	}
 
-    public String getCacheRegion() {
-        return cacheRegion;
-    }
+	public String getCacheRegion() {
+		return cacheRegion;
+	}
 
-    public void setCacheRegion(String cacheRegion) {
-        this.cacheRegion = cacheRegion;
-    }
+	public void setCacheRegion(String cacheRegion) {
+		this.cacheRegion = cacheRegion;
+	}
 
-    protected String getQueryCacheRegionPrefix() {
-        return "query.";
-    }
+	protected String getQueryCacheRegionPrefix() {
+		return "query.";
+	}
 }

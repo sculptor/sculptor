@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
@@ -11,10 +9,7 @@
 	<groupId>org.sculptorgenerator.examples</groupId>
 	<artifactId>springdatajpa-example</artifactId>
 	<name>Sculptor :: Examples :: Spring Data JPA</name>
-
-	<properties>
-	</properties>
-
+	<properties/>
 	<build>
 		<plugins>
 			<plugin>
@@ -41,7 +36,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -176,6 +170,4 @@
 			<!-- <scope>test</scope> -->
 		</dependency>
 	</dependencies>
-
 </project>
-

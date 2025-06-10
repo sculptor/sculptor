@@ -23,7 +23,6 @@ import java.util.List;
 import org.sculptor.framework.accessapi.FindAllAccess2;
 import org.sculptor.framework.domain.Property;
 
-
 /**
  * <p>
  * Find all entities of a specific type. Implementation of Access command
@@ -33,74 +32,77 @@ import org.sculptor.framework.domain.Property;
  * Command design pattern.
  * </p>
  */
-// EclipseLink has problems with inheritance and criteria query, using jpql query works
+// EclipseLink has problems with inheritance and criteria query, using jpql
+// query works
 // TODO: check reason and switch back to criteria query
-public class JpaFindAllAccessImplGeneric<T,R>
-//	extends JpaCriteriaQueryAccessBase<T,R>
-	extends JpaJpqlQueryAccessBase<T,R>
-    implements FindAllAccess2<R> {
+public class JpaFindAllAccessImplGeneric<T, R>
+		// extends JpaCriteriaQueryAccessBase<T,R>
+		extends
+			JpaJpqlQueryAccessBase<T, R>
+		implements
+			FindAllAccess2<R> {
 
-    public JpaFindAllAccessImplGeneric() {
-        super();
-    }
+	public JpaFindAllAccessImplGeneric() {
+		super();
+	}
 
-    public JpaFindAllAccessImplGeneric(Class<T> type) {
-        super(type);
-    }
+	public JpaFindAllAccessImplGeneric(Class<T> type) {
+		super(type);
+	}
 
-    public JpaFindAllAccessImplGeneric(Class<T> type, Class<R> resultType) {
-        super(type, resultType);
-    }
+	public JpaFindAllAccessImplGeneric(Class<T> type, Class<R> resultType) {
+		super(type, resultType);
+	}
 
-    public List<R> getResult() {
-        return getListResult();
-    }
+	public List<R> getResult() {
+		return getListResult();
+	}
 
-    // TODO: remove all overrides if using criteria query
+	// TODO: remove all overrides if using criteria query
 
-    private String orderBy = null;
+	private String orderBy = null;
 
-    @Override
-    protected void prepareQuery(QueryConfig config) {
-    	super.prepareQuery(config);
-    	StringBuffer query = new StringBuffer();
-    	query.append("select ");
-    	if (config.isDistinct()) {
-    		query.append("distinct ");
-    	}
-    	query.append("object(e) from ").append(getType().getSimpleName()).append(" e");
-    	Property<?>[] fetchEager = getFetchEager();
-    	if (fetchEager != null && fetchEager.length > 0) {
-    		for (Property<?> attr : fetchEager) {
-    			query.append(" left join fetch e.").append(attr.getName());
-    		}
-    	}
-    	setNamedQuery(false);
+	@Override
+	protected void prepareQuery(QueryConfig config) {
+		super.prepareQuery(config);
+		StringBuffer query = new StringBuffer();
+		query.append("select ");
+		if (config.isDistinct()) {
+			query.append("distinct ");
+		}
+		query.append("object(e) from ").append(getType().getSimpleName()).append(" e");
+		Property<?>[] fetchEager = getFetchEager();
+		if (fetchEager != null && fetchEager.length > 0) {
+			for (Property<?> attr : fetchEager) {
+				query.append(" left join fetch e.").append(attr.getName());
+			}
+		}
+		setNamedQuery(false);
 		setQuery(query.toString());
-    }
+	}
 
-    @Override
-    protected void prepareOrderBy(String query, QueryConfig config) {
-        if (orderBy != null) {
-            query += " order by " + JpaHelper.toSeparatedString(Arrays.asList(orderBy.split(",")), ",", "e.");
-            setQuery(query);
-        }
-    }
+	@Override
+	protected void prepareOrderBy(String query, QueryConfig config) {
+		if (orderBy != null) {
+			query += " order by " + JpaHelper.toSeparatedString(Arrays.asList(orderBy.split(",")), ",", "e.");
+			setQuery(query);
+		}
+	}
 
-    @Override
-    protected void prepareResultCount(QueryConfig config) {
-    	StringBuffer query = new StringBuffer();
-    	query.append("select ");
-    	if (config.isDistinct()) {
-    		query.append("distinct ");
-    	}
-    	query.append("count(e) from ").append(getType().getSimpleName()).append(" e");
-        setResultCountQuery(getEntityManager().createQuery(query.toString(), Long.class));
-    }
+	@Override
+	protected void prepareResultCount(QueryConfig config) {
+		StringBuffer query = new StringBuffer();
+		query.append("select ");
+		if (config.isDistinct()) {
+			query.append("distinct ");
+		}
+		query.append("count(e) from ").append(getType().getSimpleName()).append(" e");
+		setResultCountQuery(getEntityManager().createQuery(query.toString(), Long.class));
+	}
 
-    @Override
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
-    }
+	@Override
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
 
 }

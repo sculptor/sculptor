@@ -20,36 +20,34 @@ package org.sculptor.framework.accessapi;
 import java.util.Map;
 import java.util.Set;
 
-
 public interface FindByKeysAccess<T> extends Cacheable {
 
-    /**
-     * The name of the natural key property of the Domain Object,
-     * i.e. the natural key attribute or natural key object.
-     */
-    public void setKeyPropertyName(String keyPropertyName);
+	/**
+	 * The name of the natural key property of the Domain Object, i.e. the natural
+	 * key attribute or natural key object.
+	 */
+	public void setKeyPropertyName(String keyPropertyName);
 
-    /**
-     * When the natural key is a single simple attribute this
-     * restrictionPropertyName should not be defined. When
-     * it is a composite key or when it is a key object this
-     * must be defined. It is the name of the property to use
-     * in the the restriction criteria.
-     */
-    public void setRestrictionPropertyName(String restrictionPropertyName);
+	/**
+	 * When the natural key is a single simple attribute this
+	 * restrictionPropertyName should not be defined. When it is a composite key or
+	 * when it is a key object this must be defined. It is the name of the property
+	 * to use in the the restriction criteria.
+	 */
+	public void setRestrictionPropertyName(String restrictionPropertyName);
 
-    /**
-     * The keys to search for.
-     */
-    public void setKeys(Set<?> keys);
+	/**
+	 * The keys to search for.
+	 */
+	public void setKeys(Set<?> keys);
 
-    public void execute();
+	public void execute();
 
-    /**
-     * The result as a Map with keys and domain objects.
-     */
-    public Map<Object, T> getResult();
+	/**
+	 * The result as a Map with keys and domain objects.
+	 */
+	public Map<Object, T> getResult();
 
-    public void setPersistentClass(Class<? extends T> persistentClass);
+	public void setPersistentClass(Class<? extends T> persistentClass);
 
 }

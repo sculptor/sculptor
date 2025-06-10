@@ -29,5 +29,5 @@ class SculptordslIdeSetup extends SculptordslStandaloneSetup {
 	override createInjector() {
 		Guice.createInjector(Modules2.mixin(new SculptordslRuntimeModule, new SculptordslIdeModule))
 	}
-	
+
 }

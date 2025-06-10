@@ -34,7 +34,8 @@ public class PropertiesBaseTest {
 	@BeforeEach
 	public void prepareSystemProperties() {
 		System.setProperty(ConfigurationProviderModule.PROPERTIES_LOCATION_PROPERTY, "properties/generator.properties");
-		System.setProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY, "properties/common-generator.properties");
+		System.setProperty(ConfigurationProviderModule.COMMON_PROPERTIES_LOCATION_PROPERTY,
+				"properties/common-generator.properties");
 	}
 
 	@AfterEach
@@ -82,6 +83,8 @@ public class PropertiesBaseTest {
 		assertEquals("X-SelfFromCode-X", result.get("selfrewrite"));
 		assertEquals("fromCodeGood${fallbackProp}", result.get("propertyX"));
 		assertEquals("QfromCode", result.get("propertyQ"));
-		assertEquals("This is escaped property ${some.subproperty} and replaced subProp and unknown #prefix.escapeTest#", result.get("escapeTest"));
+		assertEquals(
+				"This is escaped property ${some.subproperty} and replaced subProp and unknown #prefix.escapeTest#",
+				result.get("escapeTest"));
 	}
 }

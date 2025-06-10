@@ -9,11 +9,11 @@ import org.sculptor.dddsample.cargo.domain.Itinerary;
  *
  */
 public class DeleteOrphanItineraryAccessImpl extends DeleteOrphanItineraryAccessImplBase {
-    @SuppressWarnings("unchecked")
-    public void performExecute() {
-    	List<Itinerary> orphans = getEntityManager().createQuery("from Itinerary where cargo = null").getResultList();
-        for (Itinerary orphan : orphans) {
-        	getEntityManager().remove(orphan);
-        }
-    }
+	@SuppressWarnings("unchecked")
+	public void performExecute() {
+		List<Itinerary> orphans = getEntityManager().createQuery("from Itinerary where cargo = null").getResultList();
+		for (Itinerary orphan : orphans) {
+			getEntityManager().remove(orphan);
+		}
+	}
 }

@@ -62,10 +62,10 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	protected static final String OUTPUT_SLOT_PATH_PREFIX = "outputSlot.path.";
 
 	/**
-	 * The current build session instance. This is used for toolchain manager
-	 * API calls.
+	 * The current build session instance. This is used for toolchain manager API
+	 * calls.
 	 */
-	@Parameter(defaultValue="${session}", readonly = true)
+	@Parameter(defaultValue = "${session}", readonly = true)
 	private MavenSession session;
 
 	/**
@@ -82,10 +82,10 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 
 	/**
 	 * A <code>java.util.List</code> of {@link FileSet}s that will be checked on
-	 * up-to-date. If all resources are up-to-date the plugin stops the
-	 * execution, because there are no files to regenerate. <br/>
-	 * The entries of this list can be relative path to the project root or
-	 * absolute path.
+	 * up-to-date. If all resources are up-to-date the plugin stops the execution,
+	 * because there are no files to regenerate. <br/>
+	 * The entries of this list can be relative path to the project root or absolute
+	 * path.
 	 * <p>
 	 * If not specified then a fileset with the default value of
 	 * <code>"src/main/resources/*.btdesign"</code> is used.
@@ -121,8 +121,7 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	/**
 	 * Properties used to define system properties (like
 	 * <code>"sculptor.generatorPropertiesLocation"</code>) or to overrride the
-	 * settings retrieved from
-	 * <code>"default-sculptor-generator.properties"</code>.
+	 * settings retrieved from <code>"default-sculptor-generator.properties"</code>.
 	 * <p>
 	 * <b>Sample:</b>
 	 * 
@@ -161,8 +160,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	}
 
 	/**
-	 * Check if the previously generated files should be deleted before starting
-	 * the code generator.
+	 * Check if the previously generated files should be deleted before starting the
+	 * code generator.
 	 * 
 	 * @return true to delete
 	 */
@@ -241,13 +240,13 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 			FileSet defaultFileSet = new FileSet();
 			defaultFileSet.setDirectory(project.getBasedir() + "/src/main/resources");
 			defaultFileSet.addInclude("*.btdesign");
-			checkFileSets = new FileSet[] { defaultFileSet };
+			checkFileSets = new FileSet[]{defaultFileSet};
 		}
 	}
 
 	/**
-	 * Extends {@link MavenProject}s compile source roots and resource
-	 * directories with the directories holding the generated artifacts.
+	 * Extends {@link MavenProject}s compile source roots and resource directories
+	 * with the directories holding the generated artifacts.
 	 * <p>
 	 * There's no problem to call this method multiple time. The corresponding
 	 * directories are added only once.
@@ -271,8 +270,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	 * <code>TestCompileSourceRoots</code> with the directories holding the
 	 * generated source code artifacts.
 	 * <p>
-	 * There's no problem in adding the same directory multiple times because
-	 * this is handled by {@link MavenProject}.
+	 * There's no problem in adding the same directory multiple times because this
+	 * is handled by {@link MavenProject}.
 	 */
 	private void extendCompileSourceRoots() {
 
@@ -330,10 +329,10 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	}
 
 	/**
-	 * Returns a list with file names from the <code>checkFileSets</code>
-	 * parameter that have been modified since previous generator run. Empty if
-	 * no files changed or <code>null</code> if there is no status file to
-	 * compare against, i.e. always run the generator.
+	 * Returns a list with file names from the <code>checkFileSets</code> parameter
+	 * that have been modified since previous generator run. Empty if no files
+	 * changed or <code>null</code> if there is no status file to compare against,
+	 * i.e. always run the generator.
 	 */
 	protected Set<String> getChangedFiles() {
 
@@ -376,9 +375,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				changedFiles.add(checkFile.getAbsolutePath());
 			}
 			if (isVerbose()) {
-				getLog().info(
-						"File '" + checkFile.getAbsolutePath() + "': " + (isModified ? "outdated" : "up-to-date")
-								+ " (" + " " + df.format(new Date(checkFile.lastModified())) + ")");
+				getLog().info("File '" + checkFile.getAbsolutePath() + "': " + (isModified ? "outdated" : "up-to-date")
+						+ " (" + " " + df.format(new Date(checkFile.lastModified())) + ")");
 			}
 		}
 
@@ -388,12 +386,14 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 			if (fileName.startsWith(project.getBasedir().getAbsolutePath())) {
 				fileName = fileName.substring(project.getBasedir().getAbsolutePath().length() + 1);
 			}
-			final String message = MessageFormat.format("\"{0}\" has been modified since last generator "
-					+ "run at {1}", fileName, df.format(new Date(statusFileLastModified)));
+			final String message = MessageFormat.format(
+					"\"{0}\" has been modified since last generator " + "run at {1}", fileName,
+					df.format(new Date(statusFileLastModified)));
 			getLog().info(message);
 		} else if (changedFiles.size() > 1) {
-			final String message = MessageFormat.format("{0} checked resources have been modified since "
-					+ "last generator run at {1}", changedFiles.size(), df.format(new Date(statusFileLastModified)));
+			final String message = MessageFormat.format(
+					"{0} checked resources have been modified since " + "last generator run at {1}",
+					changedFiles.size(), df.format(new Date(statusFileLastModified)));
 			getLog().info(message);
 		} else {
 			getLog().info("Everything is up-to-date - no generator run is needed");
@@ -402,8 +402,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 	}
 
 	/**
-	 * Executes the commandline running the Eclipse MWE2 launcher and returns
-	 * the commandlines exit value.
+	 * Executes the commandline running the Eclipse MWE2 launcher and returns the
+	 * commandlines exit value.
 	 */
 	protected boolean executeGenerator() throws MojoExecutionException {
 
@@ -439,7 +439,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 		List<File> generatedFiles = doRunGenerator(generatorProperties);
 		if (generatedFiles != null) {
 
-			// If the code generation succeeded then write status file (and refresh Eclipse workspace) else delete generated files 
+			// If the code generation succeeded then write status file (and refresh Eclipse
+			// workspace) else delete generated files
 			if (isVerbose()) {
 				for (File generatedFile : generatedFiles) {
 					getLog().info("Generated: " + getProjectRelativePath(generatedFile));
@@ -524,8 +525,8 @@ public class GeneratorMojo extends AbstractGeneratorMojo {
 				throw new IllegalArgumentException("Unsupported classpathentry: " + classpathEntry);
 			}
 		}
-		ClassLoader classLoader = new ResourceChildFirstURLClassLoader(urls, Thread.currentThread()
-				.getContextClassLoader());
+		ClassLoader classLoader = new ResourceChildFirstURLClassLoader(urls,
+				Thread.currentThread().getContextClassLoader());
 		getLog().debug("Setting new context classloader '" + classLoader + "': " + urls);
 		Thread.currentThread().setContextClassLoader(classLoader);
 	}

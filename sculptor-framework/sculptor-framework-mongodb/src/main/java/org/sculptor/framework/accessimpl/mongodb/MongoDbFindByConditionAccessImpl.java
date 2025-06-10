@@ -43,166 +43,167 @@ import com.mongodb.DBObject;
  */
 public class MongoDbFindByConditionAccessImpl<T> extends MongoDbAccessBase<T> implements FindByConditionAccess<T> {
 
-    private List<ConditionalCriteria> cndCriterias = new ArrayList<ConditionalCriteria>();
-    private Set<String> fetchAssociations = new HashSet<String>();
-    private int firstResult = -1;
-    private int maxResult = 0;
-    private List<T> result;
-    private Long rowCount = null;
+	private List<ConditionalCriteria> cndCriterias = new ArrayList<ConditionalCriteria>();
+	private Set<String> fetchAssociations = new HashSet<String>();
+	private int firstResult = -1;
+	private int maxResult = 0;
+	private List<T> result;
+	private Long rowCount = null;
 	private Property<?>[] fetchEager;
 
-    public MongoDbFindByConditionAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbFindByConditionAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public void setCondition(List<ConditionalCriteria> criteria) {
-        cndCriterias = criteria;
-    }
+	public void setCondition(List<ConditionalCriteria> criteria) {
+		cndCriterias = criteria;
+	}
 
-    public void addCondition(ConditionalCriteria criteria) {
-        cndCriterias.add(criteria);
-    }
+	public void addCondition(ConditionalCriteria criteria) {
+		cndCriterias.add(criteria);
+	}
 
-    public void setFetchAssociations(Set<String> associationPaths) {
-        this.fetchAssociations = associationPaths;
-    }
+	public void setFetchAssociations(Set<String> associationPaths) {
+		this.fetchAssociations = associationPaths;
+	}
 
-    public void addFetchAssociation(String associationPath) {
-        this.fetchAssociations.add(associationPath);
-    }
+	public void addFetchAssociation(String associationPath) {
+		this.fetchAssociations.add(associationPath);
+	}
 
-    protected Set<String> getFetchAssociations() {
-        return fetchAssociations;
-    }
+	protected Set<String> getFetchAssociations() {
+		return fetchAssociations;
+	}
 
-    public void setFetchEager(Property<?>[] fetchEager) {
-        this.fetchEager = fetchEager;
-    }
+	public void setFetchEager(Property<?>[] fetchEager) {
+		this.fetchEager = fetchEager;
+	}
 
-    public Property<?>[] getFetchEager() {
-        return fetchEager;
-    }
+	public Property<?>[] getFetchEager() {
+		return fetchEager;
+	}
 
-    protected int getFirstResult() {
-        return firstResult;
-    }
+	protected int getFirstResult() {
+		return firstResult;
+	}
 
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
+	public void setFirstResult(int firstResult) {
+		this.firstResult = firstResult;
+	}
 
-    protected int getMaxResult() {
-        return maxResult;
-    }
+	protected int getMaxResult() {
+		return maxResult;
+	}
 
-    public void setMaxResult(int maxResult) {
-        this.maxResult = maxResult;
-    }
+	public void setMaxResult(int maxResult) {
+		this.maxResult = maxResult;
+	}
 
-    public List<T> getResult() {
-        return this.result;
-    }
+	public List<T> getResult() {
+		return this.result;
+	}
 
-    @Override
-    public void performExecute() {
-        Bson query = createQuery();
-        FindIterable<DBObject> cur = getDBCollection().find(query);
-        sort(cur);
+	@Override
+	public void performExecute() {
+		Bson query = createQuery();
+		FindIterable<DBObject> cur = getDBCollection().find(query);
+		sort(cur);
 
-        if (firstResult >= 0) {
-            cur.skip(firstResult);
-        }
-        if (maxResult >= 1) {
-            cur.limit(maxResult);
-        }
+		if (firstResult >= 0) {
+			cur.skip(firstResult);
+		}
+		if (maxResult >= 1) {
+			cur.limit(maxResult);
+		}
 
-        List<T> foundResult = new ArrayList<T>();
-        cur.map(row -> getDataMapper().toDomain(row)).into(result);
+		List<T> foundResult = new ArrayList<T>();
+		cur.map(row -> getDataMapper().toDomain(row)).into(result);
 
-        this.result = foundResult;
-    }
+		this.result = foundResult;
+	}
 
-    private Bson createQuery() {
-        List<Bson> andCriteria = new ArrayList<>();
-        for (ConditionalCriteria crit : cndCriterias) {
-            andCriteria.add(makeCriterion(crit, false));
-        }
-        return Filters.and(andCriteria);
-    }
+	private Bson createQuery() {
+		List<Bson> andCriteria = new ArrayList<>();
+		for (ConditionalCriteria crit : cndCriterias) {
+			andCriteria.add(makeCriterion(crit, false));
+		}
+		return Filters.and(andCriteria);
+	}
 
-    protected Bson makeCriterion(ConditionalCriteria crit, boolean not) {
-        Bson bson = makeSimpleCriterion(crit);
-        return not ? Filters.not(bson) : bson;
-    }
+	protected Bson makeCriterion(ConditionalCriteria crit, boolean not) {
+		Bson bson = makeSimpleCriterion(crit);
+		return not ? Filters.not(bson) : bson;
+	}
 
-    private Bson makeSimpleCriterion(ConditionalCriteria crit) {
-        ConditionalCriteria.Operator operator = crit.getOperator();
-        return switch (operator) {
-            case Equal -> Filters.eq(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
-            case Like -> Filters.regex(crit.getPropertyFullName(), String.valueOf(crit.getFirstOperant()));
-            case IgnoreCaseLike -> Filters.regex(crit.getPropertyFullName(), String.valueOf(crit.getFirstOperant()), "i");
-            case In -> {
-                if (crit.getFirstOperant() instanceof Iterable<?> fo) {
-                    yield Filters.in(crit.getPropertyFullName(), fo);
-                } else {
-                    yield Filters.in(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
-                }
-            }
-            case LessThan -> Filters.lt(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
-            case LessThanOrEqual -> Filters.lte(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
-            case GreatThan -> Filters.gt(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
-            case GreatThanOrEqual -> Filters.gte(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
-            case IsNull -> Filters.exists(crit.getPropertyFullName(), false);
-            case IsNotNull -> Filters.exists(crit.getPropertyFullName(), true);
-            case IsEmpty -> Filters.eq(crit.getPropertyFullName(), "");
-            case IsNotEmpty -> Filters.ne(crit.getPropertyFullName(), "");
-            case Between -> {
-                Object val = toData(crit.getFirstOperant());
-                yield Filters.and(Filters.gte(crit.getPropertyFullName(), val)
-                        , Filters.lte(crit.getPropertyFullName(), val));
-            }
-            case And -> {
-                Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
-                Bson right = makeSimpleCriterion((ConditionalCriteria) crit.getSecondOperant());
-                yield Filters.and(left, right);
-            }
-            case Or -> {
-                Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
-                Bson right = makeSimpleCriterion((ConditionalCriteria) crit.getSecondOperant());
-                yield Filters.or(left, right);
-            }
-            case Not -> {
-                Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
-                yield Filters.not(left);
-            }
-            default -> throw new UnsupportedOperationException("Unsupported operator '" + operator.name() + "'");
-        };
-    }
+	private Bson makeSimpleCriterion(ConditionalCriteria crit) {
+		ConditionalCriteria.Operator operator = crit.getOperator();
+		return switch (operator) {
+			case Equal -> Filters.eq(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+			case Like -> Filters.regex(crit.getPropertyFullName(), String.valueOf(crit.getFirstOperant()));
+			case IgnoreCaseLike ->
+				Filters.regex(crit.getPropertyFullName(), String.valueOf(crit.getFirstOperant()), "i");
+			case In -> {
+				if (crit.getFirstOperant() instanceof Iterable<?> fo) {
+					yield Filters.in(crit.getPropertyFullName(), fo);
+				} else {
+					yield Filters.in(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+				}
+			}
+			case LessThan -> Filters.lt(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+			case LessThanOrEqual -> Filters.lte(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+			case GreatThan -> Filters.gt(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+			case GreatThanOrEqual -> Filters.gte(crit.getPropertyFullName(), toData(crit.getFirstOperant()));
+			case IsNull -> Filters.exists(crit.getPropertyFullName(), false);
+			case IsNotNull -> Filters.exists(crit.getPropertyFullName(), true);
+			case IsEmpty -> Filters.eq(crit.getPropertyFullName(), "");
+			case IsNotEmpty -> Filters.ne(crit.getPropertyFullName(), "");
+			case Between -> {
+				Object val = toData(crit.getFirstOperant());
+				yield Filters.and(Filters.gte(crit.getPropertyFullName(), val),
+						Filters.lte(crit.getPropertyFullName(), val));
+			}
+			case And -> {
+				Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
+				Bson right = makeSimpleCriterion((ConditionalCriteria) crit.getSecondOperant());
+				yield Filters.and(left, right);
+			}
+			case Or -> {
+				Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
+				Bson right = makeSimpleCriterion((ConditionalCriteria) crit.getSecondOperant());
+				yield Filters.or(left, right);
+			}
+			case Not -> {
+				Bson left = makeSimpleCriterion((ConditionalCriteria) crit.getFirstOperant());
+				yield Filters.not(left);
+			}
+			default -> throw new UnsupportedOperationException("Unsupported operator '" + operator.name() + "'");
+		};
+	}
 
-    protected void sort(FindIterable<DBObject> cursor) {
-        List<Bson> orders = new ArrayList<>();
-        for (ConditionalCriteria crit : cndCriterias) {
-            if (Operator.OrderAsc.equals(crit.getOperator())) {
-                orders.add(Sorts.ascending(crit.getPropertyFullName()));
-            } else if (Operator.OrderDesc.equals(crit.getOperator())) {
-                orders.add(Sorts.descending(crit.getPropertyFullName()));
-            }
-        }
-        if (!orders.isEmpty()) {
-            cursor.sort(Sorts.orderBy(orders));
-        }
-    }
+	protected void sort(FindIterable<DBObject> cursor) {
+		List<Bson> orders = new ArrayList<>();
+		for (ConditionalCriteria crit : cndCriterias) {
+			if (Operator.OrderAsc.equals(crit.getOperator())) {
+				orders.add(Sorts.ascending(crit.getPropertyFullName()));
+			} else if (Operator.OrderDesc.equals(crit.getOperator())) {
+				orders.add(Sorts.descending(crit.getPropertyFullName()));
+			}
+		}
+		if (!orders.isEmpty()) {
+			cursor.sort(Sorts.orderBy(orders));
+		}
+	}
 
-    public Long getResultCount() {
-        return rowCount;
-    }
+	public Long getResultCount() {
+		return rowCount;
+	}
 
-    public void executeCount() {
-        Bson query = createQuery();
-        long count = getDBCollection().countDocuments(query);
-        if (count > Integer.MAX_VALUE) {
-            throw new IllegalStateException("Too many in count: " + count);
-        }
-        rowCount = count;
-    }
+	public void executeCount() {
+		Bson query = createQuery();
+		long count = getDBCollection().countDocuments(query);
+		if (count > Integer.MAX_VALUE) {
+			throw new IllegalStateException("Too many in count: " + count);
+		}
+		rowCount = count;
+	}
 }

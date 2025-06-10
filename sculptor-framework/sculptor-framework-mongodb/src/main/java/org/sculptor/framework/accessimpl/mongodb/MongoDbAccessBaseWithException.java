@@ -38,131 +38,131 @@ import com.mongodb.DBObject;
  */
 public abstract class MongoDbAccessBaseWithException<T> {
 
-    private DbManager dbManager;
-    private DataMapper<T, DBObject> dataMapper;
-    private DataMapper<Object, DBObject>[] additionalDataMappers;
-    private Class<? extends T> persistentClass;
-    private String cacheRegion;
+	private DbManager dbManager;
+	private DataMapper<T, DBObject> dataMapper;
+	private DataMapper<Object, DBObject>[] additionalDataMappers;
+	private Class<? extends T> persistentClass;
+	private String cacheRegion;
 
-    public void execute() throws ApplicationException {
-        if (dbManager == null) {
-            throw new IllegalStateException("dbManager not defined");
-        }
-        if (dataMapper == null) {
-            throw new IllegalStateException("dataMapper not defined");
-        }
-        // subclass implementation in separate method to make it possible
-        // to add stuff around the call here
-        performExecute();
-    }
+	public void execute() throws ApplicationException {
+		if (dbManager == null) {
+			throw new IllegalStateException("dbManager not defined");
+		}
+		if (dataMapper == null) {
+			throw new IllegalStateException("dataMapper not defined");
+		}
+		// subclass implementation in separate method to make it possible
+		// to add stuff around the call here
+		performExecute();
+	}
 
-    public abstract void performExecute() throws ApplicationException;
+	public abstract void performExecute() throws ApplicationException;
 
-    protected Class<? extends T> getPersistentClass() {
-        return persistentClass;
-    }
+	protected Class<? extends T> getPersistentClass() {
+		return persistentClass;
+	}
 
-    protected void setPersistentClass(Class<? extends T> persistentClass) {
-        this.persistentClass = persistentClass;
-    }
+	protected void setPersistentClass(Class<? extends T> persistentClass) {
+		this.persistentClass = persistentClass;
+	}
 
-    /**
-     * DataMapper for persistentClass
-     */
-    public DataMapper<T, DBObject> getDataMapper() {
-        return dataMapper;
-    }
+	/**
+	 * DataMapper for persistentClass
+	 */
+	public DataMapper<T, DBObject> getDataMapper() {
+		return dataMapper;
+	}
 
-    /**
-     * Matching DataMapper, if any, otherwise null
-     */
-    @SuppressWarnings("unchecked")
-    public DataMapper<Object, DBObject> getDataMapper(Class<?> domainObjectClass) {
-        if (additionalDataMappers != null) {
-            for (DataMapper<Object, DBObject> each : additionalDataMappers) {
-                if (each.canMapToData(domainObjectClass)) {
-                    return each;
-                }
-            }
-        }
-        if (dataMapper.canMapToData(domainObjectClass)) {
-            return (DataMapper<Object, DBObject>) dataMapper;
-        }
-        // no matching
-        return null;
-    }
+	/**
+	 * Matching DataMapper, if any, otherwise null
+	 */
+	@SuppressWarnings("unchecked")
+	public DataMapper<Object, DBObject> getDataMapper(Class<?> domainObjectClass) {
+		if (additionalDataMappers != null) {
+			for (DataMapper<Object, DBObject> each : additionalDataMappers) {
+				if (each.canMapToData(domainObjectClass)) {
+					return each;
+				}
+			}
+		}
+		if (dataMapper.canMapToData(domainObjectClass)) {
+			return (DataMapper<Object, DBObject>) dataMapper;
+		}
+		// no matching
+		return null;
+	}
 
-    @SuppressWarnings("unchecked")
-    public void setDataMapper(DataMapper<? extends T, DBObject> dataMapper) {
-        this.dataMapper = (DataMapper<T, DBObject>) dataMapper;
-    }
+	@SuppressWarnings("unchecked")
+	public void setDataMapper(DataMapper<? extends T, DBObject> dataMapper) {
+		this.dataMapper = (DataMapper<T, DBObject>) dataMapper;
+	}
 
-    public void setAdditionalDataMappers(DataMapper<Object, DBObject>... dataMappers) {
-        this.additionalDataMappers = dataMappers;
-    }
+	public void setAdditionalDataMappers(DataMapper<Object, DBObject>... dataMappers) {
+		this.additionalDataMappers = dataMappers;
+	}
 
-    protected DbManager getDbManager() {
-        return dbManager;
-    }
+	protected DbManager getDbManager() {
+		return dbManager;
+	}
 
-    public void setDbManager(DbManager dbManager) {
-        this.dbManager = dbManager;
-    }
+	public void setDbManager(DbManager dbManager) {
+		this.dbManager = dbManager;
+	}
 
-    protected MongoCollection<DBObject> getDBCollection() {
-        return dbManager.getDBCollection(getDataMapper().getDBCollectionName());
-    }
+	protected MongoCollection<DBObject> getDBCollection() {
+		return dbManager.getDBCollection(getDataMapper().getDBCollectionName());
+	}
 
-    public boolean isCache() {
-        return (getCacheRegion() != null);
-    }
+	public boolean isCache() {
+		return (getCacheRegion() != null);
+	}
 
-    public void setCache(boolean cache) {
-        if (cache) {
-            String name;
-            if (getPersistentClass() == null) {
-                name = getClass().getName();
-            } else {
-                name = getPersistentClass().getName();
-            }
+	public void setCache(boolean cache) {
+		if (cache) {
+			String name;
+			if (getPersistentClass() == null) {
+				name = getClass().getName();
+			} else {
+				name = getPersistentClass().getName();
+			}
 
-            setCacheRegion(getQueryCacheRegionPrefix() + name);
-        } else {
-            // no cache
-            setCacheRegion(null);
-        }
-    }
+			setCacheRegion(getQueryCacheRegionPrefix() + name);
+		} else {
+			// no cache
+			setCacheRegion(null);
+		}
+	}
 
-    public String getCacheRegion() {
-        return cacheRegion;
-    }
+	public String getCacheRegion() {
+		return cacheRegion;
+	}
 
-    public void setCacheRegion(String cacheRegion) {
-        this.cacheRegion = cacheRegion;
-    }
+	public void setCacheRegion(String cacheRegion) {
+		this.cacheRegion = cacheRegion;
+	}
 
-    protected String getQueryCacheRegionPrefix() {
-        return "query.";
-    }
+	protected String getQueryCacheRegionPrefix() {
+		return "query.";
+	}
 
-    protected Object toData(Object value) {
-        if (value == null) {
-            return value;
-        }
+	protected Object toData(Object value) {
+		if (value == null) {
+			return value;
+		}
 
-        if (value instanceof Collection<?>) {
-            List<Object> result = new ArrayList<Object>();
-            for (Object each : (Collection<?>) value) {
-                result.add(toData(each));
-            }
-            return result;
-        }
+		if (value instanceof Collection<?>) {
+			List<Object> result = new ArrayList<Object>();
+			for (Object each : (Collection<?>) value) {
+				result.add(toData(each));
+			}
+			return result;
+		}
 
-        DataMapper<Object, DBObject> dataMapper = getDataMapper(value.getClass());
-        if (dataMapper != null) {
-            return dataMapper.toData(value);
-        }
+		DataMapper<Object, DBObject> dataMapper = getDataMapper(value.getClass());
+		if (dataMapper != null) {
+			return dataMapper.toData(value);
+		}
 
-        return value;
-    }
+		return value;
+	}
 }

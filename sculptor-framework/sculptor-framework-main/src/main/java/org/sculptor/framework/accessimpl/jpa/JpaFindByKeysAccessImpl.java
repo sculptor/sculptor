@@ -19,7 +19,6 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.accessapi.FindByKeysAccess;
 
-
 /**
  * <p>
  * Find all entities with matching keys. Implementation of Access command
@@ -29,19 +28,17 @@ import org.sculptor.framework.accessapi.FindByKeysAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByKeysAccessImpl<T>
-    extends JpaFindByKeysAccessImplGeneric<T,T>
-    implements FindByKeysAccess<T> {
+public class JpaFindByKeysAccessImpl<T> extends JpaFindByKeysAccessImplGeneric<T, T> implements FindByKeysAccess<T> {
 
-    public JpaFindByKeysAccessImpl() {
-        super();
-    }
+	public JpaFindByKeysAccessImpl() {
+		super();
+	}
 
-    public JpaFindByKeysAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByKeysAccessImpl(Class<T> type) {
+		super(type);
+	}
 
-    public void setPersistentClass(Class<? extends T> persistentClass) {
-    	super.setPersistentClass(persistentClass);
-    }
+	public void setPersistentClass(Class<? extends T> persistentClass) {
+		super.setPersistentClass(persistentClass);
+	}
 }

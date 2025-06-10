@@ -28,16 +28,16 @@ package org.sculptor.framework.accessapi;
  */
 public interface GenericAccessFactory<T> {
 
-    FindByIdAccess<T, Long> createFindByIdAccess();
+	FindByIdAccess<T, Long> createFindByIdAccess();
 
-    SaveAccess<T> createSaveAccess();
+	SaveAccess<T> createSaveAccess();
 
-    FindByQueryAccess<T> createFindByQueryAccess();
+	FindByQueryAccess<T> createFindByQueryAccess();
 
-    FindByExampleAccess<T> createFindByExampleAccess();
+	FindByExampleAccess<T> createFindByExampleAccess();
 
-    DeleteAccess<T> createDeleteAccess();
-    
-    PopulateAssociationsAccess<T> createPopulateAssociationsAccess();
+	DeleteAccess<T> createDeleteAccess();
+
+	PopulateAssociationsAccess<T> createPopulateAssociationsAccess();
 
 }

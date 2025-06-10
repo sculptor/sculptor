@@ -26,51 +26,51 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class BookingServiceMockTest {
 
-    private final ServiceContext serviceContext = JUnitServiceContextFactory.createServiceContext();
+	private final ServiceContext serviceContext = JUnitServiceContextFactory.createServiceContext();
 
-    private BookingServiceImpl cargoService;
-    private CargoRepository cargoRepository;
-    private LocationRepository locationRepository;
+	private BookingServiceImpl cargoService;
+	private CargoRepository cargoRepository;
+	private LocationRepository locationRepository;
 
-    @BeforeEach
-    protected void setUp() throws Exception {
-        cargoService = new BookingServiceImpl();
-        cargoRepository = createMock(CargoRepository.class);
-        locationRepository = createMock(LocationRepository.class);
-        ReflectionTestUtils.setField(cargoService, "cargoRepository", cargoRepository);
-        LocationServiceImpl locationService = new LocationServiceImpl();
-        ReflectionTestUtils.setField(locationService, "locationRepository", locationRepository);
-        ReflectionTestUtils.setField(cargoService, "locationService", locationService);
-    }
+	@BeforeEach
+	protected void setUp() throws Exception {
+		cargoService = new BookingServiceImpl();
+		cargoRepository = createMock(CargoRepository.class);
+		locationRepository = createMock(LocationRepository.class);
+		ReflectionTestUtils.setField(cargoService, "cargoRepository", cargoRepository);
+		LocationServiceImpl locationService = new LocationServiceImpl();
+		ReflectionTestUtils.setField(locationService, "locationRepository", locationRepository);
+		ReflectionTestUtils.setField(cargoService, "locationService", locationService);
+	}
 
-    @Test
-    public void testRegisterNew() throws Exception {
-        TrackingId expectedTrackingId = trackingId("TRK1");
-        UnLocode fromUnlocode = new UnLocode("USCHI");
-        UnLocode toUnlocode = new UnLocode("SESTO");
+	@Test
+	public void testRegisterNew() throws Exception {
+		TrackingId expectedTrackingId = trackingId("TRK1");
+		UnLocode fromUnlocode = new UnLocode("USCHI");
+		UnLocode toUnlocode = new UnLocode("SESTO");
 
-        expect(cargoRepository.nextTrackingId()).andReturn(expectedTrackingId);
-        expect(locationRepository.find(fromUnlocode)).andReturn(CHICAGO);
-        expect(locationRepository.find(toUnlocode)).andReturn(STOCKHOLM);
-        expect(cargoRepository.save(isA(Cargo.class))).andReturn(null);
+		expect(cargoRepository.nextTrackingId()).andReturn(expectedTrackingId);
+		expect(locationRepository.find(fromUnlocode)).andReturn(CHICAGO);
+		expect(locationRepository.find(toUnlocode)).andReturn(STOCKHOLM);
+		expect(cargoRepository.save(isA(Cargo.class))).andReturn(null);
 
-        replay(cargoRepository, locationRepository);
+		replay(cargoRepository, locationRepository);
 
-        TrackingId trackingId = cargoService.bookNewCargo(serviceContext, fromUnlocode, toUnlocode);
-        assertEquals(expectedTrackingId, trackingId);
-    }
+		TrackingId trackingId = cargoService.bookNewCargo(serviceContext, fromUnlocode, toUnlocode);
+		assertEquals(expectedTrackingId, trackingId);
+	}
 
-    @Test
-    public void testRegisterNewNullArguments() throws Exception {
-        replay(cargoRepository, locationRepository);
-        assertThrows(NullPointerException.class, () -> {
-            cargoService.bookNewCargo(serviceContext, null, null);
-            fail("Null arguments should not be allowed");
-        });
-    }
+	@Test
+	public void testRegisterNewNullArguments() throws Exception {
+		replay(cargoRepository, locationRepository);
+		assertThrows(NullPointerException.class, () -> {
+			cargoService.bookNewCargo(serviceContext, null, null);
+			fail("Null arguments should not be allowed");
+		});
+	}
 
-    @AfterEach
-    protected void tearDown() throws Exception {
-        verify(cargoRepository, locationRepository);
-    }
+	@AfterEach
+	protected void tearDown() throws Exception {
+		verify(cargoRepository, locationRepository);
+	}
 }

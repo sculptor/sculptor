@@ -212,30 +212,25 @@ public class PropertiesBase {
 		defaultConfiguration.setString("javaType.Timestamp", "org.joda.time.DateTime");
 		defaultConfiguration.setString("javaType.AuditableDateTime", "org.joda.time.DateTime");
 
-		defaultConfiguration.setString("hibernateType.Date", "org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
-		defaultConfiguration.setString("hibernateType.DateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
-		defaultConfiguration.setString("hibernateType.Timestamp", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
-		defaultConfiguration.setString("hibernateType.AuditableDateTime", "org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+		defaultConfiguration.setString("hibernateType.Date",
+				"org.jadira.usertype.dateandtime.joda.PersistentLocalDate");
+		defaultConfiguration.setString("hibernateType.DateTime",
+				"org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+		defaultConfiguration.setString("hibernateType.Timestamp",
+				"org.jadira.usertype.dateandtime.joda.PersistentDateTime");
+		defaultConfiguration.setString("hibernateType.AuditableDateTime",
+				"org.jadira.usertype.dateandtime.joda.PersistentDateTime");
 
-		defaultConfiguration
-				.setString(
-						"propertyEditor.Date",
-						"org.sculptor.framework.propertyeditor.LocalDateEditor(getMessagesAccessor().getMessage(\"format.DatePattern\", \"yyyy-MM-dd\"), true)");
-		defaultConfiguration
-				.setString(
-						"propertyEditor.DateTime",
-						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
-		defaultConfiguration
-				.setString(
-						"propertyEditor.Timestamp",
-						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
-		defaultConfiguration
-				.setString(
-						"propertyEditor.AuditableDateTime",
-						"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
+		defaultConfiguration.setString("propertyEditor.Date",
+				"org.sculptor.framework.propertyeditor.LocalDateEditor(getMessagesAccessor().getMessage(\"format.DatePattern\", \"yyyy-MM-dd\"), true)");
+		defaultConfiguration.setString("propertyEditor.DateTime",
+				"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
+		defaultConfiguration.setString("propertyEditor.Timestamp",
+				"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
+		defaultConfiguration.setString("propertyEditor.AuditableDateTime",
+				"org.sculptor.framework.propertyeditor.DateTimeEditor(getMessagesAccessor().getMessage(\"format.DateTimePattern\", \"yyyy-MM-dd HH:mm\"), true)");
 
-		defaultConfiguration.setString("framework.xml.DateHandler",
-				"org.sculptor.framework.xml.JodaLocalDateHandler");
+		defaultConfiguration.setString("framework.xml.DateHandler", "org.sculptor.framework.xml.JodaLocalDateHandler");
 		defaultConfiguration.setString("framework.xml.TimeStampHandler",
 				"org.sculptor.framework.xml.JodaDateTimeHandler");
 
@@ -308,7 +303,7 @@ public class PropertiesBase {
 	 *
 	 * @param prefix
 	 * @param removePrefix
-	 *			  remove prefix in the resulting properties or not
+	 *            remove prefix in the resulting properties or not
 	 * @return properties starting with prefix
 	 */
 	Properties getProperties(String prefix, boolean removePrefix) {
@@ -322,13 +317,14 @@ public class PropertiesBase {
 	}
 
 	/**
-	 * Gets all properties with a key starting with prefix merged with system properties. Values in properties
-	 * has higher priority than in props. They can be replaced in generator.properties
+	 * Gets all properties with a key starting with prefix merged with system
+	 * properties. Values in properties has higher priority than in props. They can
+	 * be replaced in generator.properties
 	 *
 	 * @param prefix
-	 *			prefix used for properties lookup
+	 *            prefix used for properties lookup
 	 * @param props
-	 *			Properties from template
+	 *            Properties from template
 	 * @return properties starting with prefix
 	 */
 	public Map<String, String> getPropertiesAsMap(String prefix, Properties props) {
@@ -339,7 +335,7 @@ public class PropertiesBase {
 				String pureKey = key.substring(prefix.length());
 				removed.add(pureKey);
 				String value = getPropertyWithSubstitute(key, prefix, props);
-				if (value!=null && !"*NONE*".equals(value)) {
+				if (value != null && !"*NONE*".equals(value)) {
 					result.put(pureKey, value);
 				}
 			}
@@ -372,9 +368,9 @@ public class PropertiesBase {
 				value = null;
 			}
 		}
-		boolean wasMatch=value != null && value.indexOf('$') != -1;
-		while(wasMatch) {
-			wasMatch=false;
+		boolean wasMatch = value != null && value.indexOf('$') != -1;
+		while (wasMatch) {
+			wasMatch = false;
 			Matcher matcher = replacement.matcher(value);
 			StringBuffer result = new StringBuffer();
 			while (matcher.find()) {
@@ -385,16 +381,14 @@ public class PropertiesBase {
 					continue;
 				}
 
-				wasMatch=true;
+				wasMatch = true;
 				int colonIndex = match.indexOf(':');
 				String subName = match.substring(2, colonIndex != -1 ? colonIndex : match.length() - 1);
 				String property = getPropertyWithSubstitute(subName, null, properties);
 				if (property == null || property.trim().length() == 0) {
 					property = colonIndex != -1
 							? match.substring(colonIndex + 1, match.length() - 1)
-							: prefix != null
-							? "#" + name + "#"
-							: "*NONE*";
+							: prefix != null ? "#" + name + "#" : "*NONE*";
 				}
 				matcher.appendReplacement(result, property);
 			}
@@ -405,11 +399,11 @@ public class PropertiesBase {
 	}
 
 	/**
-	 * Get property value where placeholders ${variable} in property value are replaced by other property values.
-	 * Kind of expression language
+	 * Get property value where placeholders ${variable} in property value are
+	 * replaced by other property values. Kind of expression language
 	 *
 	 * @param name
-	 *			property name
+	 *            property name
 	 * @return String containing property value
 	 */
 	public String getPropertyWithSubstitute(String name) {
@@ -420,7 +414,7 @@ public class PropertiesBase {
 	 * Transforms the given properties to a map with key/value pairs.
 	 *
 	 * @param properties
-	 *			  to transform
+	 *            to transform
 	 * @return map containing transformed properties
 	 */
 	public Map<String, String> getPropertiesAsMap(Properties properties) {
@@ -660,7 +654,7 @@ public class PropertiesBase {
 	 * Gets a single validation annotation from properties.
 	 *
 	 * @param annotation
-	 *			  shortcut for annotation
+	 *            shortcut for annotation
 	 * @return fully qualified Annotation Class (without leading @)
 	 */
 	public String mapValidationAnnotation(String annotation) {
@@ -671,9 +665,9 @@ public class PropertiesBase {
 	 * Gets a single validation annotation from properties.
 	 *
 	 * @param annotation
-	 *			  shortcut for annotation
+	 *            shortcut for annotation
 	 * @param defaultAnnotation
-	 *			  default annotation in case annotation could not be found
+	 *            default annotation in case annotation could not be found
 	 * @return fully qualified Annotation Class (without leading @)
 	 */
 	public String mapValidationAnnotation(String annotation, String defaultAnnotation) {
@@ -706,7 +700,8 @@ public class PropertiesBase {
 	}
 
 	/**
-	 * Returns a sorted list of all key-value pairs defined in given configuration instance.
+	 * Returns a sorted list of all key-value pairs defined in given configuration
+	 * instance.
 	 */
 	private List<String> getAllPConfigurationKeyValues(ConfigurationProvider configuration) {
 		List<String> keyValues = new ArrayList<String>();
@@ -718,7 +713,8 @@ public class PropertiesBase {
 	}
 
 	/**
-	 * Returns first index (3) from range specified as 3..5 or 3,5 or 3-5 or 3;5 or just 3
+	 * Returns first index (3) from range specified as 3..5 or 3,5 or 3-5 or 3;5 or
+	 * just 3
 	 */
 	public int getFrom(String range) {
 		String from;
@@ -726,14 +722,15 @@ public class PropertiesBase {
 		if (dotsIndex != -1) {
 			from = range.substring(0, dotsIndex);
 		} else {
-			String[] split=range.split("[,;-]");
+			String[] split = range.split("[,;-]");
 			from = split[0];
 		}
 		return Integer.parseInt(from);
 	}
 
 	/**
-	 * Returns second index (5) from range specified as 3..5 or 3,5 or 3-5 or 3;5 or just 3
+	 * Returns second index (5) from range specified as 3..5 or 3,5 or 3-5 or 3;5 or
+	 * just 3
 	 */
 	public int getTo(String range) {
 		String from;
@@ -741,7 +738,7 @@ public class PropertiesBase {
 		if (dotsIndex != -1) {
 			from = range.substring(dotsIndex + 2);
 		} else {
-			String[] split=range.split("[,;-]");
+			String[] split = range.split("[,;-]");
 			from = split.length == 1 ? split[0] : split[1];
 		}
 		return Integer.parseInt(from);

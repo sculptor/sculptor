@@ -29,42 +29,42 @@ package org.sculptor.framework.context;
  */
 public class ServiceContextStore {
 
-    // thread-local storage
-    private static ThreadLocal<ServiceContext> threadLocal = new ThreadLocal<ServiceContext>();
+	// thread-local storage
+	private static ThreadLocal<ServiceContext> threadLocal = new ThreadLocal<ServiceContext>();
 
-    /**
-     * Sets the service-context in the thread-local storage.
-     */
-    public static void set(ServiceContext ctx) {
-        threadLocal.set(ctx);
-    }
+	/**
+	 * Sets the service-context in the thread-local storage.
+	 */
+	public static void set(ServiceContext ctx) {
+		threadLocal.set(ctx);
+	}
 
-    /**
-     * Gets the service-context in the thread-local storage.
-     *
-     * @return ServiceContext of this thread
-     */
-    public static ServiceContext get() {
-        return threadLocal.get();
-    }
+	/**
+	 * Gets the service-context in the thread-local storage.
+	 *
+	 * @return ServiceContext of this thread
+	 */
+	public static ServiceContext get() {
+		return threadLocal.get();
+	}
 
-    /**
-     * Current user from ServiceContext. If ServiceContext is not set then
-     * {@link ServiceContextFactory.SYSTEM_USER} is returned.
-     */
-    public static String getCurrentUser() {
-        ServiceContext ctx = ServiceContextStore.get();
-        String currentUser;
-        if (ctx == null) {
-            currentUser = ServiceContextFactory.SYSTEM_USER;
-        } else {
-            currentUser = ctx.getUserId();
-        }
+	/**
+	 * Current user from ServiceContext. If ServiceContext is not set then
+	 * {@link ServiceContextFactory.SYSTEM_USER} is returned.
+	 */
+	public static String getCurrentUser() {
+		ServiceContext ctx = ServiceContextStore.get();
+		String currentUser;
+		if (ctx == null) {
+			currentUser = ServiceContextFactory.SYSTEM_USER;
+		} else {
+			currentUser = ctx.getUserId();
+		}
 
-        if (currentUser == null) {
-            currentUser = ServiceContextFactory.UNKNOWN_USER;
-        }
-        return currentUser;
-    }
+		if (currentUser == null) {
+			currentUser = ServiceContextFactory.UNKNOWN_USER;
+		}
+		return currentUser;
+	}
 
 }

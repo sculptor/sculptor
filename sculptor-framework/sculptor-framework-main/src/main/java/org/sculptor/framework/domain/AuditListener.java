@@ -25,11 +25,10 @@ import jakarta.persistence.PreUpdate;
 
 import org.sculptor.framework.context.ServiceContextStore;
 
-
 /**
  * This Listener will be invoked when objects are saved and it will
- * automatically update properties 'lastUpdated', 'lastUpdatedBy', 'created'
- * and 'createdBy' for objects implementing
+ * automatically update properties 'lastUpdated', 'lastUpdatedBy', 'created' and
+ * 'createdBy' for objects implementing
  * {@link org.sculptor.framework.domain.Auditable}.
  * <p>
  * It will grab the user from
@@ -37,26 +36,26 @@ import org.sculptor.framework.context.ServiceContextStore;
  * {@link org.sculptor.framework.context.ServiceContextStore}.
  *
  */
-public class AuditListener  {
+public class AuditListener {
 
 	/**
 	 * set audit informations, doesn't modify createdDate and createdBy once set.
-	 * Only works with DomainObjects that implement the Auditable interface. In other cases
-	 * a IllegalArgumentException is thrown.
+	 * Only works with DomainObjects that implement the Auditable interface. In
+	 * other cases a IllegalArgumentException is thrown.
 	 *
 	 * @param entity
 	 * @return
 	 */
-    @PreUpdate
-    @PrePersist
-    private void changeAuditInformation(Auditable auditableEntity) {
-        LocalDateTime lastUpdated = LocalDateTime.now();
-        auditableEntity.setLastUpdated(lastUpdated);
-        String lastUpdatedBy = ServiceContextStore.getCurrentUser();
-        auditableEntity.setLastUpdatedBy(lastUpdatedBy);
-        if (auditableEntity.getCreatedDate() == null)
-            auditableEntity.setCreatedDate(lastUpdated);
-        if (auditableEntity.getCreatedBy() == null)
-            auditableEntity.setCreatedBy(lastUpdatedBy);
-    }
+	@PreUpdate
+	@PrePersist
+	private void changeAuditInformation(Auditable auditableEntity) {
+		LocalDateTime lastUpdated = LocalDateTime.now();
+		auditableEntity.setLastUpdated(lastUpdated);
+		String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+		auditableEntity.setLastUpdatedBy(lastUpdatedBy);
+		if (auditableEntity.getCreatedDate() == null)
+			auditableEntity.setCreatedDate(lastUpdated);
+		if (auditableEntity.getCreatedBy() == null)
+			auditableEntity.setCreatedBy(lastUpdatedBy);
+	}
 }

@@ -9,7 +9,6 @@
 	<artifactId>sculptor-maven</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Maven</name>
-
 	<modules>
 		<module>sculptor-maven-plugin</module>
 		<!--
@@ -20,7 +19,6 @@
 		<module>sculptor-maven-archetype-springboot</module>
 		-->
 	</modules>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -32,5 +30,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

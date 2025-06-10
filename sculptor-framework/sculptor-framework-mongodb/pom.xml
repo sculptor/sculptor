@@ -8,7 +8,6 @@
 	</parent>
 	<artifactId>sculptor-framework-mongodb</artifactId>
 	<name>Sculptor :: Runtime Framework :: MongoDB</name>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -34,12 +33,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
-<dependency>
-    <groupId>jakarta.servlet</groupId>
-    <artifactId>jakarta.servlet-api</artifactId>
-    <!--<version>6.1.0</version>-->
-    <scope>provided</scope>
-</dependency>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<!--<version>6.1.0</version>-->
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>

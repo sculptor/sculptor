@@ -2,6 +2,6 @@ package org.sculptor.dddsample.common;
 
 public interface Specification<T> {
 
-  boolean isSatisfiedBy(T t);
-    
+	boolean isSatisfiedBy(T t);
+
 }

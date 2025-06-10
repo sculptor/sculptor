@@ -34,8 +34,10 @@ import org.junit.jupiter.api.Disabled
 @InjectWith(typeof(SculptordslInjectorProvider))
 class SculptordslValidatorTest extends XtextTest {
 
-	@Inject Injector injector
-	@Inject SculptordslValidator validator  
+	@Inject
+	Injector injector
+	@Inject
+	SculptordslValidator validator
 	ValidatorTester<SculptordslValidator> tester;
 
 	@BeforeEach

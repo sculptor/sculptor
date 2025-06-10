@@ -9,7 +9,6 @@
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-templates</artifactId>
 	<name>Sculptor :: Generator :: Templates</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -58,7 +57,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
@@ -72,5 +70,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

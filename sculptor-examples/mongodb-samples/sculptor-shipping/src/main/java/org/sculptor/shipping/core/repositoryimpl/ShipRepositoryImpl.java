@@ -14,48 +14,45 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("shipRepository")
 public class ShipRepositoryImpl extends ShipRepositoryBase {
-    public ShipRepositoryImpl() {
-    }
+	public ShipRepositoryImpl() {
+	}
 
-    @Override
-    public Ship save(Ship entity) {
-        Ship saved = super.save(entity);
+	@Override
+	public Ship save(Ship entity) {
+		Ship saved = super.save(entity);
 
-        List<ShipEvent> changes = entity.getUncommittedChanges();
-        changes = applyVersionToChanges(changes, saved.getVersion());
-        for (ShipEvent each : changes) {
-            getShipEventRepository().save(each);
-        }
-        entity.markChangesAsCommitted();
+		List<ShipEvent> changes = entity.getUncommittedChanges();
+		changes = applyVersionToChanges(changes, saved.getVersion());
+		for (ShipEvent each : changes) {
+			getShipEventRepository().save(each);
+		}
+		entity.markChangesAsCommitted();
 
-        return saved;
-    }
+		return saved;
+	}
 
-    private List<ShipEvent> applyVersionToChanges(List<ShipEvent> changes,
-            long version) {
-        List<ShipEvent> result = new ArrayList<ShipEvent>();
-        long sequence = version * 1000;
-        for (ShipEvent each : changes) {
-            result.add(each.withAggregateVersion(version).withChangeSequence(
-                    sequence));
-            sequence++;
-        }
-        return result;
-    }
+	private List<ShipEvent> applyVersionToChanges(List<ShipEvent> changes, long version) {
+		List<ShipEvent> result = new ArrayList<ShipEvent>();
+		long sequence = version * 1000;
+		for (ShipEvent each : changes) {
+			result.add(each.withAggregateVersion(version).withChangeSequence(sequence));
+			sequence++;
+		}
+		return result;
+	}
 
-    @Override
-    public Ship findByKey(ShipId shipId) throws ShipNotFoundException {
-        Ship result = super.findByKey(shipId);
+	@Override
+	public Ship findByKey(ShipId shipId) throws ShipNotFoundException {
+		Ship result = super.findByKey(shipId);
 
-        loadFromHistory(result);
+		loadFromHistory(result);
 
-        return result;
-    }
+		return result;
+	}
 
-    private void loadFromHistory(Ship entity) {
-        List<ShipEvent> history = getShipEventRepository().findAllForShip(
-                entity.getShipId());
-        entity.loadFromHistory(history);
-    }
+	private void loadFromHistory(Ship entity) {
+		List<ShipEvent> history = getShipEventRepository().findAllForShip(entity.getShipId());
+		entity.loadFromHistory(history);
+	}
 
 }

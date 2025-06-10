@@ -19,20 +19,19 @@ package org.sculptor.framework.errorhandling;
 
 public class OptimisticLockingException extends SystemException {
 
-    private static final long serialVersionUID = 1075483310106490686L;
+	private static final long serialVersionUID = 1075483310106490686L;
 
-    /**
-     * The errorCode is the same as the fully qualified classname of this
-     * exception.
-     */
-    public static final String ERROR_CODE = OptimisticLockingException.class.getName();
+	/**
+	 * The errorCode is the same as the fully qualified classname of this exception.
+	 */
+	public static final String ERROR_CODE = OptimisticLockingException.class.getName();
 
-    public OptimisticLockingException(String message, Throwable cause) {
-        super(ERROR_CODE, message, cause);
-    }
+	public OptimisticLockingException(String message, Throwable cause) {
+		super(ERROR_CODE, message, cause);
+	}
 
-    public OptimisticLockingException(String message) {
-        super(ERROR_CODE, message);
-    }
+	public OptimisticLockingException(String message) {
+		super(ERROR_CODE, message);
+	}
 
 }

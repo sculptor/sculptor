@@ -33,64 +33,64 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SpringIntegrationEventBusImpl implements EventBus, ApplicationContextAware {
-    private ApplicationContext ctx;
-    private final Map<EventListener, MessageHandler> listeners = new HashMap<EventListener, MessageHandler>();
+	private ApplicationContext ctx;
+	private final Map<EventListener, MessageHandler> listeners = new HashMap<EventListener, MessageHandler>();
 
-    @Override
-    public boolean publish(String topic, Event event) {
-        PublishSubscribeChannel intChannel = getChannel(topic);
-        GenericMessage<Object> intMessage = new GenericMessage<Object>(event);
-        intChannel.send(intMessage);
-        return true;
-    }
+	@Override
+	public boolean publish(String topic, Event event) {
+		PublishSubscribeChannel intChannel = getChannel(topic);
+		GenericMessage<Object> intMessage = new GenericMessage<Object>(event);
+		intChannel.send(intMessage);
+		return true;
+	}
 
-    @Override
-    public boolean subscribe(String topic, final EventSubscriber subscriber) {
-        PublishSubscribeChannel intChannel = getChannel(topic);
-        MessageHandler messageHandler = new MessageHandler() {
+	@Override
+	public boolean subscribe(String topic, final EventSubscriber subscriber) {
+		PublishSubscribeChannel intChannel = getChannel(topic);
+		MessageHandler messageHandler = new MessageHandler() {
 
-            @Override
-            public void handleMessage(Message<?> message) throws MessageRejectedException, MessageHandlingException,
-                    MessageDeliveryException {
-                subscriber.receive((Event) message.getPayload());
+			@Override
+			public void handleMessage(Message<?> message)
+					throws MessageRejectedException, MessageHandlingException, MessageDeliveryException {
+				subscriber.receive((Event) message.getPayload());
 
-            }
-        };
-        EventListener eventListener = new EventListener(topic, subscriber);
-        boolean success = intChannel.subscribe(messageHandler);
-        if (success) {
-            synchronized (listeners) {
-                listeners.put(eventListener, messageHandler);
-            }
-        }
-        return success;
-    }
+			}
+		};
+		EventListener eventListener = new EventListener(topic, subscriber);
+		boolean success = intChannel.subscribe(messageHandler);
+		if (success) {
+			synchronized (listeners) {
+				listeners.put(eventListener, messageHandler);
+			}
+		}
+		return success;
+	}
 
-    @Override
-    public boolean unsubscribe(String topic, EventSubscriber subscriber) {
-        PublishSubscribeChannel intChannel = getChannel(topic);
-        EventListener eventListener = new EventListener(topic, subscriber);
-        MessageHandler messageHandler = null;
-        boolean success = true;
-        synchronized (listeners) {
-            messageHandler = listeners.get(eventListener);
-            listeners.remove(eventListener);
-        }
-        if (messageHandler != null) {
-            success = intChannel.unsubscribe(messageHandler);
-        }
+	@Override
+	public boolean unsubscribe(String topic, EventSubscriber subscriber) {
+		PublishSubscribeChannel intChannel = getChannel(topic);
+		EventListener eventListener = new EventListener(topic, subscriber);
+		MessageHandler messageHandler = null;
+		boolean success = true;
+		synchronized (listeners) {
+			messageHandler = listeners.get(eventListener);
+			listeners.remove(eventListener);
+		}
+		if (messageHandler != null) {
+			success = intChannel.unsubscribe(messageHandler);
+		}
 
-        return success;
-    }
+		return success;
+	}
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ctx = applicationContext;
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		ctx = applicationContext;
 
-    }
+	}
 
-    private PublishSubscribeChannel getChannel(String topic) {
-        return (PublishSubscribeChannel) ctx.getBean(topic);
-    }
+	private PublishSubscribeChannel getChannel(String topic) {
+		return (PublishSubscribeChannel) ctx.getBean(topic);
+	}
 
 }

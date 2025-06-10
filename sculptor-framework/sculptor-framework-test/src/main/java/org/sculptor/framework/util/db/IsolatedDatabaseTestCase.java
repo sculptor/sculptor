@@ -31,7 +31,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 /**
  * Base class for DBUnit TestCase. It will create new Spring context in setUp,
  * i.e. create all tables, and drop all tables in tearDown.
@@ -47,98 +46,100 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @author Patrik Nordwall
  */
-// TODO: It's broken now, we can't use DatabaseTestCase because it depends on junit4
-// This class is used only in DatabaseImport util class (tool used during testing)
-public class IsolatedDatabaseTestCase { //extends DatabaseTestCase {
+// TODO: It's broken now, we can't use DatabaseTestCase because it depends on
+// junit4
+// This class is used only in DatabaseImport util class (tool used during
+// testing)
+public class IsolatedDatabaseTestCase { // extends DatabaseTestCase {
 
-    private static String DEFAULT_SPRING_CONFIG_FILE_LOCATION = "/applicationContext-test.xml";
+	private static String DEFAULT_SPRING_CONFIG_FILE_LOCATION = "/applicationContext-test.xml";
 
-    static {
-        ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
-            public String getFactoryImplementationClassName() {
-                return "org.sculptor.framework.context.JUnitServiceContextFactory";
-            }
-        });
-    }
-    private ServiceContext serviceContext = ServiceContextFactory.createServiceContext("JUnit");
-    
-    private ApplicationContext context;
+	static {
+		ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
+			public String getFactoryImplementationClassName() {
+				return "org.sculptor.framework.context.JUnitServiceContextFactory";
+			}
+		});
+	}
+	private ServiceContext serviceContext = ServiceContextFactory.createServiceContext("JUnit");
 
-    public IsolatedDatabaseTestCase() {
-    }
+	private ApplicationContext context;
 
-    protected void setUp() throws Exception {
-        // Don't use singleton context, since we need to re-create the tables
-        // each time
-        context = new ClassPathXmlApplicationContext(getSpringConfig());
-        if (ServiceContextStore.get() == null) {
-            ServiceContextStore.set(getServiceContext());
-        }
-        // super.setUp();
-    }
+	public IsolatedDatabaseTestCase() {
+	}
 
-    /**
-     * Override this method to specify the main Spring configuration file to
-     * use. By default applicationContext-test.xml will be used.
-     */
-    protected String getSpringConfig() {
-        return DEFAULT_SPRING_CONFIG_FILE_LOCATION;
-    }
+	protected void setUp() throws Exception {
+		// Don't use singleton context, since we need to re-create the tables
+		// each time
+		context = new ClassPathXmlApplicationContext(getSpringConfig());
+		if (ServiceContextStore.get() == null) {
+			ServiceContextStore.set(getServiceContext());
+		}
+		// super.setUp();
+	}
 
-    protected void tearDown() throws Exception {
-        // super.tearDown();
-        ((ConfigurableApplicationContext) context).close();
-        context = null;
-    }
+	/**
+	 * Override this method to specify the main Spring configuration file to use. By
+	 * default applicationContext-test.xml will be used.
+	 */
+	protected String getSpringConfig() {
+		return DEFAULT_SPRING_CONFIG_FILE_LOCATION;
+	}
 
-    protected DatabaseOperation getSetUpOperation() throws Exception {
-        return DatabaseOperation.REFRESH;
-    }
+	protected void tearDown() throws Exception {
+		// super.tearDown();
+		((ConfigurableApplicationContext) context).close();
+		context = null;
+	}
 
-    protected DatabaseOperation getTearDownOperation() throws Exception {
-        return new DropAllTablesOperation();
-    }
+	protected DatabaseOperation getSetUpOperation() throws Exception {
+		return DatabaseOperation.REFRESH;
+	}
 
-    protected IDatabaseConnection getConnection() throws Exception {
-        return getDbUnitConnection().getConnection();
-    }
+	protected DatabaseOperation getTearDownOperation() throws Exception {
+		return new DropAllTablesOperation();
+	}
 
-    protected DbUnitConnection getDbUnitConnection() {
-        return new DbUnitConnection(getDataSourceSpringBeanName());
-    }
+	protected IDatabaseConnection getConnection() throws Exception {
+		return getDbUnitConnection().getConnection();
+	}
 
-    /**
-     * Override this to specify another datasource. By default testDataSource
-     * is used.
-     */
-    protected String getDataSourceSpringBeanName() {
-        return "testDataSource";
-    }
+	protected DbUnitConnection getDbUnitConnection() {
+		return new DbUnitConnection(getDataSourceSpringBeanName());
+	}
+
+	/**
+	 * Override this to specify another datasource. By default testDataSource is
+	 * used.
+	 */
+	protected String getDataSourceSpringBeanName() {
+		return "testDataSource";
+	}
 
 	protected IDataSet getDataSet() throws Exception {
-		FlatXmlDataSet xmlDataSet = new FlatXmlDataSetBuilder().build(this.getClass().getClassLoader()
-				.getResourceAsStream(getDataSetFile()));
+		FlatXmlDataSet xmlDataSet = new FlatXmlDataSetBuilder()
+				.build(this.getClass().getClassLoader().getResourceAsStream(getDataSetFile()));
 		ReplacementDataSet dataSet = new ReplacementDataSet(xmlDataSet);
 		dataSet.addReplacementObject("[NULL]", null);
 		return dataSet;
 	}
 
-    /**
-     * Override this method to specify the XML file with DBUnit test data.
-     * <p>
-     * The intention was to make this class abstract, but JUnit tries to
-     * instantiate it anyway, and therefore it is not abstract.
-     */
-    protected String getDataSetFile() {
-        throw new UnsupportedOperationException("Override getDataSetFile method in subclass");
-    }
+	/**
+	 * Override this method to specify the XML file with DBUnit test data.
+	 * <p>
+	 * The intention was to make this class abstract, but JUnit tries to instantiate
+	 * it anyway, and therefore it is not abstract.
+	 */
+	protected String getDataSetFile() {
+		throw new UnsupportedOperationException("Override getDataSetFile method in subclass");
+	}
 
-    protected ApplicationContext getContext() {
-        return context;
-    }
+	protected ApplicationContext getContext() {
+		return context;
+	}
 
-    protected ServiceContext getServiceContext() {
-        return serviceContext;
-    }
+	protected ServiceContext getServiceContext() {
+		return serviceContext;
+	}
 
 }

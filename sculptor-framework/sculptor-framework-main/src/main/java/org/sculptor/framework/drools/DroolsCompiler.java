@@ -33,26 +33,26 @@ public class DroolsCompiler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String changeSet=null;
-		String outputDir=".";
+		String changeSet = null;
+		String outputDir = ".";
 		if (args.length == 0) {
 			System.err.println("ERROR: change-set not specified");
 		} else if (args.length > 2) {
 			System.err.println("ERROR: too many parameters specified");
-		} else if (! (new File(args[0])).canRead()) {
+		} else if (!(new File(args[0])).canRead()) {
 			System.err.println("ERROR: change-set not readable");
-		} else if (args.length == 2 && ! (new File(args[1])).isDirectory()) {
-			System.err.println("ERROR: Second parameter '"+args[1]+"' is not pointing to directory");
+		} else if (args.length == 2 && !(new File(args[1])).isDirectory()) {
+			System.err.println("ERROR: Second parameter '" + args[1] + "' is not pointing to directory");
 		} else {
-			changeSet=args[0];
-			outputDir=args.length == 2 ? args[1] : outputDir;
+			changeSet = args[0];
+			outputDir = args.length == 2 ? args[1] : outputDir;
 		}
 
 		if (changeSet == null) {
-			System.out.println("DroolsCompiler <change-set.xml> [output-directory]\n" +
-					"\tProgram compile specified changet-set.xml and produce packages in binary form.\n\n" +
-					"\tchange-set.xml   - XML file in changeset format (look to Drools documentation)\n"+
-					"\toutput-directory - name of output directory where packages are exported");
+			System.out.println("DroolsCompiler <change-set.xml> [output-directory]\n"
+					+ "\tProgram compile specified changet-set.xml and produce packages in binary form.\n\n"
+					+ "\tchange-set.xml   - XML file in changeset format (look to Drools documentation)\n"
+					+ "\toutput-directory - name of output directory where packages are exported");
 		} else {
 			compileChangeSet(changeSet, outputDir);
 			System.exit(0);
@@ -60,8 +60,8 @@ public class DroolsCompiler {
 	}
 
 	private static void compileChangeSet(String changeSet, String outputDir) {
-		Long start=System.currentTimeMillis();
-		KnowledgeAgent kAgent = KnowledgeAgentFactory.newKnowledgeAgent( "CompilerAgent" );
+		Long start = System.currentTimeMillis();
+		KnowledgeAgent kAgent = KnowledgeAgentFactory.newKnowledgeAgent("CompilerAgent");
 		kAgent.applyChangeSet(ResourceFactory.newFileResource(changeSet));
 		@SuppressWarnings("deprecation")
 		Collection<KnowledgePackage> kPackages = kAgent.getKnowledgeBase().getKnowledgePackages();
@@ -69,9 +69,9 @@ public class DroolsCompiler {
 		for (KnowledgePackage kPackage : kPackages) {
 			String packageName = kPackage.getName();
 			try {
-				String fileName=outputDir+"/"+packageName+".pkg";
+				String fileName = outputDir + "/" + packageName + ".pkg";
 				DroolsStreamUtils.streamOut(new FileOutputStream(fileName), kPackage);
-				System.out.println("File '"+fileName+"' was created.");
+				System.out.println("File '" + fileName + "' was created.");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

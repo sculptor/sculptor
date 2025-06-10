@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
@@ -9,7 +8,7 @@
 	<groupId>org.sculptorgenerator.eclipse</groupId>
 	<artifactId>org.sculptor.dsl.ide</artifactId>
 	<packaging>jar</packaging>
-
+	<name>Sculptor :: Eclipse :: IDE plugin</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -61,19 +60,19 @@
 							<repositoryLayout>flat</repositoryLayout>
 							<useWildcardClassPath>true</useWildcardClassPath>
 							<!-- uncomment to enable remote debugging
-							<extraJvmArguments>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000</extraJvmArguments>
-							-->
+														<extraJvmArguments>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000</extraJvmArguments>
+														-->
 							<programs>
 								<program>
 									<id>mydsl-ls</id>
 									<mainClass>org.eclipse.xtext.ide.server.ServerLauncher</mainClass>
 									<!-- uncomment to enable options
-									<commandLineArguments>
-										<commandLineArgument>-trace</commandLineArgument>
-										<commandLineArgument>-log</commandLineArgument>
-										<commandLineArgument>-noValidate</commandLineArgument>
-									</commandLineArguments>
-									-->
+																		<commandLineArguments>
+																			<commandLineArgument>-trace</commandLineArgument>
+																			<commandLineArgument>-log</commandLineArgument>
+																			<commandLineArgument>-noValidate</commandLineArgument>
+																		</commandLineArguments>
+																		-->
 								</program>
 							</programs>
 						</configuration>
@@ -82,7 +81,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

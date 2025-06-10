@@ -32,8 +32,9 @@ import org.sculptor.framework.accessapi.FindByIdAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByIdAccessImpl<T, ID extends Serializable> extends JpaAccessBase<T> implements
-		FindByIdAccess<T, ID> {
+public class JpaFindByIdAccessImpl<T, ID extends Serializable> extends JpaAccessBase<T>
+		implements
+			FindByIdAccess<T, ID> {
 
 	private boolean lock;
 	private ID id;

@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>archetype.it</groupId>
@@ -11,7 +9,6 @@
 	</parent>
 	<artifactId>basic</artifactId>
 	<name>New Sculptor Project :: Business Tier</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -76,7 +73,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -150,7 +146,7 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<!-- Remove dependency to javax.transaction when running in a transaction 
-			supporting container (jboss etc) -->
+					supporting container (jboss etc) -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
@@ -239,10 +235,8 @@
 			<!-- <scope>test</scope> -->
 		</dependency>
 	</dependencies>
-
 	<!-- Profiles -->
 	<profiles>
-
 		<!-- HIBERNATE -->
 		<profile>
 			<id>hibernate</id>
@@ -256,8 +250,7 @@
 			<properties>
 				<hibernate-version>5.6.9.Final</hibernate-version>
 			</properties>
-			<build>
-			</build>
+			<build/>
 			<dependencies>
 				<dependency>
 					<groupId>org.hibernate</groupId>
@@ -302,7 +295,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- DATANUCLEUS -->
 		<profile>
 			<id>datanucleus</id>
@@ -416,7 +408,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- ECLIPSELINK -->
 		<profile>
 			<id>eclipselink</id>
@@ -471,7 +462,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- OPENJPA -->
 		<profile>
 			<id>openjpa</id>
@@ -516,7 +506,6 @@
 							</dependency>
 						</dependencies>
 					</plugin>
-
 				</plugins>
 			</build>
 			<dependencies>
@@ -528,5 +517,4 @@
 			</dependencies>
 		</profile>
 	</profiles>
-
 </project>

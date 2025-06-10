@@ -18,8 +18,8 @@ public class SculptorHsqlDialect extends HSQLDialect {
 		BasicTypeRegistry basicTypeRegistry = functionContributions.getTypeConfiguration().getBasicTypeRegistry();
 		BasicType<Integer> intType = basicTypeRegistry.resolve(StandardBasicTypes.INTEGER);
 
-//		registerColumnType(Types.BOOLEAN, "boolean");
-//		registerHibernateType(Types.BOOLEAN, "boolean");
+		// registerColumnType(Types.BOOLEAN, "boolean");
+		// registerHibernateType(Types.BOOLEAN, "boolean");
 
 		functionRegistry.registerPattern("week", "extract(week_of_year from ?1)", intType);
 		functionRegistry.registerPattern("quarter", "extract(quarter from ?1)", intType);
@@ -30,17 +30,29 @@ public class SculptorHsqlDialect extends HSQLDialect {
 		functionRegistry.register("rpad", new StandardSQLFunction("rpad", StandardBasicTypes.STRING));
 		functionRegistry.register("lpad", new StandardSQLFunction("lpad", StandardBasicTypes.STRING));
 		functionRegistry.register("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
-//		registerFunction("strpos", new StandardSQLFunction("instr", StandardBasicTypes.STRING));
-//		registerFunction("starts_with", new StandardSQLFunction("starts_with", StandardBasicTypes.STRING));
-//		registerFunction("starts_with", new SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1 LIKE ?2"));
-//		registerFunction("add", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 + ?2"));
-//		registerFunction("substract", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 - ?2"));
-//		registerFunction("mul", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 * ?2"));
-//		registerFunction("div", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 / ?2"));
-//		registerFunction("countDistinct", new SQLFunctionTemplate(StandardBasicTypes.LONG, "count(distinct ?1)"));
-//		registerFunction("sum", new StandardSQLFunction("sum", StandardBasicTypes.BIG_DECIMAL));
-//		registerFunction("sumLong", new StandardSQLFunction("sum", StandardBasicTypes.LONG));
-//		registerFunction("minStr", new StandardSQLFunction("min", StandardBasicTypes.STRING));
-//		registerFunction("maxStr", new StandardSQLFunction("max", StandardBasicTypes.STRING));
+		// registerFunction("strpos", new StandardSQLFunction("instr",
+		// StandardBasicTypes.STRING));
+		// registerFunction("starts_with", new StandardSQLFunction("starts_with",
+		// StandardBasicTypes.STRING));
+		// registerFunction("starts_with", new
+		// SQLFunctionTemplate(StandardBasicTypes.BOOLEAN, "?1 LIKE ?2"));
+		// registerFunction("add", new SQLFunctionTemplate(StandardBasicTypes.INTEGER,
+		// "?1 + ?2"));
+		// registerFunction("substract", new
+		// SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 - ?2"));
+		// registerFunction("mul", new SQLFunctionTemplate(StandardBasicTypes.INTEGER,
+		// "?1 * ?2"));
+		// registerFunction("div", new SQLFunctionTemplate(StandardBasicTypes.INTEGER,
+		// "?1 / ?2"));
+		// registerFunction("countDistinct", new
+		// SQLFunctionTemplate(StandardBasicTypes.LONG, "count(distinct ?1)"));
+		// registerFunction("sum", new StandardSQLFunction("sum",
+		// StandardBasicTypes.BIG_DECIMAL));
+		// registerFunction("sumLong", new StandardSQLFunction("sum",
+		// StandardBasicTypes.LONG));
+		// registerFunction("minStr", new StandardSQLFunction("min",
+		// StandardBasicTypes.STRING));
+		// registerFunction("maxStr", new StandardSQLFunction("max",
+		// StandardBasicTypes.STRING));
 	}
 }

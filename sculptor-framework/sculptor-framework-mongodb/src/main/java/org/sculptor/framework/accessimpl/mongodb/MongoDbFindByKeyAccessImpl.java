@@ -38,64 +38,64 @@ import java.util.List;
  */
 public class MongoDbFindByKeyAccessImpl<T> extends MongoDbAccessBase<T> implements FindByKeyAccess<T> {
 
-    private T result;
-    private String[] keyPropertyNames;
-    private Object[] keyValues;
+	private T result;
+	private String[] keyPropertyNames;
+	private Object[] keyValues;
 
-    public MongoDbFindByKeyAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbFindByKeyAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public T getResult() {
-        return result;
-    }
+	public T getResult() {
+		return result;
+	}
 
-    public void setKeyPropertyNames(String... keyPropertyNames) {
-        this.keyPropertyNames = keyPropertyNames;
-    }
+	public void setKeyPropertyNames(String... keyPropertyNames) {
+		this.keyPropertyNames = keyPropertyNames;
+	}
 
-    public void setKeyPropertyValues(Object... keyValues) {
-        this.keyValues = keyValues;
-    }
+	public void setKeyPropertyValues(Object... keyValues) {
+		this.keyValues = keyValues;
+	}
 
-    protected String[] getKeyPropertyNames() {
-        return keyPropertyNames;
-    }
+	protected String[] getKeyPropertyNames() {
+		return keyPropertyNames;
+	}
 
-    protected Object[] getKeyValues() {
-        return keyValues;
-    }
+	protected Object[] getKeyValues() {
+		return keyValues;
+	}
 
-    @Override
-    public void setPersistentClass(Class<? extends T> persistentClass) {
-        super.setPersistentClass(persistentClass);
-    }
+	@Override
+	public void setPersistentClass(Class<? extends T> persistentClass) {
+		super.setPersistentClass(persistentClass);
+	}
 
-    private void checkKeyPropertyNamesValues() {
-        if (keyValues == null) {
-            throw new IllegalArgumentException("keyPropertyValues not defined");
-        }
-        if (keyPropertyNames == null) {
-            throw new IllegalArgumentException("keyPropertyNames not defined");
-        }
-        if (keyValues.length != keyPropertyNames.length) {
-            throw new IllegalArgumentException("Number of keyPropertyValues must be the same "
-                    + "as the number of keyPropertyNames. " + keyValues + " != " + keyPropertyNames);
-        }
-    }
+	private void checkKeyPropertyNamesValues() {
+		if (keyValues == null) {
+			throw new IllegalArgumentException("keyPropertyValues not defined");
+		}
+		if (keyPropertyNames == null) {
+			throw new IllegalArgumentException("keyPropertyNames not defined");
+		}
+		if (keyValues.length != keyPropertyNames.length) {
+			throw new IllegalArgumentException("Number of keyPropertyValues must be the same "
+					+ "as the number of keyPropertyNames. " + keyValues + " != " + keyPropertyNames);
+		}
+	}
 
-    @Override
-    public void performExecute() {
-        checkKeyPropertyNamesValues();
+	@Override
+	public void performExecute() {
+		checkKeyPropertyNamesValues();
 
-        List<Bson> filters = new ArrayList<>();
-        for (int i = 0; i < keyPropertyNames.length; i++) {
-            Object dbValue = toData(keyValues[i]);
-            filters.add(Filters.eq(keyPropertyNames[i], dbValue));
-        }
+		List<Bson> filters = new ArrayList<>();
+		for (int i = 0; i < keyPropertyNames.length; i++) {
+			Object dbValue = toData(keyValues[i]);
+			filters.add(Filters.eq(keyPropertyNames[i], dbValue));
+		}
 
-        DBObject found = getDBCollection().find(Filters.and(filters)).first();
-        result = getDataMapper().toDomain(found);
-    }
+		DBObject found = getDBCollection().find(Filters.and(filters)).first();
+		result = getDataMapper().toDomain(found);
+	}
 
 }

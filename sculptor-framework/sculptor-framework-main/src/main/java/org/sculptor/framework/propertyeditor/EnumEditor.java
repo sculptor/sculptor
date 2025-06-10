@@ -22,10 +22,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
 
 /**
- * This PropertyEditor is typically used to format 
- * options in select lists. It concatenates the defined
- * properties, using the PropertyEditors already registered
- * for the individual properties.
+ * This PropertyEditor is typically used to format options in select lists. It
+ * concatenates the defined properties, using the PropertyEditors already
+ * registered for the individual properties.
  *
  */
 public class EnumEditor<T extends Enum<T>> extends PropertyEditorSupport {
@@ -34,56 +33,55 @@ public class EnumEditor<T extends Enum<T>> extends PropertyEditorSupport {
 	private String messagesKeyPrefix;
 
 	public EnumEditor(Class<T> enumClass, MessageSource messages, String messagesKeyPrefix) {
-        this.enumClass = enumClass;
-        this.messages = messages;
-        this.messagesKeyPrefix = (messagesKeyPrefix.endsWith(".") ? messagesKeyPrefix : messagesKeyPrefix + ".");
-    }
+		this.enumClass = enumClass;
+		this.messages = messages;
+		this.messagesKeyPrefix = (messagesKeyPrefix.endsWith(".") ? messagesKeyPrefix : messagesKeyPrefix + ".");
+	}
 
-    protected MessageSource getMessages() {
-        return messages;
-    }
+	protected MessageSource getMessages() {
+		return messages;
+	}
 
-    /**
-     * It is convenient to use the
-     * {@link org.springframework.context.support.MessageSourceAccessor}
-     * to fetch messages. Note that it uses
-     * the locale held by
-     * {@link org.springframework.context.i18nLocaleContextHolder}.
-     */
-    protected MessageSourceAccessor getMessagesAccessor() {
-        return new MessageSourceAccessor(messages);
-    }
-    
-    protected String getMessagesKeyPrefix() {
+	/**
+	 * It is convenient to use the
+	 * {@link org.springframework.context.support.MessageSourceAccessor} to fetch
+	 * messages. Note that it uses the locale held by
+	 * {@link org.springframework.context.i18nLocaleContextHolder}.
+	 */
+	protected MessageSourceAccessor getMessagesAccessor() {
+		return new MessageSourceAccessor(messages);
+	}
+
+	protected String getMessagesKeyPrefix() {
 		return messagesKeyPrefix;
 	}
 
-    /**
-     * Format the Enum as translated String
-     */
-    public String getAsText() {
-        Enum<?> value = (Enum<?>) getValue();
-        if (value == null) {
-            return "";
-        }
+	/**
+	 * Format the Enum as translated String
+	 */
+	public String getAsText() {
+		Enum<?> value = (Enum<?>) getValue();
+		if (value == null) {
+			return "";
+		}
 
-        String text = getMessagesAccessor().getMessage(messagesKeyPrefix + value.name(), (String) null);
-        if (text == null) {
-            return value.toString();
-        } else {
-            return text;
-        }
-    }
-    
-    /**
-     * Parse the value from the given text is not supported by this editor
-     */
-    public void setAsText(String text) throws IllegalArgumentException {
-        if (text == null || text.equals("")) {
-            setValue(null);
-            return;
-        }
-        Enum<?> value = Enum.valueOf(enumClass, text);
-        setValue(value);
-    }
+		String text = getMessagesAccessor().getMessage(messagesKeyPrefix + value.name(), (String) null);
+		if (text == null) {
+			return value.toString();
+		} else {
+			return text;
+		}
+	}
+
+	/**
+	 * Parse the value from the given text is not supported by this editor
+	 */
+	public void setAsText(String text) throws IllegalArgumentException {
+		if (text == null || text.equals("")) {
+			setValue(null);
+			return;
+		}
+		Enum<?> value = Enum.valueOf(enumClass, text);
+		setValue(value);
+	}
 }

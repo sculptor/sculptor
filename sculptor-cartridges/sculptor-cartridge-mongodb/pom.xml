@@ -8,7 +8,6 @@
 	</parent>
 	<artifactId>sculptor-cartridge-mongodb</artifactId>
 	<name>Sculptor :: Cartridges :: MongoDB</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -57,7 +56,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
@@ -71,5 +69,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

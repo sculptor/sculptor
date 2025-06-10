@@ -23,7 +23,8 @@ import org.sculptor.framework.errorhandling.ValidationException;
 @Table(name = "MOVIE")
 @PrimaryKeyJoinColumn(name = "MEDIA")
 // @org.hibernate.annotations.ForeignKey(name = "FK_MOVIE_MEDIA")
-@NamedQueries({ @NamedQuery(name = "Movie.getNumberOfMovies", query = "select count(m) from Movie m join m.physicalMedia p where p.library.id = :libraryId") })
+@NamedQueries({
+		@NamedQuery(name = "Movie.getNumberOfMovies", query = "select count(m) from Movie m join m.physicalMedia p where p.library.id = :libraryId")})
 public class Movie extends MovieBase {
 	private static final long serialVersionUID = 1L;
 

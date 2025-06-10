@@ -27,45 +27,45 @@ import org.slf4j.LoggerFactory;
  */
 public class FactoryHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FactoryHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FactoryHelper.class);
 
-    private FactoryHelper() {
-    }
+	private FactoryHelper() {
+	}
 
-    /**
-     * Creates an instance from a String class name.
-     * 
-     * @param className
-     *            full class name
-     * @param classLoader
-     *            the class will be loaded with this ClassLoader
-     * @return new instance of the class
-     * @throws RuntimeException
-     *             if class not found or could not be instantiated
-     */
-    public static Object newInstanceFromName(String className) {
-        return newInstanceFromName(className, FactoryHelper.class.getClassLoader());
-    }
+	/**
+	 * Creates an instance from a String class name.
+	 * 
+	 * @param className
+	 *            full class name
+	 * @param classLoader
+	 *            the class will be loaded with this ClassLoader
+	 * @return new instance of the class
+	 * @throws RuntimeException
+	 *             if class not found or could not be instantiated
+	 */
+	public static Object newInstanceFromName(String className) {
+		return newInstanceFromName(className, FactoryHelper.class.getClassLoader());
+	}
 
-    /**
-     * Creates an instance from a String class name.
-     * 
-     * @param className
-     *            full class name
-     * @param classLoader
-     *            the class will be loaded with this ClassLoader
-     * @return new instance of the class
-     * @throws RuntimeException
-     *             if class not found or could not be instantiated
-     */
-    public static Object newInstanceFromName(String className, ClassLoader classLoader) {
-        try {
-            Class<?> clazz = Class.forName(className, true, classLoader);
-            return clazz.newInstance();
-        } catch (Exception e) {
-            String m = "Couldn't create instance from name " + className + " (" + e.getMessage() + ")";
-            LOG.error(m, e);
-            throw new RuntimeException(m);
-        }
-    }
+	/**
+	 * Creates an instance from a String class name.
+	 * 
+	 * @param className
+	 *            full class name
+	 * @param classLoader
+	 *            the class will be loaded with this ClassLoader
+	 * @return new instance of the class
+	 * @throws RuntimeException
+	 *             if class not found or could not be instantiated
+	 */
+	public static Object newInstanceFromName(String className, ClassLoader classLoader) {
+		try {
+			Class<?> clazz = Class.forName(className, true, classLoader);
+			return clazz.newInstance();
+		} catch (Exception e) {
+			String m = "Couldn't create instance from name " + className + " (" + e.getMessage() + ")";
+			LOG.error(m, e);
+			throw new RuntimeException(m);
+		}
+	}
 }

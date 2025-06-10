@@ -13,16 +13,15 @@ import org.springframework.stereotype.Repository;
  * Repository implementation for HandlingEvent
  */
 @Repository("handlingEventRepository")
-public class HandlingEventRepositoryImpl extends HandlingEventRepositoryBase
-    implements HandlingEventRepository {
-    public HandlingEventRepositoryImpl() {
-    }
+public class HandlingEventRepositoryImpl extends HandlingEventRepositoryBase implements HandlingEventRepository {
+	public HandlingEventRepositoryImpl() {
+	}
 
-    @Override
-    public List<HandlingEvent> findEventsForCargo(TrackingId trackingId) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("tid", trackingId);
-        return findByQuery("HandlingEvent.findEventsForCargo", parameters);
-    }
+	@Override
+	public List<HandlingEvent> findEventsForCargo(TrackingId trackingId) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("tid", trackingId);
+		return findByQuery("HandlingEvent.findEventsForCargo", parameters);
+	}
 
 }

@@ -42,129 +42,130 @@ import org.springframework.context.ApplicationContextAware;
 @Aspect
 public class PublishAdvice implements ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
 
-    @Around("@annotation(publish)")
-    public Object publish(ProceedingJoinPoint joinPoint, Publish publish) throws Throwable {
+	@Around("@annotation(publish)")
+	public Object publish(ProceedingJoinPoint joinPoint, Publish publish) throws Throwable {
 		if (applicationContext == null) {
 			throw new IllegalArgumentException("No ApplicationContext autowired - advice must be configured by Spring");
 		}
 
-        Object retVal = joinPoint.proceed();
+		Object retVal = joinPoint.proceed();
 
-        String topic = publish.topic();
-        Event event = null;
-        if (publish.eventType() == NullEventType.class) {
-            if (retVal instanceof Event) {
-                event = (Event) retVal;
-            } else {
-                for (Object each : joinPoint.getArgs()) {
-                    if (each instanceof Event) {
-                        event = (Event) each;
-                        break;
-                    }
-                }
-            }
-        } else {
-            event = createEvent(publish.eventType(), retVal, joinPoint.getArgs());
-        }
+		String topic = publish.topic();
+		Event event = null;
+		if (publish.eventType() == NullEventType.class) {
+			if (retVal instanceof Event) {
+				event = (Event) retVal;
+			} else {
+				for (Object each : joinPoint.getArgs()) {
+					if (each instanceof Event) {
+						event = (Event) each;
+						break;
+					}
+				}
+			}
+		} else {
+			event = createEvent(publish.eventType(), retVal, joinPoint.getArgs());
+		}
 
-        if (event == null) {
-            throw new IllegalArgumentException(
-                    "Return value or some argument need to be of event type, or match constructor of specified eventType");
-        }
+		if (event == null) {
+			throw new IllegalArgumentException(
+					"Return value or some argument need to be of event type, or match constructor of specified eventType");
+		}
 
-        EventBus eventBus = getEventBus(publish.eventBus());
-        eventBus.publish(topic, event);
+		EventBus eventBus = getEventBus(publish.eventBus());
+		eventBus.publish(topic, event);
 
-        return retVal;
-    }
+		return retVal;
+	}
 
-    protected EventBus getEventBus(String name) {
-        Object bean = getApplicationContext().getBean(name);
-        if (!(bean instanceof EventBus)) {
-            throw new IllegalStateException("Wrong EventBus type, got: " + bean.getClass().getName());
-        }
-        return (EventBus) bean;
-    }
+	protected EventBus getEventBus(String name) {
+		Object bean = getApplicationContext().getBean(name);
+		if (!(bean instanceof EventBus)) {
+			throw new IllegalStateException("Wrong EventBus type, got: " + bean.getClass().getName());
+		}
+		return (EventBus) bean;
+	}
 
-    private Event createEvent(Class<?> clazz, Object retVal, Object[] args) {
-        Object occured;
-        if (isJoda(clazz)) {
-            occured = createJodaDateTime();
-        } else {
-            occured = new Date();
-        }
+	private Event createEvent(Class<?> clazz, Object retVal, Object[] args) {
+		Object occured;
+		if (isJoda(clazz)) {
+			occured = createJodaDateTime();
+		} else {
+			occured = new Date();
+		}
 
-        Event event = null;
-        if (retVal != null) {
-            try {
-                Object[] constructorParams = { occured, retVal };
-                Object raw = ConstructorUtils.invokeConstructor(clazz, constructorParams);
-                event = (Event) raw;
-            } catch (Exception e) {
-            }
-        }
+		Event event = null;
+		if (retVal != null) {
+			try {
+				Object[] constructorParams = {occured, retVal};
+				Object raw = ConstructorUtils.invokeConstructor(clazz, constructorParams);
+				event = (Event) raw;
+			} catch (Exception e) {
+			}
+		}
 
-        try {
-            Object[] filteredArgs = removeServiceContext(args);
-            Object[] constructorParams;
-            if (filteredArgs.length > 0 && filteredArgs[0] != null && filteredArgs[0].getClass() == occured.getClass()) {
-                // already got a timestamp as first arg
-                constructorParams = filteredArgs;
-            } else if (filteredArgs.length == 0) {
-                constructorParams = new Object[] { occured };
-            } else {
-                constructorParams = new Object[filteredArgs.length + 1];
-                constructorParams[0] = occured;
-                System.arraycopy(filteredArgs, 0, constructorParams, 1, filteredArgs.length);
-            }
+		try {
+			Object[] filteredArgs = removeServiceContext(args);
+			Object[] constructorParams;
+			if (filteredArgs.length > 0 && filteredArgs[0] != null
+					&& filteredArgs[0].getClass() == occured.getClass()) {
+				// already got a timestamp as first arg
+				constructorParams = filteredArgs;
+			} else if (filteredArgs.length == 0) {
+				constructorParams = new Object[]{occured};
+			} else {
+				constructorParams = new Object[filteredArgs.length + 1];
+				constructorParams[0] = occured;
+				System.arraycopy(filteredArgs, 0, constructorParams, 1, filteredArgs.length);
+			}
 
-            Object raw = ConstructorUtils.invokeConstructor(clazz, constructorParams);
-            event = (Event) raw;
-        } catch (Exception e) {
-        }
+			Object raw = ConstructorUtils.invokeConstructor(clazz, constructorParams);
+			event = (Event) raw;
+		} catch (Exception e) {
+		}
 
-        return event;
-    }
+		return event;
+	}
 
-    private Object[] removeServiceContext(Object[] args) {
-        if (args.length > 1 && args[0] instanceof ServiceContext) {
-            Object[] result = new Object[args.length - 1];
-            System.arraycopy(args, 1, result, 0, result.length);
-            return result;
-        }
+	private Object[] removeServiceContext(Object[] args) {
+		if (args.length > 1 && args[0] instanceof ServiceContext) {
+			Object[] result = new Object[args.length - 1];
+			System.arraycopy(args, 1, result, 0, result.length);
+			return result;
+		}
 
-        return args;
-    }
+		return args;
+	}
 
-    /**
-     * Check if joda date time library is used, without introducing runtime
-     * dependency.
-     */
-    private boolean isJoda(Class<?> clazz) {
-        for (Constructor<?> each : clazz.getConstructors()) {
-            Class<?>[] parameterTypes = each.getParameterTypes();
-            if (parameterTypes.length > 0) {
-                if (parameterTypes[0].getName().startsWith("org.joda.time.")) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	/**
+	 * Check if joda date time library is used, without introducing runtime
+	 * dependency.
+	 */
+	private boolean isJoda(Class<?> clazz) {
+		for (Constructor<?> each : clazz.getConstructors()) {
+			Class<?>[] parameterTypes = each.getParameterTypes();
+			if (parameterTypes.length > 0) {
+				if (parameterTypes[0].getName().startsWith("org.joda.time.")) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    private Object createJodaDateTime() {
-        return FactoryHelper.newInstanceFromName("org.joda.time.DateTime");
-    }
+	private Object createJodaDateTime() {
+		return FactoryHelper.newInstanceFromName("org.joda.time.DateTime");
+	}
 
-    protected ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
+	protected ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 
 }

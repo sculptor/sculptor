@@ -22,44 +22,44 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Spring based transactional test with DbUnit support.
  */
 public class RoutingServiceTest extends AbstractDbUnitJpaTests implements RoutingServiceTestBase {
-    private RoutingService routingService;
+	private RoutingService routingService;
 
-    @Autowired
-    public void setRoutingService(RoutingService routingService) {
-        this.routingService = routingService;
-    }
+	@Autowired
+	public void setRoutingService(RoutingService routingService) {
+		this.routingService = routingService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testFetchRoutesForSpecification() throws Exception {
-        TrackingId trackingId = trackingId("ABC");
-        Cargo cargo = new Cargo(trackingId, HONGKONG, HELSINKI);
-        RouteSpecification routeSpecification = RouteSpecification.forCargo(cargo, new DateTime());
+	@Test
+	public void testFetchRoutesForSpecification() throws Exception {
+		TrackingId trackingId = trackingId("ABC");
+		Cargo cargo = new Cargo(trackingId, HONGKONG, HELSINKI);
+		RouteSpecification routeSpecification = RouteSpecification.forCargo(cargo, new DateTime());
 
-        List<Itinerary> candidates = routingService
-                .fetchRoutesForSpecification(getServiceContext(), routeSpecification);
-        assertNotNull(candidates);
+		List<Itinerary> candidates = routingService.fetchRoutesForSpecification(getServiceContext(),
+				routeSpecification);
+		assertNotNull(candidates);
 
-        for (Itinerary itinerary : candidates) {
-            List<Leg> legs = itinerary.getLegs();
-            assertNotNull(legs);
-            assertFalse(legs.isEmpty());
+		for (Itinerary itinerary : candidates) {
+			List<Leg> legs = itinerary.getLegs();
+			assertNotNull(legs);
+			assertFalse(legs.isEmpty());
 
-            // Cargo origin and start of first leg should match
-            assertEquals(cargo.getOrigin(), legs.get(0).getFrom());
+			// Cargo origin and start of first leg should match
+			assertEquals(cargo.getOrigin(), legs.get(0).getFrom());
 
-            // Cargo final destination and last leg stop should match
-            Location lastLegStop = legs.get(legs.size() - 1).getTo();
-            assertEquals(cargo.getDestination(), lastLegStop);
+			// Cargo final destination and last leg stop should match
+			Location lastLegStop = legs.get(legs.size() - 1).getTo();
+			assertEquals(cargo.getDestination(), lastLegStop);
 
-            for (int i = 0; i < legs.size() - 1; i++) {
-                // Assert that all legs are conencted
-                assertEquals(legs.get(i).getTo(), legs.get(i + 1).getFrom());
-            }
-        }
-    }
+			for (int i = 0; i < legs.size() - 1; i++) {
+				// Assert that all legs are conencted
+				assertEquals(legs.get(i).getTo(), legs.get(i + 1).getFrom());
+			}
+		}
+	}
 }

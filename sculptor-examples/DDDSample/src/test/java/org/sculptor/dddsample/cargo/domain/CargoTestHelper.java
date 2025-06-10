@@ -10,13 +10,13 @@ import org.sculptor.dddsample.location.domain.Location;
  */
 public class CargoTestHelper {
 
-    public static Cargo createCargoWithDeliveryHistory(TrackingId trackingId, Location origin, Location destination,
-            Collection<HandlingEvent> events) {
+	public static Cargo createCargoWithDeliveryHistory(TrackingId trackingId, Location origin, Location destination,
+			Collection<HandlingEvent> events) {
 
-        final Cargo cargo = new Cargo(trackingId, origin, destination);
-        cargo.getEvents().addAll(events);
+		final Cargo cargo = new Cargo(trackingId, origin, destination);
+		cargo.getEvents().addAll(events);
 
-        return cargo;
-    }
+		return cargo;
+	}
 
 }

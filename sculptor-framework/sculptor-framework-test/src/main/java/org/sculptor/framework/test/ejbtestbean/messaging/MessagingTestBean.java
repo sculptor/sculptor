@@ -42,111 +42,111 @@ import org.sculptor.framework.consumer.MessageSenderImpl;
 @Stateless(name = "MessagingTestBean")
 @TransactionManagement(TransactionManagementType.BEAN)
 public class MessagingTestBean implements MessagingTestLocal {
-    @Resource
-    private ConnectionFactory connectionFactory;
-    private jakarta.jms.Connection connection;
+	@Resource
+	private ConnectionFactory connectionFactory;
+	private jakarta.jms.Connection connection;
 
-    @Override
-    public Destination sendMessage(Destination destination, String message) {
-        Session jmsSession = null;
-        try {
-            jmsSession = getJmsConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            TextMessage textMessage = jmsSession.createTextMessage(message);
-            return sendMessage(destination, textMessage);
-        } catch (JMSException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (jmsSession != null) {
-                try {
-                    jmsSession.close();
-                } catch (Exception ignore) {
-                }
-            }
-        }
-    }
+	@Override
+	public Destination sendMessage(Destination destination, String message) {
+		Session jmsSession = null;
+		try {
+			jmsSession = getJmsConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+			TextMessage textMessage = jmsSession.createTextMessage(message);
+			return sendMessage(destination, textMessage);
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (jmsSession != null) {
+				try {
+					jmsSession.close();
+				} catch (Exception ignore) {
+				}
+			}
+		}
+	}
 
-    @Override
-    public Destination sendMessage(Destination destination, Message message) {
-        try {
-            Destination replyTo = message.getJMSReplyTo();
-            if (replyTo == null) {
-                replyTo = createTemporaryQueue();
-                message.setJMSReplyTo(replyTo);
-            }
+	@Override
+	public Destination sendMessage(Destination destination, Message message) {
+		try {
+			Destination replyTo = message.getJMSReplyTo();
+			if (replyTo == null) {
+				replyTo = createTemporaryQueue();
+				message.setJMSReplyTo(replyTo);
+			}
 
-            getMessageSender().sendMessage(destination, message);
-            return replyTo;
-        } catch (JMSException e) {
-            throw new RuntimeException(e);
-        }
-    }
+			getMessageSender().sendMessage(destination, message);
+			return replyTo;
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    protected MessageSender getMessageSender() {
-        if (getJmsConnection() == null) {
-            throw new IllegalStateException("Need JMS connection to be able to send messages.");
-        }
-        return new MessageSenderImpl(getJmsConnection());
-    }
+	protected MessageSender getMessageSender() {
+		if (getJmsConnection() == null) {
+			throw new IllegalStateException("Need JMS connection to be able to send messages.");
+		}
+		return new MessageSenderImpl(getJmsConnection());
+	}
 
-    protected jakarta.jms.Connection getJmsConnection() {
-        try {
-            if (connection == null) {
-                connection = connectionFactory.createConnection();
-                connection.start();
-            }
-            return connection;
-        } catch (JMSException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	protected jakarta.jms.Connection getJmsConnection() {
+		try {
+			if (connection == null) {
+				connection = connectionFactory.createConnection();
+				connection.start();
+			}
+			return connection;
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    protected TemporaryQueue createTemporaryQueue() {
-        Session jmsSession = null;
-        try {
-            jmsSession = getJmsConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            return jmsSession.createTemporaryQueue();
-        } catch (JMSException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (jmsSession != null) {
-                try {
-                    jmsSession.close();
-                } catch (Exception ignore) {
-                }
-            }
-        }
-    }
+	protected TemporaryQueue createTemporaryQueue() {
+		Session jmsSession = null;
+		try {
+			jmsSession = getJmsConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+			return jmsSession.createTemporaryQueue();
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (jmsSession != null) {
+				try {
+					jmsSession.close();
+				} catch (Exception ignore) {
+				}
+			}
+		}
+	}
 
-    @Override
-    public Message waitForReply(Destination replyDestination, int timeout) {
-        Session jmsSession = null;
-        try {
-            jmsSession = getJmsConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            MessageConsumer consumer = jmsSession.createConsumer(replyDestination);
-            Message replyMsg = consumer.receive(timeout);
-            return replyMsg;
-        } catch (JMSException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (jmsSession != null) {
-                try {
-                    jmsSession.close();
-                } catch (Exception ignore) {
-                }
-            }
-        }
-    }
+	@Override
+	public Message waitForReply(Destination replyDestination, int timeout) {
+		Session jmsSession = null;
+		try {
+			jmsSession = getJmsConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+			MessageConsumer consumer = jmsSession.createConsumer(replyDestination);
+			Message replyMsg = consumer.receive(timeout);
+			return replyMsg;
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (jmsSession != null) {
+				try {
+					jmsSession.close();
+				} catch (Exception ignore) {
+				}
+			}
+		}
+	}
 
-    @PreDestroy
-    public void ejbRemove() {
-        try {
-            if (connection != null) {
-                connection.stop();
-                connection.close();
-                connection = null;
-            }
-        } catch (Exception ignore) {
-        }
-    }
+	@PreDestroy
+	public void ejbRemove() {
+		try {
+			if (connection != null) {
+				connection.stop();
+				connection.close();
+				connection = null;
+			}
+		} catch (Exception ignore) {
+		}
+	}
 
 }

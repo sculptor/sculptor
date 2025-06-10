@@ -20,22 +20,23 @@ import org.sculptor.framework.errorhandling.ValidationException;
  * Entity representing Person. This class is responsible for the domain object
  * related business logic for Person. Properties and associations are
  * implemented in the generated base class
- * {@link org.sculptor.examples.library.person.domain.PersonBase}
- * .
+ * {@link org.sculptor.examples.library.person.domain.PersonBase} .
  */
 @Entity(name = "Person")
-@Table(name = "PERSON", uniqueConstraints = @UniqueConstraint(columnNames = { "SSN_NUMBER", "SSN_COUNTRY" }))
-@NamedQueries( {
-        @NamedQuery(name = "Person.findByCountry", query = "select person from Person person where person.ssn.country = :country", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true"),
-                @QueryHint(name = "org.hibernate.cacheRegion", value = "query.Person") }),
-        @NamedQuery(name = "Person.countByCountry", query = "select count(person) from Person person where person.ssn.country = :country", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true"),
-                @QueryHint(name = "org.hibernate.cacheRegion", value = "query.Person") }),
-        @NamedQuery(name = "Person.findPersonByName", query = "select person from Person person where person.name.first in :names or person.name.last in :names") })
+@Table(name = "PERSON", uniqueConstraints = @UniqueConstraint(columnNames = {"SSN_NUMBER", "SSN_COUNTRY"}))
+@NamedQueries({
+		@NamedQuery(name = "Person.findByCountry", query = "select person from Person person where person.ssn.country = :country", hints = {
+				@QueryHint(name = "org.hibernate.cacheable", value = "true"),
+				@QueryHint(name = "org.hibernate.cacheRegion", value = "query.Person")}),
+		@NamedQuery(name = "Person.countByCountry", query = "select count(person) from Person person where person.ssn.country = :country", hints = {
+				@QueryHint(name = "org.hibernate.cacheable", value = "true"),
+				@QueryHint(name = "org.hibernate.cacheRegion", value = "query.Person")}),
+		@NamedQuery(name = "Person.findPersonByName", query = "select person from Person person where person.name.first in :names or person.name.last in :names")})
 
 // datanucleus needs '(:names)' in where clause
-// @NamedQuery(name = "Person.findPersonByName", query = "select person from Person person where person.name.first in (:names) or person.name.last in (:names)")
+// @NamedQuery(name = "Person.findPersonByName", query = "select person from
+// Person person where person.name.first in (:names) or person.name.last in
+// (:names)")
 
 public class Person extends PersonBase {
 	private static final long serialVersionUID = -3936470509835260676L;

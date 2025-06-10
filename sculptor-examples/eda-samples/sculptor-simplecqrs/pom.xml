@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator.examples</groupId>
@@ -12,9 +10,8 @@
 	<artifactId>sculptor-simplecqrs</artifactId>
 	<name>Sculptor :: Examples :: EDA :: Simple CQRS</name>
 	<description>EDA example: Business tier project for Simple CQRS</description>
-
 	<build>
- 		<plugins>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -75,7 +72,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.examples.mongodb-samples</groupId>
@@ -128,7 +124,7 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<!-- Remove dependency to javax.transaction when running in a transaction 
-			supporting container (jboss etc) -->
+					supporting container (jboss etc) -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
@@ -182,5 +178,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

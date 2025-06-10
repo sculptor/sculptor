@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service("bettingService")
 public class BettingServiceImpl extends BettingServiceImplBase {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BettingServiceImpl.class); 
+	private static final Logger LOG = LoggerFactory.getLogger(BettingServiceImpl.class);
 
 	public BettingServiceImpl() {
 	}

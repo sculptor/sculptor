@@ -11,17 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PersistenceXmlParserTest {
 
-    @Test
-    public void shouldFindPersistenceUnitName() throws Exception {
-        String persistenceXml = DataHelper.content("/persistence-testdata.xml");
-        PersistenceXmlParser parser = new PersistenceXmlParser();
-        parser.parse(persistenceXml);
+	@Test
+	public void shouldFindPersistenceUnitName() throws Exception {
+		String persistenceXml = DataHelper.content("/persistence-testdata.xml");
+		PersistenceXmlParser parser = new PersistenceXmlParser();
+		parser.parse(persistenceXml);
 
-        Set<String> unitNames = parser.getPersictenceUnitNames();
-        assertTrue(unitNames.contains("UniverseEntityManagerFactory"));
-        assertTrue(unitNames.contains("SecondaryEntityManagerFactory"));
-        assertEquals(2, unitNames.size());
-    }
-
+		Set<String> unitNames = parser.getPersictenceUnitNames();
+		assertTrue(unitNames.contains("UniverseEntityManagerFactory"));
+		assertTrue(unitNames.contains("SecondaryEntityManagerFactory"));
+		assertEquals(2, unitNames.size());
+	}
 
 }

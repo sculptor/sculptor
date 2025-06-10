@@ -17,7 +17,8 @@ import org.sculptor.examples.library.media.domain.LibraryBase;
  */
 @Entity
 @Table(name = "LIBRARY")
-@NamedQueries({ @NamedQuery(name = "Library.findLibraryByName", query = "select library from Library as library where library.name = :name") })
+@NamedQueries({
+		@NamedQuery(name = "Library.findLibraryByName", query = "select library from Library as library where library.name = :name")})
 public class Library extends LibraryBase {
 	private static final long serialVersionUID = 1L;
 

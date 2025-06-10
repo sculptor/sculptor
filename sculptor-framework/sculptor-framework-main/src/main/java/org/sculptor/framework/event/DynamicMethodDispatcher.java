@@ -22,23 +22,23 @@ import org.apache.commons.beanutils.MethodUtils;
 
 public class DynamicMethodDispatcher {
 
-    /**
-     * Runtime dispatch to method with correct event parameter type
-     */
-    public static void dispatch(Object target, Event event, String methodName) {
-        try {
-            MethodUtils.invokeMethod(target, methodName, event);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof RuntimeException) {
-                throw (RuntimeException) e.getTargetException();
-            } else {
-                throw new UnsupportedOperationException(e.getTargetException());
-            }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new UnsupportedOperationException(e);
-        }
-    }
+	/**
+	 * Runtime dispatch to method with correct event parameter type
+	 */
+	public static void dispatch(Object target, Event event, String methodName) {
+		try {
+			MethodUtils.invokeMethod(target, methodName, event);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			} else {
+				throw new UnsupportedOperationException(e.getTargetException());
+			}
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
 
 }

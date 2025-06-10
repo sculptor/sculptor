@@ -34,24 +34,24 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * This plugin uses the commandline tool <a
- * href="http://www.graphviz.org/doc/info/command.html">dot</a> from the open
- * source graph visualization software <a
- * href="http://www.graphviz.org/">Graphviz</a> to generate images (PNG format)
- * for all graph files (<code>src/generated/resources/*.dot</code>) created
- * during the previous run of the Sculptor code generator.
+ * This plugin uses the commandline tool
+ * <a href="http://www.graphviz.org/doc/info/command.html">dot</a> from the open
+ * source graph visualization software
+ * <a href="http://www.graphviz.org/">Graphviz</a> to generate images (PNG
+ * format) for all graph files (<code>src/generated/resources/*.dot</code>)
+ * created during the previous run of the Sculptor code generator.
  */
 @Mojo(name = "generate-images", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class GraphvizMojo extends AbstractGeneratorMojo {
 
 	/**
-	 * Command to execute to generate the images. Default is <a
-	 * href="http://www.graphviz.org/doc/info/command.html">dot</a>.
+	 * Command to execute to generate the images. Default is
+	 * <a href="http://www.graphviz.org/doc/info/command.html">dot</a>.
 	 * <p>
 	 * Can be set from command line using '-Dsculptor.graphviz.command=<command>'.
 	 * <p>
-	 * Don't include any command line arguments, e.g.image format or input
-	 * files. These are handled by the mojo.
+	 * Don't include any command line arguments, e.g.image format or input files.
+	 * These are handled by the mojo.
 	 */
 	@Parameter(property = "sculptor.graphviz.command", defaultValue = "dot")
 	private String command;
@@ -74,16 +74,14 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 	}
 
 	/**
-	 * Strategy implementation of running the command line tool <code>dot</code>
-	 * :
+	 * Strategy implementation of running the command line tool <code>dot</code> :
 	 * <ol>
 	 * <li>check the <code>skip</code> flag
 	 * <li>get a list of modified dot files from the StatusFile
 	 * <li>run the dot command
 	 * </ol>
 	 */
-	public final void execute() throws MojoExecutionException,
-			MojoFailureException {
+	public final void execute() throws MojoExecutionException, MojoFailureException {
 
 		// If skip flag set then omit image generation
 		if (isSkip()) {
@@ -94,8 +92,7 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 			Set<String> changedDotFiles = getChangedDotFiles();
 			if (changedDotFiles != null && !changedDotFiles.isEmpty()) {
 				if (!executeDot(changedDotFiles)) {
-					throw new MojoExecutionException("Executing '" + command
-							+ "' command failed");
+					throw new MojoExecutionException("Executing '" + command + "' command failed");
 				}
 			}
 		}
@@ -103,8 +100,8 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 
 	/**
 	 * Returns a list with file names of dot files that have been changed since
-	 * previous image generation run. Empty if no files changed or
-	 * <code>null</code> if there is no status file to compare against.
+	 * previous image generation run. Empty if no files changed or <code>null</code>
+	 * if there is no status file to compare against.
 	 */
 	protected Set<String> getChangedDotFiles() {
 		Set<String> generatedFiles = getGeneratedFiles();
@@ -119,12 +116,9 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 		Set<String> changedDotFiles = new HashSet<String>();
 		for (String generatedFile : generatedFiles) {
 			if (generatedFile.endsWith(".dot")) {
-				File dotFile = new File(getProject().getBasedir(),
-						generatedFile);
-				File imageFile = new File(getProject().getBasedir(),
-						generatedFile + ".png");
-				if (!imageFile.exists()
-						|| imageFile.lastModified() < dotFile.lastModified()) {
+				File dotFile = new File(getProject().getBasedir(), generatedFile);
+				File imageFile = new File(getProject().getBasedir(), generatedFile + ".png");
+				if (!imageFile.exists() || imageFile.lastModified() < dotFile.lastModified()) {
 					changedDotFiles.add(generatedFile);
 				}
 			}
@@ -134,19 +128,15 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 		if (changedDotFiles.size() == 1) {
 			String fileName = changedDotFiles.iterator().next();
 			if (fileName.startsWith(project.getBasedir().getAbsolutePath())) {
-				fileName = fileName.substring(project.getBasedir()
-						.getAbsolutePath().length() + 1);
+				fileName = fileName.substring(project.getBasedir().getAbsolutePath().length() + 1);
 			}
-			final String message = MessageFormat.format(
-					"\"{0}\" has been changed", fileName);
+			final String message = MessageFormat.format("\"{0}\" has been changed", fileName);
 			getLog().info(message);
 		} else if (changedDotFiles.size() > 1) {
-			final String message = MessageFormat.format(
-					"{0} dot files have been changed", changedDotFiles.size());
+			final String message = MessageFormat.format("{0} dot files have been changed", changedDotFiles.size());
 			getLog().info(message);
 		} else {
-			getLog().info(
-					"Everything is up to date - no image generation is needed");
+			getLog().info("Everything is up to date - no image generation is needed");
 		}
 		return changedDotFiles;
 	}
@@ -158,8 +148,7 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 	 *            list of dot files from the
 	 *            {@link AbstractGeneratorMojo#statusFile}
 	 */
-	protected boolean executeDot(Set<String> dotFiles)
-			throws MojoExecutionException {
+	protected boolean executeDot(Set<String> dotFiles) throws MojoExecutionException {
 
 		// Build executor for projects base directory
 		MavenLogOutputStream stdout = getStdoutStream();
@@ -219,8 +208,7 @@ public class GraphvizMojo extends AbstractGeneratorMojo {
 	 *            list of generated files from the
 	 *            {@link AbstractGeneratorMojo#statusFile}
 	 */
-	protected CommandLine getDotCommandLine(Set<String> generatedFiles)
-			throws MojoExecutionException {
+	protected CommandLine getDotCommandLine(Set<String> generatedFiles) throws MojoExecutionException {
 		CommandLine cl = new CommandLine(command);
 		if (isVerbose()) {
 			cl.addArgument("-v");

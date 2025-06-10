@@ -42,10 +42,9 @@ import org.sculptor.framework.accessimpl.jpa.QueryPropertyRestriction.Operator;
  * Command design pattern.
  * </p>
  */
-public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
-	extends JpaCriteriaQueryAccessBase<T,R> {
+public abstract class JpaCriteriaQueryExpressionAccessBase<T, R> extends JpaCriteriaQueryAccessBase<T, R> {
 
-    private QueryExpressions<T> expressions = new QueryExpressions<T>();
+	private QueryExpressions<T> expressions = new QueryExpressions<T>();
 
 	public JpaCriteriaQueryExpressionAccessBase() {
 		super();
@@ -60,42 +59,42 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 	}
 
 	protected QueryExpressions<T> getExpressions() {
-        return expressions;
-    }
+		return expressions;
+	}
 
 	protected void setExpressions(QueryExpressions<T> expressions) {
-        this.expressions = expressions;
-    }
+		this.expressions = expressions;
+	}
 
-    public String getOrderBy() {
-        return expressions.getOrdersAsString();
-    }
+	public String getOrderBy() {
+		return expressions.getOrdersAsString();
+	}
 
-    public void setOrderBy(String orderBy) {
-        expressions.addOrders(orderBy);
-    }
+	public void setOrderBy(String orderBy) {
+		expressions.addOrders(orderBy);
+	}
 
-    public void setSelections(String selections) {
-        expressions.addSelections(selections);
-    }
+	public void setSelections(String selections) {
+		expressions.addSelections(selections);
+	}
 
-    public void setGroupBy(String groupBy) {
-        expressions.addGroups(groupBy);
-    }
+	public void setGroupBy(String groupBy) {
+		expressions.addGroups(groupBy);
+	}
 
-    @SuppressWarnings("unchecked")
-    protected void prepareSelect(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
-        if (expressions.hasSelections()) {
-            List<Selection<?>> selections = mapSelections(getCriteriaBuilder(), root, expressions.getSelections());
-            if (selections.size() == 1) {
-                criteriaQuery.select((Selection<? extends R>) selections.get(0));
-            } else {
-                criteriaQuery.multiselect(selections);
-            }
-        }
-    }
+	@SuppressWarnings("unchecked")
+	protected void prepareSelect(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
+		if (expressions.hasSelections()) {
+			List<Selection<?>> selections = mapSelections(getCriteriaBuilder(), root, expressions.getSelections());
+			if (selections.size() == 1) {
+				criteriaQuery.select((Selection<? extends R>) selections.get(0));
+			} else {
+				criteriaQuery.multiselect(selections);
+			}
+		}
+	}
 
-	protected void prepareGroupBy(CriteriaQuery<R> criteriaQuery, Root<T> root,	QueryConfig config) {
+	protected void prepareGroupBy(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
 		if (expressions.hasGroups()) {
 			criteriaQuery.groupBy(mapExpressions(getCriteriaBuilder(), root, expressions.getGroups()));
 		}
@@ -104,8 +103,7 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 	protected void prepareOrderBy(CriteriaQuery<R> criteriaQuery, Root<T> root, QueryConfig config) {
 		if (config.isSingleResult() && expressions.hasOrders()) {
 			if (config.throwExceptionOnConfigurationError()) {
-				throw new QueryConfigException(
-						"Query returns a single result, 'order by' not allowed.");
+				throw new QueryConfigException("Query returns a single result, 'order by' not allowed.");
 			}
 			return;
 		}
@@ -134,7 +132,7 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 	 * @param value
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 	private Predicate preparePredicate(Path<?> path, String property, Operator operator, Object value) {
 
 		path = getPath(path, property);
@@ -142,33 +140,25 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 		if (Operator.Equal.equals(operator)) {
 			return getCriteriaBuilder().equal(path, value);
 		} else if (Operator.NotEqual.equals(operator)) {
-			return getCriteriaBuilder().notEqual(
-					getCriteriaBuilder().upper(path.as(String.class)),
+			return getCriteriaBuilder().notEqual(getCriteriaBuilder().upper(path.as(String.class)),
 					((String) value).toUpperCase());
 		} else if (Operator.IgnoreCaseEqual.equals(operator)) {
-			return getCriteriaBuilder().equal(
-					getCriteriaBuilder().upper(path.as(String.class)),
+			return getCriteriaBuilder().equal(getCriteriaBuilder().upper(path.as(String.class)),
 					((String) value).toUpperCase());
 		} else if (Operator.LessThan.equals(operator)) {
-			return getCriteriaBuilder().lessThan((Expression<Comparable>) path,
-					(Comparable) value);
+			return getCriteriaBuilder().lessThan((Expression<Comparable>) path, (Comparable) value);
 		} else if (Operator.LessThanOrEqual.equals(operator)) {
-			return getCriteriaBuilder().lessThanOrEqualTo(
-					(Expression<Comparable>) path, (Comparable) value);
+			return getCriteriaBuilder().lessThanOrEqualTo((Expression<Comparable>) path, (Comparable) value);
 		} else if (Operator.GreaterThan.equals(operator)) {
-			return getCriteriaBuilder().greaterThan((Expression<Comparable>) path,
-					(Comparable) value);
+			return getCriteriaBuilder().greaterThan((Expression<Comparable>) path, (Comparable) value);
 		} else if (Operator.GreaterThanOrEqual.equals(operator)) {
-			return getCriteriaBuilder().greaterThanOrEqualTo(
-					(Expression<Comparable>) path, (Comparable) value);
+			return getCriteriaBuilder().greaterThanOrEqualTo((Expression<Comparable>) path, (Comparable) value);
 		} else if (Operator.NotLike.equals(operator)) {
-			return getCriteriaBuilder().notLike(path.as(String.class),
-					(String) value);
+			return getCriteriaBuilder().notLike(path.as(String.class), (String) value);
 		} else if (Operator.Like.equals(operator)) {
 			return getCriteriaBuilder().like(path.as(String.class), (String) value);
 		} else if (Operator.IgnoreCaseLike.equals(operator)) {
-			return getCriteriaBuilder().like(
-					getCriteriaBuilder().upper(path.as(String.class)),
+			return getCriteriaBuilder().like(getCriteriaBuilder().upper(path.as(String.class)),
 					((String) value).toUpperCase());
 		} else if (Operator.IsNull.equals(operator)) {
 			return getCriteriaBuilder().isNull(path);
@@ -259,8 +249,7 @@ public abstract class JpaCriteriaQueryExpressionAccessBase<T,R>
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<Expression<?>> mapExpressions(CriteriaBuilder builder,
-			Path<?> root, List<String> expressions) {
+	private List<Expression<?>> mapExpressions(CriteriaBuilder builder, Path<?> root, List<String> expressions) {
 		if (expressions == null) {
 			return null;
 		}

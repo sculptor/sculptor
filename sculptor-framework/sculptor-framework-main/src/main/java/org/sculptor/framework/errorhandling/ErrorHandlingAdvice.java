@@ -44,109 +44,105 @@ import org.springframework.dao.DataIntegrityViolationException;
  */
 public class ErrorHandlingAdvice extends BasicErrorHandlingAdvice {
 
-    public ErrorHandlingAdvice() {
-    }
+	public ErrorHandlingAdvice() {
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, ConstraintViolationException e) {
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), excMessage(e));
-        log.debug("{}", message);
-        ValidationException newException = new ValidationException(e.getMessage());
-        newException.setLogged(true);
-        newException.setConstraintViolations(e.getConstraintViolations());
-        throw newException;
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, ConstraintViolationException e) {
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), excMessage(e));
+		log.debug("{}", message);
+		ValidationException newException = new ValidationException(e.getMessage());
+		newException.setLogged(true);
+		newException.setConstraintViolations(e.getConstraintViolations());
+		throw newException;
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, DataIntegrityViolationException e) {
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), excMessage(e));
-        log.debug("{}", message);
-        ValidationException newException = new ValidationException(e.getMessage());
-        newException.setLogged(true);
-        throw newException;
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, DataIntegrityViolationException e) {
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		LogMessage message = new LogMessage(mapLogCode(ValidationException.ERROR_CODE), excMessage(e));
+		log.debug("{}", message);
+		ValidationException newException = new ValidationException(e.getMessage());
+		newException.setLogged(true);
+		throw newException;
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, SQLException e) {
-        handleDatabaseAccessException(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, SQLException e) {
+		handleDatabaseAccessException(target, e);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, DataAccessException e) {
-        handleDatabaseAccessException(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, DataAccessException e) {
+		handleDatabaseAccessException(target, e);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, PersistenceException e) {
-        handleDatabaseAccessException(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, PersistenceException e) {
+		handleDatabaseAccessException(target, e);
+	}
 
-    protected void handleDatabaseAccessException(Object target, Exception e) {
-        Logger log = LoggerFactory.getLogger(target.getClass());
+	protected void handleDatabaseAccessException(Object target, Exception e) {
+		Logger log = LoggerFactory.getLogger(target.getClass());
 
-        // often the wrapped SQLException contains the interesting piece of
-        // information
-        StringBuilder message = new StringBuilder();
-        message.append(e.getClass().getName()).append(": ");
-        message.append(excMessage(e));
-        SQLException sqlExc = ExceptionHelper.unwrapSQLException(e);
-        Throwable realException = sqlExc;
-        if (sqlExc != null) {
-            message.append(", Caused by: ");
-            message.append(sqlExc.getClass().getName()).append(": ");
-            message.append(excMessage(sqlExc));
-            if (sqlExc.getNextException() != null) {
-                message.append(", Next exception: ");
-                message.append(sqlExc.getNextException().getClass().getName()).append(": ");
-                message.append(excMessage(sqlExc.getNextException()));
-                realException=sqlExc.getNextException();
-            }
-        }
+		// often the wrapped SQLException contains the interesting piece of
+		// information
+		StringBuilder message = new StringBuilder();
+		message.append(e.getClass().getName()).append(": ");
+		message.append(excMessage(e));
+		SQLException sqlExc = ExceptionHelper.unwrapSQLException(e);
+		Throwable realException = sqlExc;
+		if (sqlExc != null) {
+			message.append(", Caused by: ");
+			message.append(sqlExc.getClass().getName()).append(": ");
+			message.append(excMessage(sqlExc));
+			if (sqlExc.getNextException() != null) {
+				message.append(", Next exception: ");
+				message.append(sqlExc.getNextException().getClass().getName()).append(": ");
+				message.append(excMessage(sqlExc.getNextException()));
+				realException = sqlExc.getNextException();
+			}
+		}
 
-        if (isJmsContext() && !isJmsRedelivered()) {
-            LogMessage logMessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message
-                    .toString());
-            log.info("{}", logMessage);
-        } else {
-            LogMessage logMmessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message
-                    .toString());
-            log.error(logMmessage.toString(), e);
-        }
+		if (isJmsContext() && !isJmsRedelivered()) {
+			LogMessage logMessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message.toString());
+			log.info("{}", logMessage);
+		} else {
+			LogMessage logMmessage = new LogMessage(mapLogCode(DatabaseAccessException.ERROR_CODE), message.toString());
+			log.error(logMmessage.toString(), e);
+		}
 
-        DatabaseAccessException newException = new DatabaseAccessException(message.toString(), realException);
-        newException.setLogged(true);
-        throw newException;
-    }
+		DatabaseAccessException newException = new DatabaseAccessException(message.toString(), realException);
+		newException.setLogged(true);
+		throw newException;
+	}
 
-    /**
-     * Spring exception for Optimistic Locking.
-     */
-    public void afterThrowing(Method m, Object[] args, Object target, ConcurrencyFailureException e)
-            throws OptimisticLockingException {
-        handleOptimisticLockingException(target, e);
-    }
+	/**
+	 * Spring exception for Optimistic Locking.
+	 */
+	public void afterThrowing(Method m, Object[] args, Object target, ConcurrencyFailureException e)
+			throws OptimisticLockingException {
+		handleOptimisticLockingException(target, e);
+	}
 
-    /**
-     * JPA exception for Optimistic Locking.
-     */
-    public void afterThrowing(Method m, Object[] args, Object target, OptimisticLockException e)
-            throws OptimisticLockingException {
-        handleOptimisticLockingException(target, e);
-    }
+	/**
+	 * JPA exception for Optimistic Locking.
+	 */
+	public void afterThrowing(Method m, Object[] args, Object target, OptimisticLockException e)
+			throws OptimisticLockingException {
+		handleOptimisticLockingException(target, e);
+	}
 
-    private void handleOptimisticLockingException(Object target, Exception e) throws OptimisticLockingException {
-        Logger log = LoggerFactory.getLogger(target.getClass());
+	private void handleOptimisticLockingException(Object target, Exception e) throws OptimisticLockingException {
+		Logger log = LoggerFactory.getLogger(target.getClass());
 
-        if (isJmsContext() && isJmsRedelivered()) {
-            LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE),
-                    excMessage(e));
-            log.error(logMessage.toString(), e);
-        } else {
-            LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE),
-                    excMessage(e));
-            log.info(logMessage.toString());
-        }
+		if (isJmsContext() && isJmsRedelivered()) {
+			LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE), excMessage(e));
+			log.error(logMessage.toString(), e);
+		} else {
+			LogMessage logMessage = new LogMessage(mapLogCode(OptimisticLockingException.ERROR_CODE), excMessage(e));
+			log.info(logMessage.toString());
+		}
 
-        OptimisticLockingException newException = new OptimisticLockingException(excMessage(e));
-        newException.setLogged(true);
-        throw newException;
-    }
+		OptimisticLockingException newException = new OptimisticLockingException(excMessage(e));
+		newException.setLogged(true);
+		throw newException;
+	}
 
 }

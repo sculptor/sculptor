@@ -42,11 +42,7 @@ public class MiniPerson {
 
 	@Override
 	public String toString() {
-		return "MiniPerson{" +
-				"id=" + id +
-				", first='" + first + '\'' +
-				", secondName='" + secondName + '\'' +
-				", createdDate=" + createdDate +
-				'}';
+		return "MiniPerson{" + "id=" + id + ", first='" + first + '\'' + ", secondName='" + secondName + '\''
+				+ ", createdDate=" + createdDate + '}';
 	}
 }

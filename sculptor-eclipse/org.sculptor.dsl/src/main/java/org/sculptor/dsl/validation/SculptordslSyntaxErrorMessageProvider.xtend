@@ -32,20 +32,20 @@ import org.antlr.runtime.MismatchedTokenException
  */
 class SculptordslSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 
-	@Inject IGrammarAccess grammarAccess
+	@Inject
+	IGrammarAccess grammarAccess
 
 	/**
-     * Customizes error message for reserved keywords "mismatched input 'xxx' expecting RULE_ID".
-     */
+	 * Customizes error message for reserved keywords "mismatched input 'xxx' expecting RULE_ID".
+	 */
 	override getSyntaxErrorMessage(IParserErrorContext context) {
-		if ((context.recognitionException instanceof MissingTokenException) ||
-			(context.recognitionException instanceof MismatchedTokenException)) {
+		if ((context.recognitionException instanceof MissingTokenException) || (context.recognitionException instanceof MismatchedTokenException)) {
 			val missingTokenText = context.recognitionException.token.text
 			if (GrammarUtil.getAllKeywords(grammarAccess.getGrammar()).contains(missingTokenText)) {
 				return new SyntaxErrorMessage(
 					"'" + missingTokenText + "' is a reserved keyword which is not allowed as Identifier. " +
-						"Please choose another word or alternatively escape it with the caret (^) character, e.g. '^" +
-						missingTokenText + "'", IssueCodes.USED_RESERVED_KEYWORD, #[missingTokenText])
+						"Please choose another word or alternatively escape it with the caret (^) character, e.g. '^" + missingTokenText + "'",
+					IssueCodes.USED_RESERVED_KEYWORD, #[missingTokenText])
 			}
 		}
 		super.getSyntaxErrorMessage(context)

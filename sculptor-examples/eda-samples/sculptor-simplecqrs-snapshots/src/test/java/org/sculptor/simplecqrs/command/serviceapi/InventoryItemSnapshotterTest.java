@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Spring based test with MongoDB.
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class InventoryItemSnapshotterTest implements InventoryItemSnapshotterTestBase {
 
 	@Autowired
@@ -71,8 +71,8 @@ public class InventoryItemSnapshotterTest implements InventoryItemSnapshotterTes
 			if (i % 100 == 0) {
 				expectedSnapshots++;
 			}
-			assertEquals(expectedSnapshots, countSnapshots()
-					, "Expected " + expectedSnapshots + " snapshots after " + i + " events");
+			assertEquals(expectedSnapshots, countSnapshots(),
+					"Expected " + expectedSnapshots + " snapshots after " + i + " events");
 		}
 
 	}

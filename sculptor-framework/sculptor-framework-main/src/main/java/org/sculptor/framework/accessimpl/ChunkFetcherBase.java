@@ -33,108 +33,107 @@ import java.util.Set;
  */
 public abstract class ChunkFetcherBase<T, KEY> {
 
-    // max for Oracle is 1000
-    private static final int CHUNK_SIZE = 990;
+	// max for Oracle is 1000
+	private static final int CHUNK_SIZE = 990;
 
-    private final String restrictionPropertyName;
+	private final String restrictionPropertyName;
 
-    /**
-     * @param restrictionPropertyName
-     *            the name of the property to use for the 'in' criteria
-     */
-    public ChunkFetcherBase(String restrictionPropertyName) {
-        this.restrictionPropertyName = restrictionPropertyName;
-    }
+	/**
+	 * @param restrictionPropertyName
+	 *            the name of the property to use for the 'in' criteria
+	 */
+	public ChunkFetcherBase(String restrictionPropertyName) {
+		this.restrictionPropertyName = restrictionPropertyName;
+	}
 
-    protected String getRestrictionPropertyName() {
+	protected String getRestrictionPropertyName() {
 		return restrictionPropertyName;
 	}
 
 	public Map<KEY, T> getDomainObjects(Set<? extends KEY> keys) {
-        return filterResult(keys, getDomainObjectsAsList(keys));
-    }
+		return filterResult(keys, getDomainObjectsAsList(keys));
+	}
 
-    public Map<KEY, Set<T>> getDomainObjectsNonUniqueKeys(Set<? extends KEY> keys) {
-        return filterResultNonUniqueKeys(keys, getDomainObjectsAsList(keys));
-    }
+	public Map<KEY, Set<T>> getDomainObjectsNonUniqueKeys(Set<? extends KEY> keys) {
+		return filterResultNonUniqueKeys(keys, getDomainObjectsAsList(keys));
+	}
 
-    /**
-     * Fetch existing domain objects based on natural keys
-     *
-     * @param keys
-     *            Set of natural keys for the domain objects to fetch
-     * @param resultAsSet
-     *            indicates if the keys are unique or not, eg. the resulting map
-     *            must be a set of objects.
-     * @return Map with keys and domain objects
-     */
-    public List<T> getDomainObjectsAsList(Set<? extends KEY> keys) {
-        // it is not "possible" to use huge number of parameters in a
-        // Restrictions.in criterion and therefore we chunk the query
-        // into pieces
-        List<T> all = new ArrayList<T>();
-        Iterator<? extends KEY> iter = keys.iterator();
-        List<KEY> chunkKeys = new ArrayList<KEY>();
-        for (int i = 1; iter.hasNext(); i++) {
-            KEY element = iter.next();
-            chunkKeys.add(element);
-            if ((i % CHUNK_SIZE) == 0) {
-                all.addAll(getChunk(chunkKeys));
-                chunkKeys = new ArrayList<KEY>();
-            }
-        }
-        // and then the last part
-        if (!chunkKeys.isEmpty()) {
-            all.addAll(getChunk(chunkKeys));
-        }
+	/**
+	 * Fetch existing domain objects based on natural keys
+	 *
+	 * @param keys
+	 *            Set of natural keys for the domain objects to fetch
+	 * @param resultAsSet
+	 *            indicates if the keys are unique or not, eg. the resulting map
+	 *            must be a set of objects.
+	 * @return Map with keys and domain objects
+	 */
+	public List<T> getDomainObjectsAsList(Set<? extends KEY> keys) {
+		// it is not "possible" to use huge number of parameters in a
+		// Restrictions.in criterion and therefore we chunk the query
+		// into pieces
+		List<T> all = new ArrayList<T>();
+		Iterator<? extends KEY> iter = keys.iterator();
+		List<KEY> chunkKeys = new ArrayList<KEY>();
+		for (int i = 1; iter.hasNext(); i++) {
+			KEY element = iter.next();
+			chunkKeys.add(element);
+			if ((i % CHUNK_SIZE) == 0) {
+				all.addAll(getChunk(chunkKeys));
+				chunkKeys = new ArrayList<KEY>();
+			}
+		}
+		// and then the last part
+		if (!chunkKeys.isEmpty()) {
+			all.addAll(getChunk(chunkKeys));
+		}
 
-        return all;
-    }
+		return all;
+	}
 
-    protected Map<KEY, T> filterResult(Set<? extends KEY> keys, List<T> all) {
-        Map<KEY, T> existingObjectsMap = new HashMap<KEY, T>();
-        for (T obj : all) {
-            KEY key = key(obj);
-            if (keys.contains(key)) {
-                 existingObjectsMap.put(key, obj);
-            }
-        }
-        return existingObjectsMap;
-    }
+	protected Map<KEY, T> filterResult(Set<? extends KEY> keys, List<T> all) {
+		Map<KEY, T> existingObjectsMap = new HashMap<KEY, T>();
+		for (T obj : all) {
+			KEY key = key(obj);
+			if (keys.contains(key)) {
+				existingObjectsMap.put(key, obj);
+			}
+		}
+		return existingObjectsMap;
+	}
 
-    protected Map<KEY, Set<T>> filterResultNonUniqueKeys(Set<? extends KEY> keys, List<T> all) {
-       Map<KEY, Set<T>> existingObjectsMap = new HashMap<KEY, Set<T>>();
-       for (T obj : all) {
-           KEY key = key(obj);
-           if (keys.contains(key)) {
-               Set<T> keySet = existingObjectsMap.get(key);
-               if (keySet == null) {
-                   keySet = new LinkedHashSet<T>();
-                   existingObjectsMap.put(key, keySet);
-               }
-               keySet.add(obj);
-           }
-       }
-       return existingObjectsMap;
-   }
+	protected Map<KEY, Set<T>> filterResultNonUniqueKeys(Set<? extends KEY> keys, List<T> all) {
+		Map<KEY, Set<T>> existingObjectsMap = new HashMap<KEY, Set<T>>();
+		for (T obj : all) {
+			KEY key = key(obj);
+			if (keys.contains(key)) {
+				Set<T> keySet = existingObjectsMap.get(key);
+				if (keySet == null) {
+					keySet = new LinkedHashSet<T>();
+					existingObjectsMap.put(key, keySet);
+				}
+				keySet.add(obj);
+			}
+		}
+		return existingObjectsMap;
+	}
 
-    /**
-     * @return the natural key for the domain object, normally this is the value
-     *         of the property specified in the constructor, but for composite
-     *         keys it is not
-     */
-    protected abstract KEY key(T obj);
+	/**
+	 * @return the natural key for the domain object, normally this is the value of
+	 *         the property specified in the constructor, but for composite keys it
+	 *         is not
+	 */
+	protected abstract KEY key(T obj);
 
-    protected abstract List<T> getChunk(Collection<KEY> keys);
+	protected abstract List<T> getChunk(Collection<KEY> keys);
 
-    /**
-     * By default, the values to use in the restriction criteria are the same as
-     * the key objects, but if it is composite keys, then the subclass must
-     * override and extract the property values to use in the restriction
-     * criteria.
-     */
-    protected Collection<KEY> restrictionPropertyValues(Collection<KEY> keys) {
-        return keys;
-    }
+	/**
+	 * By default, the values to use in the restriction criteria are the same as the
+	 * key objects, but if it is composite keys, then the subclass must override and
+	 * extract the property values to use in the restriction criteria.
+	 */
+	protected Collection<KEY> restrictionPropertyValues(Collection<KEY> keys) {
+		return keys;
+	}
 
 }

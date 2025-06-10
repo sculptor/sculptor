@@ -9,7 +9,6 @@
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-active-annotation-test</artifactId>
 	<name>Sculptor :: Generator :: Active annotation test</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -50,7 +49,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>

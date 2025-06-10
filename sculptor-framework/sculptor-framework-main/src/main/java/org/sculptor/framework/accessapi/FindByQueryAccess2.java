@@ -17,7 +17,6 @@
 
 package org.sculptor.framework.accessapi;
 
-
 /**
  * <p>
  * Access command for finding objects by query.
@@ -27,12 +26,12 @@ package org.sculptor.framework.accessapi;
  * </p>
  *
  */
-public interface FindByQueryAccess2<R> extends FindByQueryAccess<R>, Countable  {
+public interface FindByQueryAccess2<R> extends FindByQueryAccess<R>, Countable {
 
-    /**
-     * Result when singleResult is used.
-     */
-    R getSingleResult();
+	/**
+	 * Result when singleResult is used.
+	 */
+	R getSingleResult();
 
 	void setHint(String hint, Object value);
 }

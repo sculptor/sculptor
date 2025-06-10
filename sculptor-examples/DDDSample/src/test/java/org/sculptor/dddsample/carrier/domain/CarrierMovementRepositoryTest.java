@@ -11,25 +11,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class CarrierMovementRepositoryTest extends AbstractDbUnitJpaTests {
 
-    private CarrierMovementRepository carrierMovementRepository;
+	private CarrierMovementRepository carrierMovementRepository;
 
-    @Autowired
-    public void setCarrierMovementRepository(CarrierMovementRepository carrierMovementRepository) {
-        this.carrierMovementRepository = carrierMovementRepository;
-    }
+	@Autowired
+	public void setCarrierMovementRepository(CarrierMovementRepository carrierMovementRepository) {
+		this.carrierMovementRepository = carrierMovementRepository;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testFind() throws Exception {
-        CarrierMovement carrierMovement = carrierMovementRepository.find(new CarrierMovementId("CAR_001"));
-        assertNotNull(carrierMovement);
-        assertEquals("CAR_001", carrierMovement.getCarrierMovementId().getIdentifier());
-        assertEquals(STOCKHOLM, carrierMovement.getFrom());
-        assertEquals(HELSINKI, carrierMovement.getTo());
-    }
+	@Test
+	public void testFind() throws Exception {
+		CarrierMovement carrierMovement = carrierMovementRepository.find(new CarrierMovementId("CAR_001"));
+		assertNotNull(carrierMovement);
+		assertEquals("CAR_001", carrierMovement.getCarrierMovementId().getIdentifier());
+		assertEquals(STOCKHOLM, carrierMovement.getFrom());
+		assertEquals(HELSINKI, carrierMovement.getTo());
+	}
 
 }

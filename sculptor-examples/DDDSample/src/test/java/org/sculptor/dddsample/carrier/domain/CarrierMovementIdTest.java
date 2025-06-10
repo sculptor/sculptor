@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class CarrierMovementIdTest {
 
-    @Test
-    public void testConstructor() throws Exception {
-        assertThrows(NullPointerException.class, () -> {
-            new CarrierMovementId(null);
-            fail("Should not accept null constructor argument");
-        });
-    }
+	@Test
+	public void testConstructor() throws Exception {
+		assertThrows(NullPointerException.class, () -> {
+			new CarrierMovementId(null);
+			fail("Should not accept null constructor argument");
+		});
+	}
 
 }

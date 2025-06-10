@@ -25,78 +25,74 @@ import org.springframework.stereotype.Service;
 @Service("routingService")
 public class RoutingServiceImpl extends RoutingServiceImplBase {
 
-    public RoutingServiceImpl() {
-    }
+	public RoutingServiceImpl() {
+	}
 
-    public List<Itinerary> fetchRoutesForSpecification(ServiceContext ctx,
-        RouteSpecification routeSpecification) throws LocationNotFoundException {
+	public List<Itinerary> fetchRoutesForSpecification(ServiceContext ctx, RouteSpecification routeSpecification)
+			throws LocationNotFoundException {
 
-        final Location origin = routeSpecification.getOrigin();
-        final Location destination = routeSpecification.getDestination();
+		final Location origin = routeSpecification.getOrigin();
+		final Location destination = routeSpecification.getDestination();
 
-        final List<TransitPath> transitPaths = findShortestPath(ctx, 
-          origin.getUnLocode().getUnlocode(),
-          destination.getUnLocode().getUnlocode()
-        );
-        
-        saveUnknownCarrierMovements(transitPaths);
-        
-        final List<Itinerary> itineraries = new ArrayList<Itinerary>(transitPaths.size());
+		final List<TransitPath> transitPaths = findShortestPath(ctx, origin.getUnLocode().getUnlocode(),
+				destination.getUnLocode().getUnlocode());
 
-        for (TransitPath transitPath : transitPaths) {
-          final Itinerary itinerary = toItinerary(transitPath);
-          itineraries.add(itinerary);
-        }
+		saveUnknownCarrierMovements(transitPaths);
 
-        return itineraries;
+		final List<Itinerary> itineraries = new ArrayList<Itinerary>(transitPaths.size());
 
-    }
-    
-    private void saveUnknownCarrierMovements(List<TransitPath> paths) throws LocationNotFoundException {
-        for (TransitPath each : paths) {
-            saveUnknownCarrierMovements(each);
-        }
-    }
-    
-    private void saveUnknownCarrierMovements(TransitPath path) throws LocationNotFoundException {
-        for (TransitEdge each : path.getTransitEdges()) {
-            saveUnknownCarrierMovements(each);
-        }
-    }
+		for (TransitPath transitPath : transitPaths) {
+			final Itinerary itinerary = toItinerary(transitPath);
+			itineraries.add(itinerary);
+		}
 
-    private void saveUnknownCarrierMovements(TransitEdge edge) throws LocationNotFoundException {
-        ServiceContext ctx = ServiceContextStore.get();
-        try {
-            getCarrierService().find(ctx, new CarrierMovementId(edge.getCarrierMovementId()));
-        } catch (CarrierMovementNotFoundException e) {
-            Location fromLocation = findLocation(ctx, new UnLocode(edge.getFromUnLocode()));
-            Validate.notNull(fromLocation);
-            Location toLocation = findLocation(ctx, new UnLocode(edge.getToUnLocode()));
-            Validate.notNull(toLocation);
-            getCarrierService().save(ctx, 
-                    new CarrierMovement(new CarrierMovementId(edge.getCarrierMovementId()),
-                            fromLocation, toLocation));
-        }
-        
-    }
+		return itineraries;
 
-    private Itinerary toItinerary(TransitPath transitPath) throws LocationNotFoundException {
-        List<Leg> legs = new ArrayList<Leg>(transitPath.getTransitEdges().size());
-        for (TransitEdge edge : transitPath.getTransitEdges()) {
-          legs.add(toLeg(edge));
-        }
-        return new Itinerary(legs);
-      }
+	}
 
-      private Leg toLeg(TransitEdge edge) throws LocationNotFoundException {
-          try {
-            return new Leg(
-              findCarrierMovement(ServiceContextStore.get(), new CarrierMovementId(edge.getCarrierMovementId())),
-              findLocation(ServiceContextStore.get(), new UnLocode(edge.getFromUnLocode())),
-              findLocation(ServiceContextStore.get(), new UnLocode(edge.getToUnLocode()))
-            );
-          } catch (CarrierMovementNotFoundException e) {
-              throw new IllegalStateException("Inconsistent CarrierMovement: " + e.getMessage(), e);
-          }
-      }
+	private void saveUnknownCarrierMovements(List<TransitPath> paths) throws LocationNotFoundException {
+		for (TransitPath each : paths) {
+			saveUnknownCarrierMovements(each);
+		}
+	}
+
+	private void saveUnknownCarrierMovements(TransitPath path) throws LocationNotFoundException {
+		for (TransitEdge each : path.getTransitEdges()) {
+			saveUnknownCarrierMovements(each);
+		}
+	}
+
+	private void saveUnknownCarrierMovements(TransitEdge edge) throws LocationNotFoundException {
+		ServiceContext ctx = ServiceContextStore.get();
+		try {
+			getCarrierService().find(ctx, new CarrierMovementId(edge.getCarrierMovementId()));
+		} catch (CarrierMovementNotFoundException e) {
+			Location fromLocation = findLocation(ctx, new UnLocode(edge.getFromUnLocode()));
+			Validate.notNull(fromLocation);
+			Location toLocation = findLocation(ctx, new UnLocode(edge.getToUnLocode()));
+			Validate.notNull(toLocation);
+			getCarrierService().save(ctx,
+					new CarrierMovement(new CarrierMovementId(edge.getCarrierMovementId()), fromLocation, toLocation));
+		}
+
+	}
+
+	private Itinerary toItinerary(TransitPath transitPath) throws LocationNotFoundException {
+		List<Leg> legs = new ArrayList<Leg>(transitPath.getTransitEdges().size());
+		for (TransitEdge edge : transitPath.getTransitEdges()) {
+			legs.add(toLeg(edge));
+		}
+		return new Itinerary(legs);
+	}
+
+	private Leg toLeg(TransitEdge edge) throws LocationNotFoundException {
+		try {
+			return new Leg(
+					findCarrierMovement(ServiceContextStore.get(), new CarrierMovementId(edge.getCarrierMovementId())),
+					findLocation(ServiceContextStore.get(), new UnLocode(edge.getFromUnLocode())),
+					findLocation(ServiceContextStore.get(), new UnLocode(edge.getToUnLocode())));
+		} catch (CarrierMovementNotFoundException e) {
+			throw new IllegalStateException("Inconsistent CarrierMovement: " + e.getMessage(), e);
+		}
+	}
 }

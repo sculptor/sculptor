@@ -23,19 +23,23 @@ import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Tuple;
 
 /**
- * <p>Access command for calculating statistics by condition. The specified
+ * <p>
+ * Access command for calculating statistics by condition. The specified
  * {@link #setCondition restrictions} are used to build the restrictions with
- * simple equals conditions.</p>
- * <p>Command design pattern.</p>
+ * simple equals conditions.
+ * </p>
+ * <p>
+ * Command design pattern.
+ * </p>
  */
 public interface FindByConditionStatAccess<T> extends FindByConditionAccess<Tuple>, Cacheable {
 
 	/**
 	 * These criteria are used to build complex restrictions which depends on
 	 * provided criteria. This criteria are used in conjuction with Restriction.<br>
-	 * {@link #addCondition} - add additional condition<br> {@link #setCondition} -
-	 * set simple restriction<br> {@link #addCondition} - add additional simple
-	 * restriction
+	 * {@link #addCondition} - add additional condition<br>
+	 * {@link #setCondition} - set simple restriction<br>
+	 * {@link #addCondition} - add additional simple restriction
 	 */
 	void setCondition(List<ConditionalCriteria> criteria);
 

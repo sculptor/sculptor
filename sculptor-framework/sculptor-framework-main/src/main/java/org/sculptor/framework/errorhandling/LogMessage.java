@@ -28,90 +28,88 @@ import org.sculptor.framework.context.ServiceContextStore;
  * @author Patrik Nordwall
  */
 public class LogMessage {
-    private String errorCode;
-    private String message;
-    private ServiceContext serviceContext;
+	private String errorCode;
+	private String message;
+	private ServiceContext serviceContext;
 
-    /**
-     * @param errorCode
-     *            Well defined error code for the error type.
-     * @param message
-     *            Technical message. Used for debugging purpose, not intended
-     *            for
-     * @param serviceContext
-     *            Contains user information etc.
-     */
-    public LogMessage(ServiceContext serviceContext, String errorCode, String message) {
-        this.serviceContext = serviceContext;
-        this.errorCode = errorCode;
-        this.message = message;
-    }
+	/**
+	 * @param errorCode
+	 *            Well defined error code for the error type.
+	 * @param message
+	 *            Technical message. Used for debugging purpose, not intended for
+	 * @param serviceContext
+	 *            Contains user information etc.
+	 */
+	public LogMessage(ServiceContext serviceContext, String errorCode, String message) {
+		this.serviceContext = serviceContext;
+		this.errorCode = errorCode;
+		this.message = message;
+	}
 
-    /**
-     * ServiceContext will be picked from {@link ServiceContextStore}
-     * 
-     * @see #LogMessage(ServiceContext, String, String)
-     */
-    public LogMessage(String errorCode, String message) {
-        this(ServiceContextStore.get(), errorCode, message);
-    }
+	/**
+	 * ServiceContext will be picked from {@link ServiceContextStore}
+	 * 
+	 * @see #LogMessage(ServiceContext, String, String)
+	 */
+	public LogMessage(String errorCode, String message) {
+		this(ServiceContextStore.get(), errorCode, message);
+	}
 
-    public LogMessage(ServiceContext serviceContext, SystemException e) {
-        this(serviceContext, e.getErrorCode(), e.getMessage());
-    }
+	public LogMessage(ServiceContext serviceContext, SystemException e) {
+		this(serviceContext, e.getErrorCode(), e.getMessage());
+	}
 
-    /**
-     * ServiceContext will be picked from {@link ServiceContextStore}
-     * 
-     * @see #LogMessage(ServiceContext, SystemException)
-     */
-    public LogMessage(SystemException e) {
-        this(ServiceContextStore.get(), e.getErrorCode(), e.getMessage());
-    }
+	/**
+	 * ServiceContext will be picked from {@link ServiceContextStore}
+	 * 
+	 * @see #LogMessage(ServiceContext, SystemException)
+	 */
+	public LogMessage(SystemException e) {
+		this(ServiceContextStore.get(), e.getErrorCode(), e.getMessage());
+	}
 
-    public LogMessage(ServiceContext serviceContext, ApplicationException e) {
-        this(serviceContext, e.getErrorCode(), e.getMessage());
-    }
+	public LogMessage(ServiceContext serviceContext, ApplicationException e) {
+		this(serviceContext, e.getErrorCode(), e.getMessage());
+	}
 
-    /**
-     * ServiceContext will be picked from {@link ServiceContextStore}
-     * 
-     * @see #LogMessage(ServiceContext, ApplicationException)
-     */
-    public LogMessage(ApplicationException e) {
-        this(ServiceContextStore.get(), e.getErrorCode(), e.getMessage());
-    }
+	/**
+	 * ServiceContext will be picked from {@link ServiceContextStore}
+	 * 
+	 * @see #LogMessage(ServiceContext, ApplicationException)
+	 */
+	public LogMessage(ApplicationException e) {
+		this(ServiceContextStore.get(), e.getErrorCode(), e.getMessage());
+	}
 
-    public ServiceContext getServiceContext() {
-        return serviceContext;
-    }
+	public ServiceContext getServiceContext() {
+		return serviceContext;
+	}
 
-    /**
-     * Well defined error code for the error type.
-     */
-    public String getErrorCode() {
-        return errorCode;
-    }
+	/**
+	 * Well defined error code for the error type.
+	 */
+	public String getErrorCode() {
+		return errorCode;
+	}
 
-    /**
-     * Technical message. Used for debugging purpose, not intended for end
-     * users.
-     */
-    public String getMessage() {
-        return message;
-    }
+	/**
+	 * Technical message. Used for debugging purpose, not intended for end users.
+	 */
+	public String getMessage() {
+		return message;
+	}
 
-    /**
-     * Formats the log message.
-     */
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("[").append(errorCode).append("] ");
-        if (serviceContext != null) {
-            sb.append(serviceContext).append(" ");
-        }
-        sb.append(" : ").append(message);
-        return sb.toString();
-    }
+	/**
+	 * Formats the log message.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[").append(errorCode).append("] ");
+		if (serviceContext != null) {
+			sb.append(serviceContext).append(" ");
+		}
+		sb.append(" : ").append(message);
+		return sb.toString();
+	}
 
 }

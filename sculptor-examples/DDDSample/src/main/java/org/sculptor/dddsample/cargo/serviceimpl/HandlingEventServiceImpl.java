@@ -21,55 +21,51 @@ import org.springframework.stereotype.Service;
  */
 @Service("handlingEventService")
 public class HandlingEventServiceImpl extends HandlingEventServiceImplBase {
-    
-    private DomainEventNotifier domainEventNotifier;
 
-    public HandlingEventServiceImpl() {
-    }
+	private DomainEventNotifier domainEventNotifier;
 
-    public void register(ServiceContext ctx, DateTime completionTime, TrackingId trackingId,
-            CarrierMovementId carrierMovementId, UnLocode unlocode, Type type) throws LocationNotFoundException,
-            CarrierMovementNotFoundException, CargoNotFoundException {
+	public HandlingEventServiceImpl() {
+	}
 
-        // Carrier movement may be null for certain event types
-        Validate.noNullElements(new Object[] { trackingId, unlocode, type });
+	public void register(ServiceContext ctx, DateTime completionTime, TrackingId trackingId,
+			CarrierMovementId carrierMovementId, UnLocode unlocode, Type type)
+			throws LocationNotFoundException, CarrierMovementNotFoundException, CargoNotFoundException {
 
-        Cargo cargo = getCargoRepository().find(trackingId);
+		// Carrier movement may be null for certain event types
+		Validate.noNullElements(new Object[]{trackingId, unlocode, type});
 
-        final CarrierMovement carrierMovement = findCarrierMovement(ctx, carrierMovementId);
-        final Location location = findLocation(ctx, unlocode);
-        final DateTime registrationTime = new DateTime();
+		Cargo cargo = getCargoRepository().find(trackingId);
 
-        final HandlingEvent event = new HandlingEvent(cargo, completionTime, registrationTime, type, location,
-                carrierMovement);
+		final CarrierMovement carrierMovement = findCarrierMovement(ctx, carrierMovementId);
+		final Location location = findLocation(ctx, unlocode);
+		final DateTime registrationTime = new DateTime();
 
-        /*
-         * NOTE: The cargo instance that's loaded and associated with the
-         * handling event is in an inconsitent state, because the cargo delivery
-         * history's collection of events does not contain the event created
-         * here. However, this is not a problem, because cargo is in a different
-         * aggregate from handling event.
-         * 
-         * The rules of an aggregate dictate that all consistency rules within
-         * the aggregate are enforced synchronously in the transaction, but
-         * consistency rules of other aggregates are enforced by asynchronous
-         * updates, after the commit of this transaction.
-         */
-        getHandlingEventRepository().save(event);
+		final HandlingEvent event = new HandlingEvent(cargo, completionTime, registrationTime, type, location,
+				carrierMovement);
 
-        if (domainEventNotifier != null) {
-            domainEventNotifier.cargoWasHandled(event);
-        }
-    }
+		/*
+		 * NOTE: The cargo instance that's loaded and associated with the handling event
+		 * is in an inconsitent state, because the cargo delivery history's collection
+		 * of events does not contain the event created here. However, this is not a
+		 * problem, because cargo is in a different aggregate from handling event.
+		 * 
+		 * The rules of an aggregate dictate that all consistency rules within the
+		 * aggregate are enforced synchronously in the transaction, but consistency
+		 * rules of other aggregates are enforced by asynchronous updates, after the
+		 * commit of this transaction.
+		 */
+		getHandlingEventRepository().save(event);
 
+		if (domainEventNotifier != null) {
+			domainEventNotifier.cargoWasHandled(event);
+		}
+	}
 
-    /**
-     * Dependency injection
-     */
-    public void setDomainEventNotifier(DomainEventNotifier domainEventNotifier) {
-        this.domainEventNotifier = domainEventNotifier;
-    }
-    
-    
+	/**
+	 * Dependency injection
+	 */
+	public void setDomainEventNotifier(DomainEventNotifier domainEventNotifier) {
+		this.domainEventNotifier = domainEventNotifier;
+	}
 
 }

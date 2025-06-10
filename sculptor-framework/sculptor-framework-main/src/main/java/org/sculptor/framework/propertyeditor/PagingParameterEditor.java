@@ -18,11 +18,11 @@ public class PagingParameterEditor extends PropertyEditorSupport {
 		} else if (data.length == 3 && data[2].equalsIgnoreCase("false")) {
 			result = PagingParameter.pageAccess(Integer.parseInt(data[0]), Integer.parseInt(data[1]), false);
 		} else if (data.length == 3) {
-			result = PagingParameter.pageAccess(Integer.parseInt(data[0]), Integer.parseInt(data[1])
-					, Integer.parseInt(data[2]));
+			result = PagingParameter.pageAccess(Integer.parseInt(data[0]), Integer.parseInt(data[1]),
+					Integer.parseInt(data[2]));
 		} else if (data.length == 4) {
-			result = PagingParameter.pageAccess(Integer.parseInt(data[0]), Integer.parseInt(data[1])
-					, Boolean.parseBoolean(data[3]), Integer.parseInt(data[2]));
+			result = PagingParameter.pageAccess(Integer.parseInt(data[0]), Integer.parseInt(data[1]),
+					Boolean.parseBoolean(data[3]), Integer.parseInt(data[2]));
 		} else {
 			result = PagingParameter.pageAccess(20, 1, false, 0);
 		}

@@ -48,48 +48,48 @@ import org.slf4j.LoggerFactory;
  */
 public class DbUnitDataSourceUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(DbUnitDataSourceUtils.class);
+	private static final Logger log = LoggerFactory.getLogger(DbUnitDataSourceUtils.class);
 
-    public static final String DEFAULT_DBUNIT_TEST_PATH = "dbunit";
+	public static final String DEFAULT_DBUNIT_TEST_PATH = "dbunit";
 
-    public static DataSourceDatabaseTester databaseTester = null;
+	public static DataSourceDatabaseTester databaseTester = null;
 
-    // TODO: support configuration of DatabaseOperations
-    public static DatabaseOperation setUpDatabaseOperation = DatabaseOperation.REFRESH;
-    public static DatabaseOperation tearDownDatabaseOperation = new OrderedDeleteAllOperation();
+	// TODO: support configuration of DatabaseOperations
+	public static DatabaseOperation setUpDatabaseOperation = DatabaseOperation.REFRESH;
+	public static DatabaseOperation tearDownDatabaseOperation = new OrderedDeleteAllOperation();
 
-    /**
-     * creates the dataset executes the dbunit setup operation
-     * 
-     * @param clazz
-     *            test class
-     * @param dataSource
-     * @param dataSetFileName
-     * @throws Exception
-     */
-    public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, String dataSetFileName)
-            throws Exception {
+	/**
+	 * creates the dataset executes the dbunit setup operation
+	 * 
+	 * @param clazz
+	 *            test class
+	 * @param dataSource
+	 * @param dataSetFileName
+	 * @throws Exception
+	 */
+	public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, String dataSetFileName)
+			throws Exception {
 
-        if (dataSetFileName == null) {
-            dataSetFileName = defaultDataSetFileName(clazz);
-        }
-        
-        setUpDatabaseTester(clazz, dataSource, new String[] {dataSetFileName});
-    }
+		if (dataSetFileName == null) {
+			dataSetFileName = defaultDataSetFileName(clazz);
+		}
 
-    /**
-      * creates the dataset executes the dbunit setup operation from multiple files
-      * 
-      * @param clazz
-      *            test class
-      * @param dataSource
-      * @param dataSetFileNames
-      * @throws Exception
-      */
-    public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, String[] dataSetFileNames)
-            throws Exception {
+		setUpDatabaseTester(clazz, dataSource, new String[]{dataSetFileName});
+	}
 
-        // create dataset from XML file with "column-sensing"
+	/**
+	 * creates the dataset executes the dbunit setup operation from multiple files
+	 * 
+	 * @param clazz
+	 *            test class
+	 * @param dataSource
+	 * @param dataSetFileNames
+	 * @throws Exception
+	 */
+	public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, String[] dataSetFileNames)
+			throws Exception {
+
+		// create dataset from XML file with "column-sensing"
 		IDataSet dataSet;
 		final FlatXmlDataSetBuilder xmlDataSetBuilder = new FlatXmlDataSetBuilder();
 		xmlDataSetBuilder.setDtdMetadata(false);
@@ -103,185 +103,185 @@ public class DbUnitDataSourceUtils {
 			}
 			dataSet = new CompositeDataSet(dataSets);
 		}
-    		
-        ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataSet);
-        replacementDataSet.addReplacementObject("[NULL]", null);
 
-        setUpDatabaseTester(clazz, dataSource, replacementDataSet);
-    }
-    
-    /**
-     * creates the dataset executes the dbunit setup operation from a DataSet
-     * 
-     * @param clazz
-     *            test class
-     * @param dataSource
-     * @param dataSet
-     * @throws Exception
-     */
-    public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, IDataSet dataSet)
-            throws Exception {
-        // setup database tester
-        if (databaseTester == null) {
-            String sqlProduct = dataSource.getConnection().getMetaData().getDatabaseProductName();
-            if (sqlProduct.equalsIgnoreCase("PostgreSQL")) {
-                databaseTester = new PostgreSqlDataSourceDatabaseTester(dataSource);
-            } else if (sqlProduct.equalsIgnoreCase("Oracle")) {
-                databaseTester = new OracleDataSourceDatabaseTester(dataSource);
-            } else {
-                databaseTester = new HsqlDataSourceDatabaseTester(dataSource);
-            }
-        }
+		ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataSet);
+		replacementDataSet.addReplacementObject("[NULL]", null);
 
-        databaseTester.setSetUpOperation(getSetUpDatabaseOperation());
-        databaseTester.setTearDownOperation(getTearDownDatabaseOperation());
-        databaseTester.setDataSet(dataSet);
-        databaseTester.onSetup();
-    }
+		setUpDatabaseTester(clazz, dataSource, replacementDataSet);
+	}
 
-    /**
-     * executes the dbunit teardown operation
-     * 
-     * @throws Exception
-     */
-    public static void tearDownDatabaseTester() throws Exception {
-        if (databaseTester != null) {
-            try {
-                databaseTester.onTearDown();
-            } catch (Exception e) {
-                LoggerFactory.getLogger(DbUnitDataSourceUtils.class).warn("Failed to tear down database.", e);
-            }
-        }
-    }
+	/**
+	 * creates the dataset executes the dbunit setup operation from a DataSet
+	 * 
+	 * @param clazz
+	 *            test class
+	 * @param dataSource
+	 * @param dataSet
+	 * @throws Exception
+	 */
+	public static void setUpDatabaseTester(Class<?> clazz, DataSource dataSource, IDataSet dataSet) throws Exception {
+		// setup database tester
+		if (databaseTester == null) {
+			String sqlProduct = dataSource.getConnection().getMetaData().getDatabaseProductName();
+			if (sqlProduct.equalsIgnoreCase("PostgreSQL")) {
+				databaseTester = new PostgreSqlDataSourceDatabaseTester(dataSource);
+			} else if (sqlProduct.equalsIgnoreCase("Oracle")) {
+				databaseTester = new OracleDataSourceDatabaseTester(dataSource);
+			} else {
+				databaseTester = new HsqlDataSourceDatabaseTester(dataSource);
+			}
+		}
 
-    /**
-     * guess the dataset filename for test class name
-     * 
-     * @param clazz
-     *            test class
-     * @return dataset filename
-     */
-    private static String defaultDataSetFileName(Class<?> clazz) {
-        return DEFAULT_DBUNIT_TEST_PATH + "/" + clazz.getSimpleName() + ".xml";
-    }
+		databaseTester.setSetUpOperation(getSetUpDatabaseOperation());
+		databaseTester.setTearDownOperation(getTearDownDatabaseOperation());
+		databaseTester.setDataSet(dataSet);
+		databaseTester.onSetup();
+	}
 
-    public static DatabaseOperation getSetUpDatabaseOperation() {
-        return setUpDatabaseOperation;
-    }
+	/**
+	 * executes the dbunit teardown operation
+	 * 
+	 * @throws Exception
+	 */
+	public static void tearDownDatabaseTester() throws Exception {
+		if (databaseTester != null) {
+			try {
+				databaseTester.onTearDown();
+			} catch (Exception e) {
+				LoggerFactory.getLogger(DbUnitDataSourceUtils.class).warn("Failed to tear down database.", e);
+			}
+		}
+	}
 
-    public static void setSetUpDatabaseOperation(DatabaseOperation setUpDatabaseOperation) {
-        DbUnitDataSourceUtils.setUpDatabaseOperation = setUpDatabaseOperation;
-    }
+	/**
+	 * guess the dataset filename for test class name
+	 * 
+	 * @param clazz
+	 *            test class
+	 * @return dataset filename
+	 */
+	private static String defaultDataSetFileName(Class<?> clazz) {
+		return DEFAULT_DBUNIT_TEST_PATH + "/" + clazz.getSimpleName() + ".xml";
+	}
 
-    public static DatabaseOperation getTearDownDatabaseOperation() {
-        return tearDownDatabaseOperation;
-    }
+	public static DatabaseOperation getSetUpDatabaseOperation() {
+		return setUpDatabaseOperation;
+	}
 
-    public static void setTearDownDatabaseOperation(DatabaseOperation tearDownDatabaseOperation) {
-        DbUnitDataSourceUtils.tearDownDatabaseOperation = tearDownDatabaseOperation;
-    }
+	public static void setSetUpDatabaseOperation(DatabaseOperation setUpDatabaseOperation) {
+		DbUnitDataSourceUtils.setUpDatabaseOperation = setUpDatabaseOperation;
+	}
 
-    public static void logDb(IDatabaseConnection connection) {
-        try {
-            ITableFilter filter = new DatabaseSequenceFilter(connection);
-            IDataSet dataset = new FilteredDataSet(filter, connection.createDataSet());
+	public static DatabaseOperation getTearDownDatabaseOperation() {
+		return tearDownDatabaseOperation;
+	}
 
-            StringWriter out = new StringWriter();
+	public static void setTearDownDatabaseOperation(DatabaseOperation tearDownDatabaseOperation) {
+		DbUnitDataSourceUtils.tearDownDatabaseOperation = tearDownDatabaseOperation;
+	}
 
-            FlatXmlDataSet.write(dataset, out);
-            log.info(out.getBuffer().toString());
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
+	public static void logDb(IDatabaseConnection connection) {
+		try {
+			ITableFilter filter = new DatabaseSequenceFilter(connection);
+			IDataSet dataset = new FilteredDataSet(filter, connection.createDataSet());
 
-    /**
-     * Start the id sequence from a high value to avoid conflicts with test
-     * data. You can define the sequence name with {@link #getSequenceName}.
-     */
-    public static void restartSequence(IDatabaseConnection dbConnection, String sequenceName) {
-        if (sequenceName == null) {
-            return;
-        }
-        Connection connection = null;
-        Statement stmt = null;
-        try {
-            connection = dbConnection.getConnection();
-            stmt = connection.createStatement();
-            stmt.execute("ALTER SEQUENCE " + sequenceName + " RESTART WITH 10000");
+			StringWriter out = new StringWriter();
 
-        } catch (Exception e) {
-            try {
-                stmt.close();
-            } catch (SQLException ignore) {
-            }
-            try {
-                stmt = connection.createStatement();
-                stmt.execute("UPDATE SEQUENCE SET SEQ_COUNT = 10000 WHERE SEQ_NAME = '" + sequenceName + "'");
-            } catch (Exception e2) {
-                throw new RuntimeException("Couldn't restart sequence: " + sequenceName + " : " + e.getMessage(), e);
-            }
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException ignore) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ignore) {
-                }
-            }
-        }
-    }
+			FlatXmlDataSet.write(dataset, out);
+			log.info(out.getBuffer().toString());
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 
-    /**
-     * DatasourceTester with support for HSQLDB data types.
-     */
-    private static class HsqlDataSourceDatabaseTester extends DataSourceDatabaseTester {
-        public HsqlDataSourceDatabaseTester(DataSource dataSource) {
-            super(dataSource);
-        }
+	/**
+	 * Start the id sequence from a high value to avoid conflicts with test data.
+	 * You can define the sequence name with {@link #getSequenceName}.
+	 */
+	public static void restartSequence(IDatabaseConnection dbConnection, String sequenceName) {
+		if (sequenceName == null) {
+			return;
+		}
+		Connection connection = null;
+		Statement stmt = null;
+		try {
+			connection = dbConnection.getConnection();
+			stmt = connection.createStatement();
+			stmt.execute("ALTER SEQUENCE " + sequenceName + " RESTART WITH 10000");
 
-        @Override
-        public IDatabaseConnection getConnection() throws Exception {
-            IDatabaseConnection connection = super.getConnection();
-            connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-            return connection;
-        }
-    }
+		} catch (Exception e) {
+			try {
+				stmt.close();
+			} catch (SQLException ignore) {
+			}
+			try {
+				stmt = connection.createStatement();
+				stmt.execute("UPDATE SEQUENCE SET SEQ_COUNT = 10000 WHERE SEQ_NAME = '" + sequenceName + "'");
+			} catch (Exception e2) {
+				throw new RuntimeException("Couldn't restart sequence: " + sequenceName + " : " + e.getMessage(), e);
+			}
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException ignore) {
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException ignore) {
+				}
+			}
+		}
+	}
 
-    /**
-     * DatasourceTester with support for PostgreSQL data types.
-     */
-    private static class PostgreSqlDataSourceDatabaseTester extends DataSourceDatabaseTester {
-        public PostgreSqlDataSourceDatabaseTester(DataSource dataSource) {
-            super(dataSource);
-        }
+	/**
+	 * DatasourceTester with support for HSQLDB data types.
+	 */
+	private static class HsqlDataSourceDatabaseTester extends DataSourceDatabaseTester {
+		public HsqlDataSourceDatabaseTester(DataSource dataSource) {
+			super(dataSource);
+		}
 
-        @Override
-        public IDatabaseConnection getConnection() throws Exception {
-            IDatabaseConnection connection = super.getConnection();
-            connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
-            return connection;
-        }
-    }
+		@Override
+		public IDatabaseConnection getConnection() throws Exception {
+			IDatabaseConnection connection = super.getConnection();
+			connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+			return connection;
+		}
+	}
 
-    /**
-     * DatasourceTester with support for Oracle data types.
-     */
-    private static class OracleDataSourceDatabaseTester extends DataSourceDatabaseTester {
-        public OracleDataSourceDatabaseTester(DataSource dataSource) {
-            super(dataSource);
-        }
+	/**
+	 * DatasourceTester with support for PostgreSQL data types.
+	 */
+	private static class PostgreSqlDataSourceDatabaseTester extends DataSourceDatabaseTester {
+		public PostgreSqlDataSourceDatabaseTester(DataSource dataSource) {
+			super(dataSource);
+		}
 
-        @Override
-        public IDatabaseConnection getConnection() throws Exception {
-            IDatabaseConnection connection = super.getConnection();
-            connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
-            return connection;
-        }
-    }
+		@Override
+		public IDatabaseConnection getConnection() throws Exception {
+			IDatabaseConnection connection = super.getConnection();
+			connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+					new PostgresqlDataTypeFactory());
+			return connection;
+		}
+	}
+
+	/**
+	 * DatasourceTester with support for Oracle data types.
+	 */
+	private static class OracleDataSourceDatabaseTester extends DataSourceDatabaseTester {
+		public OracleDataSourceDatabaseTester(DataSource dataSource) {
+			super(dataSource);
+		}
+
+		@Override
+		public IDatabaseConnection getConnection() throws Exception {
+			IDatabaseConnection connection = super.getConnection();
+			connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new OracleDataTypeFactory());
+			return connection;
+		}
+	}
 }

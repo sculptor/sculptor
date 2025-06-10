@@ -19,7 +19,6 @@ package org.sculptor.framework.accessapi;
 
 import java.util.Collection;
 
-
 /**
  * <p>
  * Save an entity.
@@ -30,12 +29,12 @@ import java.util.Collection;
  */
 public interface SaveAccess<T> {
 
-    void setEntity(T entity);
+	void setEntity(T entity);
 
-    public void setEntities(Collection<T> entities);
+	public void setEntities(Collection<T> entities);
 
-    void execute();
+	void execute();
 
-    T getResult();
+	T getResult();
 
 }

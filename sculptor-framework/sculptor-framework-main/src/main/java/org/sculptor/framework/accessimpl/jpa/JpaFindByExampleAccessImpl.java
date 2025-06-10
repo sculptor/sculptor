@@ -19,7 +19,6 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.accessapi.FindByExampleAccess;
 
-
 /**
  * <p>
  * Find all entities similar to another entity. Implementation of Access command
@@ -29,15 +28,15 @@ import org.sculptor.framework.accessapi.FindByExampleAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByExampleAccessImpl<T>
-    extends JpaFindByExampleAccessImplGeneric<T,T>
-    implements FindByExampleAccess<T> {
+public class JpaFindByExampleAccessImpl<T> extends JpaFindByExampleAccessImplGeneric<T, T>
+		implements
+			FindByExampleAccess<T> {
 
-    public JpaFindByExampleAccessImpl() {
-        super();
-    }
+	public JpaFindByExampleAccessImpl() {
+		super();
+	}
 
-    public JpaFindByExampleAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByExampleAccessImpl(Class<T> type) {
+		super(type);
+	}
 }

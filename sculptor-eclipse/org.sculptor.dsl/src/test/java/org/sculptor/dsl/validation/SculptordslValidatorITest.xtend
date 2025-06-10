@@ -72,8 +72,10 @@ class SculptordslValidatorITest extends XtextTest {
 	def void testCheckRepositoryDuplicateName() {
 		val issues = testFileNoSerializer("repository_duplicate_name.btdesign")
 		assertEquals(2, issues.errorsOnly.size)
-		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
-		assertConstraints(issues.errorsOnly().inLine(8).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
+		assertConstraints(
+			issues.errorsOnly().inLine(5).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
+		assertConstraints(
+			issues.errorsOnly().inLine(8).under(typeof(DslRepository), "TestRepository").named("TestRepository").oneOfThemContains("Duplicate name"))
 	}
 
 	@Test
@@ -84,7 +86,7 @@ class SculptordslValidatorITest extends XtextTest {
 		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslModule), "test").named("test").oneOfThemContains("Duplicate name"))
 	}
 
-	//	Disabled for now.  The testFile() method is only validating resources in main file, so can't get duplicate Application/ApplicationPart objects
+	// Disabled for now.  The testFile() method is only validating resources in main file, so can't get duplicate Application/ApplicationPart objects
 	@Disabled
 	@Test
 	def void testCheckAppDuplicateName() {
@@ -98,16 +100,21 @@ class SculptordslValidatorITest extends XtextTest {
 	def void testBadReferenceMissingDash() {
 		val issues = testFileNoSerializer("attributes.btdesign")
 		assertEquals(2, issues.warningsOnly.size)
-		assertConstraints(issues.warningsOnly().inLine(6).under(typeof(DslAttribute), "badReference").named("badReference").oneOfThemContains("Use - Another"))
-		assertConstraints(issues.warningsOnly().inLine(7).under(typeof(DslAttribute), "badReference2").named("badReference2").oneOfThemContains("Use - List<Another>"))
+		assertConstraints(
+			issues.warningsOnly().inLine(6).under(typeof(DslAttribute), "badReference").named("badReference").oneOfThemContains("Use - Another"))
+		assertConstraints(
+			issues.warningsOnly().inLine(7).under(typeof(DslAttribute), "badReference2").named("badReference2").oneOfThemContains(
+				"Use - List<Another>"))
 	}
 
 	@Test
 	def void testBadServiceAndRepositoryOperationReturnTypeOfDomainObject() {
 		val issues = testFileNoSerializer("operation_return_type_bad.btdesign")
 		assertEquals(2, issues.warningsOnly.size)
-		assertConstraints(issues.warningsOnly().inLine(5).under(typeof(DslServiceOperation), "anOperation").named("anOperation").oneOfThemContains("Use @SomeType"))
-		assertConstraints(issues.warningsOnly().inLine(9).under(typeof(DslRepositoryOperation), "findIt").named("findIt").oneOfThemContains("Use @SomeType"))
+		assertConstraints(
+			issues.warningsOnly().inLine(5).under(typeof(DslServiceOperation), "anOperation").named("anOperation").oneOfThemContains("Use @SomeType"))
+		assertConstraints(
+			issues.warningsOnly().inLine(9).under(typeof(DslRepositoryOperation), "findIt").named("findIt").oneOfThemContains("Use @SomeType"))
 	}
 
 	@Test
@@ -121,9 +128,15 @@ class SculptordslValidatorITest extends XtextTest {
 	def void testUnresolvedExtendsNames() {
 		val issues = testFileNoSerializer("unresolved_extends_names.btdesign")
 		assertEquals(3, issues.size)
-		assertConstraints(issues.errorsOnly().inLine(4).under(typeof(DslEntity), "TestEntity").named("TestEntity").oneOfThemContains("resolve reference to 'NonExistentEntity'"))
-		assertConstraints(issues.errorsOnly().inLine(5).under(typeof(DslValueObject), "TestVO").named("TestVO").oneOfThemContains("resolve reference to 'NonExistentVO'"))
-		assertConstraints(issues.errorsOnly().inLine(6).under(typeof(DslDataTransferObject), "TestDTO").named("TestDTO").oneOfThemContains("resolve reference to 'NonExistentDTO'"))
+		assertConstraints(
+			issues.errorsOnly().inLine(4).under(typeof(DslEntity), "TestEntity").named("TestEntity").oneOfThemContains(
+				"resolve reference to 'NonExistentEntity'"))
+		assertConstraints(
+			issues.errorsOnly().inLine(5).under(typeof(DslValueObject), "TestVO").named("TestVO").oneOfThemContains(
+				"resolve reference to 'NonExistentVO'"))
+		assertConstraints(
+			issues.errorsOnly().inLine(6).under(typeof(DslDataTransferObject), "TestDTO").named("TestDTO").oneOfThemContains(
+				"resolve reference to 'NonExistentDTO'"))
 	}
 
 }

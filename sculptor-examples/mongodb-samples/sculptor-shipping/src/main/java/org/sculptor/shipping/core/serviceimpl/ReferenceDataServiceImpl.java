@@ -11,23 +11,23 @@ import org.springframework.stereotype.Service;
  */
 @Service("referenceDataService")
 public class ReferenceDataServiceImpl extends ReferenceDataServiceImplBase {
-    public ReferenceDataServiceImpl() {
-    }
+	public ReferenceDataServiceImpl() {
+	}
 
-    @Override
-    public void createShip(ShipId shipId, String name) {
-        Ship ship = Ship.createNew(shipId, name);
-        getShipRepository().save(ship);
-    }
+	@Override
+	public void createShip(ShipId shipId, String name) {
+		Ship ship = Ship.createNew(shipId, name);
+		getShipRepository().save(ship);
+	}
 
-    @Override
-    public void savePort(Port port) {
-        getPortRepository().save(port);
-    }
+	@Override
+	public void savePort(Port port) {
+		getPortRepository().save(port);
+	}
 
-    @Override
-    public void saveCargo(Cargo cargo) {
-        getCargoRepository().save(cargo);
-    }
+	@Override
+	public void saveCargo(Cargo cargo) {
+		getCargoRepository().save(cargo);
+	}
 
 }

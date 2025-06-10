@@ -19,16 +19,15 @@ import com.mongodb.DBObject;
  */
 @Repository("shipEventRepository")
 public class ShipEventRepositoryImpl extends ShipEventRepositoryBase {
-    public ShipEventRepositoryImpl() {
-    }
+	public ShipEventRepositoryImpl() {
+	}
 
-    @Override
-    public List<ShipEvent> findAllForShip(ShipId shipId) {
-        DBObject shipIdDBObject = ShipIdMapper.getInstance().toData(shipId);
-        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(ShipEvent.class)
-                .withProperty(ship()).eq(shipIdDBObject)
-                .orderBy(changeSequence()).build();
-        return findByCondition(criteria);
+	@Override
+	public List<ShipEvent> findAllForShip(ShipId shipId) {
+		DBObject shipIdDBObject = ShipIdMapper.getInstance().toData(shipId);
+		List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(ShipEvent.class)
+				.withProperty(ship()).eq(shipIdDBObject).orderBy(changeSequence()).build();
+		return findByCondition(criteria);
 
-    }
+	}
 }

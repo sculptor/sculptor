@@ -20,72 +20,72 @@ import org.sculptor.dddsample.carrier.domain.CarrierMovementId;
 
 public class DeliveryHistoryTest {
 
-    private final Cargo cargo = new Cargo(trackingId("XYZ"), HONGKONG, NEWYORK);
+	private final Cargo cargo = new Cargo(trackingId("XYZ"), HONGKONG, NEWYORK);
 
-    @Test
-    public void testEvensOrderedByTimeOccured() throws Exception {
+	@Test
+	public void testEvensOrderedByTimeOccured() throws Exception {
 
-        DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd");
+		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-        CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("CAR_001"), HONGKONG, NEWYORK);
-        HandlingEvent he1 = new HandlingEvent(cargo, df.parseDateTime("2010-01-03"), new DateTime(), Type.RECEIVE,
-                NEWYORK, null);
-        HandlingEvent he2 = new HandlingEvent(cargo, df.parseDateTime("2010-01-01"), new DateTime(), Type.LOAD,
-                NEWYORK, carrierMovement);
-        HandlingEvent he3 = new HandlingEvent(cargo, df.parseDateTime("2010-01-04"), new DateTime(), Type.CLAIM,
-                HONGKONG, null);
-        HandlingEvent he4 = new HandlingEvent(cargo, df.parseDateTime("2010-01-02"), new DateTime(), Type.UNLOAD,
-                HONGKONG, carrierMovement);
-        DeliveryHistory dh = new DeliveryHistory(Arrays.asList(he1, he2, he3, he4));
+		CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("CAR_001"), HONGKONG, NEWYORK);
+		HandlingEvent he1 = new HandlingEvent(cargo, df.parseDateTime("2010-01-03"), new DateTime(), Type.RECEIVE,
+				NEWYORK, null);
+		HandlingEvent he2 = new HandlingEvent(cargo, df.parseDateTime("2010-01-01"), new DateTime(), Type.LOAD, NEWYORK,
+				carrierMovement);
+		HandlingEvent he3 = new HandlingEvent(cargo, df.parseDateTime("2010-01-04"), new DateTime(), Type.CLAIM,
+				HONGKONG, null);
+		HandlingEvent he4 = new HandlingEvent(cargo, df.parseDateTime("2010-01-02"), new DateTime(), Type.UNLOAD,
+				HONGKONG, carrierMovement);
+		DeliveryHistory dh = new DeliveryHistory(Arrays.asList(he1, he2, he3, he4));
 
-        List<HandlingEvent> orderEvents = dh.eventsOrderedByCompletionTime();
-        assertEquals(4, orderEvents.size());
-        assertSame(he2, orderEvents.get(0));
-        assertSame(he4, orderEvents.get(1));
-        assertSame(he1, orderEvents.get(2));
-        assertSame(he3, orderEvents.get(3));
-    }
+		List<HandlingEvent> orderEvents = dh.eventsOrderedByCompletionTime();
+		assertEquals(4, orderEvents.size());
+		assertSame(he2, orderEvents.get(0));
+		assertSame(he4, orderEvents.get(1));
+		assertSame(he1, orderEvents.get(2));
+		assertSame(he3, orderEvents.get(3));
+	}
 
-    @Test
-    public void testCargoStatusFromLastHandlingEvent() {
-        Set<HandlingEvent> events = new HashSet<HandlingEvent>();
-        DeliveryHistory deliveryHistory = new DeliveryHistory(events);
+	@Test
+	public void testCargoStatusFromLastHandlingEvent() {
+		Set<HandlingEvent> events = new HashSet<HandlingEvent>();
+		DeliveryHistory deliveryHistory = new DeliveryHistory(events);
 
-        assertEquals(StatusCode.NOT_RECEIVED, deliveryHistory.status());
+		assertEquals(StatusCode.NOT_RECEIVED, deliveryHistory.status());
 
-        events.add(new HandlingEvent(cargo, new DateTime(10), new DateTime(11), Type.RECEIVE, HAMBURG, null));
-        deliveryHistory = new DeliveryHistory(events);
-        assertEquals(StatusCode.IN_PORT, deliveryHistory.status());
+		events.add(new HandlingEvent(cargo, new DateTime(10), new DateTime(11), Type.RECEIVE, HAMBURG, null));
+		deliveryHistory = new DeliveryHistory(events);
+		assertEquals(StatusCode.IN_PORT, deliveryHistory.status());
 
-        CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("ABC"), HAMBURG, HAMBURG);
-        events.add(new HandlingEvent(cargo, new DateTime(20), new DateTime(21), Type.LOAD, HAMBURG, carrierMovement));
-        deliveryHistory = new DeliveryHistory(events);
-        assertEquals(StatusCode.ONBOARD_CARRIER, deliveryHistory.status());
+		CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("ABC"), HAMBURG, HAMBURG);
+		events.add(new HandlingEvent(cargo, new DateTime(20), new DateTime(21), Type.LOAD, HAMBURG, carrierMovement));
+		deliveryHistory = new DeliveryHistory(events);
+		assertEquals(StatusCode.ONBOARD_CARRIER, deliveryHistory.status());
 
-        events.add(new HandlingEvent(cargo, new DateTime(30), new DateTime(31), Type.UNLOAD, HAMBURG, carrierMovement));
-        deliveryHistory = new DeliveryHistory(events);
-        assertEquals(StatusCode.IN_PORT, deliveryHistory.status());
+		events.add(new HandlingEvent(cargo, new DateTime(30), new DateTime(31), Type.UNLOAD, HAMBURG, carrierMovement));
+		deliveryHistory = new DeliveryHistory(events);
+		assertEquals(StatusCode.IN_PORT, deliveryHistory.status());
 
-        events.add(new HandlingEvent(cargo, new DateTime(40), new DateTime(41), Type.CLAIM, HAMBURG, null));
-        deliveryHistory = new DeliveryHistory(events);
-        assertEquals(StatusCode.CLAIMED, deliveryHistory.status());
-    }
+		events.add(new HandlingEvent(cargo, new DateTime(40), new DateTime(41), Type.CLAIM, HAMBURG, null));
+		deliveryHistory = new DeliveryHistory(events);
+		assertEquals(StatusCode.CLAIMED, deliveryHistory.status());
+	}
 
-    @Test
-    public void testCurrentLocation() throws Exception {
-        Set<HandlingEvent> events = new HashSet<HandlingEvent>();
-        DeliveryHistory deliveryHistory = new DeliveryHistory(events);
+	@Test
+	public void testCurrentLocation() throws Exception {
+		Set<HandlingEvent> events = new HashSet<HandlingEvent>();
+		DeliveryHistory deliveryHistory = new DeliveryHistory(events);
 
-        assertNull(deliveryHistory.currentLocation());
+		assertNull(deliveryHistory.currentLocation());
 
-        events.add(new HandlingEvent(cargo, new DateTime(10), new DateTime(11), Type.RECEIVE, HAMBURG, null));
-        deliveryHistory = new DeliveryHistory(events);
-        assertEquals(HAMBURG, deliveryHistory.currentLocation());
+		events.add(new HandlingEvent(cargo, new DateTime(10), new DateTime(11), Type.RECEIVE, HAMBURG, null));
+		deliveryHistory = new DeliveryHistory(events);
+		assertEquals(HAMBURG, deliveryHistory.currentLocation());
 
-        CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("ABC"), HAMBURG, HAMBURG);
-        events.add(new HandlingEvent(cargo, new DateTime(20), new DateTime(21), Type.LOAD, HAMBURG, carrierMovement));
-        deliveryHistory = new DeliveryHistory(events);
-        assertNull(deliveryHistory.currentLocation());
-    }
+		CarrierMovement carrierMovement = new CarrierMovement(new CarrierMovementId("ABC"), HAMBURG, HAMBURG);
+		events.add(new HandlingEvent(cargo, new DateTime(20), new DateTime(21), Type.LOAD, HAMBURG, carrierMovement));
+		deliveryHistory = new DeliveryHistory(events);
+		assertNull(deliveryHistory.currentLocation());
+	}
 
 }

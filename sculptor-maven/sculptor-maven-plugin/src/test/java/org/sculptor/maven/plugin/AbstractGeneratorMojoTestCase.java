@@ -22,7 +22,8 @@ import java.io.File;
 import org.apache.maven.project.MavenProject;
 
 public abstract class AbstractGeneratorMojoTestCase<T extends AbstractGeneratorMojo>
-		extends AbstractBaseMojoTestCase<T> {
+		extends
+			AbstractBaseMojoTestCase<T> {
 
 	public void setUp() throws Exception {
 		// required for mojo lookups to work
@@ -30,36 +31,26 @@ public abstract class AbstractGeneratorMojoTestCase<T extends AbstractGeneratorM
 	}
 
 	/**
-	 * Returns Mojo instance for the given goal. The Mojo instance is
-	 * initialized with a {@link MavenProject} created from the test projects in
+	 * Returns Mojo instance for the given goal. The Mojo instance is initialized
+	 * with a {@link MavenProject} created from the test projects in
 	 * <code>"src/test/projects/"</code> by given project name.
 	 */
 	protected T createMojo(MavenProject project, String goal) throws Exception {
 		T mojo = super.createMojo(project, goal);
 
 		// Set default values on mojo
-		setVariableValueToObject(mojo, "outletSrcOnceDir",
-				new File(project.getBasedir(), "src/main/java"));
-		setVariableValueToObject(mojo, "outletResOnceDir",
-				new File(project.getBasedir(), "src/main/resources"));
-		setVariableValueToObject(mojo, "outletSrcDir",
-				new File(project.getBasedir(), "src/generated/java"));
-		setVariableValueToObject(mojo, "outletResDir",
-				new File(project.getBasedir(), "src/generated/resources"));
-		setVariableValueToObject(mojo, "outletWebrootDir",
-				new File(project.getBasedir(), "src/main/webapp"));
-		setVariableValueToObject(mojo, "outletSrcTestOnceDir",
-				new File(project.getBasedir(), "src/test/java"));
-		setVariableValueToObject(mojo, "outletResTestOnceDir",
-				new File(project.getBasedir(), "src/test/resources"));
-		setVariableValueToObject(mojo, "outletSrcTestDir",
-				new File(project.getBasedir(), "src/test/generated/java"));
+		setVariableValueToObject(mojo, "outletSrcOnceDir", new File(project.getBasedir(), "src/main/java"));
+		setVariableValueToObject(mojo, "outletResOnceDir", new File(project.getBasedir(), "src/main/resources"));
+		setVariableValueToObject(mojo, "outletSrcDir", new File(project.getBasedir(), "src/generated/java"));
+		setVariableValueToObject(mojo, "outletResDir", new File(project.getBasedir(), "src/generated/resources"));
+		setVariableValueToObject(mojo, "outletWebrootDir", new File(project.getBasedir(), "src/main/webapp"));
+		setVariableValueToObject(mojo, "outletSrcTestOnceDir", new File(project.getBasedir(), "src/test/java"));
+		setVariableValueToObject(mojo, "outletResTestOnceDir", new File(project.getBasedir(), "src/test/resources"));
+		setVariableValueToObject(mojo, "outletSrcTestDir", new File(project.getBasedir(), "src/test/generated/java"));
 		setVariableValueToObject(mojo, "outletResTestDir",
 				new File(project.getBasedir(), "src/test/generated/resources"));
-		setVariableValueToObject(mojo, "outletDocDir",
-				new File(project.getBasedir(), "src/site"));
-		setVariableValueToObject(mojo, "statusFile",
-				new File(project.getBasedir(), ".sculptor-status"));
+		setVariableValueToObject(mojo, "outletDocDir", new File(project.getBasedir(), "src/site"));
+		setVariableValueToObject(mojo, "statusFile", new File(project.getBasedir(), ".sculptor-status"));
 		return mojo;
 	}
 

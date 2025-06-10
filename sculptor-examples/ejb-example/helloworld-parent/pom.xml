@@ -10,10 +10,8 @@
 	<artifactId>helloworld-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Examples :: Pure EJB3 :: Parent</name>
-
 	<modules>
 		<module>../helloworld</module>
 		<module>../helloworld-ear</module>
 	</modules>
-
 </project>

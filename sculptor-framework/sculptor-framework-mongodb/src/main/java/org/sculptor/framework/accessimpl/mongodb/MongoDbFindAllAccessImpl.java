@@ -38,76 +38,76 @@ import com.mongodb.DBObject;
  */
 public class MongoDbFindAllAccessImpl<T> extends MongoDbAccessBase<T> implements FindAllAccess<T> {
 
-    private String orderBy;
-    private boolean orderByAsc = true;
-    private int firstResult = -1;
-    private int maxResult = 0;
-    private List<T> result;
+	private String orderBy;
+	private boolean orderByAsc = true;
+	private int firstResult = -1;
+	private int maxResult = 0;
+	private List<T> result;
 	private Property<?>[] fetchEager;
 
-    public MongoDbFindAllAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbFindAllAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
-    }
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
 
-    public boolean isOrderByAsc() {
-        return orderByAsc;
-    }
+	public boolean isOrderByAsc() {
+		return orderByAsc;
+	}
 
-    public void setOrderByAsc(boolean orderByAsc) {
-        this.orderByAsc = orderByAsc;
-    }
+	public void setOrderByAsc(boolean orderByAsc) {
+		this.orderByAsc = orderByAsc;
+	}
 
-    protected int getFirstResult() {
-        return firstResult;
-    }
+	protected int getFirstResult() {
+		return firstResult;
+	}
 
-    public void setFetchEager(Property<?>[] fetchEager) {
-        this.fetchEager = fetchEager;
-    }
+	public void setFetchEager(Property<?>[] fetchEager) {
+		this.fetchEager = fetchEager;
+	}
 
-    public Property<?>[] getFetchEager() {
-        return fetchEager;
-    }
+	public Property<?>[] getFetchEager() {
+		return fetchEager;
+	}
 
-    public void setFirstResult(int firstResult) {
-        this.firstResult = firstResult;
-    }
+	public void setFirstResult(int firstResult) {
+		this.firstResult = firstResult;
+	}
 
-    protected int getMaxResult() {
-        return maxResult;
-    }
+	protected int getMaxResult() {
+		return maxResult;
+	}
 
-    public void setMaxResult(int maxResult) {
-        this.maxResult = maxResult;
-    }
+	public void setMaxResult(int maxResult) {
+		this.maxResult = maxResult;
+	}
 
-    public List<T> getResult() {
-        return this.result;
-    }
+	public List<T> getResult() {
+		return this.result;
+	}
 
-    @Override
-    public void performExecute() {
-        FindIterable<DBObject> cur = getDBCollection().find();
-        sort(cur);
+	@Override
+	public void performExecute() {
+		FindIterable<DBObject> cur = getDBCollection().find();
+		sort(cur);
 
-        if (firstResult >= 0) {
-            cur.skip(firstResult);
-        }
-        if (maxResult >= 1) {
-            cur.limit(maxResult);
-        }
+		if (firstResult >= 0) {
+			cur.skip(firstResult);
+		}
+		if (maxResult >= 1) {
+			cur.limit(maxResult);
+		}
 
-        List<T> foundResult = new ArrayList<T>();
-        cur.map(row -> getDataMapper().toDomain(row)).into(result);
+		List<T> foundResult = new ArrayList<T>();
+		cur.map(row -> getDataMapper().toDomain(row)).into(result);
 
-        this.result = foundResult;
-    }
+		this.result = foundResult;
+	}
 
-    protected void sort(FindIterable<DBObject> cursor) {
-        cursor.sort(orderByAsc ? Sorts.ascending(orderBy) : Sorts.descending(orderBy));
-    }
+	protected void sort(FindIterable<DBObject> cursor) {
+		cursor.sort(orderByAsc ? Sorts.ascending(orderBy) : Sorts.descending(orderBy));
+	}
 }

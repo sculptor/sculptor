@@ -185,9 +185,8 @@ public class GeneratorMojoTest extends AbstractGeneratorMojoTestCase<GeneratorMo
 	}
 
 	/**
-	 * Returns Mojo instance initialized with a {@link MavenProject} created
-	 * from the test projects in <code>"src/test/projects/"</code> by given
-	 * project name.
+	 * Returns Mojo instance initialized with a {@link MavenProject} created from
+	 * the test projects in <code>"src/test/projects/"</code> by given project name.
 	 */
 	protected GeneratorMojo createMojo(MavenProject project) throws Exception {
 

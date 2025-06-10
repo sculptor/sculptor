@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service("bettingEngine")
 public class BettingEngineImpl extends BettingEngineImplBase {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BettingEngineImpl.class); 
+	private static final Logger LOG = LoggerFactory.getLogger(BettingEngineImpl.class);
 
 	@Autowired
 	private BettingInstructionRepository instructionRepository;

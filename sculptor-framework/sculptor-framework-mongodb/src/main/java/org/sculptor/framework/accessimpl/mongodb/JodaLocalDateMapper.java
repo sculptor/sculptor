@@ -23,48 +23,51 @@ import java.util.List;
 import org.joda.time.LocalDate;
 
 public class JodaLocalDateMapper implements DataMapper<LocalDate, Date> {
-    private static JodaLocalDateMapper instance = new JodaLocalDateMapper();
+	private static JodaLocalDateMapper instance = new JodaLocalDateMapper();
 
-    protected JodaLocalDateMapper() {
-    }
+	protected JodaLocalDateMapper() {
+	}
 
-    public static JodaLocalDateMapper getInstance() {
-        return instance;
-    }
+	public static JodaLocalDateMapper getInstance() {
+		return instance;
+	}
 
-    public boolean canMapToData(Class<?> domainObjectClass) {
-        if (domainObjectClass == null) {
-            return true;
-        }
-        return LocalDate.class.isAssignableFrom(domainObjectClass);
-    }
+	public boolean canMapToData(Class<?> domainObjectClass) {
+		if (domainObjectClass == null) {
+			return true;
+		}
+		return LocalDate.class.isAssignableFrom(domainObjectClass);
+	}
 
-    public String getDBCollectionName() {
-        throw new IllegalStateException("Not a DBCollection");
-    }
+	public String getDBCollectionName() {
+		throw new IllegalStateException("Not a DBCollection");
+	}
 
-    public Date toData(LocalDate from) {
-        if (from == null) {
-            return null;
-        }
-        return from.toDateTimeAtStartOfDay().toDate();
-    }
+	public Date toData(LocalDate from) {
+		if (from == null) {
+			return null;
+		}
+		return from.toDateTimeAtStartOfDay().toDate();
+	}
 
-// Comment out due to compile error:
-// name clash: toDomain(java.lang.Object) in org.sculptor.framework.accessimpl.mongodb.JodaLocalDateMapper and toDomain(D) in org.sculptor.framework.accessimpl.mongodb.DataMapper have the same erasure, yet neither overrides the other
-//    public LocalDate toDomain(Object from) {
-//        return toDomain((Date) from);
-//    }
-// TODO: Remove permanently after more testing if not needed
-    
-    public LocalDate toDomain(Date from) {
-        if (from == null) {
-            return null;
-        }
-        return new LocalDate(from.getTime());
-    }
+	// Comment out due to compile error:
+	// name clash: toDomain(java.lang.Object) in
+	// org.sculptor.framework.accessimpl.mongodb.JodaLocalDateMapper and toDomain(D)
+	// in org.sculptor.framework.accessimpl.mongodb.DataMapper have the same
+	// erasure, yet neither overrides the other
+	// public LocalDate toDomain(Object from) {
+	// return toDomain((Date) from);
+	// }
+	// TODO: Remove permanently after more testing if not needed
 
-    public List<IndexSpecification> indexes() {
-        return Collections.emptyList();
-    }
+	public LocalDate toDomain(Date from) {
+		if (from == null) {
+			return null;
+		}
+		return new LocalDate(from.getTime());
+	}
+
+	public List<IndexSpecification> indexes() {
+		return Collections.emptyList();
+	}
 }

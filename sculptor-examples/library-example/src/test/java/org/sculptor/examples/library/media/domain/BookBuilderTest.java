@@ -12,16 +12,9 @@ public class BookBuilderTest {
 	@Test
 	public void assertBuild() {
 		LocalDateTime now = LocalDateTime.now();
-		Book book = BookBuilder.book()
-			.createdBy("me")
-			.createdDate(now)
-			.title("Ender's Game")
-			.isbn("Some-ISBN")
-			.addMediaCharacter(mediaCharacter()
-					.name("Ender")
-					.build())
-			.build();
-		
+		Book book = BookBuilder.book().createdBy("me").createdDate(now).title("Ender's Game").isbn("Some-ISBN")
+				.addMediaCharacter(mediaCharacter().name("Ender").build()).build();
+
 		assertNotNull(book);
 		assertEquals("me", book.getCreatedBy());
 		assertEquals(now, book.getCreatedDate());

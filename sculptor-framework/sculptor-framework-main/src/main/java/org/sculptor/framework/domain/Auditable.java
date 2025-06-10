@@ -26,9 +26,9 @@ public interface Auditable {
 	public void setCreatedDate(LocalDateTime createdDate);
 	public LocalDateTime getCreatedDate();
 
-    public void setLastUpdatedBy(String updatedBy);
-    public String getLastUpdatedBy();
-    public void setLastUpdated(LocalDateTime updateDate);
-    public LocalDateTime getLastUpdated();
+	public void setLastUpdatedBy(String updatedBy);
+	public String getLastUpdatedBy();
+	public void setLastUpdated(LocalDateTime updateDate);
+	public LocalDateTime getLastUpdated();
 
 }

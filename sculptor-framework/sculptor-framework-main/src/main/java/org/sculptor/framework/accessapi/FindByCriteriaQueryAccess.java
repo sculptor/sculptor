@@ -27,27 +27,28 @@ import jakarta.persistence.criteria.CriteriaQuery;
  *
  * @author Oliver Ringel
  *
- * @param <R> result type of the query
+ * @param <R>
+ *            result type of the query
  */
 public interface FindByCriteriaQueryAccess<R> extends Cacheable, Ordered, Pageable, Countable {
 
-    void setQuery(CriteriaQuery<R> criteriaQuery);
+	void setQuery(CriteriaQuery<R> criteriaQuery);
 
-    void setParameters(Map<String, Object> parameters);
+	void setParameters(Map<String, Object> parameters);
 
-    void setUseSingleResult(boolean singleResult);
+	void setUseSingleResult(boolean singleResult);
 
-    void execute();
+	void execute();
 
-    /**
-     * The result of the command.
-     */
-    List<R> getResult();
+	/**
+	 * The result of the command.
+	 */
+	List<R> getResult();
 
-    /**
-     * Result when singleResult is used.
-     */
-    R getSingleResult();
+	/**
+	 * Result when singleResult is used.
+	 */
+	R getSingleResult();
 
 	void setHint(String hint, Object value);
 }

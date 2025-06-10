@@ -20,7 +20,7 @@ public class ConditionalCriteria {
 	Object firstOperant;
 	Object secondOperant;
 	Expression<?> expression;
-	boolean having=false;
+	boolean having = false;
 
 	private ConditionalCriteria(Operator operator, Expression<?> expression) {
 		this(operator, expression, null, null);
@@ -30,11 +30,12 @@ public class ConditionalCriteria {
 		this(operator, expression, firstOperant, null);
 	}
 
-	private ConditionalCriteria(Operator operator, Expression<?> expression, Object firstOperant, Object secondOperant) {
+	private ConditionalCriteria(Operator operator, Expression<?> expression, Object firstOperant,
+			Object secondOperant) {
 		this.expression = expression;
-		this.operator=operator;
-		this.firstOperant=firstOperant;
-		this.secondOperant=secondOperant;
+		this.operator = operator;
+		this.firstOperant = firstOperant;
+		this.secondOperant = secondOperant;
 
 		Property p;
 		if (expression instanceof PropertyWithExpression) {
@@ -46,21 +47,21 @@ public class ConditionalCriteria {
 		}
 
 		if (p == null) {
-			this.propertyFullName=null;
-			this.propertyName=null;
-			this.propertyPath=new String[0];
+			this.propertyFullName = null;
+			this.propertyName = null;
+			this.propertyPath = new String[0];
 		} else if (p instanceof Property) {
-			this.propertyFullName=p instanceof LeafProperty<?>
-					? ((LeafProperty<?>)p).getEmbeddedName()
+			this.propertyFullName = p instanceof LeafProperty<?>
+					? ((LeafProperty<?>) p).getEmbeddedName()
 					: p.getName();
 
 			int lastDotPos = propertyFullName.lastIndexOf('.');
 			if (lastDotPos == -1) {
-				this.propertyName=propertyFullName;
-				this.propertyPath=new String[0];
+				this.propertyName = propertyFullName;
+				this.propertyPath = new String[0];
 			} else {
-				this.propertyName=propertyFullName.substring(lastDotPos+1);
-				this.propertyPath=propertyFullName.substring(0, lastDotPos).split("\\.");
+				this.propertyName = propertyFullName.substring(lastDotPos + 1);
+				this.propertyPath = propertyFullName.substring(0, lastDotPos).split("\\.");
 			}
 		}
 	}
@@ -85,23 +86,23 @@ public class ConditionalCriteria {
 		return propertyAlias;
 	}
 
-    public Object getFirstOperant() {
-        return firstOperant;
-    }
+	public Object getFirstOperant() {
+		return firstOperant;
+	}
 
-    public <Y extends Comparable<?>> Y getFirstOperantAs(Class<Y> type) {
-        return type.cast(firstOperant);
-    }
+	public <Y extends Comparable<?>> Y getFirstOperantAs(Class<Y> type) {
+		return type.cast(firstOperant);
+	}
 
 	public Object getSecondOperant() {
 		return secondOperant;
 	}
 
-    public <Y extends Comparable<?>>  Y getSecondOperantAs(Class<Y> type) {
-        return type.cast(secondOperant);
-    }
+	public <Y extends Comparable<?>> Y getSecondOperantAs(Class<Y> type) {
+		return type.cast(secondOperant);
+	}
 
-    public Expression getExpression() {
+	public Expression getExpression() {
 		return expression;
 	}
 
@@ -206,7 +207,8 @@ public class ConditionalCriteria {
 		return new ConditionalCriteria(Operator.GreatThanProperty, propertyLeft, propertyRight);
 	}
 
-	public static ConditionalCriteria greatThanOrEqualProperty(Expression<?> propertyLeft, Expression<?> propertyRight) {
+	public static ConditionalCriteria greatThanOrEqualProperty(Expression<?> propertyLeft,
+			Expression<?> propertyRight) {
 		return new ConditionalCriteria(Operator.GreatThanOrEqualProperty, propertyLeft, propertyRight);
 	}
 
@@ -267,11 +269,11 @@ public class ConditionalCriteria {
 	}
 
 	public void setHaving() {
-		having=true;
+		having = true;
 	}
 
 	public void unsetHaving() {
-		having=false;
+		having = false;
 	}
 
 	public boolean isHaving() {
@@ -283,19 +285,12 @@ public class ConditionalCriteria {
 	}
 
 	public enum Operator {
-		Equal, LessThan, LessThanOrEqual, GreatThan, GreatThanOrEqual, Like, IgnoreCaseLike, IgnoreCaseEqual
-		, IsNull, IsNotNull, IsEmpty, IsNotEmpty
-		, In, Between
-		, EqualProperty, LessThanProperty, LessThanOrEqualProperty, GreatThanProperty, GreatThanOrEqualProperty
-		, Not, Or, And
-		, FtsEqual
-		, OrderAsc(OperatorType.Sql), OrderDesc(OperatorType.Sql)
-		, GroupBy(OperatorType.Sql), Select(OperatorType.Sql)
-		, DistinctRoot(OperatorType.Config), ProjectionRoot(OperatorType.Config)
-		, FetchLazy(OperatorType.Config), FetchEager(OperatorType.Config)
-		, ReadOnly(OperatorType.Config), Scroll(OperatorType.Config)
-		, UseWhereForFetch(OperatorType.Config)
-		;
+		Equal, LessThan, LessThanOrEqual, GreatThan, GreatThanOrEqual, Like, IgnoreCaseLike, IgnoreCaseEqual, IsNull, IsNotNull, IsEmpty, IsNotEmpty, In, Between, EqualProperty, LessThanProperty, LessThanOrEqualProperty, GreatThanProperty, GreatThanOrEqualProperty, Not, Or, And, FtsEqual, OrderAsc(
+				OperatorType.Sql), OrderDesc(OperatorType.Sql), GroupBy(OperatorType.Sql), Select(
+						OperatorType.Sql), DistinctRoot(OperatorType.Config), ProjectionRoot(
+								OperatorType.Config), FetchLazy(OperatorType.Config), FetchEager(
+										OperatorType.Config), ReadOnly(OperatorType.Config), Scroll(
+												OperatorType.Config), UseWhereForFetch(OperatorType.Config);
 
 		private OperatorType operatorType;
 

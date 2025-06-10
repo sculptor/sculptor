@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -11,31 +12,30 @@
 	<packaging>eclipse-test-plugin</packaging>
 	-->
 	<name>Sculptor :: Eclipse :: Textual DSL Tests</name>
-
 	<build>
 		<plugins>
-		<!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src</source>
-                                <source>src-gen</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-				-->
+			<!--
+			<plugin>
+				 <groupId>org.codehaus.mojo</groupId>
+				 <artifactId>build-helper-maven-plugin</artifactId>
+				 <version>3.2.0</version>
+				 <executions>
+					  <execution>
+							<id>add-source</id>
+							<phase>generate-sources</phase>
+							<goals>
+								 <goal>add-source</goal>
+							</goals>
+							<configuration>
+								 <sources>
+									  <source>src</source>
+									  <source>src-gen</source>
+								 </sources>
+							</configuration>
+					  </execution>
+				 </executions>
+			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -102,13 +102,19 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			 <groupId>org.eclipse.xtext</groupId>
-			 <artifactId>org.eclipse.xtext</artifactId>
-			 <version>${xtext-version}</version>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext</artifactId>
+			<version>${xtext-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.mwe.utils</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>

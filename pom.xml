@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>org.sculptorgenerator</groupId>
 	<artifactId>sculptor-parent</artifactId>
 	<version>4.0.0-SNAPSHOT</version>
@@ -11,19 +10,16 @@
 		 from Domain-Driven Design and Domain Specific Languages for generating high quality
 		 Java code and configuration from a textual specification.</description>
 	<url>http://sculptorgenerator.org/</url>
-
 	<scm>
 		<url>https://github.com/sculptor/sculptor.git</url>
 		<connection>scm:git:https://github.com/sculptor/sculptor.git</connection>
 		<developerConnection>scm:git:https://github.com/sculptor/sculptor.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
-
 	<issueManagement>
 		<url>https://github.com/sculptor/sculptor/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
-
 	<inceptionYear>2013</inceptionYear>
 	<licenses>
 		<license>
@@ -32,35 +28,33 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
 	<developers>
 		<developer>
 			<id>tavoda</id>
 			<name>Pavel Tavoda</name>
-		    <email>pavel.tavoda@gmail.com</email>
+			<email>pavel.tavoda@gmail.com</email>
 			<roles>
 				<role>Project-Manager</role>
 				<role>Developer</role>
 			</roles>
 		</developer>
 		<developer>
-		    <id>rsmith72</id>
-		    <name>Ron Smith</name>
-		    <email>rsmith72@gmail.com</email>
-		    <roles>
+			<id>rsmith72</id>
+			<name>Ron Smith</name>
+			<email>rsmith72@gmail.com</email>
+			<roles>
 				<role>Developer</role>
 			</roles>
 		</developer>
 		<developer>
-		    <id>tjuerge</id>
-		    <name>Torsten Juergeleit</name>
-		    <email>torsten.juergeleit@gmail.com</email>
-		    <roles>
+			<id>tjuerge</id>
+			<name>Torsten Juergeleit</name>
+			<email>torsten.juergeleit@gmail.com</email>
+			<roles>
 				<role>Developer</role>
 			</roles>
 		</developer>
 	</developers>
-
 	<distributionManagement>
 		<repository>
 			<id>artifactory.hq.f4s.sk</id>
@@ -74,39 +68,30 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<!--
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-	-->
-
+		<distributionManagement>
+			<snapshotRepository>
+				<id>sonatype-nexus-snapshots</id>
+				<name>Sonatype Nexus Snapshots</name>
+				<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			</snapshotRepository>
+			<repository>
+				<id>sonatype-nexus-staging</id>
+				<name>Nexus Release Repository</name>
+				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			</repository>
+		</distributionManagement>
+		-->
 	<properties>
+		<!-- Generic build properties -->
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-
 		<java-version>17</java-version>
 		<maven-version>3.0</maven-version>
 		<maven.compiler.source>${java-version}</maven.compiler.source>
 		<maven.compiler.target>${java-version}</maven.compiler.target>
-
-		<tycho-version>4.0.12</tycho-version>
-		<tycho.disableP2Mirrors>true</tycho.disableP2Mirrors>
-
+		<!-- Generator dependencies -->
 		<xtext-version>2.38.0</xtext-version>
-		<!-- <ecore-xtext-version>1.5.0</ecore-xtext-version> -->
-		<ecore-xcore-version>1.32.0</ecore-xcore-version>
-		<asm-version>9.7.1</asm-version>
-		<emf-mwe2-launch-version>2.21.0</emf-mwe2-launch-version>
-
+		<!-- Framework dependencies -->
 		<spring-boot-version>3.5.0</spring-boot-version>
-
 		<appengine-version>2.0.36</appengine-version>
 		<drools-version>6.5.0.Final</drools-version>
 		<camel-version>4.11.0</camel-version>
@@ -114,12 +99,10 @@
 		<hsqldb-version>2.7.4</hsqldb-version>
 		<activemq-version>5.17.1</activemq-version>
 		<joda-time-version>2.14.0</joda-time-version>
-		<xstream-version>1.4.19</xstream-version>
-
+		<xstream-version>1.4.21</xstream-version>
 		<!-- GitHub server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
 	</properties>
- 
 	<profiles>
 		<profile>
 			<id>all</id>
@@ -268,7 +251,6 @@
 			</build>
 		</profile>
 	</profiles>
-
 	<repositories>
 		<repository>
 			<id>codehaus-snapshots</id>
@@ -295,7 +277,6 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -310,10 +291,14 @@
 					<version>3.5.0</version>
 					<configuration>
 						<filesets>
-							<fileset><directory>src/main/xtend-gen/</directory></fileset>
+							<fileset>
+								<directory>src/main/xtend-gen/</directory>
+							</fileset>
 						</filesets>
 						<filesets>
-							<fileset><directory>src/test/xtend-gen/</directory></fileset>
+							<fileset>
+								<directory>src/test/xtend-gen/</directory>
+							</fileset>
 						</filesets>
 					</configuration>
 				</plugin>
@@ -392,11 +377,11 @@
 					<version>3.3.1</version>
 					<executions>
 						<!--
-						 ~ This workaround prevents Maven from executing the 'generate-sources' phase twice.
-						 ~ See http://jira.codehaus.org/browse/MSOURCES-13
-						 ~ and http://blog.peterlynch.ca/2010/05/maven-how-to-prevent-generate-sources.html
- 						-->
- 						<execution>
+						 This workaround prevents Maven from executing the 'generate-sources' phase twice.
+						 See http://jira.codehaus.org/browse/MSOURCES-13
+						 and http://blog.peterlynch.ca/2010/05/maven-how-to-prevent-generate-sources.html
+						-->
+						<execution>
 							<id>attach-sources</id>
 							<phase>invalid</phase>
 							<goals>
@@ -412,7 +397,7 @@
 							</goals>
 						</execution>
 					</executions>
-      			</plugin>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
@@ -512,7 +497,7 @@
 						<!--
 							to get rid of the warning: [WARNING] Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.
 							see: method execute() in https://github.com/ispringer/exec-maven-plugin/blob/master/src/main/java/org/codehaus/mojo/exec/ExecJavaMojo.java
-						<killAfter>-1</killAfter>
+							<killAfter>-1</killAfter>
 						-->
 						<cleanupDaemonThreads>false</cleanupDaemonThreads>
 					</configuration>
@@ -643,11 +628,11 @@
 					<artifactId>tycho-p2-director-plugin</artifactId>
 					<version>${tycho-version}</version>
 				</plugin>
- 				<plugin>
+				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
- 					<artifactId>tycho-versions-plugin</artifactId>
- 					<version>${tycho-version}</version>
- 				</plugin>
+					<artifactId>tycho-versions-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho.extras</groupId>
 					<artifactId>tycho-p2-extras-plugin</artifactId>
@@ -659,7 +644,7 @@
 					<artifactId>site-maven-plugin</artifactId>
 					<version>0.12</version>
 					<!-- Deploying the p2 repository to a GitHub repository branch as described in
-						http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
+											http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github/ -->
 					<configuration>
 						<noJekyll>true</noJekyll>
 						<includes>
@@ -829,7 +814,6 @@
 								<requireJavaVersion>
 									<version>[17,)</version>
 								</requireJavaVersion>
-								<!--
 								<bannedDependencies>
 									<searchTransitive>true</searchTransitive>
 									<excludes>
@@ -838,7 +822,6 @@
 									</excludes>
 									<message>Secondary logging frameworks are banned in preference to org.slf4j:*-over-slf4j</message>
 								</bannedDependencies>
-								-->
 							</rules>
 						</configuration>
 					</execution>
@@ -846,7 +829,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -933,26 +915,26 @@
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time-version}</version>
 			</dependency>
-<dependency>
-    <groupId>jakarta.ejb</groupId>
-    <artifactId>jakarta.ejb-api</artifactId>
-	<version>4.0.1</version>
-</dependency>
-<dependency>
-    <groupId>jakarta.interceptor</groupId>
-    <artifactId>jakarta.interceptor-api</artifactId>
-    <version>2.2.0</version>
-</dependency>
-<dependency>
-    <groupId>jakarta.security.jacc</groupId>
-    <artifactId>jakarta.security.jacc-api</artifactId>
-    <version>1.6.1</version>
-</dependency>
-		<dependency>
-			<groupId>org.drools</groupId>
-			<artifactId>drools-compiler</artifactId>
-			<version>${drools-version}</version>
-		</dependency>
+			<dependency>
+				<groupId>jakarta.ejb</groupId>
+				<artifactId>jakarta.ejb-api</artifactId>
+				<version>4.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.interceptor</groupId>
+				<artifactId>jakarta.interceptor-api</artifactId>
+				<version>2.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.security.jacc</groupId>
+				<artifactId>jakarta.security.jacc-api</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-compiler</artifactId>
+				<version>${drools-version}</version>
+			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
@@ -964,17 +946,17 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<!--
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
-				<version>1.3</version>
+				<version>1.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.8.0</version>
+				<version>2.19.0</version>
 			</dependency>
+			<!--
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
@@ -1066,19 +1048,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<dependencies>
-		<!--
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		-->
-	</dependencies>
 </project>

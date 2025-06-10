@@ -33,8 +33,9 @@ public class InventoryItemSnapshotterImpl extends InventoryItemSnapshotterImplBa
 
 		InventoryItemSnapshot snapshot = getInventoryItemSnapshotRepository().getLatestSnapshot(itemId);
 		long snapshotVersion = snapshot == null ? 1 : snapshot.getVersion();
-		long eventVersion = inventoryItemEvent.getAggregateVersion() == null ? 1 : inventoryItemEvent
-				.getAggregateVersion();
+		long eventVersion = inventoryItemEvent.getAggregateVersion() == null
+				? 1
+				: inventoryItemEvent.getAggregateVersion();
 		if (eventVersion - snapshotVersion >= VERSION_DELTA) {
 			takeSnapshot(itemId);
 		}

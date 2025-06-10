@@ -57,251 +57,250 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Oliver Ringel
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 @Transactional(transactionManager = "txManager")
-public abstract class AbstractDbUnitAnnotationAwareTransactionalTests extends
-        AbstractTransactionalJUnit4SpringContextTests {
+public abstract class AbstractDbUnitAnnotationAwareTransactionalTests
+		extends
+			AbstractTransactionalJUnit4SpringContextTests {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public AbstractDbUnitAnnotationAwareTransactionalTests() {
-    }
+	public AbstractDbUnitAnnotationAwareTransactionalTests() {
+	}
 
-    static {
-        ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
+	static {
+		ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
 			public String getFactoryImplementationClassName() {
 				return "org.sculptor.framework.context.JUnitServiceContextFactory";
-            }
-        });
-    }
+			}
+		});
+	}
 
-    private final ServiceContext serviceContext = ServiceContextFactory.createServiceContext("JUnit");
+	private final ServiceContext serviceContext = ServiceContextFactory.createServiceContext("JUnit");
 
-    protected ServiceContext getServiceContext() {
-        return serviceContext;
-    }
+	protected ServiceContext getServiceContext() {
+		return serviceContext;
+	}
 
-    /**
-     * inject the datasource
-     */
-    @Override
-    @Autowired
-    @Qualifier("testDataSource")
-    public void setDataSource(DataSource dataSource) {
-    	super.setDataSource(dataSource);
-    }
+	/**
+	 * inject the datasource
+	 */
+	@Override
+	@Autowired
+	@Qualifier("testDataSource")
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
 
-    /**
-     * setup dbunit DatabaseTester/DataSet in transaction
-     *
-     * @throws Exception
-     */
-    @BeforeEach
-    public void setUpDatabaseTester() throws Exception {
-    	if (getJdbcTemplate().getDataSource() == null) {
-    		throw new IllegalStateException("Missing @Resource 'testDataSource'");
-    	}
-    	buildSchema();
-        
-    	IDataSet dataSet = getDataSet();
-    	String[] compositeDataSetFileNames = getCompositeDataSetFiles();
-     	
-    	if(dataSet != null) {
-             DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), dataSet);    		
-    	} else if (compositeDataSetFileNames != null) {
-             DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), compositeDataSetFileNames);    		
-     	} else {
-             DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), getDataSetFile());
-     	}
- 
-        restartSequence();
-    }
+	/**
+	 * setup dbunit DatabaseTester/DataSet in transaction
+	 *
+	 * @throws Exception
+	 */
+	@BeforeEach
+	public void setUpDatabaseTester() throws Exception {
+		if (getJdbcTemplate().getDataSource() == null) {
+			throw new IllegalStateException("Missing @Resource 'testDataSource'");
+		}
+		buildSchema();
 
-    /**
-     * Override this method to specify a DataSet to use for test data.
-     * If dataSet is not set, getCompompositeDataSetFiles() and getDataSetFile() will be called.
-     * 
-     * @return Data set to use
-     */
-    protected IDataSet getDataSet() {
-    	return null;
-    }
-    
-    /**
-     * Start the id sequence from a high value to avoid conflicts with test
-     * data. You can define the sequence name with {@link #getSequenceName}.
-     */
-    protected void restartSequence() {
-        String sequenceName = getSequenceName();
-        if (sequenceName == null) {
-            return;
-        }
-        try {
-            DbUnitDataSourceUtils.restartSequence(getConnection(), sequenceName);
-        } catch (Exception e) {
-            log.debug("Couldn't restart sequence: " + sequenceName);
-        }
-    }
+		IDataSet dataSet = getDataSet();
+		String[] compositeDataSetFileNames = getCompositeDataSetFiles();
 
-    /**
-     * increase the version number to test optimistic locking
-     *
-     * @param domainObjectClass
-     */
-    protected void increaseVersion(Class<?> domainObjectClass, Long id) {
-        increaseVersion(getTableName(domainObjectClass), id);
-    }
+		if (dataSet != null) {
+			DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), dataSet);
+		} else if (compositeDataSetFileNames != null) {
+			DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(),
+					compositeDataSetFileNames);
+		} else {
+			DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getJdbcTemplate().getDataSource(), getDataSetFile());
+		}
 
-    /**
-     * increase the version number to test optimistic locking
-     *
-     * @param tableName
-     * @return
-     */
-    protected void increaseVersion(String tableName, Long id) {
-        getJdbcTemplate().update("update " + tableName + " set version = version + 1 where id = " + id);
-    }
+		restartSequence();
+	}
 
-    /**
-     * In case you don't need to start the id sequence from a high value to
-     * avoid conflicts with test data you should override this method and return
-     * null.
-     */
-    protected String getSequenceName() {
-        return null;
-    }
+	/**
+	 * Override this method to specify a DataSet to use for test data. If dataSet is
+	 * not set, getCompompositeDataSetFiles() and getDataSetFile() will be called.
+	 * 
+	 * @return Data set to use
+	 */
+	protected IDataSet getDataSet() {
+		return null;
+	}
 
-    /**
-     * Execute some SQL scripts before setup the database to modify the schema
-     * This is used for workarounds
-     *
-     * @throws Exception
-     */
-    protected void buildSchema() {
-    }
+	/**
+	 * Start the id sequence from a high value to avoid conflicts with test data.
+	 * You can define the sequence name with {@link #getSequenceName}.
+	 */
+	protected void restartSequence() {
+		String sequenceName = getSequenceName();
+		if (sequenceName == null) {
+			return;
+		}
+		try {
+			DbUnitDataSourceUtils.restartSequence(getConnection(), sequenceName);
+		} catch (Exception e) {
+			log.debug("Couldn't restart sequence: " + sequenceName);
+		}
+	}
 
-    @AfterEach
-    public void tearDownDatabaseTester() throws Exception {
-        DbUnitDataSourceUtils.tearDownDatabaseTester();
-    }
+	/**
+	 * increase the version number to test optimistic locking
+	 *
+	 * @param domainObjectClass
+	 */
+	protected void increaseVersion(Class<?> domainObjectClass, Long id) {
+		increaseVersion(getTableName(domainObjectClass), id);
+	}
 
-    /**
-     * Override this method to specify the XML file with DBUnit test data. If
-     * filename is not set, DbUnitDataSourceUtils will guess a filename.
-     *
-     * @return the filename with test data
-     */
-    protected String getDataSetFile() {
-        return null;
-    }
-    
+	/**
+	 * increase the version number to test optimistic locking
+	 *
+	 * @param tableName
+	 * @return
+	 */
+	protected void increaseVersion(String tableName, Long id) {
+		getJdbcTemplate().update("update " + tableName + " set version = version + 1 where id = " + id);
+	}
 
-    /**
-      * Override this method to specify multiple XML files with DBUnit test data to be processed as a CompositeDataSetFile.
-      * If filename is not set, getDataSetFile() will be called.
-      * 
-      * @return Array of filenames with test data
-      */
-     protected String[] getCompositeDataSetFiles() {
-     	return null;
-     }
+	/**
+	 * In case you don't need to start the id sequence from a high value to avoid
+	 * conflicts with test data you should override this method and return null.
+	 */
+	protected String getSequenceName() {
+		return null;
+	}
 
-    protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
-        return countRowsInTable(domainObjectClass, "");
-    }
+	/**
+	 * Execute some SQL scripts before setup the database to modify the schema This
+	 * is used for workarounds
+	 *
+	 * @throws Exception
+	 */
+	protected void buildSchema() {
+	}
 
-    /**
-     * Counts the number of rows from a table via jdbc. Table name is picked for @Table
-     * annotation of the domainObjectClass
-     *
-     * @param domainObjectClass
-     *            persistent class defining the name of the table for counting
-     *            rows
-     * @param condition
-     *            additional condition
-     * @return number of rows
-     */
-    protected int countRowsInTable(Class<?> domainObjectClass, String condition) throws Exception {
-        return countRowsInTable(getTableName(domainObjectClass), condition);
-    }
+	@AfterEach
+	public void tearDownDatabaseTester() throws Exception {
+		DbUnitDataSourceUtils.tearDownDatabaseTester();
+	}
 
-    /**
-     * counts the number of rows from a table via jdbc
-     *
-     * @param tableName
-     *            name of the table for counting rows
-     * @return number of rows
-     */
-    @Override
-    protected int countRowsInTable(String tableName) {
-        return countRowsInTable(tableName, "");
-    }
+	/**
+	 * Override this method to specify the XML file with DBUnit test data. If
+	 * filename is not set, DbUnitDataSourceUtils will guess a filename.
+	 *
+	 * @return the filename with test data
+	 */
+	protected String getDataSetFile() {
+		return null;
+	}
 
-    /**
-     * counts the number of rows from a table via jdbc
-     *
-     * @param tableName
-     *            name of the table for counting rows
-     * @param condition
-     *            additional condition
-     * @return number of rows
-     */
+	/**
+	 * Override this method to specify multiple XML files with DBUnit test data to
+	 * be processed as a CompositeDataSetFile. If filename is not set,
+	 * getDataSetFile() will be called.
+	 * 
+	 * @return Array of filenames with test data
+	 */
+	protected String[] getCompositeDataSetFiles() {
+		return null;
+	}
+
+	protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
+		return countRowsInTable(domainObjectClass, "");
+	}
+
+	/**
+	 * Counts the number of rows from a table via jdbc. Table name is picked
+	 * for @Table annotation of the domainObjectClass
+	 *
+	 * @param domainObjectClass
+	 *            persistent class defining the name of the table for counting rows
+	 * @param condition
+	 *            additional condition
+	 * @return number of rows
+	 */
+	protected int countRowsInTable(Class<?> domainObjectClass, String condition) throws Exception {
+		return countRowsInTable(getTableName(domainObjectClass), condition);
+	}
+
+	/**
+	 * counts the number of rows from a table via jdbc
+	 *
+	 * @param tableName
+	 *            name of the table for counting rows
+	 * @return number of rows
+	 */
+	@Override
+	protected int countRowsInTable(String tableName) {
+		return countRowsInTable(tableName, "");
+	}
+
+	/**
+	 * counts the number of rows from a table via jdbc
+	 *
+	 * @param tableName
+	 *            name of the table for counting rows
+	 * @param condition
+	 *            additional condition
+	 * @return number of rows
+	 */
 	protected int countRowsInTable(String tableName, String condition) {
 		Number number = getJdbcTemplate().queryForObject("select count(*) from " + tableName + " " + condition,
 				Integer.class);
 		return (number != null ? number.intValue() : 0);
 	}
 
-    protected IDatabaseConnection getConnection() throws Exception {
-        IDatabaseConnection connection = new DatabaseConnection(getJdbcTemplate().getDataSource().getConnection());
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqlDataTypeFactory());
-        return connection;
-    }
+	protected IDatabaseConnection getConnection() throws Exception {
+		IDatabaseConnection connection = new DatabaseConnection(getJdbcTemplate().getDataSource().getConnection());
+		DatabaseConfig config = connection.getConfig();
+		config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqlDataTypeFactory());
+		return connection;
+	}
 
-    protected void logDb() {
-        IDatabaseConnection connection = null;
-        try {
-            connection = getConnection();
-            DbUnitDataSourceUtils.logDb(connection);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ignore) {
-                }
-            }
-        }
-    }
+	protected void logDb() {
+		IDatabaseConnection connection = null;
+		try {
+			connection = getConnection();
+			DbUnitDataSourceUtils.logDb(connection);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException ignore) {
+				}
+			}
+		}
+	}
 
-    /**
-     * Get the table name from a domainobject class
-     *
-     * @param domainObjectClass
-     * @return the table name
-     *
-     */
-    protected String getTableName(Class<?> domainObjectClass) {
-        String table = null;
-        if (domainObjectClass.isAnnotationPresent(Table.class)) {
-            table = domainObjectClass.getAnnotation(Table.class).name();
-        } else {
-            table = domainObjectClass.getSimpleName();
-        }
-        return table;
-    }
+	/**
+	 * Get the table name from a domainobject class
+	 *
+	 * @param domainObjectClass
+	 * @return the table name
+	 *
+	 */
+	protected String getTableName(Class<?> domainObjectClass) {
+		String table = null;
+		if (domainObjectClass.isAnnotationPresent(Table.class)) {
+			table = domainObjectClass.getAnnotation(Table.class).name();
+		} else {
+			table = domainObjectClass.getSimpleName();
+		}
+		return table;
+	}
 
+	protected ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
 
-    protected ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    /**
-     * Return the JdbcTemplate that this base class manages.
-     */
-    public final JdbcTemplate getJdbcTemplate() {
-        return this.jdbcTemplate;
-    }
+	/**
+	 * Return the JdbcTemplate that this base class manages.
+	 */
+	public final JdbcTemplate getJdbcTemplate() {
+		return this.jdbcTemplate;
+	}
 }

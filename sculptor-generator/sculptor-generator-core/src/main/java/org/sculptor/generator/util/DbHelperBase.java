@@ -44,9 +44,12 @@ public class DbHelperBase {
 
 	private static final String ID_ATTRIBUTE_NAME = "id";
 
-	@Inject private HelperBase helperBase;
-	@Inject private PropertiesBase propBase;
-	@Inject private SingularPluralConverter singularPluralConverter;
+	@Inject
+	private HelperBase helperBase;
+	@Inject
+	private PropertiesBase propBase;
+	@Inject
+	private SingularPluralConverter singularPluralConverter;
 
 	public List<DomainObject> getDomainObjectsInCreateOrder(Application application, Boolean ascending) {
 		List<DomainObject> all = getAllDomainObjects(application);
@@ -227,8 +230,8 @@ public class DbHelperBase {
 			for (Attribute attribute : (List<Attribute>) _enum.getAttributes()) {
 				if (attribute.isNaturalKey()) {
 					for (EnumValue enumValue : (List<EnumValue>) _enum.getValues()) {
-						EnumConstructorParameter enumParam = (EnumConstructorParameter) enumValue.getParameters().get(
-								attributePosition);
+						EnumConstructorParameter enumParam = (EnumConstructorParameter) enumValue.getParameters()
+								.get(attributePosition);
 						maxLength = calcMaxLength(enumParam.getValue(), maxLength);
 					}
 					break;
@@ -288,11 +291,12 @@ public class DbHelperBase {
 		return name;
 	}
 
-	/** 
+	/**
 	 * Moved to DbHelper
+	 * 
 	 * @deprecated
 	 */
-	@Deprecated 
+	@Deprecated
 	private String convertDatabaseName(String name) {
 		if (propBase.getBooleanProperty("db.useUnderscoreNaming")) {
 			name = CamelCaseConverter.camelCaseToUnderscore(name);
@@ -355,12 +359,12 @@ public class DbHelperBase {
 		return convertDatabaseName(name);
 	}
 
-	
-	/** 
+	/**
 	 * Moved to DbHelper
+	 * 
 	 * @deprecated
 	 */
-	@Deprecated 
+	@Deprecated
 	private String idSuffix(String name, DomainObject to) {
 		if (useIdSuffixInForeignKey()) {
 			Attribute idAttribute = getIdAttribute(to);
@@ -382,11 +386,12 @@ public class DbHelperBase {
 		return "";
 	}
 
-	/** 
+	/**
 	 * Use Properties.useIdSuffixInForeigKey() instead
+	 * 
 	 * @deprecated
 	 */
-	@Deprecated 
+	@Deprecated
 	private boolean useIdSuffixInForeignKey() {
 		return propBase.getBooleanProperty("db.useIdSuffixInForeigKey");
 	}
@@ -423,14 +428,16 @@ public class DbHelperBase {
 		return type;
 	}
 
-	/** 
+	/**
 	 * Moved to DbHelper
+	 * 
 	 * @deprecated
 	 */
-	@Deprecated 
+	@Deprecated
 	private void checkIdAttribute(DomainObject referencedClass, Attribute idAttribute) {
 		if (idAttribute == null) {
-			throw new IllegalArgumentException("Referenced class " + referencedClass.getName() + " doesn't contain 'id' attribute");
+			throw new IllegalArgumentException(
+					"Referenced class " + referencedClass.getName() + " doesn't contain 'id' attribute");
 		}
 	}
 
@@ -452,9 +459,8 @@ public class DbHelperBase {
 				Reference opposite = ref.getOpposite();
 				// undirectional many references are designed in db as
 				// many-to-many, except when inverse is defined to true
-				if ((opposite == null && !ref.isInverse())
-						|| (opposite != null && opposite.isMany() && !opposite.isTransient() && !manyToManyReferences
-								.contains(opposite))) {
+				if ((opposite == null && !ref.isInverse()) || (opposite != null && opposite.isMany()
+						&& !opposite.isTransient() && !manyToManyReferences.contains(opposite))) {
 					manyToManyReferences.add(ref);
 				}
 			}
@@ -530,8 +536,9 @@ public class DbHelperBase {
 		name1 = removeIdSuffix(name1, ref.getTo());
 		String name2;
 		if (ref.getOpposite() == null) {
-			name2 = (ref.getFrom().getDatabaseTable() != null) ? ref.getFrom().getDatabaseTable() : ref.getFrom().getName()
-					.toUpperCase();
+			name2 = (ref.getFrom().getDatabaseTable() != null)
+					? ref.getFrom().getDatabaseTable()
+					: ref.getFrom().getName().toUpperCase();
 		} else {
 			name2 = ref.getOpposite().getDatabaseColumn();
 			name2 = removeIdSuffix(name2, ref.getOpposite().getTo());
@@ -561,8 +568,9 @@ public class DbHelperBase {
 		name1 = removeIdSuffix(name1, reference.getTo());
 		String name2;
 		if (reference.getOpposite() == null) {
-			name2 = (reference.getFrom().getDatabaseTable() != null) ? reference.getFrom().getDatabaseTable() : reference.getFrom()
-					.getName().toUpperCase();
+			name2 = (reference.getFrom().getDatabaseTable() != null)
+					? reference.getFrom().getDatabaseTable()
+					: reference.getFrom().getName().toUpperCase();
 		} else {
 			name2 = reference.getOpposite().getDatabaseColumn();
 			name2 = removeIdSuffix(name2, reference.getOpposite().getTo());

@@ -20,8 +20,8 @@ import jakarta.persistence.EntityManager;
 import javax.sql.DataSource;
 
 public interface JpaTestLocal {
-    EntityManager getEntityManager();
+	EntityManager getEntityManager();
 
-    DataSource getDataSource();
+	DataSource getDataSource();
 
 }

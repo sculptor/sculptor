@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 @Disabled
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class InventoryItemDetailViewTest implements InventoryItemDetailViewTestBase {
 
 	@Autowired

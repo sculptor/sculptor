@@ -25,37 +25,35 @@ import org.sculptor.framework.util.FactoryConfiguration;
 
 /**
  * Implementation of
- * {@link org.sculptor.framework.context.ServiceContextFactory}
- * that can be used for testing.
+ * {@link org.sculptor.framework.context.ServiceContextFactory} that can be used
+ * for testing.
  */
 public class JUnitServiceContextFactory extends ServiceContextFactory {
 
+	public static ServiceContext createServiceContext() {
+		ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
+			public String getFactoryImplementationClassName() {
+				return JUnitServiceContextFactory.class.getName();
+			}
+		});
+		return ServiceContextFactory.createServiceContext("JUnit");
+	}
 
+	@Override
+	protected Subject activeSubject() {
+		return null; // no real login
+	}
 
-    public static ServiceContext createServiceContext() {
-        ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
-            public String getFactoryImplementationClassName() {
-                return JUnitServiceContextFactory.class.getName();
-            }
-        });
-        return ServiceContextFactory.createServiceContext("JUnit");
-    }
+	@Override
+	protected String userIdFromSubject(Subject caller) {
+		return "JUnit";
+	}
 
-    @Override
-    protected Subject activeSubject() {
-        return null; // no real login
-    }
-
-    @Override
-    protected String userIdFromSubject(Subject caller) {
-        return "JUnit";
-    }
-
-    @Override
-    protected Set<String> rolesFromSubject(Subject caller) {
-        Set<String> roles = new HashSet<String>();
-        roles.add("JUnitRole");
-        return roles;
-    }
+	@Override
+	protected Set<String> rolesFromSubject(Subject caller) {
+		Set<String> roles = new HashSet<String>();
+		roles.add("JUnitRole");
+		return roles;
+	}
 
 }

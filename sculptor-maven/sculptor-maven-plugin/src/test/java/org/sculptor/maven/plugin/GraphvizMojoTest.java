@@ -29,8 +29,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.commons.exec.CommandLine;
 import org.apache.maven.project.MavenProject;
 
-public class GraphvizMojoTest extends
-		AbstractGeneratorMojoTestCase<GraphvizMojo> {
+public class GraphvizMojoTest extends AbstractGeneratorMojoTestCase<GraphvizMojo> {
 
 	private static final String GENERATED_FILE = "src/generated/resources/umlgraph-dependencies.dot";
 
@@ -110,9 +109,8 @@ public class GraphvizMojoTest extends
 	}
 
 	/**
-	 * Returns Mojo instance initialized with a {@link MavenProject} created
-	 * from the test projects in <code>"src/test/projects/"</code> by given
-	 * project name.
+	 * Returns Mojo instance initialized with a {@link MavenProject} created from
+	 * the test projects in <code>"src/test/projects/"</code> by given project name.
 	 */
 	protected GraphvizMojo createMojo(MavenProject project) throws Exception {
 

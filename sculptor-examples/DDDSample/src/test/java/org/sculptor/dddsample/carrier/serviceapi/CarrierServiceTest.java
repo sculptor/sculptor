@@ -12,24 +12,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Spring based transactional test with DbUnit support.
  */
 public class CarrierServiceTest extends AbstractDbUnitJpaTests implements CarrierServiceTestBase {
-    private CarrierService carrierService;
+	private CarrierService carrierService;
 
-    @Autowired
-    public void setCarrierService(CarrierService carrierService) {
-        this.carrierService = carrierService;
-    }
+	@Autowired
+	public void setCarrierService(CarrierService carrierService) {
+		this.carrierService = carrierService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testFind() throws Exception {
-        CarrierMovement found = carrierService.find(getServiceContext(), new CarrierMovementId("CAR_001"));
-        assertNotNull(found);
-    }
+	@Test
+	public void testFind() throws Exception {
+		CarrierMovement found = carrierService.find(getServiceContext(), new CarrierMovementId("CAR_001"));
+		assertNotNull(found);
+	}
 
-    public void testSave() throws Exception {
-    }
+	public void testSave() throws Exception {
+	}
 }

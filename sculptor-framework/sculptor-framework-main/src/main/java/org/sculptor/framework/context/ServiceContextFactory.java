@@ -29,7 +29,6 @@ import jakarta.servlet.http.HttpSession;
 import org.sculptor.framework.util.FactoryConfiguration;
 import org.sculptor.framework.util.FactoryHelper;
 
-
 /**
  * Factory class to create ServiceContext.
  *
@@ -37,145 +36,144 @@ import org.sculptor.framework.util.FactoryHelper;
  */
 public abstract class ServiceContextFactory {
 
-    private static final int MAX_GENERATED_SESSION_ID = 1000000;
+	private static final int MAX_GENERATED_SESSION_ID = 1000000;
 
-    public static final String SYSTEM_USER = "system";
-    public static final String GUEST_USER = "guest";
-    public static final String UNKNOWN_USER = "unknown";
+	public static final String SYSTEM_USER = "system";
+	public static final String GUEST_USER = "guest";
+	public static final String UNKNOWN_USER = "unknown";
 
-    private static final Random RANDOM_GENERATOR = new Random(System.currentTimeMillis());
+	private static final Random RANDOM_GENERATOR = new Random(System.currentTimeMillis());
 
-    private static ServiceContextFactory singletonInstance;
+	private static ServiceContextFactory singletonInstance;
 
-    private static FactoryConfiguration config = new FactoryConfiguration() {
-        public String getFactoryImplementationClassName() {
-            return "org.sculptor.framework.context.JBossServiceContextFactory";
-        }
-    };
+	private static FactoryConfiguration config = new FactoryConfiguration() {
+		public String getFactoryImplementationClassName() {
+			return "org.sculptor.framework.context.JBossServiceContextFactory";
+		}
+	};
 
-    protected ServiceContextFactory() {
-    }
+	protected ServiceContextFactory() {
+	}
 
-    public static void setConfiguration(FactoryConfiguration aConfig) {
-        config = aConfig;
-    }
+	public static void setConfiguration(FactoryConfiguration aConfig) {
+		config = aConfig;
+	}
 
-    private static ServiceContextFactory getInstance() {
-        if (singletonInstance == null) {
-            singletonInstance = createInstance();
-        }
+	private static ServiceContextFactory getInstance() {
+		if (singletonInstance == null) {
+			singletonInstance = createInstance();
+		}
 
-        return singletonInstance;
-    }
+		return singletonInstance;
+	}
 
-    private static ServiceContextFactory createInstance() {
-        return (ServiceContextFactory) FactoryHelper.newInstanceFromName(config.getFactoryImplementationClassName());
-    }
+	private static ServiceContextFactory createInstance() {
+		return (ServiceContextFactory) FactoryHelper.newInstanceFromName(config.getFactoryImplementationClassName());
+	}
 
-    /**
-     * Convenience method, it requires that the request is a HttpServletRequest.
-     *
-     * @see #createServiceContext(HttpServletRequest)
-     */
-    public static ServiceContext createServiceContext(ServletRequest request) {
-        if (!(request instanceof HttpServletRequest)) {
-            throw new IllegalArgumentException("Expected HttpServletRequest");
-        }
-        return createServiceContext((HttpServletRequest) request);
-    }
+	/**
+	 * Convenience method, it requires that the request is a HttpServletRequest.
+	 *
+	 * @see #createServiceContext(HttpServletRequest)
+	 */
+	public static ServiceContext createServiceContext(ServletRequest request) {
+		if (!(request instanceof HttpServletRequest)) {
+			throw new IllegalArgumentException("Expected HttpServletRequest");
+		}
+		return createServiceContext((HttpServletRequest) request);
+	}
 
-    /**
-     * Use this method to create a ServiceContext for a web application.
-     * sessionId is the HttpSession id. applicationId is defined in
-     * <display-name> in web.xml
-     * <p>
-     * The userId and roles are populated from current Subject, which was
-     * created by some Login Module.
-     * <p>
-     * If a ServiceContext instance is already available in thread local
-     * {@link ServiceContextStore} it will be used instead of creating a new
-     * instance.
-     */
-    public static ServiceContext createServiceContext(HttpServletRequest request) {
-        return getInstance().createServiceContextImpl(request);
-    }
+	/**
+	 * Use this method to create a ServiceContext for a web application. sessionId
+	 * is the HttpSession id. applicationId is defined in <display-name> in web.xml
+	 * <p>
+	 * The userId and roles are populated from current Subject, which was created by
+	 * some Login Module.
+	 * <p>
+	 * If a ServiceContext instance is already available in thread local
+	 * {@link ServiceContextStore} it will be used instead of creating a new
+	 * instance.
+	 */
+	public static ServiceContext createServiceContext(HttpServletRequest request) {
+		return getInstance().createServiceContextImpl(request);
+	}
 
-    protected ServiceContext createServiceContextImpl(HttpServletRequest request) {
-        ServiceContext context = ServiceContextStore.get();
-        if (context != null) {
-            return context;
-        }
+	protected ServiceContext createServiceContextImpl(HttpServletRequest request) {
+		ServiceContext context = ServiceContextStore.get();
+		if (context != null) {
+			return context;
+		}
 
-        String applicationId = request.getServletContext().getServletContextName();
-        // Respect session creation policy - microservices
-        HttpSession session = request.getSession(false);
-        String sessionId = session != null ? session.getId() : null;
+		String applicationId = request.getServletContext().getServletContextName();
+		// Respect session creation policy - microservices
+		HttpSession session = request.getSession(false);
+		String sessionId = session != null ? session.getId() : null;
 
-        String userId = null;
-        Set<String> roles = Collections.emptySet();
-        Subject caller = activeSubject();
-        if (caller != null) {
-            userId = userIdFromSubject(caller);
-            roles = rolesFromSubject(caller);
-        }
+		String userId = null;
+		Set<String> roles = Collections.emptySet();
+		Subject caller = activeSubject();
+		if (caller != null) {
+			userId = userIdFromSubject(caller);
+			roles = rolesFromSubject(caller);
+		}
 
-        if (userId == null) {
-            // try with this then
-            Principal userPrincipal = request.getUserPrincipal();
-            if (userPrincipal != null) {
-                userId = userPrincipal.getName();
-            }
-        }
+		if (userId == null) {
+			// try with this then
+			Principal userPrincipal = request.getUserPrincipal();
+			if (userPrincipal != null) {
+				userId = userPrincipal.getName();
+			}
+		}
 
-        if (userId == null) {
-            // still no user, no login, use guest
-            userId = GUEST_USER;
-        }
+		if (userId == null) {
+			// still no user, no login, use guest
+			userId = GUEST_USER;
+		}
 
-        context = new ServiceContext(userId, sessionId, applicationId, roles);
+		context = new ServiceContext(userId, sessionId, applicationId, roles);
 
-        return context;
-    }
+		return context;
+	}
 
-    protected abstract Subject activeSubject();
+	protected abstract Subject activeSubject();
 
-    protected abstract String userIdFromSubject(Subject caller);
+	protected abstract String userIdFromSubject(Subject caller);
 
-    protected abstract Set<String> rolesFromSubject(Subject caller);
+	protected abstract Set<String> rolesFromSubject(Subject caller);
 
-    /**
-     * Use this method to create a ServiceContext for a system user, e.g. a MDB
-     * for system integration or batch job.
-     * <p>
-     * If a ServiceContext instance is already available in thread local
-     * {@link ServiceContextStore} it will be used instead of creating a new
-     * instance.
-     *
-     * @param applicationId
-     *            the id of the external system
-     */
-    public static ServiceContext createServiceContext(String applicationId) {
-        return getInstance().createServiceContextImpl(applicationId);
-    }
+	/**
+	 * Use this method to create a ServiceContext for a system user, e.g. a MDB for
+	 * system integration or batch job.
+	 * <p>
+	 * If a ServiceContext instance is already available in thread local
+	 * {@link ServiceContextStore} it will be used instead of creating a new
+	 * instance.
+	 *
+	 * @param applicationId
+	 *            the id of the external system
+	 */
+	public static ServiceContext createServiceContext(String applicationId) {
+		return getInstance().createServiceContextImpl(applicationId);
+	}
 
-    protected ServiceContext createServiceContextImpl(String applicationId) {
-        ServiceContext context = ServiceContextStore.get();
-        if (context != null) {
-            return context;
-        }
-        String sessionId = String.valueOf(RANDOM_GENERATOR.nextInt(MAX_GENERATED_SESSION_ID));
-        Subject caller = activeSubject();
-        String userId = null;
-        Set<String> roles = Collections.emptySet();
-        if (caller != null) {
-            userId = userIdFromSubject(caller);
-            roles = rolesFromSubject(caller);
-        } else {
-            userId = SYSTEM_USER;
-        }
+	protected ServiceContext createServiceContextImpl(String applicationId) {
+		ServiceContext context = ServiceContextStore.get();
+		if (context != null) {
+			return context;
+		}
+		String sessionId = String.valueOf(RANDOM_GENERATOR.nextInt(MAX_GENERATED_SESSION_ID));
+		Subject caller = activeSubject();
+		String userId = null;
+		Set<String> roles = Collections.emptySet();
+		if (caller != null) {
+			userId = userIdFromSubject(caller);
+			roles = rolesFromSubject(caller);
+		} else {
+			userId = SYSTEM_USER;
+		}
 
-        context = new ServiceContext(userId, sessionId, applicationId, roles);
-        return context;
-    }
+		context = new ServiceContext(userId, sessionId, applicationId, roles);
+		return context;
+	}
 
 }

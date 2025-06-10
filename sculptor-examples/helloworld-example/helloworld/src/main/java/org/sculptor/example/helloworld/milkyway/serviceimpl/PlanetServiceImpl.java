@@ -11,21 +11,19 @@ import org.springframework.stereotype.Service;
 @Service("planetService")
 public class PlanetServiceImpl extends PlanetServiceImplBase {
 
-    public PlanetServiceImpl() {
-    }
+	public PlanetServiceImpl() {
+	}
 
-    public String sayHello(ServiceContext ctx, String planetName)
-        throws PlanetNotFoundException {
+	public String sayHello(ServiceContext ctx, String planetName) throws PlanetNotFoundException {
 
-        Planet planet = getPlanet(ctx, planetName);
-        return planet.getMessage();
-    }
+		Planet planet = getPlanet(ctx, planetName);
+		return planet.getMessage();
+	}
 
-    public Planet getPlanet(ServiceContext ctx, String planetName)
-        throws PlanetNotFoundException {
+	public Planet getPlanet(ServiceContext ctx, String planetName) throws PlanetNotFoundException {
 
-        Planet planet = findByKey(ctx, planetName);
-        return planet;
-    }
+		Planet planet = findByKey(ctx, planetName);
+		return planet;
+	}
 
 }

@@ -50,8 +50,8 @@ public class MediaRepositoryImpl extends MediaRepositoryBase implements MediaRep
 		// Retrieve the MediaCharacter objects via another Repository
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("characterName", characterName);
-		List<MediaCharacter> foundCharacters = getMediaCharacterRepository().findByQuery("MediaCharacter.findByCharacterName",
-				parameters);
+		List<MediaCharacter> foundCharacters = getMediaCharacterRepository()
+				.findByQuery("MediaCharacter.findByCharacterName", parameters);
 
 		// filter matching Media for the found characters and the specified
 		// library

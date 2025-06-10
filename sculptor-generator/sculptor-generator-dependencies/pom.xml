@@ -10,7 +10,6 @@
 	<artifactId>sculptor-generator-dependencies</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Generator :: Dependencies</name>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
@@ -33,5 +32,4 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 	</dependencies>
-
 </project>

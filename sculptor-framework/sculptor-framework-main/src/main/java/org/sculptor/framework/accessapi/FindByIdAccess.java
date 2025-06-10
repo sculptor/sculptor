@@ -19,7 +19,6 @@ package org.sculptor.framework.accessapi;
 
 import java.io.Serializable;
 
-
 /**
  * <p>
  * Find an entity by its id. Access command for finding an object by id.
@@ -31,15 +30,15 @@ import java.io.Serializable;
  */
 public interface FindByIdAccess<T, ID extends Serializable> {
 
-    void setLock(boolean lock);
+	void setLock(boolean lock);
 
-    void setId(ID id);
-    
-    void execute();
+	void setId(ID id);
 
-    /**
-     * The result of the command.
-     */
-    T getResult();
+	void execute();
+
+	/**
+	 * The result of the command.
+	 */
+	T getResult();
 
 }

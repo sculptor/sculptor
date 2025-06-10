@@ -32,29 +32,27 @@ import org.sculptor.framework.accessapi.CountAllAccess;
  * </p>
  */
 @Deprecated
-public class JpaCountAllAccessImpl<T>
-    extends JpaCriteriaQueryAccessBase<T,Long>
-    implements CountAllAccess<T> {
+public class JpaCountAllAccessImpl<T> extends JpaCriteriaQueryAccessBase<T, Long> implements CountAllAccess<T> {
 
-    public JpaCountAllAccessImpl(Class<T> persistentClass) {
-        super(persistentClass, Long.class);
-    }
+	public JpaCountAllAccessImpl(Class<T> persistentClass) {
+		super(persistentClass, Long.class);
+	}
 
-    public long getResult() {
-        return getSingleResult();
-    }
+	public long getResult() {
+		return getSingleResult();
+	}
 
-    @Override
-    protected void prepareConfig(QueryConfig config) {
-        config.setSingleResult(true);
-    }
+	@Override
+	protected void prepareConfig(QueryConfig config) {
+		config.setSingleResult(true);
+	}
 
-    @Override
-    protected void prepareSelect(CriteriaQuery<Long> criteriaQuery, Root<T> root, QueryConfig config) {
-    	if (config.isDistinct()) {
-        	criteriaQuery.select(getCriteriaBuilder().countDistinct(root));
-    	} else {
-        	criteriaQuery.select(getCriteriaBuilder().count(root));
-    	}
-    }
+	@Override
+	protected void prepareSelect(CriteriaQuery<Long> criteriaQuery, Root<T> root, QueryConfig config) {
+		if (config.isDistinct()) {
+			criteriaQuery.select(getCriteriaBuilder().countDistinct(root));
+		} else {
+			criteriaQuery.select(getCriteriaBuilder().count(root));
+		}
+	}
 }

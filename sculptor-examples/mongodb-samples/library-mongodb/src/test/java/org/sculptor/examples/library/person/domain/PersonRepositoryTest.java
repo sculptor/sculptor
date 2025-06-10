@@ -30,10 +30,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class PersonRepositoryTest {
 
-	private static final String[] DATE_PATTERNS = { "yyyy-MM-dd" };
+	private static final String[] DATE_PATTERNS = {"yyyy-MM-dd"};
 
 	@Autowired
 	private PersonRepository personRepository;
@@ -127,8 +127,8 @@ public class PersonRepositoryTest {
 	@Test
 	public void shouldFindByGroupedNotCondition() throws Exception {
 		List<ConditionalCriteria> conditionalCriteria = criteriaFor(Person.class).withProperty(sex()).eq(Gender.MALE)
-				.and().not().lbrace().withProperty(ssn().country()).eq(Country.NORWAY).and()
-				.withProperty(name().last()).eq("Dddd").rbrace().orderBy(name().last()).build();
+				.and().not().lbrace().withProperty(ssn().country()).eq(Country.NORWAY).and().withProperty(name().last())
+				.eq("Dddd").rbrace().orderBy(name().last()).build();
 		List<Person> persons = personRepository.findByCondition(conditionalCriteria);
 		assertEquals(1, persons.size());
 		assertEquals("123456", persons.get(0).getSsn().getNumber());
@@ -143,7 +143,8 @@ public class PersonRepositoryTest {
 		String previous = null;
 		for (Person each : persons) {
 			if (previous != null) {
-				assertTrue(each.getName().getFirst().compareTo(previous) >= 0, "Expected " + each.getName().getFirst() + " >= " + previous);
+				assertTrue(each.getName().getFirst().compareTo(previous) >= 0,
+						"Expected " + each.getName().getFirst() + " >= " + previous);
 			}
 			previous = each.getName().getFirst();
 		}

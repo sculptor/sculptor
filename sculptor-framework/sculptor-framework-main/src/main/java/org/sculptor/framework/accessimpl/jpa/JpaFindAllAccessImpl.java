@@ -19,7 +19,6 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.accessapi.FindAllAccess;
 
-
 /**
  * <p>
  * Find all entities of a specific type. Implementation of Access command
@@ -29,15 +28,13 @@ import org.sculptor.framework.accessapi.FindAllAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindAllAccessImpl<T>
-    extends JpaFindAllAccessImplGeneric<T,T>
-    implements FindAllAccess<T> {
+public class JpaFindAllAccessImpl<T> extends JpaFindAllAccessImplGeneric<T, T> implements FindAllAccess<T> {
 
-    public JpaFindAllAccessImpl() {
-        super();
-    }
+	public JpaFindAllAccessImpl() {
+		super();
+	}
 
-    public JpaFindAllAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindAllAccessImpl(Class<T> type) {
+		super(type);
+	}
 }

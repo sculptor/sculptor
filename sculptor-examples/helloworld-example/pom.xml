@@ -11,7 +11,6 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Examples :: Hello World</name>
 	<url>http://sculptorgenerator.org/documentation/hello-world-tutorial</url>
-
 	<modules>
 		<module>helloworld-parent</module>
 	</modules>

@@ -7,15 +7,15 @@ package org.sculptor.framework.accessapi;
  */
 public interface Pageable {
 
-    /**
-     * Set the first row to retrieve. If not set, rows will be retrieved
-     * beginnning from row <tt>0</tt>.
-     */
-    void setFirstResult(int firstResult);
+	/**
+	 * Set the first row to retrieve. If not set, rows will be retrieved beginnning
+	 * from row <tt>0</tt>.
+	 */
+	void setFirstResult(int firstResult);
 
-    /**
-     * Set the maximum number of rows to retrieve.
-     */
-    void setMaxResult(int maxResult);
+	/**
+	 * Set the maximum number of rows to retrieve.
+	 */
+	void setMaxResult(int maxResult);
 
 }

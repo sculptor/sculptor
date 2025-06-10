@@ -19,7 +19,6 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.accessapi.FindByQueryAccess;
 
-
 /**
  * <p>
  * Implementation of Access command FindByQueryAccess.
@@ -28,19 +27,17 @@ import org.sculptor.framework.accessapi.FindByQueryAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByQueryAccessImpl<T>
-    extends JpaFindByQueryAccessImplGeneric<T,T>
-    implements FindByQueryAccess<T> {
+public class JpaFindByQueryAccessImpl<T> extends JpaFindByQueryAccessImplGeneric<T, T> implements FindByQueryAccess<T> {
 
-    public JpaFindByQueryAccessImpl() {
-        super();
-    }
+	public JpaFindByQueryAccessImpl() {
+		super();
+	}
 
-    public JpaFindByQueryAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByQueryAccessImpl(Class<T> type) {
+		super(type);
+	}
 
-//    public JpaFindByQueryAccessImpl(Class<T> type, Class<T> resultType) {
-//        super(type, resultType);
-//    }
+	// public JpaFindByQueryAccessImpl(Class<T> type, Class<T> resultType) {
+	// super(type, resultType);
+	// }
 }

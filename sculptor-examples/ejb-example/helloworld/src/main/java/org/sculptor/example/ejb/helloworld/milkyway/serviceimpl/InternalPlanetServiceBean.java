@@ -14,7 +14,7 @@ import org.sculptor.framework.persistence.JpaFlushEagerInterceptor;
  * Implementation of InternalPlanetService.
  */
 @Stateless(name = "internalPlanetService")
-@Interceptors({ ServiceContextStoreInterceptor.class, ErrorHandlingInterceptor.class })
+@Interceptors({ServiceContextStoreInterceptor.class, ErrorHandlingInterceptor.class})
 public class InternalPlanetServiceBean extends InternalPlanetServiceBeanBase implements InternalPlanetServiceLocal {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
@@ -22,7 +22,7 @@ public class InternalPlanetServiceBean extends InternalPlanetServiceBeanBase imp
 	public InternalPlanetServiceBean() {
 	}
 
-	@Interceptors({ JpaFlushEagerInterceptor.class })
+	@Interceptors({JpaFlushEagerInterceptor.class})
 	public String sayHello(ServiceContext ctx) {
 		return "Hello";
 	}

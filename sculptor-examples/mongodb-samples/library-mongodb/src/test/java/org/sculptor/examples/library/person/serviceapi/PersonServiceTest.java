@@ -30,10 +30,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class PersonServiceTest implements PersonServiceTestBase {
 
-	private static final String[] DATE_PATTERNS = { "yyyy-MM-dd" };
+	private static final String[] DATE_PATTERNS = {"yyyy-MM-dd"};
 
 	@Autowired
 	private PersonService personService;
@@ -45,13 +45,13 @@ public class PersonServiceTest implements PersonServiceTestBase {
 	public void initialData() throws Exception {
 		Person p1 = new Person(Gender.MALE, ssn("123456", Country.SWEDEN));
 		p1.setBirthDate(DateUtils.parseDate("1951-06-13", DATE_PATTERNS));
-		p1.setName(personName("Stellan", "Skarsgård"));
+		p1.setName(personName("Stellan", "Skarsgï¿½rd"));
 		p1 = personService.save(getServiceContext(), p1);
 		id1 = p1.getId();
 
 		Person p2 = new Person(Gender.MALE, ssn("123457", Country.SWEDEN));
 		p2.setBirthDate(DateUtils.parseDate("1976-08-25", DATE_PATTERNS));
-		p2.setName(personName("Alexander", "Skarsgård"));
+		p2.setName(personName("Alexander", "Skarsgï¿½rd"));
 		p2 = personService.save(getServiceContext(), p2);
 
 		Person p3 = new Person(Gender.MALE, ssn("123458", Country.SWEDEN));
@@ -171,7 +171,7 @@ public class PersonServiceTest implements PersonServiceTestBase {
 	@Override
 	@Test
 	public void testFindPersonByName() throws Exception {
-		List<Person> persons = personService.findPersonByName(getServiceContext(), "Skarsgård");
+		List<Person> persons = personService.findPersonByName(getServiceContext(), "Skarsgï¿½rd");
 		assertEquals(2, persons.size());
 	}
 

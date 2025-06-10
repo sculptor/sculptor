@@ -9,7 +9,6 @@
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-active-annotation</artifactId>
 	<name>Sculptor :: Generator :: Active annotation</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -42,7 +41,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>

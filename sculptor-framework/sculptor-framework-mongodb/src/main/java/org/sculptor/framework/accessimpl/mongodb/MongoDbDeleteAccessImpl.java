@@ -36,49 +36,49 @@ import com.mongodb.DBObject;
  */
 public class MongoDbDeleteAccessImpl<T> extends MongoDbAccessBase<T> implements DeleteAccess<T> {
 
-    private T entity;
-    private Collection<T> entities;
+	private T entity;
+	private Collection<T> entities;
 
-    public MongoDbDeleteAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbDeleteAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public T getEntity() {
-        return entity;
-    }
+	public T getEntity() {
+		return entity;
+	}
 
-    @Override
-    public void setEntity(T entity) {
-        this.entity = entity;
-    }
+	@Override
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 
-    public Collection<T> getEntities() {
-        return entities;
-    }
+	public Collection<T> getEntities() {
+		return entities;
+	}
 
-    @Override
-    public void setEntities(Collection<T> entities) {
-        this.entities = entities;
-    }
+	@Override
+	public void setEntities(Collection<T> entities) {
+		this.entities = entities;
+	}
 
-    @Override
-    public void performExecute() {
-        if (entity != null) {
-            performRemove(entity);
-        }
-        if (entities != null) {
-            for (T e : entities) {
-                performRemove(e);
-            }
-        }
-    }
+	@Override
+	public void performExecute() {
+		if (entity != null) {
+			performRemove(entity);
+		}
+		if (entities != null) {
+			for (T e : entities) {
+				performRemove(e);
+			}
+		}
+	}
 
-    protected void performRemove(T obj) {
-        DBObject dbObj = getDataMapper().toData(obj);
-        if (dbObj.containsField("_id")) {
-            getDBCollection().deleteOne(Filters.eq("_id", dbObj.get("_id")));
-        } else {
-            getDBCollection().deleteMany(Filters.eq(dbObj));
-        }
-    }
+	protected void performRemove(T obj) {
+		DBObject dbObj = getDataMapper().toData(obj);
+		if (dbObj.containsField("_id")) {
+			getDBCollection().deleteOne(Filters.eq("_id", dbObj.get("_id")));
+		} else {
+			getDBCollection().deleteMany(Filters.eq(dbObj));
+		}
+	}
 }

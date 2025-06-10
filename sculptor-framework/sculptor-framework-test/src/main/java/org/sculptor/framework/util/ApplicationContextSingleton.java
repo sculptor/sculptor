@@ -25,35 +25,35 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ApplicationContextSingleton {
 
-    private static String DEFAULT_SPRING_CONFIG_FILE_LOCATION = "/applicationContext-test.xml";
+	private static String DEFAULT_SPRING_CONFIG_FILE_LOCATION = "/applicationContext-test.xml";
 
-    private static ApplicationContextSingleton instance = new ApplicationContextSingleton();
+	private static ApplicationContextSingleton instance = new ApplicationContextSingleton();
 
-    private Map<String, ApplicationContext> applicationContexts = new HashMap<String, ApplicationContext>();
+	private Map<String, ApplicationContext> applicationContexts = new HashMap<String, ApplicationContext>();
 
-    private ApplicationContextSingleton() {
-    }
+	private ApplicationContextSingleton() {
+	}
 
-    public static ApplicationContext getApplicationContext(String configLocation) {
-        return instance.getApplicationContextImpl(configLocation);
-    }
+	public static ApplicationContext getApplicationContext(String configLocation) {
+		return instance.getApplicationContextImpl(configLocation);
+	}
 
-    /**
-     * Get the Spring ApplicationContext from applicationContext-test.xml
-     */
-    public static ApplicationContext getApplicationContext() {
-        return instance.getApplicationContextImpl(DEFAULT_SPRING_CONFIG_FILE_LOCATION);
-    }
+	/**
+	 * Get the Spring ApplicationContext from applicationContext-test.xml
+	 */
+	public static ApplicationContext getApplicationContext() {
+		return instance.getApplicationContextImpl(DEFAULT_SPRING_CONFIG_FILE_LOCATION);
+	}
 
-    protected ApplicationContext getApplicationContextImpl(String configLocation) {
-        ApplicationContext applicationContext = applicationContexts.get(configLocation);
+	protected ApplicationContext getApplicationContextImpl(String configLocation) {
+		ApplicationContext applicationContext = applicationContexts.get(configLocation);
 
-        if (applicationContext == null) {
-            applicationContext = new ClassPathXmlApplicationContext(configLocation);
-            applicationContexts.put(configLocation, applicationContext);
-        }
+		if (applicationContext == null) {
+			applicationContext = new ClassPathXmlApplicationContext(configLocation);
+			applicationContexts.put(configLocation, applicationContext);
+		}
 
-        return applicationContext;
-    }
+		return applicationContext;
+	}
 
 }

@@ -241,7 +241,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	 * @param managedObject
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	protected List<Predicate> prepareWhere(Path<?> path, ManagedType type, Object managedObject) {
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
@@ -382,11 +382,13 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		if (path.getJavaType() != String.class) {
 			throw new QueryConfigException("Path is not of type string.");
 		}
-		Expression<String> stringExpression = (getConfig().isIgnoreCase()) ? criteriaBuilder.upper((Path<String>) path)
+		Expression<String> stringExpression = (getConfig().isIgnoreCase())
+				? criteriaBuilder.upper((Path<String>) path)
 				: (Path<String>) path;
 		String stringValue = (getConfig().isIgnoreCase()) ? value.toString().toUpperCase() : value.toString();
-		return (getConfig().isEnableLike()) ? criteriaBuilder.like(stringExpression, stringValue) : criteriaBuilder
-				.equal(stringExpression, stringValue);
+		return (getConfig().isEnableLike())
+				? criteriaBuilder.like(stringExpression, stringValue)
+				: criteriaBuilder.equal(stringExpression, stringValue);
 	}
 
 	/**
@@ -398,7 +400,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		if (predicates == null || predicates.size() == 0) {
 			return null;
 		}
-        return getCriteriaBuilder().and(predicates.toArray(new Predicate[predicates.size()]));
+		return getCriteriaBuilder().and(predicates.toArray(new Predicate[predicates.size()]));
 	}
 
 	/**
@@ -445,7 +447,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		for (Iterator<String> iterator = properties.iterator(); iterator.hasNext();) {
 			String property = iterator.next();
 			investPath.add(property);
-			if ( (enforceExplicit || isExplicitJoinNeeded(path, property)) && iterator.hasNext()) {
+			if ((enforceExplicit || isExplicitJoinNeeded(path, property)) && iterator.hasNext()) {
 				path = getExplicitJoinForPath(fromPath, investPath);
 			} else {
 				path = getPathForSimpleProperty(path, property);
@@ -494,12 +496,12 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		if (From.class.isAssignableFrom(fromPath.getClass())) {
 			From<?, F> curPath = (From<?, F>) fromPath;
 			for (String pathElem : pathElems) {
-				Set<Join<F,?>> joins = curPath.getJoins();
-				boolean found=false;
+				Set<Join<F, ?>> joins = curPath.getJoins();
+				boolean found = false;
 				for (Join<F, ?> join : joins) {
 					if (join.getAttribute().getName().equals(pathElem)) {
 						curPath = (From) join;
-						found=true;
+						found = true;
 						break;
 					}
 				}
@@ -524,13 +526,14 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		}
 
 		// Concat path with dots
-		StringBuilder dotPath=new StringBuilder();
-		String delim="";
+		StringBuilder dotPath = new StringBuilder();
+		String delim = "";
 		for (String pathElem : pathElems) {
 			dotPath.append(delim).append(pathElem);
-			delim=".";
+			delim = ".";
 		}
-		throw new QueryConfigException("Can't create a explicit join for property path " + dotPath + " from " + fromPath);
+		throw new QueryConfigException(
+				"Can't create a explicit join for property path " + dotPath + " from " + fromPath);
 	}
 
 	/**
@@ -557,7 +560,7 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 		return attribute;
 	}
 
-	@SuppressWarnings({ "unused" })
+	@SuppressWarnings({"unused"})
 	private boolean isManagedType(Class<?> type) {
 		for (ManagedType<?> managedType : metaModel.getManagedTypes()) {
 			if (managedType.getJavaType().equals(type)) {

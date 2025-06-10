@@ -35,59 +35,60 @@ import org.slf4j.LoggerFactory;
  * Command design pattern.
  * </p>
  */
-public class MongoDbPopulateAssociationsAccessImpl<T> extends MongoDbFindByIdAccessImpl<T, Serializable> implements
-        PopulateAssociationsAccess<T> {
+public class MongoDbPopulateAssociationsAccessImpl<T> extends MongoDbFindByIdAccessImpl<T, Serializable>
+		implements
+			PopulateAssociationsAccess<T> {
 
-    private static final Logger log = LoggerFactory.getLogger(JpaPopulateAssociationsAccessImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(JpaPopulateAssociationsAccessImpl.class);
 
-    private T entity;
-    private AssociationSpecification associationSpecification;
+	private T entity;
+	private AssociationSpecification associationSpecification;
 
-    public MongoDbPopulateAssociationsAccessImpl(Class<T> persistentClass) {
-        super(persistentClass);
-    }
+	public MongoDbPopulateAssociationsAccessImpl(Class<T> persistentClass) {
+		super(persistentClass);
+	}
 
-    public T getEntity() {
-        return entity;
-    }
+	public T getEntity() {
+		return entity;
+	}
 
-    public void setEntity(T entity) {
-        this.entity = entity;
-    }
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 
-    public AssociationSpecification getAssociationSpecification() {
-        return associationSpecification;
-    }
+	public AssociationSpecification getAssociationSpecification() {
+		return associationSpecification;
+	}
 
-    public void setAssociationSpecification(AssociationSpecification associationSpecification) {
-        this.associationSpecification = associationSpecification;
-    }
+	public void setAssociationSpecification(AssociationSpecification associationSpecification) {
+		this.associationSpecification = associationSpecification;
+	}
 
-    @Override
-    public void performExecute() {
-        // retrieve a fresh instance
-        Serializable id = IdReflectionUtil.internalGetId(entity);
-        setId(id);
-        super.performExecute();
+	@Override
+	public void performExecute() {
+		// retrieve a fresh instance
+		Serializable id = IdReflectionUtil.internalGetId(entity);
+		setId(id);
+		super.performExecute();
 
-        populateAssociations();
-    }
+		populateAssociations();
+	}
 
-    protected void populateAssociations() {
-        if (getResult() == null || associationSpecification == null) {
-            return;
-        }
-        for (String each : associationSpecification.getAssociationNames()) {
-            populateAssociation(getResult(), each);
-        }
-    }
+	protected void populateAssociations() {
+		if (getResult() == null || associationSpecification == null) {
+			return;
+		}
+		for (String each : associationSpecification.getAssociationNames()) {
+			populateAssociation(getResult(), each);
+		}
+	}
 
-    protected void populateAssociation(Object object, String associationName) {
-        try {
-            PropertyUtils.getProperty(object, associationName);
-        } catch (Exception e) {
-            log.warn("Could not populate association: " + associationName + " for " + object.getClass().getName());
-        }
-    }
+	protected void populateAssociation(Object object, String associationName) {
+		try {
+			PropertyUtils.getProperty(object, associationName);
+		} catch (Exception e) {
+			log.warn("Could not populate association: " + associationName + " for " + object.getClass().getName());
+		}
+	}
 
 }

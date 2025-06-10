@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for <a href=
  * "http://www.oracle.com/technetwork/java/javaee/tech/persistence-jsp-140049.html"
- * >JPA</a> and <a href="http://www.dbunit.org">DBUnit</a> tests in a <a
- * href="http://openejb.apache.org/">OpenEJB</a> environment.
+ * >JPA</a> and <a href="http://www.dbunit.org">DBUnit</a> tests in a
+ * <a href="http://openejb.apache.org/">OpenEJB</a> environment.
  * <p>
  * Inject dependencies to EJBs with the ordinary <code>@EJB</code> annotation.
  * <p>
@@ -57,231 +57,229 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractOpenEJBDbUnitTest extends AbstractOpenEJBTest {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private EntityManager entityManager;
-    private DataSource dataSource;
-    private JpaTestLocal jpaTestBean;
+	private EntityManager entityManager;
+	private DataSource dataSource;
+	private JpaTestLocal jpaTestBean;
 
-    public AbstractOpenEJBDbUnitTest() {
-    }
+	public AbstractOpenEJBDbUnitTest() {
+	}
 
-    @BeforeEach
-    @Override
-    public void initialize() throws Exception {
-        super.initialize();
-        setUpDatabaseTester();
-    }
+	@BeforeEach
+	@Override
+	public void initialize() throws Exception {
+		super.initialize();
+		setUpDatabaseTester();
+	}
 
-    protected Set<String> getPersistentUnitNames() {
-        try {
-            PersistenceXmlParser persistenceXmlParser = new PersistenceXmlParser();
-            String persistenceXml = DataHelper.content("/META-INF/persistence.xml");
-            persistenceXmlParser.parse(persistenceXml);
-            return persistenceXmlParser.getPersictenceUnitNames();
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
+	protected Set<String> getPersistentUnitNames() {
+		try {
+			PersistenceXmlParser persistenceXmlParser = new PersistenceXmlParser();
+			String persistenceXml = DataHelper.content("/META-INF/persistence.xml");
+			persistenceXmlParser.parse(persistenceXml);
+			return persistenceXmlParser.getPersictenceUnitNames();
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 
-    @Override
-    protected void initOpenEjb() throws Exception {
-        super.initOpenEjb();
-        jpaTestBean = lookup(getTestBeanJndiName());
-        if (jpaTestBean == null) {
-            throw new IllegalStateException("Couldn't find " + getMessagingTestBeanJndiName());
-        }
-        entityManager = jpaTestBean.getEntityManager();
-        dataSource = jpaTestBean.getDataSource();
-    }
+	@Override
+	protected void initOpenEjb() throws Exception {
+		super.initOpenEjb();
+		jpaTestBean = lookup(getTestBeanJndiName());
+		if (jpaTestBean == null) {
+			throw new IllegalStateException("Couldn't find " + getMessagingTestBeanJndiName());
+		}
+		entityManager = jpaTestBean.getEntityManager();
+		dataSource = jpaTestBean.getDataSource();
+	}
 
-    protected String getTestBeanJndiName() {
-        return "JpaTestBeanLocal";
-    }
+	protected String getTestBeanJndiName() {
+		return "JpaTestBeanLocal";
+	}
 
-    @Override
-    protected void additionalInitialContextProperties(Properties defaultProperties) {
-        for (String unitName : getPersistentUnitNames()) {
-            initPersistenceUnitProperties(unitName, defaultProperties);
-        }
-    }
+	@Override
+	protected void additionalInitialContextProperties(Properties defaultProperties) {
+		for (String unitName : getPersistentUnitNames()) {
+			initPersistenceUnitProperties(unitName, defaultProperties);
+		}
+	}
 
-    /**
-     * Overrides some properties defined for persistent units in "persistence.xml".
-     */
-    protected void initPersistenceUnitProperties(String unitName, Properties properties) {
-        properties.put(unitName + ".hibernate.dialect", "org.sculptor.framework.persistence.SculptorHsqlDialect");
-        properties.put(unitName + ".hibernate.show_sql", "false");
-        properties.put(unitName + ".hibernate.hbm2ddl.auto", "create-drop");
-        properties.put(unitName + ".hibernate.cache.use_query_cache", "false");
-        properties.put(unitName + ".hibernate.cache.use_second_level_cache", "false");
-    }
+	/**
+	 * Overrides some properties defined for persistent units in "persistence.xml".
+	 */
+	protected void initPersistenceUnitProperties(String unitName, Properties properties) {
+		properties.put(unitName + ".hibernate.dialect", "org.sculptor.framework.persistence.SculptorHsqlDialect");
+		properties.put(unitName + ".hibernate.show_sql", "false");
+		properties.put(unitName + ".hibernate.hbm2ddl.auto", "create-drop");
+		properties.put(unitName + ".hibernate.cache.use_query_cache", "false");
+		properties.put(unitName + ".hibernate.cache.use_second_level_cache", "false");
+	}
 
-    protected EntityManager getEntityManager() {
-        return entityManager;
-    }
+	protected EntityManager getEntityManager() {
+		return entityManager;
+	}
 
-    protected DataSource getDataSource() {
-        return dataSource;
-    }
+	protected DataSource getDataSource() {
+		return dataSource;
+	}
 
-    /**
-     * setup dbunit DatabaseTester/DataSet in transaction
-     * 
-     * @throws Exception
-     */
-    protected void setUpDatabaseTester() throws Exception {
-        DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getDataSource(), getDataSetFile());
-        restartSequence();
-    }
+	/**
+	 * setup dbunit DatabaseTester/DataSet in transaction
+	 * 
+	 * @throws Exception
+	 */
+	protected void setUpDatabaseTester() throws Exception {
+		DbUnitDataSourceUtils.setUpDatabaseTester(getClass(), getDataSource(), getDataSetFile());
+		restartSequence();
+	}
 
-    /**
-     * Start the id sequence from a high value to avoid conflicts with test
-     * data. You can define the sequence name with {@link #getSequenceName}.
-     */
-    protected void restartSequence() {
-        String sequenceName = getSequenceName();
-        if (sequenceName == null) {
-            return;
-        }
-        try {
-            DbUnitDataSourceUtils.restartSequence(getConnection(), sequenceName);
+	/**
+	 * Start the id sequence from a high value to avoid conflicts with test data.
+	 * You can define the sequence name with {@link #getSequenceName}.
+	 */
+	protected void restartSequence() {
+		String sequenceName = getSequenceName();
+		if (sequenceName == null) {
+			return;
+		}
+		try {
+			DbUnitDataSourceUtils.restartSequence(getConnection(), sequenceName);
 
-        } catch (Exception e) {
-            log.debug("Couldn't restart sequence: " + sequenceName);
-        }
-    }
+		} catch (Exception e) {
+			log.debug("Couldn't restart sequence: " + sequenceName);
+		}
+	}
 
-    /**
-     * In case you don't need to start the id sequence from a high value to
-     * avoid conflicts with test data you should override this method and return
-     * null.
-     */
-    protected String getSequenceName() {
-        if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
-            return "hibernate_sequence";
-        } else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "SEQ_GEN";
-        } else {
-            return null;
-        }
-     }
+	/**
+	 * In case you don't need to start the id sequence from a high value to avoid
+	 * conflicts with test data you should override this method and return null.
+	 */
+	protected String getSequenceName() {
+		if (JpaHelper.isJpaProviderHibernate(getEntityManager())) {
+			return "hibernate_sequence";
+		} else if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+			return "SEQ_GEN";
+		} else {
+			return null;
+		}
+	}
 
-    @AfterEach
-    public void tearDownDatabaseTester() throws Exception {
-        DbUnitDataSourceUtils.tearDownDatabaseTester();
-    }
+	@AfterEach
+	public void tearDownDatabaseTester() throws Exception {
+		DbUnitDataSourceUtils.tearDownDatabaseTester();
+	}
 
-    /**
-     * Override this method to specify the XML file with DBUnit test data. If
-     * filename is not set, DbUnitDataSourceUtils will guess a filename.
-     * 
-     * @return the filename with test data
-     */
-    protected String getDataSetFile() {
-        return null;
-    }
+	/**
+	 * Override this method to specify the XML file with DBUnit test data. If
+	 * filename is not set, DbUnitDataSourceUtils will guess a filename.
+	 * 
+	 * @return the filename with test data
+	 */
+	protected String getDataSetFile() {
+		return null;
+	}
 
-    protected IDatabaseConnection getConnection() throws Exception {
-        IDatabaseConnection connection = new DatabaseConnection(getDataSource().getConnection());
-        DatabaseConfig config = connection.getConfig();
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqlDataTypeFactory());
+	protected IDatabaseConnection getConnection() throws Exception {
+		IDatabaseConnection connection = new DatabaseConnection(getDataSource().getConnection());
+		DatabaseConfig config = connection.getConfig();
+		config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqlDataTypeFactory());
 
-        return connection;
-    }
+		return connection;
+	}
 
-    protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
-        return countRowsInTable(domainObjectClass, "");
-    }
+	protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
+		return countRowsInTable(domainObjectClass, "");
+	}
 
-    /**
-     * Counts the number of rows from a table via jdbc. Table name is picked for @Table
-     * annotation of the domainObjectClass
-     * 
-     * @param domainObjectClass
-     *            persistent class defining the name of the table for counting
-     *            rows
-     * @param condition
-     *            additional condition
-     * @return number of rows
-     */
-    protected int countRowsInTable(Class<?> domainObjectClass, String condition) throws Exception {
-        String table;
-        if (domainObjectClass.isAnnotationPresent(Table.class)) {
-            table = domainObjectClass.getAnnotation(Table.class).name();
-        } else {
-            table = domainObjectClass.getSimpleName();
-        }
-        return countRowsInTable(table, condition);
-    }
+	/**
+	 * Counts the number of rows from a table via jdbc. Table name is picked
+	 * for @Table annotation of the domainObjectClass
+	 * 
+	 * @param domainObjectClass
+	 *            persistent class defining the name of the table for counting rows
+	 * @param condition
+	 *            additional condition
+	 * @return number of rows
+	 */
+	protected int countRowsInTable(Class<?> domainObjectClass, String condition) throws Exception {
+		String table;
+		if (domainObjectClass.isAnnotationPresent(Table.class)) {
+			table = domainObjectClass.getAnnotation(Table.class).name();
+		} else {
+			table = domainObjectClass.getSimpleName();
+		}
+		return countRowsInTable(table, condition);
+	}
 
-    protected int countRowsInTable(String table) throws Exception {
-        return countRowsInTable(table, "");
-    }
+	protected int countRowsInTable(String table) throws Exception {
+		return countRowsInTable(table, "");
+	}
 
-    /**
-     * counts the number of rows from a table via jdbc
-     * 
-     * @param tableName
-     *            name of the table for counting rows
-     * @param condition
-     *            additional condition
-     * @return number of rows
-     */
-    protected int countRowsInTable(String table, String condition) throws Exception {
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            con = getConnection().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery("select count(*) as rowcount from " + table + " " + condition);
-            rs.next();
-            int count = rs.getInt("rowcount");
-            return count;
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            close(con, stmt, rs);
-        }
-    }
+	/**
+	 * counts the number of rows from a table via jdbc
+	 * 
+	 * @param tableName
+	 *            name of the table for counting rows
+	 * @param condition
+	 *            additional condition
+	 * @return number of rows
+	 */
+	protected int countRowsInTable(String table, String condition) throws Exception {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = getConnection().getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery("select count(*) as rowcount from " + table + " " + condition);
+			rs.next();
+			int count = rs.getInt("rowcount");
+			return count;
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			close(con, stmt, rs);
+		}
+	}
 
-    protected void logDb() {
-        IDatabaseConnection connection = null;
-        try {
-            connection = getConnection();
-            DbUnitDataSourceUtils.logDb(connection);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ignore) {
-                }
-            }
-        }
-    }
+	protected void logDb() {
+		IDatabaseConnection connection = null;
+		try {
+			connection = getConnection();
+			DbUnitDataSourceUtils.logDb(connection);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException ignore) {
+				}
+			}
+		}
+	}
 
-    protected static void close(Connection con, Statement stmt, ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException ignore) {
-            }
-        }
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException ignore) {
-            }
-        }
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException ignore) {
-            }
-        }
-    }
+	protected static void close(Connection con, Statement stmt, ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException ignore) {
+			}
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (SQLException ignore) {
+			}
+		}
+		if (con != null) {
+			try {
+				con.close();
+			} catch (SQLException ignore) {
+			}
+		}
+	}
 
 }

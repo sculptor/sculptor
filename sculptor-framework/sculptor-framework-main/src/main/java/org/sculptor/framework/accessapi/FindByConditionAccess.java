@@ -20,19 +20,23 @@ package org.sculptor.framework.accessapi;
 import java.util.List;
 
 /**
- * <p>Access command for finding objects by condition. The specified
+ * <p>
+ * Access command for finding objects by condition. The specified
  * {@link #setRestrictions restrictions} are used to build the restrictions with
- * simple equals conditions.</p>
- * <p>Command design pattern.</p>
+ * simple equals conditions.
+ * </p>
+ * <p>
+ * Command design pattern.
+ * </p>
  */
 public interface FindByConditionAccess<T> extends Cacheable, Pageable, FetchEager {
 
 	/**
 	 * These criteria are used to build complex restrictions which depends on
 	 * provided criteria. This criteria are used in conjuction with Restriction.<br>
-	 * {@link #addCriteria} - add additional condition<br> {@link #setRestriction} -
-	 * set simple restriction<br> {@link #addRestriction} - add additional simple
-	 * restriction
+	 * {@link #addCriteria} - add additional condition<br>
+	 * {@link #setRestriction} - set simple restriction<br>
+	 * {@link #addRestriction} - add additional simple restriction
 	 */
 	void setCondition(List<ConditionalCriteria> criteria);
 

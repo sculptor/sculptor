@@ -35,11 +35,11 @@ import org.sculptor.dddsample.location.domain.Location;
  * the cargo is (on board carrier, in port etc), are captured in this aggregate.
  */
 @Entity(name = "Cargo")
-@Table(name = "CARGO"    , uniqueConstraints = @UniqueConstraint(columnNames={"TRACKINGID"}))
+@Table(name = "CARGO", uniqueConstraints = @UniqueConstraint(columnNames = {"TRACKINGID"}))
 public class Cargo extends CargoBase {
-    private static final long serialVersionUID = -4916991786969251821L;
+	private static final long serialVersionUID = -4916991786969251821L;
 
-    protected Cargo() {
+	protected Cargo() {
 	}
 
 	public Cargo(TrackingId trackingId, Location origin, Location destination) {
@@ -58,8 +58,8 @@ public class Cargo extends CargoBase {
 	}
 
 	/**
-	 * @return Last known location of the cargo, or Location.UNKNOWN if the
-	 *         delivery history is empty.
+	 * @return Last known location of the cargo, or Location.UNKNOWN if the delivery
+	 *         history is empty.
 	 */
 	public Location lastKnownLocation() {
 		final HandlingEvent lastEvent = deliveryHistory().lastEvent();
@@ -105,7 +105,8 @@ public class Cargo extends CargoBase {
 	 * Check if cargo is misdirected.
 	 * <p/>
 	 * <ul>
-	 * <li>A cargo is misdirected if it is in a location that's not in the itinerary.
+	 * <li>A cargo is misdirected if it is in a location that's not in the
+	 * itinerary.
 	 * <li>A cargo with no itinerary can not be misdirected.
 	 * <li>A cargo that has received no handling events can not be misdirected.
 	 * </ul>
@@ -123,8 +124,8 @@ public class Cargo extends CargoBase {
 
 	/**
 	 * Does not take into account the possibility of the cargo having been
-	 * (errouneously) loaded onto another carrier after it has been unloaded at
-	 * the final destination.
+	 * (errouneously) loaded onto another carrier after it has been unloaded at the
+	 * final destination.
 	 *
 	 * @return True if the cargo has been unloaded at the final destination.
 	 */

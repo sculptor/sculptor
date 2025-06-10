@@ -17,26 +17,26 @@ import org.springframework.stereotype.Repository;
 public class LibraryRepositoryImpl extends LibraryRepositoryBase {
 
 	public LibraryRepositoryImpl() {
-    }
+	}
 
-    @Override
-    public Library findLibraryByName(String name) throws LibraryNotFoundException {
-        List<Library> result = findByCondition(criteriaFor(Library.class).withProperty(name()).eq(name).build());
-        if (result.isEmpty()) {
-            throw new LibraryNotFoundException("Library not found: " + name);
-        } else {
-            return result.get(0);
-        }
-    }
+	@Override
+	public Library findLibraryByName(String name) throws LibraryNotFoundException {
+		List<Library> result = findByCondition(criteriaFor(Library.class).withProperty(name()).eq(name).build());
+		if (result.isEmpty()) {
+			throw new LibraryNotFoundException("Library not found: " + name);
+		} else {
+			return result.get(0);
+		}
+	}
 
-    @Override
-    public Library save(Library entity) {
-        if (entity.getName().equals("err")) {
-            throw new RuntimeException("SimulatedRuntimeException");
-        }
-        if (entity.getName().equals("validation")) {
-            throw new ValidationException("foo", "Simulated validation exception");
-        }
-        return super.save(entity);
-    }
+	@Override
+	public Library save(Library entity) {
+		if (entity.getName().equals("err")) {
+			throw new RuntimeException("SimulatedRuntimeException");
+		}
+		if (entity.getName().equals("validation")) {
+			throw new ValidationException("foo", "Simulated validation exception");
+		}
+		return super.save(entity);
+	}
 }

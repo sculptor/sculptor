@@ -14,28 +14,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Spring based transactional test with DbUnit support.
  */
 public class LocationServiceTest extends AbstractDbUnitJpaTests implements LocationServiceTestBase {
-    private LocationService locationService;
+	private LocationService locationService;
 
-    @Autowired
-    public void setLocationService(LocationService locationService) {
-        this.locationService = locationService;
-    }
+	@Autowired
+	public void setLocationService(LocationService locationService) {
+		this.locationService = locationService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testFind() throws Exception {
-        Location found = locationService.find(getServiceContext(), new UnLocode("USCHI"));
-        assertNotNull(found);
-    }
+	@Test
+	public void testFind() throws Exception {
+		Location found = locationService.find(getServiceContext(), new UnLocode("USCHI"));
+		assertNotNull(found);
+	}
 
-    @Test
-    public void testNotFound() throws LocationNotFoundException {
-        assertThrows(LocationNotFoundException.class, () -> {
-            locationService.find(getServiceContext(), new UnLocode("ZZZZZ"));
-        });
-    }
+	@Test
+	public void testNotFound() throws LocationNotFoundException {
+		assertThrows(LocationNotFoundException.class, () -> {
+			locationService.find(getServiceContext(), new UnLocode("ZZZZZ"));
+		});
+	}
 }

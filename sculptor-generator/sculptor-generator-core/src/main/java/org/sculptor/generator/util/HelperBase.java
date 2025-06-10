@@ -105,13 +105,13 @@ public class HelperBase {
 		// Print properties
 		LOG.warn("Properties:");
 		Properties props = System.getProperties();
-		for (Map.Entry<Object,Object> key : props.entrySet()) {
+		for (Map.Entry<Object, Object> key : props.entrySet()) {
 			LOG.warn("    " + key.getKey() + " = " + key.getValue());
 		}
 
 		LOG.warn("Environment:");
 		Map<String, String> env = System.getenv();
-		for (Map.Entry<String,String> key : env.entrySet()) {
+		for (Map.Entry<String, String> key : env.entrySet()) {
 			LOG.warn("    " + key.getKey() + " = " + key.getValue());
 		}
 		LOG.warn("######################################################");
@@ -122,7 +122,7 @@ public class HelperBase {
 	public String processPath(String input) {
 		Matcher matcher = PLACE_HOLDER_PATTERN.matcher(input);
 		StringBuffer out = new StringBuffer();
-		while(matcher.find()) {
+		while (matcher.find()) {
 			String match = matcher.group();
 			String envVar = match.substring(2, match.length() - 1);
 			String replacement = System.getProperty(envVar);
@@ -355,7 +355,8 @@ public class HelperBase {
 			type = domainObjectTypeName;
 		}
 
-		if (typeName != null && !typeName.equals("void") && domainObjectTypeName != null && !domainObjectTypeName.equals("void")) {
+		if (typeName != null && !typeName.equals("void") && domainObjectTypeName != null
+				&& !domainObjectTypeName.equals("void")) {
 			type = typeName + "<" + domainObjectTypeName + ">";
 		}
 
@@ -376,7 +377,8 @@ public class HelperBase {
 				|| type.equals("") || type.equals("void")) {
 			return type;
 		} else {
-			String mappedCollectionType = (collectionImpl ? getJavaTypeImpl(typedElement.getCollectionType())
+			String mappedCollectionType = (collectionImpl
+					? getJavaTypeImpl(typedElement.getCollectionType())
 					: getJavaType(typedElement.getCollectionType()));
 			if (typedElement.getCollectionType().equals("Map")) {
 				String keyType = getMapKeyType((DomainObjectTypedElement) typedElement);
@@ -462,8 +464,8 @@ public class HelperBase {
 	}
 
 	/**
-	 * Collection type can be set, list, bag or map. It corresponds to the
-	 * Hibernate collection types.
+	 * Collection type can be set, list, bag or map. It corresponds to the Hibernate
+	 * collection types.
 	 */
 	public String getRefCollectionType(Reference ref) {
 		String type = ref.getCollectionType();
@@ -486,7 +488,9 @@ public class HelperBase {
 		}
 		// Note that Boolean object type is not named with is prefix (according
 		// to java beans spec)
-		String result = isBooleanPrimitiveType(e) ? "is" + capName : "get" + ("Class".equals(capName) ? "Class_" : capName);
+		String result = isBooleanPrimitiveType(e)
+				? "is" + capName
+				: "get" + ("Class".equals(capName) ? "Class_" : capName);
 		return result;
 	}
 
@@ -790,8 +794,7 @@ public class HelperBase {
 	}
 
 	/**
-	 * Fill in parameters and return values for operations that delegate to
-	 * Service.
+	 * Fill in parameters and return values for operations that delegate to Service.
 	 */
 	public void addDefaultValues(Resource resource) {
 		for (ResourceOperation op : resource.getOperations()) {
@@ -887,7 +890,8 @@ public class HelperBase {
 	}
 
 	/**
-	 * Throws a {@link SculptorGeneratorException} to stop the generation with an error message.
+	 * Throws a {@link SculptorGeneratorException} to stop the generation with an
+	 * error message.
 	 * 
 	 * @param msg
 	 *            message to log
@@ -1059,7 +1063,8 @@ public class HelperBase {
 		validate = validate.replaceAll("'", "\"");
 		for (Map.Entry<String, String> entry : propBase.validationAnnotationDefinitions().entrySet()) {
 			String firstChar = entry.getKey().substring(0, 1);
-			String keyPattern = "[" + firstChar.toUpperCase() + firstChar.toLowerCase() + "]" + entry.getKey().substring(1);
+			String keyPattern = "[" + firstChar.toUpperCase() + firstChar.toLowerCase() + "]"
+					+ entry.getKey().substring(1);
 
 			validate = validate.replaceAll("@" + keyPattern, "@" + entry.getValue());
 		}
@@ -1081,7 +1086,8 @@ public class HelperBase {
 	 *            the validate string
 	 * @return annotation validation string
 	 */
-	public String handleParameterizedAnnotation(String annotation, String parameterNames, String parameters, String validate) {
+	public String handleParameterizedAnnotation(String annotation, String parameterNames, String parameters,
+			String validate) {
 
 		if (parameters == null)
 			return "";
@@ -1435,7 +1441,7 @@ public class HelperBase {
 	}
 
 	public String toConditionalCriteria(String condition, String root) {
-		return new QueryConverter.ConditionalCriteriaStrategy(condition,root).toQueryDsl();
+		return new QueryConverter.ConditionalCriteriaStrategy(condition, root).toQueryDsl();
 	}
 
 }

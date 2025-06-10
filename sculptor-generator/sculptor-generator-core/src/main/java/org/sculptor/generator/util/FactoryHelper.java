@@ -36,7 +36,8 @@ public class FactoryHelper {
 
 	/**
 	 * Creates an instance from a String class name.
-	 * @param genericAccessObjectManager 
+	 * 
+	 * @param genericAccessObjectManager
 	 * 
 	 * @param className
 	 *            full class name
@@ -68,7 +69,8 @@ public class FactoryHelper {
 				Class<?>[] parameterTypes = c.getParameterTypes();
 				if (parameterTypes.length == 0) {
 					return c.newInstance();
-				} else if (parameterTypes.length == 1 && enclosingObject != null && parameterTypes[0].equals(enclosingObject.getClass())) {
+				} else if (parameterTypes.length == 1 && enclosingObject != null
+						&& parameterTypes[0].equals(enclosingObject.getClass())) {
 					return c.newInstance(enclosingObject);
 				}
 			}

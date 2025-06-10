@@ -33,8 +33,9 @@ import org.sculptor.framework.accessapi.FindByExampleAccess2;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByExampleAccessImplGeneric<T, R> extends JpaCriteriaQueryAccessBase<T, R> implements
-		FindByExampleAccess2<T, R> {
+public class JpaFindByExampleAccessImplGeneric<T, R> extends JpaCriteriaQueryAccessBase<T, R>
+		implements
+			FindByExampleAccess2<T, R> {
 
 	private T exampleInstance;
 

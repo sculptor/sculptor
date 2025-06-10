@@ -14,9 +14,9 @@ import org.sculptor.dsl.ide.SculptordslIdeModule
  * Initialization support for running Xtext languages in web applications.
  */
 class SculptordslWebSetup extends SculptordslStandaloneSetup {
-	
+
 	override Injector createInjector() {
 		return Guice.createInjector(Modules2.mixin(new SculptordslRuntimeModule, new SculptordslIdeModule, new SculptordslWebModule))
 	}
-	
+
 }

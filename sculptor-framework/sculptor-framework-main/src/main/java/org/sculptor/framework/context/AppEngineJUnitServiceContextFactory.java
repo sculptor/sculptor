@@ -18,17 +18,17 @@ package org.sculptor.framework.context;
 
 public class AppEngineJUnitServiceContextFactory extends AppEngineServiceContextFactory {
 
-    @Override
-    protected ServiceContext createServiceContextImpl(String applicationId) {
-        ServiceContext context = ServiceContextStore.get();
-        if (context != null) {
-            return context;
-        }
-        String sessionId = "abcdef";
-        String appUrl = "http://localhost:8080";
+	@Override
+	protected ServiceContext createServiceContextImpl(String applicationId) {
+		ServiceContext context = ServiceContextStore.get();
+		if (context != null) {
+			return context;
+		}
+		String sessionId = "abcdef";
+		String appUrl = "http://localhost:8080";
 
-        context = createServiceContextFromAppengineEnvironment(sessionId, appUrl);
-        return context;
-    }
+		context = createServiceContextFromAppengineEnvironment(sessionId, appUrl);
+		return context;
+	}
 
 }

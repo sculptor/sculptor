@@ -6,16 +6,14 @@ import java.io.Serializable;
  * Enum for Bar
  */
 public enum Bar implements Serializable {
-    ONE,
-    TWO,
-    THREE;
+	ONE, TWO, THREE;
 
-    /**
-     */
-    private Bar() {
-    }
+	/**
+	 */
+	private Bar() {
+	}
 
-    public String getName() {
-        return name();
-    }
+	public String getName() {
+		return name();
+	}
 }

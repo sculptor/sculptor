@@ -17,5 +17,5 @@
 package org.sculptor.framework.domain;
 
 public interface Identifiable {
-    Long getId();
+	Long getId();
 }

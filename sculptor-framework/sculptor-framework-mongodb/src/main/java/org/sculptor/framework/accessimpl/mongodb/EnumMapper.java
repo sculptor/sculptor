@@ -20,39 +20,39 @@ import java.util.Collections;
 import java.util.List;
 
 public class EnumMapper implements DataMapper<Enum<?>, String> {
-    private static EnumMapper instance = new EnumMapper();
+	private static EnumMapper instance = new EnumMapper();
 
-    protected EnumMapper() {
-    }
+	protected EnumMapper() {
+	}
 
-    public static EnumMapper getInstance() {
-        return instance;
-    }
+	public static EnumMapper getInstance() {
+		return instance;
+	}
 
-    public boolean canMapToData(Class<?> domainObjectClass) {
-        if (domainObjectClass == null) {
-            return true;
-        }
-        return Enum.class.isAssignableFrom(domainObjectClass);
-    }
+	public boolean canMapToData(Class<?> domainObjectClass) {
+		if (domainObjectClass == null) {
+			return true;
+		}
+		return Enum.class.isAssignableFrom(domainObjectClass);
+	}
 
-    public String getDBCollectionName() {
-        throw new IllegalStateException("Enum is not stored in own DBCollection");
-    }
+	public String getDBCollectionName() {
+		throw new IllegalStateException("Enum is not stored in own DBCollection");
+	}
 
-    public String toData(Enum<?> from) {
-        if (from == null) {
-            return null;
-        }
-        return from.name();
-    }
+	public String toData(Enum<?> from) {
+		if (from == null) {
+			return null;
+		}
+		return from.name();
+	}
 
-    public Enum<?> toDomain(String from) {
-        throw new UnsupportedOperationException(getClass().getSimpleName()
-                + " cannot map toDomain, it can only map toData");
-    }
+	public Enum<?> toDomain(String from) {
+		throw new UnsupportedOperationException(
+				getClass().getSimpleName() + " cannot map toDomain, it can only map toData");
+	}
 
-    public List<IndexSpecification> indexes() {
-        return Collections.emptyList();
-    }
+	public List<IndexSpecification> indexes() {
+		return Collections.emptyList();
+	}
 }

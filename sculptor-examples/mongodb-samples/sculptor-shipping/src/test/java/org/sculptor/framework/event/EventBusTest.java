@@ -17,75 +17,75 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class EventBusTest {
-    private static final String CHANNEL = "testChannel";
-    MyEventHandler handler;
-    @Autowired
-    @Qualifier("eventBus")
-    private EventBus eventBus;
+	private static final String CHANNEL = "testChannel";
+	MyEventHandler handler;
+	@Autowired
+	@Qualifier("eventBus")
+	private EventBus eventBus;
 
-    @Test
-    public void publicEventShouldBeRoutedThroughTheBus() {
-        eventBus.publish(CHANNEL, new TestEvent("foo"));
-        assertNotNull(handler.event);
-    }
+	@Test
+	public void publicEventShouldBeRoutedThroughTheBus() {
+		eventBus.publish(CHANNEL, new TestEvent("foo"));
+		assertNotNull(handler.event);
+	}
 
-    @Test
-    public void noMoreEventsShouldBeRoutedAfterUnsubscribe() {
-        eventBus.publish(CHANNEL, new TestEvent("foo"));
-        assertNotNull(handler.event);
-        eventBus.unsubscribe(CHANNEL, handler);
-        handler.event = null;
-        eventBus.publish(CHANNEL, new TestEvent("foo"));
-        assertNull(handler.event);
-    }
+	@Test
+	public void noMoreEventsShouldBeRoutedAfterUnsubscribe() {
+		eventBus.publish(CHANNEL, new TestEvent("foo"));
+		assertNotNull(handler.event);
+		eventBus.unsubscribe(CHANNEL, handler);
+		handler.event = null;
+		eventBus.publish(CHANNEL, new TestEvent("foo"));
+		assertNull(handler.event);
+	}
 
-    @Test
-    public void TenThousandEventsShouldPass() {
-        int noOfEvents = 10000;
-        long time = System.currentTimeMillis();
-        System.out.println("Start of 10000 events");
-        for (int i = 0; i < noOfEvents; i++) {
-            eventBus.publish(CHANNEL, new TestEvent("#" + i));
-        }
-        System.out.println("End of 10000 events, took: " + (System.currentTimeMillis() - time) + " millis.");
-        assertEquals(noOfEvents, handler.counter.get());
-    }
+	@Test
+	public void TenThousandEventsShouldPass() {
+		int noOfEvents = 10000;
+		long time = System.currentTimeMillis();
+		System.out.println("Start of 10000 events");
+		for (int i = 0; i < noOfEvents; i++) {
+			eventBus.publish(CHANNEL, new TestEvent("#" + i));
+		}
+		System.out.println("End of 10000 events, took: " + (System.currentTimeMillis() - time) + " millis.");
+		assertEquals(noOfEvents, handler.counter.get());
+	}
 
-    @BeforeEach
-    public void initBusAndHandler() {
-        MyEventHandler handler = new MyEventHandler();
-        eventBus.subscribe(CHANNEL, handler);
-        this.handler = handler;
-    }
+	@BeforeEach
+	public void initBusAndHandler() {
+		MyEventHandler handler = new MyEventHandler();
+		eventBus.subscribe(CHANNEL, handler);
+		this.handler = handler;
+	}
 
-    @AfterEach
-    public void cleanUpBusAndHandler() {
-        if (handler != null) {
-            eventBus.unsubscribe(CHANNEL, handler);
-        }
-        this.handler = null;
-    }
+	@AfterEach
+	public void cleanUpBusAndHandler() {
+		if (handler != null) {
+			eventBus.unsubscribe(CHANNEL, handler);
+		}
+		this.handler = null;
+	}
 
-    private static class MyEventHandler implements EventSubscriber {
-        Event event;
-        AtomicInteger counter = new AtomicInteger();
+	private static class MyEventHandler implements EventSubscriber {
+		Event event;
+		AtomicInteger counter = new AtomicInteger();
 
-        @Override
-        public void receive(Event event) {
-            this.event = event;
-            counter.incrementAndGet();
-        }
-    }
+		@Override
+		public void receive(Event event) {
+			this.event = event;
+			counter.incrementAndGet();
+		}
+	}
 
-    private static class TestEvent implements Event {
-        private static final long serialVersionUID = 1L;
+	private static class TestEvent implements Event {
+		private static final long serialVersionUID = 1L;
 
-        public TestEvent(String data) {
-            this.data = data;
-        }
+		public TestEvent(String data) {
+			this.data = data;
+		}
 
-        String data;
-    }
+		String data;
+	}
 }

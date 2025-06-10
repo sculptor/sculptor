@@ -99,7 +99,8 @@ public class SingularPluralConverter {
 			return null;
 		}
 		// upper/lower case of first char
-		if ((lookupValue.charAt(0) != input.charAt(0)) && (lookupValue.toLowerCase().charAt(0) == input.toLowerCase().charAt(0))) {
+		if ((lookupValue.charAt(0) != input.charAt(0))
+				&& (lookupValue.toLowerCase().charAt(0) == input.toLowerCase().charAt(0))) {
 			return input.charAt(0) + lookupValue.substring(1);
 		}
 		return lookupValue;

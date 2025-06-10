@@ -1,20 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>archetype.it</groupId>
 	<artifactId>basic</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<name>New Sculptor Project :: Business Tier</name>
-
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-
 		<java-version>1.8</java-version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-
 		<sculptor-version>3.2.0-SNAPSHOT</sculptor-version>
 		<jboss-javaee6-version>3.0.3.Final</jboss-javaee6-version>
 		<hibernate-validator-version>6.2.3.Final</hibernate-validator-version>
@@ -27,12 +22,10 @@
 		<joda-time-version>2.10.9</joda-time-version>
 		<jackson-version>2.13.3</jackson-version>
 		<xstream-version>1.4.19</xstream-version>
-
 		<junit-version>5.7.0</junit-version>
 		<hamcrest-version>2.2</hamcrest-version>
 		<hsqldb-version>2.6.1</hsqldb-version>
 	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -97,7 +90,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -171,7 +163,7 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<!-- Remove dependency to javax.transaction when running in a transaction 
-			supporting container (jboss etc) -->
+					supporting container (jboss etc) -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
@@ -278,10 +270,8 @@
 			<!-- <scope>test</scope> -->
 		</dependency>
 	</dependencies>
-
 	<!-- Profiles -->
 	<profiles>
-
 		<!-- HIBERNATE -->
 		<profile>
 			<id>hibernate</id>
@@ -295,8 +285,7 @@
 			<properties>
 				<hibernate-version>5.6.9.Final</hibernate-version>
 			</properties>
-			<build>
-			</build>
+			<build/>
 			<dependencies>
 				<dependency>
 					<groupId>org.hibernate</groupId>
@@ -341,7 +330,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- DATANUCLEUS -->
 		<profile>
 			<id>datanucleus</id>
@@ -455,7 +443,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- ECLIPSELINK -->
 		<profile>
 			<id>eclipselink</id>
@@ -510,7 +497,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- OPENJPA -->
 		<profile>
 			<id>openjpa</id>
@@ -555,7 +541,6 @@
 							</dependency>
 						</dependencies>
 					</plugin>
-
 				</plugins>
 			</build>
 			<dependencies>
@@ -567,5 +552,4 @@
 			</dependencies>
 		</profile>
 	</profiles>
-
 </project>

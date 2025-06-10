@@ -17,8 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @InjectWith(SculptordslInjectorProvider)
 class SculptordslParsingTest {
 
-	@Inject ParseHelper<DslModel> parseHelper
-	
+	@Inject
+	ParseHelper<DslModel> parseHelper
+
 	@Test
 	def void loadModel() {
 		val result = parseHelper.parse('''

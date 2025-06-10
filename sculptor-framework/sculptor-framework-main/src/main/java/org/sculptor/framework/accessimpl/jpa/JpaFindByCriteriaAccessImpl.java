@@ -27,15 +27,15 @@ import org.sculptor.framework.accessapi.FindByCriteriaAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByCriteriaAccessImpl<T>
-    extends JpaFindByCriteriaAccessImplGeneric<T,T>
-    implements FindByCriteriaAccess<T> {
+public class JpaFindByCriteriaAccessImpl<T> extends JpaFindByCriteriaAccessImplGeneric<T, T>
+		implements
+			FindByCriteriaAccess<T> {
 
-    public JpaFindByCriteriaAccessImpl() {
-        super();
-    }
+	public JpaFindByCriteriaAccessImpl() {
+		super();
+	}
 
-    public JpaFindByCriteriaAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByCriteriaAccessImpl(Class<T> type) {
+		super(type);
+	}
 }

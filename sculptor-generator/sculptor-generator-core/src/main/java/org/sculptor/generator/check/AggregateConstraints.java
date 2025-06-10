@@ -40,12 +40,11 @@ import sculptormetamodel.ValueObject;
  */
 public class AggregateConstraints {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AggregateConstraints.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AggregateConstraints.class);
 
 	/**
-	 * According to DDD the aggregate root is the only member of the aggregate
-	 * that objects outside the aggregate boundary may hold references to.
+	 * According to DDD the aggregate root is the only member of the aggregate that
+	 * objects outside the aggregate boundary may hold references to.
 	 */
 	public static boolean checkAggregateReferences(Application app) {
 		Map<DomainObject, Set<DomainObject>> aggregateGroups = getAggregateGroups(app);
@@ -56,15 +55,13 @@ public class AggregateConstraints {
 				}
 				// find only the elements common to both sets, i.e. the
 				// intersection
-				Set<DomainObject> intersection = new HashSet<DomainObject>(
-						group1);
+				Set<DomainObject> intersection = new HashSet<DomainObject>(group1);
 				intersection.retainAll(group2);
 				if (!intersection.isEmpty()) {
 					// found two groups with some non-root objects in common,
 					// i.e. reference directly to a non-root from outside the
 					// aggregate boundary
-					LOG.warn("checkAggregateReferences failed with intersection: "
-							+ intersection);
+					LOG.warn("checkAggregateReferences failed with intersection: " + intersection);
 					return false;
 				}
 			}
@@ -73,8 +70,7 @@ public class AggregateConstraints {
 		return true;
 	}
 
-	private static Map<DomainObject, Set<DomainObject>> getAggregateGroups(
-			Application app) {
+	private static Map<DomainObject, Set<DomainObject>> getAggregateGroups(Application app) {
 		Map<DomainObject, Set<DomainObject>> groups = new HashMap<DomainObject, Set<DomainObject>>();
 		for (DomainObject root : getAllAggregatesRoots(app)) {
 			Set<DomainObject> group = new HashSet<DomainObject>();
@@ -84,11 +80,9 @@ public class AggregateConstraints {
 		return groups;
 	}
 
-	private static void collectAggregateGroup(DomainObject domainObject,
-			Set<DomainObject> group) {
+	private static void collectAggregateGroup(DomainObject domainObject, Set<DomainObject> group) {
 		for (Reference ref : (List<Reference>) domainObject.getReferences()) {
-			if (!isAggregateRoot(ref.getTo())
-					&& isEntityOrPersistentValueObject(ref.getTo())
+			if (!isAggregateRoot(ref.getTo()) && isEntityOrPersistentValueObject(ref.getTo())
 					&& !group.contains(ref.getTo())) {
 				group.add(ref.getTo());
 				// follow reference and collect other objects in same aggregate
@@ -98,8 +92,7 @@ public class AggregateConstraints {
 		}
 	}
 
-	private static Collection<DomainObject> getAllAggregatesRoots(
-			Application app) {
+	private static Collection<DomainObject> getAllAggregatesRoots(Application app) {
 		List<DomainObject> all = new ArrayList<DomainObject>();
 		for (Module m : (List<Module>) app.getModules()) {
 			for (DomainObject d : (List<DomainObject>) m.getDomainObjects()) {

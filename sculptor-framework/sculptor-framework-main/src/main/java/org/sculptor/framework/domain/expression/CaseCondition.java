@@ -45,4 +45,3 @@ public interface CaseCondition<T> {
 
 	CaseConditionRoot<T> isNotEmpty();
 }
-

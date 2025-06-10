@@ -37,8 +37,8 @@ public abstract class AbstractLogOutputStream extends LogOutputStream {
 	 * @param log
 	 *            plugins {@link Log}
 	 * @param isErrorStream
-	 *            if <code>true</code> then every line sent to this output
-	 *            stream increases the error count
+	 *            if <code>true</code> then every line sent to this output stream
+	 *            increases the error count
 	 */
 	public AbstractLogOutputStream(boolean isErrorStream) {
 		this.isErrorStream = isErrorStream;
@@ -66,8 +66,8 @@ public abstract class AbstractLogOutputStream extends LogOutputStream {
 	}
 
 	/**
-	 * Logs a line to the log system of the user and reports if the line
-	 * indicates an error.
+	 * Logs a line to the log system of the user and reports if the line indicates
+	 * an error.
 	 * 
 	 * @param line
 	 *            the line to log

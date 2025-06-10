@@ -29,85 +29,83 @@ import java.net.URL;
 import java.util.MissingResourceException;
 
 /**
- * This class is typically only used by JUnit test classes.
- * Helper to read content from file in classpath and write content to file.
- * Default charset is ISO-8859-1, but it can be specified to be something else.
+ * This class is typically only used by JUnit test classes. Helper to read
+ * content from file in classpath and write content to file. Default charset is
+ * ISO-8859-1, but it can be specified to be something else.
  *
  */
 public class DataHelper {
 
-    private static final String DEFAULT_CHARSET = "ISO-8859-1";
+	private static final String DEFAULT_CHARSET = "ISO-8859-1";
 
-    public DataHelper() {
-    }
+	public DataHelper() {
+	}
 
-    /**
-     *
-     * @param path path to resource in classpath
-     * @return reader to the resource in classpath
-     * @throws IOException
-     */
-    public static BufferedReader reader(String path) throws IOException {
-        return reader(path, DEFAULT_CHARSET);
-    }
+	/**
+	 *
+	 * @param path
+	 *            path to resource in classpath
+	 * @return reader to the resource in classpath
+	 * @throws IOException
+	 */
+	public static BufferedReader reader(String path) throws IOException {
+		return reader(path, DEFAULT_CHARSET);
+	}
 
-    public static BufferedReader reader(String path, String charset) throws IOException {
-        if (path.startsWith("file:/")) {
-            // remove "file:/" from path
-            File file = new File(path.substring(6));
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(file), charset));
-            return reader;
-        } else {
-            URL sourceUrl = DataHelper.class.getResource(path);
-            if (sourceUrl == null) {
-                throw new MissingResourceException(path + " not found in classpath", path, "");
-            }
-            InputStream sourceInput = sourceUrl.openStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(sourceInput, charset));
-            return reader;
-        }
+	public static BufferedReader reader(String path, String charset) throws IOException {
+		if (path.startsWith("file:/")) {
+			// remove "file:/" from path
+			File file = new File(path.substring(6));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
+			return reader;
+		} else {
+			URL sourceUrl = DataHelper.class.getResource(path);
+			if (sourceUrl == null) {
+				throw new MissingResourceException(path + " not found in classpath", path, "");
+			}
+			InputStream sourceInput = sourceUrl.openStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(sourceInput, charset));
+			return reader;
+		}
 
-    }
+	}
 
-    public static String content(String path) throws IOException {
-        return content(path, DEFAULT_CHARSET);
-    }
+	public static String content(String path) throws IOException {
+		return content(path, DEFAULT_CHARSET);
+	}
 
-    public static String content(String path, String charset) throws IOException {
-        BufferedReader reader = null;
-        try {
-            reader = reader(path, charset);
-            StringBuffer content = new StringBuffer();
-            String line = reader.readLine();
-            while (line != null) {
-                content.append(line).append("\n");
-                line = reader.readLine();
-            }
-            return content.toString();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-    }
+	public static String content(String path, String charset) throws IOException {
+		BufferedReader reader = null;
+		try {
+			reader = reader(path, charset);
+			StringBuffer content = new StringBuffer();
+			String line = reader.readLine();
+			while (line != null) {
+				content.append(line).append("\n");
+				line = reader.readLine();
+			}
+			return content.toString();
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
 
-    public static void write(String path, String content) throws IOException {
-        write(path, content, DEFAULT_CHARSET);
-    }
+	public static void write(String path, String content) throws IOException {
+		write(path, content, DEFAULT_CHARSET);
+	}
 
-    public static void write(String path, String content, String charset) throws IOException {
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(path),
-                    charset));
-            writer.write(content);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-        }
-    }
+	public static void write(String path, String content, String charset) throws IOException {
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), charset));
+			writer.write(content);
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
 
 }

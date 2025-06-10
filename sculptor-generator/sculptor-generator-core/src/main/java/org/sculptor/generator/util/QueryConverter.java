@@ -77,8 +77,8 @@ public interface QueryConverter {
 
 		@Override
 		public String toString() {
-			return String.format("select=%1$s from=%2$s where=%3$s group by=%4$s order by=%5$s", select, from, where, groupBy,
-					orderBy);
+			return String.format("select=%1$s from=%2$s where=%3$s group by=%4$s order by=%5$s", select, from, where,
+					groupBy, orderBy);
 		}
 
 		private boolean hasSqlParts() {
@@ -137,10 +137,10 @@ public interface QueryConverter {
 				convertSelections();
 		}
 
-//		private void prepareFrom() {
-//			if (!from.isEmpty())
-//				convertSelections();
-//		}
+		// private void prepareFrom() {
+		// if (!from.isEmpty())
+		// convertSelections();
+		// }
 
 		private void prepareWhere() {
 			if (!where.isEmpty()) {
@@ -247,7 +247,8 @@ public interface QueryConverter {
 
 		private void convertStaticText() {
 			where = where.replace("(", ".lbrace").replace(")", ".rbrace").replace("lbrace", "lbrace()")
-					.replace("rbrace", "rbrace()").replace("and", ".and()").replace("or", ".or()").replace("!", ".not()");
+					.replace("rbrace", "rbrace()").replace("and", ".and()").replace("or", ".or()")
+					.replace("!", ".not()");
 		}
 
 		private void insertExpressions() {
@@ -346,18 +347,18 @@ public interface QueryConverter {
 				this.operator = operator;
 				this.transformation = transformation;
 				switch (countOperants()) {
-				case 3:
-					// (not) between expression
-					regex = "(\\S+?)\\s+" + operator + "\\s+(\\S+?)\\sand\\s+(\\S+?)\\s+";
-					break;
-				case 2:
-					regex = "(\\S+?)\\s+" + operator + "\\s+(\\S+?)(?=\\s+)";
-					break;
-				case 1:
-					regex = "(\\S+?)\\s+" + operator + "\\s+";
-					break;
-				default:
-					break;
+					case 3 :
+						// (not) between expression
+						regex = "(\\S+?)\\s+" + operator + "\\s+(\\S+?)\\sand\\s+(\\S+?)\\s+";
+						break;
+					case 2 :
+						regex = "(\\S+?)\\s+" + operator + "\\s+(\\S+?)(?=\\s+)";
+						break;
+					case 1 :
+						regex = "(\\S+?)\\s+" + operator + "\\s+";
+						break;
+					default :
+						break;
 				}
 				if (this.operator.equals("in")) {
 					replacement = "";

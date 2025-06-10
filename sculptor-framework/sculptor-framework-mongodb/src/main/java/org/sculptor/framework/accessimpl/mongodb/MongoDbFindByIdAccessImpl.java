@@ -33,46 +33,47 @@ import com.mongodb.DBObject;
  * Command design pattern.
  * </p>
  */
-public class MongoDbFindByIdAccessImpl<T, ID extends Serializable> extends MongoDbAccessBase<T> implements
-        FindByIdAccess<T, ID> {
+public class MongoDbFindByIdAccessImpl<T, ID extends Serializable> extends MongoDbAccessBase<T>
+		implements
+			FindByIdAccess<T, ID> {
 
-    private ID id;
-    private T result;
+	private ID id;
+	private T result;
 
-    public MongoDbFindByIdAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbFindByIdAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    protected ID getId() {
-        return id;
-    }
+	protected ID getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(ID id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(ID id) {
+		this.id = id;
+	}
 
-    @Override
-    public T getResult() {
-        return result;
-    }
+	@Override
+	public T getResult() {
+		return result;
+	}
 
-    protected void setResult(T result) {
-        this.result = result;
-    }
+	protected void setResult(T result) {
+		this.result = result;
+	}
 
-    @Override
-    public void performExecute() {
-        DBObject found = getDBCollection().find(Filters.eq("id", id)).first();
-        result = getDataMapper().toDomain(found);
-    }
+	@Override
+	public void performExecute() {
+		DBObject found = getDBCollection().find(Filters.eq("id", id)).first();
+		result = getDataMapper().toDomain(found);
+	}
 
-    protected boolean isLock() {
-        throw new UnsupportedOperationException("lock not supported by " + getClass().getName());
-    }
+	protected boolean isLock() {
+		throw new UnsupportedOperationException("lock not supported by " + getClass().getName());
+	}
 
-    @Override
-    public void setLock(boolean lock) {
-        throw new UnsupportedOperationException("lock not supported by " + getClass().getName());
-    }
+	@Override
+	public void setLock(boolean lock) {
+		throw new UnsupportedOperationException("lock not supported by " + getClass().getName());
+	}
 }

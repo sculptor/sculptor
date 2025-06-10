@@ -6,9 +6,9 @@ import javax.persistence.Table;
 /**
  * Entity representing House.
  * <p>
- * This class is responsible for the domain object related
- * business logic for House. Properties and associations are
- * implemented in the generated base class {@link org.sculptor.dddsample.relation.domain.HouseBase}.
+ * This class is responsible for the domain object related business logic for
+ * House. Properties and associations are implemented in the generated base
+ * class {@link org.sculptor.dddsample.relation.domain.HouseBase}.
  */
 
 @Entity

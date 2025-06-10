@@ -25,7 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
 public class LibraryServiceTest implements LibraryServiceTestBase {
 
 	@Autowired
@@ -86,8 +86,8 @@ public class LibraryServiceTest implements LibraryServiceTestBase {
 		assertNotNull(foundLibrary);
 		assertNotNull(foundLibrary.getLastUpdated());
 		assertEquals("JUnit", foundLibrary.getLastUpdatedBy());
-		assertTrue(foundLibrary.getLastUpdated().compareTo(now) >= 0
-				, "Expected " + foundLibrary.getLastUpdated() + " > " + now);
+		assertTrue(foundLibrary.getLastUpdated().compareTo(now) >= 0,
+				"Expected " + foundLibrary.getLastUpdated() + " > " + now);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class LibraryServiceTest implements LibraryServiceTestBase {
 	@Override
 	@Test
 	public void testFindMediaByName() throws Exception {
-		String title = "Pippi Långstrump i Söderhavet";
+		String title = "Pippi Lï¿½ngstrump i Sï¿½derhavet";
 		List<Media> movieList = libraryService.findMediaByName(getServiceContext(), testData.getLibraryId(), title);
 		assertNotNull(movieList);
 		assertEquals(1, movieList.size());

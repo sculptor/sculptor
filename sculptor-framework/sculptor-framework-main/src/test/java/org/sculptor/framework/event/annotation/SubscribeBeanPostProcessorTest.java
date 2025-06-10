@@ -31,8 +31,8 @@ public class SubscribeBeanPostProcessorTest {
 	@Test
 	public void testWithValidEventSubscriber() {
 		final DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-		factory.registerBeanDefinition("eventBus", BeanDefinitionBuilder.genericBeanDefinition(TestEventBus.class)
-				.getBeanDefinition());
+		factory.registerBeanDefinition("eventBus",
+				BeanDefinitionBuilder.genericBeanDefinition(TestEventBus.class).getBeanDefinition());
 		factory.registerBeanDefinition("eventListener",
 				BeanDefinitionBuilder.genericBeanDefinition(ValidEventSubscriber.class).getBeanDefinition());
 		final SubscribeBeanPostProcessor bpp = new SubscribeBeanPostProcessor();
@@ -53,8 +53,7 @@ public class SubscribeBeanPostProcessorTest {
 		try {
 			final DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
 			factory.registerBeanDefinition("eventListener",
-					BeanDefinitionBuilder.genericBeanDefinition(EventSubscriberWithoutTopic.class)
-							.getBeanDefinition());
+					BeanDefinitionBuilder.genericBeanDefinition(EventSubscriberWithoutTopic.class).getBeanDefinition());
 			final SubscribeBeanPostProcessor bpp = new SubscribeBeanPostProcessor();
 			bpp.setBeanFactory(factory);
 			factory.addBeanPostProcessor(bpp);
@@ -70,9 +69,8 @@ public class SubscribeBeanPostProcessorTest {
 	public void testWithMissingEventBus() {
 		try {
 			final DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-			factory.registerBeanDefinition("eventListener",
-					BeanDefinitionBuilder.genericBeanDefinition(EventSubscriberWithoutEventBus.class)
-							.getBeanDefinition());
+			factory.registerBeanDefinition("eventListener", BeanDefinitionBuilder
+					.genericBeanDefinition(EventSubscriberWithoutEventBus.class).getBeanDefinition());
 			final SubscribeBeanPostProcessor bpp = new SubscribeBeanPostProcessor();
 			bpp.setBeanFactory(factory);
 			factory.addBeanPostProcessor(bpp);
@@ -88,11 +86,10 @@ public class SubscribeBeanPostProcessorTest {
 	public void testWithUnknownEventBus() {
 		try {
 			final DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-			factory.registerBeanDefinition("eventBus", BeanDefinitionBuilder.genericBeanDefinition(TestEventBus.class)
-					.getBeanDefinition());
-			factory.registerBeanDefinition("eventListener",
-					BeanDefinitionBuilder.genericBeanDefinition(EventSubscriberWithUnknownEventBus.class)
-							.getBeanDefinition());
+			factory.registerBeanDefinition("eventBus",
+					BeanDefinitionBuilder.genericBeanDefinition(TestEventBus.class).getBeanDefinition());
+			factory.registerBeanDefinition("eventListener", BeanDefinitionBuilder
+					.genericBeanDefinition(EventSubscriberWithUnknownEventBus.class).getBeanDefinition());
 			final SubscribeBeanPostProcessor bpp = new SubscribeBeanPostProcessor();
 			bpp.setBeanFactory(factory);
 			factory.addBeanPostProcessor(bpp);
@@ -109,8 +106,8 @@ public class SubscribeBeanPostProcessorTest {
 	public void testWithInvalidEventBus() {
 		try {
 			final DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-			factory.registerBeanDefinition("eventBus", BeanDefinitionBuilder.genericBeanDefinition(Object.class)
-					.getBeanDefinition());
+			factory.registerBeanDefinition("eventBus",
+					BeanDefinitionBuilder.genericBeanDefinition(Object.class).getBeanDefinition());
 			factory.registerBeanDefinition("eventListener",
 					BeanDefinitionBuilder.genericBeanDefinition(ValidEventSubscriber.class).getBeanDefinition());
 			final SubscribeBeanPostProcessor bpp = new SubscribeBeanPostProcessor();

@@ -29,7 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles({ "test", "web" })
+@ActiveProfiles({"test", "web"})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class FrontResourceControllerTest {
@@ -41,18 +41,18 @@ public class FrontResourceControllerTest {
 	public void testHome() throws Exception {
 		ResponseEntity<String> entity = restTemplate.getForEntity("/", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue(entity.getBody().contains(";URL=rest/front")
-				, "Wrong body (refresh URL doesn't match):\n" + entity.getBody());
+		assertTrue(entity.getBody().contains(";URL=rest/front"),
+				"Wrong body (refresh URL doesn't match):\n" + entity.getBody());
 	}
 
 	@Test
 	public void testFront() throws Exception {
 		ResponseEntity<String> entity = restTemplate.getForEntity("/rest/front", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue(entity.getBody().contains("<title>Sculptor REST Example")
-				, "Wrong body (title doesn't match):\n" + entity.getBody());
-		assertFalse(entity.getBody().contains("layout:fragment")
-				, "Wrong body (found layout:fragment):\n" + entity.getBody());
+		assertTrue(entity.getBody().contains("<title>Sculptor REST Example"),
+				"Wrong body (title doesn't match):\n" + entity.getBody());
+		assertFalse(entity.getBody().contains("layout:fragment"),
+				"Wrong body (found layout:fragment):\n" + entity.getBody());
 	}
 
 	@Test

@@ -10,7 +10,6 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Examples</name>
 	<description>Aggregator project for all Sculptor examples</description>
-
 	<modules>
 		<module>helloworld-example</module>
 		<module>library-example</module>
@@ -18,7 +17,7 @@
 		<module>mongodb-samples</module>
 		<module>eda-samples</module>
 		<!-- <module>ejb-example</module> -->
-		<module>springboot-example</module> 
+		<module>springboot-example</module>
 		<module>springdatajpa-example</module>
 		<module>fulltextsearch-example</module>
 	</modules>

@@ -14,43 +14,43 @@ import org.springframework.stereotype.Service;
  */
 @Service("trackingService")
 public class TrackingServiceImpl extends TrackingServiceImplBase {
-    private static final Log LOG = LogFactory.getLog(TrackingServiceImpl.class);
+	private static final Log LOG = LogFactory.getLog(TrackingServiceImpl.class);
 
-    public TrackingServiceImpl() {
-    }
+	public TrackingServiceImpl() {
+	}
 
-    public Cargo track(ServiceContext ctx, TrackingId trackingId) throws CargoNotFoundException {
-        Validate.notNull(trackingId);
+	public Cargo track(ServiceContext ctx, TrackingId trackingId) throws CargoNotFoundException {
+		Validate.notNull(trackingId);
 
-        return getCargoRepository().find(trackingId, true);
-    }
+		return getCargoRepository().find(trackingId, true);
+	}
 
-    public void inspectCargo(ServiceContext ctx, TrackingId trackingId) throws CargoNotFoundException {
-        Validate.notNull(trackingId);
+	public void inspectCargo(ServiceContext ctx, TrackingId trackingId) throws CargoNotFoundException {
+		Validate.notNull(trackingId);
 
-        try {
-            final Cargo cargo = getCargoRepository().find(trackingId);
-    
-            if (cargo.isMisdirected()) {
-                handleMisdirectedCargo(cargo);
-            }
-            if (cargo.isUnloadedAtDestination()) {
-                notifyCustomerOfAvailability(cargo);
-            }
-        } catch (CargoNotFoundException e) {
-            LOG.warn("Can't inspect non-existing cargo " + trackingId);
-            throw e;
-        }
-    }
+		try {
+			final Cargo cargo = getCargoRepository().find(trackingId);
 
-    private void notifyCustomerOfAvailability(Cargo cargo) {
-        LOG.info("Cargo " + cargo.getTrackingId() + " has been unloaded " + "at its final destination "
-                + cargo.getDestination());
-    }
+			if (cargo.isMisdirected()) {
+				handleMisdirectedCargo(cargo);
+			}
+			if (cargo.isUnloadedAtDestination()) {
+				notifyCustomerOfAvailability(cargo);
+			}
+		} catch (CargoNotFoundException e) {
+			LOG.warn("Can't inspect non-existing cargo " + trackingId);
+			throw e;
+		}
+	}
 
-    private void handleMisdirectedCargo(Cargo cargo) {
-        LOG.info("Cargo " + cargo.getTrackingId() + " has been misdirected. " + "Last event was "
-                + cargo.deliveryHistory().lastEvent());
-    }
+	private void notifyCustomerOfAvailability(Cargo cargo) {
+		LOG.info("Cargo " + cargo.getTrackingId() + " has been unloaded " + "at its final destination "
+				+ cargo.getDestination());
+	}
+
+	private void handleMisdirectedCargo(Cargo cargo) {
+		LOG.info("Cargo " + cargo.getTrackingId() + " has been misdirected. " + "Last event was "
+				+ cargo.deliveryHistory().lastEvent());
+	}
 
 }

@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sculptorgenerator</groupId>
@@ -11,7 +9,6 @@
 	<groupId>org.sculptorgenerator.examples</groupId>
 	<artifactId>DDDSample</artifactId>
 	<name>Sculptor :: Examples :: DDD Sample</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -61,7 +58,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator</groupId>
@@ -110,7 +106,7 @@
 			<!-- <scope>provided</scope> -->
 		</dependency>
 		<!-- Remove dependency to javax.transaction when running in a transaction 
-			supporting container (jboss etc) -->
+					supporting container (jboss etc) -->
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
@@ -157,7 +153,6 @@
 			<artifactId>javassist</artifactId>
 			<version>3.27.0-GA</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -184,13 +179,9 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 	<!-- Profiles -->
-
 	<profiles>
-
 		<!-- HIBERNATE -->
-
 		<profile>
 			<id>hibernate</id>
 			<activation>
@@ -248,8 +239,7 @@
 					<!-- <version>${hibernate.validator.version}</version> -->
 					<!-- </dependency> -->
 					<!-- </dependencies> -->
-					<!-- </plugin> -->
-				</plugins>
+					<!-- </plugin> -->/>
 			</build>
 			<dependencies>
 				<dependency>
@@ -280,9 +270,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- DATANUCLEUS -->
-
 		<profile>
 			<id>datanucleus</id>
 			<activation>
@@ -395,9 +383,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- ECLIPSELINK -->
-
 		<profile>
 			<id>eclipselink</id>
 			<activation>
@@ -412,39 +398,39 @@
 			</properties>
 			<build>
 				<plugins>
-<!--					<plugin>-->
-<!--						<artifactId>eclipselink-staticweave-maven-plugin</artifactId>-->
-<!--						<groupId>au.com.alderaan</groupId>-->
-<!--						<version>1.0.4</version>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<goals>-->
-<!--									<goal>weave</goal>-->
-<!--								</goals>-->
-<!--								<phase>process-classes</phase>-->
-<!--								<configuration>-->
-<!--									<logLevel>ALL</logLevel>-->
-<!--									<includeProjectClasspath>true</includeProjectClasspath>-->
-<!--								</configuration>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--				        <dependencies>-->
-<!--				            <dependency>-->
-<!--				                <groupId>org.eclipse.persistence</groupId>-->
-<!--				                <artifactId>eclipselink</artifactId>-->
-<!--				                <version>${eclipselink-version}</version>-->
-<!--				            </dependency>-->
-<!--				        </dependencies>-->
-<!--					</plugin>-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.0</version>
-				<configuration>
-					<argLine>-Xms32m -Xmx1024m -javaagent:/home/tavoda/.m2/repository/org/springframework/spring-instrument/5.1.6.RELEASE/spring-instrument-5.1.6.RELEASE.jar</argLine>
-				</configuration>
-			</plugin>
-		</plugins>
+					<!--					<plugin>-->
+					<!--						<artifactId>eclipselink-staticweave-maven-plugin</artifactId>-->
+					<!--						<groupId>au.com.alderaan</groupId>-->
+					<!--						<version>1.0.4</version>-->
+					<!--						<executions>-->
+					<!--							<execution>-->
+					<!--								<goals>-->
+					<!--									<goal>weave</goal>-->
+					<!--								</goals>-->
+					<!--								<phase>process-classes</phase>-->
+					<!--								<configuration>-->
+					<!--									<logLevel>ALL</logLevel>-->
+					<!--									<includeProjectClasspath>true</includeProjectClasspath>-->
+					<!--								</configuration>-->
+					<!--							</execution>-->
+					<!--						</executions>-->
+					<!--				        <dependencies>-->
+					<!--				            <dependency>-->
+					<!--				                <groupId>org.eclipse.persistence</groupId>-->
+					<!--				                <artifactId>eclipselink</artifactId>-->
+					<!--				                <version>${eclipselink-version}</version>-->
+					<!--				            </dependency>-->
+					<!--				        </dependencies>-->
+					<!--					</plugin>-->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.22.0</version>
+						<configuration>
+							<argLine>-Xms32m -Xmx1024m -javaagent:/home/tavoda/.m2/repository/org/springframework/spring-instrument/5.1.6.RELEASE/spring-instrument-5.1.6.RELEASE.jar</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -459,9 +445,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
 		<!-- OPENJPA -->
-
 		<profile>
 			<id>openjpa</id>
 			<activation>
@@ -475,33 +459,32 @@
 			</properties>
 			<build>
 				<plugins>
-<!--					<plugin>-->
-<!--						<groupId>org.apache.openjpa</groupId>-->
-<!--						<artifactId>openjpa-maven-plugin</artifactId>-->
-<!--						<version>${openjpa-version}</version>-->
-<!--						<configuration>-->
-<!--							<includes>**/domain/*.class</includes>-->
-<!--							<excludes>**/domain/*Propert*.class,**/domain/*Repository.class</excludes>-->
-<!--						</configuration>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>enhancer</id>-->
-<!--								<phase>process-classes</phase>-->
-<!--								<goals>-->
-<!--									<goal>enhance</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.22.0</version>
-					<configuration>
-						<argLine>-Xms32m -Xmx1024m</argLine>
-					</configuration>
-				</plugin>
+					<!--					<plugin>-->
+					<!--						<groupId>org.apache.openjpa</groupId>-->
+					<!--						<artifactId>openjpa-maven-plugin</artifactId>-->
+					<!--						<version>${openjpa-version}</version>-->
+					<!--						<configuration>-->
+					<!--							<includes>**/domain/*.class</includes>-->
+					<!--							<excludes>**/domain/*Propert*.class,**/domain/*Repository.class</excludes>-->
+					<!--						</configuration>-->
+					<!--						<executions>-->
+					<!--							<execution>-->
+					<!--								<id>enhancer</id>-->
+					<!--								<phase>process-classes</phase>-->
+					<!--								<goals>-->
+					<!--									<goal>enhance</goal>-->
+					<!--								</goals>-->
+					<!--							</execution>-->
+					<!--						</executions>-->
+					<!--					</plugin>-->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.22.0</version>
+						<configuration>
+							<argLine>-Xms32m -Xmx1024m</argLine>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 			<dependencies>
@@ -513,5 +496,4 @@
 			</dependencies>
 		</profile>
 	</profiles>
-
 </project>

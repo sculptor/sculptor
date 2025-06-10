@@ -48,8 +48,7 @@ public class SculptordslInjectorProvider implements IInjectorProvider, IRegistry
 		return new SculptordslRuntimeModule() {
 			@Override
 			public ClassLoader bindClassLoaderToInstance() {
-				return SculptordslInjectorProvider.this.getClass()
-						.getClassLoader();
+				return SculptordslInjectorProvider.this.getClass().getClassLoader();
 			}
 		};
 	}

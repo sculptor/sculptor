@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.sculptor.framework.accessapi.FindByQueryAccess2;
 
-
 /**
  * <p>
  * Implementation of Access command FindByQueryAccessGeneric.
@@ -30,23 +29,23 @@ import org.sculptor.framework.accessapi.FindByQueryAccess2;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByQueryAccessImplGeneric<T,R>
-    extends JpaJpqlQueryAccessBase<T,R>
-    implements FindByQueryAccess2<R> {
+public class JpaFindByQueryAccessImplGeneric<T, R> extends JpaJpqlQueryAccessBase<T, R>
+		implements
+			FindByQueryAccess2<R> {
 
-    public JpaFindByQueryAccessImplGeneric() {
-        super();
-    }
+	public JpaFindByQueryAccessImplGeneric() {
+		super();
+	}
 
-    public JpaFindByQueryAccessImplGeneric(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByQueryAccessImplGeneric(Class<T> type) {
+		super(type);
+	}
 
-    public JpaFindByQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
-        super(type, resultType);
-    }
+	public JpaFindByQueryAccessImplGeneric(Class<T> type, Class<R> resultType) {
+		super(type, resultType);
+	}
 
-    public List<R> getResult() {
-        return getListResult();
-    }
+	public List<R> getResult() {
+		return getListResult();
+	}
 }

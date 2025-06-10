@@ -22,7 +22,8 @@ class CaseExpressionBuilder<T> implements JpaFunction, CaseRoot, CaseConditionRo
 	}
 
 	@Override
-	public jakarta.persistence.criteria.Expression prepareFunction(CriteriaBuilder cb, jakarta.persistence.criteria.Expression left, ExpressionConverter converter) {
+	public jakarta.persistence.criteria.Expression prepareFunction(CriteriaBuilder cb,
+			jakarta.persistence.criteria.Expression left, ExpressionConverter converter) {
 		CriteriaBuilder.Case<Object> selectCase = cb.selectCase();
 		jakarta.persistence.criteria.Expression result = selectCase;
 		for (CaseWhenThan wt : cases) {
@@ -304,4 +305,3 @@ class CaseExpressionBuilder<T> implements JpaFunction, CaseRoot, CaseConditionRo
 		}
 	}
 }
-

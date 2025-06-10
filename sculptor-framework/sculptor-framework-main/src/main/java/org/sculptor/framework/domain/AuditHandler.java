@@ -24,11 +24,11 @@ import java.util.Set;
  * @author Ing. Pavel Tavoda
  */
 public interface AuditHandler<T> {
-    public boolean isChanged(Property<? super T> property);
+	public boolean isChanged(Property<? super T> property);
 
-    public Serializable getOldValue(Property<? super T> property);
+	public Serializable getOldValue(Property<? super T> property);
 
-    public Serializable getNewValue(Property<? super T> property);
+	public Serializable getNewValue(Property<? super T> property);
 
-    public Set<Property<? super T>> getOldValueList();
+	public Set<Property<? super T>> getOldValueList();
 }

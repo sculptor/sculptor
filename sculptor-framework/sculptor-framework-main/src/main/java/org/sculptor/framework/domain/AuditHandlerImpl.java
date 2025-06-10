@@ -27,39 +27,37 @@ import java.util.Set;
  * @author Ing. Pavel Tavoda
  */
 public class AuditHandlerImpl<T> implements AuditHandler<T>, Serializable {
-    private static final long serialVersionUID = -5799264861822716653L;
-    private final Map<Property<? super T>, Serializable> oldValues = new HashMap<Property<? super T>, Serializable>();
-    private final Map<Property<? super T>, Serializable> newValues = new HashMap<Property<? super T>, Serializable>();
-    private boolean auditingValues = false;
+	private static final long serialVersionUID = -5799264861822716653L;
+	private final Map<Property<? super T>, Serializable> oldValues = new HashMap<Property<? super T>, Serializable>();
+	private final Map<Property<? super T>, Serializable> newValues = new HashMap<Property<? super T>, Serializable>();
+	private boolean auditingValues = false;
 
-    public boolean isChanged(Property<? super T> property) {
-        return oldValues.containsKey(property);
-    }
+	public boolean isChanged(Property<? super T> property) {
+		return oldValues.containsKey(property);
+	}
 
-    public Serializable getOldValue(Property<? super T> property) {
-        return oldValues.get(property);
-    }
+	public Serializable getOldValue(Property<? super T> property) {
+		return oldValues.get(property);
+	}
 
-    public Serializable getNewValue(Property<? super T> property) {
-        return newValues.get(property);
-    }
+	public Serializable getNewValue(Property<? super T> property) {
+		return newValues.get(property);
+	}
 
-    public Set<Property<? super T>> getOldValueList() {
-        return Collections.unmodifiableSet(oldValues.keySet());
-    }
+	public Set<Property<? super T>> getOldValueList() {
+		return Collections.unmodifiableSet(oldValues.keySet());
+	}
 
-    public void startAuditing() {
-        auditingValues = true;
-    }
+	public void startAuditing() {
+		auditingValues = true;
+	}
 
-    public void recordChange(Property<? super T> valProp, Serializable oldVal,
-            Serializable newVal) {
-        if (auditingValues
-                && ((oldVal != null && !oldVal.equals(newVal)) || (oldVal == null && newVal != null))) {
-            if (!oldValues.containsKey(valProp)) {
-                oldValues.put(valProp, oldVal);
-            }
-            newValues.put(valProp, newVal);
-        }
-    }
+	public void recordChange(Property<? super T> valProp, Serializable oldVal, Serializable newVal) {
+		if (auditingValues && ((oldVal != null && !oldVal.equals(newVal)) || (oldVal == null && newVal != null))) {
+			if (!oldValues.containsKey(valProp)) {
+				oldValues.put(valProp, oldVal);
+			}
+			newValues.put(valProp, newVal);
+		}
+	}
 }

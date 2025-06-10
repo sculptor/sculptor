@@ -135,7 +135,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 	public void testFindPersonByName() throws Exception {
 		// NamedQuery needs '()', see comments in Person class
 		Assumptions.assumeTrue(!JpaHelper.isJpaProviderDataNucleus(getEntityManager()));
-		List<Person> persons = personService.findPersonByName(getServiceContext(), "Skarsgård");
+		List<Person> persons = personService.findPersonByName(getServiceContext(), "Skarsgï¿½rd");
 		assertEquals(2, persons.size());
 	}
 
@@ -145,7 +145,8 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		PagingParameter pagingParameter = PagingParameter.pageAccess(PagingParameter.DEFAULT_PAGE_SIZE);
 		PagedResult<Person> pagedResult = personService.findAll(getServiceContext(), pagingParameter);
 
-		// Due to missing DbUnit tear-down database operation (locking issues) we are left with
+		// Due to missing DbUnit tear-down database operation (locking issues) we are
+		// left with
 		// data from other tests like PersonRepositoryTest
 		assertTrue(pagedResult.getValues().size() >= 3);
 	}
@@ -162,17 +163,15 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		assertEquals(3, personHaber.get(1).getId().longValue());
 		assertEquals(1, personHaber.get(2).getId().longValue());
 
-		// Values in DB for addresses are [{adress="Makova" city="London"}, {adress="Crievkova" city="Paris"}]
+		// Values in DB for addresses are [{adress="Makova" city="London"},
+		// {adress="Crievkova" city="Paris"}]
 		// Simulate bug #174
-		
+
 		// Combined OR query
 		criteria = ConditionalCriteriaBuilder.criteriaFor(Person.class)
-				.withProperty(PersonProperties.contact().addresses().city()).eq("London")
-				.or()
-				.withProperty(PersonProperties.contact().addresses().adress()).eq("Crievkova")
-				.or()
-				.withProperty(PersonProperties.contact().addresses().city()).eq("Berlin")
-				.build();
+				.withProperty(PersonProperties.contact().addresses().city()).eq("London").or()
+				.withProperty(PersonProperties.contact().addresses().adress()).eq("Crievkova").or()
+				.withProperty(PersonProperties.contact().addresses().city()).eq("Berlin").build();
 		personHaber = personService.findByCondition(getServiceContext(), criteria);
 		assertEquals(2, personHaber.size());
 		assertEquals(3, personHaber.get(0).getId().longValue());
@@ -180,13 +179,9 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 
 		// Combined OR query with distinctRoot()
 		criteria = ConditionalCriteriaBuilder.criteriaFor(Person.class)
-				.withProperty(PersonProperties.contact().addresses().city()).eq("London")
-				.or()
-				.withProperty(PersonProperties.contact().addresses().adress()).eq("Crievkova")
-				.or()
-				.withProperty(PersonProperties.contact().addresses().city()).eq("Berlin")
-				.distinctRoot()
-				.build();
+				.withProperty(PersonProperties.contact().addresses().city()).eq("London").or()
+				.withProperty(PersonProperties.contact().addresses().adress()).eq("Crievkova").or()
+				.withProperty(PersonProperties.contact().addresses().city()).eq("Berlin").distinctRoot().build();
 		personHaber = personService.findByCondition(getServiceContext(), criteria);
 		assertEquals(1, personHaber.size());
 		assertEquals(3, personHaber.get(0).getId().longValue());
@@ -194,8 +189,7 @@ public class PersonServiceTest extends AbstractDbUnitJpaTests implements PersonS
 		// Combined AND query
 		criteria = ConditionalCriteriaBuilder.criteriaFor(Person.class)
 				.withProperty(PersonProperties.contact().addresses().city()).in("London", "Berlin")
-				.withProperty(PersonProperties.contact().addresses().adress()).eq("Makova")
-				.build();
+				.withProperty(PersonProperties.contact().addresses().adress()).eq("Makova").build();
 		personHaber = personService.findByCondition(getServiceContext(), criteria);
 		assertEquals(1, personHaber.size());
 		assertEquals(3, personHaber.get(0).getId().longValue());

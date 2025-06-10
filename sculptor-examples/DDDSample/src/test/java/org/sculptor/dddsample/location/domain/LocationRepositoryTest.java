@@ -10,38 +10,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LocationRepositoryTest extends AbstractDbUnitJpaTests {
-    private LocationRepository locationRepository;
+	private LocationRepository locationRepository;
 
-    @Autowired
-    public void setLocationRepository(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
+	@Autowired
+	public void setLocationRepository(LocationRepository locationRepository) {
+		this.locationRepository = locationRepository;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testFind() throws Exception {
-        final UnLocode melbourne = new UnLocode("AUMEL");
-        Location location = locationRepository.find(melbourne);
-        assertNotNull(location);
-        assertEquals(melbourne, location.getUnLocode());
-    }
+	@Test
+	public void testFind() throws Exception {
+		final UnLocode melbourne = new UnLocode("AUMEL");
+		Location location = locationRepository.find(melbourne);
+		assertNotNull(location);
+		assertEquals(melbourne, location.getUnLocode());
+	}
 
-    @Test
-    public void testFindThrowingLocationNotFoundException() throws LocationNotFoundException {
-        assertThrows(LocationNotFoundException.class, () -> {
-            locationRepository.find(new UnLocode("NOLOC"));
-        });
-    }
+	@Test
+	public void testFindThrowingLocationNotFoundException() throws LocationNotFoundException {
+		assertThrows(LocationNotFoundException.class, () -> {
+			locationRepository.find(new UnLocode("NOLOC"));
+		});
+	}
 
-    @Test
-    public void testFindAll() throws Exception {
-        List<Location> allLocations = locationRepository.findAll();
-        assertNotNull(allLocations);
-        assertEquals(7, allLocations.size());
-    }
+	@Test
+	public void testFindAll() throws Exception {
+		List<Location> allLocations = locationRepository.findAll();
+		assertNotNull(allLocations);
+		assertEquals(7, allLocations.size());
+	}
 
 }

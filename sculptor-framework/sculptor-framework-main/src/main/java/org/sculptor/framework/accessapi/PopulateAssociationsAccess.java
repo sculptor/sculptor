@@ -19,10 +19,9 @@ package org.sculptor.framework.accessapi;
 
 import org.sculptor.framework.domain.AssociationSpecification;
 
-
 /**
  * <p>
- * Populate the specified associations of a persistent object. 
+ * Populate the specified associations of a persistent object.
  * </p>
  * <p>
  * Command design pattern.
@@ -31,18 +30,18 @@ import org.sculptor.framework.domain.AssociationSpecification;
  */
 public interface PopulateAssociationsAccess<T> {
 
-    void setEntity(T entity);
-    
-    /**
-     * Define the associations to populate.
-     */
-    void setAssociationSpecification(AssociationSpecification associationSpecification);
-    
-    void execute();
+	void setEntity(T entity);
 
-    /**
-     * The result of the command.
-     */
-    T getResult();
+	/**
+	 * Define the associations to populate.
+	 */
+	void setAssociationSpecification(AssociationSpecification associationSpecification);
+
+	void execute();
+
+	/**
+	 * The result of the command.
+	 */
+	T getResult();
 
 }

@@ -34,8 +34,8 @@ import org.sculptor.framework.persistence.JpaFlushEagerInterceptor;
  */
 @MessageDriven(name = "planetConsumer", messageListenerInterface = MessageListener.class, activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/addPlanet") })
-@Interceptors({ ServiceContextStoreInterceptor.class, ErrorHandlingInterceptor.class, JpaFlushEagerInterceptor.class })
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/addPlanet")})
+@Interceptors({ServiceContextStoreInterceptor.class, ErrorHandlingInterceptor.class, JpaFlushEagerInterceptor.class})
 public class PlanetConsumerBean extends PlanetConsumerBeanBase implements MessageListener {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;

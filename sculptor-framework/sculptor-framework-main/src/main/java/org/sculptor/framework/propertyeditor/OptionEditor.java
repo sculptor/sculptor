@@ -23,90 +23,93 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.PropertyEditorRegistry;
 
 /**
- * This PropertyEditor is typically used to format 
- * options in select lists. It concatenates the defined
- * properties, using the PropertyEditors already registered
- * for the individual properties.
+ * This PropertyEditor is typically used to format options in select lists. It
+ * concatenates the defined properties, using the PropertyEditors already
+ * registered for the individual properties.
  *
  */
 public class OptionEditor extends PropertyEditorSupport {
-    private PropertyEditorRegistry registry;
-    private String[] properties;
-    private String registryPropertyNamePrefix = "";
-    private String separator = " | ";
+	private PropertyEditorRegistry registry;
+	private String[] properties;
+	private String registryPropertyNamePrefix = "";
+	private String separator = " | ";
 
-    public OptionEditor(PropertyEditorRegistry registry, String[] properties) {
-        this.registry = registry;
-        this.properties = properties;
-    }
-    
-    /**
-     * @param registry The registry with already registered PropertyEditors that
-     *      will be used to format the individual property values.
-     * @param properties The names of the properties to concatenate, it may be nested paths
-     * @param registryPropertyNamePrefix When looking for PropertyEditors in the registry 
-     *      this prefix will be used in front of the property name.
-     */
-    public OptionEditor(PropertyEditorRegistry registry, String[] properties, String registryPropertyNamePrefix) {
-        this(registry, properties);
-        this.registryPropertyNamePrefix = registryPropertyNamePrefix;
-    }
-    
-    public String getSeparator() {
-        return separator;
-    }
+	public OptionEditor(PropertyEditorRegistry registry, String[] properties) {
+		this.registry = registry;
+		this.properties = properties;
+	}
 
-    public void setSeparator(String separator) {
-        this.separator = separator;
-    }
+	/**
+	 * @param registry
+	 *            The registry with already registered PropertyEditors that will be
+	 *            used to format the individual property values.
+	 * @param properties
+	 *            The names of the properties to concatenate, it may be nested paths
+	 * @param registryPropertyNamePrefix
+	 *            When looking for PropertyEditors in the registry this prefix will
+	 *            be used in front of the property name.
+	 */
+	public OptionEditor(PropertyEditorRegistry registry, String[] properties, String registryPropertyNamePrefix) {
+		this(registry, properties);
+		this.registryPropertyNamePrefix = registryPropertyNamePrefix;
+	}
 
-    /**
-     * Format the Object as String of concatenated properties.
-     */
-    public String getAsText() {
+	public String getSeparator() {
+		return separator;
+	}
 
-        Object value = getValue();
-        if (value == null) {
-            return "";
-        }
+	public void setSeparator(String separator) {
+		this.separator = separator;
+	}
 
-        String propertyName = null; // used in error handling below
-        try {
-            StringBuffer label = new StringBuffer();
+	/**
+	 * Format the Object as String of concatenated properties.
+	 */
+	public String getAsText() {
 
-            for (int i = 0; i < properties.length; i++) {
-                propertyName = properties[i];
-                Class<?> propertyType = PropertyUtils.getPropertyType(value, propertyName);
-                Object propertyValue = PropertyUtils.getNestedProperty(value, propertyName);
-                PropertyEditor editor = registry.findCustomEditor(propertyType, registryPropertyNamePrefix + propertyName);
-                if (editor == null) {
-                    label.append(propertyValue);
-                } else {
-                    editor.setValue(propertyValue);
-                    label.append(editor.getAsText());
-                    editor.setValue(null);
-                }
-                
-                if (i < (properties.length - 1)) {
-                    label.append(separator);
-                }
-            }
-            
-            return label.toString();
-            
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Couldn't access " + propertyName + 
-                    " of " + value.getClass().getName() + " : " +
-                    e.getMessage(), e);
-        }
+		Object value = getValue();
+		if (value == null) {
+			return "";
+		}
 
-    }
-    
-    /**
-     * Parse the value from the given text is not supported by this editor
-     */
-    public void setAsText(String text) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("setAsText not supported by OptionEditor");
-    }
+		String propertyName = null; // used in error handling below
+		try {
+			StringBuffer label = new StringBuffer();
+
+			for (int i = 0; i < properties.length; i++) {
+				propertyName = properties[i];
+				Class<?> propertyType = PropertyUtils.getPropertyType(value, propertyName);
+				Object propertyValue = PropertyUtils.getNestedProperty(value, propertyName);
+				PropertyEditor editor = registry.findCustomEditor(propertyType,
+						registryPropertyNamePrefix + propertyName);
+				if (editor == null) {
+					label.append(propertyValue);
+				} else {
+					editor.setValue(propertyValue);
+					label.append(editor.getAsText());
+					editor.setValue(null);
+				}
+
+				if (i < (properties.length - 1)) {
+					label.append(separator);
+				}
+			}
+
+			return label.toString();
+
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Couldn't access " + propertyName + " of " + value.getClass().getName() + " : " + e.getMessage(),
+					e);
+		}
+
+	}
+
+	/**
+	 * Parse the value from the given text is not supported by this editor
+	 */
+	public void setAsText(String text) throws IllegalArgumentException {
+		throw new UnsupportedOperationException("setAsText not supported by OptionEditor");
+	}
 
 }

@@ -1,21 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>archetype.it</groupId>
 	<artifactId>basic-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>0.1-SNAPSHOT</version>
 	<name>New Sculptor Project :: Parent</name>
-
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-
 		<java-version>1.8</java-version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-
 		<sculptor-version>${project.version}</sculptor-version>
 		<jboss-javaee6-version>${jboss-javaee6-version}</jboss-javaee6-version>
 		<hibernate-validator-version>${hibernate-validator-version}</hibernate-validator-version>
@@ -28,19 +23,16 @@
 		<joda-time-version>${joda-time-version}</joda-time-version>
 		<jackson-version>${jackson-version}</jackson-version>
 		<xstream-version>${xstream-version}</xstream-version>
-
 		<junit-version>${junit-version}</junit-version>
 		<hamcrest-version>${hamcrest-version}</hamcrest-version>
 		<hsqldb-version>${hsqldb-version}</hsqldb-version>
 	</properties>
-
 	<modules>
 		<module>../basic</module>
 		<!-- Add web module when needed -->
 		<!-- <module>../basic-web</module> -->
 		<module>../basic-ear</module>
 	</modules>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -71,7 +63,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

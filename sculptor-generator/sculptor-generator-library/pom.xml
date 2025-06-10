@@ -9,7 +9,6 @@
 	</parent>
 	<artifactId>sculptor-generator-library</artifactId>
 	<name>Sculptor :: Generator :: Library</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -48,11 +47,10 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
-            <artifactId>sculptor-generator-templates</artifactId>
+			<artifactId>sculptor-generator-templates</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- The following runtime-dependencies are not added to the shaded library -->
@@ -81,5 +79,4 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
 	</dependencies>
-
 </project>

@@ -16,7 +16,8 @@ import org.sculptor.examples.library.media.domain.MediaCharacterBase;
  */
 @Entity
 @Table(name = "MEDIACHARACTER")
-@NamedQueries({ @NamedQuery(name = "MediaCharacter.findByCharacterName", query = "select c from MediaCharacter as c where c.name = :characterName") })
+@NamedQueries({
+		@NamedQuery(name = "MediaCharacter.findByCharacterName", query = "select c from MediaCharacter as c where c.name = :characterName")})
 public class MediaCharacter extends MediaCharacterBase {
 	private static final long serialVersionUID = 1L;
 

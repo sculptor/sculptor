@@ -29,27 +29,27 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 public class ServiceContextStoreAdvice implements MethodInterceptor {
 
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        if (ServiceContextStore.get() != null) {
-            // this is not the first advice and it should therefore be ignored
-            // it is the first advice that is responsible for setting/clearing
-            // the service context
-            return invocation.proceed();
-        }
-        try {
-            Object[] args = invocation.getArguments();
-            if (args != null) {
-                for (int i = 0; i < args.length; i++) {
-                    if (args[i] instanceof ServiceContext) {
-                        ServiceContextStore.set((ServiceContext) args[i]);
-                        break;
-                    }
-                }
-            }
-            return invocation.proceed();
-        } finally {
-            ServiceContextStore.set(null);
-        }
-    }
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		if (ServiceContextStore.get() != null) {
+			// this is not the first advice and it should therefore be ignored
+			// it is the first advice that is responsible for setting/clearing
+			// the service context
+			return invocation.proceed();
+		}
+		try {
+			Object[] args = invocation.getArguments();
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					if (args[i] instanceof ServiceContext) {
+						ServiceContextStore.set((ServiceContext) args[i]);
+						break;
+					}
+				}
+			}
+			return invocation.proceed();
+		} finally {
+			ServiceContextStore.set(null);
+		}
+	}
 
 }

@@ -8,7 +8,6 @@
 	</parent>
 	<artifactId>sculptor-framework-test</artifactId>
 	<name>Sculptor :: Runtime Framework :: Test</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -37,7 +36,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -53,24 +51,24 @@
 			<artifactId>jakarta.persistence-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-<dependency>
-    <groupId>jakarta.ejb</groupId>
-    <artifactId>jakarta.ejb-api</artifactId>
-<!-- <version>4.0.1</version> -->
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>jakarta.jms</groupId>
-    <artifactId>jakarta.jms-api</artifactId>
-    <!-- <version>3.1.0</version> -->
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>jakarta.servlet</groupId>
-    <artifactId>jakarta.servlet-api</artifactId>
-    <!--<version>6.1.0</version>-->
-    <scope>provided</scope>
-</dependency>
+		<dependency>
+			<groupId>jakarta.ejb</groupId>
+			<artifactId>jakarta.ejb-api</artifactId>
+			<!-- <version>4.0.1</version> -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.jms</groupId>
+			<artifactId>jakarta.jms-api</artifactId>
+			<!-- <version>3.1.0</version> -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<!--<version>6.1.0</version>-->
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -87,12 +85,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<!--
-		<dependency>
-			<groupId>org.glassfish.web</groupId>
-			<artifactId>javax.el</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		-->
+				<dependency>
+					<groupId>org.glassfish.web</groupId>
+					<artifactId>javax.el</artifactId>
+					<scope>compile</scope>
+				</dependency>
+				-->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
@@ -142,5 +140,4 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 </project>

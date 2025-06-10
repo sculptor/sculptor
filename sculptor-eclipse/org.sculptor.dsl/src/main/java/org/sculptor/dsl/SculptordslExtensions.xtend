@@ -41,22 +41,20 @@ class SculptordslExtensions {
 	def static <T extends EObject> Iterator<T> eAllOfClass(EObject obj, Class<T> clazz) {
 		obj?.eAll.filter(clazz)
 	}
-	
 
 	/**
 	 * @return DslSimpleDomainObjects whose type matches attr.type
 	 */
 	def static Iterable<DslSimpleDomainObject> domainObjectsForAttributeType(DslAttribute attr) {
-		attr.rootContainer.eAllOfType(typeof(DslSimpleDomainObject)).filter [it.name == attr.type]
+		attr.rootContainer.eAllOfType(typeof(DslSimpleDomainObject)).filter[it.name == attr.type]
 	}
-
 
 	/**
 	 * @return the first DslSimpleDomainObject whose type matches complexType, or null
 	 */
 	def static firstDomainObjectForType(DslComplexType complexType) {
-		val res = complexType.rootContainer.eAllOfType(typeof(DslSimpleDomainObject)).findFirst [name == complexType.type]
+		val res = complexType.rootContainer.eAllOfType(typeof(DslSimpleDomainObject)).findFirst[name == complexType.type]
 		res
 	}
-	
+
 }

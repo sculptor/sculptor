@@ -25,8 +25,7 @@ public class MavenLogOutputStreamTest extends TestCase {
 
 	public void testLineCount() {
 		@SuppressWarnings("resource")
-		MavenLogOutputStream outputStream = new MavenLogOutputStream(
-				new SilentLog());
+		MavenLogOutputStream outputStream = new MavenLogOutputStream(new SilentLog());
 		outputStream.processLine("test", 0);
 		outputStream.processLine("test", 0);
 		outputStream.processLine("test", 0);
@@ -35,8 +34,7 @@ public class MavenLogOutputStreamTest extends TestCase {
 
 	public void testErrorStreamLineCount() {
 		@SuppressWarnings("resource")
-		MavenLogOutputStream outputStream = new MavenLogOutputStream(
-				new SilentLog(), true);
+		MavenLogOutputStream outputStream = new MavenLogOutputStream(new SilentLog(), true);
 		outputStream.processLine("test", 0);
 		outputStream.processLine("test", 0);
 		outputStream.processLine("test", 0);

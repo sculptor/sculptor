@@ -39,35 +39,34 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * 
  */
 public class DbManagerFilter extends OncePerRequestFilter {
-    TransactionOptions transactionOptions = TransactionOptions.builder()
-            .writeConcern(WriteConcern.MAJORITY)
-            .build();
+	TransactionOptions transactionOptions = TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build();
 
-    public DbManagerFilter() {
-    }
+	public DbManagerFilter() {
+	}
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 
-        DbManager dbManager = lookupDbManager();
+		DbManager dbManager = lookupDbManager();
 
-        try (ClientSession session = dbManager.startSession()) {
-            session.startTransaction(transactionOptions);
-            filterChain.doFilter(request, response);
-        }
-    }
+		try (ClientSession session = dbManager.startSession()) {
+			session.startTransaction(transactionOptions);
+			filterChain.doFilter(request, response);
+		}
+	}
 
-    protected DbManager lookupDbManager() {
-        WebApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-        return context.getBean("mongodbManager", DbManager.class);
-    }
+	protected DbManager lookupDbManager() {
+		WebApplicationContext context = WebApplicationContextUtils
+				.getRequiredWebApplicationContext(getServletContext());
+		return context.getBean("mongodbManager", DbManager.class);
+	}
 
-    public TransactionOptions getTransactionOptions() {
-        return transactionOptions;
-    }
+	public TransactionOptions getTransactionOptions() {
+		return transactionOptions;
+	}
 
-    public void setTransactionOptions(TransactionOptions transactionOptions) {
-        this.transactionOptions = transactionOptions;
-    }
+	public void setTransactionOptions(TransactionOptions transactionOptions) {
+		this.transactionOptions = transactionOptions;
+	}
 }

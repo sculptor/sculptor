@@ -4,28 +4,27 @@ public class ColumnStatResult {
 
 	String fieldName;
 
-	Long count=null;
-	Long countDistinct=null;
-	Double min=null;
-	Double max=null;
-	Double average=null;
-	Double sum=null;
+	Long count = null;
+	Long countDistinct = null;
+	Double min = null;
+	Double max = null;
+	Double average = null;
+	Double sum = null;
 
-
-	String minString=null;
-	String maxString=null;
-	String groupByVal=null;
-	Integer groupByHour=null;
-	Integer groupByDay=null;
-	Integer groupByWeek=null;
-	Integer groupByMonth=null;
-	Integer groupByQuarter=null;
-	Integer groupByYear=null;
-	Integer groupByDow=null;
-	Integer groupByDoy=null;
+	String minString = null;
+	String maxString = null;
+	String groupByVal = null;
+	Integer groupByHour = null;
+	Integer groupByDay = null;
+	Integer groupByWeek = null;
+	Integer groupByMonth = null;
+	Integer groupByQuarter = null;
+	Integer groupByYear = null;
+	Integer groupByDow = null;
+	Integer groupByDoy = null;
 
 	public ColumnStatResult(ColumnStatRequest<?> statRequest) {
-		this.fieldName=statRequest.getColumn().getName();
+		this.fieldName = statRequest.getColumn().getName();
 	}
 
 	// getters
@@ -170,7 +169,7 @@ public class ColumnStatResult {
 	}
 
 	public String toString() {
-		StringBuilder sb=new StringBuilder("ColumnStat[field=");
+		StringBuilder sb = new StringBuilder("ColumnStat[field=");
 		sb.append("'").append(getName()).append("'");
 
 		if (getCount() != null) {

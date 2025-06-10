@@ -38,57 +38,57 @@ import com.google.apphosting.api.ApiProxy.Environment;
  * @author Patrik Nordwall
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
-public abstract class AbstractAppEngineJpaTests { //extends AbstractJUnit4SpringContextTests {
-    private EntityManager entityManager;
+@ContextConfiguration(locations = {"classpath:applicationContext-test.xml"})
+public abstract class AbstractAppEngineJpaTests { // extends AbstractJUnit4SpringContextTests {
+	private EntityManager entityManager;
 
-    public AbstractAppEngineJpaTests() {
-    }
+	public AbstractAppEngineJpaTests() {
+	}
 
-    @BeforeEach
-    public void setUpAppEngine() {
-        AppEngineTestHelper.setUpAppEngine(createAppEngineTestEnvironment());
-        ServiceContextStore.set(getServiceContext());
-    }
+	@BeforeEach
+	public void setUpAppEngine() {
+		AppEngineTestHelper.setUpAppEngine(createAppEngineTestEnvironment());
+		ServiceContextStore.set(getServiceContext());
+	}
 
-    @AfterEach
-    public void tearDownAppEngine() {
-        AppEngineTestHelper.tearDownAppEngine();
-    }
+	@AfterEach
+	public void tearDownAppEngine() {
+		AppEngineTestHelper.tearDownAppEngine();
+	}
 
-    protected ServiceContext getServiceContext() {
-        return AppEngineTestHelper.getServiceContext();
-    }
+	protected ServiceContext getServiceContext() {
+		return AppEngineTestHelper.getServiceContext();
+	}
 
-    @PersistenceContext
-    protected void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+	@PersistenceContext
+	protected void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
-    protected EntityManager getEntityManager() {
-        return entityManager;
-    }
+	protected EntityManager getEntityManager() {
+		return entityManager;
+	}
 
-    /**
-     * flushes the entity manager to get the correct result via jdbc
-     */
-    protected void flush() {
-        getEntityManager().flush();
-    }
+	/**
+	 * flushes the entity manager to get the correct result via jdbc
+	 */
+	protected void flush() {
+		getEntityManager().flush();
+	}
 
-    /**
-     * Subclass may override to provide another environment
-     */
-    protected Environment createAppEngineTestEnvironment() {
-        return new SimpleAppEngineTestEnvironment();
-    }
+	/**
+	 * Subclass may override to provide another environment
+	 */
+	protected Environment createAppEngineTestEnvironment() {
+		return new SimpleAppEngineTestEnvironment();
+	}
 
-    /**
-     * Counts the number of stored instances of an object.
-     */
-    protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
-        Query query = getEntityManager()
-                .createQuery("select count(e) from " + domainObjectClass.getSimpleName() + " e");
-        return (Integer) query.getSingleResult();
-    }
+	/**
+	 * Counts the number of stored instances of an object.
+	 */
+	protected int countRowsInTable(Class<?> domainObjectClass) throws Exception {
+		Query query = getEntityManager()
+				.createQuery("select count(e) from " + domainObjectClass.getSimpleName() + " e");
+		return (Integer) query.getSingleResult();
+	}
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import org.sculptor.framework.accessapi.FindByConditionAccess;
 import org.sculptor.framework.accessapi.FindByConditionAccess2;
 
-
 /**
  * <p>
  * Implementation of Access command FindByConditionAccess.
@@ -31,22 +30,22 @@ import org.sculptor.framework.accessapi.FindByConditionAccess2;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByConditionAccessImpl<T>
-    extends JpaFindByConditionAccessImplGeneric<T,T>
-    implements FindByConditionAccess2<T> {
+public class JpaFindByConditionAccessImpl<T> extends JpaFindByConditionAccessImplGeneric<T, T>
+		implements
+			FindByConditionAccess2<T> {
 
-    public JpaFindByConditionAccessImpl() {
-        super();
-    }
+	public JpaFindByConditionAccessImpl() {
+		super();
+	}
 
-    public JpaFindByConditionAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByConditionAccessImpl(Class<T> type) {
+		super(type);
+	}
 
 	@Override
-    public List<T> getResult() {
-        return getListResult();
-    }
+	public List<T> getResult() {
+		return getListResult();
+	}
 
 	@Override
 	public void executeCount() {

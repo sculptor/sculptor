@@ -13,13 +13,13 @@ import org.sculptor.dddsample.location.domain.Location;
 @Entity(name = "Leg")
 @Table(name = "LEG")
 public class Leg extends LegBase {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    protected Leg() {
-    }
+	protected Leg() {
+	}
 
-    public Leg(CarrierMovement carrierMovement, Location from, Location to) {
-        super(carrierMovement, from, to);
-        Validate.noNullElements(new Object[]{carrierMovement, from, to});
-    }
+	public Leg(CarrierMovement carrierMovement, Location from, Location to) {
+		super(carrierMovement, from, to);
+		Validate.noNullElements(new Object[]{carrierMovement, from, to});
+	}
 }

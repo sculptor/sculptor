@@ -42,9 +42,9 @@ public class PrimitiveTypeMapper {
 	}
 
 	/**
-	 * Translate primitive type names (such as int, long, boolean) to Object
-	 * type names (such as Integer, Long, Boolean). If the primitive type is not
-	 * defined this method will return the primitiveTypeName.
+	 * Translate primitive type names (such as int, long, boolean) to Object type
+	 * names (such as Integer, Long, Boolean). If the primitive type is not defined
+	 * this method will return the primitiveTypeName.
 	 */
 	public String mapPrimitiveType2ObjectTypeName(String primitiveTypeName) {
 		if (primitive2ObjectTypeNameMap.containsKey(primitiveTypeName)) {

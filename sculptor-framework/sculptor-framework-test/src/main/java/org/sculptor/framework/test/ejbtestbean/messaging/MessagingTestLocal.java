@@ -21,10 +21,10 @@ import jakarta.jms.Message;
 
 public interface MessagingTestLocal {
 
-    Destination sendMessage(Destination destination, Message message);
+	Destination sendMessage(Destination destination, Message message);
 
-    Destination sendMessage(Destination destination, String message);
+	Destination sendMessage(Destination destination, String message);
 
-    Message waitForReply(Destination replyDestination, int timeout);
+	Message waitForReply(Destination replyDestination, int timeout);
 
 }

@@ -24,8 +24,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
-public abstract class AbstractBaseMojoTestCase<T extends AbstractMojo>
-		extends AbstractMojoTestCase {
+public abstract class AbstractBaseMojoTestCase<T extends AbstractMojo> extends AbstractMojoTestCase {
 
 	public static final String TEST_PROJECT_FOLDER = "src/test/projects/";
 
@@ -42,8 +41,7 @@ public abstract class AbstractBaseMojoTestCase<T extends AbstractMojo>
 
 		// Copy test project
 		File srcProject = new File(getBasedir(), TEST_PROJECT_FOLDER + name);
-		File targetProject = new File(getBasedir(), "target/test-projects/"
-				+ name);
+		File targetProject = new File(getBasedir(), "target/test-projects/" + name);
 
 		FileUtils.deleteDirectory(targetProject);
 		FileUtils.copyDirectoryStructure(srcProject, targetProject);
@@ -53,8 +51,8 @@ public abstract class AbstractBaseMojoTestCase<T extends AbstractMojo>
 	}
 
 	/**
-	 * Returns Mojo instance for the given goal. The Mojo instance is
-	 * initialized with a {@link MavenProject} created from the test projects in
+	 * Returns Mojo instance for the given goal. The Mojo instance is initialized
+	 * with a {@link MavenProject} created from the test projects in
 	 * <code>"src/test/projects/"</code> by given project name.
 	 */
 	protected T createMojo(MavenProject project, String goal) throws Exception {

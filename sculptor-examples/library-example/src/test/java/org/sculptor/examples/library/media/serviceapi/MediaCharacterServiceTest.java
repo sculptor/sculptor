@@ -17,30 +17,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class MediaCharacterServiceTest extends AbstractDbUnitJpaTests implements MediaCharacterServiceTestBase {
 
-    private MediaCharacterService mediaCharacterService;
+	private MediaCharacterService mediaCharacterService;
 
-    @Autowired
-    public void setMediaCharacterService(MediaCharacterService mediaCharacterService) {
-        this.mediaCharacterService = mediaCharacterService;
-    }
+	@Autowired
+	public void setMediaCharacterService(MediaCharacterService mediaCharacterService) {
+		this.mediaCharacterService = mediaCharacterService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        // use same testdata as for LibraryService
-        if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
-            return "dbunit/LibraryServiceTest_eclipselink.xml";
-        }
-        // datanucleus bug. PrimaryKeyJoinColumn is not working correctly for entities inherited from mappedsuperclass
-        // TODO: report to datanucleus issue tracker
-        else if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
-            return "dbunit/LibraryServiceTest_datanucleus.xml";
-        }
-        return "dbunit/LibraryServiceTest.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		// use same testdata as for LibraryService
+		if (JpaHelper.isJpaProviderEclipselink(getEntityManager())) {
+			return "dbunit/LibraryServiceTest_eclipselink.xml";
+		}
+		// datanucleus bug. PrimaryKeyJoinColumn is not working correctly for entities
+		// inherited from mappedsuperclass
+		// TODO: report to datanucleus issue tracker
+		else if (JpaHelper.isJpaProviderDataNucleus(getEntityManager())) {
+			return "dbunit/LibraryServiceTest_datanucleus.xml";
+		}
+		return "dbunit/LibraryServiceTest.xml";
+	}
 
-    @Test
-    public void testFindAll() throws Exception {
-        List<MediaCharacter> all = mediaCharacterService.findAll(getServiceContext());
-        assertEquals(2, all.size());
-    }
+	@Test
+	public void testFindAll() throws Exception {
+		List<MediaCharacter> all = mediaCharacterService.findAll(getServiceContext());
+		assertEquals(2, all.size());
+	}
 }

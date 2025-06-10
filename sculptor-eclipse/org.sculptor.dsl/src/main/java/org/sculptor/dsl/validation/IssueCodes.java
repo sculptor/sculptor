@@ -20,7 +20,7 @@ package org.sculptor.dsl.validation;
 /**
  * Constants for validation errors.
  * <p>
- * These constants are needed for Quick Fixes 
+ * These constants are needed for Quick Fixes
  */
 public interface IssueCodes {
 

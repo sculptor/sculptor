@@ -33,88 +33,88 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CamelEventBusImpl implements EventBus {
-    private static final String DEFAULT_TOPIC_PREFIX = "direct:";
+	private static final String DEFAULT_TOPIC_PREFIX = "direct:";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Map<EventListener, Consumer> listeners = new HashMap<EventListener, Consumer>();
+	private final Map<EventListener, Consumer> listeners = new HashMap<EventListener, Consumer>();
 
-    @Resource(name = "producerTemplate")
-    private ProducerTemplate producer;
+	@Resource(name = "producerTemplate")
+	private ProducerTemplate producer;
 
-    @Autowired
-    private CamelContext camelContext;
+	@Autowired
+	private CamelContext camelContext;
 
-    private final boolean propagateException;
+	private final boolean propagateException;
 
-    public CamelEventBusImpl() {
-        this.propagateException = false;
-    }
+	public CamelEventBusImpl() {
+		this.propagateException = false;
+	}
 
-    public CamelEventBusImpl(boolean propagateException) {
-        this.propagateException = propagateException;
-    }
+	public CamelEventBusImpl(boolean propagateException) {
+		this.propagateException = propagateException;
+	}
 
-    public boolean publish(String toTopic, Event event) {
-        try {
-            producer.sendBody(prefixed(toTopic), event);
-            return true;
-        } catch (RuntimeException e) {
-            if (propagateException) {
-                throw e;
-            } else {
-                log.warn(String.format("Exception when publishing event %s to topic %s", event, toTopic));
-            }
-            return false;
-        }
-    }
+	public boolean publish(String toTopic, Event event) {
+		try {
+			producer.sendBody(prefixed(toTopic), event);
+			return true;
+		} catch (RuntimeException e) {
+			if (propagateException) {
+				throw e;
+			} else {
+				log.warn(String.format("Exception when publishing event %s to topic %s", event, toTopic));
+			}
+			return false;
+		}
+	}
 
-    public boolean subscribe(String toTopic, final EventSubscriber subscriber) {
-        try {
-            Endpoint endpoint = camelContext.getEndpoint(prefixed(toTopic));
-            Consumer consumer = endpoint.createConsumer(new org.apache.camel.Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    Event event = (Event) exchange.getIn().getBody();
-                    subscriber.receive(event);
-                }
-            });
-            camelContext.addService(consumer);
-            synchronized (listeners) {
-                listeners.put(new EventListener(toTopic, subscriber), consumer);
-            }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        return true;
-    }
+	public boolean subscribe(String toTopic, final EventSubscriber subscriber) {
+		try {
+			Endpoint endpoint = camelContext.getEndpoint(prefixed(toTopic));
+			Consumer consumer = endpoint.createConsumer(new org.apache.camel.Processor() {
+				public void process(Exchange exchange) throws Exception {
+					Event event = (Event) exchange.getIn().getBody();
+					subscriber.receive(event);
+				}
+			});
+			camelContext.addService(consumer);
+			synchronized (listeners) {
+				listeners.put(new EventListener(toTopic, subscriber), consumer);
+			}
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return true;
+	}
 
-    public boolean unsubscribe(String toTopic, EventSubscriber subscriber) {
-        try {
-            EventListener eventListener = new EventListener(toTopic, subscriber);
-            Consumer consumer = null;
-            synchronized (listeners) {
-                consumer = listeners.get(eventListener);
-                listeners.remove(eventListener);
-            }
-            if (consumer != null) {
-                consumer.stop();
-            }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        return true;
-    }
+	public boolean unsubscribe(String toTopic, EventSubscriber subscriber) {
+		try {
+			EventListener eventListener = new EventListener(toTopic, subscriber);
+			Consumer consumer = null;
+			synchronized (listeners) {
+				consumer = listeners.get(eventListener);
+				listeners.remove(eventListener);
+			}
+			if (consumer != null) {
+				consumer.stop();
+			}
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		return true;
+	}
 
-    protected String prefixed(String topic) {
-        if (topic.contains(":")) {
-            return topic;
-        } else {
-            return DEFAULT_TOPIC_PREFIX + topic;
-        }
-    }
+	protected String prefixed(String topic) {
+		if (topic.contains(":")) {
+			return topic;
+		} else {
+			return DEFAULT_TOPIC_PREFIX + topic;
+		}
+	}
 
 }

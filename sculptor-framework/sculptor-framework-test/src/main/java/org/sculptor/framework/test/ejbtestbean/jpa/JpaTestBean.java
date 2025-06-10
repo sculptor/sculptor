@@ -28,17 +28,19 @@ import javax.sql.DataSource;
 import org.sculptor.framework.test.AbstractOpenEJBDbUnitTest;
 
 /**
- * Used by {@link AbstractOpenEJBDbUnitTest}, but can be used directly from application
- * project (<code>test.ejb-jar</code> file) also. The 'openejb.deployments.classpath.include'
- * will cause this EJB to be automatically discovered and deployed when OpenEJB
- * boots up. When using multiple persistence units you have to skip auto deploy
- * by adding the following property to <code>openejb-test.properties</code>:
+ * Used by {@link AbstractOpenEJBDbUnitTest}, but can be used directly from
+ * application project (<code>test.ejb-jar</code> file) also. The
+ * 'openejb.deployments.classpath.include' will cause this EJB to be
+ * automatically discovered and deployed when OpenEJB boots up. When using
+ * multiple persistence units you have to skip auto deploy by adding the
+ * following property to <code>openejb-test.properties</code>:
+ * 
  * <pre>
  * openejb.deployments.classpath.include=
  * </pre>
  * <p>
- * Instead you should deploy it via <code>test.ejb-jar</code> file and define the persistence
- * unit to use.
+ * Instead you should deploy it via <code>test.ejb-jar</code> file and define
+ * the persistence unit to use.
  * 
  * <pre>
  *         &lt;session>
@@ -69,24 +71,24 @@ import org.sculptor.framework.test.AbstractOpenEJBDbUnitTest;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class JpaTestBean implements JpaTestLocal {
 
-    @Resource(name = "DefaultDS", mappedName = "DefaultDS", type = javax.sql.DataSource.class)
-    private DataSource dataSource;
+	@Resource(name = "DefaultDS", mappedName = "DefaultDS", type = javax.sql.DataSource.class)
+	private DataSource dataSource;
 
-    private EntityManager entityManager;
+	private EntityManager entityManager;
 
-    @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
+	@Override
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
 
-    @PersistenceContext
-    protected void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+	@PersistenceContext
+	protected void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
-    @Override
-    public DataSource getDataSource() {
-        return dataSource;
-    }
+	@Override
+	public DataSource getDataSource() {
+		return dataSource;
+	}
 
 }

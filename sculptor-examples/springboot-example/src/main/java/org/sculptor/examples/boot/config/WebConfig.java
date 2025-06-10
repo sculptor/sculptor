@@ -62,7 +62,7 @@ public class WebConfig implements WebMvcConfigurer {
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
 		resolver.setContentNegotiationManager(manager);
 		resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		resolver.setDefaultViews(Arrays.asList(new View[] { xmlView(), jsonView() }));
+		resolver.setDefaultViews(Arrays.asList(new View[]{xmlView(), jsonView()}));
 		return resolver;
 	}
 

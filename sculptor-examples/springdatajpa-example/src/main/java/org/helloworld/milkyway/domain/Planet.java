@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name = "PLANET")
 @NamedQueries({
 		@NamedQuery(name = "Planet.findLargest", query = "select planet from Planet planet where planet.diameter = (select max(planet.diameter) from Planet planet)"),
-		@NamedQuery(name = "Planet.findSmallest", query = "select planet from Planet planet where planet.diameter = (select min(planet.diameter) from Planet planet)") })
+		@NamedQuery(name = "Planet.findSmallest", query = "select planet from Planet planet where planet.diameter = (select min(planet.diameter) from Planet planet)")})
 public class Planet extends PlanetBase {
 
 	private static final long serialVersionUID = 1L;

@@ -10,19 +10,19 @@ import org.eclipse.xtext.web.servlet.XtextServlet
 /**
  * Deploy this class into a servlet container to enable DSL-specific services.
  */
-@WebServlet(name = 'XtextServices', urlPatterns = '/xtext-service/*')
+@WebServlet(name='XtextServices', urlPatterns='/xtext-service/*')
 class SculptordslServlet extends XtextServlet {
-	
+
 	static final long serialVersionUID = 1L
-	
+
 	DisposableRegistry disposableRegistry
-	
+
 	override init() {
 		super.init()
 		val injector = new SculptordslWebSetup().createInjectorAndDoEMFRegistration()
 		disposableRegistry = injector.getInstance(DisposableRegistry)
 	}
-	
+
 	override destroy() {
 		if (disposableRegistry !== null) {
 			disposableRegistry.dispose()
@@ -30,5 +30,5 @@ class SculptordslServlet extends XtextServlet {
 		}
 		super.destroy()
 	}
-	
+
 }

@@ -10,7 +10,6 @@
 	<packaging>maven-archetype</packaging>
 	<name>Sculptor :: Maven :: Archetype for springboot application</name>
 	<description>Maven archetype for a SpringBoot project using the Sculptor code generator</description>
-
 	<build>
 		<extensions>
 			<extension>
@@ -63,5 +62,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
 </project>

@@ -18,8 +18,8 @@ import org.apache.commons.lang3.Validate;
 @Entity(name = "Itinerary")
 @Table(name = "ITINERARY")
 public class Itinerary extends ItineraryBase {
-    private static final long serialVersionUID = 1L;
-    static final Itinerary EMPTY_ITINERARY = new Itinerary();
+	private static final long serialVersionUID = 1L;
+	static final Itinerary EMPTY_ITINERARY = new Itinerary();
 
 	public Itinerary(final List<Leg> legs) {
 		Validate.notEmpty(legs);
@@ -32,13 +32,12 @@ public class Itinerary extends ItineraryBase {
 	}
 
 	@Override
-    public List<Leg> getLegs() {
+	public List<Leg> getLegs() {
 		return Collections.unmodifiableList(super.getLegs());
 	}
 
 	/**
-	 * Test if the given handling event is expected when executing this
-	 * itinerary.
+	 * Test if the given handling event is expected when executing this itinerary.
 	 *
 	 * @param event
 	 *            Event to test.
@@ -60,8 +59,7 @@ public class Itinerary extends ItineraryBase {
 			// carrier movement
 			for (Leg leg : getLegs()) {
 				if (leg.getFrom().equals(event.getLocation())
-						&& leg.getCarrierMovement().equals(
-								event.getCarrierMovement()))
+						&& leg.getCarrierMovement().equals(event.getCarrierMovement()))
 					return true;
 			}
 			return false;
@@ -72,8 +70,7 @@ public class Itinerary extends ItineraryBase {
 			// movement
 			for (Leg leg : getLegs()) {
 				if (leg.getTo().equals(event.getLocation())
-						&& leg.getCarrierMovement().equals(
-								event.getCarrierMovement()))
+						&& leg.getCarrierMovement().equals(event.getCarrierMovement()))
 					return true;
 			}
 			return false;

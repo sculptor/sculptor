@@ -17,36 +17,36 @@
 
 package org.sculptor.framework.accessapi;
 
-
 /**
  * Find domain object with specified natural key.
  *
- * @param <T> domain object type
+ * @param <T>
+ *            domain object type
  */
 public interface FindByKeyAccess<T> extends Cacheable {
 
-    /**
-     * The name of the natural key properties of the Domain Object.
-     * When the key is a single attribute or BasicType it will only
-     * be one property name. When composite keys it will be several.
-     */
-    public void setKeyPropertyNames(String... keyPropertyNames);
+	/**
+	 * The name of the natural key properties of the Domain Object. When the key is
+	 * a single attribute or BasicType it will only be one property name. When
+	 * composite keys it will be several.
+	 */
+	public void setKeyPropertyNames(String... keyPropertyNames);
 
-    /**
-     * The keys to search for. Must be the same number of values
-     * as the number of property names defined in {@link #setKeyPropertyNames}.
-     * When the key is a single attribute or BasicType it will only
-     * be one property value. When composite keys it will be several.
-     */
-    public void setKeyPropertyValues(Object... keyValues);
+	/**
+	 * The keys to search for. Must be the same number of values as the number of
+	 * property names defined in {@link #setKeyPropertyNames}. When the key is a
+	 * single attribute or BasicType it will only be one property value. When
+	 * composite keys it will be several.
+	 */
+	public void setKeyPropertyValues(Object... keyValues);
 
-    public void execute();
+	public void execute();
 
-    /**
-     * The result of the command. null if not found.
-     */
-    public T getResult();
+	/**
+	 * The result of the command. null if not found.
+	 */
+	public T getResult();
 
-    public void setPersistentClass(Class<? extends T> persistentClass);
+	public void setPersistentClass(Class<? extends T> persistentClass);
 
 }

@@ -30,7 +30,8 @@ import org.eclipse.xtext.conversion.impl.QualifiedNameValueConverter
  */
 class SculptordslValueConverters extends DefaultTerminalConverters {
 
-	@Inject QualifiedNameValueConverter qnValueConverter
+	@Inject
+	QualifiedNameValueConverter qnValueConverter
 
 	@ValueConverter(rule="DslJavaIdentifier")
 	def IValueConverter<String> javaIdentifier() {

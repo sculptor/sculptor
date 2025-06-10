@@ -44,7 +44,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	/**
 	 * The enclosing project.
 	 */
-	@Parameter(defaultValue="${project}", readonly = true)
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
@@ -55,15 +55,14 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	protected File outletSrcOnceDir;
 
 	/**
-	 * Directory for non-source-code artifacts. If an artifact with the same
-	 * name already exists, the generation of the artifact will be skipped.
+	 * Directory for non-source-code artifacts. If an artifact with the same name
+	 * already exists, the generation of the artifact will be skipped.
 	 */
 	@Parameter(defaultValue = "src/main/resources", required = true)
 	protected File outletResOnceDir;
 
 	/**
-	 * Directory for source-code artifacts. Existings artifacts will be
-	 * overwritten.
+	 * Directory for source-code artifacts. Existings artifacts will be overwritten.
 	 */
 	@Parameter(defaultValue = "src/generated/java", required = true)
 	protected File outletSrcDir;
@@ -83,15 +82,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	protected File outletWebrootDir;
 
 	/**
-	 * Directory for test source-code artifacts. If an artifact with the same
-	 * name already exists, the generation of the artifact will be skipped.
+	 * Directory for test source-code artifacts. If an artifact with the same name
+	 * already exists, the generation of the artifact will be skipped.
 	 */
 	@Parameter(defaultValue = "src/test/java", required = true)
 	protected File outletSrcTestOnceDir;
 
 	/**
-	 * Directory for test non-source-code artifacts. Existings artifacts will
-	 * not be overwritten.
+	 * Directory for test non-source-code artifacts. Existings artifacts will not be
+	 * overwritten.
 	 */
 	@Parameter(defaultValue = "src/test/resources", required = true)
 	protected File outletResTestOnceDir;
@@ -141,8 +140,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	/**
 	 * Check if the logging should be verbose.
 	 * <p>
-	 * If Maven debug logging is requested "mvn -X" the verbose logging is active
-	 * as well.
+	 * If Maven debug logging is requested "mvn -X" the verbose logging is active as
+	 * well.
 	 * 
 	 * @return true to verbose logging
 	 */
@@ -151,17 +150,17 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Returns the StatusFile (defined via {@link #statusFile}) or
-	 * <code>null</code> if none exists.
+	 * Returns the StatusFile (defined via {@link #statusFile}) or <code>null</code>
+	 * if none exists.
 	 */
 	protected File getStatusFile() {
 		return (statusFile.exists() ? statusFile : null);
 	}
 
 	/**
-	 * Updates the StatusFile (defined via {@link #statusFile}). This file
-	 * indicates the last successful execution of the code generator and is used
-	 * to check the state of the source files.
+	 * Updates the StatusFile (defined via {@link #statusFile}). This file indicates
+	 * the last successful execution of the code generator and is used to check the
+	 * state of the source files.
 	 * 
 	 * @param createdFiles
 	 *            list of files created by the code generator
@@ -172,19 +171,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 		try {
 			for (File createdFile : createdFiles) {
 				try {
-					statusProperties.setProperty(
-							getProjectRelativePath(createdFile),
-							calculateChecksum(createdFile));
+					statusProperties.setProperty(getProjectRelativePath(createdFile), calculateChecksum(createdFile));
 				} catch (IOException e) {
-					getLog().warn(
-							"Checksum calculation failed: " + e.getMessage());
+					getLog().warn("Checksum calculation failed: " + e.getMessage());
 				}
 			}
 			final FileWriter statusWriter = new FileWriter(statusFile);
 			try {
 				statusProperties.store(statusWriter,
-						"Sculptor created the following " + createdFiles.size()
-								+ " files");
+						"Sculptor created the following " + createdFiles.size() + " files");
 				success = true;
 			} finally {
 				statusWriter.close();
@@ -233,8 +228,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Deletes the files in the directories marked as 'generated' and the
-	 * unmodified one-shot generated files.
+	 * Deletes the files in the directories marked as 'generated' and the unmodified
+	 * one-shot generated files.
 	 * <p>
 	 * The list of all previously generated files is retrieved from the StatusFile
 	 * (defined via {@link #statusFile}). Modified one-shot generated files are
@@ -242,7 +237,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 	 */
 	protected boolean deleteGeneratedFiles() {
 		boolean success;
-		
+
 		// First delete all files in the directories marked as 'generated'
 		cleanDirectory(outletSrcDir);
 		cleanDirectory(outletResDir);
@@ -268,33 +263,21 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 						// For one-shot generated files compare checksum before
 						// deleting
 						boolean delete;
-						if (fileName
-								.startsWith(getProjectRelativePath(outletSrcOnceDir))
-								|| fileName
-										.startsWith(getProjectRelativePath(outletResOnceDir))
-								|| fileName
-										.startsWith(getProjectRelativePath(outletWebrootDir))
-								|| fileName
-										.startsWith(getProjectRelativePath(outletSrcTestOnceDir))
-								|| fileName
-										.startsWith(getProjectRelativePath(outletResTestOnceDir))) {
-							delete = calculateChecksum(file).equals(
-									statusFileProps.getProperty(fileName));
-							if (!delete
-									&& (isVerbose() || getLog()
-											.isDebugEnabled())) {
-								getLog().info(
-										"Keeping previously generated modified"
-												+ " file: " + file);
+						if (fileName.startsWith(getProjectRelativePath(outletSrcOnceDir))
+								|| fileName.startsWith(getProjectRelativePath(outletResOnceDir))
+								|| fileName.startsWith(getProjectRelativePath(outletWebrootDir))
+								|| fileName.startsWith(getProjectRelativePath(outletSrcTestOnceDir))
+								|| fileName.startsWith(getProjectRelativePath(outletResTestOnceDir))) {
+							delete = calculateChecksum(file).equals(statusFileProps.getProperty(fileName));
+							if (!delete && (isVerbose() || getLog().isDebugEnabled())) {
+								getLog().info("Keeping previously generated modified" + " file: " + file);
 							}
 						} else {
 							delete = false;
 						}
 						if (delete) {
 							if (isVerbose() || getLog().isDebugEnabled()) {
-								getLog().info(
-										"Deleting previously generated file: "
-												+ file);
+								getLog().info("Deleting previously generated file: " + file);
 							}
 							// We have to make sure the file is deleted on
 							// Windows as well
@@ -302,14 +285,10 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
 							// Delete image file generated from dot file
 							if (fileName.endsWith(".dot")) {
-								File imageFile = new File(getProject()
-										.getBasedir(), fileName + ".png");
+								File imageFile = new File(getProject().getBasedir(), fileName + ".png");
 								if (imageFile.exists()) {
-									if (isVerbose()
-											|| getLog().isDebugEnabled()) {
-										getLog().info(
-												"Deleting previously generated file: "
-														+ imageFile);
+									if (isVerbose() || getLog().isDebugEnabled()) {
+										getLog().info("Deleting previously generated file: " + imageFile);
 									}
 									// We have to make sure the file is deleted
 									// on Windows as well

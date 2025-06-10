@@ -30,19 +30,19 @@ import org.sculptor.framework.accessapi.CountAllAccess;
  */
 public class MongoDbCountAllAccessImpl<T> extends MongoDbAccessBase<T> implements CountAllAccess<T> {
 
-    private long result;
+	private long result;
 
-    public MongoDbCountAllAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbCountAllAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public long getResult() {
-        return this.result;
-    }
+	public long getResult() {
+		return this.result;
+	}
 
-    @Override
-    public void performExecute() {
-        result = getDBCollection().countDocuments();
-    }
+	@Override
+	public void performExecute() {
+		result = getDBCollection().countDocuments();
+	}
 
 }

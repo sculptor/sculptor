@@ -10,13 +10,11 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Runtime Framework</name>
 	<description>Aggregator project for all runtime framework modules</description>
-
 	<modules>
 		<module>sculptor-framework-main</module>
 		<module>sculptor-framework-test</module>
 		<module>sculptor-framework-mongodb</module>
 	</modules>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -28,5 +26,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

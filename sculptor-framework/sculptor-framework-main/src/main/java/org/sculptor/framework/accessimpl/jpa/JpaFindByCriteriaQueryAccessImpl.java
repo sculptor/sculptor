@@ -19,7 +19,6 @@ package org.sculptor.framework.accessimpl.jpa;
 
 import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
 
-
 /**
  * <p>
  * Implementation of Access command FindByCriteriaQueryAccess.
@@ -28,15 +27,15 @@ import org.sculptor.framework.accessapi.FindByCriteriaQueryAccess;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByCriteriaQueryAccessImpl<T>
-    extends JpaFindByCriteriaQueryAccessImplGeneric<T,T>
-    implements FindByCriteriaQueryAccess<T> {
+public class JpaFindByCriteriaQueryAccessImpl<T> extends JpaFindByCriteriaQueryAccessImplGeneric<T, T>
+		implements
+			FindByCriteriaQueryAccess<T> {
 
-    public JpaFindByCriteriaQueryAccessImpl() {
-        super();
-    }
+	public JpaFindByCriteriaQueryAccessImpl() {
+		super();
+	}
 
-    public JpaFindByCriteriaQueryAccessImpl(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByCriteriaQueryAccessImpl(Class<T> type) {
+		super(type);
+	}
 }

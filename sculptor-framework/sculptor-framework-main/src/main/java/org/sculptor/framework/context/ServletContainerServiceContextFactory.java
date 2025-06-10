@@ -23,24 +23,24 @@ import javax.security.auth.Subject;
 
 public class ServletContainerServiceContextFactory extends ServiceContextFactory {
 
-    public ServletContainerServiceContextFactory() {
-        super();
-    }
+	public ServletContainerServiceContextFactory() {
+		super();
+	}
 
-    protected Subject activeSubject() {
-        // JAAS Subject not used
-        return null;
-    }
+	protected Subject activeSubject() {
+		// JAAS Subject not used
+		return null;
+	}
 
-    protected String userIdFromSubject(Subject caller) {
-        // JAAS Subject not used
-        return null;
-    }
+	protected String userIdFromSubject(Subject caller) {
+		// JAAS Subject not used
+		return null;
+	}
 
-    protected Set<String> rolesFromSubject(Subject caller) {
-        // JAAS Subject not used
-        Set<String> roles = new HashSet<String>();
-        return roles;
-    }
+	protected Set<String> rolesFromSubject(Subject caller) {
+		// JAAS Subject not used
+		Set<String> roles = new HashSet<String>();
+		return roles;
+	}
 
 }

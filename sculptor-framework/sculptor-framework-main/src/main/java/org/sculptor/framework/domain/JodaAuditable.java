@@ -26,9 +26,9 @@ public interface JodaAuditable {
 	public void setCreatedDate(DateTime createdDate);
 	public DateTime getCreatedDate();
 
-    public void setLastUpdatedBy(String updatedBy);
-    public String getLastUpdatedBy();
-    public void setLastUpdated(DateTime updateDate);
-    public DateTime getLastUpdated();
+	public void setLastUpdatedBy(String updatedBy);
+	public String getLastUpdatedBy();
+	public void setLastUpdated(DateTime updateDate);
+	public DateTime getLastUpdated();
 
 }

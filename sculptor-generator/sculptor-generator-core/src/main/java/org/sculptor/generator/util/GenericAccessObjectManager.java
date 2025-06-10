@@ -101,14 +101,10 @@ public class GenericAccessObjectManager {
 	}
 
 	public boolean useGenericAccessStrategy(RepositoryOperation op) {
-		return op.getName().equals("findAll") ||
-				op.getName().equals("findByQuery") ||
-				op.getName().equals("findByExample") ||
-				op.getName().equals("findByKeys") ||
-				op.getName().equals("findByNaturalKeys") ||
-				op.getName().equals("findByCondition") ||
-				op.getName().equals("findByConditionAs") ||
-				op.getName().equals("findByCriteria");
+		return op.getName().equals("findAll") || op.getName().equals("findByQuery")
+				|| op.getName().equals("findByExample") || op.getName().equals("findByKeys")
+				|| op.getName().equals("findByNaturalKeys") || op.getName().equals("findByCondition")
+				|| op.getName().equals("findByConditionAs") || op.getName().equals("findByCriteria");
 
 	}
 
@@ -204,8 +200,7 @@ public class GenericAccessObjectManager {
 		}
 
 		protected void addNotFoundException(RepositoryOperation operation) {
-			if (propBase.getBooleanProperty("generate.NotFoundException")
-					&& (operation.getThrows() == null)) {
+			if (propBase.getBooleanProperty("generate.NotFoundException") && (operation.getThrows() == null)) {
 				String objectNotFoundExc = operation.getRepository().getAggregateRoot().getName() + "NotFoundException";
 				operation.setThrows(objectNotFoundExc);
 			}
@@ -472,7 +467,8 @@ public class GenericAccessObjectManager {
 				addParameterFirst(operation, "String", "query");
 			}
 
-			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
+			if (operation.getCollectionType() == null
+					&& (operation.getType() != null || operation.getDomainObjectType() != null)) {
 				helperBase.addHint(operation, "useSingleResult");
 			}
 
@@ -553,7 +549,8 @@ public class GenericAccessObjectManager {
 				addParameterFirst(operation, "jakarta.persistence.criteria.CriteriaQuery", "query");
 			}
 
-			if (operation.getCollectionType() == null && (operation.getType() != null || operation.getDomainObjectType() != null)) {
+			if (operation.getCollectionType() == null
+					&& (operation.getType() != null || operation.getDomainObjectType() != null)) {
 				helperBase.addHint(operation, "useSingleResult");
 			}
 
@@ -696,7 +693,8 @@ public class GenericAccessObjectManager {
 				}
 				addParameter(operation, "java.util.List<" + conditionalCriteriaClass + ">", "condition");
 
-				String colStatParamType = "java.util.List<" + COLUMN_STAT_REQUEST + "<" + aggregateRootClassName(operation) + ">>";
+				String colStatParamType = "java.util.List<" + COLUMN_STAT_REQUEST + "<"
+						+ aggregateRootClassName(operation) + ">>";
 				addParameter(operation, colStatParamType, "columnStat");
 
 				if (propBase.getBooleanProperty("findByConditionStat.paging")) {
@@ -767,7 +765,6 @@ public class GenericAccessObjectManager {
 		}
 
 	}
-
 
 	public class MergeStrategy extends AbstractGenericAccessObjectStrategy {
 

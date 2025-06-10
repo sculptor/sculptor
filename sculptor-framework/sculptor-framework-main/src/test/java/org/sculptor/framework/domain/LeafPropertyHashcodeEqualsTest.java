@@ -6,7 +6,6 @@ import org.sculptor.framework.domain.Property;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class LeafPropertyHashcodeEqualsTest {
 	Property<Person> firstNameProp = PersonProperties.firstName();
 	Property<Person> secondNameProp = PersonProperties.secondName();
@@ -67,7 +66,7 @@ class Person extends Person1 {
 	}
 	public void setSecondName(String secondName) {
 		this.secondName = secondName;
-	}	
+	}
 }
 
 class PersonProperties {

@@ -17,38 +17,38 @@
 package org.sculptor.framework.event;
 
 class EventListener {
-    final String topic;
-    final EventSubscriber subscriber;
+	final String topic;
+	final EventSubscriber subscriber;
 
-    EventListener(String topic, EventSubscriber subscriber) {
-        this.topic = topic;
-        this.subscriber = subscriber;
-    }
+	EventListener(String topic, EventSubscriber subscriber) {
+		this.topic = topic;
+		this.subscriber = subscriber;
+	}
 
-    boolean isInterestedIn(String topic) {
-        return this.topic.equals(topic);
-    }
+	boolean isInterestedIn(String topic) {
+		return this.topic.equals(topic);
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + topic.hashCode();
-        result = prime * result + subscriber.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + topic.hashCode();
+		result = prime * result + subscriber.hashCode();
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        EventListener other = (EventListener) obj;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EventListener other = (EventListener) obj;
 
-        return topic.equals(other.topic) && subscriber.equals(other.subscriber);
-    }
+		return topic.equals(other.topic) && subscriber.equals(other.subscriber);
+	}
 
 }

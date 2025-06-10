@@ -30,8 +30,8 @@ import org.sculptor.framework.event.Event;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Subscribe {
-    String topic() default "";
+	String topic() default "";
 
-    String eventBus() default "eventBus";
+	String eventBus() default "eventBus";
 
 }

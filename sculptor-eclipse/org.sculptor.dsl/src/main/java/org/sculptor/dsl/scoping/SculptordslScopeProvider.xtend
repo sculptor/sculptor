@@ -36,7 +36,7 @@ import org.sculptor.dsl.sculptordsl.DslServiceOperationDelegate
  * 
  * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#scoping
  * on how and when to use it 
- *
+ * 
  */
 class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 
@@ -44,7 +44,7 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val Scope scope = new Scope()
 		val elements = new ArrayList<IEObjectDescription>()
 		val DslDomainObject domainObject = (ctx.eContainer as DslReference).domainObjectType as DslDomainObject
-		domainObject.references.forEach[
+		domainObject.references.forEach [
 			if (it.eContainer !== null) {
 				elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 			}
@@ -59,11 +59,11 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val option = ctx.delegate
 		if (option !== null) {
 			if (option instanceof DslRepository) {
-				option.operations.forEach[
+				option.operations.forEach [
 					elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 				]
 			} else {
-				(option as DslService).operations.forEach[
+				(option as DslService).operations.forEach [
 					elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 				]
 			}
@@ -77,7 +77,7 @@ class SculptordslScopeProvider extends AbstractDeclarativeScopeProvider {
 		val elements = new ArrayList<IEObjectDescription>()
 		val option = ctx.delegate
 		if (option !== null) {
-			option.operations.forEach[
+			option.operations.forEach [
 				elements.add(new EObjectDescription(QualifiedName.create(it.name), it, null))
 			]
 		}

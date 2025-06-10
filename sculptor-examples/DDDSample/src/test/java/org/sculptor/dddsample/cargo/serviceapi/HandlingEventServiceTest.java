@@ -17,31 +17,31 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Spring based transactional test with DbUnit support.
  */
 public class HandlingEventServiceTest extends AbstractDbUnitJpaTests implements HandlingEventServiceTestBase {
-    private HandlingEventService handlingEventService;
+	private HandlingEventService handlingEventService;
 
-    @Autowired
-    public void setHandlingEventService(HandlingEventService handlingEventService) {
-        this.handlingEventService = handlingEventService;
-    }
+	@Autowired
+	public void setHandlingEventService(HandlingEventService handlingEventService) {
+		this.handlingEventService = handlingEventService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testRegister() throws Exception {
-        final DateTime date = new DateTime();
-        final TrackingId trackingId = trackingId("ABC");
-        final CarrierMovementId carrierMovementId = new CarrierMovementId("AAA_BBB");
-        final UnLocode unLocode = new UnLocode("SESTO");
+	@Test
+	public void testRegister() throws Exception {
+		final DateTime date = new DateTime();
+		final TrackingId trackingId = trackingId("ABC");
+		final CarrierMovementId carrierMovementId = new CarrierMovementId("AAA_BBB");
+		final UnLocode unLocode = new UnLocode("SESTO");
 
-        int countBefore = countRowsInTable(HandlingEvent.class, "where cargo = 2");
-        assertEquals(0, countBefore);
+		int countBefore = countRowsInTable(HandlingEvent.class, "where cargo = 2");
+		assertEquals(0, countBefore);
 
-        handlingEventService.register(getServiceContext(), date, trackingId, carrierMovementId, unLocode, Type.LOAD);
+		handlingEventService.register(getServiceContext(), date, trackingId, carrierMovementId, unLocode, Type.LOAD);
 
-        int countAfter = countRowsInTable(HandlingEvent.class, "where cargo = 2");
-        assertEquals(1, countAfter);
-    }
+		int countAfter = countRowsInTable(HandlingEvent.class, "where cargo = 2");
+		assertEquals(1, countAfter);
+	}
 }

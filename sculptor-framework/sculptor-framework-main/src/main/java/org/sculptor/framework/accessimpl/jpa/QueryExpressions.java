@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 /**
  * Holds the expressions of the query
  *
@@ -16,10 +15,10 @@ import java.util.Map.Entry;
  */
 public class QueryExpressions<T> {
 
-    private List<String> selections = new ArrayList<String>();
-    private List<String> groups = new ArrayList<String>();
-    private List<String> orders = new ArrayList<String>();
-    private List<QueryPropertyRestriction> restrictions = new ArrayList<QueryPropertyRestriction>();
+	private List<String> selections = new ArrayList<String>();
+	private List<String> groups = new ArrayList<String>();
+	private List<String> orders = new ArrayList<String>();
+	private List<QueryPropertyRestriction> restrictions = new ArrayList<QueryPropertyRestriction>();
 	private Map<String, Object> parameters = new HashMap<String, Object>();
 	private Class<T> type = null;
 
@@ -52,7 +51,8 @@ public class QueryExpressions<T> {
 	}
 
 	/**
-	 * Tries to select all fields from a class with same name and type declared in entity
+	 * Tries to select all fields from a class with same name and type declared in
+	 * entity
 	 *
 	 * @param selectionType
 	 */
@@ -81,11 +81,11 @@ public class QueryExpressions<T> {
 		return false;
 	}
 
-    public List<String> getGroups() {
+	public List<String> getGroups() {
 		return groups;
 	}
 
-    public void setGroups(List<String> groups) {
+	public void setGroups(List<String> groups) {
 		this.groups = groups;
 	}
 
@@ -113,11 +113,11 @@ public class QueryExpressions<T> {
 		return false;
 	}
 
-    public List<String> getOrders() {
+	public List<String> getOrders() {
 		return orders;
 	}
 
-    public String getOrdersAsString() {
+	public String getOrdersAsString() {
 		return JpaHelper.toSeparatedString(orders, ",");
 	}
 
@@ -149,7 +149,7 @@ public class QueryExpressions<T> {
 		return false;
 	}
 
-    public List<QueryPropertyRestriction> getRestrictions() {
+	public List<QueryPropertyRestriction> getRestrictions() {
 		return restrictions;
 	}
 
@@ -159,20 +159,17 @@ public class QueryExpressions<T> {
 
 	public void addRestrictions(Map<String, Object> restrictions) {
 		for (Entry<String, Object> restriction : restrictions.entrySet()) {
-			this.restrictions.add(
-					new QueryPropertyRestriction(restriction.getKey(), restriction.getValue()));
+			this.restrictions.add(new QueryPropertyRestriction(restriction.getKey(), restriction.getValue()));
 		}
 	}
 
-    public void addRestriction(String property, Object value) {
-		this.restrictions.add(
-				new QueryPropertyRestriction(property, value));
-    }
+	public void addRestriction(String property, Object value) {
+		this.restrictions.add(new QueryPropertyRestriction(property, value));
+	}
 
-    public void addRestriction(String property, QueryPropertyRestriction.Operator operator, Object value) {
-        this.restrictions.add(
-                new QueryPropertyRestriction(property, operator, value));
-    }
+	public void addRestriction(String property, QueryPropertyRestriction.Operator operator, Object value) {
+		this.restrictions.add(new QueryPropertyRestriction(property, operator, value));
+	}
 
 	public Map<String, Object> getParameters() {
 		return parameters;
@@ -182,7 +179,7 @@ public class QueryExpressions<T> {
 		this.parameters = parameters;
 	}
 
-    public void addParameter(String parameter, Object value) {
-    	parameters.put(parameter, value);
-    }
+	public void addParameter(String parameter, Object value) {
+		parameters.put(parameter, value);
+	}
 }

@@ -38,7 +38,7 @@ public class CleanMojo extends AbstractGeneratorMojo {
 	 * <p>
 	 * Can be set from command line using '-Dsculptor.clean.skip=true'.
 	 */
-	@Parameter(property="sculptor.clean.skip", defaultValue="false")
+	@Parameter(property = "sculptor.clean.skip", defaultValue = "false")
 	private boolean skip;
 
 	/**
@@ -50,8 +50,7 @@ public class CleanMojo extends AbstractGeneratorMojo {
 		return skip;
 	}
 
-	public final void execute() throws MojoExecutionException,
-			MojoFailureException {
+	public final void execute() throws MojoExecutionException, MojoFailureException {
 
 		// If skip flag set then omit clean-up
 		if (isSkip()) {
@@ -69,8 +68,7 @@ public class CleanMojo extends AbstractGeneratorMojo {
 					// well
 					FileUtils.forceDelete(statusFile);
 				} catch (IOException e) {
-					throw new MojoExecutionException(
-							"Deleting status file failed", e);
+					throw new MojoExecutionException("Deleting status file failed", e);
 				}
 				if (isVerbose()) {
 					getLog().info("Deleted status file: " + statusFile);

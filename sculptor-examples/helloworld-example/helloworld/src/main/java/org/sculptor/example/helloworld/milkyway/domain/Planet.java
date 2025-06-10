@@ -6,36 +6,36 @@ import javax.persistence.Table;
 /**
  * EntityImpl representing Planet.
  * <p>
- * This class is responsible for the domain object related business logic for Planet. Properties and associations are implemented in
- * the generated base class {@link PlanetBase}.
+ * This class is responsible for the domain object related business logic for
+ * Planet. Properties and associations are implemented in the generated base
+ * class {@link PlanetBase}.
  */
 
 @Entity
 @Table(name = "PLANET")
 public class Planet extends PlanetBase {
 
-    private static final long serialVersionUID = -5098471604527709435L;
+	private static final long serialVersionUID = -5098471604527709435L;
 
-    /**
-     * Don't use this constructor.
-     * This constructor is public due to DataNucleus.
-     */
-    // DataNucleus need a public no args constructor
-    public Planet() {
-    }
+	/**
+	 * Don't use this constructor. This constructor is public due to DataNucleus.
+	 */
+	// DataNucleus need a public no args constructor
+	public Planet() {
+	}
 
-    public Planet(String name) {
-        super(name);
-    }
+	public Planet(String name) {
+		super(name);
+	}
 
-    public Moon getMoon(String moonName) {
-        for (Moon moon : getMoons()) {
-            if (moon.getName().equals(moonName)) {
-                return moon;
-            }
-        }
-        // not found
-        return null;
-    }
+	public Moon getMoon(String moonName) {
+		for (Moon moon : getMoons()) {
+			if (moon.getName().equals(moonName)) {
+				return moon;
+			}
+		}
+		// not found
+		return null;
+	}
 
 }

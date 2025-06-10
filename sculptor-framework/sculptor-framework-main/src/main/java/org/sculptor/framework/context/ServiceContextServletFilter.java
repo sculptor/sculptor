@@ -36,10 +36,10 @@ import org.sculptor.framework.util.FactoryConfiguration;
  * reqest. The ServiceContext instance is stored in the thread local
  * {@link org.sculptor.framework.context.ServiceContextStore}.
  * <p>
- * The ServiceContext is created by 
- * {@link org.sculptor.framework.context.ServiceContextFactory}
- * and the concrete factory implementation is configurable by init-param 
- * 'ServiceContextFactoryImplementationClassName'. 
+ * The ServiceContext is created by
+ * {@link org.sculptor.framework.context.ServiceContextFactory} and the concrete
+ * factory implementation is configurable by init-param
+ * 'ServiceContextFactoryImplementationClassName'.
  * <p>
  * The filter will also copy attributes from the HTTP Session to the
  * ServiceContext instance. The attribute names to copy is configurable by the
@@ -51,72 +51,74 @@ import org.sculptor.framework.util.FactoryConfiguration;
  */
 public class ServiceContextServletFilter implements Filter {
 
-    private static final String SERVICE_CONTEXT_FACTORY_IMPLEMENTATION_INIT_PARAM = "ServiceContextFactoryImplementationClassName";
-    private static final String COPY_SESSION_ATTRIBUTES_INIT_PARAM = "copySessionAttributes";
+	private static final String SERVICE_CONTEXT_FACTORY_IMPLEMENTATION_INIT_PARAM = "ServiceContextFactoryImplementationClassName";
+	private static final String COPY_SESSION_ATTRIBUTES_INIT_PARAM = "copySessionAttributes";
 
-    private String[] copySessionAttributes;
+	private String[] copySessionAttributes;
 
-    public ServiceContextServletFilter() {
-        super();
-    }
+	public ServiceContextServletFilter() {
+		super();
+	}
 
-    public void destroy() {
+	public void destroy() {
 
-    }
+	}
 
-    public void init(FilterConfig filterConfig) throws ServletException {
-        initServiceContextFactoryImplementationClassName(filterConfig);
-        initCopySessionAttributes(filterConfig);
-    }
-    
-    private void initServiceContextFactoryImplementationClassName(FilterConfig filterConfig) {
-        final String serviceContextFactoryImplementationClassName = filterConfig.getInitParameter(SERVICE_CONTEXT_FACTORY_IMPLEMENTATION_INIT_PARAM);
-        if (serviceContextFactoryImplementationClassName != null && !serviceContextFactoryImplementationClassName.equals("")) {
-            ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
-                public String getFactoryImplementationClassName() {
-                    return serviceContextFactoryImplementationClassName;
-                }
-                
-            });
-        }
-    }
+	public void init(FilterConfig filterConfig) throws ServletException {
+		initServiceContextFactoryImplementationClassName(filterConfig);
+		initCopySessionAttributes(filterConfig);
+	}
 
-    private void initCopySessionAttributes(FilterConfig filterConfig) {
-        String copySessionAttributesParam = filterConfig.getInitParameter(COPY_SESSION_ATTRIBUTES_INIT_PARAM);
-        if (copySessionAttributesParam != null && !copySessionAttributesParam.equals("")) {
-            copySessionAttributes = copySessionAttributesParam.split(",");
-            for (int i = 0; i < copySessionAttributes.length; i++) {
-                copySessionAttributes[i] = copySessionAttributes[i].trim();
-            }
-        }
-    }
+	private void initServiceContextFactoryImplementationClassName(FilterConfig filterConfig) {
+		final String serviceContextFactoryImplementationClassName = filterConfig
+				.getInitParameter(SERVICE_CONTEXT_FACTORY_IMPLEMENTATION_INIT_PARAM);
+		if (serviceContextFactoryImplementationClassName != null
+				&& !serviceContextFactoryImplementationClassName.equals("")) {
+			ServiceContextFactory.setConfiguration(new FactoryConfiguration() {
+				public String getFactoryImplementationClassName() {
+					return serviceContextFactoryImplementationClassName;
+				}
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-            ServletException {
-        try {
-            ServiceContext ctx = ServiceContextFactory.createServiceContext(request);
-            copySessionAttributes((HttpServletRequest) request, ctx);
-            ServiceContextStore.set(ctx);
+			});
+		}
+	}
 
-            chain.doFilter(request, response);
+	private void initCopySessionAttributes(FilterConfig filterConfig) {
+		String copySessionAttributesParam = filterConfig.getInitParameter(COPY_SESSION_ATTRIBUTES_INIT_PARAM);
+		if (copySessionAttributesParam != null && !copySessionAttributesParam.equals("")) {
+			copySessionAttributes = copySessionAttributesParam.split(",");
+			for (int i = 0; i < copySessionAttributes.length; i++) {
+				copySessionAttributes[i] = copySessionAttributes[i].trim();
+			}
+		}
+	}
 
-        } finally {
-            ServiceContextStore.set(null);
-        }
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		try {
+			ServiceContext ctx = ServiceContextFactory.createServiceContext(request);
+			copySessionAttributes((HttpServletRequest) request, ctx);
+			ServiceContextStore.set(ctx);
 
-    }
+			chain.doFilter(request, response);
 
-    private void copySessionAttributes(HttpServletRequest request, ServiceContext ctx) {
-        if (copySessionAttributes == null) {
-            return; // nothing to copy
-        }
-        HttpSession session = request.getSession();
-        for (int i = 0; i < copySessionAttributes.length; i++) {
-            Object value = session.getAttribute(copySessionAttributes[i]);
-            if (value instanceof Serializable) {
-                ctx.setProperty(copySessionAttributes[i], (Serializable) value);
-            }
-        }
-    }
+		} finally {
+			ServiceContextStore.set(null);
+		}
+
+	}
+
+	private void copySessionAttributes(HttpServletRequest request, ServiceContext ctx) {
+		if (copySessionAttributes == null) {
+			return; // nothing to copy
+		}
+		HttpSession session = request.getSession();
+		for (int i = 0; i < copySessionAttributes.length; i++) {
+			Object value = session.getAttribute(copySessionAttributes[i]);
+			if (value instanceof Serializable) {
+				ctx.setProperty(copySessionAttributes[i], (Serializable) value);
+			}
+		}
+	}
 
 }

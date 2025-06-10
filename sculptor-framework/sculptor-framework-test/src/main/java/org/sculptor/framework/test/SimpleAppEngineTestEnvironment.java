@@ -30,43 +30,43 @@ public class SimpleAppEngineTestEnvironment implements ApiProxy.Environment {
 
 	@Override
 	public String getAppId() {
-        return "test";
-    }
+		return "test";
+	}
 
 	@Override
-    public String getVersionId() {
-        return "1.0";
-    }
+	public String getVersionId() {
+		return "1.0";
+	}
 
 	@Override
-    public String getEmail() {
-        return "foo.bar@gmail.com";
-    }
+	public String getEmail() {
+		return "foo.bar@gmail.com";
+	}
 
 	@Override
-    public boolean isLoggedIn() {
-        return true;
-    }
+	public boolean isLoggedIn() {
+		return true;
+	}
 
 	@Override
-    public boolean isAdmin() {
-        return false;
-    }
+	public boolean isAdmin() {
+		return false;
+	}
 
 	@Override
-    public String getAuthDomain() {
-        return "test";
-    }
+	public String getAuthDomain() {
+		return "test";
+	}
 
 	@Override
-    public String getRequestNamespace() {
-        return "";
-    }
+	public String getRequestNamespace() {
+		return "";
+	}
 
 	@Override
-    public Map<String, Object> getAttributes() {
-        return new HashMap<String, Object>();
-    }
+	public Map<String, Object> getAttributes() {
+		return new HashMap<String, Object>();
+	}
 
 	@Override
 	public long getRemainingMillis() {

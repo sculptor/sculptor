@@ -23,23 +23,23 @@ import java.util.Set;
  * Specification of the associations to be populated on request by a client.
  */
 public class AssociationSpecification extends AbstractDomainObject {
-    private static final long serialVersionUID = -8048504029628479107L;
+	private static final long serialVersionUID = -8048504029628479107L;
 
-    private final Set<String> associationNames = new HashSet<String>();
+	private final Set<String> associationNames = new HashSet<String>();
 
-    public AssociationSpecification() {
-    }
+	public AssociationSpecification() {
+	}
 
-    public AssociationSpecification(String associationName) {
-        addAssociationName(associationName);
-    }
+	public AssociationSpecification(String associationName) {
+		addAssociationName(associationName);
+	}
 
-    public void addAssociationName(String associationName) {
-        associationNames.add(associationName);
-    }
+	public void addAssociationName(String associationName) {
+		associationNames.add(associationName);
+	}
 
-    public Set<String> getAssociationNames() {
-        return associationNames;
-    }
+	public Set<String> getAssociationNames() {
+		return associationNames;
+	}
 
 }

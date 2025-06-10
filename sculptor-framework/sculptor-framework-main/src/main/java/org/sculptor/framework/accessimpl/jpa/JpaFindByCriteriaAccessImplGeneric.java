@@ -28,7 +28,6 @@ import jakarta.persistence.criteria.Root;
 
 import org.sculptor.framework.accessapi.FindByCriteriaAccess2;
 
-
 /**
  * <p>
  * Implementation of Access command FindByCriteriaAccess.
@@ -37,60 +36,60 @@ import org.sculptor.framework.accessapi.FindByCriteriaAccess2;
  * Command design pattern.
  * </p>
  */
-public class JpaFindByCriteriaAccessImplGeneric<T,R>
-    extends JpaCriteriaQueryAccessBase<T,R>
-    implements FindByCriteriaAccess2<R> {
+public class JpaFindByCriteriaAccessImplGeneric<T, R> extends JpaCriteriaQueryAccessBase<T, R>
+		implements
+			FindByCriteriaAccess2<R> {
 
-    private Set<String> fetchAssociations = new HashSet<String>();
-    private Map<String, Object> restrictions = new HashMap<String, Object>();
+	private Set<String> fetchAssociations = new HashSet<String>();
+	private Map<String, Object> restrictions = new HashMap<String, Object>();
 
-    public JpaFindByCriteriaAccessImplGeneric() {
-        super();
-    }
+	public JpaFindByCriteriaAccessImplGeneric() {
+		super();
+	}
 
-    public JpaFindByCriteriaAccessImplGeneric(Class<T> type) {
-        super(type);
-    }
+	public JpaFindByCriteriaAccessImplGeneric(Class<T> type) {
+		super(type);
+	}
 
-    public JpaFindByCriteriaAccessImplGeneric(Class<T> type, Class<R> resultType) {
-        super(type, resultType);
-    }
+	public JpaFindByCriteriaAccessImplGeneric(Class<T> type, Class<R> resultType) {
+		super(type, resultType);
+	}
 
 	public void setRestrictions(Map<String, Object> restrictions) {
-	    if (restrictions == null)
-	        return;
-	    this.restrictions.putAll(restrictions);
-    }
+		if (restrictions == null)
+			return;
+		this.restrictions.putAll(restrictions);
+	}
 
-    public void addRestriction(String name, Object value) {
-        restrictions.put(name, value);
-    }
+	public void addRestriction(String name, Object value) {
+		restrictions.put(name, value);
+	}
 
-    public void setFetchAssociations(Set<String> associationPaths) {
-        this.fetchAssociations = associationPaths;
-    }
+	public void setFetchAssociations(Set<String> associationPaths) {
+		this.fetchAssociations = associationPaths;
+	}
 
-    public void addFetchAssociation(String associationPath) {
-        this.fetchAssociations.add(associationPath);
-    }
+	public void addFetchAssociation(String associationPath) {
+		this.fetchAssociations.add(associationPath);
+	}
 
-    protected Set<String> getFetchAssociations() {
-        return fetchAssociations;
-    }
+	protected Set<String> getFetchAssociations() {
+		return fetchAssociations;
+	}
 
 	public List<R> getResult() {
-        return getListResult();
-    }
+		return getListResult();
+	}
 
 	@Override
-    protected List<Predicate> prepareWhere() {
-	    return prepareWhere(restrictions);
-    }
+	protected List<Predicate> prepareWhere() {
+		return prepareWhere(restrictions);
+	}
 
-    @Override
-    protected void prepareFetch(Root<T> root, QueryConfig config) {
-        for (String path : fetchAssociations) {
-            root.fetch(path);
-        }
-    }
+	@Override
+	protected void prepareFetch(Root<T> root, QueryConfig config) {
+		for (String path : fetchAssociations) {
+			root.fetch(path);
+		}
+	}
 }

@@ -49,35 +49,35 @@ public class DroolsAdvice implements MethodInterceptor, ApplicationContextAware 
 	private ApplicationContext appContext;
 	private KnowledgeAgent kagent;
 
-	int updateInterval=300; // 5 min
-	String ruleSet="/CompanyPolicy.xml";
-	boolean catchAllExceptions=false;
+	int updateInterval = 300; // 5 min
+	String ruleSet = "/CompanyPolicy.xml";
+	boolean catchAllExceptions = false;
 
 	public Object invoke(MethodInvocation procJointpoint) throws Throwable {
-		long startTimeExec=System.currentTimeMillis();
+		long startTimeExec = System.currentTimeMillis();
 		log.info("############# START DROOLS RULES");
-		RequestDescription req=new RequestDescription( procJointpoint);
+		RequestDescription req = new RequestDescription(procJointpoint);
 		try {
 			Object[] arguments = procJointpoint.getArguments();
 			ServiceContext ctx;
 			int startArg;
 			if (arguments[0] instanceof ServiceContext) {
-				ctx=(ServiceContext) arguments[0];
-				startArg=1;
+				ctx = (ServiceContext) arguments[0];
+				startArg = 1;
 			} else {
-				ctx=ServiceContextStore.get();
-				startArg=0;
+				ctx = ServiceContextStore.get();
+				startArg = 0;
 			}
 
-			HashMap<String, Object> objects=new HashMap<String, Object>();
-			for (int i=startArg; i < arguments.length; i++) {
-				objects.put("arg"+i, arguments[i]);
+			HashMap<String, Object> objects = new HashMap<String, Object>();
+			for (int i = startArg; i < arguments.length; i++) {
+				objects.put("arg" + i, arguments[i]);
 			}
 			objects.put("request", req);
 			objects.put("service", procJointpoint.getThis());
 			objects.put("username", ServiceContextStore.getCurrentUser());
 
-			HashMap<String, Object> globals=new HashMap<String, Object>();
+			HashMap<String, Object> globals = new HashMap<String, Object>();
 			if (ctx != null) {
 				globals.put("serviceContext", ctx);
 			}
@@ -91,15 +91,15 @@ public class DroolsAdvice implements MethodInterceptor, ApplicationContextAware 
 			applyCompanyPolicy(objects, globals);
 		} catch (Throwable th) {
 			if (catchAllExceptions) {
-				while(th.getCause() != null) {
-					th=th.getCause();
+				while (th.getCause() != null) {
+					th = th.getCause();
 				}
-				log.warn("Applying company policy finished with error: "+th.getMessage(), th);
+				log.warn("Applying company policy finished with error: " + th.getMessage(), th);
 			} else {
 				throw th;
 			}
 		} finally {
-			log.info("############# END DROOLS RULES ("+(System.currentTimeMillis() - startTimeExec)+" ms)");
+			log.info("############# END DROOLS RULES (" + (System.currentTimeMillis() - startTimeExec) + " ms)");
 		}
 
 		if (req.wasProceed() && req.getLastResult() != null && req.getLastResult() instanceof Throwable) {
@@ -112,15 +112,16 @@ public class DroolsAdvice implements MethodInterceptor, ApplicationContextAware 
 	}
 
 	private void applyCompanyPolicy(HashMap<String, Object> objects, HashMap<String, Object> globals) {
-		if (kagent==null) {
+		if (kagent == null) {
 			synchronized (DroolsAdvice.class) {
-				if (kagent==null) {
-					KnowledgeAgent unconfigAgent = KnowledgeAgentFactory.newKnowledgeAgent( "CompanyPolicyAgent" );
+				if (kagent == null) {
+					KnowledgeAgent unconfigAgent = KnowledgeAgentFactory.newKnowledgeAgent("CompanyPolicyAgent");
 					unconfigAgent.applyChangeSet(ResourceFactory.newClassPathResource(getDroolsRuleSet()));
 
-					ResourceChangeScannerConfiguration sconf = ResourceFactory.getResourceChangeScannerService().newResourceChangeScannerConfiguration();
-					sconf.setProperty( "drools.resource.scanner.interval", Integer.toString(getUpdateInterval()) );
-					ResourceFactory.getResourceChangeScannerService().configure( sconf );
+					ResourceChangeScannerConfiguration sconf = ResourceFactory.getResourceChangeScannerService()
+							.newResourceChangeScannerConfiguration();
+					sconf.setProperty("drools.resource.scanner.interval", Integer.toString(getUpdateInterval()));
+					ResourceFactory.getResourceChangeScannerService().configure(sconf);
 					ResourceFactory.getResourceChangeNotifierService().start();
 					ResourceFactory.getResourceChangeScannerService().start();
 
@@ -132,22 +133,22 @@ public class DroolsAdvice implements MethodInterceptor, ApplicationContextAware 
 		StatelessKnowledgeSession slSession = kagent.newStatelessKnowledgeSession();
 		List<Command<?>> cmds = new ArrayList<Command<?>>();
 		if (globals != null && globals.size() > 0) {
-			for (Iterator<String> keys=globals.keySet().iterator(); keys.hasNext();) {
-				String key=keys.next();
+			for (Iterator<String> keys = globals.keySet().iterator(); keys.hasNext();) {
+				String key = keys.next();
 				cmds.add(CommandFactory.newSetGlobal(key, globals.get(key)));
 			}
 		}
 
 		if (objects != null && objects.size() > 0) {
-			for (Iterator<String> keys=objects.keySet().iterator(); keys.hasNext();) {
-				String key=keys.next();
-				cmds.add( CommandFactory.newInsert(objects.get(key), key) );
+			for (Iterator<String> keys = objects.keySet().iterator(); keys.hasNext();) {
+				String key = keys.next();
+				cmds.add(CommandFactory.newInsert(objects.get(key), key));
 			}
 		}
 		// For stateless sesion is automatic
 		// cmds.add(CommandFactory.newFireAllRules());
 
-		slSession.execute( CommandFactory.newBatchExecution( cmds ) );
+		slSession.execute(CommandFactory.newBatchExecution(cmds));
 	}
 
 	public int getUpdateInterval() {
@@ -178,6 +179,6 @@ public class DroolsAdvice implements MethodInterceptor, ApplicationContextAware 
 	 * Dependency injection, ApplicationContextAware.
 	 */
 	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
-		this.appContext=appContext;
+		this.appContext = appContext;
 	}
 }

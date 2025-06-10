@@ -33,11 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DBUnit tear down operation that deletes all tables in the database.
- * The difference between this and {@link org.dbunit.operation.DeleteAllOperation}
- * is that this uses {@link org.dbunit.database.DatabaseSequenceFilter}
- * to determine the order of the tables and this affects all tables
- * in the database, not only the ones in the data set.
+ * DBUnit tear down operation that deletes all tables in the database. The
+ * difference between this and {@link org.dbunit.operation.DeleteAllOperation}
+ * is that this uses {@link org.dbunit.database.DatabaseSequenceFilter} to
+ * determine the order of the tables and this affects all tables in the
+ * database, not only the ones in the data set.
  *
  * @author Patrik Nordwall
  */

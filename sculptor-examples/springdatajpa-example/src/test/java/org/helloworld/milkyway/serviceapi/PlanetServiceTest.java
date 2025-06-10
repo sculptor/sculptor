@@ -21,7 +21,8 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
 
 	@Test
 	public void testFindById() throws Exception {
-		Planet earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
+		Planet earth = planetService.findById(getServiceContext(), 1L)
+				.orElseThrow(() -> new NotFoundException("Planet"));
 		assertEquals("Earth", earth.getName());
 	}
 
@@ -45,7 +46,8 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
 
 	@Test
 	public void testSave() throws Exception {
-		Planet earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
+		Planet earth = planetService.findById(getServiceContext(), 1L)
+				.orElseThrow(() -> new NotFoundException("Planet"));
 		int diameterBefore = earth.getDiameter();
 		earth.setDiameter(diameterBefore + 100);
 		planetService.save(getServiceContext(), earth);
@@ -56,7 +58,8 @@ public class PlanetServiceTest extends AbstractDbUnitJpaTests implements PlanetS
 	@Test
 	public void testDelete() throws Exception {
 		int planetsBefore = countRowsInTable(Planet.class);
-		Planet earth = planetService.findById(getServiceContext(), 1L).orElseThrow(() -> new NotFoundException("Planet"));
+		Planet earth = planetService.findById(getServiceContext(), 1L)
+				.orElseThrow(() -> new NotFoundException("Planet"));
 		planetService.delete(getServiceContext(), earth);
 		int planetsAfter = countRowsInTable(Planet.class);
 		assertEquals(planetsBefore - 1, planetsAfter);

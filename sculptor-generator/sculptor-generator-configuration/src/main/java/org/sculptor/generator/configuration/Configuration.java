@@ -16,7 +16,6 @@
  */
 package org.sculptor.generator.configuration;
 
-
 /**
  * Constants for configuration.
  */

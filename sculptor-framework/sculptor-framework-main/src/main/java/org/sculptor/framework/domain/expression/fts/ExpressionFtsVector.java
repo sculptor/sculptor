@@ -14,13 +14,15 @@ public interface ExpressionFtsVector<T> extends Expression<T> {
 	// divides the rank by the document length
 	public int NORM_LENGTH = 2;
 
-	// divides the rank by the mean harmonic distance between extents (this is implemented only by ts_rank_cd)
+	// divides the rank by the mean harmonic distance between extents (this is
+	// implemented only by ts_rank_cd)
 	public int NORM_MHD = 4;
 
 	// divides the rank by the number of unique words in document
 	public int NORM_UNIQUE_WORDS = 8;
 
-	// divides the rank by 1 + the logarithm of the number of unique words in document
+	// divides the rank by 1 + the logarithm of the number of unique words in
+	// document
 	public int NORM_UNIQUE_WORDS_LOG = 16;
 
 	// divides the rank by itself + 1
@@ -32,13 +34,16 @@ public interface ExpressionFtsVector<T> extends Expression<T> {
 	ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query);
 	ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, int normalization);
 	ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD);
-	ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD, int normalization);
+	ExpressionNumeric<T> ftsRank(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD,
+			int normalization);
 
 	// Cover density ranking, don't use with stripped vector
 	ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query);
 	ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, int normalization);
-	ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD);
-	ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD, int normalization);
+	ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, float weightA, float weightB, float weightC,
+			float weightD);
+	ExpressionNumeric<T> ftsRankCd(ExpressionFtsQuery query, float weightA, float weightB, float weightC, float weightD,
+			int normalization);
 
 	ExpressionFtsVector<T> ftsStrip();
 	ExpressionNumeric<T> ftsLength();

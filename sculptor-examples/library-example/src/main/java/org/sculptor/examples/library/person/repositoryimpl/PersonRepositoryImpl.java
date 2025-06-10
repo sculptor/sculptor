@@ -14,15 +14,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("personRepository")
 public class PersonRepositoryImpl extends PersonRepositoryBase {
-    public PersonRepositoryImpl() {
-    }
+	public PersonRepositoryImpl() {
+	}
 
-    @Override
-    public List<Person> findPersonByName(String name) {
-        List<String> names = Arrays.asList(name.split(" "));
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("names", names);
-        return findByQuery("Person.findPersonByName", parameters);
-    }
+	@Override
+	public List<Person> findPersonByName(String name) {
+		List<String> names = Arrays.asList(name.split(" "));
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("names", names);
+		return findByQuery("Person.findPersonByName", parameters);
+	}
 }
-

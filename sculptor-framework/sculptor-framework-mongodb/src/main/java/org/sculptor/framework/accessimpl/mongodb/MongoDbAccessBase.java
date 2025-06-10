@@ -28,16 +28,16 @@ import org.sculptor.framework.errorhandling.ApplicationException;
  */
 public abstract class MongoDbAccessBase<T> extends MongoDbAccessBaseWithException<T> {
 
-    @Override
-    public void execute() {
-        try {
-            super.execute();
-        } catch (ApplicationException e) {
-            throw new RuntimeException("Don't expect " + e.getClass().getName() + " from execute of "
-                    + getClass().getName());
-        }
-    }
+	@Override
+	public void execute() {
+		try {
+			super.execute();
+		} catch (ApplicationException e) {
+			throw new RuntimeException(
+					"Don't expect " + e.getClass().getName() + " from execute of " + getClass().getName());
+		}
+	}
 
-    @Override
-    public abstract void performExecute();
+	@Override
+	public abstract void performExecute();
 }

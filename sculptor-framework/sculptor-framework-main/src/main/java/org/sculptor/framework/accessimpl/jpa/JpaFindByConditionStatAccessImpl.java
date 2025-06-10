@@ -15,7 +15,9 @@ import java.util.List;
 /**
  * Created by tavoda on 10/27/16.
  */
-public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAccessImplGeneric<T, Tuple> implements FindByConditionStatAccess<T> {
+public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAccessImplGeneric<T, Tuple>
+		implements
+			FindByConditionStatAccess<T> {
 	private List<ColumnStatRequest<T>> columnStatRequest;
 	private List<List<ColumnStatResult>> columnStatResult;
 
@@ -27,7 +29,8 @@ public class JpaFindByConditionStatAccessImpl<T> extends JpaFindByConditionAcces
 	public void setColumnStat(List<ColumnStatRequest<T>> columnStat) {
 		columnStatRequest = columnStat;
 		@SuppressWarnings("unchecked")
-		ConditionalCriteriaBuilder.ConditionRoot<T> criteriaBuilder = (ConditionalCriteriaBuilder.ConditionRoot<T>) ConditionalCriteriaBuilder.criteriaFor(getPersistentClass());
+		ConditionalCriteriaBuilder.ConditionRoot<T> criteriaBuilder = (ConditionalCriteriaBuilder.ConditionRoot<T>) ConditionalCriteriaBuilder
+				.criteriaFor(getPersistentClass());
 		for (ColumnStatRequest<T> statRequest : columnStat) {
 			List<ColumnStatType> statFlags = statRequest.getStatFlags();
 			for (ColumnStatType statType : statFlags) {

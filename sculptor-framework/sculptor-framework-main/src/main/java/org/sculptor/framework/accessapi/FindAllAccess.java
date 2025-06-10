@@ -31,6 +31,6 @@ public interface FindAllAccess<T> extends Cacheable, Ordered, Pageable, FetchEag
 
 	void execute();
 
-    List<T> getResult();
+	List<T> getResult();
 
 }

@@ -17,7 +17,6 @@ package org.sculptor.framework.drools;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-
 /**
  * Class used for sending information about request to Drools engine
  *
@@ -28,19 +27,19 @@ public class RequestDescription {
 	private final String methodName;
 
 	private MethodInvocation joinPoint;
-	private Object lastResult=null;
-	private boolean wasProceed=false;
+	private Object lastResult = null;
+	private boolean wasProceed = false;
 
 	public RequestDescription(MethodInvocation procJoinPoint) {
 		// String serviceName, String methodName) {
-		String serviceClassName=procJoinPoint.getThis().getClass().getSimpleName();
+		String serviceClassName = procJoinPoint.getThis().getClass().getSimpleName();
 		if (serviceClassName.endsWith("Impl")) {
-			serviceClassName=serviceClassName.substring(0, serviceClassName.length()-4);
+			serviceClassName = serviceClassName.substring(0, serviceClassName.length() - 4);
 		}
 
 		this.serviceName = serviceClassName;
 		this.methodName = procJoinPoint.getMethod().getName();
-		this.joinPoint=procJoinPoint;
+		this.joinPoint = procJoinPoint;
 	}
 
 	public String getMethodName() {
@@ -52,19 +51,19 @@ public class RequestDescription {
 	}
 
 	public Object proceed() throws Throwable {
-		wasProceed=true;
-		lastResult=joinPoint.proceed();
+		wasProceed = true;
+		lastResult = joinPoint.proceed();
 		return lastResult;
 	}
 
 	public void setSyntheticResult(Object result) {
-		wasProceed=true;
-		lastResult=result;
+		wasProceed = true;
+		lastResult = result;
 	}
 
 	public void setSyntheticException(Throwable exception) {
-		wasProceed=true;
-		lastResult=exception;
+		wasProceed = true;
+		lastResult = exception;
 	}
 
 	public Object getLastResult() {

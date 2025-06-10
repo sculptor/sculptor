@@ -30,8 +30,8 @@ public interface GenericAccessObjectStrategy {
 	public void addDefaultValues(RepositoryOperation operation);
 
 	/**
-	 * Specify if the constructor of the AccessObject implementation takes the
-	 * class of the persistent object as parameter.
+	 * Specify if the constructor of the AccessObject implementation takes the class
+	 * of the persistent object as parameter.
 	 */
 	public boolean isPersistentClassConstructor();
 

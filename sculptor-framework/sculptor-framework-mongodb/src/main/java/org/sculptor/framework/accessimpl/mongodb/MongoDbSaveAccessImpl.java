@@ -48,145 +48,145 @@ import com.mongodb.DBObject;
  */
 public class MongoDbSaveAccessImpl<T> extends MongoDbAccessBase<T> implements SaveAccess<T> {
 
-    private T entity;
-    private T result;
-    private Collection<T> entities;
+	private T entity;
+	private T result;
+	private Collection<T> entities;
 
-    public MongoDbSaveAccessImpl(Class<T> persistentClass) {
-        setPersistentClass(persistentClass);
-    }
+	public MongoDbSaveAccessImpl(Class<T> persistentClass) {
+		setPersistentClass(persistentClass);
+	}
 
-    public T getEntity() {
-        return entity;
-    }
+	public T getEntity() {
+		return entity;
+	}
 
-    @Override
-    public void setEntity(T entity) {
-        this.entity = entity;
-    }
+	@Override
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 
-    public Collection<T> getEntities() {
-        return entities;
-    }
+	public Collection<T> getEntities() {
+		return entities;
+	}
 
-    @Override
-    public void setEntities(Collection<T> entities) {
-        this.entities = entities;
-    }
+	@Override
+	public void setEntities(Collection<T> entities) {
+		this.entities = entities;
+	}
 
-    @Override
-    public T getResult() {
-        return result;
-    }
+	@Override
+	public T getResult() {
+		return result;
+	}
 
-    @Override
-    public void performExecute() {
-        if (entity != null) {
-            result = performSave(entity);
-        }
-        if (entities != null) {
-            List<T> newInstances = new ArrayList<T>();
-            for (T each : getEntities()) {
-                newInstances.add(performSave(each));
-            }
-            setEntities(newInstances);
-        }
-    }
+	@Override
+	public void performExecute() {
+		if (entity != null) {
+			result = performSave(entity);
+		}
+		if (entities != null) {
+			List<T> newInstances = new ArrayList<T>();
+			for (T each : getEntities()) {
+				newInstances.add(performSave(each));
+			}
+			setEntities(newInstances);
+		}
+	}
 
-    protected T performSave(T obj) {
-        updateAuditInformation(obj);
-        DBObject dbObj = getDataMapper().toData(obj);
+	protected T performSave(T obj) {
+		updateAuditInformation(obj);
+		DBObject dbObj = getDataMapper().toData(obj);
 
-        if (dbObj.containsField("_id")) {
-            if (dbObj.containsField("version")) {
-                updateWithOptimisticLocking(obj, dbObj);
-            } else {
-                update(dbObj.get("_id"), dbObj);
-            }
-        } else {
-            insert(obj, dbObj);
-        }
+		if (dbObj.containsField("_id")) {
+			if (dbObj.containsField("version")) {
+				updateWithOptimisticLocking(obj, dbObj);
+			} else {
+				update(dbObj.get("_id"), dbObj);
+			}
+		} else {
+			insert(obj, dbObj);
+		}
 
-        return obj;
-    }
+		return obj;
+	}
 
-    protected void insert(T obj, DBObject dbObj) {
-        dbObj.put("_id", ObjectId.get());
-        Long newVersion = null;
-        if (dbObj.containsField("version") && dbObj.get("version") == null) {
-            newVersion = 1L;
-            dbObj.put("version", newVersion);
-        }
-        InsertOneResult result = getDBCollection().insertOne(dbObj);
-        IdReflectionUtil.internalSetId(obj, result.getInsertedId().asObjectId().getValue());
-        if (newVersion != null) {
-            IdReflectionUtil.internalSetVersion(obj, newVersion);
-        }
-    }
+	protected void insert(T obj, DBObject dbObj) {
+		dbObj.put("_id", ObjectId.get());
+		Long newVersion = null;
+		if (dbObj.containsField("version") && dbObj.get("version") == null) {
+			newVersion = 1L;
+			dbObj.put("version", newVersion);
+		}
+		InsertOneResult result = getDBCollection().insertOne(dbObj);
+		IdReflectionUtil.internalSetId(obj, result.getInsertedId().asObjectId().getValue());
+		if (newVersion != null) {
+			IdReflectionUtil.internalSetVersion(obj, newVersion);
+		}
+	}
 
-    protected void update(Object objId, DBObject dbObj) {
-        getDBCollection().updateOne(Filters.eq("_id", objId), new Document(dbObj.toMap()));
-    }
+	protected void update(Object objId, DBObject dbObj) {
+		getDBCollection().updateOne(Filters.eq("_id", objId), new Document(dbObj.toMap()));
+	}
 
-    protected void updateWithOptimisticLocking(T obj, DBObject dbObj) {
-        Long version = (Long) dbObj.get("version");
-        Bson q = Filters.and(Filters.eq("_id", dbObj.get("_id")), Filters.eq("version", version));
+	protected void updateWithOptimisticLocking(T obj, DBObject dbObj) {
+		Long version = (Long) dbObj.get("version");
+		Bson q = Filters.and(Filters.eq("_id", dbObj.get("_id")), Filters.eq("version", version));
 
-        Long newVersion;
-        if (version == null) {
-            newVersion = 1L;
-        } else {
-            newVersion = version + 1;
-        }
-        dbObj.put("version", newVersion);
+		Long newVersion;
+		if (version == null) {
+			newVersion = 1L;
+		} else {
+			newVersion = version + 1;
+		}
+		dbObj.put("version", newVersion);
 
-        UpdateResult updateResult = getDBCollection().updateOne(q, new Document(dbObj.toMap()));
-        if (updateResult.getModifiedCount() != 1) {
-            throw new OptimisticLockingException("Optimistic locking violation. Object was updated by someone else.");
-        }
+		UpdateResult updateResult = getDBCollection().updateOne(q, new Document(dbObj.toMap()));
+		if (updateResult.getModifiedCount() != 1) {
+			throw new OptimisticLockingException("Optimistic locking violation. Object was updated by someone else.");
+		}
 
-        IdReflectionUtil.internalSetVersion(obj, newVersion);
-    }
+		IdReflectionUtil.internalSetVersion(obj, newVersion);
+	}
 
-    protected void updateAuditInformation(T obj) {
-        if (obj instanceof Auditable) {
-            changeAuditInformation((Auditable) obj);
-        } else if (obj instanceof DateAuditable) {
-            changeAuditInformation((DateAuditable) obj);
-        } else if (obj instanceof JodaAuditable) {
-            changeAuditInformation((JodaAuditable) obj);
-        }
+	protected void updateAuditInformation(T obj) {
+		if (obj instanceof Auditable) {
+			changeAuditInformation((Auditable) obj);
+		} else if (obj instanceof DateAuditable) {
+			changeAuditInformation((DateAuditable) obj);
+		} else if (obj instanceof JodaAuditable) {
+			changeAuditInformation((JodaAuditable) obj);
+		}
 
-    }
+	}
 
-    private void changeAuditInformation(Auditable auditableEntity) {
-        auditableEntity.setLastUpdated(LocalDateTime.now());
-        String lastUpdatedBy = ServiceContextStore.getCurrentUser();
-        auditableEntity.setLastUpdatedBy(lastUpdatedBy);
-        if (auditableEntity.getCreatedDate() == null)
-            auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
-        if (auditableEntity.getCreatedBy() == null)
-            auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
-    }
+	private void changeAuditInformation(Auditable auditableEntity) {
+		auditableEntity.setLastUpdated(LocalDateTime.now());
+		String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+		auditableEntity.setLastUpdatedBy(lastUpdatedBy);
+		if (auditableEntity.getCreatedDate() == null)
+			auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
+		if (auditableEntity.getCreatedBy() == null)
+			auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
+	}
 
-    private void changeAuditInformation(DateAuditable auditableEntity) {
-        auditableEntity.setLastUpdated(new Date());
-        String lastUpdatedBy = ServiceContextStore.getCurrentUser();
-        auditableEntity.setLastUpdatedBy(lastUpdatedBy);
-        if (auditableEntity.getCreatedDate() == null)
-            auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
-        if (auditableEntity.getCreatedBy() == null)
-            auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
-    }
+	private void changeAuditInformation(DateAuditable auditableEntity) {
+		auditableEntity.setLastUpdated(new Date());
+		String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+		auditableEntity.setLastUpdatedBy(lastUpdatedBy);
+		if (auditableEntity.getCreatedDate() == null)
+			auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
+		if (auditableEntity.getCreatedBy() == null)
+			auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
+	}
 
-    private void changeAuditInformation(JodaAuditable auditableEntity) {
-        auditableEntity.setLastUpdated(new DateTime());
-        String lastUpdatedBy = ServiceContextStore.getCurrentUser();
-        auditableEntity.setLastUpdatedBy(lastUpdatedBy);
-        if (auditableEntity.getCreatedDate() == null)
-            auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
-        if (auditableEntity.getCreatedBy() == null)
-            auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
-    }
+	private void changeAuditInformation(JodaAuditable auditableEntity) {
+		auditableEntity.setLastUpdated(new DateTime());
+		String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+		auditableEntity.setLastUpdatedBy(lastUpdatedBy);
+		if (auditableEntity.getCreatedDate() == null)
+			auditableEntity.setCreatedDate(auditableEntity.getLastUpdated());
+		if (auditableEntity.getCreatedBy() == null)
+			auditableEntity.setCreatedBy(auditableEntity.getLastUpdatedBy());
+	}
 
 }

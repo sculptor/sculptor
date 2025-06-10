@@ -24,39 +24,37 @@ package org.sculptor.framework.errorhandling;
  */
 public class UnexpectedRuntimeException extends SystemException {
 
-    private static final long serialVersionUID = 8966485625275552709L;
+	private static final long serialVersionUID = 8966485625275552709L;
 
-    /**
-     * The errorCode is the same as the fully qualified classname of this
-     * exception.
-     */
-    public static final String ERROR_CODE = UnexpectedRuntimeException.class.getName();
+	/**
+	 * The errorCode is the same as the fully qualified classname of this exception.
+	 */
+	public static final String ERROR_CODE = UnexpectedRuntimeException.class.getName();
 
-    public UnexpectedRuntimeException(RuntimeException e) {
-        this(e.getMessage(), e);
-    }
+	public UnexpectedRuntimeException(RuntimeException e) {
+		this(e.getMessage(), e);
+	}
 
-    /**
-     * @param message
-     *            Technical message. Used for debugging purpose, not intended
-     *            for end users.
-     */
-    public UnexpectedRuntimeException(String message) {
-        this(message, null);
-    }
+	/**
+	 * @param message
+	 *            Technical message. Used for debugging purpose, not intended for
+	 *            end users.
+	 */
+	public UnexpectedRuntimeException(String message) {
+		this(message, null);
+	}
 
-    /**
-     * @param message
-     *            Technical message. Used for debugging purpose, not intended
-     *            for end users.
-     * @param cause
-     *            Original cause of the exception, use with caution since
-     *            clients must include the class of the cause also (e.g. a
-     *            vendor specific database exception should not be exposed to
-     *            clients).
-     */
-    public UnexpectedRuntimeException(String message, Throwable cause) {
-        super(ERROR_CODE, message, cause);
-    }
+	/**
+	 * @param message
+	 *            Technical message. Used for debugging purpose, not intended for
+	 *            end users.
+	 * @param cause
+	 *            Original cause of the exception, use with caution since clients
+	 *            must include the class of the cause also (e.g. a vendor specific
+	 *            database exception should not be exposed to clients).
+	 */
+	public UnexpectedRuntimeException(String message, Throwable cause) {
+		super(ERROR_CODE, message, cause);
+	}
 
 }

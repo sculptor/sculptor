@@ -17,5 +17,5 @@
 package org.sculptor.framework.event;
 
 public interface EventSubscriber {
-    void receive(Event event);
+	void receive(Event event);
 }

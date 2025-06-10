@@ -19,9 +19,9 @@ package org.sculptor.framework.accessapi;
 
 /**
  * <p>
- * Access command for finding objects by simple restrictions
- * of a criteria. The specified {@link #setRestrictions restrictions}
- * are used to build the restrictions with simple equals conditions.
+ * Access command for finding objects by simple restrictions of a criteria. The
+ * specified {@link #setRestrictions restrictions} are used to build the
+ * restrictions with simple equals conditions.
  * </p>
  * <p>
  * Command design pattern.
@@ -33,9 +33,9 @@ public interface FindByCriteriaAccess2<R> extends FindByCriteriaAccess<R>, Count
 	// allow to set query hints like timeout,...
 	void setHint(String hint, Object value);
 
-    void setUseSingleResult(boolean singleResult);
-    R getSingleResult();
+	void setUseSingleResult(boolean singleResult);
+	R getSingleResult();
 
-    void setSelections(String selections);
-    void setGroupBy(String selections);
+	void setSelections(String selections);
+	void setGroupBy(String selections);
 }

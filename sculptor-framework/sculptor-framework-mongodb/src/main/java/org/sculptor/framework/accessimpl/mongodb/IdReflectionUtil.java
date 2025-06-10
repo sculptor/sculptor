@@ -24,56 +24,56 @@ import org.sculptor.framework.domain.Identifiable;
 
 public class IdReflectionUtil {
 
-    public static Serializable internalGetId(Object domainObject) {
-        if (domainObject instanceof Identifiable) {
-            return ((Identifiable) domainObject).getId();
-        }
+	public static Serializable internalGetId(Object domainObject) {
+		if (domainObject instanceof Identifiable) {
+			return ((Identifiable) domainObject).getId();
+		}
 
-        if (PropertyUtils.isReadable(domainObject, "id")) {
-            try {
-                return (Serializable) PropertyUtils.getProperty(domainObject, "id");
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Can't get id property of domainObject: " + domainObject);
-            }
-        } else {
+		if (PropertyUtils.isReadable(domainObject, "id")) {
+			try {
+				return (Serializable) PropertyUtils.getProperty(domainObject, "id");
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Can't get id property of domainObject: " + domainObject);
+			}
+		} else {
 
-            // no id property, don't know if it is new
-            throw new IllegalArgumentException("No id property in domainObject: " + domainObject);
-        }
-    }
+			// no id property, don't know if it is new
+			throw new IllegalArgumentException("No id property in domainObject: " + domainObject);
+		}
+	}
 
-    public static void internalSetId(Object domainObject, Serializable id) {
-        internalSet(domainObject, "id", id);
-    }
+	public static void internalSetId(Object domainObject, Serializable id) {
+		internalSet(domainObject, "id", id);
+	}
 
-    public static void internalSetUuid(Object domainObject, String uuid) {
-        internalSet(domainObject, "uuid", uuid);
-    }
+	public static void internalSetUuid(Object domainObject, String uuid) {
+		internalSet(domainObject, "uuid", uuid);
+	}
 
-    public static void internalSetVersion(Object domainObject, Long version) {
-        internalSet(domainObject, "version", version);
-    }
+	public static void internalSetVersion(Object domainObject, Long version) {
+		internalSet(domainObject, "version", version);
+	}
 
-    public static void internalSet(Object domainObject, String fieldName, Object value) {
-        try {
-            Field field = findField(domainObject.getClass(), fieldName);
-            field.setAccessible(true);
-            field.set(domainObject, value);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Can't get " + fieldName + " field of domainObject: " + domainObject);
-        }
-    }
+	public static void internalSet(Object domainObject, String fieldName, Object value) {
+		try {
+			Field field = findField(domainObject.getClass(), fieldName);
+			field.setAccessible(true);
+			field.set(domainObject, value);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Can't get " + fieldName + " field of domainObject: " + domainObject);
+		}
+	}
 
-    private static Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
-            if (clazz.getSuperclass() == null) {
-                throw e;
-            } else {
-                return findField(clazz.getSuperclass(), fieldName);
-            }
-        }
-    }
+	private static Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+		try {
+			return clazz.getDeclaredField(fieldName);
+		} catch (NoSuchFieldException e) {
+			if (clazz.getSuperclass() == null) {
+				throw e;
+			} else {
+				return findField(clazz.getSuperclass(), fieldName);
+			}
+		}
+	}
 
 }

@@ -25,7 +25,8 @@ public class SculptorGeneratorResult {
 	private List<SculptorGeneratorIssue> issues;
 	private List<File> generatedFiles;
 
-	/* package */ SculptorGeneratorResult(Status status, List<SculptorGeneratorIssue> issues, List<File> generatedFiles) {
+	/* package */ SculptorGeneratorResult(Status status, List<SculptorGeneratorIssue> issues,
+			List<File> generatedFiles) {
 		this.status = status;
 		this.issues = issues;
 		this.generatedFiles = generatedFiles;
@@ -44,7 +45,7 @@ public class SculptorGeneratorResult {
 	}
 
 	public enum Status {
-		SUCCESS, SUCCESS_BUT_WARNINGS, FAILED 
+		SUCCESS, SUCCESS_BUT_WARNINGS, FAILED
 	}
 
 }

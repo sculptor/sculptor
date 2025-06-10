@@ -21,45 +21,45 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class TrackingServiceTest extends AbstractDbUnitJpaTests implements TrackingServiceTestBase {
 
-    private TrackingService trackingService;
+	private TrackingService trackingService;
 
-    @Autowired
-    public void setTrackingService(TrackingService trackingService) {
-        this.trackingService = trackingService;
-    }
+	@Autowired
+	public void setTrackingService(TrackingService trackingService) {
+		this.trackingService = trackingService;
+	}
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/TestData.xml";
-    }
+	@Override
+	protected String getDataSetFile() {
+		return "dbunit/TestData.xml";
+	}
 
-    @Test
-    public void testTrack() throws Exception {
-        final Cargo cargo = new Cargo(trackingId("FGH"), HONGKONG, HELSINKI);
+	@Test
+	public void testTrack() throws Exception {
+		final Cargo cargo = new Cargo(trackingId("FGH"), HONGKONG, HELSINKI);
 
-        // Tested call
-        Cargo trackedCargo = trackingService.track(getServiceContext(), trackingId("FGH"));
-        assertEquals(cargo, trackedCargo);
+		// Tested call
+		Cargo trackedCargo = trackingService.track(getServiceContext(), trackingId("FGH"));
+		assertEquals(cargo, trackedCargo);
 
-        List<HandlingEvent> events = trackedCargo.deliveryHistory().eventsOrderedByCompletionTime();
-        assertEquals(2, events.size());
+		List<HandlingEvent> events = trackedCargo.deliveryHistory().eventsOrderedByCompletionTime();
+		assertEquals(2, events.size());
 
-        HandlingEvent handlingEvent = events.get(0);
-        assertEquals(Type.RECEIVE, handlingEvent.getType());
+		HandlingEvent handlingEvent = events.get(0);
+		assertEquals(Type.RECEIVE, handlingEvent.getType());
 
-        handlingEvent = events.get(1);
-        assertEquals(Type.LOAD, handlingEvent.getType());
-    }
+		handlingEvent = events.get(1);
+		assertEquals(Type.LOAD, handlingEvent.getType());
+	}
 
-    @Test
-    public void testTrackThrowingCargoNotFoundException() throws CargoNotFoundException {
-        assertThrows(CargoNotFoundException.class, () -> {
-            trackingService.track(getServiceContext(), trackingId("ZZZ"));
-        });
-    }
+	@Test
+	public void testTrackThrowingCargoNotFoundException() throws CargoNotFoundException {
+		assertThrows(CargoNotFoundException.class, () -> {
+			trackingService.track(getServiceContext(), trackingId("ZZZ"));
+		});
+	}
 
-    @Test
-    public void testInspectCargo() throws Exception {
-        trackingService.inspectCargo(getServiceContext(), trackingId("FGH"));
-    }
+	@Test
+	public void testInspectCargo() throws Exception {
+		trackingService.inspectCargo(getServiceContext(), trackingId("FGH"));
+	}
 }

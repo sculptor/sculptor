@@ -140,8 +140,8 @@ public class SubscribeBeanPostProcessor implements DestructionAwareBeanPostProce
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		if (!(beanFactory instanceof ListableBeanFactory)) {
-			throw new IllegalArgumentException("Expected instance of 'ListableBeanFactory' but got '"
-					+ beanFactory.getClass() + "'");
+			throw new IllegalArgumentException(
+					"Expected instance of 'ListableBeanFactory' but got '" + beanFactory.getClass() + "'");
 		}
 		this.beanFactory = (ListableBeanFactory) beanFactory;
 	}

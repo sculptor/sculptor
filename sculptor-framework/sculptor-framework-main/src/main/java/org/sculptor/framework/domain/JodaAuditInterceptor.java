@@ -31,62 +31,61 @@ import org.sculptor.framework.context.ServiceContextStore;
  * {@link org.sculptor.framework.domain.JodaAuditable}.
  * <p>
  * It will grab the user from
- * {@link org.sculptor.framework.context.ServiceContext}
- * provided by
+ * {@link org.sculptor.framework.context.ServiceContext} provided by
  * {@link org.sculptor.framework.context.ServiceContextStore}.
  * 
  */
 public class JodaAuditInterceptor extends EmptyInterceptor {
 
-    private static final long serialVersionUID = -4898120478874862611L;
+	private static final long serialVersionUID = -4898120478874862611L;
 
-    @Override
-    public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        // do nothing
-    }
+	@Override
+	public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		// do nothing
+	}
 
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
+	@Override
+	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
+			String[] propertyNames, Type[] types) {
 
-        return changeLastUpdatedInformation(entity, currentState, propertyNames);
-    }
+		return changeLastUpdatedInformation(entity, currentState, propertyNames);
+	}
 
-    @Override
-    public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        return changeLastUpdatedInformation(entity, state, propertyNames);
-    }
+	@Override
+	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		return changeLastUpdatedInformation(entity, state, propertyNames);
+	}
 
-    private boolean changeLastUpdatedInformation(Object entity, Object[] currentState, String[] propertyNames) {
-        boolean result = false;
-        if (entity instanceof JodaAuditable) {
-            String lastUpdatedBy = ServiceContextStore.getCurrentUser();
-            DateTime lastUpdatedDate = new DateTime();
-            for (int i = 0; i < propertyNames.length; i++) {
-                if ("lastUpdated".equals(propertyNames[i])) {
-                    currentState[i] = lastUpdatedDate;
-                    result = true;
-                } else if ("lastUpdatedBy".equals(propertyNames[i])) {
-                    currentState[i] = lastUpdatedBy;
-                    result = true;
-                } else if ("createdDate".equals(propertyNames[i]) && (currentState[i] == null)) {
-                    currentState[i] = lastUpdatedDate;
-                    result = true;
-                } else if ("createdBy".equals(propertyNames[i]) && (currentState[i] == null)) {
-                    currentState[i] = lastUpdatedBy;
-                    result = true;
-                }
-            }
-        }
+	private boolean changeLastUpdatedInformation(Object entity, Object[] currentState, String[] propertyNames) {
+		boolean result = false;
+		if (entity instanceof JodaAuditable) {
+			String lastUpdatedBy = ServiceContextStore.getCurrentUser();
+			DateTime lastUpdatedDate = new DateTime();
+			for (int i = 0; i < propertyNames.length; i++) {
+				if ("lastUpdated".equals(propertyNames[i])) {
+					currentState[i] = lastUpdatedDate;
+					result = true;
+				} else if ("lastUpdatedBy".equals(propertyNames[i])) {
+					currentState[i] = lastUpdatedBy;
+					result = true;
+				} else if ("createdDate".equals(propertyNames[i]) && (currentState[i] == null)) {
+					currentState[i] = lastUpdatedDate;
+					result = true;
+				} else if ("createdBy".equals(propertyNames[i]) && (currentState[i] == null)) {
+					currentState[i] = lastUpdatedBy;
+					result = true;
+				}
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        // Do nothing
+	@Override
+	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		// Do nothing
 
-        return false;
-    }
+		return false;
+	}
 
 }

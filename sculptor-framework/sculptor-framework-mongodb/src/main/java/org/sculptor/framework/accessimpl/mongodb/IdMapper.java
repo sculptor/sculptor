@@ -20,46 +20,46 @@ import java.util.Collections;
 import java.util.List;
 
 public class IdMapper implements DataMapper<Object, String> {
-    private final Class<?> supportedDomainObjectClass;
+	private final Class<?> supportedDomainObjectClass;
 
-    protected IdMapper(Class<?> domainObjectClass) {
-        this.supportedDomainObjectClass = domainObjectClass;
-    }
+	protected IdMapper(Class<?> domainObjectClass) {
+		this.supportedDomainObjectClass = domainObjectClass;
+	}
 
-    public static IdMapper getInstance(Class<?> domainObjectClass) {
-        return new IdMapper(domainObjectClass);
-    }
+	public static IdMapper getInstance(Class<?> domainObjectClass) {
+		return new IdMapper(domainObjectClass);
+	}
 
-    public boolean canMapToData(Class<?> domainObjectClass) {
-        if (domainObjectClass == null) {
-            return true;
-        }
-        return supportedDomainObjectClass.isAssignableFrom(domainObjectClass);
-    }
+	public boolean canMapToData(Class<?> domainObjectClass) {
+		if (domainObjectClass == null) {
+			return true;
+		}
+		return supportedDomainObjectClass.isAssignableFrom(domainObjectClass);
+	}
 
-    public String getDBCollectionName() {
-        throw new IllegalStateException("Not a DBCollection");
-    }
+	public String getDBCollectionName() {
+		throw new IllegalStateException("Not a DBCollection");
+	}
 
-    public String toData(Object from) {
-        if (from == null) {
-            return null;
-        }
-        Object id = IdReflectionUtil.internalGetId(from);
-        if (id == null) {
-            return null;
-        } else {
-            // TODO should it be mongoId
-            return String.valueOf(id);
-        }
-    }
+	public String toData(Object from) {
+		if (from == null) {
+			return null;
+		}
+		Object id = IdReflectionUtil.internalGetId(from);
+		if (id == null) {
+			return null;
+		} else {
+			// TODO should it be mongoId
+			return String.valueOf(id);
+		}
+	}
 
-    public Object toDomain(String from) {
-        throw new UnsupportedOperationException(getClass().getSimpleName()
-                + " cannot map toDomain, it can only map toData");
-    }
+	public Object toDomain(String from) {
+		throw new UnsupportedOperationException(
+				getClass().getSimpleName() + " cannot map toDomain, it can only map toData");
+	}
 
-    public List<IndexSpecification> indexes() {
-        return Collections.emptyList();
-    }
+	public List<IndexSpecification> indexes() {
+		return Collections.emptyList();
+	}
 }

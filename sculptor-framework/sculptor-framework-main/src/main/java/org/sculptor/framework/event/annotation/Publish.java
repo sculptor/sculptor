@@ -37,10 +37,10 @@ import org.sculptor.framework.event.Event;
 @Target(ElementType.METHOD)
 public @interface Publish {
 
-    String topic();
+	String topic();
 
-    Class<? extends Event> eventType() default NullEventType.class;
+	Class<? extends Event> eventType() default NullEventType.class;
 
-    String eventBus() default "eventBus";
+	String eventBus() default "eventBus";
 
 }

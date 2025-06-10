@@ -10,7 +10,6 @@
 	<artifactId>helloworld-ear</artifactId>
 	<packaging>pom</packaging>
 	<name>Sculptor :: Examples :: Pure EJB3 :: EAR</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -35,7 +34,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -44,5 +42,4 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-
 </project>

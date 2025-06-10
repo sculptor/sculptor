@@ -28,37 +28,35 @@ import org.dom4j.Element;
 
 class PersistenceXmlParser {
 
-    private final Set<String> persictenceUnitNames = new HashSet<String>();
+	private final Set<String> persictenceUnitNames = new HashSet<String>();
 
-    @SuppressWarnings("unchecked")
-    void parse(String xml) {
-        try {
-            Document document = DocumentHelper.parseText(xml);
-            Element rootElement = document.getRootElement();
+	@SuppressWarnings("unchecked")
+	void parse(String xml) {
+		try {
+			Document document = DocumentHelper.parseText(xml);
+			Element rootElement = document.getRootElement();
 
-            Iterator<Element> elementIterator = rootElement.elementIterator("persistence-unit");
-            while (elementIterator.hasNext()) {
-                parsePersistentUnit(elementIterator.next());
-            }
+			Iterator<Element> elementIterator = rootElement.elementIterator("persistence-unit");
+			while (elementIterator.hasNext()) {
+				parsePersistentUnit(elementIterator.next());
+			}
 
-        } catch (DocumentException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+		} catch (DocumentException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
 
-    private void parsePersistentUnit(Element persistenceUnitElement) {
-        Attribute persistenceUnitNameAttribute = persistenceUnitElement.attribute("name");
-        if (persistenceUnitNameAttribute == null) {
-            throw new IllegalArgumentException("Invalid persistence.xml, no persistence-unit name");
-        }
+	private void parsePersistentUnit(Element persistenceUnitElement) {
+		Attribute persistenceUnitNameAttribute = persistenceUnitElement.attribute("name");
+		if (persistenceUnitNameAttribute == null) {
+			throw new IllegalArgumentException("Invalid persistence.xml, no persistence-unit name");
+		}
 
-        persictenceUnitNames.add(persistenceUnitNameAttribute.getText());
-    }
+		persictenceUnitNames.add(persistenceUnitNameAttribute.getText());
+	}
 
-    Set<String> getPersictenceUnitNames() {
-        return persictenceUnitNames;
-    }
-
-
+	Set<String> getPersictenceUnitNames() {
+		return persictenceUnitNames;
+	}
 
 }

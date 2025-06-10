@@ -21,7 +21,8 @@ package org.sculptor.generator.chain;
  * overridable template. The {@link ChainOverridable} annotation applies this
  * class as base class for the overriden templates.
  * 
- * @param <T> the overridable template
+ * @param <T>
+ *            the overridable template
  * @see ChainOverridable
  */
 public abstract class ChainLink<T extends ChainLink<T>> {

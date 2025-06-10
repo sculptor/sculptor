@@ -10,21 +10,20 @@ import org.sculptor.dddsample.cargo.exception.CargoNotFoundException;
  *
  */
 public class FindCargoAccessObjectImpl extends FindCargoAccessObjectImplBase {
-    public void performExecute() throws CargoNotFoundException {
+	public void performExecute() throws CargoNotFoundException {
 
-    	try {
-            // Query for id and then perform a standard load().
-            // This way we use the metadata-defined way of loading the aggregate
-            // in an efficient way (generally a complete aggregate at a time),
-            // and we can benefi from the identifier-keyed second level cache
-            // without havng to cache individual queries.
-        	Long id = (Long) getEntityManager()
-        		.createQuery("select id from Cargo where trackingId = :tid").setParameter("tid", getTrackingId())
-        		.getSingleResult();
+		try {
+			// Query for id and then perform a standard load().
+			// This way we use the metadata-defined way of loading the aggregate
+			// in an efficient way (generally a complete aggregate at a time),
+			// and we can benefi from the identifier-keyed second level cache
+			// without havng to cache individual queries.
+			Long id = (Long) getEntityManager().createQuery("select id from Cargo where trackingId = :tid")
+					.setParameter("tid", getTrackingId()).getSingleResult();
 
-             setResult((Cargo) getEntityManager().find(Cargo.class, id));
+			setResult((Cargo) getEntityManager().find(Cargo.class, id));
 		} catch (NoResultException e) {
-            throw new CargoNotFoundException("No cargo for tracking id: " + getTrackingId());
+			throw new CargoNotFoundException("No cargo for tracking id: " + getTrackingId());
 		}
-    }
+	}
 }

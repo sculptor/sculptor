@@ -56,261 +56,258 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractMessageBean {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Resource
-    private MessageDrivenContext mdbContext;
+	@Resource
+	private MessageDrivenContext mdbContext;
 
-    public AbstractMessageBean() {
-    }
+	public AbstractMessageBean() {
+	}
 
-    protected Logger getLog() {
-        return log;
-    }
+	protected Logger getLog() {
+		return log;
+	}
 
-    public void onMessage(Message msg) {
-        if (!checkSupportedMessageTypes(msg)) {
-            return;
-        }
+	public void onMessage(Message msg) {
+		if (!checkSupportedMessageTypes(msg)) {
+			return;
+		}
 
-        try {
-            ServiceContext serviceContext = createServiceContext();
-            serviceContext.setProperty("jms", Boolean.TRUE);
-            boolean redelivered = isJmsRedelivered(msg);
-            serviceContext.setProperty("jmsRedelivered", redelivered);
-            serviceContext.setProperty("jmsMessageID", getJMSMessageID(msg));
-            ServiceContextStore.set(serviceContext);
+		try {
+			ServiceContext serviceContext = createServiceContext();
+			serviceContext.setProperty("jms", Boolean.TRUE);
+			boolean redelivered = isJmsRedelivered(msg);
+			serviceContext.setProperty("jmsRedelivered", redelivered);
+			serviceContext.setProperty("jmsMessageID", getJMSMessageID(msg));
+			ServiceContextStore.set(serviceContext);
 
-            String reply = consume(serviceContext, getMessageText(msg));
-            sendReply(msg, reply);
-        } catch (RuntimeException e) {
-            handleRuntimeException(msg, e);
-        } catch (ApplicationException e) {
-            if (isInvalidMessageException(e)) {
-                handleInvalidMessageException(msg, e);
-            } else {
-                handleApplicationException(e);
-            }
-        }
-    }
+			String reply = consume(serviceContext, getMessageText(msg));
+			sendReply(msg, reply);
+		} catch (RuntimeException e) {
+			handleRuntimeException(msg, e);
+		} catch (ApplicationException e) {
+			if (isInvalidMessageException(e)) {
+				handleInvalidMessageException(msg, e);
+			} else {
+				handleApplicationException(e);
+			}
+		}
+	}
 
-    protected void handleRuntimeException(Message msg, RuntimeException e) {
-        SystemException excToUse = SystemException.unwrapSystemException(e);
-        if (excToUse == null) {
-            excToUse = new UnexpectedRuntimeException(e.getMessage());
-        }
-        if (isInvalidMessageException(excToUse)) {
-            handleInvalidMessageException(msg, excToUse);
-        } else {
-            // re-throw which will cause rollback
-            throw e;
-        }
-    }
+	protected void handleRuntimeException(Message msg, RuntimeException e) {
+		SystemException excToUse = SystemException.unwrapSystemException(e);
+		if (excToUse == null) {
+			excToUse = new UnexpectedRuntimeException(e.getMessage());
+		}
+		if (isInvalidMessageException(excToUse)) {
+			handleInvalidMessageException(msg, excToUse);
+		} else {
+			// re-throw which will cause rollback
+			throw e;
+		}
+	}
 
-    protected void handleInvalidMessageException(Message msg, SystemException e) {
-        if (!e.isLogged()) {
-            log.error((new LogMessage(e)).toString(), e);
-            e.setLogged(true);
-        }
-        sendToInvalidMessageQueue(msg);
-        String invalidMessageReply = formatInvalidMessageReply(e, msg);
-        sendReply(msg, invalidMessageReply);
-    }
+	protected void handleInvalidMessageException(Message msg, SystemException e) {
+		if (!e.isLogged()) {
+			log.error((new LogMessage(e)).toString(), e);
+			e.setLogged(true);
+		}
+		sendToInvalidMessageQueue(msg);
+		String invalidMessageReply = formatInvalidMessageReply(e, msg);
+		sendReply(msg, invalidMessageReply);
+	}
 
-    protected void handleInvalidMessageException(Message msg, ApplicationException e) {
-        if (!e.isLogged()) {
-            log.error((new LogMessage(e)).toString(), e);
-            e.setLogged(true);
-        }
-        sendToInvalidMessageQueue(msg);
-        String invalidMessageReply = formatInvalidMessageReply(e, msg);
-        sendReply(msg, invalidMessageReply);
-    }
+	protected void handleInvalidMessageException(Message msg, ApplicationException e) {
+		if (!e.isLogged()) {
+			log.error((new LogMessage(e)).toString(), e);
+			e.setLogged(true);
+		}
+		sendToInvalidMessageQueue(msg);
+		String invalidMessageReply = formatInvalidMessageReply(e, msg);
+		sendReply(msg, invalidMessageReply);
+	}
 
-    protected void handleApplicationException(ApplicationException e) {
-        if (log.isDebugEnabled() && !e.isLogged()) {
-            LogMessage logMessage = new LogMessage(e);
-            log.debug(logMessage.toString(), e);
-            e.setLogged(true);
-        }
-        mdbContext.setRollbackOnly();
-    }
+	protected void handleApplicationException(ApplicationException e) {
+		if (log.isDebugEnabled() && !e.isLogged()) {
+			LogMessage logMessage = new LogMessage(e);
+			log.debug(logMessage.toString(), e);
+			e.setLogged(true);
+		}
+		mdbContext.setRollbackOnly();
+	}
 
-    protected boolean isJmsRedelivered(Message msg) {
+	protected boolean isJmsRedelivered(Message msg) {
 
-        try {
-            return msg.getJMSRedelivered();
-        } catch (JMSException e) {
-            return false;
-        }
-    }
+		try {
+			return msg.getJMSRedelivered();
+		} catch (JMSException e) {
+			return false;
+		}
+	}
 
-    protected String getJMSMessageID(Message msg) {
-        try {
-            return msg.getJMSMessageID();
-        } catch (JMSException e) {
-            return null;
-        }
-    }
+	protected String getJMSMessageID(Message msg) {
+		try {
+			return msg.getJMSMessageID();
+		} catch (JMSException e) {
+			return null;
+		}
+	}
 
-    /**
-     * Subclass may override to define invalid message exceptions. Default is
-     * {@link org.sculptor.framework.errorhandling.InvalidMessageException}
-     * ,
-     * {@link org.sculptor.framework.xml.XmlMappingException}
-     * and
-     * {@link org.sculptor.framework.errorhandling.ValidationException}
-     */
-    protected boolean isInvalidMessageException(Exception e) {
-        return (e instanceof InvalidMessageException || e instanceof XmlMappingException || e instanceof ValidationException);
-    }
+	/**
+	 * Subclass may override to define invalid message exceptions. Default is
+	 * {@link org.sculptor.framework.errorhandling.InvalidMessageException} ,
+	 * {@link org.sculptor.framework.xml.XmlMappingException} and
+	 * {@link org.sculptor.framework.errorhandling.ValidationException}
+	 */
+	protected boolean isInvalidMessageException(Exception e) {
+		return (e instanceof InvalidMessageException || e instanceof XmlMappingException
+				|| e instanceof ValidationException);
+	}
 
-    protected String formatInvalidMessageReply(ApplicationException e, Message msg) {
-        return formatInvalidMessageReply(e.getErrorCode(), e.getMessage(), msg);
-    }
+	protected String formatInvalidMessageReply(ApplicationException e, Message msg) {
+		return formatInvalidMessageReply(e.getErrorCode(), e.getMessage(), msg);
+	}
 
-    protected String formatInvalidMessageReply(SystemException e, Message msg) {
-        return formatInvalidMessageReply(e.getErrorCode(), e.getMessage(), msg);
-    }
+	protected String formatInvalidMessageReply(SystemException e, Message msg) {
+		return formatInvalidMessageReply(e.getErrorCode(), e.getMessage(), msg);
+	}
 
-    protected String formatInvalidMessageReply(String errorCode, String excMessage, Message msg) {
-        StringBuilder result = new StringBuilder();
-        result.append(errorCode);
-        result.append("\n");
-        result.append(excMessage);
-        result.append(getMessageText(msg));
-        return result.toString();
-    }
+	protected String formatInvalidMessageReply(String errorCode, String excMessage, Message msg) {
+		StringBuilder result = new StringBuilder();
+		result.append(errorCode);
+		result.append("\n");
+		result.append(excMessage);
+		result.append(getMessageText(msg));
+		return result.toString();
+	}
 
-    public String consume(ServiceContext ctx, String textMessage) throws ApplicationException {
-        return consume(textMessage);
-    }
+	public String consume(ServiceContext ctx, String textMessage) throws ApplicationException {
+		return consume(textMessage);
+	}
 
-    /**
-     * @param textMessage
-     *            the incoming text message
-     * @return the reply, return null if there is no reply
-     */
-    public abstract String consume(String textMessage) throws ApplicationException;
+	/**
+	 * @param textMessage
+	 *            the incoming text message
+	 * @return the reply, return null if there is no reply
+	 */
+	public abstract String consume(String textMessage) throws ApplicationException;
 
-    /**
-     * Only TextMessages are supported by default. Subclass may override, but
-     * then {@link #getMessageText(Message)} must also be implemented to support
-     * other message types.
-     */
-    protected boolean checkSupportedMessageTypes(Message msg) {
-        if (msg instanceof TextMessage) {
-            return true;
-        } else {
-            try {
-                log.error("Unsupported message type: " + msg.getJMSType());
-            } catch (JMSException ignore) {
-            }
-            sendToInvalidMessageQueue(msg);
-            return false;
-        }
-    }
+	/**
+	 * Only TextMessages are supported by default. Subclass may override, but then
+	 * {@link #getMessageText(Message)} must also be implemented to support other
+	 * message types.
+	 */
+	protected boolean checkSupportedMessageTypes(Message msg) {
+		if (msg instanceof TextMessage) {
+			return true;
+		} else {
+			try {
+				log.error("Unsupported message type: " + msg.getJMSType());
+			} catch (JMSException ignore) {
+			}
+			sendToInvalidMessageQueue(msg);
+			return false;
+		}
+	}
 
-    protected String getMessageText(Message msg) throws MessageException {
-        try {
-            if (msg instanceof TextMessage) {
-                return ((TextMessage) msg).getText();
-            } else {
-                throw new IllegalArgumentException("Unsupported message type: " + msg.getJMSType());
-            }
-        } catch (JMSException e) {
-            throw new MessageException("Failure when getting text from JMS message: " + e.getMessage(), e);
-        }
-    }
+	protected String getMessageText(Message msg) throws MessageException {
+		try {
+			if (msg instanceof TextMessage) {
+				return ((TextMessage) msg).getText();
+			} else {
+				throw new IllegalArgumentException("Unsupported message type: " + msg.getJMSType());
+			}
+		} catch (JMSException e) {
+			throw new MessageException("Failure when getting text from JMS message: " + e.getMessage(), e);
+		}
+	}
 
-    protected ServiceContext createServiceContext() {
-        ServiceContext defaultCtx = ServiceContextFactory.createServiceContext(getMessageConsumerBeanId());
-        return new ServiceContext(getMessageConsumerBeanId(), defaultCtx.getSessionId(), defaultCtx.getApplicationId(),
-                defaultCtx.getRoles());
-    }
+	protected ServiceContext createServiceContext() {
+		ServiceContext defaultCtx = ServiceContextFactory.createServiceContext(getMessageConsumerBeanId());
+		return new ServiceContext(getMessageConsumerBeanId(), defaultCtx.getSessionId(), defaultCtx.getApplicationId(),
+				defaultCtx.getRoles());
+	}
 
-    protected String getMessageConsumerBeanId() {
-        return getClass().getSimpleName();
-    }
+	protected String getMessageConsumerBeanId() {
+		return getClass().getSimpleName();
+	}
 
-    protected MessageSender getMessageSender() {
-        if (getJmsConnection() == null) {
-            throw new IllegalStateException("Need JMS connection to be able to send messages.");
-        }
-        return new MessageSenderImpl(getJmsConnection());
-    }
+	protected MessageSender getMessageSender() {
+		if (getJmsConnection() == null) {
+			throw new IllegalStateException("Need JMS connection to be able to send messages.");
+		}
+		return new MessageSenderImpl(getJmsConnection());
+	}
 
-    protected void sendToInvalidMessageQueue(Message msg) {
-        if (getJmsConnection() == null || getInvalidMessageQueue() == null) {
-            getLog().info(
-                    "No JmsConnection or queue, message that was not sent to InvalidMessageQueue:\n"
-                            + safeGetMessageText(msg));
-            return;
-        }
-        String messageText = "";
-        try {
-            messageText = getMessageText(msg);
-            getMessageSender().sendMessage(getInvalidMessageQueue(), messageText, getJMSMessageID(msg));
-        } catch (Exception e) {
-            getLog().error("Can't send to InvalidMessageQueue: " + e.getMessage(), e);
-            getLog().info("Message that was not sent to InvalidMessageQueue:\n" + messageText);
-        } finally {
-            closeConnection();
-        }
-    }
+	protected void sendToInvalidMessageQueue(Message msg) {
+		if (getJmsConnection() == null || getInvalidMessageQueue() == null) {
+			getLog().info("No JmsConnection or queue, message that was not sent to InvalidMessageQueue:\n"
+					+ safeGetMessageText(msg));
+			return;
+		}
+		String messageText = "";
+		try {
+			messageText = getMessageText(msg);
+			getMessageSender().sendMessage(getInvalidMessageQueue(), messageText, getJMSMessageID(msg));
+		} catch (Exception e) {
+			getLog().error("Can't send to InvalidMessageQueue: " + e.getMessage(), e);
+			getLog().info("Message that was not sent to InvalidMessageQueue:\n" + messageText);
+		} finally {
+			closeConnection();
+		}
+	}
 
-    private String safeGetMessageText(Message msg) {
-        try {
-            return getMessageText(msg);
-        } catch (Exception e) {
-            return "";
-        }
-    }
+	private String safeGetMessageText(Message msg) {
+		try {
+			return getMessageText(msg);
+		} catch (Exception e) {
+			return "";
+		}
+	}
 
-    protected void sendReply(Message msg, String reply)
-            throws org.sculptor.framework.errorhandling.MessageException {
-        try {
-            if (reply == null) {
-                reply = defaultOkReply();
-            }
-            Destination replyTo = msg.getJMSReplyTo();
-            if (replyTo != null && getJmsConnection() != null) {
-                getMessageSender().sendMessage(replyTo, reply, getJMSMessageID(msg));
-            }
-        } catch (JMSException e) {
-            throw new org.sculptor.framework.errorhandling.MessageException(
-                    "Failure when sending repy: " + reply + "\n" + e.getMessage(), e);
-        } finally {
-            closeConnection();
-        }
-    }
+	protected void sendReply(Message msg, String reply) throws org.sculptor.framework.errorhandling.MessageException {
+		try {
+			if (reply == null) {
+				reply = defaultOkReply();
+			}
+			Destination replyTo = msg.getJMSReplyTo();
+			if (replyTo != null && getJmsConnection() != null) {
+				getMessageSender().sendMessage(replyTo, reply, getJMSMessageID(msg));
+			}
+		} catch (JMSException e) {
+			throw new org.sculptor.framework.errorhandling.MessageException(
+					"Failure when sending repy: " + reply + "\n" + e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+	}
 
-    protected String defaultOkReply() {
-        return "OK";
-    }
+	protected String defaultOkReply() {
+		return "OK";
+	}
 
-    /**
-     * Subclass need to implement this to be able to send messages, such as
-     * reply and send to invalid message queue.
-     */
-    protected Connection getJmsConnection() {
-        return null;
-    }
+	/**
+	 * Subclass need to implement this to be able to send messages, such as reply
+	 * and send to invalid message queue.
+	 */
+	protected Connection getJmsConnection() {
+		return null;
+	}
 
-    /**
-     * Subclass need to implement this to be able to send messages, such as
-     * reply and send to invalid message queue.
-     */
-    protected void closeConnection() {
-    }
+	/**
+	 * Subclass need to implement this to be able to send messages, such as reply
+	 * and send to invalid message queue.
+	 */
+	protected void closeConnection() {
+	}
 
-    /**
-     * Subclass need to implement this to be able to send to invalid message
-     * queue. You could override {@link #sendToInvalidMessageQueue} to implement
-     * some other error handling for invalid messages.
-     */
-    protected Destination getInvalidMessageQueue() {
-        return null;
-    }
+	/**
+	 * Subclass need to implement this to be able to send to invalid message queue.
+	 * You could override {@link #sendToInvalidMessageQueue} to implement some other
+	 * error handling for invalid messages.
+	 */
+	protected Destination getInvalidMessageQueue() {
+		return null;
+	}
 
 }

@@ -39,29 +39,27 @@ import com.mongodb.DBObject;
  */
 public abstract class MongoDbChunkFetcher<T, KEY> extends ChunkFetcherBase<T, KEY> {
 
-    private final MongoCollection<DBObject> dbCollection;
-    private final DataMapper<T, DBObject> dataMapper;
+	private final MongoCollection<DBObject> dbCollection;
+	private final DataMapper<T, DBObject> dataMapper;
 
-    /**
-     * @param restrictionPropertyName
-     *            the name of the property to use for the 'in' criteria
-     */
-    public MongoDbChunkFetcher(MongoCollection<DBObject> dbCollection, DataMapper<T, DBObject> dataMapper,
-            String restrictionPropertyName) {
-        super(restrictionPropertyName);
-        this.dbCollection = dbCollection;
-        this.dataMapper = dataMapper;
-    }
+	/**
+	 * @param restrictionPropertyName
+	 *            the name of the property to use for the 'in' criteria
+	 */
+	public MongoDbChunkFetcher(MongoCollection<DBObject> dbCollection, DataMapper<T, DBObject> dataMapper,
+			String restrictionPropertyName) {
+		super(restrictionPropertyName);
+		this.dbCollection = dbCollection;
+		this.dataMapper = dataMapper;
+	}
 
-    @Override
-    protected List<T> getChunk(Collection<KEY> keys) {
-        List<T> result = new ArrayList<>();
-        Bson filter = Filters.in(getRestrictionPropertyName(), restrictionPropertyValues(keys));
-        dbCollection.find(filter)
-                .map(dataMapper::toDomain)
-                .into(result);
+	@Override
+	protected List<T> getChunk(Collection<KEY> keys) {
+		List<T> result = new ArrayList<>();
+		Bson filter = Filters.in(getRestrictionPropertyName(), restrictionPropertyValues(keys));
+		dbCollection.find(filter).map(dataMapper::toDomain).into(result);
 
-        return result;
-    }
+		return result;
+	}
 
 }

@@ -21,7 +21,7 @@ import org.sculptor.framework.errorhandling.ErrorHandlingInterceptor;
 @WebService(endpointInterface = "org.sculptor.example.ejb.helloworld.milkyway.serviceapi.PlanetWebServiceEndpoint", serviceName = "PlanetWebService")
 // http://localhost:8080/universe/PlanetWebService/WebDelegateEndPoint?wsdl
 @WebContext(contextRoot = "/universe", urlPattern = "/PlanetWebService/WebDelegateEndPoint")
-@Interceptors({ ServiceContextStoreInterceptor.class, ErrorHandlingInterceptor.class })
+@Interceptors({ServiceContextStoreInterceptor.class, ErrorHandlingInterceptor.class})
 public class PlanetWebServiceBean extends PlanetWebServiceBeanBase {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;

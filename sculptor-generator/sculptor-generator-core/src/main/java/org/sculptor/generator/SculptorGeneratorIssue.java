@@ -23,11 +23,9 @@ public interface SculptorGeneratorIssue {
 	String getMessage();
 
 	Throwable getThrowable();
-	
+
 	public enum Severity {
-		ERROR,
-		WARNING,
-		INFO
+		ERROR, WARNING, INFO
 	}
 
 	public static final class SculptorGeneratorIssueImpl implements SculptorGeneratorIssue {
@@ -60,7 +58,7 @@ public interface SculptorGeneratorIssue {
 		public Throwable getThrowable() {
 			return throwable;
 		}
-		
+
 	}
 
 }

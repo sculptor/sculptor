@@ -9,7 +9,6 @@
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-configuration</artifactId>
 	<name>Sculptor :: Generator :: Configuration</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -42,7 +41,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.generator</groupId>
@@ -61,5 +59,4 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
 </project>

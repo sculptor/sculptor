@@ -28,7 +28,6 @@ import java.nio.file.StandardOpenOption;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
-
 public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 
 	private static final String ONE_SHOT_GENERATED_FILE = "src/main/webapp/index.jsp";
@@ -43,14 +42,11 @@ public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 
 	public void testDeleteGeneratedFilesAll() throws Exception {
 		CleanMojo mojo = createMojo(createProject("test2"));
-		assertTrue(new File(mojo.getProject().getBasedir(),
-				ONE_SHOT_GENERATED_FILE).exists());
+		assertTrue(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
 
 		assertTrue(mojo.deleteGeneratedFiles());
-		assertFalse(new File(mojo.getProject().getBasedir(),
-				ONE_SHOT_GENERATED_FILE).exists());
-		assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE)
-				.exists());
+		assertFalse(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
+		assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE).exists());
 		assertFalse(new File(mojo.getProject().getBasedir(), UNKNOWN_FILE).exists());
 	}
 
@@ -65,31 +61,27 @@ public class CleanMojoTest extends AbstractGeneratorMojoTestCase<CleanMojo> {
 		assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE).exists());
 	}
 
-//	public void testExecuteSkip() throws Exception {
-//		CleanMojo mojo = spy(createMojo(createProject("test1")));
-//		doThrow(Exception.class).when(mojo).deleteGeneratedFiles();
-//
-//		setVariableValueToObject(mojo, "skip", true);
-//		mojo.execute();
-//	}
+	// public void testExecuteSkip() throws Exception {
+	// CleanMojo mojo = spy(createMojo(createProject("test1")));
+	// doThrow(Exception.class).when(mojo).deleteGeneratedFiles();
+	//
+	// setVariableValueToObject(mojo, "skip", true);
+	// mojo.execute();
+	// }
 
 	public void testExecute() throws Exception {
 		CleanMojo mojo = spy(createMojo(createProject("test2")));
-		assertTrue(new File(mojo.getProject().getBasedir(),
-				ONE_SHOT_GENERATED_FILE).exists());
+		assertTrue(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
 
 		mojo.execute();
-		assertFalse(new File(mojo.getProject().getBasedir(),
-				ONE_SHOT_GENERATED_FILE).exists());
-		assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE)
-				.exists());
+		assertFalse(new File(mojo.getProject().getBasedir(), ONE_SHOT_GENERATED_FILE).exists());
+		assertFalse(new File(mojo.getProject().getBasedir(), GENERATED_FILE).exists());
 		assertNull(mojo.getStatusFile());
 	}
 
 	/**
-	 * Returns Mojo instance initialized with a {@link MavenProject} created
-	 * from the test projects in <code>"src/test/projects/"</code> by given
-	 * project name.
+	 * Returns Mojo instance initialized with a {@link MavenProject} created from
+	 * the test projects in <code>"src/test/projects/"</code> by given project name.
 	 */
 	protected CleanMojo createMojo(MavenProject project) throws Exception {
 

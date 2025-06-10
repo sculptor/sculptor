@@ -17,7 +17,6 @@
 
 package org.sculptor.framework.accessapi;
 
-
 /**
  * <p>
  * Count all entities of a specific type.
@@ -30,6 +29,6 @@ public interface CountAllAccess<T> {
 
 	void execute();
 
-    long getResult();
+	long getResult();
 
 }

@@ -39,33 +39,30 @@ import org.dbunit.operation.DatabaseOperation;
  */
 public class DropAllTablesOperation extends DatabaseOperation {
 
-    public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException,
-            SQLException {
+	public void execute(IDatabaseConnection connection, IDataSet dataSet) throws DatabaseUnitException, SQLException {
 
+		ITableFilter filter = new DatabaseSequenceFilter(connection);
+		IDataSet dataset = new FilteredDataSet(filter, connection.createDataSet());
+		String[] tableNames = dataset.getTableNames();
+		List<String> reversedTableNames = new ArrayList<String>();
+		reversedTableNames.addAll(Arrays.asList(tableNames));
+		Collections.reverse(reversedTableNames);
 
-
-        ITableFilter filter = new DatabaseSequenceFilter(connection);
-        IDataSet dataset = new FilteredDataSet(filter, connection.createDataSet());
-        String[] tableNames = dataset.getTableNames();
-        List<String> reversedTableNames = new ArrayList<String>();
-        reversedTableNames.addAll(Arrays.asList(tableNames));
-        Collections.reverse(reversedTableNames);
-
-        Statement stmt = null;
-        try {
-            stmt = connection.getConnection().createStatement();
-            for (String table : reversedTableNames) {
-                stmt.addBatch("DROP TABLE " + table + " IF EXISTS CASCADE");
-            }
-            stmt.executeBatch();
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException ignore) {
-                }
-            }
-        }
-    }
+		Statement stmt = null;
+		try {
+			stmt = connection.getConnection().createStatement();
+			for (String table : reversedTableNames) {
+				stmt.addBatch("DROP TABLE " + table + " IF EXISTS CASCADE");
+			}
+			stmt.executeBatch();
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException ignore) {
+				}
+			}
+		}
+	}
 
 }

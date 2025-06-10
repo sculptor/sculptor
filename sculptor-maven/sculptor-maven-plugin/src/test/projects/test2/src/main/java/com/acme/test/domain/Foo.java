@@ -7,18 +7,18 @@ import javax.persistence.Embeddable;
 /**
  * BasicType representing Foo.
  * <p>
- * This class is responsible for the domain object related
- * business logic for Foo. Properties and associations are
- * implemented in the generated base class {@link com.acme.test.domain.FooBase}.
+ * This class is responsible for the domain object related business logic for
+ * Foo. Properties and associations are implemented in the generated base class
+ * {@link com.acme.test.domain.FooBase}.
  */
 @Embeddable
 public class Foo extends FooBase {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    protected Foo() {
-    }
+	protected Foo() {
+	}
 
-    public Foo(String name, Date timestamp) {
-        super(name, timestamp);
-    }
+	public Foo(String name, Date timestamp) {
+		super(name, timestamp);
+	}
 }

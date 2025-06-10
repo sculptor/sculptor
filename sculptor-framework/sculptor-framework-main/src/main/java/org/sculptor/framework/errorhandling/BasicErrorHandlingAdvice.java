@@ -35,84 +35,84 @@ import org.springframework.aop.ThrowsAdvice;
  */
 public class BasicErrorHandlingAdvice implements ThrowsAdvice {
 
-    public BasicErrorHandlingAdvice() {
-    }
+	public BasicErrorHandlingAdvice() {
+	}
 
-    /**
-     * Possibility for subclass to override and map logCodes.
-     */
-    protected String mapLogCode(String logCode) {
-        return logCode;
-    }
+	/**
+	 * Possibility for subclass to override and map logCodes.
+	 */
+	protected String mapLogCode(String logCode) {
+		return logCode;
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, ValidationException e) {
-        if (e.isLogged()) {
-            return;
-        }
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
-        log.debug(message.toString());
-        e.setLogged(true);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, ValidationException e) {
+		if (e.isLogged()) {
+			return;
+		}
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
+		log.debug(message.toString());
+		e.setLogged(true);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, SystemException e) {
-        if (e.isLogged()) {
-            return;
-        }
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
-        if (e.isFatal()) {
-            log.error(message.toString(), e);
-        } else {
-            log.error(message.toString(), e);
-        }
-        e.setLogged(true);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, SystemException e) {
+		if (e.isLogged()) {
+			return;
+		}
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
+		if (e.isFatal()) {
+			log.error(message.toString(), e);
+		} else {
+			log.error(message.toString(), e);
+		}
+		e.setLogged(true);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, ApplicationException e) {
-        if (e.isLogged()) {
-            return;
-        }
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        if (log.isDebugEnabled()) {
-            LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
-            log.debug(message.toString(), e);
-            e.setLogged(true);
-        }
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, ApplicationException e) {
+		if (e.isLogged()) {
+			return;
+		}
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		if (log.isDebugEnabled()) {
+			LogMessage message = new LogMessage(mapLogCode(e.getErrorCode()), excMessage(e));
+			log.debug(message.toString(), e);
+			e.setLogged(true);
+		}
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, RuntimeException e) {
-        SystemException wrappedSystemException = SystemException.unwrapSystemException(e);
-        if (wrappedSystemException == null) {
-            Logger log = LoggerFactory.getLogger(target.getClass());
-            // null message is useless, e.g. NullPointerException
-            String message = excMessage(e);
-            LogMessage logMessage = new LogMessage(mapLogCode(UnexpectedRuntimeException.ERROR_CODE), message);
-            log.error(logMessage.toString(), e);
-            UnexpectedRuntimeException newException = new UnexpectedRuntimeException(message);
-            newException.setLogged(true);
-            throw newException;
-        } else {
-            afterThrowing(m, args, target, wrappedSystemException);
-        }
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, RuntimeException e) {
+		SystemException wrappedSystemException = SystemException.unwrapSystemException(e);
+		if (wrappedSystemException == null) {
+			Logger log = LoggerFactory.getLogger(target.getClass());
+			// null message is useless, e.g. NullPointerException
+			String message = excMessage(e);
+			LogMessage logMessage = new LogMessage(mapLogCode(UnexpectedRuntimeException.ERROR_CODE), message);
+			log.error(logMessage.toString(), e);
+			UnexpectedRuntimeException newException = new UnexpectedRuntimeException(message);
+			newException.setLogged(true);
+			throw newException;
+		} else {
+			afterThrowing(m, args, target, wrappedSystemException);
+		}
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, OutOfMemoryError e) {
-        // OutOfMemoryError is important and therefore handled separatly from
-        // other Errors
-        handleError(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, OutOfMemoryError e) {
+		// OutOfMemoryError is important and therefore handled separatly from
+		// other Errors
+		handleError(target, e);
+	}
 
-    public void afterThrowing(Method m, Object[] args, Object target, Error e) {
-        handleError(target, e);
-    }
+	public void afterThrowing(Method m, Object[] args, Object target, Error e) {
+		handleError(target, e);
+	}
 
-    protected void handleError(Object target, Error e) {
-        Logger log = LoggerFactory.getLogger(target.getClass());
-        String errorCode = e.getClass().getName();
-        String mappedErrorCode = mapLogCode(errorCode);
-        LogMessage message = new LogMessage(mappedErrorCode, excMessage(e));
-        log.error(message.toString(), e);
-    }
+	protected void handleError(Object target, Error e) {
+		Logger log = LoggerFactory.getLogger(target.getClass());
+		String errorCode = e.getClass().getName();
+		String mappedErrorCode = mapLogCode(errorCode);
+		LogMessage message = new LogMessage(mappedErrorCode, excMessage(e));
+		log.error(message.toString(), e);
+	}
 
 }

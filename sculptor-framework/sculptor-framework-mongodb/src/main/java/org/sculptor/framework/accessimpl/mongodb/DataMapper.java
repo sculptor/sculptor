@@ -27,14 +27,14 @@ import java.util.List;
  */
 public interface DataMapper<T, D> {
 
-    boolean canMapToData(Class<?> domainObjectClass);
+	boolean canMapToData(Class<?> domainObjectClass);
 
-    String getDBCollectionName();
+	String getDBCollectionName();
 
-    T toDomain(D from);
+	T toDomain(D from);
 
-    D toData(T from);
+	D toData(T from);
 
-    List<IndexSpecification> indexes();
+	List<IndexSpecification> indexes();
 
 }

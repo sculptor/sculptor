@@ -17,19 +17,22 @@
 
 package org.sculptor.framework.accessapi;
 
-
 /**
- * <p>Access command for finding objects by condition. The specified
+ * <p>
+ * Access command for finding objects by condition. The specified
  * {@link #setRestrictions restrictions} are used to build the restrictions with
- * simple equals conditions.</p>
- * <p>Command design pattern.</p>
+ * simple equals conditions.
+ * </p>
+ * <p>
+ * Command design pattern.
+ * </p>
  */
 public interface FindByConditionAccess2<R> extends FindByConditionAccess<R>, Countable {
 
 	// allow to set query hints like timeout,...
 	void setHint(String hint, Object value);
 
-    void setUseSingleResult(boolean singleResult);
+	void setUseSingleResult(boolean singleResult);
 
-    R getSingleResult();
+	R getSingleResult();
 }

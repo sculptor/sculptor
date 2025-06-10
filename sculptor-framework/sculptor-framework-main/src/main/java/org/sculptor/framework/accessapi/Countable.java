@@ -7,10 +7,10 @@ package org.sculptor.framework.accessapi;
  */
 public interface Countable {
 
-    /**
-     * Count of rows
-     */
-    void executeResultCount();
+	/**
+	 * Count of rows
+	 */
+	void executeResultCount();
 
-    Long getResultCount();
+	Long getResultCount();
 }

@@ -24,66 +24,63 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * This class is used for loading XML schemas or DTDs from classpath.
- * The last part, the file name after the last /, of the systemId is
- * used together with a resouce prefix (e.g. schemas/) to locate the 
- * resource in classpath. 
+ * This class is used for loading XML schemas or DTDs from classpath. The last
+ * part, the file name after the last /, of the systemId is used together with a
+ * resouce prefix (e.g. schemas/) to locate the resource in classpath.
  *
  */
 public class ClassloaderEntityResolver implements EntityResolver {
-    
-    private String resourceNamePrefix = "";  // root of classpath
-    private ClassLoader classLoader = ClassloaderEntityResolver.class.getClassLoader();
-    
-    /**
-     * Constructor without resource name prefix, i.e. the resource
-     * is located in the root of the classpath.
-     *
-     */
-    public ClassloaderEntityResolver() {
-    }
-    
-    /**
-     * @param resourceNamePrefix custom prefix of the resources, e.g. "schemas/"
-     */
-    public ClassloaderEntityResolver(String resourceNamePrefix) {
-        this.resourceNamePrefix = resourceNamePrefix;
-    }
-    
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
-    public InputSource resolveEntity(String publicId, String systemId)
-        throws SAXException, IOException {
+	private String resourceNamePrefix = ""; // root of classpath
+	private ClassLoader classLoader = ClassloaderEntityResolver.class.getClassLoader();
 
-        if (systemId == null) {
-            return null;
-        }
-        
-        try {
-            String resourceName = resolveResourceName(systemId);
-            InputStream inputStream =    
-                classLoader.getResourceAsStream(resourceName);
-            if (inputStream == null) {
-                return null;
-            }
-            return new InputSource(inputStream);
-        } catch (Exception e) {
-            // No action; just let the null InputSource pass through
-            return null;
-        }
-    }
-    
-    private String resolveResourceName(String systemId) {
-        int i = systemId.lastIndexOf('/');
-        String name;
-        if (i == -1) {
-            name = systemId;
-        } else {
-            name = systemId.substring(i+1);
-        }
-        return (resourceNamePrefix + name);
-    }
+	/**
+	 * Constructor without resource name prefix, i.e. the resource is located in the
+	 * root of the classpath.
+	 *
+	 */
+	public ClassloaderEntityResolver() {
+	}
+
+	/**
+	 * @param resourceNamePrefix
+	 *            custom prefix of the resources, e.g. "schemas/"
+	 */
+	public ClassloaderEntityResolver(String resourceNamePrefix) {
+		this.resourceNamePrefix = resourceNamePrefix;
+	}
+
+	public void setClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+
+		if (systemId == null) {
+			return null;
+		}
+
+		try {
+			String resourceName = resolveResourceName(systemId);
+			InputStream inputStream = classLoader.getResourceAsStream(resourceName);
+			if (inputStream == null) {
+				return null;
+			}
+			return new InputSource(inputStream);
+		} catch (Exception e) {
+			// No action; just let the null InputSource pass through
+			return null;
+		}
+	}
+
+	private String resolveResourceName(String systemId) {
+		int i = systemId.lastIndexOf('/');
+		String name;
+		if (i == -1) {
+			name = systemId;
+		} else {
+			name = systemId.substring(i + 1);
+		}
+		return (resourceNamePrefix + name);
+	}
 }
-

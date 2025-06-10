@@ -10,13 +10,11 @@
 	<packaging>pom</packaging>
 	<name>Sculptor :: Cartridges</name>
 	<description>Aggregator project for all Sculptor cartridges</description>
-
 	<modules>
 		<module>sculptor-cartridge-builder</module>
 		<module>sculptor-cartridge-mongodb</module>
 		<module>sculptor-cartridge-springdatajpa</module>
 	</modules>
-
 	<build>
 		<plugins>
 			<plugin>

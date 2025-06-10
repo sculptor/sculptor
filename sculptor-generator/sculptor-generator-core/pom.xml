@@ -9,7 +9,6 @@
 	<groupId>org.sculptorgenerator.generator</groupId>
 	<artifactId>sculptor-generator-core</artifactId>
 	<name>Sculptor :: Generator :: Core</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -42,7 +41,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sculptorgenerator.eclipse</groupId>
@@ -64,5 +62,4 @@
 			<artifactId>org.eclipse.jdt.core</artifactId>
 		</dependency>
 	</dependencies>
-
 </project>
