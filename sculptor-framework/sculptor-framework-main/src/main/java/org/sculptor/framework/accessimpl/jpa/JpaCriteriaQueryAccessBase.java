@@ -35,6 +35,7 @@ import jakarta.persistence.metamodel.ManagedType;
 import jakarta.persistence.metamodel.Metamodel;
 import jakarta.persistence.metamodel.SingularAttribute;
 
+import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.sculptor.framework.domain.Property;
 
 /**
@@ -196,20 +197,24 @@ public abstract class JpaCriteriaQueryAccessBase<T, R> extends JpaQueryAccessBas
 	@Override
 	public void executeResultCount() {
 		if (resultCountQuery == null) {
-			CriteriaQuery<Long> resultCountCriteriaQuery = criteriaBuilder.createQuery(Long.class);
-			// TODO: works only T = R
-			Root<?> countRoot = resultCountCriteriaQuery.from(getType());
-			if (getConfig().isDistinct()) {
-				resultCountCriteriaQuery.select(criteriaBuilder.countDistinct(countRoot));
+			if (criteriaQuery instanceof JpaCriteriaQuery<?> hibCriteria) {
+				resultCountQuery = getEntityManager().createQuery(hibCriteria.createCountQuery());
 			} else {
-				resultCountCriteriaQuery.select(criteriaBuilder.count(countRoot));
+				CriteriaQuery<Long> resultCountCriteriaQuery = criteriaBuilder.createQuery(Long.class);
+				// TODO: works only T = R
+				Root<?> countRoot = resultCountCriteriaQuery.from(getType());
+				if (getConfig().isDistinct()) {
+					resultCountCriteriaQuery.select(criteriaBuilder.countDistinct(countRoot));
+				} else {
+					resultCountCriteriaQuery.select(criteriaBuilder.count(countRoot));
+				}
+				if (criteriaQuery.getRestriction() != null) {
+					resultCountCriteriaQuery.where(criteriaQuery.getRestriction());
+				}
+				copyJoinRecursive(getRoot(), countRoot);
+				// copy explicit joins
+				resultCountQuery = getEntityManager().createQuery(resultCountCriteriaQuery);
 			}
-			if (criteriaQuery.getRestriction() != null) {
-				resultCountCriteriaQuery.where(criteriaQuery.getRestriction());
-			}
-			copyJoinRecursive(getRoot(), countRoot);
-			// copy explicit joins
-			resultCountQuery = getEntityManager().createQuery(resultCountCriteriaQuery);
 		}
 		setResultCount(resultCountQuery.getSingleResult());
 	}
